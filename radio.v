@@ -16,7 +16,7 @@ enum RadioState {
 
 type RadioClickFn fn()
 
-struct Radio {
+pub struct Radio {
 pub mut:
 	idx            int
 	selected_index int
@@ -34,7 +34,7 @@ pub mut:
 	// onclick    RadioClickFn
 }
 
-struct RadioConfig {
+pub struct RadioConfig {
 	x      int
 	y      int
 	parent &ui.Window

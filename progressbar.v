@@ -44,7 +44,7 @@ pub mut:
 	is_focused bool
 }
 
-struct ProgressBarConfig {
+pub struct ProgressBarConfig {
 	x      int
 	y      int
 	width  int

@@ -38,7 +38,7 @@ pub mut:
 	text       string
 }
 
-struct CheckBoxConfig {
+pub struct CheckBoxConfig {
 	x       int
 	y       int
 	parent  &ui.Window

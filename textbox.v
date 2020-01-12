@@ -43,14 +43,16 @@ pub mut:
 	is_password bool
 }
 
+/*
 struct Rect {
 	x      int
 	y      int
 	width  int
 	height int
 }
+*/
 
-struct TextBoxConfig {
+pub struct TextBoxConfig {
 	x           int
 	y           int
 	width       int

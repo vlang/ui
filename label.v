@@ -16,7 +16,7 @@ mut:
 	ctx    &UI
 }
 
-struct LabelConfig {
+pub struct LabelConfig {
 	x      int
 	y      int
 	parent &ui.Window

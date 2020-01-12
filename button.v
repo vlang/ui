@@ -25,7 +25,7 @@ enum ButtonState {
 
 type ButtonClickFn fn(voidptr)
 
-struct ButtonConfig {
+pub struct ButtonConfig {
 	x       int
 	y       int
 	parent  &ui.Window

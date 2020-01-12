@@ -20,7 +20,7 @@ mut:
 	texture u32
 }
 
-struct PictureConfig {
+pub struct PictureConfig {
 	x      int
 	y      int
 	parent &ui.Window
@@ -42,7 +42,6 @@ pub fn new_picture(c PictureConfig) &Picture {
 		ctx: c.parent.ctx
 	}
 	pic.parent.children << pic
-	println('creating')
 	pic.texture = gg.create_image(c.path)
 	return pic
 }
