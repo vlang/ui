@@ -5,16 +5,13 @@ module ui
 
 import gx
 import gg
-import glfw
-import time
 import freetype
 import strings
-import clipboard
 
 const (
 	placeholder_cfg = gx.TextCfg{
 		color: gx.gray
-		size: freetype.DEFAULT_FONT_SIZE
+		size: freetype.default_font_size
 		align: gx.ALIGN_LEFT
 	}
 	default_window_color = gx.rgb(236, 236, 236)

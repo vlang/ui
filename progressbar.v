@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import freetype
 
 const (
 	progress_bar_color = gx.rgb(87, 153, 245)

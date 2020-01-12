@@ -4,8 +4,6 @@
 module ui
 
 import gx
-import gg
-import freetype
 
 const (
 	check_mark_size = 14

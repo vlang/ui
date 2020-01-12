@@ -3,9 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
-import freetype
-
 pub struct Label {
 mut:
 	text   string

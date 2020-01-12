@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
 import os
 import gg
 

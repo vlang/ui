@@ -4,8 +4,6 @@
 module ui
 
 import gx
-import gg
-import freetype
 
 /*
 enum RadioState {
@@ -110,7 +108,7 @@ fn (r mut Radio) click(e MouseEvent) {
 	// println('e.y=$e.y r.y=$r.y')
 	y := e.y - r.y
 	r.selected_index = (y) / (r.height + 5)
-	println(r.selected_index)
+	//println(r.selected_index)
 }
 
 fn (b mut Radio) focus() {
