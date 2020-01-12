@@ -258,7 +258,11 @@ fn bar() {
 
 fn system_font_path() string {
 	$if macos {
-		return '/System/Library/Fonts/SFNSText.ttf'
+		dir := '/System/Library/Fonts/'
+		if !os.exists(dir + 'SFNS.ttf') {
+			return dir + 'SFNSText.ttf'
+		}
+		return dir + 'SFNS.ttf'
 	}
 	$if linux {
 		return '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
