@@ -97,7 +97,7 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 	})
 	wsize := gcontext.window.get_window_size()
 	fsize := gcontext.window.get_framebuffer_size()
-	scale = if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
+	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
 	mut ctx := &UI{
 		gg: gcontext
 		ft: freetype.new_context(gg.Cfg{
