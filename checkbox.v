@@ -30,7 +30,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent     &Window
+	parent     &ui.Window
 	is_focused bool
 	is_checked bool
 	ctx        &UI
@@ -41,7 +41,7 @@ pub mut:
 struct CheckBoxConfig {
 	x       int
 	y       int
-	parent  &Window
+	parent  &ui.Window
 	text    string
 	onclick CheckBoxClickFn
 	is_checked bool

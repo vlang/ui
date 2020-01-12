@@ -27,7 +27,7 @@ pub mut:
 	width          int
 	x              int
 	y              int
-	parent         &Window
+	parent         &ui.Window
 	is_focused     bool
 	is_checked     bool
 	ctx            &UI
@@ -37,7 +37,7 @@ pub mut:
 struct RadioConfig {
 	x      int
 	y      int
-	parent &Window
+	parent &ui.Window
 	// onclick    RadioClickFn
 	values []string
 	title  string

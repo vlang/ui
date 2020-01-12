@@ -2,6 +2,7 @@ module main
 
 import ui
 import gx
+import os
 
 const (
 	win_width = 600
@@ -137,7 +138,7 @@ fn main() {
 		y: win_height - 100
 		width: 100
 		height: 100
-		path: 'logo.png'
+		path: os.resource_abs_path( 'logo.png' )
 	})
 	ctx.window = window
 	ui.run(window)
