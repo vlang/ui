@@ -21,6 +21,12 @@ That means that if you have an open-source non-GPL project, you won't have to re
 
 Every single feature will be open-sourced right away and available under both licenses.
 
+### Installation
+```bash
+git clone https://github.com/vlang/ui
+ln -s ui ~/.vmodules/ui
+```
+
 ### Dependencies
 
 Binaries built with V UI will have no dependencies.
