@@ -28,7 +28,7 @@ type ButtonClickFn fn(voidptr)
 struct ButtonConfig {
 	x       int
 	y       int
-	parent  &Window
+	parent  &ui.Window
 	text    string
 	onclick ButtonClickFn
 	height  int=20
@@ -42,7 +42,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent     &Window
+	parent     &ui.Window
 	is_focused bool
 	ctx        &UI
 	onclick    ButtonClickFn

@@ -30,7 +30,7 @@ pub mut:
 	width       int
 	x           int
 	y           int
-	parent      &Window
+	parent      &ui.Window
 	is_focused  bool
 	// gg &gg.GG
 	ctx         &UI
@@ -58,7 +58,7 @@ struct TextBoxConfig {
 	min         int
 	max         int
 	val         int
-	parent      &Window
+	parent      &ui.Window
 	placeholder string
 	max_len     int
 	is_numeric  bool

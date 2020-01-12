@@ -10,7 +10,7 @@ import gg
 struct Picture {
 mut:
 	text    string
-	parent  &Window
+	parent  &ui.Window
 	x       int
 	y       int
 	width   int
@@ -23,7 +23,7 @@ mut:
 struct PictureConfig {
 	x      int
 	y      int
-	parent &Window
+	parent &ui.Window
 	path   string
 	width  int
 	height int

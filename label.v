@@ -9,7 +9,7 @@ import freetype
 pub struct Label {
 mut:
 	text   string
-	parent &Window
+	parent &ui.Window
 	x      int
 	y      int
 	idx    int
@@ -19,7 +19,7 @@ mut:
 struct LabelConfig {
 	x      int
 	y      int
-	parent &Window
+	parent &ui.Window
 	text   string
 }
 

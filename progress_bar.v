@@ -36,7 +36,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent     &Window
+	parent     &ui.Window
 	ctx        &UI
 	val        int
 	min        int
@@ -52,7 +52,7 @@ struct ProgressBarConfig {
 	min    int
 	max    int
 	val    int
-	parent &Window
+	parent &ui.Window
 }
 
 pub fn new_progress_bar(c ProgressBarConfig) &ProgressBar {

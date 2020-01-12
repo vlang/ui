@@ -10,6 +10,7 @@ import time
 import freetype
 import stbi
 import os
+import filepath
 import clipboard
 
 const (
@@ -85,24 +86,26 @@ struct MouseEvent {
 	mods   int
 }
 
-pub fn new_window(cfg WindowConfig) &Window {
+pub fn new_window(cfg WindowConfig) &ui.Window {
+	gcontext := gg.new_context(gg.Cfg{
+		width: cfg.width
+		height: cfg.height
+		use_ortho: true // This is needed for 2D drawing
+		create_window: true
+		window_title: cfg.title
+		// window_user_ptr: ctx
+	})
+	wsize := gcontext.window.get_window_size()
+	fsize := gcontext.window.get_framebuffer_size()
+	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
 	mut ctx := &UI{
-		gg: gg.new_context(gg.Cfg{
-			width: cfg.width
-			height: cfg.height
-			use_ortho: true // This is needed for 2D drawing
-
-			create_window: true
-			window_title: cfg.title
-			// window_user_ptr: ctx
-
-		})
+		gg: gcontext
 		ft: freetype.new_context(gg.Cfg{
 			width: cfg.width
 			height: cfg.height
 			use_ortho: true
 			font_size: 13
-			scale: 2
+			scale: scale
 			window_user_ptr: 0
 			font_path: system_font_path()
 		})
@@ -113,7 +116,7 @@ pub fn new_window(cfg WindowConfig) &Window {
 	ctx.gg.window.onkeydown(gkey_down)
 	ctx.gg.window.onchar(onchar)
 	ctx.gg.window.on_click(onclick)
-	window := &Window{
+	window := &ui.Window{
 		user_ptr: cfg.user_ptr
 		ctx: ctx
 		glfw_obj: ctx.gg.window
@@ -128,7 +131,7 @@ fn init() {
 	stbi.set_flip_vertically_on_load(true)
 }
 
-pub fn run(window Window) {
+pub fn run(window ui.Window) {
 	mut ctx := window.ctx
 	ctx.window = window
 	go ctx.loop()
@@ -142,7 +145,7 @@ pub fn run(window Window) {
 	}
 }
 
-fn (window &Window) unfocus_all() {
+fn (window &ui.Window) unfocus_all() {
 	for child in window.children {
 		child.unfocus()
 	}
@@ -210,7 +213,7 @@ fn onchar(glfw_wnd voidptr, codepoint u32) {
 	}
 }
 
-fn (w mut Window) focus_next() {
+fn (w mut ui.Window) focus_next() {
 	mut doit := false
 	for child in w.children {
 		// Focus on the next widget
@@ -226,7 +229,7 @@ fn (w mut Window) focus_next() {
 	w.just_tabbed = true
 }
 
-fn (w &Window) focus_previous() {
+fn (w &ui.Window) focus_previous() {
 	for i, child in w.children {
 		is_focused := child.is_focused()
 		if is_focused && i > 0 {
@@ -237,7 +240,7 @@ fn (w &Window) focus_previous() {
 	}
 }
 
-pub fn (w &Window) set_cursor() {
+pub fn (w &ui.Window) set_cursor() {
 	// glfw.set_cursor(.ibeam)
 	// w.glfw_obj.set_cursor(.ibeam)
 }
@@ -255,8 +258,11 @@ fn bar() {
 	foo(&Picture{})
 }
 
-
 fn system_font_path() string {
+	env_font := os.getenv('VUI_FONT')
+	if env_font.len != 0 {
+		return env_font
+	}
 	$if macos {
 		dir := '/System/Library/Fonts/'
 		if !os.exists(dir + 'SFNS.ttf') {
@@ -265,7 +271,20 @@ fn system_font_path() string {
 		return dir + 'SFNS.ttf'
 	}
 	$if linux {
-		return '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+		searched_fonts := [
+			'/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
+			'/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf',
+			'/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+			'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
+			'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+			'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+			]
+		for f in searched_fonts {
+			if os.exists( f ) {
+				return f
+			}
+		}
+		panic('Please install at least one of: $searched_fonts .')
 	}
 	$if windows {
 		return 'C:\\Windows\\Fonts\\arial.ttf'
@@ -273,17 +292,20 @@ fn system_font_path() string {
 	panic('font')
 }
 
-
 fn (ctx mut UI) load_icos() {
 	// TODO figure out how to use load_from_memory
-	mut f := os.create(os.tmpdir() + 'check.png') or {
+	tmp := filepath.join( os.tmpdir() , 'v_ui' ) + os.path_separator
+	if !os.is_dir( tmp ) {
+		os.mkdir( tmp ) or { 
+			panic(err) 
+		}
+	}
+	mut f := os.create( tmp + 'check.png') or {
 		panic(err)
 	}
 	f.write_bytes(bytes_check_png, bytes_check_png_len)
 	f.close()
-	tmp := os.tmpdir()
-	ctx.cb_image = gg.create_image(tmp + 'check.png')
+	ctx.cb_image = gg.create_image( tmp + 'check.png' )
 	ctx.circle_image = gg.create_image(tmp + 'circle.png')
 	ctx.selected_radio_image = gg.create_image(tmp + 'selected_radio.png')
 }
-
