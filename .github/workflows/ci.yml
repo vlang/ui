@@ -9,11 +9,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Deps
+    - name: Install dependencies
       run: sudo rm -f /etc/apt/sources.list.d/dotnetdev.list /etc/apt/sources.list.d/microsoft-prod.list; sudo apt-get update; sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev
     - name: Build examples
       run: |
+        cd ..
         git clone --depth 1 https://github.com/vlang/v
         cd v && make
         cd ..
-        v/v examples/users/users.v
+        cp -rf ui v/vlib/ui
+        cd ui
+        ../v/v examples/users/users.v
+
+  macos:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        brew install freetype glfw
+    - name: Build examples
+      run: |
+        cd ..
+        git clone --depth 1 https://github.com/vlang/v
+        cd v && make
+        cd ..
+        cp -rf ui v/vlib/ui
+        cd ui
+        ../v/v examples/users/users.v
