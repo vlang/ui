@@ -87,23 +87,25 @@ struct MouseEvent {
 }
 
 pub fn new_window(cfg WindowConfig) &ui.Window {
+	gcontext := gg.new_context(gg.Cfg{
+		width: cfg.width
+		height: cfg.height
+		use_ortho: true // This is needed for 2D drawing
+		create_window: true
+		window_title: cfg.title
+		// window_user_ptr: ctx
+	})
+	wsize := gcontext.window.get_window_size()
+	fsize := gcontext.window.get_framebuffer_size()
+	scale = if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
 	mut ctx := &UI{
-		gg: gg.new_context(gg.Cfg{
-			width: cfg.width
-			height: cfg.height
-			use_ortho: true // This is needed for 2D drawing
-
-			create_window: true
-			window_title: cfg.title
-			// window_user_ptr: ctx
-
-		})
+		gg: gcontext
 		ft: freetype.new_context(gg.Cfg{
 			width: cfg.width
 			height: cfg.height
 			use_ortho: true
 			font_size: 13
-			scale: system_scale()
+			scale: scale
 			window_user_ptr: 0
 			font_path: system_font_path()
 		})
@@ -255,7 +257,6 @@ fn bar() {
 	foo(&Radio{})
 	foo(&Picture{})
 }
-
 
 fn system_scale() int {
 	$if linux {
