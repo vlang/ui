@@ -20,3 +20,9 @@ Open-source projects will have access to the commercial license for free.
 That means that if you have an open-source non-GPL project, you won't have to relicense it under GPL to use V UI.
 
 Every single feature will be open-sourced right away and available under both licenses.
+
+### Dependencies
+
+Binaries built with V UI will have no dependencies.
+
+But to develop with V UI you need to install `glfw` and `freetype`. `glfw` dependency will soon be removed.

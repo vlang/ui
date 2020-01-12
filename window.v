@@ -13,13 +13,6 @@ import os
 import filepath
 import clipboard
 
-const (
-	NR_COLS = 3
-	CELL_HEIGHT = 25
-	CELL_WIDTH = 100
-	TABLE_WIDTH = CELL_WIDTH * NR_COLS
-)
-
 pub type DrawFn fn(voidptr)
 
 pub struct Window {
@@ -289,15 +282,15 @@ fn system_font_path() string {
 	$if windows {
 		return 'C:\\Windows\\Fonts\\arial.ttf'
 	}
-	panic('font')
+	panic('failed to init the font')
 }
 
 fn (ctx mut UI) load_icos() {
 	// TODO figure out how to use load_from_memory
 	tmp := filepath.join( os.tmpdir() , 'v_ui' ) + os.path_separator
 	if !os.is_dir( tmp ) {
-		os.mkdir( tmp ) or { 
-			panic(err) 
+		os.mkdir( tmp ) or {
+			panic(err)
 		}
 	}
 	mut f := os.create( tmp + 'check.png') or {

@@ -7,10 +7,10 @@ import os
 const (
 	win_width = 600
 	win_height = 385
-	NR_COLS = 3
-	CELL_HEIGHT = 25
-	CELL_WIDTH = 100
-	TABLE_WIDTH = CELL_WIDTH * NR_COLS
+	nr_colrs = 3
+	cell_height = 25
+	cell_width = 100
+	table_width = cell_width * nr_colrs
 )
 
 struct User {
@@ -169,17 +169,17 @@ fn draw(ctx mut Context) {
 	gg := ctx.window.ctx.gg // TODO
 	mut ft := ctx.window.ctx.ft // TODO
 	x := 280
-	gg.draw_rect(x - 20, 0, TABLE_WIDTH + 100, 800, gx.white)
+	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in ctx.users {
-		y := 20 + i * CELL_HEIGHT
+		y := 20 + i * cell_height
 		// Outer border
-		gg.draw_empty_rect(x, y, TABLE_WIDTH, CELL_HEIGHT, gx.Gray)
+		gg.draw_empty_rect(x, y, table_width, cell_height, gx.Gray)
 		// Vertical separators
-		gg.draw_line_c(x + CELL_WIDTH, y, x + CELL_WIDTH, y + CELL_HEIGHT, gx.Gray)
-		gg.draw_line_c(x + CELL_WIDTH * 2, y, x + CELL_WIDTH * 2, y + CELL_HEIGHT, gx.Gray)
+		gg.draw_line_c(x + cell_width, y, x + cell_width, y + cell_height, gx.Gray)
+		gg.draw_line_c(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.Gray)
 		// Text values
 		ft.draw_text_def(x + 5, y + 5, user.first_name)
-		ft.draw_text_def(x + 5 + CELL_WIDTH, y + 5, user.last_name)
-		ft.draw_text_def(x + 5 + CELL_WIDTH * 2, y + 5, user.age.str())
+		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
+		ft.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
 	}
 }
