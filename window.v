@@ -258,13 +258,6 @@ fn bar() {
 	foo(&Picture{})
 }
 
-fn system_scale() int {
-	$if linux {
-		return 1
-	}
-	return 2
-}
-
 fn system_font_path() string {
 	env_font := os.getenv('VUI_FONT')
 	if env_font.len != 0 {
