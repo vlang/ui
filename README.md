@@ -14,12 +14,7 @@ lots of things will change.
 
 There will be a declarative version of the API, similar to SwiftUI.
 
-V UI is licensed under GPL3. A commercial license will be available.
-
-Open-source projects will have access to the commercial license for free.
-That means that if you have an open-source non-GPL project, you won't have to relicense it under GPL to use V UI.
-
-Every single feature will be open-sourced right away and available under both licenses.
+V UI is licensed under GPL3. A commercial license will be available. Open-source projects will have access to the commercial license for free. Every single feature will be open-sourced right away and available under both licenses. At some point in the future the library will be relicensed under MIT.
 
 ### Installation
 ```bash
