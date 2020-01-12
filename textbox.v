@@ -175,6 +175,9 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		.backspace {
 			t.ctx.show_cursor = true
 			if t.text != '' {
+				if t.cursor_pos == 0 {
+					return
+				}
 				t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
 				t.cursor_pos--
 			}
@@ -235,6 +238,10 @@ fn (t mut TextBox) click(e MouseEvent) {
 	}
 	// Calculate cursor position from x
 	x := e.x - t.x - textbox_padding
+	if x <= 0 {
+		t.cursor_pos = 0
+		return
+	}
 	mut prev_width := 0
 	for i in 1 .. t.text.len {
 		width := t.ctx.ft.text_width(t.text[..i])
