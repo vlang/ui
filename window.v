@@ -273,18 +273,20 @@ fn system_font_path() string {
 		return '/System/Library/Fonts/SFNSText.ttf'
 	}
 	$if linux {
-		for f in [
+		searched_fonts := [
 			'/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
 			'/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf',
 			'/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
 			'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
 			'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-		]{
+			'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+			]
+		for f in searched_fonts {
 			if os.exists( f ) {
 				return f
 			}
 		}
-		return '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+		panic('Please install at least one of: $searched_fonts .')
 	}
 	$if windows {
 		return 'C:\\Windows\\Fonts\\arial.ttf'
