@@ -280,7 +280,7 @@ fn system_font_path() string {
 			'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
 			'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
 		]{
-			if !os.exists( f ) {
+			if os.exists( f ) {
 				return f
 			}
 		}
