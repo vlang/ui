@@ -1,5 +1,8 @@
 # V UI 0.0.1
 
+<img src='https://raw.githubusercontent.com/vlang/ui/master/examples/users/screenshot.png' width=712>
+
+
 **This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM).
