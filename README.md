@@ -19,7 +19,13 @@ V UI is licensed under GPL3. A commercial license will be available. Open-source
 ### Installation
 ```bash
 git clone https://github.com/vlang/ui
-ln -s /path/to/ui ~/.vmodules/ui
+ln -s `pwd`/ui ~/.vmodules/ui
+cd ui
+```
+
+### Running the examples
+```bash
+v run examples/users/users.v
 ```
 
 ### Dependencies
