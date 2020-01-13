@@ -165,7 +165,7 @@ fn btn_add_click(ctx mut Context) {
 	ctx.label.set_text('$ctx.users.len/10')
 }
 
-fn draw(ctx mut Context) {
+fn draw(ctx &Context) {
 	gg := ctx.window.ctx.gg // TODO
 	mut ft := ctx.window.ctx.ft // TODO
 	x := 280

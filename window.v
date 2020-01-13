@@ -293,12 +293,17 @@ fn (ctx mut UI) load_icos() {
 			panic(err)
 		}
 	}
-	mut f := os.create( tmp + 'check.png') or {
+	ctx.cb_image     = gg.create_image( tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len) )
+	ctx.circle_image = gg.create_image( tmp_save_pic(tmp, 'circle.png',  bytes_circle_png, bytes_circle_png_len) )
+	ctx.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
+}
+
+fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string {
+	tmp_path := tmp + picname
+	mut f := os.create( tmp_path ) or {
 		panic(err)
 	}
-	f.write_bytes(bytes_check_png, bytes_check_png_len)
+	f.write_bytes(bytes, bytes_len)
 	f.close()
-	ctx.cb_image = gg.create_image( tmp + 'check.png' )
-	ctx.circle_image = gg.create_image(tmp + 'circle.png')
-	ctx.selected_radio_image = gg.create_image(tmp + 'selected_radio.png')
-}
+	return tmp_path
+}  
