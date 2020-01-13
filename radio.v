@@ -80,16 +80,12 @@ fn (b mut Radio) draw() {
 	for i, val in b.values {
 		y := b.y + b.height * i + 15
 		x := b.x + 5
-		b.ctx.gg.draw_rect(x, y, check_mark_size, check_mark_size, gx.white)
-		draw_inner_border(b.ctx.gg, x, y, check_mark_size, check_mark_size)
 		if i == b.selected_index {
-			// b.ctx.gg.draw_image(x + 3,y+3, 8, 8, b.ctx.circle_image)
-			b.ctx.gg.draw_image(x, y - 1, 16, 16, b.ctx.selected_radio_image)
+			b.ctx.gg.draw_image(x, y-3, 16, 16, b.ctx.selected_radio_image)
 		}
-		//else {
-		// b.ctx.gg.draw_rect(x+3,y+3, 8,8,gx.white)
-		//}
-		// b.ctx.gg.draw_image(x,y, 16, 16, b.ctx.selected_radio_image)
+		else {
+			b.ctx.gg.draw_image(x, y-3, 16, 16, b.ctx.circle_image)		
+		}
 		// Text
 		b.ctx.ft.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
 	}
