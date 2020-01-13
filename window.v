@@ -128,7 +128,7 @@ pub fn run(window ui.Window) {
 	mut ctx := window.ctx
 	ctx.window = window
 	go ctx.loop()
-	for {
+	for !window.glfw_obj.should_close() {
 		gg.clear(default_window_color)
 		window.draw_fn(window.user_ptr)
 		for child in window.children {
