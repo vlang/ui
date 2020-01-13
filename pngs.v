@@ -6,7 +6,6 @@ module ui
 // Your changes may be overwritten.
 
 const (
-  bytes_check_png_name = 'check.png'
   bytes_check_png_len = 3811
   bytes_check_png = [ byte(137), 
     80,   78,   71,   13,   10,   26,   10,    0,    0,    0,   13,   73,   72,   68,   82,    0, 
@@ -250,7 +249,6 @@ const (
     96,  130, 
 ]!!
 
-  bytes_circle_png_name = 'circle.png'
   bytes_circle_png_len = 818
   bytes_circle_png = [ byte(137), 
     80,   78,   71,   13,   10,   26,   10,    0,    0,    0,   13,   73,   72,   68,   82,    0, 
@@ -307,7 +305,6 @@ const (
    130, 
 ]!!
 
-  bytes_selected_radio_png_name = 'selected_radio.png'
   bytes_selected_radio_png_len = 946
   bytes_selected_radio_png = [ byte(137), 
     80,   78,   71,   13,   10,   26,   10,    0,    0,    0,   13,   73,   72,   68,   82,    0, 
