@@ -24,6 +24,7 @@ mut:
 	first_name &ui.TextBox
 	last_name  &ui.TextBox
 	age        &ui.TextBox
+	password   &ui.TextBox
 	pbar       &ui.ProgressBar
 	users      []User
 	window     &ui.Window
@@ -81,7 +82,7 @@ fn main() {
 		parent: window
 		is_numeric: true
 	})
-	ui.new_textbox(ui.TextBoxConfig{
+	ctx.password = ui.new_textbox(ui.TextBoxConfig{
 		x: 20
 		y: 110
 		width: 200
@@ -162,6 +163,7 @@ fn btn_add_click(ctx mut Context) {
 	ctx.first_name.focus()
 	ctx.last_name.set_text('')
 	ctx.age.set_text('')
+	ctx.password.set_text('')
 	ctx.label.set_text('$ctx.users.len/10')
 }
 
