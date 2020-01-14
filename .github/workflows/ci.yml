@@ -4,9 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ubuntu:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Install dependencies
@@ -14,14 +12,14 @@ jobs:
         sudo rm -f /etc/apt/sources.list.d/dotnetdev.list /etc/apt/sources.list.d/microsoft-prod.list
         sudo apt-get update
         sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev libgtk-3-dev
-    - name: Build examples
+    - name: Build V
       run: |
-        cd ..
-        git clone --depth 1 https://github.com/vlang/v
-        cd v && make
-        cd ..
-        cp -rf ui v/vlib/ui
-        cd ui
+        git clone --depth 1 https://github.com/vlang/v ../v
+        cd ../v
+        make
+    - name: Build UI demo
+      run: |
+        cp -rf ../ui ../v/vlib/ui
         ../v/v examples/users/users.v
 
   macos:
@@ -31,12 +29,34 @@ jobs:
     - name: Install dependencies
       run: |
         brew install freetype glfw
-    - name: Build examples
+    - name: Build V
       run: |
-        cd ..
-        git clone --depth 1 https://github.com/vlang/v
-        cd v && make
-        cd ..
-        cp -rf ui v/vlib/ui
-        cd ui
+        git clone --depth 1 https://github.com/vlang/v ../v
+        cd ../v
+        make
+    - name: Build UI demo
+      run: |
+        cp -rf ../ui ../v/vlib/ui
         ../v/v examples/users/users.v
+
+  windows-msvc:
+    runs-on: windows-2019
+    env:
+        VFLAGS: -cc msvc
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        echo %VFLAGS%
+        echo $VFLAGS
+        git clone --depth 1 https://github.com/vlang/v ..\v
+        git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries.git ..\v\thirdparty/freetype/
+    - name: Build V
+      run: |
+        cd ..\v
+        .\make.bat -msvc
+    - name: Build UI demo
+      run: |
+        xcopy ..\ui ..\v\vlib\ui /e /i /h
+        ..\v\v.exe examples\users\users.v        
+
