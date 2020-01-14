@@ -138,7 +138,7 @@ fn (t mut TextBox) draw() {
 	if t.is_focused && t.ctx.show_cursor {
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
-			cursor_x += t.ctx.ft.text_width(strings.repeat(`*`, t.text.len))
+			cursor_x += t.ctx.ft.text_width(strings.repeat(`*`, t.cursor_pos))
 		}
 		else if skip_idx > 0 {
 			cursor_x += t.ctx.ft.text_width(t.text[skip_idx..])
