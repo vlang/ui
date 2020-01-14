@@ -7,15 +7,16 @@ import (
 
 public const (
   font_dir = []string{
-    r'c:\windows\fonts\arial.ttf',
-    '/usr/share/font/dejavu/dajaVusans.tff',
-    '/usr/share/fonts/truetype/arial.ttf',
-    '/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
-		'/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf',
-		'/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-		'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
-		'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-		'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+     r'c:\windows\fonts\arial.ttf',
+     '/usr/share/font/dejavu/dajaVusans.tff',
+     '/usr/share/fonts/truetype/arial.ttf',
+     '/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
+     '/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf',
+     '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+	'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
+	'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+	'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+	'/usr/share/fonts/dejavu/DejaVuSans.ttf',
     '/System/Library/Fonts/SFNSText.ttf'
   }
   
