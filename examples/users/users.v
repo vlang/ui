@@ -144,6 +144,16 @@ fn main() {
 		y: 20
 		draw_fn:canvas_draw
 	})
+	ui.new_menu({
+		parent: window
+		x: 250
+		y: 20
+		items: [
+			ui.MenuItem{'Delete all users', menu_click},
+			ui.MenuItem{'Export users', menu_click},
+			ui.MenuItem{'Exit', menu_click},
+		]
+	})
 	ui.new_picture({
 		parent: window
 		x: win_width - 100
@@ -154,6 +164,10 @@ fn main() {
 	})
 	app.window = window
 	ui.run(window)
+}
+
+fn menu_click() {
+
 }
 
 fn btn_help_click() {

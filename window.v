@@ -254,6 +254,7 @@ fn bar() {
 	foo(&Radio{})
 	foo(&Picture{})
 	foo(&Canvas{})
+	foo(&Menu{})
 }
 
 fn system_font_path() string {
