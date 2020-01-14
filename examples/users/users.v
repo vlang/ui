@@ -34,10 +34,6 @@ mut:
 	txt_pos    int
 }
 
-struct Foo {
-	widgets []ui.IWidgeter
-}
-
 fn main() {
 	mut app := &App{
 		users: [User{
@@ -53,14 +49,14 @@ fn main() {
 			country: 'Canada'
 		}]
 	}
-	window := ui.new_window(ui.WindowConfig{
+	window := ui.new_window({
 		width: win_width
 		height: win_height
 		title: 'V UI Demo'
 		user_ptr: app
 	})
 	// mut t1 := ui.new_textbox(mut window, ui.Rect{20, 20, 200, 0},  'First name')
-	app.first_name = ui.new_textbox(ui.TextBoxConfig{
+	app.first_name = ui.new_textbox({
 		max_len: 20
 		x: 20
 		y: 20
@@ -68,7 +64,7 @@ fn main() {
 		placeholder: 'First name'
 		parent: window
 	})
-	app.last_name = ui.new_textbox(ui.TextBoxConfig{
+	app.last_name = ui.new_textbox({
 		max_len: 50
 		x: 20
 		y: 50
@@ -76,7 +72,7 @@ fn main() {
 		placeholder: 'Last name'
 		parent: window
 	})
-	app.age = ui.new_textbox(ui.TextBoxConfig{
+	app.age = ui.new_textbox({
 		max_len: 3
 		x: 20
 		y: 80
@@ -85,7 +81,7 @@ fn main() {
 		parent: window
 		is_numeric: true
 	})
-	app.password = ui.new_textbox(ui.TextBoxConfig{
+	app.password = ui.new_textbox({
 		x: 20
 		y: 110
 		width: 200
@@ -94,20 +90,20 @@ fn main() {
 		is_password: true
 		max_len: 20
 	})
-	ui.new_checkbox(ui.CheckBoxConfig{
+	ui.new_checkbox({
 		parent: window
 		x: 20
 		y: 140
 		is_checked: true
 		text: 'Online registration'
 	})
-	ui.new_checkbox(ui.CheckBoxConfig{
+	ui.new_checkbox({
 		parent: window
 		x: 20
 		y: 165
 		text: 'Subscribe to the newsletter'
 	})
-	app.country = ui.new_radio(ui.RadioConfig{
+	app.country = ui.new_radio({
 		parent: window
 		x: 20
 		width: 200
@@ -115,14 +111,14 @@ fn main() {
 		values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 		title: 'Country'
 	})
-	ui.new_button(ui.ButtonConfig{
+	ui.new_button({
 		x: 20
 		y: 320
 		parent: window
 		text: 'Add user'
 		onclick: btn_add_click
 	})
-	app.pbar = ui.new_progress_bar(ui.ProgressBarConfig{
+	app.pbar = ui.new_progress_bar({
 		parent: window
 		x: 20
 		y: 350
@@ -130,19 +126,19 @@ fn main() {
 		max: 10
 		val: 2
 	})
-	app.label = ui.new_label(ui.LabelConfig{
+	app.label = ui.new_label({
 		parent: window
 		x: 230
 		y: 350
 		text: '2/10'
 	})
-	ui.new_canvas(ui.CanvasConfig{
+	ui.new_canvas({
 		parent: window
 		x: 250
 		y: 20
 		draw_fn:canvas_draw
 	})
-	ui.new_picture(ui.PictureConfig{
+	ui.new_picture({
 		parent: window
 		x: win_width - 100
 		y: win_height - 100
