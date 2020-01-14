@@ -150,34 +150,34 @@ fn main() {
 	ui.run(window)
 }
 
-fn btn_add_click(ctx mut App) {
-	ctx.window.set_cursor()
-	if ctx.users.len >= 10 {
+fn btn_add_click(app mut App) {
+	app.window.set_cursor()
+	if app.users.len >= 10 {
 		return
 	}
-	if ctx.first_name.text == '' || ctx.last_name.text == '' {
+	if app.first_name.text == '' ||  app.last_name.text == '' {
 		return
 	}
-	ctx.users << User{
-		first_name: ctx.first_name.text
-		last_name: ctx.last_name.text
-		age: ctx.age.text.int()
+	app.users << User{
+		first_name: app.first_name.text
+		last_name: app.last_name.text
+		age: app.age.text.int()
 	}
-	ctx.pbar.val++
-	ctx.first_name.set_text('')
-	ctx.first_name.focus()
-	ctx.last_name.set_text('')
-	ctx.age.set_text('')
-	ctx.password.set_text('')
-	ctx.label.set_text('$ctx.users.len/10')
+	app.pbar.val++
+	app.first_name.set_text('')
+	app.first_name.focus()
+	app.last_name.set_text('')
+	app.age.set_text('')
+	app.password.set_text('')
+	app.label.set_text('$app.users.len/10')
 }
 
-fn canvas_draw(ctx &App) {
-	gg := ctx.window.ctx.gg // TODO
-	mut ft := ctx.window.ctx.ft // TODO
+fn canvas_draw(app &App) {
+	gg := app.window.ctx.gg // TODO
+	mut ft := app.window.ctx.ft // TODO
 	x := 280
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
-	for i, user in ctx.users {
+	for i, user in app.users {
 		y := 20 + i * cell_height
 		// Outer border
 		gg.draw_empty_rect(x, y, table_width, cell_height, gx.Gray)

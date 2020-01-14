@@ -35,7 +35,7 @@ mut:
 	window               ui.Window
 	show_cursor          bool
 	cb_image             u32
-	circle_image         u32
+	//circle_image         u32
 	radio_image          u32
 	selected_radio_image u32
 	clipboard            &clipboard.Clipboard
@@ -299,7 +299,15 @@ fn (ctx mut UI) load_icos() {
 		}
 	}
 	ctx.cb_image     = gg.create_image( tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len) )
-	ctx.circle_image = gg.create_image( tmp_save_pic(tmp, 'circle.png',  bytes_circle_png, bytes_circle_png_len) )
+	/*
+	$if macos {
+		ctx.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_darwin_circle_png,
+			bytes_darwin_circle_png_len))
+	} $else {
+		ctx.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_circle_png,
+			bytes_circle_png_len))
+	}
+	*/
 	ctx.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
 }
 
