@@ -19,7 +19,7 @@ struct User {
 	age        int
 }
 
-struct Context {
+struct App {
 mut:
 	first_name &ui.TextBox
 	last_name  &ui.TextBox
@@ -37,7 +37,7 @@ struct Foo {
 }
 
 fn main() {
-	mut ctx := &Context{
+	mut app := &App{
 		users: [User{
 			first_name: 'Sam'
 			last_name: 'Johnson'
@@ -53,11 +53,10 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI Demo'
-		user_ptr: ctx
-		draw_fn: draw
+		user_ptr: app
 	})
 	// mut t1 := ui.new_textbox(mut window, ui.Rect{20, 20, 200, 0},  'First name')
-	ctx.first_name = ui.new_textbox(ui.TextBoxConfig{
+	app.first_name = ui.new_textbox(ui.TextBoxConfig{
 		max_len: 20
 		x: 20
 		y: 20
@@ -65,7 +64,7 @@ fn main() {
 		placeholder: 'First name'
 		parent: window
 	})
-	ctx.last_name = ui.new_textbox(ui.TextBoxConfig{
+	app.last_name = ui.new_textbox(ui.TextBoxConfig{
 		max_len: 50
 		x: 20
 		y: 50
@@ -73,7 +72,7 @@ fn main() {
 		placeholder: 'Last name'
 		parent: window
 	})
-	ctx.age = ui.new_textbox(ui.TextBoxConfig{
+	app.age = ui.new_textbox(ui.TextBoxConfig{
 		max_len: 3
 		x: 20
 		y: 80
@@ -119,7 +118,7 @@ fn main() {
 		text: 'Add user'
 		onclick: btn_add_click
 	})
-	ctx.pbar = ui.new_progress_bar(ui.ProgressBarConfig{
+	app.pbar = ui.new_progress_bar(ui.ProgressBarConfig{
 		parent: window
 		x: 20
 		y: 350
@@ -127,11 +126,17 @@ fn main() {
 		max: 10
 		val: 2
 	})
-	ctx.label = ui.new_label(ui.LabelConfig{
+	app.label = ui.new_label(ui.LabelConfig{
 		parent: window
 		x: 230
 		y: 350
 		text: '2/10'
+	})
+	ui.new_canvas(ui.CanvasConfig{
+		parent: window
+		x: 250
+		y: 20
+		draw_fn:canvas_draw
 	})
 	ui.new_picture(ui.PictureConfig{
 		parent: window
@@ -141,11 +146,11 @@ fn main() {
 		height: 100
 		path: os.resource_abs_path( 'logo.png' )
 	})
-	ctx.window = window
+	app.window = window
 	ui.run(window)
 }
 
-fn btn_add_click(ctx mut Context) {
+fn btn_add_click(ctx mut App) {
 	ctx.window.set_cursor()
 	if ctx.users.len >= 10 {
 		return
@@ -167,7 +172,7 @@ fn btn_add_click(ctx mut Context) {
 	ctx.label.set_text('$ctx.users.len/10')
 }
 
-fn draw(ctx &Context) {
+fn canvas_draw(ctx &App) {
 	gg := ctx.window.ctx.gg // TODO
 	mut ft := ctx.window.ctx.ft // TODO
 	x := 280

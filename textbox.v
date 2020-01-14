@@ -177,6 +177,13 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 				if t.cursor_pos == 0 {
 					return
 				}
+				/*
+				u := t.text.ustring()
+				a:= u.left(t.cursor_pos - 1)
+				b :=u.right(t.cursor_pos)
+				println('a=$a b=$b')
+				t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
+				*/
 				t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
 				t.cursor_pos--
 			}

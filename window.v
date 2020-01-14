@@ -25,6 +25,7 @@ mut:
 	just_tabbed bool
 	user_ptr    voidptr
 	draw_fn     DrawFn
+	title string
 }
 
 struct UI {
@@ -114,6 +115,7 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 		ctx: ctx
 		glfw_obj: ctx.gg.window
 		draw_fn: cfg.draw_fn
+		title: cfg.title
 	}
 	// window.set_cursor()
 	return window
@@ -130,7 +132,9 @@ pub fn run(window ui.Window) {
 	go ctx.loop()
 	for !window.glfw_obj.should_close() {
 		gg.clear(default_window_color)
-		window.draw_fn(window.user_ptr)
+		if window.draw_fn != 0 {
+			window.draw_fn(window.user_ptr)
+		}
 		for child in window.children {
 			child.draw()
 		}
@@ -249,6 +253,7 @@ fn bar() {
 	foo(&Label{})
 	foo(&Radio{})
 	foo(&Picture{})
+	foo(&Canvas{})
 }
 
 fn system_font_path() string {
@@ -306,4 +311,4 @@ fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string
 	f.write_bytes(bytes, bytes_len)
 	f.close()
 	return tmp_path
-}  
+}
