@@ -276,7 +276,8 @@ fn system_font_path() string {
 			'/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
 			'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
 			'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-			'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+			'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+			'/usr/share/fonts/dejavu/DejaVuSans.ttf'		// for Fedora 31
 			]
 		for f in searched_fonts {
 			if os.exists( f ) {
