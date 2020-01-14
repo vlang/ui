@@ -55,7 +55,6 @@ fn main() {
 		title: 'V UI Demo'
 		user_ptr: app
 	})
-	// mut t1 := ui.new_textbox(mut window, ui.Rect{20, 20, 200, 0},  'First name')
 	app.first_name = ui.new_textbox({
 		max_len: 20
 		x: 20
@@ -118,6 +117,13 @@ fn main() {
 		text: 'Add user'
 		onclick: btn_add_click
 	})
+	ui.new_button({
+		x: 187
+		y: 320
+		parent: window
+		text: '?'
+		onclick: btn_help_click
+	})
 	app.pbar = ui.new_progress_bar({
 		parent: window
 		x: 20
@@ -150,6 +156,10 @@ fn main() {
 	ui.run(window)
 }
 
+fn btn_help_click() {
+	ui.message_box('Built with V UI')
+}
+
 fn btn_add_click(app mut App) {
 	app.window.set_cursor()
 	if app.users.len >= 10 {
@@ -158,12 +168,13 @@ fn btn_add_click(app mut App) {
 	if app.first_name.text == '' ||  app.last_name.text == '' {
 		return
 	}
-	app.users << User{
+	new_user := User{
 		first_name: app.first_name.text
 		last_name: app.last_name.text
 		age: app.age.text.int()
 		country: app.country.selected_value()
 	}
+	app.users << new_user
 	app.pbar.val++
 	app.first_name.set_text('')
 	app.first_name.focus()
@@ -171,6 +182,7 @@ fn btn_add_click(app mut App) {
 	app.age.set_text('')
 	app.password.set_text('')
 	app.label.set_text('$app.users.len/10')
+	//ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
 fn canvas_draw(app &App) {
