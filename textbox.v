@@ -144,7 +144,9 @@ fn (t mut TextBox) draw() {
 			cursor_x += t.ctx.ft.text_width(t.text[skip_idx..])
 		}
 		else if t.text.len > 0 {
-			cursor_x += t.ctx.ft.text_width(t.text[..t.cursor_pos])
+			//left := t.text[..t.cursor_pos]
+			left := t.text.ustring().left(t.cursor_pos)
+			cursor_x += t.ctx.ft.text_width(left)
 		}
 		// t.ctx.gg.draw_line(cursor_x, t.y+2, cursor_x, t.y-2+t.height-1)//, gx.Black)
 		t.ctx.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
@@ -164,8 +166,9 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		if t.is_numeric && (s.len > 1 || !s[0].is_digit()) {
 			return
 		}
-		t.text += s
-		t.cursor_pos += s.len
+		t.insert(s)
+		//t.text += s
+		//t.cursor_pos ++//= utf8_char_len(s[0])// s.len
 		return
 	}
 	//println(e.key)
@@ -177,14 +180,10 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 				if t.cursor_pos == 0 {
 					return
 				}
-				/*
 				u := t.text.ustring()
-				a:= u.left(t.cursor_pos - 1)
-				b :=u.right(t.cursor_pos)
-				println('a=$a b=$b')
 				t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
-				*/
-				t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
+				//u.free() // TODO remove
+				//t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
 				t.cursor_pos--
 			}
 		}
@@ -193,7 +192,10 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 			if t.cursor_pos == t.text.len || t.text == '' {
 				return
 			}
-			t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
+			u := t.text.ustring()
+			t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos+1)
+			//t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
+			//u.free() // TODO remove
 		}
 		.left {
 			t.ctx.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
@@ -249,8 +251,10 @@ fn (t mut TextBox) click(e MouseEvent) {
 		return
 	}
 	mut prev_width := 0
-	for i in 1 .. t.text.len {
-		width := t.ctx.ft.text_width(t.text[..i])
+	ustr := t.text.ustring()
+	for i in 1 .. ustr.len {
+		//width := t.ctx.ft.text_width(t.text[..i])
+		width := t.ctx.ft.text_width(ustr.left(i))
 		if prev_width <= x && x <= width {
 			t.cursor_pos = i
 			return
@@ -278,7 +282,7 @@ fn (t mut TextBox) unfocus() {
 }
 
 fn (t mut TextBox) update() {
-	t.cursor_pos = t.text.len
+	t.cursor_pos = t.text.ustring().len
 }
 
 pub fn (t mut TextBox) set_text(s string) {
@@ -287,10 +291,16 @@ pub fn (t mut TextBox) set_text(s string) {
 }
 
 pub fn (t mut TextBox) insert(s string) {
-	old_len := t.text.len
-	t.text = t.text[..t.cursor_pos] + s + t.text[t.cursor_pos..]
-	if t.max_len > 0 {
-		t.text = t.text.limit(t.max_len)
+	mut ustr := t.text.ustring()
+	old_len := ustr.len
+	//t.text = t.text[..t.cursor_pos] + s + t.text[t.cursor_pos..]
+	t.text = ustr.left(t.cursor_pos) + s + ustr.right(t.cursor_pos)
+	ustr = t.text.ustring()
+	if t.max_len > 0  && ustr.len >= t.max_len {
+		//t.text = t.text.limit(t.max_len)
+		t.text = ustr.left(t.max_len)
+		ustr = t.text.ustring()
 	}
-	t.cursor_pos += t.text.len - old_len
+	//t.cursor_pos += t.text.len - old_len
+	t.cursor_pos += ustr.len - old_len
 }
