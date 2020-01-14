@@ -29,6 +29,7 @@ pub mut:
 	is_focused     bool
 	is_checked     bool
 	ctx            &UI
+	//selected_value string
 	// onclick    RadioClickFn
 }
 
@@ -116,6 +117,10 @@ fn (b mut Radio) unfocus() {
 
 fn (b &Radio) idx() int {
 	return b.idx
+}
+
+pub fn (r &Radio) selected_value() string {
+	return r.values[r.selected_index]
 }
 
 fn (t &Radio) is_focused() bool {

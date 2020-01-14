@@ -5,18 +5,19 @@ import gx
 import os
 
 const (
-	win_width = 600
+	win_width = 700
 	win_height = 385
-	nr_colrs = 3
+	nr_cols = 4
 	cell_height = 25
 	cell_width = 100
-	table_width = cell_width * nr_colrs
+	table_width = cell_width * nr_cols
 )
 
 struct User {
 	first_name string
 	last_name  string
 	age        int
+	country    string
 }
 
 struct App {
@@ -29,6 +30,7 @@ mut:
 	users      []User
 	window     &ui.Window
 	label      &ui.Label
+	country    &ui.Radio
 	txt_pos    int
 }
 
@@ -42,11 +44,13 @@ fn main() {
 			first_name: 'Sam'
 			last_name: 'Johnson'
 			age: 29
+			country: 'United States'
 		},
 		User{
 			first_name: 'Kate'
 			last_name: 'Williams'
 			age: 26
+			country: 'Canada'
 		}]
 	}
 	window := ui.new_window(ui.WindowConfig{
@@ -103,7 +107,7 @@ fn main() {
 		y: 165
 		text: 'Subscribe to the newsletter'
 	})
-	ui.new_radio(ui.RadioConfig{
+	app.country = ui.new_radio(ui.RadioConfig{
 		parent: window
 		x: 20
 		width: 200
@@ -162,6 +166,7 @@ fn btn_add_click(app mut App) {
 		first_name: app.first_name.text
 		last_name: app.last_name.text
 		age: app.age.text.int()
+		country: app.country.selected_value()
 	}
 	app.pbar.val++
 	app.first_name.set_text('')
@@ -184,9 +189,11 @@ fn canvas_draw(app &App) {
 		// Vertical separators
 		gg.draw_line_c(x + cell_width, y, x + cell_width, y + cell_height, gx.Gray)
 		gg.draw_line_c(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.Gray)
+		gg.draw_line_c(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.Gray)
 		// Text values
 		ft.draw_text_def(x + 5, y + 5, user.first_name)
 		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
 		ft.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
+		ft.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
 	}
 }
