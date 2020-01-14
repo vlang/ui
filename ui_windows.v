@@ -3,8 +3,10 @@
 // that can be found in the LICENSE file.
 module ui
 
+fn C.MessageBox(h voidptr, text charptr, caption charptr, kind u32) int
+
 pub fn message_box(s string) {
 	title := ''
-     C.MessageBox(0, s.str, title.str, C.MB_OK)
+	C.MessageBox(0, s.str, title.str, C.MB_OK)
 }
 
