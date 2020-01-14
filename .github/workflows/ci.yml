@@ -21,6 +21,8 @@ jobs:
       run: |
         cp -rf ../ui ../v/vlib/ui
         ../v/v examples/users/users.v
+    - name: Results
+      run: |
         ls -lart examples/users/users*
 
   macos:
@@ -39,6 +41,8 @@ jobs:
       run: |
         cp -rf ../ui ../v/vlib/ui
         ../v/v examples/users/users.v
+    - name: Results
+      run: |        
         ls -lart examples/users/users*
 
   windows-msvc:
@@ -61,6 +65,7 @@ jobs:
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
         ..\v\v.exe examples\users\users.v
+    - name: Results
+      run: |
         dir examples\users\
-        dir /S 
 
