@@ -61,5 +61,6 @@ jobs:
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
         ..\v\v.exe examples\users\users.v
-        dir examples\users\users.v examples\users\users.exe
+        dir examples\users\
+        dir /S 
 
