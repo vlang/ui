@@ -81,7 +81,7 @@ fn main() {
 		parent: window
 		is_numeric: true
 	})
-	ctx.password = ui.new_textbox(ui.TextBoxConfig{
+	app.password = ui.new_textbox(ui.TextBoxConfig{
 		x: 20
 		y: 110
 		width: 200
