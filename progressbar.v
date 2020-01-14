@@ -20,6 +20,7 @@ enum Key {
 	delete = 261
 	tab = 258
 	key_v = 86
+	key_a = 65
 }
 
 enum KeyMod {
