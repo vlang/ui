@@ -8,13 +8,10 @@ struct App {
 mut:
 	txtbox     &ui.TextBox
 	window     &ui.Window
-	button_idx int
 	btns       []&ui.Button
 	op         string
-	a f64
-	b f64
 	result     f64
-	is_float bool
+	is_float   bool
 	new_number bool
 }
 
@@ -24,7 +21,7 @@ fn main() {
 	app.window = ui.new_window({
 		width: 175
 		height: 220
-		title: 'Calculator'
+		title: 'V Calculator'
 		user_ptr: app
 	})
 	app.txtbox = ui.new_textbox({
@@ -35,8 +32,8 @@ fn main() {
 		y: 5
 		read_only: true
 	})
-	for op in ops {
-		app.add_button(op)
+	for i, op in ops {
+		app.add_button(op, i)
 	}
 	ui.run(app.window)
 }
@@ -102,10 +99,10 @@ fn btn_click(app mut App, btn &ui.Button) {
 	}
 }
 
-fn (ctx mut App) add_button(text string) {
+fn (ctx mut App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
-	x := 5 + ctx.button_idx % buttons_per_row * (30 + 10)
-	y := 35 + (ctx.button_idx / buttons_per_row) * 35
+	x := 5 + button_idx % buttons_per_row * (30 + 10)
+	y := 35 + (button_idx / buttons_per_row) * 35
 	// Skip empty buttons
 	if text != '' {
 		ctx.btns << ui.new_button({
@@ -118,5 +115,4 @@ fn (ctx mut App) add_button(text string) {
 			height: 30
 		})
 	}
-	ctx.button_idx++
 }
