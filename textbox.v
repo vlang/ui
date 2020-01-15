@@ -68,6 +68,8 @@ pub struct TextBoxConfig {
 	is_numeric  bool
 	is_password bool
 	read_only   bool
+	is_multi    bool
+	text        string
 }
 
 // pub fn new_textbox(parent mut Window, rect Rect, placeholder string) &TextBox {
@@ -90,6 +92,7 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		is_password: c.is_password
 		max_len: c.max_len
 		read_only: c.read_only
+		text: c.text
 	}
 	txt.parent.has_textbox = true
 	txt.parent.children << txt

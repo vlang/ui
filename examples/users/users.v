@@ -175,6 +175,7 @@ fn btn_help_click() {
 }
 
 fn btn_add_click(app mut App) {
+	//ui.notify('user', 'done')
 	app.window.set_cursor()
 	if app.users.len >= 10 {
 		return

@@ -15,3 +15,19 @@ fn nsstring(s string) voidptr {
 	# encoding:NSUTF8StringEncoding freeWhenDone: false];
 	return 0
 }
+
+pub fn notify(title, msg string) {
+	ns_msg := nsstring(msg)
+	ns_title := nsstring(title)
+	# NSUserNotification *notification = [[[NSUserNotification alloc] init] retain];
+	# notification.title = ns_title;
+	# notification.informativeText = ns_msg;
+	# NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
+	# [center deliverNotification:notification];
+}
+
+pub fn text_width(s string) int {
+	return 0
+}
+
+
