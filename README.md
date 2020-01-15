@@ -9,7 +9,7 @@
 
 **This is pre-alpha software.**
 
-V UI is a cross-platform UI toolkit written in [V](https://github.com/vlang/v)
+V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
 for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM). V UI
 uses native widgets on Windows and macOS, on all other platforms the widgets
 are drawn by V UI.  Right now only the non-native widgets are available.
@@ -39,7 +39,7 @@ v run ~/.vmodules/ui/examples/users/users.v
 
 Binaries built with V UI will have no dependencies.
 
-But to develop with V UI you need to install [V](https://github.com/vlang/v#installing-v-from-source),
+But to develop V UI apps you need to install [V](https://github.com/vlang/v#installing-v-from-source),
 `glfw` and `freetype`. `glfw` dependency will soon be removed.
 
 ```
