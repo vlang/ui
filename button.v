@@ -88,8 +88,7 @@ fn (b mut Button) click(e MouseEvent) {
 	}
 	else if e.action == 0 {
 		b.state = .normal
-		a := b.onclick
-		a(b.parent.user_ptr, b)
+		b.onclick(b.parent.user_ptr, b)
 	}
 }
 

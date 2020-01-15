@@ -93,7 +93,7 @@ fn main() {
 		parent: window
 		x: 20
 		y: 140
-		is_checked: true
+		checked: true
 		text: 'Online registration'
 	})
 	ui.new_checkbox({
@@ -176,7 +176,7 @@ fn btn_help_click() {
 
 fn btn_add_click(app mut App) {
 	//ui.notify('user', 'done')
-	app.window.set_cursor()
+	//app.window.set_cursor(.hand)
 	if app.users.len >= 10 {
 		return
 	}
@@ -210,9 +210,9 @@ fn canvas_draw(app &App) {
 		// Outer border
 		gg.draw_empty_rect(x, y, table_width, cell_height, gx.Gray)
 		// Vertical separators
-		gg.draw_line_c(x + cell_width, y, x + cell_width, y + cell_height, gx.Gray)
-		gg.draw_line_c(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.Gray)
-		gg.draw_line_c(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.Gray)
+		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.Gray)
+		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.Gray)
+		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.Gray)
 		// Text values
 		ft.draw_text_def(x + 5, y + 5, user.first_name)
 		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)

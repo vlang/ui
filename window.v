@@ -101,16 +101,19 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	x,y := glfw.get_cursor_pos(glfw_wnd)
+	e := MouseEvent{
+		button: button
+		action: action
+		mods: mods
+		x: int(x)
+		y: int(y)
+	}
+	//if window.click
+	//window.click(e)
 	for child in window.children {
-		q := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
-		if q {
-			child.click(MouseEvent{
-				button: button
-				action: action
-				mods: mods
-				x: int(x)
-				y: int(y)
-			})
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
 		}
 	}
 }
@@ -191,16 +194,17 @@ pub fn (w &ui.Window) refresh() {
 
 pub fn (w &ui.Window) onmousedown(cb voidptr) {
 }
+
 pub fn (w &ui.Window) onkeydown(cb voidptr) {
-	}
+}
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
 	return false
 }
 
-pub fn (b &Window) focus() {
+pub fn (b &ui.Window) focus() {
 }
-pub fn (b &Window) always_on_top(val bool) {
+pub fn (b &ui.Window) always_on_top(val bool) {
 }
 
 // TODO remove this

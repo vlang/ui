@@ -30,7 +30,7 @@ pub mut:
 	y          int
 	parent     &ui.Window
 	is_focused bool
-	is_checked bool
+	checked bool
 	ui         &UI
 	onclick    CheckBoxClickFn
 	text       string
@@ -55,7 +55,7 @@ pub fn new_checkbox(c CheckBoxConfig) &CheckBox {
 		idx: c.parent.children.len
 		text: c.text
 		onclick: c.onclick
-		is_checked: c.checked
+		checked: c.checked
 	}
 	cb.width = cb.ui.ft.text_width(c.text) + check_mark_size
 	cb.parent.children << cb
@@ -67,7 +67,7 @@ fn (b mut CheckBox) draw() {
 	// b.ui.gg.draw_empty_rect(b.x, b.y, check_mark_size, check_mark_size, cb_border_color)
 	draw_inner_border(b.ui.gg, b.x, b.y, check_mark_size, check_mark_size)
 	// Draw X (TODO draw a check mark instead)
-	if b.is_checked {
+	if b.checked {
 		/*
 		x0 := b.x +2
 		y0 := b.y +2
@@ -92,7 +92,7 @@ fn (t &CheckBox) point_inside(x, y f64) bool {
 
 fn (b mut CheckBox) click(e MouseEvent) {
 	if e.action == 0 {
-		b.is_checked = !b.is_checked
+		b.checked = !b.checked
 	}
 }
 
