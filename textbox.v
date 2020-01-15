@@ -42,6 +42,7 @@ pub mut:
 	is_password bool
 	sel_start   int
 	sel_end     int
+	read_only   bool
 }
 
 /*
@@ -66,6 +67,7 @@ pub struct TextBoxConfig {
 	max_len     int
 	is_numeric  bool
 	is_password bool
+	read_only   bool
 }
 
 // pub fn new_textbox(parent mut Window, rect Rect, placeholder string) &TextBox {
@@ -74,7 +76,7 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 	// isinit = true
 	mut txt := &TextBox{
 		height: c.height
-		width: c.width
+		width: if c.width < 30  { 30 } else { c.width }
 		x: c.x
 		y: c.y
 		//sel_start: 0
@@ -87,6 +89,7 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
+		read_only: c.read_only
 	}
 	txt.parent.has_textbox = true
 	txt.parent.children << txt
@@ -128,6 +131,9 @@ fn (t mut TextBox) draw() {
 		// The text doesn't fit, find the largest substring we can draw
 		if width > t.width {
 			for i := t.text.len - 1; i >= 0; i-- {
+				if i >= t.text.len {
+					continue
+				}
 				if t.ctx.ft.text_width(t.text[i..]) > t.width {
 					skip_idx = i + 3
 					break
@@ -151,7 +157,7 @@ fn (t mut TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if t.is_focused && t.ctx.show_cursor && t.sel_start == 0 && t.sel_end == 0 { // no cursor in sel mode
+	if t.is_focused && !t.read_only && t.ctx.show_cursor && t.sel_start == 0 && t.sel_end == 0 { // no cursor in sel mode
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
 			cursor_x += t.ctx.ft.text_width(strings.repeat(`*`, t.cursor_pos))
@@ -175,6 +181,9 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		return
 	}
 	if e.codepoint != 0 {
+		if t.read_only {
+			return
+		}
 		if t.max_len > 0 && t.text.len >= t.max_len {
 			return
 		}

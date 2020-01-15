@@ -23,7 +23,7 @@ enum ButtonState {
 	pressed
 }
 
-type ButtonClickFn fn(voidptr)
+type ButtonClickFn fn(voidptr, voidptr)
 
 pub struct ButtonConfig {
 	x       int
@@ -32,9 +32,10 @@ pub struct ButtonConfig {
 	text    string
 	onclick ButtonClickFn
 	height  int=20
+	width   int
 }
 
-struct Button {
+pub struct Button {
 pub mut:
 	idx        int
 	state      ButtonState
@@ -49,6 +50,7 @@ pub mut:
 	text       string
 }
 
+
 pub fn new_button(c ButtonConfig) &Button {
 	mut b := &Button{
 		height: c.height
@@ -60,7 +62,7 @@ pub fn new_button(c ButtonConfig) &Button {
 		onclick: c.onclick
 		ctx: c.parent.ctx
 	}
-	b.width = b.ctx.ft.text_width(c.text) + button_horizontal_padding
+	b.width = if c.width == 0 { b.ctx.ft.text_width(c.text) + button_horizontal_padding } else { c.width }
 	b.parent.children << b
 	return b
 }
@@ -87,7 +89,7 @@ fn (b mut Button) click(e MouseEvent) {
 	else if e.action == 0 {
 		b.state = .normal
 		a := b.onclick
-		a(b.parent.user_ptr)
+		a(b.parent.user_ptr, b)
 	}
 }
 
