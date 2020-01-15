@@ -26,14 +26,13 @@ licenses. At some point in the future the library will be relicensed under MIT.
 
 ### Installation
 ```bash
-git clone https://github.com/vlang/ui
-ln -s `pwd`/ui ~/.vmodules/ui
-cd ui
+v install ui
 ```
 
 ### Running the examples
 ```bash
-v run examples/users/users.v
+v run ~/.vmodules/ui/examples/users/users.v
+
 ```
 
 ### Dependencies
