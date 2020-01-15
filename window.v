@@ -18,7 +18,7 @@ pub type DrawFn fn(voidptr)
 pub struct Window {
 mut:
 	glfw_obj    &glfw.Window
-	ctx         &UI
+	ui &UI
 	children    []IWidgeter
 	has_textbox bool // for initial focus
 	tab_index   int
@@ -26,19 +26,6 @@ mut:
 	user_ptr    voidptr
 	draw_fn     DrawFn
 	title string
-}
-
-struct UI {
-mut:
-	gg                   &gg.GG
-	ft                   &freetype.FreeType
-	window               ui.Window
-	show_cursor          bool
-	cb_image             u32
-	//circle_image         u32
-	radio_image          u32
-	selected_radio_image u32
-	clipboard            &clipboard.Clipboard
 }
 
 pub struct WindowConfig {
@@ -87,12 +74,12 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
-		// window_user_ptr: ctx
+		// window_user_ptr: ui
 	})
 	wsize := gcontext.window.get_window_size()
 	fsize := gcontext.window.get_framebuffer_size()
 	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
-	mut ctx := &UI{
+	mut ui_ctx := &UI{
 		gg: gcontext
 		ft: freetype.new_context(gg.Cfg{
 			width: cfg.width
@@ -105,15 +92,15 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 		})
 		clipboard: clipboard.new()
 	}
-	ctx.load_icos()
-	ctx.gg.window.set_user_ptr(ctx)
-	ctx.gg.window.onkeydown(gkey_down)
-	ctx.gg.window.onchar(onchar)
-	ctx.gg.window.on_click(onclick)
+	ui_ctx.load_icos()
+	ui_ctx.gg.window.set_user_ptr(ui_ctx)
+	ui_ctx.gg.window.onkeydown(gkey_down)
+	ui_ctx.gg.window.onchar(onchar)
+	ui_ctx.gg.window.on_click(onclick)
 	window := &ui.Window{
 		user_ptr: cfg.user_ptr
-		ctx: ctx
-		glfw_obj: ctx.gg.window
+		ui: ui_ctx
+		glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 	}
@@ -127,9 +114,9 @@ fn init() {
 }
 
 pub fn run(window ui.Window) {
-	mut ctx := window.ctx
-	ctx.window = window
-	go ctx.loop()
+	mut ui := window.ui
+	ui.window = window
+	go ui.loop()
 	for !window.glfw_obj.should_close() {
 		gg.clear(default_window_color)
 		if window.draw_fn != 0 {
@@ -138,7 +125,7 @@ pub fn run(window ui.Window) {
 		for child in window.children {
 			child.draw()
 		}
-		ctx.gg.render()
+		ui.gg.render()
 	}
 }
 
@@ -149,8 +136,8 @@ fn (window &ui.Window) unfocus_all() {
 }
 
 fn onclick(glfw_wnd voidptr, button, action, mods int) {
-	ctx := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	window := ctx.window
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
 	x,y := glfw.get_cursor_pos(glfw_wnd)
 	for child in window.children {
 		q := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
@@ -166,10 +153,10 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 	}
 }
 
-fn (ctx mut UI) loop() {
+fn (ui mut UI) loop() {
 	for {
 		time.sleep_ms(500)
-		ctx.show_cursor = !ctx.show_cursor
+		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
 	}
 }
@@ -179,8 +166,8 @@ fn gkey_down(glfw_wnd voidptr, key, code, action, mods int) {
 	if action != 2 && action != 1 {
 		return
 	}
-	ctx := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	window := ctx.window
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
 	// C.printf('g child=%p\n', child)
 	for child in window.children {
 		is_focused := child.is_focused()
@@ -197,8 +184,8 @@ fn gkey_down(glfw_wnd voidptr, key, code, action, mods int) {
 }
 
 fn onchar(glfw_wnd voidptr, codepoint u32) {
-	ctx := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	window := ctx.window
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
 	for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
@@ -292,7 +279,7 @@ fn system_font_path() string {
 	panic('failed to init the font')
 }
 
-fn (ctx mut UI) load_icos() {
+fn (ui mut UI) load_icos() {
 	// TODO figure out how to use load_from_memory
 	tmp := filepath.join( os.tmpdir() , 'v_ui' ) + os.path_separator
 	if !os.is_dir( tmp ) {
@@ -300,17 +287,17 @@ fn (ctx mut UI) load_icos() {
 			panic(err)
 		}
 	}
-	ctx.cb_image     = gg.create_image( tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len) )
+	ui.cb_image     = gg.create_image( tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len) )
 	/*
 	$if macos {
-		ctx.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_darwin_circle_png,
+		ui.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_darwin_circle_png,
 			bytes_darwin_circle_png_len))
 	} $else {
-		ctx.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_circle_png,
+		ui.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_circle_png,
 			bytes_circle_png_len))
 	}
 	*/
-	ctx.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
+	ui.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
 }
 
 fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string {

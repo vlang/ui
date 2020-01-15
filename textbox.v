@@ -32,7 +32,7 @@ pub mut:
 	parent      &ui.Window
 	is_focused  bool
 	// gg &gg.GG
-	ctx         &UI
+	ui          &UI
 	text        string
 	max_len     int
 	is_multi    bool
@@ -84,7 +84,7 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		//sel_start: 0
 		parent: c.parent
 		placeholder: c.placeholder
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 		idx: c.parent.children.len
 		is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
 
@@ -107,15 +107,15 @@ fn draw_inner_border(gg &gg.GG, x, y, width, height int) {
 }
 
 fn (t mut TextBox) draw() {
-	t.ctx.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
-	draw_inner_border(t.ctx.gg, t.x, t.y, t.width, t.height)
-	width := if t.text.len == 0 { 0 } else { t.ctx.ft.text_width(t.text) }
+	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
+	draw_inner_border(t.ui.gg, t.x, t.y, t.width, t.height)
+	width := if t.text.len == 0 { 0 } else { t.ui.ft.text_width(t.text) }
 	text_y := t.y + 4 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
 	if t.text == '' {
 		if t.placeholder != '' {
-			t.ctx.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
+			t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
 		}
 	}
 	// Text
@@ -126,9 +126,9 @@ fn (t mut TextBox) draw() {
 		if t.sel_start < t.sel_end && t.sel_start < ustr.len {
 			left := ustr.left(t.sel_start)
 			right := ustr.right(t.sel_start)
-			x := t.ctx.ft.text_width(ustr.left(t.sel_start)) + t.x + textbox_padding
-			sel_width := t.ctx.ft.text_width(right) + 1
-			t.ctx.gg.draw_rect(x, t.y + 3, sel_width, t.height-6, selection_color)
+			x := t.ui.ft.text_width(ustr.left(t.sel_start)) + t.x + textbox_padding
+			sel_width := t.ui.ft.text_width(right) + 1
+			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height-6, selection_color)
 		}
 
 		// The text doesn't fit, find the largest substring we can draw
@@ -137,44 +137,44 @@ fn (t mut TextBox) draw() {
 				if i >= t.text.len {
 					continue
 				}
-				if t.ctx.ft.text_width(t.text[i..]) > t.width {
+				if t.ui.ft.text_width(t.text[i..]) > t.width {
 					skip_idx = i + 3
 					break
 				}
 			}
-			t.ctx.ft.draw_text_def(t.x + textbox_padding, text_y, t.text[skip_idx..])
+			t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, t.text[skip_idx..])
 		}
 		else {
 			if t.is_password {
 				/*
 				for i in 0..t.text.len {
 					// TODO drawing multiple circles is broken
-					//t.ctx.gg.draw_image(t.x + 5 + i * 12, t.y + 5, 8, 8, t.ctx.circle_image)
+					//t.ui.gg.draw_image(t.x + 5 + i * 12, t.y + 5, 8, 8, t.ui.circle_image)
 				}
 				*/
-				t.ctx.ft.draw_text_def(t.x + textbox_padding, text_y, strings.repeat(`*`, t.text.len))
+				t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, strings.repeat(`*`, t.text.len))
 			}
 			else {
-				t.ctx.ft.draw_text_def(t.x + textbox_padding, text_y, t.text)
+				t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, t.text)
 			}
 		}
 	}
 	// Draw the cursor
-	if t.is_focused && !t.read_only && t.ctx.show_cursor && t.sel_start == 0 && t.sel_end == 0 { // no cursor in sel mode
+	if t.is_focused && !t.read_only && t.ui.show_cursor && t.sel_start == 0 && t.sel_end == 0 { // no cursor in sel mode
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
-			cursor_x += t.ctx.ft.text_width(strings.repeat(`*`, t.cursor_pos))
+			cursor_x += t.ui.ft.text_width(strings.repeat(`*`, t.cursor_pos))
 		}
 		else if skip_idx > 0 {
-			cursor_x += t.ctx.ft.text_width(t.text[skip_idx..])
+			cursor_x += t.ui.ft.text_width(t.text[skip_idx..])
 		}
 		else if t.text.len > 0 {
 			//left := t.text[..t.cursor_pos]
 			left := t.text.ustring().left(t.cursor_pos)
-			cursor_x += t.ctx.ft.text_width(left)
+			cursor_x += t.ui.ft.text_width(left)
 		}
-		// t.ctx.gg.draw_line(cursor_x, t.y+2, cursor_x, t.y-2+t.height-1)//, gx.Black)
-		t.ctx.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
+		// t.ui.gg.draw_line(cursor_x, t.y+2, cursor_x, t.y-2+t.height-1)//, gx.Black)
+		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
 	}
 }
 
@@ -203,7 +203,7 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 	// println('mods=$e.mods')
 	match e.key {
 		.backspace {
-			t.ctx.show_cursor = true
+			t.ui.show_cursor = true
 			if t.text != '' {
 				if t.cursor_pos == 0 {
 					return
@@ -225,7 +225,7 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 			}
 		}
 		.delete {
-			t.ctx.show_cursor = true
+			t.ui.show_cursor = true
 			if t.cursor_pos == t.text.len || t.text == '' {
 				return
 			}
@@ -235,14 +235,14 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 			//u.free() // TODO remove
 		}
 		.left {
-			t.ctx.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+			t.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
 			t.cursor_pos--
 			if t.cursor_pos <= 0 {
 				t.cursor_pos = 0
 			}
 		}
 		.right {
-			t.ctx.show_cursor = true
+			t.ui.show_cursor = true
 			t.cursor_pos++
 			if t.cursor_pos > t.text.len {
 				t.cursor_pos = t.text.len
@@ -256,11 +256,11 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		}
 		.key_v {
 			if e.mods == .super {
-				t.insert(t.ctx.clipboard.paste())
+				t.insert(t.ui.clipboard.paste())
 			}
 		}
 		.tab {
-			t.ctx.show_cursor = true
+			t.ui.show_cursor = true
 			if t.parent.just_tabbed {
 				t.parent.just_tabbed = false
 				return
@@ -282,7 +282,7 @@ fn (t &TextBox) point_inside(x, y f64) bool {
 }
 
 fn (t mut TextBox) click(e MouseEvent) {
-	t.ctx.show_cursor = true
+	t.ui.show_cursor = true
 	t.focus()
 	if t.text == '' {
 		return
@@ -296,8 +296,8 @@ fn (t mut TextBox) click(e MouseEvent) {
 	mut prev_width := 0
 	ustr := t.text.ustring()
 	for i in 1 .. ustr.len {
-		//width := t.ctx.ft.text_width(t.text[..i])
-		width := t.ctx.ft.text_width(ustr.left(i))
+		//width := t.ui.ft.text_width(t.text[..i])
+		width := t.ui.ft.text_width(ustr.left(i))
 		if prev_width <= x && x <= width {
 			t.cursor_pos = i
 			return
@@ -322,6 +322,8 @@ fn (t &TextBox) is_focused() bool {
 
 fn (t mut TextBox) unfocus() {
 	t.is_focused = false
+	t.sel_start = 0
+	t.sel_end = 0
 }
 
 fn (t mut TextBox) update() {

@@ -18,7 +18,7 @@ mut:
 	x      int
 	y      int
 	idx    int
-	ctx    &UI
+	ui     &UI
 	items []MenuItem
 	visible bool
 }
@@ -44,7 +44,7 @@ pub fn new_menu(c MenuConfig) &Menu {
 		x: c.x
 		y: c.y
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 		items: c.items
 	}
 	l.parent.children << l
@@ -55,11 +55,11 @@ fn (m mut Menu) draw() {
 	if !m.visible {
 		return
 	}
-	gg := m.ctx.gg
+	gg := m.ui.gg
 	gg.draw_rect(m.x, m.y, 150, m.items.len * menu_height, menu_color)
 	gg.draw_empty_rect(m.x, m.y, 150, m.items.len * menu_height, menu_border_color)
 	for i, item in m.items {
-		m.ctx.ft.draw_text_def(m.x + 10, m.y + i * menu_height  +10, item.text)
+		m.ui.ft.draw_text_def(m.x + 10, m.y + i * menu_height  +10, item.text)
 	}
 }
 

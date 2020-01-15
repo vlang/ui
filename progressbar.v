@@ -37,7 +37,7 @@ pub mut:
 	x          int
 	y          int
 	parent     &ui.Window
-	ctx        &UI
+	ui         &UI
 	val        int
 	min        int
 	max        int
@@ -62,7 +62,7 @@ pub fn new_progress_bar(c ProgressBarConfig) &ProgressBar {
 		x: c.x
 		y: c.y
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 		idx: c.parent.children.len
 		min: c.min
 		max: c.max
@@ -74,12 +74,12 @@ pub fn new_progress_bar(c ProgressBarConfig) &ProgressBar {
 
 fn (b &ProgressBar) draw() {
 	// Draw the gray background
-	b.ctx.gg.draw_rect(b.x, b.y, b.width, b.height, progress_bar_background_color)
-	b.ctx.gg.draw_empty_rect(b.x, b.y, b.width, b.height, progress_bar_background_border_color)
+	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, progress_bar_background_color)
+	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, progress_bar_background_border_color)
 	// Draw the value
 	width := int(f64(b.width) * (f64(b.val) / f64(b.max)))
-	b.ctx.gg.draw_empty_rect(b.x, b.y, width, b.height, progress_bar_border_color) // gx.Black)
-	b.ctx.gg.draw_rect(b.x, b.y, width, b.height, progress_bar_color) // gx.Black)
+	b.ui.gg.draw_empty_rect(b.x, b.y, width, b.height, progress_bar_border_color) // gx.Black)
+	b.ui.gg.draw_rect(b.x, b.y, width, b.height, progress_bar_color) // gx.Black)
 }
 
 fn (b &ProgressBar) key_down(e KeyEvent) {}

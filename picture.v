@@ -15,7 +15,7 @@ mut:
 	width   int
 	height  int
 	idx     int
-	ctx     &UI
+	ui      &UI
 	texture u32
 }
 
@@ -38,7 +38,7 @@ pub fn new_picture(c PictureConfig) &Picture {
 		width: c.width
 		height: c.height
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 	}
 	pic.parent.children << pic
 	pic.texture = gg.create_image(c.path)
@@ -46,7 +46,7 @@ pub fn new_picture(c PictureConfig) &Picture {
 }
 
 fn (b mut Picture) draw() {
-	b.ctx.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
+	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
 }
 
 fn (t &Picture) key_down(e KeyEvent) {}

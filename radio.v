@@ -28,7 +28,7 @@ pub mut:
 	parent         &ui.Window
 	is_focused     bool
 	is_checked     bool
-	ctx            &UI
+	ui             &UI
 	//selected_value string
 	// onclick    RadioClickFn
 }
@@ -49,7 +49,7 @@ pub fn new_radio(c RadioConfig) &Radio {
 		x: c.x
 		y: c.y
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 		idx: c.parent.children.len
 		values: c.values
 		title: c.title
@@ -60,7 +60,7 @@ pub fn new_radio(c RadioConfig) &Radio {
 	if cb.width == 0 {
 		mut max := 0
 		for value in cb.values {
-			width := cb.ctx.ft.text_width(value)
+			width := cb.ui.ft.text_width(value)
 			if width > max {
 				max = width
 			}
@@ -73,21 +73,21 @@ pub fn new_radio(c RadioConfig) &Radio {
 
 fn (b mut Radio) draw() {
 	// Border
-	b.ctx.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
+	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
 	// Title
-	b.ctx.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ctx.ft.text_width(b.title) + 5, 10, default_window_color)
-	b.ctx.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
+	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.ft.text_width(b.title) + 5, 10, default_window_color)
+	b.ui.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
 	// Values
 	for i, val in b.values {
 		y := b.y + b.height * i + 15
 		x := b.x + 5
-		b.ctx.gg.draw_image(x, y-1, 16, 16, b.ctx.selected_radio_image)
+		b.ui.gg.draw_image(x, y-1, 16, 16, b.ui.selected_radio_image)
 		if i != b.selected_index {
-			b.ctx.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
-			//b.ctx.gg.draw_image(x, y-3, 16, 16, b.ctx.circle_image)
+			b.ui.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
+			//b.ui.gg.draw_image(x, y-3, 16, 16, b.ui.circle_image)
 		}
 		// Text
-		b.ctx.ft.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
+		b.ui.ft.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
 	}
 }
 

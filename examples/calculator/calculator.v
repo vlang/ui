@@ -99,17 +99,17 @@ fn btn_click(app mut App, btn &ui.Button) {
 	}
 }
 
-fn (ctx mut App) add_button(text string, button_idx int) {
+fn (app mut App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
 	x := 5 + button_idx % buttons_per_row * (30 + 10)
 	y := 35 + (button_idx / buttons_per_row) * 35
 	// Skip empty buttons
 	if text != '' {
-		ctx.btns << ui.new_button({
+		app.btns << ui.new_button({
 			text: text
 			x: x
 			y: y
-			parent: ctx.window
+			parent: app.window
 			onclick: btn_click
 			width: 30
 			height: 30

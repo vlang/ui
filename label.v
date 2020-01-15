@@ -10,7 +10,7 @@ mut:
 	x      int
 	y      int
 	idx    int
-	ctx    &UI
+	ui     &UI
 }
 
 pub struct LabelConfig {
@@ -26,14 +26,14 @@ pub fn new_label(c LabelConfig) &Label {
 		x: c.x
 		y: c.y
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 	}
 	l.parent.children << l
 	return l
 }
 
 fn (b mut Label) draw() {
-	b.ctx.ft.draw_text(b.x, b.y, b.text, btn_text_cfg)
+	b.ui.ft.draw_text(b.x, b.y, b.text, btn_text_cfg)
 }
 
 fn (t &Label) key_down(e KeyEvent) {}

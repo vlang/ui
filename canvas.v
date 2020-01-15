@@ -12,7 +12,7 @@ mut:
 	y      int
 	width int
 	height int
-	ctx    &UI
+	ui     &UI
 	draw_fn DrawFn
 	idx int
 }
@@ -30,7 +30,7 @@ pub fn new_canvas(c CanvasConfig) &Canvas {
 		x: c.x
 		y: c.y
 		parent: c.parent
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 		draw_fn: c.draw_fn
 	}
 	canvas.parent.children << canvas

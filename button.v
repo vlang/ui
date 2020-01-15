@@ -45,7 +45,7 @@ pub mut:
 	y          int
 	parent     &ui.Window
 	is_focused bool
-	ctx        &UI
+	ui         &UI
 	onclick    ButtonClickFn
 	text       string
 }
@@ -60,20 +60,20 @@ pub fn new_button(c ButtonConfig) &Button {
 		idx: c.parent.children.len
 		text: c.text
 		onclick: c.onclick
-		ctx: c.parent.ctx
+		ui: c.parent.ui
 	}
-	b.width = if c.width == 0 { b.ctx.ft.text_width(c.text) + button_horizontal_padding } else { c.width }
+	b.width = if c.width == 0 { b.ui.ft.text_width(c.text) + button_horizontal_padding } else { c.width }
 	b.parent.children << b
 	return b
 }
 
 fn (b mut Button) draw() {
-	// b.ctx.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
-	text_width := b.ctx.ft.text_width(b.text) + button_horizontal_padding
+	// b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
+	text_width := b.ui.ft.text_width(b.text) + button_horizontal_padding
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
-	b.ctx.gg.draw_rect(b.x, b.y, text_width, b.height, bg_color) // gx.white)
-	b.ctx.gg.draw_empty_rect(b.x, b.y, text_width, b.height, button_border_color)
-	b.ctx.ft.draw_text(b.x + button_horizontal_padding / 2, b.y + 3, b.text, btn_text_cfg)
+	b.ui.gg.draw_rect(b.x, b.y, text_width, b.height, bg_color) // gx.white)
+	b.ui.gg.draw_empty_rect(b.x, b.y, text_width, b.height, button_border_color)
+	b.ui.ft.draw_text(b.x + button_horizontal_padding / 2, b.y + 3, b.text, btn_text_cfg)
 }
 
 fn (b &Button) key_down(e KeyEvent) {}
