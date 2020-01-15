@@ -30,4 +30,18 @@ pub fn text_width(s string) int {
 	return 0
 }
 
+pub fn bundle_path() string {
+	s := ''
+	# s = tos2( [[[NSBundle mainBundle] bundlePath] UTF8String]);
+	return s
+}
+
+pub fn wait_events() {
+	# NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+	# untilDate:[NSDate distantFuture]
+	# inMode:NSDefaultRunLoopMode
+	# dequeue:YES];
+	# [NSApp sendEvent:event];
+}
+
 

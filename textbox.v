@@ -14,7 +14,6 @@ const (
 		size: freetype.default_font_size
 		align: gx.ALIGN_LEFT
 	}
-	default_window_color = gx.rgb(236, 236, 236)
 	text_border_color = gx.rgb(177, 177, 177)
 	text_inner_border_color = gx.rgb(240, 240, 240)
 	textbox_padding = 5
@@ -328,6 +327,10 @@ fn (t mut TextBox) unfocus() {
 
 fn (t mut TextBox) update() {
 	t.cursor_pos = t.text.ustring().len
+}
+
+pub fn (t mut TextBox) hide() {
+
 }
 
 pub fn (t mut TextBox) set_text(s string) {

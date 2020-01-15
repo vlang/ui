@@ -79,10 +79,12 @@ pub fn run(window ui.Window) {
 	ui.window = window
 	go ui.loop()
 	for !window.glfw_obj.should_close() {
-		gg.clear(default_window_color)
+		gg.clear(window.bg_color)//default_window_color)
+		// The user can define a custom drawing function for the entire window (advanced mode)
 		if window.draw_fn != 0 {
 			window.draw_fn(window.user_ptr)
 		}
+		// Render all widgets, including Canvas
 		for child in window.children {
 			child.draw()
 		}
@@ -90,14 +92,6 @@ pub fn run(window ui.Window) {
 	}
 }
 
-
-
-pub fn draw_text(x, y int, s string, cfg gx.TextCfg) {
-
-}
-
-pub fn draw_text_def(x, y int, s string) {
-}
 
 fn system_font_path() string {
 	env_font := os.getenv('VUI_FONT')
@@ -163,4 +157,12 @@ fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string
 	f.write_bytes(bytes, bytes_len)
 	f.close()
 	return tmp_path
+}
+
+pub fn open_url(url string) {
+
+}
+
+pub fn confirm(s string) bool {
+	return false
 }

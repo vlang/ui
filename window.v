@@ -13,6 +13,10 @@ import os
 import filepath
 import clipboard
 
+const (
+	default_window_color = gx.rgb(236, 236, 236)
+)
+
 pub type DrawFn fn(voidptr)
 
 pub struct Window {
@@ -26,6 +30,11 @@ mut:
 	user_ptr    voidptr
 	draw_fn     DrawFn
 	title string
+	mx int
+	my int
+	width int
+	height int
+	bg_color gx.Color
 }
 
 pub struct WindowConfig {
@@ -37,6 +46,7 @@ pub:
 	always_on_top bool
 	user_ptr      voidptr
 	draw_fn       DrawFn
+	bg_color gx.Color = default_window_color
 }
 
 pub fn new_window(cfg WindowConfig) &ui.Window {
@@ -75,6 +85,7 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 		glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
+		bg_color: cfg.bg_color
 	}
 	// window.set_cursor()
 	return window
@@ -167,12 +178,29 @@ fn (w &ui.Window) focus_previous() {
 	}
 }
 
-pub fn (w &ui.Window) set_cursor() {
+pub fn (w &ui.Window) set_cursor(cursor Cursor) {
 	// glfw.set_cursor(.ibeam)
 	// w.glfw_obj.set_cursor(.ibeam)
 }
 
 pub fn (w &ui.Window) close() {
+}
+
+pub fn (w &ui.Window) refresh() {
+}
+
+pub fn (w &ui.Window) onmousedown(cb voidptr) {
+}
+pub fn (w &ui.Window) onkeydown(cb voidptr) {
+	}
+
+pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
+	return false
+}
+
+pub fn (b &Window) focus() {
+}
+pub fn (b &Window) always_on_top(val bool) {
 }
 
 // TODO remove this
@@ -188,5 +216,9 @@ fn bar() {
 	foo(&Picture{})
 	foo(&Canvas{})
 	foo(&Menu{})
+}
+
+pub fn (w mut ui.Window) set_title(title string) {
+
 }
 

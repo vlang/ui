@@ -12,23 +12,6 @@ const (
 	progress_bar_background_border_color = gx.rgb(191, 191, 191)
 )
 
-// glfw values TODO
-enum Key {
-	left = 263
-	right = 262
-	backspace = 259
-	delete = 261
-	tab = 258
-	key_v = 86
-	key_a = 65
-}
-
-enum KeyMod {
-	shift = 1
-	alt = 4
-	super = 8
-}
-
 pub struct ProgressBar {
 pub mut:
 	idx        int

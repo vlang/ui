@@ -201,8 +201,8 @@ fn btn_add_click(app mut App) {
 }
 
 fn canvas_draw(app &App) {
-	gg := app.window.ui.gg // TODO
-	mut ft := app.window.ui.ft // TODO
+	gg := app.window.ui.gg
+	mut ft := app.window.ui.ft
 	x := 280
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {

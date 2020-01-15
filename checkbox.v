@@ -42,7 +42,7 @@ pub struct CheckBoxConfig {
 	parent  &ui.Window
 	text    string
 	onclick CheckBoxClickFn
-	is_checked bool
+	checked bool
 }
 
 pub fn new_checkbox(c CheckBoxConfig) &CheckBox {
@@ -55,7 +55,7 @@ pub fn new_checkbox(c CheckBoxConfig) &CheckBox {
 		idx: c.parent.children.len
 		text: c.text
 		onclick: c.onclick
-		is_checked: c.is_checked
+		is_checked: c.checked
 	}
 	cb.width = cb.ui.ft.text_width(c.text) + check_mark_size
 	cb.parent.children << cb

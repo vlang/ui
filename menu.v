@@ -63,6 +63,13 @@ fn (m mut Menu) draw() {
 	}
 }
 
+pub type MenuClickFn fn()
+
+pub fn (m mut Menu) add_item(text string, action MenuFn) {
+	m.items << MenuItem{text:text, action: action}
+
+}
+
 fn (t &Menu) key_down(e KeyEvent) {}
 
 fn (t &Menu) click(e MouseEvent) {
