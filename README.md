@@ -39,5 +39,22 @@ v run ~/.vmodules/ui/examples/users/users.v
 
 Binaries built with V UI will have no dependencies.
 
-But to develop with V UI you need to install [V](https://github.com/vlang/v),
+But to develop with V UI you need to install [V](https://github.com/vlang/v#installing-v-from-source),
 `glfw` and `freetype`. `glfw` dependency will soon be removed.
+
+```
+macOS:
+brew install glfw freetype
+
+Debian/Ubuntu:
+sudo apt install libglfw3 libglfw3-dev libfreetype6-dev
+
+Arch/Manjaro:
+sudo pacman -S glfw-x11 freetype2
+
+Fedora:
+sudo dnf install glfw glfw-devel freetype-devel
+
+Windows:
+git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
+```
