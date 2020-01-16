@@ -65,7 +65,7 @@ fn main() {
 		y: 84
 		width: 180
 		height: 20
-		orientation: ui.Orientation.horizontal
+		orientation: .horizontal
 		max: 50
 		min: 0
 		val: app.duration
