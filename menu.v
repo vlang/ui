@@ -9,6 +9,7 @@ const (
 	menu_height = 30
 	menu_color=gx.rgb(240, 240, 240)
 	menu_border_color=gx.rgb(223,223,223)
+	menu_diable_color=gx.rgb(0xc0,0xc0,0xc0)
 )
 
 pub struct Menu {
@@ -36,6 +37,8 @@ pub type MenuFn fn()
 pub struct MenuItem {
 	text string
 	action MenuFn
+	checked bool	// item is checked or not.
+	enable  bool	// item is enable or not?
 }
 
 pub fn new_menu(c MenuConfig) &Menu {
