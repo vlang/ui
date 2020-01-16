@@ -38,7 +38,7 @@ pub interface IWidgeter {
 	is_focused() bool
 }
 
-struct KeyEvent {
+pub struct KeyEvent {
 	key       ui.Key
 	action    int
 	code      int
@@ -46,7 +46,8 @@ struct KeyEvent {
 	codepoint u32
 }
 
-struct MouseEvent {
+pub struct MouseEvent {
+pub:
 	x      int
 	y      int
 	button int
