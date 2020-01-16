@@ -24,3 +24,9 @@ pub enum KeyMod {
 	alt = 4
 	super = 8
 }
+
+pub enum KeyState {
+	press = 1
+	release = 0
+	repeat = 2
+}

@@ -21,6 +21,9 @@ const (
 	selection_color = gx.rgb(186, 214, 251)
 )
 
+type KeyDownFn fn(voidptr, voidptr, u32)
+type KeyUpFn fn(voidptr, voidptr, u32)
+
 pub struct TextBox {
 pub mut:
 	idx         int
@@ -43,6 +46,8 @@ pub mut:
 	sel_end     int
 	read_only   bool
 	borderless  bool
+	on_key_down KeyDownFn = KeyDownFn(0)
+	on_key_up KeyUpFn = KeyUpFn(0)
 }
 
 /*
@@ -71,6 +76,8 @@ pub struct TextBoxConfig {
 	is_multi    bool
 	text        string
 	borderless  bool
+	on_key_down KeyDownFn
+	on_key_up   KeyUpFn
 }
 
 // pub fn new_textbox(parent mut Window, rect Rect, placeholder string) &TextBox {
@@ -95,6 +102,8 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		read_only: c.read_only
 		text: c.text
 		borderless: c.borderless
+		on_key_down: c.on_key_down
+		on_key_up: c.on_key_up
 	}
 	txt.parent.has_textbox = true
 	txt.parent.children << txt
@@ -187,6 +196,9 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
+	if e.action == KeyState.press && t.on_key_down != KeyDownFn(0) {
+		t.on_key_down(t.parent.user_ptr, t, e.codepoint)
+	}
 	if e.codepoint != 0 {
 		if t.read_only {
 			return
@@ -199,6 +211,9 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 			return
 		}
 		t.insert(s)
+		if e.action == KeyState.release && t.on_key_up != KeyUpFn(0) {
+			t.on_key_up(t.parent.user_ptr, t, e.codepoint)
+		}
 		//t.text += s
 		//t.cursor_pos ++//= utf8_char_len(s[0])// s.len
 		return
@@ -345,6 +360,14 @@ pub fn (t mut TextBox) hide() {
 pub fn (t mut TextBox) set_text(s string) {
 	t.text = s
 	t.update()
+}
+
+pub fn (t mut TextBox) on_change(func voidptr) {
+	t.text = t.text
+}
+
+pub fn (t mut TextBox) on_return(func voidptr) {
+	t.text = t.text
 }
 
 pub fn (t mut TextBox) insert(s string) {
