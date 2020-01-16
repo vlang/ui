@@ -19,6 +19,7 @@ const (
 
 pub type DrawFn fn(voidptr)
 pub type ClickFn fn(e MouseEvent, func voidptr)
+pub type ScrollFn fn(e MouseEvent, func voidptr)
 
 pub struct Window {
 mut:
@@ -37,6 +38,7 @@ mut:
 	height int
 	bg_color gx.Color
 	click_fn ClickFn
+	scroll_fn ScrollFn
 }
 
 pub struct WindowConfig {
@@ -201,9 +203,8 @@ pub fn (w &ui.Window) onmousedown(cb voidptr) {
 pub fn (w &ui.Window) onkeydown(cb voidptr) {
 }
 
-pub fn (w mut ui.Window) on_click(func ClickFn) {
-	w.click_fn = func
-}
+pub fn (w mut ui.Window) on_click(func ClickFn) {	w.click_fn = func }
+pub fn (w mut ui.Window) on_scroll(func ScrollFn) {	w.scroll_fn = func }
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
 	return false

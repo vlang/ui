@@ -26,9 +26,11 @@ pub fn notify(title, msg string) {
 	# [center deliverNotification:notification];
 }
 
+/*
 pub fn text_width(s string) int {
 	return 0
 }
+*/
 
 pub fn bundle_path() string {
 	s := ''

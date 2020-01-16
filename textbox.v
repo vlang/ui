@@ -42,6 +42,7 @@ pub mut:
 	sel_start   int
 	sel_end     int
 	read_only   bool
+	borderless  bool
 }
 
 /*
@@ -69,6 +70,7 @@ pub struct TextBoxConfig {
 	read_only   bool
 	is_multi    bool
 	text        string
+	borderless  bool
 }
 
 // pub fn new_textbox(parent mut Window, rect Rect, placeholder string) &TextBox {
@@ -92,6 +94,7 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		max_len: c.max_len
 		read_only: c.read_only
 		text: c.text
+		borderless: c.borderless
 	}
 	txt.parent.has_textbox = true
 	txt.parent.children << txt
@@ -107,7 +110,9 @@ fn draw_inner_border(gg &gg.GG, x, y, width, height int) {
 
 fn (t mut TextBox) draw() {
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
-	draw_inner_border(t.ui.gg, t.x, t.y, t.width, t.height)
+	if !t.borderless {
+		draw_inner_border(t.ui.gg, t.x, t.y, t.width, t.height)
+	}
 	width := if t.text.len == 0 { 0 } else { t.ui.ft.text_width(t.text) }
 	text_y := t.y + 4 // TODO off by 1px
 	mut skip_idx := 0
