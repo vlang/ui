@@ -8,6 +8,17 @@
 <img src='https://raw.githubusercontent.com/vlang/ui/c2f802a137b5171dade1d5fdc364cd92d34e3ca7/examples/users/screenshot.png' width=712>
 </a>
 
+### Installation
+```bash
+v install ui
+```
+
+### Running the examples
+```bash
+v run ~/.vmodules/ui/examples/users/users.v
+
+```
+
 **This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
@@ -27,22 +38,12 @@ licenses. At some point in the future the library will be relicensed under MIT.
 
 Discord: https://discord.gg/n7c74HM (`#v-ui` channel)
 
-### Installation
-```bash
-v install ui
-```
-
-### Running the examples
-```bash
-v run ~/.vmodules/ui/examples/users/users.v
-
-```
 
 ### Dependencies
 
 Binaries built with V UI will have no dependencies.
 
-But to develop V UI apps you need to install [V](https://github.com/vlang/v#installing-v-from-source),
+To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source),
 `glfw` and `freetype`. `glfw` dependency will soon be removed.
 
 ```
