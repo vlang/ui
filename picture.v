@@ -53,6 +53,8 @@ fn (t &Picture) key_down(e KeyEvent) {}
 
 fn (t &Picture) click(e MouseEvent) {
 }
+fn (t &Picture) mouse_move(e MouseEvent) {
+}
 
 fn (t &Picture) focus() {}
 
@@ -62,6 +64,10 @@ fn (t &Picture) idx() int {
 
 fn (t &Picture) is_focused() bool {
 	return false
+}
+
+fn (t &Picture) typ() WidgetType {
+	return .Picture
 }
 
 fn (t &Picture) unfocus() {}

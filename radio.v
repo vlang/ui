@@ -107,6 +107,9 @@ fn (r mut Radio) click(e MouseEvent) {
 	//println(r.selected_index)
 }
 
+fn (r &Radio) mouse_move(e MouseEvent) {
+}
+
 fn (b mut Radio) focus() {
 	b.is_focused = true
 }
@@ -117,6 +120,10 @@ fn (b mut Radio) unfocus() {
 
 fn (b &Radio) idx() int {
 	return b.idx
+}
+
+fn (t &Radio) typ() WidgetType {
+	return .Radio
 }
 
 pub fn (r &Radio) selected_value() string {

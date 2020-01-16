@@ -73,6 +73,8 @@ fn (t &ProgressBar) point_inside(x, y f64) bool {
 
 fn (b &ProgressBar) click(e MouseEvent) {
 }
+fn (b &ProgressBar) mouse_move(e MouseEvent) {
+}
 
 fn (b &ProgressBar) focus() {
 }
@@ -83,6 +85,10 @@ fn (b &ProgressBar) idx() int {
 
 fn (t &ProgressBar) is_focused() bool {
 	return t.is_focused
+}
+
+fn (t &ProgressBar) typ() WidgetType {
+	return .ProgressBar
 }
 
 fn (b &ProgressBar) unfocus() {

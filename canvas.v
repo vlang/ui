@@ -45,11 +45,18 @@ fn (t &Canvas) key_down(e KeyEvent) {}
 
 fn (t &Canvas) click(e MouseEvent) {
 }
+fn (t &Canvas) mouse_move(e MouseEvent) {
+}
+
 
 fn (t &Canvas) focus() {}
 
 fn (t &Canvas) idx() int {
 	return t.idx
+}
+
+fn (t &Canvas) typ() WidgetType {
+	return .Canvas
 }
 
 fn (t &Canvas) is_focused() bool {
