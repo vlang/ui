@@ -18,7 +18,7 @@ const (
 )
 
 pub type DrawFn fn(voidptr)
-pub type ClickFn fn(MouseEvent)
+pub type ClickFn fn(e MouseEvent, func voidptr)
 
 pub struct Window {
 mut:
@@ -111,7 +111,7 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 		y: int(y)
 	}
 	if window.click_fn != 0 {
-		window.click_fn(e)
+		window.click_fn(e, window.user_ptr)
 	}
 	for child in window.children {
 		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
