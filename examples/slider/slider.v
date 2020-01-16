@@ -28,7 +28,7 @@ fn main() {
 		y: 12
 		width: 20
 		height: 200
-		orientation: ui.Orientation.vertical
+		orientation: .vertical
 		max: 100
 		val: 0
 		on_value_changed: on_vert_value_changed
@@ -40,7 +40,7 @@ fn main() {
 		y: 12
 		width: 200
 		height: 20
-		orientation: ui.Orientation.horizontal
+		orientation: .horizontal
 		max: 100
 		val: 0
 		on_value_changed: on_hor_value_changed
