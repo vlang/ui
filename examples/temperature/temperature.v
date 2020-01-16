@@ -21,7 +21,7 @@ fn main() {
 	window := ui.new_window({
 		width: win_width
 		height: win_height
-		title: 'Temprature Conv.'
+		title: 'Temperature Conv.'
 		user_ptr: app
 	})
 	app.txt_box_celsius = ui.new_textbox({
