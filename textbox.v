@@ -357,6 +357,14 @@ pub fn (t mut TextBox) set_text(s string) {
 	t.update()
 }
 
+pub fn (t mut TextBox) on_change(func voidptr) {
+	t.text = t.text
+}
+
+pub fn (t mut TextBox) on_return(func voidptr) {
+	t.text = t.text
+}
+
 pub fn (t mut TextBox) insert(s string) {
 	mut ustr := t.text.ustring()
 	old_len := ustr.len
