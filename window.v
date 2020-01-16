@@ -18,6 +18,7 @@ const (
 )
 
 pub type DrawFn fn(voidptr)
+pub type ClickFn fn(MouseEvent)
 
 pub struct Window {
 mut:
@@ -35,6 +36,7 @@ mut:
 	width int
 	height int
 	bg_color gx.Color
+	click_fn ClickFn
 }
 
 pub struct WindowConfig {
@@ -108,8 +110,9 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 		x: int(x)
 		y: int(y)
 	}
-	//if window.click
-	//window.click(e)
+	if window.click_fn != 0 {
+		window.click_fn(e)
+	}
 	for child in window.children {
 		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
 		if inside {
@@ -196,6 +199,10 @@ pub fn (w &ui.Window) onmousedown(cb voidptr) {
 }
 
 pub fn (w &ui.Window) onkeydown(cb voidptr) {
+}
+
+pub fn (w mut ui.Window) on_click(func ClickFn) {
+	w.click_fn = func
 }
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
