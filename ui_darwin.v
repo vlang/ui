@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
+[unsafe_fn]
 pub fn message_box(s string) {
 	ns_string := nsstring(s)
 	# NSAlert *alert = [[NSAlert alloc] init] ;
@@ -10,12 +11,14 @@ pub fn message_box(s string) {
 	# [alert runModal];
 }
 
+[unsafe_fn]
 fn nsstring(s string) voidptr {
 	# return [ [ NSString alloc ] initWithBytesNoCopy:s.str  length:s.len
 	# encoding:NSUTF8StringEncoding freeWhenDone: false];
 	return 0
 }
 
+[unsafe_fn]
 pub fn notify(title, msg string) {
 	ns_msg := nsstring(msg)
 	ns_title := nsstring(title)
@@ -38,6 +41,7 @@ pub fn bundle_path() string {
 	return s
 }
 
+[unsafe_fn]
 pub fn wait_events() {
 	# NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
 	# untilDate:[NSDate distantFuture]
