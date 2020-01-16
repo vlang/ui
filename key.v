@@ -23,3 +23,8 @@ pub enum KeyMod {
 	super = 8
 }
 
+pub enum KeyState {
+	press = 1
+	release = 0
+	repeat = 2
+}
