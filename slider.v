@@ -23,14 +23,14 @@ pub mut:
 	track_width      int
 	thumb_width 	 int
 	thumb_height 	 int
-	orientation      Orientation
+	orientation      Orientation = Orientation.horizontal
 	x          int
 	y          int
 	parent     &ui.Window
 	ui         &UI
 	val        f32
-	min        int
-	max        int
+	min        int = 0
+	max        int = 100
 	is_focused bool
 	dragging   bool
 	on_value_changed SliderValueChangedFn
@@ -64,8 +64,8 @@ pub fn new_slider(c SliderConfig) &Slider {
 		orientation: c.orientation
 		on_value_changed: c.on_value_changed
 	}
-	p.thumb_height = if p.orientation == .horizontal {p.track_height * 3} else {10}
-	p.thumb_width = if p.orientation == .horizontal { 10 } else {p.track_width * 3}
+	p.thumb_height = if p.orientation == .horizontal {p.track_height + 10} else {10}
+	p.thumb_width = if p.orientation == .horizontal { 10 } else {p.track_width + 10}
 	p.parent.children << p
 	p.parent.on_click(on_window_click)
 	p.parent.on_mousemove(on_window_mouse_move)
@@ -73,16 +73,20 @@ pub fn new_slider(c SliderConfig) &Slider {
 }
 
 fn (b &Slider) draw_thumb() {
-	dim := if b.orientation == .horizontal { b.track_width } else {b.track_height}
-	rev_dim := if b.orientation == .horizontal { b.track_height } else { b.track_width }
 	axis := if b.orientation == .horizontal {b.x} else {b.y}
 	rev_axis := if b.orientation == .horizontal {b.y} else {b.x}
 
+	rev_dim := if b.orientation == .horizontal { b.track_height } else { b.track_width }
+	rev_thumb_dim := if b.orientation == .horizontal {b.thumb_height} else {b.thumb_width}
+	
+	dim := if b.orientation == .horizontal { b.track_width } else {b.track_height}
+
 	mut pos := f32(dim) * (b.val / f32(b.max))
-	if (pos > dim) {pos = f32(dim)}
+	pos += axis
+	if (pos > axis + dim) {pos = f32(dim) + axis}
 	if (pos < axis) {pos = axis}
 
-	middle := f32(rev_axis) - rev_dim - f32(rev_dim / 3)
+	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
 
 	if b.orientation == .horizontal {
 		b.ui.gg.draw_rect(pos, middle, b.thumb_width, b.thumb_height, thumb_color)
@@ -169,9 +173,12 @@ fn (b mut Slider) mouse_move(e MouseEvent) {
 }
 
 fn (b mut Slider) change_value(x, y int) {
-	divisor := if b.orientation == .horizontal {b.track_width} else {b.track_height}
-	axis := if b.orientation == .horizontal {x} else {y}
-	b.val = f32(axis) * f32(b.max) / f32(divisor)
+	dim := if b.orientation == .horizontal {b.track_width} else {b.track_height}
+	axis := if b.orientation == .horizontal {b.x} else {b.y}
+	pos := if b.orientation == .horizontal {x} else {y} - axis
+	
+	b.val = (f32(pos) * f32(b.max)) / f32(dim)
+
 	if int(b.val) < b.min {
 		b.val = b.min
 	} else if int(b.val) > b.max {
