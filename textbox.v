@@ -284,7 +284,7 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 fn (t &TextBox) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
-
+fn (t mut TextBox) mouse_move(e MouseEvent) {}
 fn (t mut TextBox) click(e MouseEvent) {
 	t.ui.show_cursor = true
 	t.focus()
@@ -318,6 +318,10 @@ pub fn (t mut TextBox) focus() {
 
 fn (t &TextBox) idx() int {
 	return t.idx
+}
+
+fn (t &TextBox) typ() WidgetType {
+	return .TextBox
 }
 
 fn (t &TextBox) is_focused() bool {

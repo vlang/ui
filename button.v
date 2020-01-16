@@ -92,6 +92,8 @@ fn (b mut Button) click(e MouseEvent) {
 	}
 }
 
+fn (b mut Button) mouse_move(e MouseEvent) {}
+
 fn (b mut Button) focus() {
 	b.is_focused = true
 }
@@ -102,6 +104,10 @@ fn (b mut Button) unfocus() {
 
 fn (b &Button) idx() int {
 	return b.idx
+}
+
+fn (t &Button) typ() WidgetType {
+	return .Button
 }
 
 fn (t &Button) is_focused() bool {

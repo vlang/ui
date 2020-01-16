@@ -26,15 +26,30 @@ mut:
 	clipboard            &clipboard.Clipboard
 }
 
+pub enum WidgetType {
+	Button,
+	Canvas,
+	CheckBox,
+	Label,
+	Menu,
+	Picture,
+	ProgressBar,
+	Radio,
+	Slider,
+	TextBox
+}
+
 // TODO rename to `Widget` once interfaces allow that :)
 pub interface IWidgeter {
 	key_down(KeyEvent)
 	draw()
 	click(MouseEvent)
+	mouse_move(MouseEvent)
 	point_inside(x, y f64) bool
 	unfocus()
 	focus()
 	idx() int
+	typ() WidgetType
 	is_focused() bool
 }
 

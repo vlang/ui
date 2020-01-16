@@ -40,11 +40,17 @@ fn (t &Label) key_down(e KeyEvent) {}
 
 fn (t &Label) click(e MouseEvent) {
 }
+fn (t &Label) mouse_move(e MouseEvent) {
+}
 
 fn (t &Label) focus() {}
 
 fn (t &Label) idx() int {
 	return t.idx
+}
+
+fn (t &Label) typ() WidgetType {
+	return .Label
 }
 
 fn (t &Label) is_focused() bool {

@@ -20,6 +20,7 @@ const (
 pub type DrawFn fn(voidptr)
 pub type ClickFn fn(e MouseEvent, func voidptr)
 pub type ScrollFn fn(e MouseEvent, func voidptr)
+pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 
 pub struct Window {
 mut:
@@ -39,6 +40,7 @@ mut:
 	bg_color gx.Color
 	click_fn ClickFn
 	scroll_fn ScrollFn
+	mouse_move_fn MouseMoveFn
 }
 
 pub struct WindowConfig {
@@ -82,6 +84,7 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 	ui_ctx.gg.window.set_user_ptr(ui_ctx)
 	ui_ctx.gg.window.onkeydown(gkey_down)
 	ui_ctx.gg.window.onchar(onchar)
+	ui_ctx.gg.window.onmousemove(onmousemove)
 	ui_ctx.gg.window.on_click(onclick)
 	window := &ui.Window{
 		user_ptr: cfg.user_ptr
@@ -101,6 +104,24 @@ fn (window &ui.Window) unfocus_all() {
 	}
 }
 
+fn onmousemove(glfw_wnd voidptr, x, y f64) {
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
+	e := MouseEvent{
+		x: int(x)
+		y: int(y)
+	}
+	if window.mouse_move_fn != 0 {
+		window.mouse_move_fn(e, &ui.window)
+	}
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.mouse_move(e)
+		}
+	}
+}
+
 fn onclick(glfw_wnd voidptr, button, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
@@ -113,7 +134,7 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 		y: int(y)
 	}
 	if window.click_fn != 0 {
-		window.click_fn(e, window.user_ptr)
+		window.click_fn(e, &ui.window)
 	}
 	for child in window.children {
 		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
@@ -204,6 +225,7 @@ pub fn (w &ui.Window) onkeydown(cb voidptr) {
 }
 
 pub fn (w mut ui.Window) on_click(func ClickFn) {	w.click_fn = func }
+pub fn (w mut ui.Window) on_mousemove(func MouseMoveFn) {	w.mouse_move_fn = func }
 pub fn (w mut ui.Window) on_scroll(func ScrollFn) {	w.scroll_fn = func }
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
@@ -222,6 +244,7 @@ fn bar() {
 	foo(&TextBox{})
 	foo(&Button{})
 	foo(&ProgressBar{})
+	foo(&Slider{})
 	foo(&CheckBox{})
 	foo(&Label{})
 	foo(&Radio{})

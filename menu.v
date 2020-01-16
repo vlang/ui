@@ -75,10 +75,17 @@ fn (t &Menu) key_down(e KeyEvent) {}
 fn (t &Menu) click(e MouseEvent) {
 }
 
+fn (t &Menu) mouse_move(e MouseEvent) {
+}
+
 fn (t &Menu) focus() {}
 
 fn (t &Menu) idx() int {
 	return t.idx
+}
+
+fn (t &Menu) typ() WidgetType {
+	return .Menu
 }
 
 fn (t &Menu) is_focused() bool {

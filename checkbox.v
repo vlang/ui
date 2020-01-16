@@ -96,6 +96,8 @@ fn (b mut CheckBox) click(e MouseEvent) {
 	}
 }
 
+fn (b mut CheckBox) mouse_move(e MouseEvent) {}
+
 fn (b mut CheckBox) focus() {
 	b.is_focused = true
 }
@@ -106,6 +108,9 @@ fn (b mut CheckBox) unfocus() {
 
 fn (b &CheckBox) idx() int {
 	return b.idx
+}
+fn (t &CheckBox) typ() WidgetType {
+	return .CheckBox
 }
 
 fn (t &CheckBox) is_focused() bool {

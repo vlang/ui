@@ -7,6 +7,8 @@ module ui
 pub enum Key {
 	left = 263
 	right = 262
+	arrow_up = 264
+	arrow_down = 265
 	backspace = 259
 	delete = 261
 	tab = 258
@@ -22,4 +24,3 @@ pub enum KeyMod {
 	alt = 4
 	super = 8
 }
-
