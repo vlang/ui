@@ -110,7 +110,7 @@ fn (b &CheckBox) idx() int {
 	return b.idx
 }
 fn (t &CheckBox) typ() WidgetType {
-	return .CheckBox
+	return .check_box
 }
 
 fn (t &CheckBox) is_focused() bool {

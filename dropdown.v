@@ -165,7 +165,7 @@ fn (t &Dropdown) idx() int {
 }
 
 fn (t &Dropdown) typ() WidgetType {
-	return .Dropdown
+	return .dropdown
 }
 
 fn (t &Dropdown) is_focused() bool {

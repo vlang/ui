@@ -85,7 +85,7 @@ fn (t &Menu) idx() int {
 }
 
 fn (t &Menu) typ() WidgetType {
-	return .Menu
+	return .menu
 }
 
 fn (t &Menu) is_focused() bool {

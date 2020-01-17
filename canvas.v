@@ -56,7 +56,7 @@ fn (t &Canvas) idx() int {
 }
 
 fn (t &Canvas) typ() WidgetType {
-	return .Canvas
+	return .canvas
 }
 
 fn (t &Canvas) is_focused() bool {

@@ -336,7 +336,7 @@ fn (t &TextBox) idx() int {
 }
 
 fn (t &TextBox) typ() WidgetType {
-	return .TextBox
+	return .text_box
 }
 
 fn (t &TextBox) is_focused() bool {
