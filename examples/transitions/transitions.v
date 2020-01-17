@@ -29,14 +29,6 @@ fn main() {
 		user_ptr: app
 	})
 
-	ui.new_button({
-		x: win_width / 2 - 50
-		y: win_height - 32
-		parent: window
-		text: 'Toggle Side'
-		onclick: btn_toggle_click
-	})
-
 	mut picture := &ui.new_picture({
 		x: 10
 		y: win_height / 2 - 50
@@ -47,9 +39,17 @@ fn main() {
 	})
 
 	app.picture_x_transition = ui.new_transition_value({
-		duration: 250
+		duration: 750
 		animated_value: &picture.x
 		parent: window
+	})
+
+	ui.new_button({
+		x: win_width / 2 - 50
+		y: win_height - 32
+		parent: window
+		text: 'Toggle Side'
+		onclick: btn_toggle_click
 	})
 
 	app.window = window

@@ -6,16 +6,17 @@ import time
 
 pub struct TransitionValue {
 mut:
-	last_draw_time	i64
-	started_time		i64
-	duration				i64
-	animating				bool
-	parent 			 		&ui.Window
-	animated_value 	&int
-	start_value 		int
-	target_value 		int
-	idx    			 		int
-	ui     			 		&UI
+	last_draw_time	 i64
+	started_time		 i64
+	duration				 i64
+	animating				 bool
+	parent 			 		 &ui.Window
+	animated_value 	 &int
+	start_value 		 int
+	target_value 		 int
+	last_draw_target int
+	idx    			 		 int
+	ui     			 		 &UI
 }
 
 pub struct TransitionValueConfig {
@@ -33,6 +34,7 @@ pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 		animated_value: config.animated_value
 		start_value: *config.animated_value
 		target_value: *config.animated_value
+		last_draw_target: *config.animated_value
 		parent: config.parent
 		ui: config.parent.ui
 	}
@@ -42,7 +44,10 @@ pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 
 fn (t mut TransitionValue) draw() {
 	if t.target_value != *t.animated_value && !t.animating {
+		t.started_time = time.ticks()
+		t.start_value = *t.animated_value
 		t.animating = true
+	} else if t.animating && t.target_value != t.last_draw_target {
 		t.started_time = time.ticks()
 		t.start_value = *t.animated_value
 	}
@@ -52,13 +57,16 @@ fn (t mut TransitionValue) draw() {
 
 		mut mapped := t.start_value + int((if x<.5 { 2.0*x*x } else { -1.0+(4.0-2.0*x)*x }) * f32(t.target_value - t.start_value))
 
+		// Animation finished
 		if x >= 1 {
 			t.animating = false
 			mapped = t.target_value
 		}
 
 		*t.animated_value = mapped
-		
+		t.ui.redraw_requested = true
+
+		t.last_draw_target = t.target_value
 		t.last_draw_time = time.ticks()
 	}
 }

@@ -22,8 +22,9 @@ mut:
 	//circle_image         u32
 	radio_image          u32
 	selected_radio_image u32
-	down_arrow			 u32
+	down_arrow			 		 u32
 	clipboard            &clipboard.Clipboard
+	redraw_requested		 bool
 }
 
 pub enum WidgetType {
@@ -85,7 +86,7 @@ fn init() {
 
 fn (ui mut UI) loop() {
 	for {
-		time.sleep_ms(500)
+		time.sleep_ms(5000)
 		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
 	}
@@ -105,6 +106,11 @@ pub fn run(window ui.Window) {
 		// Render all widgets, including Canvas
 		for child in window.children {
 			child.draw()
+		}
+		// Triggers a re-render in case any function requests it.
+		// Transitions & animations, for example.
+		if window.ui.redraw_requested {
+			glfw.post_empty_event()
 		}
 		ui.gg.render()
 	}
