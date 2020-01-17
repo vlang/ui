@@ -23,6 +23,7 @@ mut:
 	//circle_image         u32
 	radio_image          u32
 	selected_radio_image u32
+	down_arrow			 u32
 	clipboard            &clipboard.Clipboard
 }
 
@@ -36,7 +37,8 @@ pub enum WidgetType {
 	ProgressBar,
 	Radio,
 	Slider,
-	TextBox
+	TextBox,
+	Dropdown
 }
 
 // TODO rename to `Widget` once interfaces allow that :)
@@ -162,6 +164,7 @@ fn (ui mut UI) load_icos() {
 			bytes_circle_png_len))
 	}
 	*/
+	ui.down_arrow = gg.create_image( tmp_save_pic(tmp, 'arrow.png', bytes_arrow_png, bytes_arrow_png_len))
 	ui.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
 }
 
