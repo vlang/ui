@@ -2,20 +2,31 @@
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
+import time
 
 pub struct TransitionValue {
 mut:
-	parent 			 &ui.Window
-	idx    			 int
-	ui     			 &UI
+	last_draw		 		int
+	parent 			 		&ui.Window
+	animated_value 	&int
+	interp_value 	 	f32
+	target_value 		int
+	idx    			 		int
+	ui     			 		&UI
 }
 
 pub struct TransitionValueConfig {
-	parent   		 &ui.Window
+	speed 			 		int
+	animated_value 	&int
+	parent   		 		&ui.Window
 }
 
 pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 	mut transition := &TransitionValue{
+		last_draw: time.ticks()
+		animated_value: config.animated_value
+		interp_value: f32(*config.animated_value)
+		target_value: *config.animated_value
 		parent: config.parent
 		ui: config.parent.ui
 	}
@@ -23,9 +34,9 @@ pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 	return transition
 }
 
-fn (b mut TransitionValue) draw() {
+fn (t mut TransitionValue) draw() {
 
-} 
+}
 
 fn (t &TransitionValue) key_down(e KeyEvent) {}
 
