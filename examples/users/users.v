@@ -35,60 +35,87 @@ mut:
 }
 
 fn main() {
-	mut app := &App{
-		users: [User{
-			first_name: 'Sam'
-			last_name: 'Johnson'
-			age: 29
-			country: 'United States'
-		},
-		User{
-			first_name: 'Kate'
-			last_name: 'Williams'
-			age: 26
-			country: 'Canada'
-		}]
-	}
-	window := ui.new_window({
+	mut window := ui.new_window({
 		width: win_width
 		height: win_height
 		title: 'V UI Demo'
-		user_ptr: app
 	})
-	app.first_name = ui.new_textbox({
-		max_len: 20
-		x: 20
-		y: 20
-		width: 200
-		placeholder: 'First name'
-		parent: window
-	})
-	app.last_name = ui.new_textbox({
-		max_len: 50
-		x: 20
-		y: 50
-		width: 200
-		placeholder: 'Last name'
-		parent: window
-	})
-	app.age = ui.new_textbox({
-		max_len: 3
-		x: 20
-		y: 80
-		width: 200
-		placeholder: 'Age'
-		parent: window
-		is_numeric: true
-	})
-	app.password = ui.new_textbox({
-		x: 20
-		y: 110
-		width: 200
-		placeholder: 'Password'
-		parent: window
-		is_password: true
-		max_len: 20
-	})
+
+	mut app := &App{
+		first_name: ui.new_textbox({
+			max_len: 20
+			x: 20
+			y: 20
+			width: 200
+			placeholder: 'First name'
+			parent: window
+		})
+		last_name: ui.new_textbox({
+			max_len: 50
+			x: 20
+			y: 50
+			width: 200
+			placeholder: 'Last name'
+			parent: window
+		})
+		age: ui.new_textbox({
+			max_len: 3
+			x: 20
+			y: 80
+			width: 200
+			placeholder: 'Age'
+			parent: window
+			is_numeric: true
+		})
+		password: ui.new_textbox({
+			x: 20
+			y: 110
+			width: 200
+			placeholder: 'Password'
+			parent: window
+			is_password: true
+			max_len: 20
+		})
+		pbar: ui.new_progress_bar({
+			parent: window
+			x: 20
+			y: 350
+			width: 200
+			max: 10
+			val: 2
+		})
+		users: [
+			User{
+				first_name: 'Sam'
+				last_name: 'Johnson'
+				age: 29
+				country: 'United States'
+			},
+			User{
+				first_name: 'Kate'
+				last_name: 'Williams'
+				age: 26
+				country: 'Canada'
+			}
+		]
+		window: window
+		label: ui.new_label({
+			parent: window
+			x: 230
+			y: 350
+			text: '2/10'
+		})
+		country: ui.new_radio({
+			parent: window
+			x: 20
+			width: 200
+			y: 200
+			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+			title: 'Country'
+		})
+	}
+	window.user_ptr = app
+
 	ui.new_checkbox({
 		parent: window
 		x: 20
@@ -101,14 +128,6 @@ fn main() {
 		x: 20
 		y: 165
 		text: 'Subscribe to the newsletter'
-	})
-	app.country = ui.new_radio({
-		parent: window
-		x: 20
-		width: 200
-		y: 200
-		values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-		title: 'Country'
 	})
 	ui.new_button({
 		x: 20
@@ -123,20 +142,6 @@ fn main() {
 		parent: window
 		text: '?'
 		onclick: btn_help_click
-	})
-	app.pbar = ui.new_progress_bar({
-		parent: window
-		x: 20
-		y: 350
-		width: 200
-		max: 10
-		val: 2
-	})
-	app.label = ui.new_label({
-		parent: window
-		x: 230
-		y: 350
-		text: '2/10'
 	})
 	ui.new_canvas({
 		parent: window
@@ -162,7 +167,6 @@ fn main() {
 		height: 100
 		path: os.resource_abs_path( 'logo.png' )
 	})
-	app.window = window
 	ui.run(window)
 }
 
