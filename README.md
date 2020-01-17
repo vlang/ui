@@ -64,4 +64,4 @@ git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [pat
 ```
 
 [Twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
-[Twitter badge]: https://twitter.com/intent/follow?screen_name=v_language
+[Twitter badge]: https://twitter.com/v_language
