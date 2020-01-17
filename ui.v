@@ -38,6 +38,7 @@ pub enum WidgetType {
 	slider
 	text_box
 	dropdown
+	transition_value
 }
 
 // TODO rename to `Widget` once interfaces allow that :)
