@@ -15,8 +15,10 @@ v install ui
 
 ### Running the examples
 ```bash
-v run ~/.vmodules/ui/examples/users/users.v
-
+cd examples
+v run users/users.v
+v run temperature/temperature.v
+v run ...
 ```
 
 **This is pre-alpha software.**
