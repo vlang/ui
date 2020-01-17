@@ -6,11 +6,7 @@ module ui
 import gx
 import gg
 import glfw
-import time
 import freetype
-import stbi
-import os
-import filepath
 import clipboard
 
 const (

@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import glfw
 
 const (
 	thumb_color = gx.rgb(87, 153, 245)
