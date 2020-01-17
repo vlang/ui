@@ -50,7 +50,7 @@ fn (t &Label) idx() int {
 }
 
 fn (t &Label) typ() WidgetType {
-	return .Label
+	return .label
 }
 
 fn (t &Label) is_focused() bool {

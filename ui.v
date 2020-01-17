@@ -4,7 +4,6 @@
 module ui
 
 import (
-	gx
 	glfw
 	stbi
 	time
@@ -28,17 +27,17 @@ mut:
 }
 
 pub enum WidgetType {
-	Button,
-	Canvas,
-	CheckBox,
-	Label,
-	Menu,
-	Picture,
-	ProgressBar,
-	Radio,
-	Slider,
-	TextBox,
-	Dropdown
+	button
+	canvas
+	check_box
+	label
+	menu
+	picture
+	progress_bar
+	radio
+	slider
+	text_box
+	dropdown
 }
 
 // TODO rename to `Widget` once interfaces allow that :)

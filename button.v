@@ -107,7 +107,7 @@ fn (b &Button) idx() int {
 }
 
 fn (t &Button) typ() WidgetType {
-	return .Button
+	return .button
 }
 
 fn (t &Button) is_focused() bool {

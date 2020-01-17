@@ -67,7 +67,7 @@ fn (t &Picture) is_focused() bool {
 }
 
 fn (t &Picture) typ() WidgetType {
-	return .Picture
+	return .picture
 }
 
 fn (t &Picture) unfocus() {}
