@@ -6,25 +6,25 @@ import time
 
 pub struct TransitionValue {
 mut:
-	last_draw_time	 i64
-	started_time		 i64
-	duration				 i64
-	animating				 bool
-	easing					 EasingFunction
-	parent 			 		 &ui.Window
-	animated_value 	 &int
-	start_value 		 int
-	target_value 		 int
+	last_draw_time   i64
+	started_time     i64
+	duration         i64
+	animating        bool
+	easing           EasingFunction
+	parent           &ui.Window
+	animated_value   &int
+	start_value      int
+	target_value     int
 	last_draw_target int
-	idx    			 		 int
-	ui     			 		 &UI
+	idx              int
+	ui               &UI
 }
 
 pub struct TransitionValueConfig {
-	duration 			 	int
-	animated_value 	&int
-	easing					EasingFunction
-	parent   		 		&ui.Window
+	duration       int
+	animated_value &int
+	easing         EasingFunction
+	parent         &ui.Window
 }
 
 pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {

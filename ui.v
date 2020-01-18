@@ -22,9 +22,9 @@ mut:
 	//circle_image         u32
 	radio_image          u32
 	selected_radio_image u32
-	down_arrow			 		 u32
+	down_arrow           u32
 	clipboard            &clipboard.Clipboard
-	redraw_requested		 bool
+	redraw_requested     bool
 }
 
 pub enum WidgetType {

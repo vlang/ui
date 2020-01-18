@@ -41,19 +41,19 @@ fn ease_in_out_quint(x f32) f32 { return if x < 0.5 { 16.0*x*x*x*x*x } else { 1.
 
 pub fn easing(easingtype EasingType) EasingFunction {
 	match easingtype {
-		.linear 						{ return linear }
-		.ease_in_quad 			{ return ease_in_quad }
-		.ease_out_quad 			{ return ease_out_quad }
-		.ease_in_out_quad 	{ return ease_in_out_quad }
-		.ease_in_cubic 			{ return ease_in_cubic }
-		.ease_out_cubic 		{ return ease_out_cubic }
-		.ease_in_out_cubic 	{ return ease_in_out_cubic }
-		.ease_in_quart 			{ return ease_in_quart }
-		.ease_out_quart 		{ return ease_out_quart }
-		.ease_in_out_quart 	{ return ease_in_out_quart }
-		.ease_in_quint 			{ return ease_in_quint }
-		.ease_out_quint 		{ return ease_out_quint }
-		.ease_in_out_quint 	{ return ease_in_out_quint }
+		.linear             { return linear }
+		.ease_in_quad       { return ease_in_quad }
+		.ease_out_quad      { return ease_out_quad }
+		.ease_in_out_quad   { return ease_in_out_quad }
+		.ease_in_cubic      { return ease_in_cubic }
+		.ease_out_cubic     { return ease_out_cubic }
+		.ease_in_out_cubic  { return ease_in_out_cubic }
+		.ease_in_quart      { return ease_in_quart }
+		.ease_out_quart     { return ease_out_quart }
+		.ease_in_out_quart  { return ease_in_out_quart }
+		.ease_in_quint      { return ease_in_quint }
+		.ease_out_quint     { return ease_out_quint }
+		.ease_in_out_quint  { return ease_in_out_quint }
 		else { return linear }
 	}
 }
