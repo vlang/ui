@@ -10,6 +10,7 @@ mut:
 	started_time		 i64
 	duration				 i64
 	animating				 bool
+	easing					 EasingFunction
 	parent 			 		 &ui.Window
 	animated_value 	 &int
 	start_value 		 int
@@ -22,6 +23,7 @@ mut:
 pub struct TransitionValueConfig {
 	duration 			 	int
 	animated_value 	&int
+	easing					EasingFunction
 	parent   		 		&ui.Window
 }
 
@@ -31,6 +33,7 @@ pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 		started_time: 0
 		duration: config.duration
 		animating: false
+		easing: config.easing
 		animated_value: config.animated_value
 		start_value: *config.animated_value
 		target_value: *config.animated_value
@@ -59,8 +62,8 @@ fn (t mut TransitionValue) draw() {
 		// Get the current progress of start_time -> start_time+duration
 		x := f32(time.ticks() - t.started_time + 1) / f32(t.duration)
 		// Map the progress value [0 -> 1] to [0 -> delta value]
-		// Right now, using easeInOutQuad
-		mut mapped := t.start_value + int((if x<.5 { 2.0*x*x } else { -1.0+(4.0-2.0*x)*x }) * f32(t.target_value - t.start_value))
+		// Using the defined EasingFunction
+		mut mapped := t.start_value + int(t.easing(x) * f64(t.target_value - t.start_value))
 		// Animation finished
 		if x >= 1 {
 			t.animating = false
