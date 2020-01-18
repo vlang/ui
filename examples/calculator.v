@@ -2,6 +2,9 @@ import ui
 
 const (
 	buttons_per_row = 4
+	bwidth = 30
+	bheight = 30
+	bpadding = 5
 )
 
 
@@ -20,17 +23,17 @@ fn main() {
 	ops := ['C', '', '', '÷', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '0', '.', '', '=']
 	mut app := &App{txtbox:0, window:0}
 	app.window = ui.new_window({
-		width: 175
+		width: 155
 		height: 220
-		title: 'V Calculator'
+		title: 'V Calc'
 		user_ptr: app
 	})
 	app.txtbox = ui.new_textbox({
 		placeholder: '0'
 		parent: app.window
-		width: 160
-		x: 5
-		y: 5
+		width: 135
+		x: 10
+		y: 10
 		read_only: true
 	})
 	for i, op in ops {
@@ -102,8 +105,8 @@ fn btn_click(app mut App, btn &ui.Button) {
 
 fn (app mut App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
-	x := 5 + button_idx % buttons_per_row * (30 + 10)
-	y := 35 + (button_idx / buttons_per_row) * 35
+	x := 2*bpadding + (button_idx % buttons_per_row) * (bwidth+bpadding)
+	y := 2*bpadding + bheight + (button_idx / buttons_per_row) * (bwidth+bpadding)
 	// Skip empty buttons
 	if text != '' {
 		app.btns << ui.new_button({
@@ -112,8 +115,8 @@ fn (app mut App) add_button(text string, button_idx int) {
 			y: y
 			parent: app.window
 			onclick: btn_click
-			width: 30
-			height: 30
+			width: bwidth
+			height: bheight
 		})
 	}
 }
