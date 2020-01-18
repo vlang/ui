@@ -33,11 +33,6 @@ This is a very early version of the library, lots of features are missing
 
 There will be a declarative version of the API, similar to SwiftUI.
 
-V UI is licensed under GPL3. A commercial license will be available.
-Open-source projects will have access to the commercial license for free. Every
-single feature will be open-sourced right away and available under both
-licenses. At some point in the future the library will be relicensed under MIT.
-
 Discord: https://discord.gg/n7c74HM (`#v-ui` channel)
 
 
@@ -64,6 +59,18 @@ sudo dnf install glfw glfw-devel freetype-devel
 Windows:
 git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
 ```
+
+### License
+
+V UI is licensed under GPL3. A commercial license will be available.
+Open-source projects will have access to the commercial license for free. Every
+single feature will be open-sourced right away and available under both
+licenses. At some point in the future the library will be relicensed under MIT.
+
+### Contributing
+
+After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution. 
+
 
 [Twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
 [Twitter badge]: https://twitter.com/v_language
