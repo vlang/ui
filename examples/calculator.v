@@ -4,6 +4,7 @@ const (
 	buttons_per_row = 4
 )
 
+
 struct App {
 mut:
 	txtbox     &ui.TextBox
@@ -17,7 +18,7 @@ mut:
 
 fn main() {
 	ops := ['C', '', '', '÷', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '0', '.', '', '=']
-	mut app := &App{}
+	mut app := &App{txtbox:0, window:0}
 	app.window = ui.new_window({
 		width: 175
 		height: 220
