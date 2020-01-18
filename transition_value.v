@@ -44,29 +44,34 @@ pub fn new_transition_value(config TransitionValueConfig) &TransitionValue {
 
 fn (t mut TransitionValue) draw() {
 	if t.target_value != *t.animated_value && !t.animating {
+		// Initiate the transition by setting start_time to the current time
+		// and set the start value to the current value of the transition target.
 		t.started_time = time.ticks()
 		t.start_value = *t.animated_value
 		t.animating = true
 	} else if t.animating && t.target_value != t.last_draw_target {
+		// Update the target and restart time if target changes
+		// while it's still animating the previous value change.
 		t.started_time = time.ticks()
 		t.start_value = *t.animated_value
 	}
-
 	if t.animating {
+		// Get the current progress of start_time -> start_time+duration
 		x := f32(time.ticks() - t.started_time + 1) / f32(t.duration)
-
+		// Map the progress value [0 -> 1] to [0 -> delta value]
+		// Right now, using easeInOutQuad
 		mut mapped := t.start_value + int((if x<.5 { 2.0*x*x } else { -1.0+(4.0-2.0*x)*x }) * f32(t.target_value - t.start_value))
-
 		// Animation finished
 		if x >= 1 {
 			t.animating = false
 			mapped = t.target_value
 		}
-
+		// Update the target value and request a redraw
 		*t.animated_value = mapped
 		t.ui.redraw_requested = true
-
+		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value
+		// Update last draw time to calculate frame delta
 		t.last_draw_time = time.ticks()
 	}
 }
@@ -88,7 +93,7 @@ fn (t &TransitionValue) is_focused() bool {
 fn (t &TransitionValue) unfocus() {}
 
 fn (t &TransitionValue) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+	return false
 }
 
 fn (t mut TransitionValue) mouse_move(e MouseEvent) { }

@@ -86,7 +86,7 @@ fn init() {
 
 fn (ui mut UI) loop() {
 	for {
-		time.sleep_ms(5000)
+		time.sleep_ms(500)
 		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
 	}
