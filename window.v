@@ -248,6 +248,7 @@ fn bar() {
 	foo(&Canvas{})
 	foo(&Menu{})
 	foo(&Dropdown{})
+	foo(&TransitionValue{})
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
