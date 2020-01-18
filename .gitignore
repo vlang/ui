@@ -1,2 +1,9 @@
-examples/users/users
 fns.txt
+examples/calculator/calculator
+examples/counter/counter
+examples/dropdown/dropdown
+examples/slider/slider
+examples/temperature/temperature
+examples/timer/timer
+examples/transitions/transitions
+examples/users/users
