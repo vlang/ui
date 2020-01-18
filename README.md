@@ -4,7 +4,7 @@
 <a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fvlang%2Fpledges&style=for-the-badge' height='20'></a>
 [![Twitter handle][]][Twitter badge]
 
-<a href='https://github.com/vlang/ui/blob/master/examples/users/users.v'>
+<a href='https://github.com/vlang/ui/blob/master/examples/users.v'>
 <img src='https://raw.githubusercontent.com/vlang/ui/c2f802a137b5171dade1d5fdc364cd92d34e3ca7/examples/users/screenshot.png' width=712>
 </a>
 
