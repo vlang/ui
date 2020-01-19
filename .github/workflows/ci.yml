@@ -20,10 +20,10 @@ jobs:
     - name: Build UI demo
       run: |
         cp -rf ../ui ../v/vlib/ui
-        ../v/v examples/users.v
+        for f in examples/*.v; do ../v/v $f ; done
     - name: Results
       run: |
-        ls -lart examples/users*
+        ls -lart examples/* | grep -v .v$
 
   macos:
     runs-on: macOS-latest
@@ -40,10 +40,10 @@ jobs:
     - name: Build UI demo
       run: |
         cp -rf ../ui ../v/vlib/ui
-        ../v/v examples/users.v
+        for f in examples/*.v; do ../v/v $f ; done
     - name: Results
       run: |        
-        ls -lart examples/users*
+        ls -lart examples/* | grep -v .v$
 
   windows-msvc:
     runs-on: windows-2019
