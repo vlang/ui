@@ -14,7 +14,7 @@ struct App {
 mut:
 	picture_x_transition &ui.TransitionValue
 	picture_y_transition &ui.TransitionValue
-	state	  int
+	state   int
 	window  &ui.Window
 }
 
