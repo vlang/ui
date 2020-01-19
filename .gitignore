@@ -1,6 +1,6 @@
 fns.txt
-examples/**.exe
-examples/**.dll
+examples/*.exe
+examples/*.dll
 examples/calculator
 examples/counter
 examples/dropdown
