@@ -16,6 +16,7 @@ const (
 		align: gx.ALIGN_LEFT
 	}
 	button_horizontal_padding = 26
+	button_vertical_padding = 8
 )
 
 enum ButtonState {
@@ -31,7 +32,7 @@ pub struct ButtonConfig {
 	parent  &ui.Window
 	text    string
 	onclick ButtonClickFn
-	height  int=20
+	height  int = 20
 	width   int
 }
 
@@ -53,6 +54,7 @@ pub mut:
 
 pub fn new_button(c ButtonConfig) &Button {
 	mut b := &Button{
+		width: c.width
 		height: c.height
 		x: c.x
 		y: c.y
@@ -63,17 +65,23 @@ pub fn new_button(c ButtonConfig) &Button {
 		ui: c.parent.ui
 	}
 	b.width = if c.width == 0 { b.ui.ft.text_width(c.text) + button_horizontal_padding } else { c.width }
+	b.height = if c.height == 0 { b.ui.ft.text_height(c.text) + button_vertical_padding } else { c.height }
 	b.parent.children << b
 	return b
 }
 
 fn (b mut Button) draw() {
 	// b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
-	text_width := b.ui.ft.text_width(b.text) + button_horizontal_padding
+	text_width, text_height := b.ui.ft.text_size(b.text)
+	w2 := text_width /2
+	h2 := text_height /2
+	bcenter_x := b.x + b.width/2
+	bcenter_y := b.y + b.height/2
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
-	b.ui.gg.draw_rect(b.x, b.y, text_width, b.height, bg_color) // gx.white)
-	b.ui.gg.draw_empty_rect(b.x, b.y, text_width, b.height, button_border_color)
-	b.ui.ft.draw_text(b.x + button_horizontal_padding / 2, b.y + 3, b.text, btn_text_cfg)
+	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
+	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
+	b.ui.ft.draw_text(bcenter_x-w2, bcenter_y-h2-1, b.text, btn_text_cfg)
+	//b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }
 
 fn (b &Button) key_down(e KeyEvent) {}
