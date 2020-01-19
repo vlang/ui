@@ -109,7 +109,8 @@ pub fn run(window ui.Window) {
 		}
 		// Triggers a re-render in case any function requests it.
 		// Transitions & animations, for example.
-		if window.ui.redraw_requested {
+		if ui.redraw_requested {
+			ui.redraw_requested = false
 			glfw.post_empty_event()
 		}
 		ui.gg.render()
