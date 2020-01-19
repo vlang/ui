@@ -9,19 +9,21 @@
 </a>
 
 ### Installation
+
 ```bash
 v install ui
 ```
 
 ### Running the examples
+
 ```bash
 cd examples
-v run users/users.v
-v run temperature/temperature.v
+v run users.v
+v run temperature.v
 v run ...
 ```
 
-**This is pre-alpha software.**
+**NOTE : This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
 for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM). V UI
@@ -35,8 +37,7 @@ There will be a declarative version of the API with hot reloading, similar to Sw
 
 On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
-Discord: https://discord.gg/n7c74HM (`#v-ui` channel)
-
+Discord: [`#v-ui` channel](https://discord.gg/pDEXKTe0)
 
 ### Dependencies
 
@@ -45,7 +46,7 @@ Binaries built with V UI will have no dependencies.
 To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source),
 `glfw` and `freetype`. `glfw` dependency will soon be removed.
 
-```
+```markdown
 macOS:
 brew install glfw freetype
 
@@ -71,7 +72,7 @@ licenses. At some point in the future the library will be relicensed under MIT.
 
 ### Contributing
 
-After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution. 
+After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution.
 
 
 [Twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
