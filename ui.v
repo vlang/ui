@@ -120,35 +120,27 @@ pub fn run(window ui.Window) {
 
 fn system_font_path() string {
 	env_font := os.getenv('VUI_FONT')
-	if env_font.len != 0 {
+	if env_font != '' && os.exists(env_font) {
 		return env_font
-	}
-	$if macos {
-		dir := '/System/Library/Fonts/'
-		if !os.exists(dir + 'SFNS.ttf') {
-			return dir + 'SFNSText.ttf'
-		}
-		return dir + 'SFNS.ttf'
-	}
-	$if linux {
-		searched_fonts := [
-			'/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
-			'/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf',
-			'/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-			'/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf',
-			'/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-			'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-			'/usr/share/fonts/dejavu/DejaVuSans.ttf'		// for Fedora 31
-			]
-		for f in searched_fonts {
-			if os.exists( f ) {
-				return f
-			}
-		}
-		panic('Please install at least one of: $searched_fonts .')
 	}
 	$if windows {
 		return 'C:\\Windows\\Fonts\\arial.ttf'
+	}
+	mut fonts := ['Ubuntu-R.ttf', 'Arial.ttf', 'LiberationSans-Regular.ttf', ' NotoSans-Regular.ttf',
+	'FreeSans.ttf', 'DejaVuSans.ttf']
+	$if macos {
+		fonts = ['SFNS.ttf', 'SFNSText.ttf']
+	}
+	s := os.exec('fc-list') or { panic('failed to fetch system fonts') }
+	system_fonts := s.output.split('\n')
+	for line in system_fonts {
+		for font in fonts {
+			if line.contains(font) && line.contains(':') {
+				res := line.all_before(':')
+				println('Using font $res')
+				return res
+			}
+		}
 	}
 	panic('failed to init the font')
 }
