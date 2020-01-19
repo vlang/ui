@@ -29,11 +29,11 @@ fn main() {
 		user_ptr: app
 	})
 	mut picture := &ui.new_picture({
-		x: win_width / 2 - 50
-		y: win_height / 2 - 50
+		x: win_width / 2 - (158/2)
+		y: win_height / 2 - (158/2)
 		parent: window
-		width: 100
-		height: 100
+		width: 158
+		height: 158
 		path: os.resource_abs_path('logo.png')
 	})
 	ui.new_button({
@@ -67,23 +67,23 @@ fn btn_toggle_click(app mut App) {
 			app.state = 1
 		}
 		1 {
-			app.picture_x_transition.target_value = win_width - 132
-			app.picture_y_transition.target_value = win_height - 132
+			app.picture_x_transition.target_value = win_width - (158 + 32)
+			app.picture_y_transition.target_value = win_height - (158 + 32)
 			app.state = 2
 		}
 		2 {
-			app.picture_x_transition.target_value = win_width - 132
+			app.picture_x_transition.target_value = win_width - (158 + 32)
 			app.picture_y_transition.target_value = 32
 			app.state = 3
 		}
 		3 {
 			app.picture_x_transition.target_value = 32
-			app.picture_y_transition.target_value = win_height - 132
+			app.picture_y_transition.target_value = win_height - (158 + 32)
 			app.state = 4
 		}
 		4 {
-			app.picture_x_transition.target_value = win_width / 2 - 50
-			app.picture_y_transition.target_value = win_height / 2 - 50
+			app.picture_x_transition.target_value = win_width / 2 - (158 / 2)
+			app.picture_y_transition.target_value = win_height / 2 - (158 / 2)
 			app.state = 0
 		}
 		else { app.state = 0 }
