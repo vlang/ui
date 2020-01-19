@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import glfw
 
 const (
 	thumb_color = gx.rgb(87, 153, 245)
@@ -131,7 +130,7 @@ fn on_window_click(e MouseEvent, ptr voidptr) {
 	for child in window.children {
 		typ := child.typ()
 		inside := child.point_inside(e.x, e.y)
-		if typ == .Slider {
+		if typ == .slider {
 			if e.action == 0 && !inside {
 				child.click(e)
 			}
@@ -147,7 +146,7 @@ fn on_window_mouse_move(e MouseEvent, ptr voidptr) {
 	for child in window.children {
 		typ := child.typ()
 		inside := child.point_inside(e.x, e.y)
-		if typ == .Slider {
+		if typ == .slider {
 			if !inside {
 				child.mouse_move(e)
 			}
@@ -199,7 +198,7 @@ fn (b &Slider) idx() int {
 }
 
 fn (t &Slider) typ() WidgetType {
-	return .Slider
+	return .slider
 }
 
 fn (t &Slider) is_focused() bool {

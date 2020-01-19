@@ -1,2 +1,10 @@
-examples/users/users
 fns.txt
+examples/*.exe
+examples/*.dll
+examples/calculator
+examples/counter
+examples/dropdown
+examples/temperature
+examples/timer
+examples/transitions
+examples/users

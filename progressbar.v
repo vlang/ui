@@ -88,7 +88,7 @@ fn (t &ProgressBar) is_focused() bool {
 }
 
 fn (t &ProgressBar) typ() WidgetType {
-	return .ProgressBar
+	return .progress_bar
 }
 
 fn (b &ProgressBar) unfocus() {

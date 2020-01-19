@@ -4,7 +4,6 @@
 module ui
 
 import (
-	gx
 	glfw
 	stbi
 	time
@@ -23,22 +22,24 @@ mut:
 	//circle_image         u32
 	radio_image          u32
 	selected_radio_image u32
-	down_arrow			 u32
+	down_arrow           u32
 	clipboard            &clipboard.Clipboard
+	redraw_requested     bool
 }
 
 pub enum WidgetType {
-	Button,
-	Canvas,
-	CheckBox,
-	Label,
-	Menu,
-	Picture,
-	ProgressBar,
-	Radio,
-	Slider,
-	TextBox,
-	Dropdown
+	button
+	canvas
+	check_box
+	label
+	menu
+	picture
+	progress_bar
+	radio
+	slider
+	text_box
+	dropdown
+	transition_value
 }
 
 // TODO rename to `Widget` once interfaces allow that :)
@@ -105,6 +106,11 @@ pub fn run(window ui.Window) {
 		// Render all widgets, including Canvas
 		for child in window.children {
 			child.draw()
+		}
+		// Triggers a re-render in case any function requests it.
+		// Transitions & animations, for example.
+		if window.ui.redraw_requested {
+			glfw.post_empty_event()
 		}
 		ui.gg.render()
 	}

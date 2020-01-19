@@ -123,7 +123,7 @@ fn (b &Radio) idx() int {
 }
 
 fn (t &Radio) typ() WidgetType {
-	return .Radio
+	return .radio
 }
 
 pub fn (r &Radio) selected_value() string {

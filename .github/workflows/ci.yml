@@ -20,10 +20,10 @@ jobs:
     - name: Build UI demo
       run: |
         cp -rf ../ui ../v/vlib/ui
-        ../v/v examples/users/users.v
+        for f in examples/*.v; do echo; echo "Building $f ..."; time ../v/v $f ; echo; done
     - name: Results
       run: |
-        ls -lart examples/users/users*
+        ls -lart examples/* | grep -v .v$
 
   macos:
     runs-on: macOS-latest
@@ -40,10 +40,10 @@ jobs:
     - name: Build UI demo
       run: |
         cp -rf ../ui ../v/vlib/ui
-        ../v/v examples/users/users.v
+        for f in examples/*.v; do echo; echo "Building $f ..."; time ../v/v $f ; echo; done
     - name: Results
       run: |        
-        ls -lart examples/users/users*
+        ls -lart examples/* | grep -v .v$
 
   windows-msvc:
     runs-on: windows-2019
@@ -64,8 +64,8 @@ jobs:
     - name: Build UI demo
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
-        ..\v\v.exe examples\users\users.v
+        ..\v\v.exe examples\users.v
     - name: Results
       run: |
-        dir examples\users\
+        dir examples\
 

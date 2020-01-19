@@ -4,7 +4,7 @@
 <a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fvlang%2Fpledges&style=for-the-badge' height='20'></a>
 [![Twitter handle][]][Twitter badge]
 
-<a href='https://github.com/vlang/ui/blob/master/examples/users/users.v'>
+<a href='https://github.com/vlang/ui/blob/master/examples/users.v'>
 <img src='https://raw.githubusercontent.com/vlang/ui/c2f802a137b5171dade1d5fdc364cd92d34e3ca7/examples/users/screenshot.png' width=712>
 </a>
 
@@ -15,8 +15,10 @@ v install ui
 
 ### Running the examples
 ```bash
-v run ~/.vmodules/ui/examples/users/users.v
-
+cd examples
+v run users/users.v
+v run temperature/temperature.v
+v run ...
 ```
 
 **This is pre-alpha software.**
@@ -29,12 +31,9 @@ are drawn by V UI.  Right now only the non-native widgets are available.
 This is a very early version of the library, lots of features are missing
 (layouts, certain widgets, etc), lots of things will change.
 
-There will be a declarative version of the API, similar to SwiftUI.
+There will be a declarative version of the API with hot reloading, similar to SwiftUI and Flutter.
 
-V UI is licensed under GPL3. A commercial license will be available.
-Open-source projects will have access to the commercial license for free. Every
-single feature will be open-sourced right away and available under both
-licenses. At some point in the future the library will be relicensed under MIT.
+On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
 Discord: https://discord.gg/n7c74HM (`#v-ui` channel)
 
@@ -63,5 +62,17 @@ Windows:
 git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
 ```
 
+### License
+
+V UI is licensed under GPL3. A commercial license will be available.
+Open-source projects will have access to the commercial license for free. Every
+single feature will be open-sourced right away and available under both
+licenses. At some point in the future the library will be relicensed under MIT.
+
+### Contributing
+
+After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution. 
+
+
 [Twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
-[Twitter badge]: https://twitter.com/intent/follow?screen_name=v_language
+[Twitter badge]: https://twitter.com/v_language
