@@ -8,7 +8,7 @@ import os
 const (
 	win_width = 400
 	win_height = 400
-	picture_width_and_height = 158
+	picture_width_and_height = 100
 )
 
 struct App {
