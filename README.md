@@ -31,9 +31,9 @@ are drawn by V UI.  Right now only the non-native widgets are available.
 This is a very early version of the library, lots of features are missing
 (layouts, certain widgets, etc), lots of things will change.
 
-There will be a declarative version of the API with hot reloading, similar to SwiftUI.
+There will be a declarative version of the API with hot reloading, similar to SwiftUI and Flutter.
 
-On Linux, V UI will be a full-featured alternative to GTK and Qt.
+On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
 Discord: https://discord.gg/n7c74HM (`#v-ui` channel)
 
