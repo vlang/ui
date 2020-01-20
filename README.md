@@ -37,6 +37,8 @@ There will be a declarative version of the API with hot reloading, similar to Sw
 
 On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
+[0.1 roadmap](https://github.com/vlang/ui/issues/31)
+
 Discord: [`#v-ui` channel](https://discord.gg/pDEXKTe0)
 
 ### Dependencies
