@@ -77,7 +77,7 @@ fn (b &Slider) draw_thumb() {
 
 	rev_dim := if b.orientation == .horizontal { b.track_height } else { b.track_width }
 	rev_thumb_dim := if b.orientation == .horizontal {b.thumb_height} else {b.thumb_width}
-	
+
 	dim := if b.orientation == .horizontal { b.track_width } else {b.track_height}
 
 	mut pos := f32(dim) * (b.val / f32(b.max))
@@ -136,6 +136,12 @@ fn on_window_click(e MouseEvent, ptr voidptr) {
 			}
 			break
 		}
+		else if typ == .button {
+			child.unfocus()
+			//b := child as Button
+			// b.state = .normal
+			//break
+		}
 	}
 }
 
@@ -175,7 +181,7 @@ fn (b mut Slider) change_value(x, y int) {
 	dim := if b.orientation == .horizontal {b.track_width} else {b.track_height}
 	axis := if b.orientation == .horizontal {b.x} else {b.y}
 	pos := if b.orientation == .horizontal {x} else {y} - axis
-	
+
 	b.val = (f32(pos) * f32(b.max)) / f32(dim)
 
 	if int(b.val) < b.min {

@@ -67,6 +67,7 @@ pub fn new_button(c ButtonConfig) &Button {
 	b.width = if c.width == 0 { b.ui.ft.text_width(c.text) + button_horizontal_padding } else { c.width }
 	b.height = if c.height == 0 { b.ui.ft.text_height(c.text) + button_vertical_padding } else { c.height }
 	b.parent.children << b
+	b.parent.on_click(on_window_click)
 	return b
 }
 
@@ -113,6 +114,7 @@ fn (b mut Button) focus() {
 
 fn (b mut Button) unfocus() {
 	b.is_focused = false
+	b.state = .normal
 }
 
 fn (b &Button) idx() int {
