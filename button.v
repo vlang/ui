@@ -80,7 +80,12 @@ fn (b mut Button) draw() {
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
-	b.ui.ft.draw_text(bcenter_x-w2, bcenter_y-h2-1, b.text, btn_text_cfg)
+	mut y := bcenter_y-h2-1
+	//if b.ui.gg.scale == 2 {
+	$if macos { // TODO
+		y += 2
+	}
+	b.ui.ft.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)
 	//b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }
 
