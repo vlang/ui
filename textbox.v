@@ -128,7 +128,7 @@ fn (t mut TextBox) draw() {
 	// Placeholder
 	if t.text == '' {
 		if t.placeholder != '' {
-			t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
+			t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, {placeholder_cfg|max_width:t.width-20})
 		}
 	}
 	// Text
