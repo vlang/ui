@@ -21,15 +21,22 @@ fn main() {
 		title: 'Dropdown'
 		user_ptr: app
 	}, [
-		ui.dropdown({
-			width: 200
-			def_text: "Select an option"
-			items: [
-				ui.DropdownItem{text:'Delete all users'},
-				ui.DropdownItem{text:'Export users'},
-				ui.DropdownItem{text:'Exit'},
-			]
-		}) as ui.IWidgeter
+		ui.column({
+			stretch: true
+			alignment: .left
+			margin: ui.MarginConfig{5,5,0,0}
+		},
+		[
+			ui.dropdown({
+				width: 140
+				def_text: "Select an option"
+				items: [
+					ui.DropdownItem{text:'Delete all users'},
+					ui.DropdownItem{text:'Export users'},
+					ui.DropdownItem{text:'Exit'},
+				]
+			}) as ui.IWidgeter
+		]) as ui.IWidgeter
 	])
 	app.window = window
 	ui.run(window)
