@@ -23,6 +23,8 @@ v run temperature.v
 v run ...
 ```
 
+Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward. 
+
 **NOTE : This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
