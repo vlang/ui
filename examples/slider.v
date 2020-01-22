@@ -3,8 +3,8 @@ module main
 import ui
 
 const (
-	win_width = 260
-	win_height = 230
+	win_width = 250
+	win_height = 250
 )
 
 struct App {
@@ -22,10 +22,14 @@ fn main() {
 		title: 'Slider Example'
 		user_ptr: app
 	})
-	app.vert_slider = ui.new_slider({
+	row := ui.row({
 		parent: window
-		x: 12
-		y: 12
+		stretch: true
+		alignment: .center
+		spacing: 10
+	})
+	app.vert_slider = ui.new_slider({
+		parent: row
 		width: 20
 		height: 200
 		orientation: .vertical
@@ -34,9 +38,7 @@ fn main() {
 		on_value_changed: on_vert_value_changed
 	})
 	app.hor_slider = ui.new_slider({
-		parent: window
-		x: 50
-		y: 12
+		parent: row
 		width: 200
 		height: 20
 		orientation: .horizontal

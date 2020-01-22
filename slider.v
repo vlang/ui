@@ -17,7 +17,7 @@ pub enum Orientation {
 
 pub struct Slider {
 pub mut:
-	idx        int
+	
 	track_height     int
 	track_width      int
 	thumb_width 	 int
@@ -25,7 +25,7 @@ pub mut:
 	orientation      Orientation = Orientation.horizontal
 	x          int
 	y          int
-	parent     &ui.Window
+	parent ILayouter
 	ui         &UI
 	val        f32
 	min        int = 0
@@ -36,27 +36,30 @@ pub mut:
 }
 
 pub struct SliderConfig {
-	x      int
-	y      int
 	width  int
 	height int
 	min    int
 	max    int
 	val    f32
 	orientation      Orientation
-	parent &ui.Window
 	on_value_changed SliderValueChangedFn
 }
 
-pub fn new_slider(c SliderConfig) &Slider {
+fn (s mut Slider)init(p &ILayouter) {
+	parent := *p
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, slider_click, s)
+	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+}
+
+pub fn slider(c SliderConfig) &Slider {
 	mut p := &Slider{
 		track_height: c.height
 		track_width: c.width
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
-		idx: c.parent.children.len
 		min: c.min
 		max: c.max
 		val: c.val
@@ -65,9 +68,6 @@ pub fn new_slider(c SliderConfig) &Slider {
 	}
 	p.thumb_height = if p.orientation == .horizontal {p.track_height + 10} else {10}
 	p.thumb_width = if p.orientation == .horizontal { 10 } else {p.track_width + 10}
-	p.parent.children << p
-	p.parent.on_click(on_window_click)
-	p.parent.on_mousemove(on_window_mouse_move)
 	return p
 }
 
@@ -94,6 +94,25 @@ fn (b &Slider) draw_thumb() {
 	}
 }
 
+fn (b mut Slider) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut Slider) propose_size(w, h int) (int, int) {
+	/* p.track_width = w
+	p.track_height = h
+	if p.track_height > 20 {p.track_height = 20} //TODO constrain
+	p.thumb_height = if p.orientation == .horizontal {p.track_height + 10} else {10}
+	p.thumb_width = if p.orientation == .horizontal { 10 } else {p.track_width + 10}
+	return w, p.thumb_height */
+	if b.orientation == .horizontal {
+		return b.track_width, b.thumb_height
+	} else {
+		return b.thumb_width, b.track_height
+	}
+}
+
 fn (b &Slider) draw() {
 	// Draw the track
 	b.ui.gg.draw_rect(b.x, b.y, b.track_width, b.track_height, slider_background_color)
@@ -103,7 +122,7 @@ fn (b &Slider) draw() {
 	b.draw_thumb()
 }
 
-fn (b mut Slider) key_down(e KeyEvent) {
+fn slider_key_down(b mut Slider, e &KeyEvent) {
 	match e.key {
 		.arrow_down, .left {
 			if b.val > b.min {
@@ -122,46 +141,7 @@ fn (t &Slider) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.track_width && y >= t.y && y <= t.y + (t.track_height + t.thumb_height)
 }
 
-fn on_window_click(e MouseEvent, ptr voidptr) {
-	// we use a global window_click listener so that if
-	// the user releases the mouse button outside the slider
-	// area we can turn the dragging off.
-	window := &ui.Window(ptr)
-	for child in window.children {
-		typ := child.typ()
-		inside := child.point_inside(e.x, e.y)
-		if typ == .slider {
-			if e.action == 0 && !inside {
-				child.click(e)
-			}
-			break
-		}
-		else if typ == .button {
-			child.unfocus()
-			//b := child as Button
-			// b.state = .normal
-			//break
-		}
-	}
-}
-
-fn on_window_mouse_move(e MouseEvent, ptr voidptr) {
-	// we use a global window_mouse listener so the user can
-	// keep dragging when his mouse moves outside the slider area.
-	window := &ui.Window(ptr)
-	for child in window.children {
-		typ := child.typ()
-		inside := child.point_inside(e.x, e.y)
-		if typ == .slider {
-			if !inside {
-				child.mouse_move(e)
-			}
-			break
-		}
-	}
-}
-
-fn (b mut Slider) click(e MouseEvent) {
+fn slider_click(b mut Slider, e &MouseEvent) {
 	if !b.point_inside(e.x, e.y)  {
 		b.dragging = false
 		return
@@ -171,7 +151,7 @@ fn (b mut Slider) click(e MouseEvent) {
 	b.dragging = e.action == 1
 }
 
-fn (b mut Slider) mouse_move(e MouseEvent) {
+fn slider_mouse_move(b mut Slider, e &MouseEvent) {
 	if b.dragging {
 		b.change_value(e.x, e.y)
 	}
@@ -190,21 +170,16 @@ fn (b mut Slider) change_value(x, y int) {
 		b.val = b.max
 	}
 	if b.on_value_changed != 0 {
-		b.on_value_changed(b.parent.user_ptr, b)
+		parent := b.parent
+		user_ptr := parent.get_user_ptr()
+		b.on_value_changed(user_ptr, b)
 	}
 }
 
 fn (b mut Slider) focus() {
-	b.parent.unfocus_all()
+	parent := b.parent
+	parent.unfocus_all()
 	b.is_focused = true
-}
-
-fn (b &Slider) idx() int {
-	return b.idx
-}
-
-fn (t &Slider) typ() WidgetType {
-	return .slider
 }
 
 fn (t &Slider) is_focused() bool {

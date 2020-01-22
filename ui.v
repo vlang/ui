@@ -27,34 +27,52 @@ mut:
 	redraw_requested     bool
 }
 
-pub enum WidgetType {
-	button
-	canvas
-	check_box
-	label
-	menu
-	picture
-	progress_bar
-	radio
-	slider
-	text_box
-	dropdown
-	transition_value
+pub enum VerticalAlignment {
+	top = 0
+	center
+	bottom
+}
+
+pub enum HorizontalAlignment {
+	left = 0
+	center
+	right
+}
+
+pub struct MarginConfig {
+	top int
+	left int
+	right int
+	bottom int
 }
 
 // TODO rename to `Widget` once interfaces allow that :)
 pub interface IWidgeter {
-	key_down(KeyEvent)
+	init(ILayouter)
+	//key_down(KeyEvent)
 	draw()
-	click(MouseEvent)
-	mouse_move(MouseEvent)
+	//click(MouseEvent)
+	//mouse_move(MouseEvent)
 	point_inside(x, y f64) bool
 	unfocus()
 	focus()
-	idx() int
-	typ() WidgetType
+	set_pos(x,y int)
+	propose_size(w, h int) (int,int)
 	is_focused() bool
 }
+
+// TODO rename to `Layouter` once interfaces allow that :)
+pub interface ILayouter {
+	get_ui() &UI
+	get_user_ptr() voidptr
+	get_size() (int, int)
+	get_subscriber() &eventbus.Subscriber
+	//on_click(ClickFn)
+	unfocus_all()
+	//on_mousemove(MouseMoveFn)
+	draw()
+}
+
 
 pub struct KeyEvent {
 	key       ui.Key

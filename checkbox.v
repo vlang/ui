@@ -18,48 +18,73 @@ enum CheckBoxState {
 }
 */
 
-type CheckBoxClickFn fn()
+type CheckChangedFn fn(voidptr, bool)
 
 pub struct CheckBox {
 pub mut:
-	idx        int
+	
 	//state      CheckBoxState
 	height     int
 	width      int
 	x          int
 	y          int
-	parent     &ui.Window
+	parent ILayouter
 	is_focused bool
 	checked bool
 	ui         &UI
-	onclick    CheckBoxClickFn
+	on_check_changed CheckChangedFn
 	text       string
 }
 
 pub struct CheckBoxConfig {
 	x       int
 	y       int
-	parent  &ui.Window
+	parent ILayouter
 	text    string
-	onclick CheckBoxClickFn
+	on_check_changed CheckChangedFn
 	checked bool
 }
 
-pub fn new_checkbox(c CheckBoxConfig) &CheckBox {
+fn (cb mut CheckBox)init(p &ILayouter) {
+	parent := *p
+	cb.parent = parent
+	ui := parent.get_ui()
+	cb.ui = ui
+	cb.width = cb.ui.ft.text_width(cb.text) + 5 + check_mark_size
+	
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, cb_click, cb) 
+}
+
+pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
-		height: 20
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
-		idx: c.parent.children.len
+		height: 20 //TODO
 		text: c.text
-		onclick: c.onclick
+		on_check_changed: c.on_check_changed
 		checked: c.checked
 	}
-	cb.width = cb.ui.ft.text_width(c.text) + check_mark_size
-	cb.parent.children << cb
 	return cb
+}
+
+fn cb_click(cb mut CheckBox, e &MouseEvent, window &ui.Window) {
+	if cb.point_inside(e.x, e.y) && e.action == 0 {
+		cb.checked = !cb.checked
+		if cb.on_check_changed != 0 {
+			cb.on_check_changed(window.user_ptr, cb.checked)
+		}
+	}
+}
+
+fn (b mut CheckBox) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut CheckBox) propose_size(w, h int) (int, int) {
+	//b.width = w
+	//b.height = h
+	//width := check_mark_size + 5 + b.ui.ft.text_width(b.text)
+	return b.width, check_mark_size
 }
 
 fn (b mut CheckBox) draw() {
@@ -84,16 +109,8 @@ fn (b mut CheckBox) draw() {
 	b.ui.ft.draw_text(b.x + check_mark_size + 5, b.y, b.text, btn_text_cfg)
 }
 
-fn (b &CheckBox) key_down(e KeyEvent) {}
-
 fn (t &CheckBox) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
-}
-
-fn (b mut CheckBox) click(e MouseEvent) {
-	if e.action == 0 {
-		b.checked = !b.checked
-	}
 }
 
 fn (b mut CheckBox) mouse_move(e MouseEvent) {}
@@ -106,12 +123,6 @@ fn (b mut CheckBox) unfocus() {
 	b.is_focused = false
 }
 
-fn (b &CheckBox) idx() int {
-	return b.idx
-}
-fn (t &CheckBox) typ() WidgetType {
-	return .check_box
-}
 
 fn (t &CheckBox) is_focused() bool {
 	return t.is_focused

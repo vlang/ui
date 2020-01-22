@@ -8,9 +8,11 @@ import gg
 import glfw
 import freetype
 import clipboard
+import eventbus
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
+	default_font_size = 13
 )
 
 pub type DrawFn fn(voidptr)
@@ -37,6 +39,7 @@ mut:
 	click_fn ClickFn
 	scroll_fn ScrollFn
 	mouse_move_fn MouseMoveFn
+	eventbus &eventbus.EventBus = eventbus.new()
 }
 
 pub struct WindowConfig {
@@ -51,7 +54,7 @@ pub:
 	bg_color gx.Color = default_window_color
 }
 
-pub fn new_window(cfg WindowConfig) &ui.Window {
+pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 	gcontext := gg.new_context(gg.Cfg{
 		width: cfg.width
 		height: cfg.height
@@ -69,7 +72,7 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 			width: cfg.width
 			height: cfg.height
 			use_ortho: true
-			font_size: 13
+			font_size: default_font_size
 			scale: scale
 			window_user_ptr: 0
 			font_path: system_font_path()
@@ -78,36 +81,36 @@ pub fn new_window(cfg WindowConfig) &ui.Window {
 	}
 	ui_ctx.load_icos()
 	ui_ctx.gg.window.set_user_ptr(ui_ctx)
-	ui_ctx.gg.window.onkeydown(gkey_down)
-	ui_ctx.gg.window.onchar(onchar)
-	ui_ctx.gg.window.onmousemove(onmousemove)
-	ui_ctx.gg.window.on_click(onclick)
-	window := &ui.Window{
+	ui_ctx.gg.window.onkeydown(window_key_down)
+	ui_ctx.gg.window.onchar(window_char)
+	ui_ctx.gg.window.onmousemove(window_mouse_move)
+	ui_ctx.gg.window.on_click(window_click)
+	mut window := &ui.Window{
 		user_ptr: cfg.user_ptr
 		ui: ui_ctx
 		glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
+		width: cfg.width
+		height: cfg.height,
+		children: children
+	}
+	for child in window.children {
+		child.init(window)
 	}
 	// window.set_cursor()
 	return window
 }
 
-fn (window &ui.Window) unfocus_all() {
-	for child in window.children {
-		child.unfocus()
-	}
-}
-
-fn onmousemove(glfw_wnd voidptr, x, y f64) {
+fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	e := MouseEvent{
 		x: int(x)
 		y: int(y)
 	}
-	if window.mouse_move_fn != 0 {
+	/* if window.mouse_move_fn != 0 {
 		window.mouse_move_fn(e, &ui.window)
 	}
 	for child in window.children {
@@ -115,21 +118,22 @@ fn onmousemove(glfw_wnd voidptr, x, y f64) {
 		if inside {
 			child.mouse_move(e)
 		}
-	}
+	} */
+	window.eventbus.publish(events.on_mouse_move, &window, e)
 }
 
-fn onclick(glfw_wnd voidptr, button, action, mods int) {
+fn window_click(glfw_wnd voidptr, button, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	x,y := glfw.get_cursor_pos(glfw_wnd)
-	e := MouseEvent{
+	e := &MouseEvent{
 		button: button
 		action: action
 		mods: mods
 		x: int(x)
 		y: int(y)
 	}
-	if window.click_fn != 0 {
+	/* if window.click_fn != 0 {
 		window.click_fn(e, &ui.window)
 	}
 	for child in window.children {
@@ -137,10 +141,11 @@ fn onclick(glfw_wnd voidptr, button, action, mods int) {
 		if inside {
 			child.click(e)
 		}
-	}
+	} */
+	window.eventbus.publish(events.on_click, &window, e)
 }
 
-fn gkey_down(glfw_wnd voidptr, key, code, action, mods int) {
+fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 	// println("key down")
 	if action != 2 && action != 1 {
 		return
@@ -148,32 +153,36 @@ fn gkey_down(glfw_wnd voidptr, key, code, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	// C.printf('g child=%p\n', child)
-	for child in window.children {
+	e := &KeyEvent {
+		key: key
+		code: code
+		action: action
+		mods: mods
+	}
+	window.eventbus.publish(events.on_key_down, &window, e)
+	/* for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
 			continue
 		}
-		child.key_down(KeyEvent{
-			key: key
-			code: code
-			action: action
-			mods: mods
-		})
-	}
+		child.key_down()
+	} */
 }
 
-fn onchar(glfw_wnd voidptr, codepoint u32) {
+fn window_char(glfw_wnd voidptr, codepoint u32) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
-	for child in window.children {
+	e := &KeyEvent{
+		codepoint: codepoint
+	}
+	window.eventbus.publish(events.on_key_down, &window, e)
+	/* for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
 			continue
 		}
-		child.key_down(KeyEvent{
-			codepoint: codepoint
-		})
-	}
+		child.key_down()
+	} */
 }
 
 fn (w mut ui.Window) focus_next() {
@@ -235,6 +244,7 @@ pub fn (b &ui.Window) always_on_top(val bool) {
 
 // TODO remove this
 fn foo(w IWidgeter) {}
+fn foo2(l ILayouter) {}
 
 fn bar() {
 	foo(&TextBox{})
@@ -249,9 +259,38 @@ fn bar() {
 	foo(&Menu{})
 	foo(&Dropdown{})
 	foo(&TransitionValue{})
+	foo(&Stack{})
+}
+
+fn bar2() {
+	foo2(&ui.Window{})
+	foo2(&Stack{})
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
 
 }
 
+/*ILayouter Interface Methods*/
+fn (w &ui.Window) draw() {}
+
+fn (w &ui.Window) get_ui() &UI {
+	return w.ui
+}
+fn (w &ui.Window) get_user_ptr() voidptr {
+	return w.user_ptr
+}
+
+fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
+	return w.eventbus.subscriber
+}
+
+fn (w &ui.Window) get_size() (int, int) {
+	return w.width, w.height
+}
+
+fn (window &ui.Window) unfocus_all() {
+	for child in window.children {
+		child.unfocus()
+	}
+}

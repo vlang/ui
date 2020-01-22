@@ -7,57 +7,54 @@ pub type DrawFn fn(voidptr)
 
 pub struct Canvas {
 mut:
-	parent &ui.Window
-	x      int
-	y      int
 	width int
 	height int
-	ui     &UI
+	x		int
+	y		int
+	parent ILayouter
 	draw_fn DrawFn
-	idx int
+	
 }
 
 pub struct CanvasConfig {
-	x      int
-	y      int
-	parent &ui.Window
+	width int
+	height int
 	text   string
 	draw_fn DrawFn
 }
 
-pub fn new_canvas(c CanvasConfig) &Canvas {
+fn (c mut Canvas)init(p &ILayouter) {
+	parent := *p
+	c.parent = parent
+}
+
+pub fn canvas(c CanvasConfig) &Canvas {
 	mut canvas := &Canvas{
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
+		width: c.width
+		height: c.height
 		draw_fn: c.draw_fn
 	}
-	canvas.parent.children << canvas
 	return canvas
 }
 
+fn (b mut Canvas) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut Canvas) propose_size(w, h int) (int, int) {
+	b.width = w
+	b.height = h
+	return w, h
+}
+
 fn (c mut Canvas) draw() {
-	c.draw_fn(c.parent.user_ptr)
+	parent := c.parent
+	user_ptr := parent.get_user_ptr()
+	c.draw_fn(user_ptr)
 }
-
-fn (t &Canvas) key_down(e KeyEvent) {}
-
-fn (t &Canvas) click(e MouseEvent) {
-}
-fn (t &Canvas) mouse_move(e MouseEvent) {
-}
-
 
 fn (t &Canvas) focus() {}
-
-fn (t &Canvas) idx() int {
-	return t.idx
-}
-
-fn (t &Canvas) typ() WidgetType {
-	return .canvas
-}
 
 fn (t &Canvas) is_focused() bool {
 	return false

@@ -6,52 +6,44 @@ module ui
 pub struct Label {
 mut:
 	text   string
-	parent &ui.Window
+	parent ILayouter
 	x      int
 	y      int
-	idx    int
 	ui     &UI
 }
 
 pub struct LabelConfig {
-	x      int
-	y      int
-	parent &ui.Window
 	text   string
 }
 
-pub fn new_label(c LabelConfig) &Label {
-	mut l := &Label{
+fn (l mut Label)init(p &ILayouter) {
+	parent := *p
+	ui := parent.get_ui()
+	l.ui = ui
+}
+
+pub fn label(c LabelConfig) &Label {
+	return &Label{
 		text: c.text
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
 	}
-	l.parent.children << l
-	return l
+}
+
+fn (b mut Label) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut Label) propose_size(w, h int) (int, int) {
+	//b.width = w
+	//b.height = h
+	return b.ui.ft.text_size(b.text)
 }
 
 fn (b mut Label) draw() {
 	b.ui.ft.draw_text(b.x, b.y, b.text, btn_text_cfg)
 }
 
-fn (t &Label) key_down(e KeyEvent) {}
-
-fn (t &Label) click(e MouseEvent) {
-}
-fn (t &Label) mouse_move(e MouseEvent) {
-}
-
 fn (t &Label) focus() {}
-
-fn (t &Label) idx() int {
-	return t.idx
-}
-
-fn (t &Label) typ() WidgetType {
-	return .label
-}
 
 fn (t &Label) is_focused() bool {
 	return false

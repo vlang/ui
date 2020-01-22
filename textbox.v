@@ -26,12 +26,12 @@ type KeyUpFn fn(voidptr, voidptr, u32)
 
 pub struct TextBox {
 pub mut:
-	idx         int
+	
 	height      int
 	width       int
 	x           int
 	y           int
-	parent      &ui.Window
+	parent ILayouter
 	is_focused  bool
 	// gg &gg.GG
 	ui          &UI
@@ -60,14 +60,11 @@ struct Rect {
 */
 
 pub struct TextBoxConfig {
-	x           int
-	y           int
 	width       int
 	height      int=22
 	min         int
 	max         int
 	val         int
-	parent      &ui.Window
 	placeholder string
 	max_len     int
 	is_numeric  bool
@@ -80,22 +77,24 @@ pub struct TextBoxConfig {
 	on_key_up   KeyUpFn
 }
 
-// pub fn new_textbox(parent mut Window, rect Rect, placeholder string) &TextBox {
-pub fn new_textbox(c TextBoxConfig) &TextBox {
-	// println('new textbox')
-	// isinit = true
-	mut txt := &TextBox{
+fn (tb mut TextBox)init(p &ILayouter) {
+	parent := *p
+	tb.parent = parent
+	ui :=  parent.get_ui()
+	tb.ui = ui
+	// return widget
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, tb_click, tb)
+	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
+}
+
+pub fn textbox(c TextBoxConfig) &TextBox {
+	return &TextBox{
 		height: c.height
 		width: if c.width < 30  { 30 } else { c.width }
-		x: c.x
-		y: c.y
 		//sel_start: 0
-		parent: c.parent
 		placeholder: c.placeholder
-		ui: c.parent.ui
-		idx: c.parent.children.len
-		is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
-
+		//TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
@@ -105,16 +104,21 @@ pub fn new_textbox(c TextBoxConfig) &TextBox {
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
 	}
-	txt.parent.has_textbox = true
-	txt.parent.children << txt
-	// return widget
-	return txt
 }
 
 fn draw_inner_border(gg &gg.GG, x, y, width, height int) {
 	gg.draw_empty_rect(x, y, width, height, text_border_color)
 	// TODO this should be +-1, not 0.5, a bug in gg/opengl
 	gg.draw_empty_rect(0.5 + x, 0.5 + y, width - 1, height - 1, text_inner_border_color) // inner lighter border
+}
+
+fn (b mut TextBox) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut TextBox) propose_size(w, h int) (int, int) {
+	return b.width, b.height
 }
 
 fn (t mut TextBox) draw() {
@@ -126,10 +130,8 @@ fn (t mut TextBox) draw() {
 	text_y := t.y + 4 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
-	if t.text == '' {
-		if t.placeholder != '' {
-			t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, {placeholder_cfg|max_width:t.width-20})
-		}
+	if t.text == '' && t.placeholder != '' {
+		t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
 	}
 	// Text
 	else {
@@ -191,13 +193,13 @@ fn (t mut TextBox) draw() {
 	}
 }
 
-fn (t mut TextBox) key_down(e KeyEvent) {
+fn tb_key_down(t mut TextBox, window &ui.Window e &KeyEvent) {
 	if !t.is_focused {
 		println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
 	if e.action == KeyState.press && t.on_key_down != KeyDownFn(0) {
-		t.on_key_down(t.parent.user_ptr, t, e.codepoint)
+		t.on_key_down(window.user_ptr, t, e.codepoint)
 	}
 	if e.codepoint != 0 {
 		if t.read_only {
@@ -212,7 +214,7 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		}
 		t.insert(s)
 		if e.action == KeyState.release && t.on_key_up != KeyUpFn(0) {
-			t.on_key_up(t.parent.user_ptr, t, e.codepoint)
+			t.on_key_up(window.user_ptr, t, e.codepoint)
 		}
 		//t.text += s
 		//t.cursor_pos ++//= utf8_char_len(s[0])// s.len
@@ -280,17 +282,17 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 		}
 		.tab {
 			t.ui.show_cursor = true
-			if t.parent.just_tabbed {
+			/*TODO if t.parent.just_tabbed {
 				t.parent.just_tabbed = false
 				return
-			}
+			} */
 			// println('TAB $t.idx')
-			if e.mods == .shift {
+			/* if e.mods == .shift {
 				t.parent.focus_previous()
 			}
 			else {
 				t.parent.focus_next()
-			}
+			} */
 		}
 		else {}
 	}
@@ -299,8 +301,8 @@ fn (t mut TextBox) key_down(e KeyEvent) {
 fn (t &TextBox) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
-fn (t mut TextBox) mouse_move(e MouseEvent) {}
-fn (t mut TextBox) click(e MouseEvent) {
+
+fn tb_click(t mut TextBox, e &MouseEvent) {
 	t.ui.show_cursor = true
 	t.focus()
 	if t.text == '' {
@@ -327,16 +329,9 @@ fn (t mut TextBox) click(e MouseEvent) {
 }
 
 pub fn (t mut TextBox) focus() {
-	t.parent.unfocus_all()
+	parent := t.parent
+	parent.unfocus_all()
 	t.is_focused = true
-}
-
-fn (t &TextBox) idx() int {
-	return t.idx
-}
-
-fn (t &TextBox) typ() WidgetType {
-	return .text_box
 }
 
 fn (t &TextBox) is_focused() bool {
