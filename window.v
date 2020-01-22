@@ -258,7 +258,7 @@ fn bar() {
 	foo(&Canvas{})
 	foo(&Menu{})
 	foo(&Dropdown{})
-	foo(&TransitionValue{})
+	foo(&Transition{})
 	foo(&Stack{})
 }
 
