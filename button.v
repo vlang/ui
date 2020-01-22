@@ -64,7 +64,6 @@ pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
 		width: c.width
 		height: c.height
-		width: c.width
 		text: c.text
 		onclick: c.onclick
 	}
