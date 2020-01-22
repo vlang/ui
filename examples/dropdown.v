@@ -24,7 +24,7 @@ fn main() {
 		ui.column({
 			stretch: true
 			alignment: .left
-			margin: ui.MarginConfig{5,5,0,0}
+			margin: ui.MarginConfig{5,5,5,5}
 		},
 		[
 			ui.dropdown({
