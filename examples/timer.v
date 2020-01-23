@@ -10,12 +10,9 @@ const (
 
 struct App {
 mut:
-	lbl_elapsed_time &ui.Label
-	lbl_elapsed_value &ui.Label
-	lbl_duration &ui.Label
-	progress_bar &ui.ProgressBar
-	slider &ui.Slider
-	reset_btn &ui.Button
+	lbl_elapsed_value ui.Label
+	progress_bar ui.ProgressBar
+	slider ui.Slider
 	window     &ui.Window
 	duration f32 = 25.0
 	elapsed_time f32 = 0.0
@@ -59,6 +56,7 @@ fn main() {
 			}, [
 				ui.label({
 					text: '00.0s'
+					ref:  &app.lbl_elapsed_value
 				}) as ui.IWidgeter,
 				ui.slider({
 					width: 180
@@ -68,6 +66,7 @@ fn main() {
 					min: 0
 					val: app.duration
 					on_value_changed: on_value_changed
+					ref: &app.slider
 				})
 			])
 		]) as ui.IWidgeter,
@@ -75,11 +74,12 @@ fn main() {
 				height: 20
 				val: 0
 				max: 100
+				ref: &app.progress_bar
 			})
 		]) as ui.IWidgeter
 	])
 	app.window = window
-	//go app.timer()
+	go app.timer()
 	ui.run(window)
 }
 

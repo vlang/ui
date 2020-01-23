@@ -75,7 +75,6 @@ pub struct TextBoxConfig {
 	borderless  bool
 	on_key_down KeyDownFn
 	on_key_up   KeyUpFn
-	mut:
 	ref			&TextBox
 }
 

@@ -32,6 +32,7 @@ pub struct ProgressBarConfig {
 	min    int
 	max    int
 	val    int
+	ref		&ProgressBar
 }
 
 fn (pb mut ProgressBar)init(p &ILayouter) {
@@ -48,6 +49,11 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		min: c.min
 		max: c.max
 		val: c.val
+	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *p
+		return &ref
 	}
 	return p
 }

@@ -43,6 +43,7 @@ pub struct SliderConfig {
 	val    f32
 	orientation      Orientation
 	on_value_changed SliderValueChangedFn
+	ref		&Slider
 }
 
 fn (s mut Slider)init(p &ILayouter) {
@@ -68,6 +69,11 @@ pub fn slider(c SliderConfig) &Slider {
 	}
 	p.thumb_height = if p.orientation == .horizontal {p.track_height + 10} else {10}
 	p.thumb_width = if p.orientation == .horizontal { 10 } else {p.track_width + 10}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *p
+		return &ref
+	}
 	return p
 }
 

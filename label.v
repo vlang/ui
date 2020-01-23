@@ -14,6 +14,7 @@ mut:
 
 pub struct LabelConfig {
 	text   string
+	ref		&Label
 }
 
 fn (l mut Label)init(p &ILayouter) {
@@ -23,9 +24,15 @@ fn (l mut Label)init(p &ILayouter) {
 }
 
 pub fn label(c LabelConfig) &Label {
-	return &Label{
+	lbl := &Label{
 		text: c.text
 	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *lbl
+		return &ref
+	}
+	return lbl
 }
 
 fn (b mut Label) set_pos(x, y int) {
