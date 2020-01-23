@@ -23,6 +23,7 @@ pub struct TransitionConfig {
 	duration       int
 	animated_value &int
 	easing         EasingFunction
+	ref				&Transition
 }
 
 fn (t mut Transition) init(p &ILayouter) {
@@ -42,6 +43,11 @@ pub fn transition(config TransitionConfig) &Transition {
 		start_value: *config.animated_value
 		target_value: *config.animated_value
 		last_draw_target: *config.animated_value
+	}
+	if config.ref != 0 {
+		mut ref := config.ref
+		*ref = *transition
+		return &ref
 	}
 	return transition
 }

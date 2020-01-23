@@ -6,7 +6,7 @@ module ui
 import os
 import gg
 
-struct Picture {
+pub struct Picture {
 mut:
 	text    string
 	parent ILayouter
@@ -23,6 +23,7 @@ pub struct PictureConfig {
 	path   string
 	width  int
 	height int
+	ref		&Picture
 }
 
 fn (pic mut Picture)init(p &ILayouter) {
@@ -38,8 +39,13 @@ pub fn picture(c PictureConfig) &Picture {
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
+		texture: gg.create_image(c.path)
 	}
-	pic.texture = gg.create_image(c.path)
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *pic
+		return &ref
+	}
 	return pic
 }
 
