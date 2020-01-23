@@ -9,7 +9,7 @@ const (
 
 struct App {
 mut:
-	counter &ui.TextBox
+	counter ui.TextBox
 	window  &ui.Window
 }
 
@@ -32,6 +32,7 @@ fn main() {
 				read_only: true
 				is_numeric: true
 				text: '0'
+				ref: &app.counter
 			}) as ui.IWidgeter,
 			ui.button({
 				text: 'Count'

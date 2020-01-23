@@ -147,9 +147,6 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 
 fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 	// println("key down")
-	if action != 2 && action != 1 {
-		return
-	}
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	// C.printf('g child=%p\n', child)
@@ -159,7 +156,11 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 		action: action
 		mods: mods
 	}
-	window.eventbus.publish(events.on_key_down, &window, e)
+	if action == 2 || action == 1 {
+		window.eventbus.publish(events.on_key_down, &window, e)
+	} else {
+		window.eventbus.publish(events.on_key_up, &window, e)
+	}
 	/* for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {

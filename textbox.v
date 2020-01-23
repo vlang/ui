@@ -75,6 +75,8 @@ pub struct TextBoxConfig {
 	borderless  bool
 	on_key_down KeyDownFn
 	on_key_up   KeyUpFn
+	mut:
+	ref			&TextBox
 }
 
 fn (tb mut TextBox)init(p &ILayouter) {
@@ -86,10 +88,11 @@ fn (tb mut TextBox)init(p &ILayouter) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, tb_click, tb)
 	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
+	subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
-	return &TextBox{
+	tb := &TextBox{
 		height: c.height
 		width: if c.width < 30  { 30 } else { c.width }
 		//sel_start: 0
@@ -104,6 +107,12 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
 	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *tb
+		return &ref
+	}
+	return tb
 }
 
 fn draw_inner_border(gg &gg.GG, x, y, width, height int) {
@@ -192,13 +201,21 @@ fn (t mut TextBox) draw() {
 		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
 	}
 }
-
-fn tb_key_down(t mut TextBox, window &ui.Window e &KeyEvent) {
+fn tb_key_up(t mut TextBox, e &KeyEvent, window &ui.Window ) {
 	if !t.is_focused {
-		println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if e.action == KeyState.press && t.on_key_down != KeyDownFn(0) {
+	if t.on_key_up != 0 {
+		t.on_key_up(window.user_ptr, t, e.codepoint)
+	}
+}
+
+fn tb_key_down(t mut TextBox, e &KeyEvent, window &ui.Window ) {
+	if !t.is_focused {
+		//println('textbox.key_down on an unfocused textbox, this should never happen')
+		return
+	}
+	if t.on_key_down != 0 {
 		t.on_key_down(window.user_ptr, t, e.codepoint)
 	}
 	if e.codepoint != 0 {
@@ -213,9 +230,6 @@ fn tb_key_down(t mut TextBox, window &ui.Window e &KeyEvent) {
 			return
 		}
 		t.insert(s)
-		if e.action == KeyState.release && t.on_key_up != KeyUpFn(0) {
-			t.on_key_up(window.user_ptr, t, e.codepoint)
-		}
 		//t.text += s
 		//t.cursor_pos ++//= utf8_char_len(s[0])// s.len
 		return
