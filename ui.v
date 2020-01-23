@@ -40,6 +40,7 @@ pub enum WidgetType {
 	text_box
 	dropdown
 	transition_value
+	switch_box
 }
 
 // TODO rename to `Widget` once interfaces allow that :)
