@@ -261,6 +261,7 @@ fn bar() {
 	foo(&Dropdown{})
 	foo(&Transition{})
 	foo(&Stack{})
+	foo(&Switch{})
 }
 
 fn bar2() {
