@@ -96,7 +96,7 @@ fn (c &Stack) get_size() (int, int) {
 }
 
 fn (b mut Stack) draw() {
-	per_child_size := b.get_height() / b.children.len
+	mut per_child_size := b.get_height()
 	mut pos := b.get_y_axis()
 	mut size := 0
 	for child in b.children {
@@ -112,7 +112,9 @@ fn (b mut Stack) draw() {
 		if w > size {size = w}
 		child.draw()
 		pos += h + b.spacing
+		per_child_size -= h + b.spacing
 	}
+	if b.stretch {return}
 	b.set_height(pos - b.get_y_axis())
 	s := b.get_width()
 	if s == 0 || s < size {
@@ -129,7 +131,7 @@ fn (b &Stack) align(size int) int {
 			return b.get_x_axis() + ((b.get_width() - size) / 2)
 		}
 		2 {
-			return b.get_width() - size
+			return (b.get_x_axis() + b.get_width()) - size
 		}
 		else {return b.get_x_axis()}
 	}

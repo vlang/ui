@@ -43,9 +43,13 @@ fn (b mut Canvas) set_pos(x, y int) {
 }
 
 fn (b mut Canvas) propose_size(w, h int) (int, int) {
-	b.width = w
+	/* b.width = w
 	b.height = h
-	return w, h
+	return w, h */
+	if b.width == 0 {
+		b.width = w
+	}
+	return b.width, b.height
 }
 
 fn (c mut Canvas) draw() {
