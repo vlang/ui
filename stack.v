@@ -158,12 +158,12 @@ fn (t &Stack) point_inside(x, y f64) bool {
 
 fn (b mut Stack) focus() {
 	// b.is_focused = true
-	println('')
+	//println('')
 }
 
 fn (b mut Stack) unfocus() {
 	// b.is_focused = false
-	println('')
+	//println('')
 }
 
 fn (t &Stack) is_focused() bool {

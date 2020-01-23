@@ -69,23 +69,27 @@ fn main() {
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
+					ref: &app.first_name
 				}) as ui.IWidgeter,
 				ui.textbox({
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'
+					ref: &app.last_name
 				}),
 				ui.textbox({
 					max_len: 3
 					width: 200
 					placeholder: 'Age'
 					is_numeric: true
+					ref: &app.age
 				}),
 				ui.textbox({
 					width: 200
 					placeholder: 'Password'
 					is_password: true
 					max_len: 20
+					ref: &app.password
 				}),
 				ui.checkbox({
 					checked: true
@@ -98,6 +102,7 @@ fn main() {
 					width: 200
 					values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 					title: 'Country'
+					ref: &app.country
 				}),
 				ui.row({
 					spacing: 85
@@ -119,9 +124,11 @@ fn main() {
 						width: 170
 						max: 10
 						val: 2
+						ref: &app.pbar
 					}) as ui.IWidgeter,
 					ui.label({
 						text: '2/10'
+						ref: &app.label
 					})
 				])
 			]) as ui.IWidgeter,

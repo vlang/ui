@@ -37,6 +37,7 @@ pub struct RadioConfig {
 	values []string
 	title  string
 	width  int
+	ref		&Radio
 }
 
 fn (r mut Radio)init(p &ILayouter) {
@@ -66,6 +67,11 @@ pub fn radio(c RadioConfig) &Radio {
 		title: c.title
 		width: c.width
 		// onclick: c.onclick
+	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *cb
+		return &ref
 	}
 	return cb
 }
@@ -112,6 +118,9 @@ fn radio_click(r mut Radio, e &MouseEvent) {
 	// println('e.y=$e.y r.y=$r.y')
 	y := e.y - r.y
 	r.selected_index = (y) / (r.height + 5)
+	if r.selected_index == r.values.len {
+		r.selected_index = r.values.len - 1
+	}
 	//println(r.selected_index)
 }
 
