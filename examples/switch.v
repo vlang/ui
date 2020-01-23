@@ -9,24 +9,21 @@ const (
 
 struct App {
 mut:
-	switcher &ui.Switch
 	window     &ui.Window
 }
 
 fn main() {
 	mut app := &App{}
-	window := ui.new_window({
+	window := ui.window({
 		width: win_width
 		height: win_height
 		title: 'Switch'
 		user_ptr: app
-	})
-	app.switcher = ui.new_switch({
-		parent: window
-		x: 12
-		y: 12
-		open: true
-	})
+	}, [
+		ui.switcher({
+			open: true
+		}) as ui.IWidgeter
+	])
 	app.window = window
 	ui.run(window)
 }

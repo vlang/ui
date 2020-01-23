@@ -22,7 +22,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent     &ILayouter
+	parent     ILayouter
 	is_focused bool
 	open bool
 	ui         &UI
