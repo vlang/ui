@@ -12,9 +12,11 @@ mut:
 	parent ILayouter
 	x       int
 	y       int
+	offset_x int
+	offset_y int
 	width   int
 	height  int
-	
+	path	string
 	ui      &UI
 	texture u32
 }
@@ -30,6 +32,7 @@ fn (pic mut Picture)init(p &ILayouter) {
 	parent := *p
 	ui := parent.get_ui()
 	pic.ui = ui
+	pic.texture = gg.create_image(pic.path)
 }
 
 pub fn picture(c PictureConfig) &Picture {
@@ -39,7 +42,7 @@ pub fn picture(c PictureConfig) &Picture {
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
-		texture: gg.create_image(c.path)
+		path:   c.path
 	}
 	if c.ref != 0 {
 		mut ref := c.ref
@@ -50,8 +53,8 @@ pub fn picture(c PictureConfig) &Picture {
 }
 
 fn (b mut Picture) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+	b.x = x + b.offset_x
+	b.y = y + b.offset_y
 }
 
 fn (b mut Picture) propose_size(w, h int) (int, int) {
