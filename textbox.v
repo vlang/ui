@@ -303,6 +303,7 @@ fn (t &TextBox) point_inside(x, y f64) bool {
 }
 
 fn tb_click(t mut TextBox, e &MouseEvent) {
+	if !t.point_inside(e.x, e.y) {return}
 	t.ui.show_cursor = true
 	t.focus()
 	if t.text == '' {
