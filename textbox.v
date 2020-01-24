@@ -8,6 +8,12 @@ import gg
 import freetype
 import strings
 
+enum SelectionDirection {
+	nil = 0
+	left_to_right
+	right_to_left
+}
+
 const (
 	placeholder_cfg = gx.TextCfg{
 		color: gx.gray
@@ -50,6 +56,7 @@ pub mut:
 	on_key_down KeyDownFn = KeyDownFn(0)
 	on_key_up KeyUpFn = KeyUpFn(0)
 	dragging	bool
+	sel_direction SelectionDirection
 }
 
 /*
@@ -346,7 +353,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &ui.Window ) {
 	}
 }
 fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
-	if key == .left {
+	if t.sel_direction == .right_to_left {
 		t.sel_start = sel_start
 		t.sel_end = sel_end
 	} else {
@@ -356,8 +363,8 @@ fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
 }
 
 fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
-	mut sel_start := if key == .left {t.sel_start} else {t.sel_end}
-	mut sel_end := if key == .left {t.sel_end} else {t.sel_start}
+	mut sel_start := if t.sel_direction == .right_to_left {t.sel_start} else {t.sel_end}
+	mut sel_end := if t.sel_direction == .right_to_left {t.sel_end} else {t.sel_start}
 	
 	if mods == .shift + .ctrl {
 		sel_end = t.cursor_pos
@@ -385,12 +392,17 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 		return true
 	}
 	if mods == .shift {
-		if (key == .left && sel_start == 0 && sel_end > 0) || (key == .right && sel_end == t.text.len ) {return true}
+		if (t.sel_direction == .right_to_left && sel_start == 0 && sel_end > 0) || (t.sel_direction == .left_to_right && sel_end == t.text.len ) {return true}
 		if sel_start <= 0 {
 			sel_end = t.cursor_pos
 			sel_start = if key == .left { t.cursor_pos - 1 } else {t.cursor_pos + 1}
+			t.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
 		} else {
-			sel_start = if key == .left { sel_start - 1 } else { sel_start + 1}
+			if t.sel_direction == .right_to_left {
+				sel_start = if key == .left { sel_start - 1 } else { sel_start + 1 }
+			} else {
+				sel_start = if key == .left { sel_start - 1 } else { sel_start + 1}
+			}
 		}
 		t.set_sel(sel_start, sel_end, key)
 		return true
