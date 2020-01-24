@@ -17,7 +17,9 @@ mut:
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		window: 0
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -39,13 +41,16 @@ fn main() {
 			}, [
 				ui.label({
 					text: 'Elapsed Time:'
+					ref: 0
 				}) as ui.IWidgeter,
 				ui.label({
 					text: 'Duration:'
+					ref: 0
 				}),
 				ui.button({
 					text: 'Reset'
 					onclick: on_reset
+					ref: 0
 				})
 			]) as ui.IWidgeter,
 			ui.column({

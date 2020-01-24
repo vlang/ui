@@ -34,6 +34,7 @@ mut:
 
 fn main() {
 	mut app := &App{
+		window: 0
 		users: [
 			User{
 				first_name: 'Sam'
@@ -92,9 +93,11 @@ fn main() {
 				ui.checkbox({
 					checked: true
 					text: 'Online registration'
+					ref: 0
 				}),
 				ui.checkbox({
 					text: 'Subscribe to the newsletter'
+					ref: 0
 				}),
 				ui.radio({
 					width: 200
@@ -108,10 +111,12 @@ fn main() {
 					ui.button({
 						text: 'Add user'
 						onclick: btn_add_click
+						ref: 0
 					}) as ui.IWidgeter,
 					ui.button({
 						text: '?'
 						onclick: btn_help_click
+						ref: 0
 					})
 				]),
 				ui.row({
@@ -142,6 +147,7 @@ fn main() {
 					width: 100
 					height: 100
 					path: os.resource_abs_path( 'logo.png' )
+					ref: 0
 				})
 			])
 		]) as ui.IWidgeter,

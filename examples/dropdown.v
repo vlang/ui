@@ -7,12 +7,13 @@ const (
 
 struct App {
 mut:
-	dropdown   &ui.Dropdown
 	window     &ui.Window
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		window: 0
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -33,6 +34,7 @@ fn main() {
 					ui.DropdownItem{text:'Export users'},
 					ui.DropdownItem{text:'Exit'},
 				]
+				ref: 0
 			}) as ui.IWidgeter
 		]) as ui.IWidgeter
 	])

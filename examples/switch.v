@@ -11,7 +11,9 @@ mut:
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		window: 0
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height

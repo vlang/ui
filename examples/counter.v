@@ -12,7 +12,9 @@ mut:
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		window: 0
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -20,7 +22,7 @@ fn main() {
 		user_ptr: app
 	}, [
 		ui.row({
-			alignment: .top
+			alignment: .center
 			spacing: 5
 			stretch : true
 			margin: ui.MarginConfig{5,5,5,5}
@@ -35,6 +37,7 @@ fn main() {
 			ui.button({
 				text: 'Count'
 				onclick: btn_count_click
+				ref: 0
 			})
 		]) as ui.IWidgeter
 	])

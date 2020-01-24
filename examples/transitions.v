@@ -19,6 +19,7 @@ mut:
 fn main() {
 	mut app := &App{
 		state: 0
+		window: 0
 	}
 	window := ui.window({
 		width: win_width
@@ -34,6 +35,7 @@ fn main() {
 			ui.button({
 				text: 'Slide'
 				onclick: btn_toggle_click
+				ref: 0
 			}) as ui.IWidgeter,
 			ui.picture({
 				width: picture_width_and_height

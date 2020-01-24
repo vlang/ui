@@ -9,13 +9,13 @@ struct App {
 mut:
     txt_box_celsius ui.TextBox
     txt_box_fahrenheit ui.TextBox
-    lbl_fahrenheit &ui.Label
-    lbl_celsius &ui.Label
     window     &ui.Window
 }
 
 fn main() {
-    mut app := &App{}
+    mut app := &App{
+        window: 0
+    }
     window := ui.window({
         width: win_width
         height: win_height
@@ -30,6 +30,7 @@ fn main() {
         }, [
             ui.label({
                 text: 'Celsius = '
+                ref: 0
             }) as ui.IWidgeter, 
             ui.textbox({
                 width: 70
@@ -39,6 +40,7 @@ fn main() {
             }),
 			ui.label({
                 text: 'Fahrenheit'
+                ref: 0
             }),
             ui.textbox({
                 width: 70
