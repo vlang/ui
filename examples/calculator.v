@@ -10,9 +10,9 @@ const (
 
 struct App {
 mut:
-	txtbox     &ui.TextBox
+	txtbox     ui.TextBox
 	window     &ui.Window
-	btns       []&ui.Button
+	rows       []&ui.ILayouter
 	result     f64
 	is_float   bool
 	new_number bool
@@ -21,32 +21,39 @@ mut:
 }
 
 fn main() {
-	ops := ['C', ' ', ' ', '÷',
-	'7', '8', '9', '*',
-	'4', '5', '6', '-',
-	'1', '2', '3', '+',
-	'0', '.', '±', '=']
+	ops := [
+		['C', '%', '^', '÷'],
+		['7', '8', '9', '*'],
+		['4', '5', '6', '-'],
+		['1', '2', '3', '+'],
+		['0', '.', '±', '=']
+		]
 	mut app := &App{
-		txtbox: 0
 		window: 0
 	}
-	app.window = ui.new_window({
+	mut children := [
+		ui.IWidgeter(ui.textbox({
+			placeholder: '0'
+			width: 135
+			read_only: true
+			ref: &app.txtbox
+		}))
+	]
+	for i, op in ops {
+		children << ui.row({spacing: 5}, get_row(op))
+	}
+	app.window = ui.window({
 		width: 145
 		height: 210
 		title: 'V Calc'
 		user_ptr: app
-	})
-	app.txtbox = ui.new_textbox({
-		placeholder: '0'
-		parent: app.window
-		width: 135
-		x: 5
-		y: 5
-		read_only: true
-	})
-	for i, op in ops {
-		app.add_button(op, i)
-	}
+	}, [
+		ui.column({
+			stretch: true
+			margin: ui.MarginConfig{5,5,5,5}
+			spacing: 5
+		}, children) as ui.IWidgeter
+	])
 	ui.run(app.window)
 }
 
@@ -181,7 +188,21 @@ fn (app mut App) calculate() {
 	// eprintln('-------- result: $result | i: $i -------------------')
 }
 
-fn (app mut App) add_button(text string, button_idx int) {
+fn get_row(ops []string) []ui.IWidgeter {
+	mut children := []ui.IWidgeter
+	for op in ops {
+		if op == ' ' {continue}
+		children << ui.IWidgeter(ui.button({
+			text: op
+			onclick: btn_click
+			width: bwidth
+			height: bheight
+		}))
+	}
+	return children
+}
+
+/* fn (app mut App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
 	x := bpadding + (button_idx % buttons_per_row) * (bwidth + bpadding)
 	y := bpadding + bheight + (button_idx / buttons_per_row) * (bwidth + bpadding)
@@ -198,3 +219,4 @@ fn (app mut App) add_button(text string, button_idx int) {
 		})
 	}
 }
+ */

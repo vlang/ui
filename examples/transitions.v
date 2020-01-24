@@ -1,5 +1,3 @@
-module main
-
 import ui
 import os
 
