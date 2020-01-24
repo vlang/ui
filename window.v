@@ -55,6 +55,7 @@ pub:
 }
 
 pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
+	fpath := system_font_path()
 	gcontext := gg.new_context(gg.Cfg{
 		width: cfg.width
 		height: cfg.height
@@ -75,7 +76,7 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 			font_size: default_font_size
 			scale: scale
 			window_user_ptr: 0
-			font_path: system_font_path()
+			font_path: fpath
 		})
 		clipboard: clipboard.new()
 	}
