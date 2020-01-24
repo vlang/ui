@@ -385,6 +385,7 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 		return true
 	}
 	if mods == .shift {
+		if (key == .left && sel_start == 0 && sel_end > 0) || (key == .right && sel_end == t.text.len ) {return true}
 		if sel_start <= 0 {
 			sel_end = t.cursor_pos
 			sel_start = if key == .left { t.cursor_pos - 1 } else {t.cursor_pos + 1}
@@ -445,6 +446,10 @@ fn tb_click(t mut TextBox, e &MouseEvent) {
 		t.dragging = false
 		return
 	}
+	if !t.dragging && e.action == 1 {
+		t.sel_start = 0
+		t.sel_end = 0
+	}
 	t.dragging = e.action == 1
 	t.ui.show_cursor = true
 	t.focus()
@@ -472,13 +477,10 @@ fn tb_click(t mut TextBox, e &MouseEvent) {
 }
 
 pub fn (t mut TextBox) focus() {
-	end := t.sel_end
-	start := t.sel_start
+	if t.is_focused {return}
 	parent := t.parent
 	parent.unfocus_all()
 	t.is_focused = true
-	t.sel_end = end
-	t.sel_start = start
 }
 
 fn (t &TextBox) is_focused() bool {
