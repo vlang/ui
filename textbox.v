@@ -367,25 +367,30 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 	mut sel_end := if t.sel_direction == .right_to_left {t.sel_end} else {t.sel_start}
 	
 	if mods == .shift + .ctrl {
-		sel_end = t.cursor_pos
 		mut i := t.cursor_pos
 		if sel_start > 0 {
 			i = if key == .left { sel_start - 1 } else { sel_start + 1}
+		} else if sel_start == 0 && sel_end > 0 {
+			i = 0
+		} else {
+			t.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
 		}
+		sel_end = t.cursor_pos
 		for {
 			if key == .left && i > 0 {
 				i--
 			} else if key == .right && i < t.text.len {
 				i++
 			}
-			if t.text[i].is_white() {
-				sel_start = if key == .left { i + 1 } else {i - 1}
-				break
-			} else if i == 0 {
+			 if i == 0 {
 				sel_start = 0
 				break
 			} else if i == t.text.len {
 				sel_start = t.text.len
+				break
+			} else if t.text[i].is_white() {
+				sel_start = if t.sel_direction == .right_to_left { i + 1 } else {i}
+				break
 			}
 		}
 		t.set_sel(sel_start, sel_end, key)
@@ -398,11 +403,7 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 			sel_start = if key == .left { t.cursor_pos - 1 } else {t.cursor_pos + 1}
 			t.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
 		} else {
-			if t.sel_direction == .right_to_left {
-				sel_start = if key == .left { sel_start - 1 } else { sel_start + 1 }
-			} else {
-				sel_start = if key == .left { sel_start - 1 } else { sel_start + 1}
-			}
+			sel_start = if key == .left { sel_start - 1 } else { sel_start + 1}
 		}
 		t.set_sel(sel_start, sel_end, key)
 		return true
