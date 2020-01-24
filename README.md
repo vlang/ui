@@ -10,26 +10,26 @@
 
 ```v
 ui.window({
-    width: 600
+    width:  600
     height: 400
-    title: 'V UI Demo'
+    title:  'V UI Demo'
 }, [
     ui.row({
         stretch: true
-        margin: {10, 10, 10, 10}
+        margin:  {10, 10, 10, 10}
     }, [
         ui.column({
-            width: 200
+            width:   200
             spacing: 13
         }, [
             ui.textbox({
-                max_len: 20
-                width: 200
+                max_len:     20
+                width:       200
                 placeholder: 'First name'
             })
             ui.textbox({
-                max_len: 50
-                width: 200
+                max_len:     50
+                width:       200
                 placeholder: 'Last name'
             })
         )
@@ -52,8 +52,6 @@ v run temperature.v
 v run ...
 ```
 
-Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward. 
-
 **NOTE : This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
@@ -63,7 +61,6 @@ are drawn by V UI. Right now only the non-native widgets are available.
 
 This is a very early version of the library, lots of features are missing, lots of things will change.
 
-
 The API is declarative, and there will be hot reloading, similar to SwiftUI and Flutter.
 
 On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
@@ -71,6 +68,8 @@ On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 [0.1 roadmap](https://github.com/vlang/ui/issues/31)
 
 Discord: [`#v-ui` channel](https://discord.gg/pDEXKTe0)
+
+Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward. 
 
 ### Dependencies
 
