@@ -112,7 +112,7 @@ fn (t &Radio) point_inside(x, y f64) bool {
 }
 
 fn radio_click(r mut Radio, e &MouseEvent) {
-	if !r.point_inside(e.x, e.y) && e.action != 0 {
+	if !r.point_inside(e.x, e.y) {
 		return
 	}
 	// println('e.y=$e.y r.y=$r.y')
