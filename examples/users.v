@@ -1,5 +1,3 @@
-module main
-
 import ui
 import gx
 import os
@@ -22,68 +20,20 @@ struct User {
 
 struct App {
 mut:
-	first_name &ui.TextBox
-	last_name  &ui.TextBox
-	age        &ui.TextBox
-	password   &ui.TextBox
-	pbar       &ui.ProgressBar
+	first_name ui.TextBox
+	last_name  ui.TextBox
+	age        ui.TextBox
+	password   ui.TextBox
+	pbar       ui.ProgressBar
 	users      []User
 	window     &ui.Window
-	label      &ui.Label
-	country    &ui.Radio
+	label      ui.Label
+	country    ui.Radio
 	txt_pos    int
 }
 
 fn main() {
-	mut window := ui.new_window({
-		width: win_width
-		height: win_height
-		title: 'V UI Demo'
-	})
-
 	mut app := &App{
-		first_name: ui.new_textbox({
-			max_len: 20
-			x: 20
-			y: 20
-			width: 200
-			placeholder: 'First name'
-			parent: window
-		})
-		last_name: ui.new_textbox({
-			max_len: 50
-			x: 20
-			y: 50
-			width: 200
-			placeholder: 'Last name'
-			parent: window
-		})
-		age: ui.new_textbox({
-			max_len: 3
-			x: 20
-			y: 80
-			width: 200
-			placeholder: 'Age'
-			parent: window
-			is_numeric: true
-		})
-		password: ui.new_textbox({
-			x: 20
-			y: 110
-			width: 200
-			placeholder: 'Password'
-			parent: window
-			is_password: true
-			max_len: 20
-		})
-		pbar: ui.new_progress_bar({
-			parent: window
-			x: 20
-			y: 350
-			width: 200
-			max: 10
-			val: 2
-		})
 		users: [
 			User{
 				first_name: 'Sam'
@@ -98,75 +48,112 @@ fn main() {
 				country: 'Canada'
 			}
 		]
-		window: window
-		label: ui.new_label({
-			parent: window
-			x: 230
-			y: 350
-			text: '2/10'
-		})
-		country: ui.new_radio({
-			parent: window
-			x: 20
-			width: 200
-			y: 200
-			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-			title: 'Country'
-		})
 	}
-	window.user_ptr = app
-
-	ui.new_checkbox({
-		parent: window
-		x: 20
-		y: 140
-		checked: true
-		text: 'Online registration'
-	})
-	ui.new_checkbox({
-		parent: window
-		x: 20
-		y: 165
-		text: 'Subscribe to the newsletter'
-	})
-	ui.new_button({
-		x: 20
-		y: 320
-		parent: window
-		text: 'Add user'
-		onclick: btn_add_click
-	})
-	ui.new_button({
-		x: 187
-		y: 320
-		parent: window
-		text: '?'
-		onclick: btn_help_click
-	})
-	ui.new_canvas({
-		parent: window
-		x: 250
-		y: 20
-		draw_fn:canvas_draw
-	})
-	ui.new_menu({
-		parent: window
-		x: 250
-		y: 20
-		items: [
-			ui.MenuItem{'Delete all users', menu_click},
-			ui.MenuItem{'Export users', menu_click},
-			ui.MenuItem{'Exit', menu_click},
-		]
-	})
-	ui.new_picture({
-		parent: window
-		x: win_width - 100
-		y: win_height - 100
-		width: 100
-		height: 100
-		path: os.resource_abs_path( 'logo.png' )
-	})
+	window := ui.window({
+		width: win_width
+		height: win_height
+		user_ptr: app
+		title: 'V UI Demo'
+	}, [
+		ui.row({
+			stretch: true,
+			margin: ui.MarginConfig{10,10,10,10}
+		}, [
+			ui.column({
+				width: 200
+				spacing: 13
+			}, [
+				ui.textbox({
+					max_len: 20
+					width: 200
+					placeholder: 'First name'
+					ref: &app.first_name
+				}) as ui.IWidgeter,
+				ui.textbox({
+					max_len: 50
+					width: 200
+					placeholder: 'Last name'
+					ref: &app.last_name
+				}),
+				ui.textbox({
+					max_len: 3
+					width: 200
+					placeholder: 'Age'
+					is_numeric: true
+					ref: &app.age
+				}),
+				ui.textbox({
+					width: 200
+					placeholder: 'Password'
+					is_password: true
+					max_len: 20
+					ref: &app.password
+				}),
+				ui.checkbox({
+					checked: true
+					text: 'Online registration'
+				}),
+				ui.checkbox({
+					text: 'Subscribe to the newsletter'
+				}),
+				ui.radio({
+					width: 200
+					values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+					title: 'Country'
+					ref: &app.country
+				}),
+				ui.row({
+					spacing: 85
+				}, [
+					ui.button({
+						text: 'Add user'
+						onclick: btn_add_click
+					}) as ui.IWidgeter,
+					ui.button({
+						text: '?'
+						onclick: btn_help_click
+					})
+				]),
+				ui.row({
+					spacing: 5
+					alignment: .center
+				}, [
+					ui.progressbar({
+						width: 170
+						max: 10
+						val: 2
+						ref: &app.pbar
+					}) as ui.IWidgeter,
+					ui.label({
+						text: '2/10'
+						ref: &app.label
+					})
+				])
+			]) as ui.IWidgeter,
+			ui.column({
+				stretch: true
+				alignment: .right
+			},[
+				ui.canvas({
+					height: 275
+					draw_fn:canvas_draw
+				}) as ui.IWidgeter,
+				ui.picture({
+					width: 100
+					height: 100
+					path: os.resource_abs_path( 'logo.png' )
+				})
+			])
+		]) as ui.IWidgeter,
+		ui.menu({
+			items: [
+				ui.MenuItem{'Delete all users', menu_click},
+				ui.MenuItem{'Export users', menu_click},
+				ui.MenuItem{'Exit', menu_click},
+			]
+		})
+	])
+	app.window = window
 	ui.run(window)
 }
 
@@ -207,7 +194,7 @@ fn btn_add_click(app mut App) {
 fn canvas_draw(app &App) {
 	gg := app.window.ui.gg
 	mut ft := app.window.ui.ft
-	x := 280
+	x := 240
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
 		y := 20 + i * cell_height

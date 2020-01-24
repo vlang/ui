@@ -14,12 +14,11 @@ const (
 
 pub struct ProgressBar {
 pub mut:
-	idx        int
 	height     int
 	width      int
 	x          int
 	y          int
-	parent     &ui.Window
+	parent ILayouter
 	ui         &UI
 	val        int
 	min        int
@@ -28,31 +27,50 @@ pub mut:
 }
 
 pub struct ProgressBarConfig {
-	x      int
-	y      int
 	width  int
 	height int=16
 	min    int
 	max    int
 	val    int
-	parent &ui.Window
+	ref		&ProgressBar
 }
 
-pub fn new_progress_bar(c ProgressBarConfig) &ProgressBar {
+fn (pb mut ProgressBar)init(p &ILayouter) {
+	parent := *p
+	pb.parent = parent
+	ui := parent.get_ui()
+	pb.ui = ui
+}
+
+pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 	mut p := &ProgressBar{
 		height: c.height
 		width: c.width
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
-		idx: c.parent.children.len
 		min: c.min
 		max: c.max
 		val: c.val
 	}
-	p.parent.children << p
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *p
+		return &ref
+	}
 	return p
+}
+
+fn (b mut ProgressBar) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut ProgressBar) propose_size(w, h int) (int, int) {
+	/* b.width = w
+	b.height = h
+	return w, h */
+	if b.width == 0 {
+		b.width = w
+	}
+	return b.width, b.height
 }
 
 fn (b &ProgressBar) draw() {
@@ -65,30 +83,15 @@ fn (b &ProgressBar) draw() {
 	b.ui.gg.draw_rect(b.x, b.y, width, b.height, progress_bar_color) // gx.Black)
 }
 
-fn (b &ProgressBar) key_down(e KeyEvent) {}
-
 fn (t &ProgressBar) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
-}
-
-fn (b &ProgressBar) click(e MouseEvent) {
-}
-fn (b &ProgressBar) mouse_move(e MouseEvent) {
+	return false//x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
 fn (b &ProgressBar) focus() {
 }
 
-fn (b &ProgressBar) idx() int {
-	return b.idx
-}
-
 fn (t &ProgressBar) is_focused() bool {
 	return t.is_focused
-}
-
-fn (t &ProgressBar) typ() WidgetType {
-	return .progress_bar
 }
 
 fn (b &ProgressBar) unfocus() {

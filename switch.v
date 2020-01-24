@@ -13,7 +13,7 @@ const (
 	sw_close_bg_color = gx.rgb(220, 223, 230)
 )
 
-type SwitchClickFn fn()
+type SwitchClickFn fn(voidptr, voidptr)
 
 pub struct Switch {
 pub mut:
@@ -22,7 +22,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent     &ui.Window
+	parent     ILayouter
 	is_focused bool
 	open bool
 	ui         &UI
@@ -30,27 +30,36 @@ pub mut:
 }
 
 pub struct SwitchConfig {
-	x       int
-	y       int
-	parent  &ui.Window
 	onclick SwitchClickFn
 	open bool
 }
 
-pub fn new_switch(c SwitchConfig) &Switch {
+fn (s mut Switch) init(p &ILayouter){
+	parent := *p
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, sw_click, s)
+}
+
+pub fn switcher(c SwitchConfig) &Switch {
 	mut sw := &Switch{
 		height: sw_height
 		width: sw_width
 		open:c.open
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
-		idx: c.parent.children.len
 		onclick: c.onclick
 	}
-	sw.parent.children << sw
 	return sw
+}
+
+fn (b mut Switch) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut Switch) propose_size(w, h int) (int, int) {
+	return b.width, b.height
 }
 
 fn (b mut Switch) draw() {
@@ -64,19 +73,18 @@ fn (b mut Switch) draw() {
 	}
 }
 
-fn (b &Switch) key_down(e KeyEvent) {}
-
 fn (t &Switch) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn (b mut Switch) click(e MouseEvent) {
+fn sw_click(b mut Switch, e &MouseEvent, w &ui.Window) {
 	if e.action == 0 {
 		b.open = !b.open
+		if b.onclick != 0 {
+			b.onclick(w.user_ptr, b)
+		}
 	}
 }
-
-fn (b mut Switch) mouse_move(e MouseEvent) {}
 
 fn (b mut Switch) focus() {
 	b.is_focused = true
@@ -84,14 +92,6 @@ fn (b mut Switch) focus() {
 
 fn (b mut Switch) unfocus() {
 	b.is_focused = false
-}
-
-fn (b &Switch) idx() int {
-	return b.idx
-}
-
-fn (t &Switch) typ() WidgetType {
-	return .switch_box
 }
 
 fn (t &Switch) is_focused() bool {

@@ -14,19 +14,15 @@ const (
 pub struct Menu {
 mut:
 	text   string
-	parent &ui.Window
+	parent ILayouter
 	x      int
 	y      int
-	idx    int
 	ui     &UI
 	items []MenuItem
 	visible bool
 }
 
 pub struct MenuConfig {
-	x      int
-	y      int
-	parent &ui.Window
 	text   string
 	items []MenuItem
 }
@@ -38,17 +34,28 @@ pub struct MenuItem {
 	action MenuFn
 }
 
-pub fn new_menu(c MenuConfig) &Menu {
-	mut l := &Menu{
+fn (m mut Menu)init(p &ILayouter) {
+	parent := *p
+	ui := parent.get_ui()
+	m.ui = ui
+}
+
+pub fn menu(c MenuConfig) &Menu {
+	return &Menu {
 		text: c.text
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
 		items: c.items
 	}
-	l.parent.children << l
-	return l
+}
+
+fn (b mut Menu) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (b mut Menu) propose_size(w, h int) (int, int) {
+	//b.width = w
+	//b.height = h
+	return 0,0
 }
 
 fn (m mut Menu) draw() {
@@ -63,30 +70,12 @@ fn (m mut Menu) draw() {
 	}
 }
 
-pub type MenuClickFn fn()
-
 pub fn (m mut Menu) add_item(text string, action MenuFn) {
 	m.items << MenuItem{text:text, action: action}
 
 }
 
-fn (t &Menu) key_down(e KeyEvent) {}
-
-fn (t &Menu) click(e MouseEvent) {
-}
-
-fn (t &Menu) mouse_move(e MouseEvent) {
-}
-
 fn (t &Menu) focus() {}
-
-fn (t &Menu) idx() int {
-	return t.idx
-}
-
-fn (t &Menu) typ() WidgetType {
-	return .menu
-}
 
 fn (t &Menu) is_focused() bool {
 	return false

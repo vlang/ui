@@ -1,5 +1,3 @@
-module main
-
 import ui
 
 const (
@@ -9,36 +7,38 @@ const (
 
 struct App {
 mut:
-	counter &ui.TextBox
-	window     &ui.Window
+	counter ui.TextBox
+	window  &ui.Window
 }
 
 fn main() {
 	mut app := &App{}
-	window := ui.new_window({
+	window := ui.window({
 		width: win_width
 		height: win_height
 		title: 'Counter'
 		user_ptr: app
-	})
-	app.counter = ui.new_textbox({
-		max_len: 20
-		width: 100
-		x: 12
-		y: 14
-		read_only: true
-		is_numeric: true
-		text: '0'
-		parent: window
-	})
+	}, [
+		ui.row({
+			alignment: .top
+			spacing: 5
+			stretch : true
+			margin: ui.MarginConfig{5,5,5,5}
+		}, [
+			ui.textbox({
+				max_len: 20
+				read_only: true
+				is_numeric: true
+				text: '0'
+				ref: &app.counter
+			}) as ui.IWidgeter,
+			ui.button({
+				text: 'Count'
+				onclick: btn_count_click
+			})
+		]) as ui.IWidgeter
+	])
 
-	ui.new_button({
-		x: 121
-		y: 14
-		parent: window
-		text: 'Count'
-		onclick: btn_count_click
-	})
 	app.window = window
 	ui.run(window)
 }

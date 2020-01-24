@@ -6,68 +6,71 @@ module ui
 import os
 import gg
 
-struct Picture {
+pub struct Picture {
 mut:
 	text    string
-	parent  &ui.Window
+	parent ILayouter
 	x       int
 	y       int
+	offset_x int
+	offset_y int
 	width   int
 	height  int
-	idx     int
+	path	string
 	ui      &UI
 	texture u32
 }
 
 pub struct PictureConfig {
-	x      int
-	y      int
-	parent &ui.Window
 	path   string
 	width  int
 	height int
+	ref		&Picture
 }
 
-pub fn new_picture(c PictureConfig) &Picture {
+fn (pic mut Picture)init(p &ILayouter) {
+	parent := *p
+	ui := parent.get_ui()
+	pic.ui = ui
+	pic.texture = gg.create_image(pic.path)
+}
+
+pub fn picture(c PictureConfig) &Picture {
 	if !os.exists(c.path) {
 		println('V UI: picture file "$c.path" not found')
 	}
 	mut pic := &Picture{
-		x: c.x
-		y: c.y
 		width: c.width
 		height: c.height
-		parent: c.parent
-		ui: c.parent.ui
+		path:   c.path
 	}
-	pic.parent.children << pic
-	pic.texture = gg.create_image(c.path)
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *pic
+		return &ref
+	}
 	return pic
+}
+
+fn (b mut Picture) set_pos(x, y int) {
+	b.x = x + b.offset_x
+	b.y = y + b.offset_y
+}
+
+fn (b mut Picture) propose_size(w, h int) (int, int) {
+	//b.width = w
+	//b.height = h
+	return b.width, b.height
 }
 
 fn (b mut Picture) draw() {
 	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
 }
 
-fn (t &Picture) key_down(e KeyEvent) {}
-
-fn (t &Picture) click(e MouseEvent) {
-}
-fn (t &Picture) mouse_move(e MouseEvent) {
-}
-
 fn (t &Picture) focus() {}
-
-fn (t &Picture) idx() int {
-	return t.idx
-}
 
 fn (t &Picture) is_focused() bool {
 	return false
-}
-
-fn (t &Picture) typ() WidgetType {
-	return .picture
 }
 
 fn (t &Picture) unfocus() {}

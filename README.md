@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/commits/master)
 <a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fvlang%2Fpledges&style=for-the-badge' height='20'></a>
-[![Twitter handle][]][Twitter badge]
+[![Twitter handle][]][twitter badge]
 
 <a href='https://github.com/vlang/ui/blob/master/examples/users.v'>
 <img src='https://raw.githubusercontent.com/vlang/ui/c2f802a137b5171dade1d5fdc364cd92d34e3ca7/examples/users/screenshot.png' width=712>
@@ -30,7 +30,7 @@ Documentation will be available soon. In the meantime use the examples as the do
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
 for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM). V UI
 uses native widgets on Windows and macOS, on all other platforms the widgets
-are drawn by V UI.  Right now only the non-native widgets are available.
+are drawn by V UI. Right now only the non-native widgets are available.
 
 This is a very early version of the library, lots of features are missing
 (layouts, certain widgets, etc), lots of things will change.
@@ -78,6 +78,5 @@ licenses. At some point in the future the library will be relicensed under MIT.
 
 After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution.
 
-
-[Twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
-[Twitter badge]: https://twitter.com/v_language
+[twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
+[twitter badge]: https://twitter.com/v_language

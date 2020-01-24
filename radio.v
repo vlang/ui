@@ -16,7 +16,6 @@ type RadioClickFn fn()
 
 pub struct Radio {
 pub mut:
-	idx            int
 	selected_index int
 	values         []string
 	// state      RadioState
@@ -25,7 +24,7 @@ pub mut:
 	width          int
 	x              int
 	y              int
-	parent         &ui.Window
+	parent ILayouter
 	is_focused     bool
 	is_checked     bool
 	ui             &UI
@@ -34,41 +33,58 @@ pub mut:
 }
 
 pub struct RadioConfig {
-	x      int
-	y      int
-	parent &ui.Window
 	// onclick    RadioClickFn
 	values []string
 	title  string
 	width  int
+	ref		&Radio
 }
 
-pub fn new_radio(c RadioConfig) &Radio {
+fn (r mut Radio)init(p &ILayouter) {
+	parent := *p
+	r.parent = parent
+	ui := parent.get_ui()
+	r.ui = ui
+	// Get max value text width
+	if r.width == 0 {
+		mut max := 0
+		for value in r.values {
+			width := r.ui.ft.text_width(value)
+			if width > max {
+				max = width
+			}
+		}
+		r.width = max + check_mark_size + 10
+	}
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, radio_click, r)
+}
+
+pub fn radio(c RadioConfig) &Radio {
 	mut cb := &Radio{
 		height: 20
-		x: c.x
-		y: c.y
-		parent: c.parent
-		ui: c.parent.ui
-		idx: c.parent.children.len
 		values: c.values
 		title: c.title
 		width: c.width
 		// onclick: c.onclick
 	}
-	// Get max value text width
-	if cb.width == 0 {
-		mut max := 0
-		for value in cb.values {
-			width := cb.ui.ft.text_width(value)
-			if width > max {
-				max = width
-			}
-		}
-		cb.width = max + check_mark_size + 10
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *cb
+		return &ref
 	}
-	cb.parent.children << cb
 	return cb
+}
+
+fn (b mut Radio) set_pos(x, y int) {
+	b.x = x
+	b.y = y
+}
+
+fn (cb mut Radio) propose_size(w, h int) (int, int) {
+	//b.width = w
+	//b.height = 20//default_font_size
+	return cb.width, cb.values.len * (cb.height + 5)
 }
 
 fn (b mut Radio) draw() {
@@ -91,23 +107,21 @@ fn (b mut Radio) draw() {
 	}
 }
 
-fn (b &Radio) key_down(e KeyEvent) {}
-
 fn (t &Radio) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + (t.height + 5) * t.values.len
 }
 
-fn (r mut Radio) click(e MouseEvent) {
-	if e.action != 0 {
+fn radio_click(r mut Radio, e &MouseEvent) {
+	if !r.point_inside(e.x, e.y) && e.action != 0 {
 		return
 	}
 	// println('e.y=$e.y r.y=$r.y')
 	y := e.y - r.y
 	r.selected_index = (y) / (r.height + 5)
+	if r.selected_index == r.values.len {
+		r.selected_index = r.values.len - 1
+	}
 	//println(r.selected_index)
-}
-
-fn (r &Radio) mouse_move(e MouseEvent) {
 }
 
 fn (b mut Radio) focus() {
@@ -116,14 +130,6 @@ fn (b mut Radio) focus() {
 
 fn (b mut Radio) unfocus() {
 	b.is_focused = false
-}
-
-fn (b &Radio) idx() int {
-	return b.idx
-}
-
-fn (t &Radio) typ() WidgetType {
-	return .radio
 }
 
 pub fn (r &Radio) selected_value() string {
