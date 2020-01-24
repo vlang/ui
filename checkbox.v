@@ -37,12 +37,10 @@ pub mut:
 }
 
 pub struct CheckBoxConfig {
-	x       int
-	y       int
-	parent ILayouter
 	text    string
 	on_check_changed CheckChangedFn
 	checked bool
+	ref		&CheckBox
 }
 
 fn (cb mut CheckBox)init(p &ILayouter) {
@@ -62,6 +60,11 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		text: c.text
 		on_check_changed: c.on_check_changed
 		checked: c.checked
+	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *cb
+		return ref
 	}
 	return cb
 }

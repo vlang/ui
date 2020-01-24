@@ -31,11 +31,11 @@ pub struct ButtonConfig {
 	onclick ButtonClickFn
 	height  int = 20
 	width   int
+	ref		&Button
 }
 
 pub struct Button {
 pub mut:
-	
 	state      ButtonState
 	height     int
 	width      int
@@ -66,6 +66,11 @@ pub fn button(c ButtonConfig) &Button {
 		height: c.height
 		text: c.text
 		onclick: c.onclick
+	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *b
+		return &ref
 	}
 	return b
 }

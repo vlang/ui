@@ -41,6 +41,7 @@ pub struct DropdownConfig {
 	items []DropdownItem
 	selected_index int = -1
 	on_selection_changed SelectionChangedFn
+	ref		&Dropdown
 }
 
 pub struct DropdownItem {
@@ -65,6 +66,11 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
 		def_text: c.def_text
+	}
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *dd
+		return ref
 	}
 	return dd
 }
