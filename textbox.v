@@ -249,6 +249,19 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &ui.Window ) {
 					t.cursor_pos = t.sel_start
 					t.sel_start = 0
 					t.sel_end = 0
+				} else if e.mods in [.super, .ctrl] {
+					// Delete until previous whitespace
+					mut i := t.cursor_pos
+					for {
+						if i > 0 {
+							i--
+						}
+						if t.text[i].is_white() || i == 0 {
+							t.text = u.left(i) + u.right(t.cursor_pos)
+							break
+						}
+					}
+					t.cursor_pos = i
 				} else {
 					// Delete just one character
 					t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
