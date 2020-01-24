@@ -24,6 +24,7 @@ pub enum KeyMod {
 	shift = 1
 	alt = 4
 	super = 8
+	ctrl = 2
 }
 
 pub enum KeyState {
