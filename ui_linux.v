@@ -6,16 +6,13 @@ module ui
 import sync
 
 pub fn message_box(s string) {
-	eprintln('message_box start')
 	mut message_app := &MessageApp{
 		window: 0
 		waitgroup: sync.new_waitgroup()
 	}
 	message_app.waitgroup.add(1)
 	go run_message_dialog( message_app, s)
-	eprintln('message_box waiting for thread end')
 	message_app.waitgroup.wait()
-	eprintln('message_box finish')
 }
 
 /////////////////////////////////////////////////////////////
