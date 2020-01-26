@@ -35,9 +35,30 @@ mut:
 fn run_message_dialog(message_app mut MessageApp, s string){
 	// run_message_dialog is run in a separate thread
 	// and will block until the dialog window is closed
+	text_lines := word_wrap_to_lines(s, 70)
+	mut height := 40
+	mut widgets := [
+		// TODO: add hspace and vspace separators
+		ui.IWidgeter( ui.label({
+			text: ''
+		}))
+	]
+	for tline in text_lines {
+		widgets << 	ui.IWidgeter( ui.label({
+			text: tline
+		}))
+		height += 14
+	}
+	widgets << ui.IWidgeter( ui.label({
+		text: ' '
+	}))
+	widgets << ui.button({
+		text: 'OK'
+		onclick: btn_message_ok_click
+	})
 	message_app.window = window({
-		width: 340
-		height: 65
+		width: 400
+		height: height
 		title: 'Message box'
 		bg_color: default_window_color
 		user_ptr: message_app
@@ -45,20 +66,8 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 			IWidgeter(column({
 				stretch: true
 				alignment: .center
-				margin: ui.MarginConfig{10,10,10,10}
-				},[
-					ui.IWidgeter( ui.label({
-						text: s
-					})),
-					// TODO: add hspace and vspace separators
-					ui.IWidgeter( ui.label({
-						text: ' '
-					})),
-					ui.button({
-						text: 'OK'
-						onclick: btn_message_ok_click
-					}),
-				])
+				margin: ui.MarginConfig{5,5,5,5}
+				}, widgets)
 			)
 		])
 	ui.run(message_app.window)
@@ -67,4 +76,27 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 
 fn btn_message_ok_click(app mut MessageApp) {
 	app.window.glfw_obj.set_should_close(true)
+}
+
+fn word_wrap_to_lines(s string, max_line_length int) []string {
+	words := s.split(' ')
+	mut line := []string
+	mut line_len := 0
+	mut text_lines := []string
+	for word in words {
+		if line_len + word.len < max_line_length {
+			line << word
+			line_len += word.len + 1
+			continue
+		} else {
+			text_lines << line.join(' ')
+			line = []
+			line_len = 0
+		}
+	}
+	if line_len>0{
+		text_lines << line.join(' ')
+	}
+	eprintln( text_lines.str() )
+	return text_lines
 }
