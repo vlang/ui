@@ -25,6 +25,7 @@ mut:
 	down_arrow           u32
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
+	closed bool = false
 }
 
 pub enum VerticalAlignment {
@@ -102,21 +103,37 @@ fn init() {
 	stbi.set_flip_vertically_on_load(true)
 }
 
-fn (ui mut UI) loop() {
+fn (ui mut UI) idle_loop() {
+	// This method is called by window.run to ensure
+	// that the window will be redrawn slowly, and that
+	// the cursor will blink at a rate of 1Hz, even if
+	// there are no other user events.
 	for {
-		time.sleep_ms(500)
 		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
+		
+		// Sleeping for a monolithic block of 500ms means, that the thread
+		// in which this method is run, may react to the closing of a dialog
+		// 500ms after the button for closing the dialog/window was clicked.
+		// Instead, we sleep 50 times, for just 10ms each time, checking
+		// in between the sleeps, whether the dialog window had been closed.
+		// This guarantees that the thread will exit at most 10ms after the
+		// closing event.
+		for i:=0; i<50; i++ {
+			time.sleep_ms(10)
+			if ui.closed {
+				return
+			}
+		}
 	}
 }
-
 
 pub fn run(window ui.Window) {
 	mut ui := window.ui
 	ui.window = window
-	go ui.loop()
+	go ui.idle_loop()
 	for !window.glfw_obj.should_close() {
-		gg.clear(window.bg_color)//default_window_color)
+		gg.clear(window.bg_color) //default_window_color
 		// The user can define a custom drawing function for the entire window (advanced mode)
 		if window.draw_fn != 0 {
 			window.draw_fn(window.user_ptr)
@@ -133,6 +150,12 @@ pub fn run(window ui.Window) {
 		}
 		ui.gg.render()
 	}
+	ui.window.glfw_obj.destroy()
+	ui.closed = true
+	// the ui.idle_loop thread checks every 10 ms if ui.closed is true;
+	// waiting 2x this time should be enough to ensure the ui.loop
+	// thread will exit before us, without using a waitgroup here too
+	time.sleep_ms(20)
 }
 
 
