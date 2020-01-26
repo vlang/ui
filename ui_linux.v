@@ -6,6 +6,15 @@ module ui
 import sync
 
 pub fn message_box(s string) {
+	// Running the message box dialog window
+	// in a new thread ensures that glfw's context 
+	// of the main window will not be messed up.
+	//
+	// We use a waitgroup to wait for the end of the thread,
+	// to ensure that message_box shows a modal dialog, i.e. that
+	// its behaviour is as close to the behaviour of the native 
+	// message box dialogs on other platforms.
+	//
 	mut message_app := &MessageApp{
 		window: 0
 		waitgroup: sync.new_waitgroup()
