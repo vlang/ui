@@ -118,7 +118,7 @@ pub fn run(window ui.Window) {
 	mut ui := window.ui
 	ui.window = window
 	go ui.loop()
-	for !window.glfw_obj.should_close() {		
+	for !window.glfw_obj.should_close() {
 		gg.clear(window.bg_color) //default_window_color
 		// The user can define a custom drawing function for the entire window (advanced mode)
 		if window.draw_fn != 0 {
@@ -134,13 +134,14 @@ pub fn run(window ui.Window) {
 			ui.redraw_requested = false
 			glfw.post_empty_event()
 		}
-		ui.gg.render()		
+		ui.gg.render()
 	}
 	ui.window.glfw_obj.destroy()
 	ui.closed = true
-	// the ui.loop thread checks every 10 ms if ui.closed is true; waiting 2x this time
-	// should be enough to ensure it will exit
-	time.sleep_ms(20) 
+	// the ui.loop thread checks every 10 ms if ui.closed is true;
+	// waiting 2x this time should be enough to ensure the ui.loop
+	// thread will exit before us, without using a waitgroup here too
+	time.sleep_ms(20)
 }
 
 

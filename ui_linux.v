@@ -41,6 +41,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 					ui.IWidgeter( ui.label({
 						text: s
 					})),
+					// TODO: add hspace and vspace separators
 					ui.IWidgeter( ui.label({
 						text: ' '
 					})),
@@ -48,7 +49,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 						text: 'OK'
 						onclick: btn_message_ok_click
 					}),
-					])
+				])
 			)
 		])
 	ui.run(message_app.window)
