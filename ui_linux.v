@@ -85,7 +85,6 @@ fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &ui.Window ) {
 		}
 		else {}
 	}
-	eprintln('e.key: $e.key')
 }
 
 fn msgbox_btn_ok_click(app mut MessageApp) {
