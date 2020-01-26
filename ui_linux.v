@@ -54,7 +54,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 	}))
 	widgets << ui.button({
 		text: 'OK'
-		onclick: btn_message_ok_click
+		onclick: msgbox_btn_ok_click
 	})
 	message_app.window = window({
 		width: 400
@@ -70,11 +70,25 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 				}, widgets)
 			)
 		])
+
+	mut subscriber := message_app.window.get_subscriber()
+	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
+
 	ui.run(message_app.window)
 	message_app.waitgroup.done()
 }
 
-fn btn_message_ok_click(app mut MessageApp) {
+fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &ui.Window ) {
+	match e.key {
+		.enter, .escape, .space {
+			app.window.glfw_obj.set_should_close(true)
+		}
+		else {}
+	}
+	eprintln('e.key: $e.key')
+}
+
+fn msgbox_btn_ok_click(app mut MessageApp) {
 	app.window.glfw_obj.set_should_close(true)
 }
 
@@ -97,6 +111,5 @@ fn word_wrap_to_lines(s string, max_line_length int) []string {
 	if line_len>0{
 		text_lines << line.join(' ')
 	}
-	eprintln( text_lines.str() )
 	return text_lines
 }
