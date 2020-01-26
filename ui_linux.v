@@ -3,34 +3,61 @@
 // that can be found in the LICENSE file.
 module ui
 
-/*
-#include <gtk/gtk.h>
-#flag `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`
-
-struct C.GtkWidget{}
-struct C.GtkDialog{}
-type Callback fn (voidptr)
-fn C.g_signal_connect_swapped(inst &GtkWidget, signal charptr, cb Callback, obj &GtkWidget)
-fn C.gtk_init(int, &charptr)
-fn C.gtk_main()
-fn C.gtk_main_quit()
-fn C.gtk_message_dialog_new(voidptr, int, int, int, charptr) &GtkWidget
-fn C.gtk_widget_show(w &GtkWidget)
-fn C.gtk_widget_destroy(w &GtkWidget)
-
-fn message_box_close(w &GtkWidget){
-	C.gtk_widget_destroy(w)
-	C.gtk_main_quit()
-}
-*/
+import sync
 
 pub fn message_box(s string) {
-	// TODO
-	/*
-	gtk_init(0, [''].data)
-	dialog := C.gtk_message_dialog_new( 0, C.GTK_DIALOG_DESTROY_WITH_PARENT, C.GTK_MESSAGE_INFO, C.GTK_BUTTONS_OK, s.str)
-	C.g_signal_connect_swapped( dialog, 'response'.str, message_box_close as Callback, dialog )
-	C.gtk_widget_show(dialog)
-	C.gtk_main()
-	*/
+	eprintln('message_box start')
+	mut message_app := &MessageApp{
+		window: 0
+		waitgroup: sync.new_waitgroup()
+	}
+	message_app.waitgroup.add(1)
+	go run_message_dialog( message_app, s)
+	eprintln('message_box waiting for thread end')
+	message_app.waitgroup.wait()
+	eprintln('message_box finish')
+}
+
+/////////////////////////////////////////////////////////////
+
+struct MessageApp{
+mut:
+	window  &ui.Window
+	waitgroup &sync.WaitGroup
+}
+
+fn run_message_dialog(message_app mut MessageApp, s string){
+	// run_message_dialog is run in a separate thread
+	// and will block until the dialog window is closed
+	message_app.window = window({
+		width: 340
+		height: 65
+		title: 'Message box'
+		bg_color: default_window_color
+		user_ptr: message_app
+		}, [
+			IWidgeter(column({
+				stretch: true
+				alignment: .center
+				margin: ui.MarginConfig{10,10,10,10}
+				},[
+					ui.IWidgeter( ui.label({
+						text: s
+					})),
+					ui.IWidgeter( ui.label({
+						text: ' '
+					})),
+					ui.button({
+						text: 'OK'
+						onclick: btn_message_ok_click
+					}),
+					])
+			)
+		])
+	ui.run(message_app.window)
+	message_app.waitgroup.done()
+}
+
+fn btn_message_ok_click(app mut MessageApp) {
+	app.window.glfw_obj.set_should_close(true)
 }

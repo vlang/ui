@@ -25,6 +25,7 @@ mut:
 	down_arrow           u32
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
+	closed bool = false
 }
 
 pub enum VerticalAlignment {
@@ -104,19 +105,21 @@ fn init() {
 
 fn (ui mut UI) loop() {
 	for {
-		time.sleep_ms(500)
 		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
+		for i:=0; i<50; i++ {
+			if ui.closed { return }
+			time.sleep_ms(10)
+		}
 	}
 }
-
 
 pub fn run(window ui.Window) {
 	mut ui := window.ui
 	ui.window = window
 	go ui.loop()
-	for !window.glfw_obj.should_close() {
-		gg.clear(window.bg_color)//default_window_color)
+	for !window.glfw_obj.should_close() {		
+		gg.clear(window.bg_color) //default_window_color
 		// The user can define a custom drawing function for the entire window (advanced mode)
 		if window.draw_fn != 0 {
 			window.draw_fn(window.user_ptr)
@@ -131,8 +134,13 @@ pub fn run(window ui.Window) {
 			ui.redraw_requested = false
 			glfw.post_empty_event()
 		}
-		ui.gg.render()
+		ui.gg.render()		
 	}
+	ui.window.glfw_obj.destroy()
+	ui.closed = true
+	// the ui.loop thread checks every 10 ms if ui.closed is true; waiting 2x this time
+	// should be enough to ensure it will exit
+	time.sleep_ms(20) 
 }
 
 
