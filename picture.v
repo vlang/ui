@@ -51,7 +51,7 @@ pub fn picture(c PictureConfig) &Picture {
 		width: c.width
 		height: c.height
 		path: c.path
-    use_cache: c.use_cache
+		use_cache: c.use_cache
 	}
 	if c.ref != 0 {
 		mut ref := c.ref
