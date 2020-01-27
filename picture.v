@@ -8,31 +8,39 @@ import gg
 
 pub struct Picture {
 mut:
-	text    string
-	parent ILayouter
-	x       int
-	y       int
-	offset_x int
-	offset_y int
-	width   int
-	height  int
-	path	string
-	ui      &UI
-	texture u32
+	text      string
+	parent    ILayouter
+	x         int
+	y         int
+	offset_x  int
+	offset_y  int
+	width     int
+	height    int
+	path      string
+	ui       &UI
+	texture   u32
+	use_cache bool
 }
 
 pub struct PictureConfig {
-	path   string
-	width  int
-	height int
-	ref		&Picture
+	path       string
+	width      int
+	height     int
+	use_cache  bool = true
+	ref       &Picture
 }
 
 fn (pic mut Picture)init(p &ILayouter) {
 	parent := *p
-	ui := parent.get_ui()
+	mut ui := parent.get_ui()
 	pic.ui = ui
-	pic.texture = gg.create_image(pic.path)
+	if !pic.use_cache && pic.path in ui.resource_cache {
+		pic.texture = ui.resource_cache[pic.path]
+	} else {
+		texture := gg.create_image(pic.path)
+		pic.texture = texture
+		ui.resource_cache[pic.path] = texture
+	}
 }
 
 pub fn picture(c PictureConfig) &Picture {
@@ -42,7 +50,8 @@ pub fn picture(c PictureConfig) &Picture {
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
-		path:   c.path
+		path: c.path
+		use_cache: c.use_cache
 	}
 	if c.ref != 0 {
 		mut ref := c.ref
