@@ -35,8 +35,7 @@ ui.window({
         )
    )
 ]);
-   
-````                        
+````
 ### Installation
 
 ```bash
@@ -90,6 +89,9 @@ sudo pacman -S glfw-x11 freetype2
 
 Fedora:
 sudo dnf install glfw glfw-devel freetype-devel
+
+ClearLinux:
+sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype devpkg-glfw3
 
 Windows:
 git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
