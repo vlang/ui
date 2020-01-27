@@ -12,6 +12,7 @@ pub enum Key {
 	backspace = 259
 	delete = 261
 	tab = 258
+	space = 32
 	key_v = 86
 	key_a = 65
 	enter = 257

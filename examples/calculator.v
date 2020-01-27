@@ -39,7 +39,7 @@ fn main() {
 			ref: &app.txtbox
 		}))
 	]
-	for i, op in ops {
+	for op in ops {
 		children << ui.row({spacing: 5}, get_row(op))
 	}
 	app.window = ui.window({
