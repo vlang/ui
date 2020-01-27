@@ -30,7 +30,7 @@ mut:
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
 	resource_cache       map[string]u32
-	closed               bool
+	closed               bool = false
 }
 
 pub enum VerticalAlignment {
