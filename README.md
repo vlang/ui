@@ -1,4 +1,4 @@
-# V UI 0.0.1
+# V UI 0.0.2
 
 [![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/commits/master)
 <a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fvlang%2Fpledges&style=for-the-badge' height='20'></a>
@@ -35,8 +35,7 @@ ui.window({
         )
    )
 ]);
-   
-````                        
+````
 ### Installation
 
 ```bash
@@ -90,6 +89,9 @@ sudo pacman -S glfw-x11 freetype2
 
 Fedora:
 sudo dnf install glfw glfw-devel freetype-devel
+
+ClearLinux:
+sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype devpkg-glfw3
 
 Windows:
 git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
