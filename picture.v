@@ -16,7 +16,7 @@ mut:
 	offset_y  int
 	width     int
 	height    int
-	path	    string
+	path      string
 	ui       &UI
 	texture   u32
 	use_cache bool
@@ -27,7 +27,7 @@ pub struct PictureConfig {
 	width      int
 	height     int
 	use_cache  bool = true
-	ref		    &Picture
+	ref       &Picture
 }
 
 fn (pic mut Picture)init(p &ILayouter) {
