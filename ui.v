@@ -12,6 +12,10 @@ import (
 	filepath
 )
 
+const (
+	version = '0.0.2'
+)
+
 pub struct UI {
 mut:
 	gg                   &gg.GG
