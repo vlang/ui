@@ -25,6 +25,7 @@ mut:
 	down_arrow           u32
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
+	resource_cache       map[string]u32
 }
 
 pub enum VerticalAlignment {
