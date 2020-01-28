@@ -39,6 +39,7 @@ ui.window({
 ### Installation
 
 ```bash
+v up
 v install ui
 ```
 
