@@ -32,8 +32,8 @@ ui.window({
                 width:       200
                 placeholder: 'Last name'
             })
-        )
-   )
+        ])
+   ])
 ]);
 ````
 ### Installation
