@@ -53,6 +53,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		user_ptr: app
+		resizer: ui.empty_resizer(),
 		title: 'V UI Demo'
 	}, [
 		ui.row({

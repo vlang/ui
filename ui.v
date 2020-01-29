@@ -77,8 +77,12 @@ pub interface ILayouter {
 	unfocus_all()
 	//on_mousemove(MouseMoveFn)
 	draw()
+	resize()
 }
 
+pub interface IResizer {
+    resize(widgets []IWidgeter)
+}
 
 pub struct KeyEvent {
 	key       ui.Key

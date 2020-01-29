@@ -197,3 +197,5 @@ fn (b mut Stack) set_height(h int) int {
 fn (b mut Stack) set_width(w int) int {
 	return if b.direction == .row {b.height = w} else {b.width = w}
 }
+
+fn (b mut Stack) resize() {}

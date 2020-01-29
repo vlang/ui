@@ -36,6 +36,7 @@ mut:
 	width int
 	height int
 	bg_color gx.Color
+	resizer &ui.IResizer
 	click_fn ClickFn
 	scroll_fn ScrollFn
 	mouse_move_fn MouseMoveFn
@@ -52,6 +53,7 @@ pub:
 	user_ptr      voidptr
 	draw_fn       DrawFn
 	bg_color gx.Color = default_window_color
+	resizer &ui.IResizer
 }
 
 pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
@@ -95,7 +97,8 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 		bg_color: cfg.bg_color
 		width: cfg.width
 		height: cfg.height,
-		children: children
+		children: children,
+		resizer: cfg.resizer
 	}
 	for child in window.children {
 		child.init(window)
@@ -247,6 +250,7 @@ pub fn (b &ui.Window) always_on_top(val bool) {
 // TODO remove this
 fn foo(w IWidgeter) {}
 fn foo2(l ILayouter) {}
+fn foo3(r IResizer) {}
 
 fn bar() {
 	foo(&TextBox{})
@@ -268,6 +272,10 @@ fn bar() {
 fn bar2() {
 	foo2(&ui.Window{})
 	foo2(&Stack{})
+}
+
+fn bar3() {
+	foo3(&EmptyResizer{})
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
@@ -296,4 +304,8 @@ fn (window &ui.Window) unfocus_all() {
 	for child in window.children {
 		child.unfocus()
 	}
+}
+
+fn (w &ui.Window) resize(){
+    //w.resizer.resize(w.children)
 }
