@@ -105,6 +105,9 @@ fn (b mut Slider) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut Slider) set_size(w, h int) {
+}
+
 fn (b mut Slider) propose_size(w, h int) (int, int) {
 	/* p.track_width = w
 	p.track_height = h

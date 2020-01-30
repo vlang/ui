@@ -58,6 +58,9 @@ fn (b mut Switch) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut Switch) set_size(w, h int) {
+}
+
 fn (b mut Switch) propose_size(w, h int) (int, int) {
 	return b.width, b.height
 }

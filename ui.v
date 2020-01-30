@@ -33,6 +33,17 @@ mut:
 	closed               bool = false
 }
 
+pub enum LayoutType {
+	auto = 0
+	fill = 1
+	row = 2
+}
+
+pub enum Alignment {
+	vertical = 0
+	horizontal = 1
+}
+
 pub enum VerticalAlignment {
 	top = 0
 	center
@@ -63,6 +74,7 @@ pub interface IWidgeter {
 	unfocus()
 	focus()
 	set_pos(x,y int)
+	set_size(w,h int)
 	propose_size(w, h int) (int,int)
 	is_focused() bool
 }

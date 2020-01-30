@@ -40,6 +40,9 @@ fn (b mut Label) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut Label) set_size(w, h int) {
+}
+
 fn (b mut Label) propose_size(w, h int) (int, int) {
 	size := b.ui.ft.text_size(b.text)
 

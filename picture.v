@@ -66,6 +66,11 @@ fn (b mut Picture) set_pos(x, y int) {
 	b.y = y + b.offset_y
 }
 
+fn (b mut Picture) set_size(w, h int) {
+	b.width = w
+	b.height = h
+}
+
 fn (b mut Picture) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h

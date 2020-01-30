@@ -52,6 +52,9 @@ fn (b mut Menu) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut Menu) set_size(w, h int) {
+}
+
 fn (b mut Menu) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h

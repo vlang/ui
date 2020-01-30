@@ -36,7 +36,7 @@ mut:
 	width int
 	height int
 	bg_color gx.Color
-	resizer &ui.IResizer
+	resizer &ui.VResizer
 	click_fn ClickFn
 	scroll_fn ScrollFn
 	mouse_move_fn MouseMoveFn
@@ -53,7 +53,7 @@ pub:
 	user_ptr      voidptr
 	draw_fn       DrawFn
 	bg_color gx.Color = default_window_color
-	resizer &ui.IResizer
+	resizer &ui.VResizer
 }
 
 pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
@@ -104,6 +104,7 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 		child.init(window)
 	}
 	// window.set_cursor()
+	window.resize()
 	return window
 }
 
@@ -275,7 +276,7 @@ fn bar2() {
 }
 
 fn bar3() {
-	foo3(&EmptyResizer{})
+	foo3(&VResizer{})
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
@@ -307,5 +308,7 @@ fn (window &ui.Window) unfocus_all() {
 }
 
 fn (w &ui.Window) resize(){
-    //w.resizer.resize(w.children)
+    if w.resizer != 0 {
+    	w.resizer.resize(w.width, w.height, w.children)
+    }
 }
