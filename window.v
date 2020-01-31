@@ -263,6 +263,7 @@ fn bar() {
 	foo(&Transition{})
 	foo(&Stack{})
 	foo(&Switch{})
+	foo(&Rectangle{})
 }
 
 fn bar2() {
