@@ -19,7 +19,7 @@ fn main() {
 		user_ptr: app
 		resizer: ui.resizer({
 			layout: .row
-			align: .vertical //horizontal //vertical
+			align: .horizontal //horizontal //vertical
 			wrap: true
 		})
 	}, [
@@ -31,7 +31,16 @@ fn main() {
 		}) as ui.IWidgeter,
 		ui.button({
 			text: 'Add user3'
-		}) as ui.IWidgeter
+		}) as ui.IWidgeter,
+		ui.dropdown({
+			width: 140
+			def_text: "Select an option"
+			items: [
+				ui.DropdownItem{text:'Delete all users'},
+				ui.DropdownItem{text:'Export users'},
+				ui.DropdownItem{text:'Exit'},
+			]
+		}) as ui.IWidgeter,
 	])
 	app.window = window
 	ui.run(window)
