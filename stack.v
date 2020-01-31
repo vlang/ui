@@ -78,9 +78,6 @@ fn (b mut Stack) set_pos(x, y int) {
 	b.y = y + b.margin.top
 }
 
-fn (b mut Stack) set_size(w, h int) {
-}
-
 fn (b &Stack) get_subscriber() &eventbus.Subscriber {
 	parent := b.parent
 	return parent.get_subscriber()

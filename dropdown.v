@@ -74,8 +74,8 @@ fn (dd mut Dropdown) set_pos(x, y int) {
 	dd.y = y
 }
 
-fn (dd mut Dropdown) set_size(w, h int) {
-	dd.width = w
+fn (dd mut Dropdown) get_size() (int, int) {
+   return dd.width, dropdown_height
 }
 
 fn (dd mut Dropdown) propose_size(w, h int) (int, int) {

@@ -81,8 +81,8 @@ fn (b mut Radio) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Radio) set_size(w, h int) {
-	b.width = w
+fn (b mut Radio) get_size() (int, int) {
+   return b.width, b.height
 }
 
 fn (cb mut Radio) propose_size(w, h int) (int, int) {

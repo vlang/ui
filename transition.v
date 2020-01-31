@@ -57,7 +57,9 @@ pub fn (t mut Transition) set_value(animated_value &int){
 }
 
 fn (t &Transition) set_pos(x, y int) {}
-fn (b mut Transition) set_size(w, h int) {}
+fn (t mut Transition) get_size() (int, int) {
+   return 0,0
+}
 fn (t &Transition) propose_size(w, h int) (int, int) {
 	return 0,0
 }

@@ -18,8 +18,9 @@ fn main() {
 		title: 'FillResizer'
 		user_ptr: app
 		resizer: ui.resizer({
-			layout: .fill
-			align: .horizontal //vertical
+			layout: .row
+			align: .vertical //horizontal //vertical
+			wrap: true
 		})
 	}, [
 		ui.button({
