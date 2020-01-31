@@ -284,7 +284,7 @@ fn (w &ui.Window) get_user_ptr() voidptr {
 	return w.user_ptr
 }
 
-fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
+pub fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
 	return w.eventbus.subscriber
 }
 

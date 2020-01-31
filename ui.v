@@ -81,6 +81,7 @@ pub interface ILayouter {
 
 
 pub struct KeyEvent {
+pub:
 	key       ui.Key
 	action    int
 	code      int
