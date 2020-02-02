@@ -127,7 +127,7 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	x,y := glfw.get_cursor_pos(glfw_wnd)
-	e := &MouseEvent{
+	e := MouseEvent{
 		button: button
 		action: action
 		mods: mods
@@ -151,7 +151,7 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	// C.printf('g child=%p\n', child)
-	e := &KeyEvent {
+	e := KeyEvent {
 		key: key
 		code: code
 		action: action
@@ -174,7 +174,7 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 fn window_char(glfw_wnd voidptr, codepoint u32) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
-	e := &KeyEvent{
+	e := KeyEvent{
 		codepoint: codepoint
 	}
 	window.eventbus.publish(events.on_key_down, &window, e)
