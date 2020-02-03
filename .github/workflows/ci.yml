@@ -17,7 +17,7 @@ jobs:
         git clone --depth 1 https://github.com/vlang/v ../v
         cd ../v
         make
-    - name: Build UI demo
+    - name: Build UI examples
       run: |
         cp -rf ../ui ../v/vlib/ui
         for f in examples/*.v; do echo; echo "Building $f ..."; time ../v/v $f ; echo; done
@@ -37,7 +37,7 @@ jobs:
         git clone --depth 1 https://github.com/vlang/v ../v
         cd ../v
         make
-    - name: Build UI demo
+    - name: Build UI examples
       run: |
         cp -rf ../ui ../v/vlib/ui
         for f in examples/*.v; do echo; echo "Building $f ..."; time ../v/v $f ; echo; done
@@ -53,20 +53,23 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: |
+        exit
         echo %VFLAGS%
         echo $VFLAGS
         git clone --depth 1 https://github.com/vlang/v ..\v
         git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries.git ..\v\thirdparty/freetype/
-        exit
     - name: Build V
       run: |
         cd ..\v
         .\make.bat -msvc
+        exit
     - name: Build UI demo
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
         ..\v\v.exe examples\users.v
+        exit
     - name: Results
       run: |
+        exit
         dir examples\
 
