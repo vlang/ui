@@ -26,7 +26,7 @@ jobs:
         ls -lart examples/* | grep -v .v$
 
   macos:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
     - name: Install dependencies
@@ -46,7 +46,7 @@ jobs:
         ls -lart examples/* | grep -v .v$
 
   windows-msvc:
-    runs-on: windows-2019
+    runs-on: windows-latest
     env:
         VFLAGS: -cc msvc
     steps:
@@ -57,6 +57,7 @@ jobs:
         echo $VFLAGS
         git clone --depth 1 https://github.com/vlang/v ..\v
         git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries.git ..\v\thirdparty/freetype/
+        exit
     - name: Build V
       run: |
         cd ..\v
