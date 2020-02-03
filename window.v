@@ -273,11 +273,13 @@ fn bar() {
 	foo(&Stack{})
 	foo(&Switch{})
 	foo(&Rectangle{})
+	foo(&FillLayout{})
 }
 
 fn bar2() {
 	foo2(&ui.Window{})
 	foo2(&Stack{})
+	foo(&ui.FillLayout{})
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
