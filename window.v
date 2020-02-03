@@ -62,6 +62,7 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
+		resizable: cfg.resizable
 		// window_user_ptr: ui
 	})
 	wsize := gcontext.window.get_window_size()
