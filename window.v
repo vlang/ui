@@ -302,7 +302,7 @@ fn (w &ui.Window) get_size() (int, int) {
 	return w.width, w.height
 }
 
-fn (w &ui.Window) resize(w, h int) {
+fn (window &ui.Window) resize(width, height int) {
 }
 
 fn (window &ui.Window) unfocus_all() {

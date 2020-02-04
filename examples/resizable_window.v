@@ -19,10 +19,16 @@ fn main() {
 		resizable: true
 		user_ptr: app
 	}, [
-		ui.button({
-			text: "Button1"
-		}) as ui.IWidgeter
-	])
+		ui.row({
+			stretch: true,
+			margin: ui.MarginConfig{10,10,10,10}
+		}, [
+			ui.button({
+				text: 'Add user'
+			}) as ui.IWidgeter
+		]) as ui.IWidgeter]
+	)
+
 	app.window = window
 	ui.run(window)
 }
