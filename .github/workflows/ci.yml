@@ -65,9 +65,9 @@ jobs:
         .\make.bat -msvc
     - name: Build UI demo
       run: |
+        exit
         xcopy ..\ui ..\v\vlib\ui /e /i /h
         ..\v\v.exe examples\users.v
-        exit
     - name: Results
       run: |
         exit
