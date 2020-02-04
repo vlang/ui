@@ -60,9 +60,9 @@ jobs:
         git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries.git ..\v\thirdparty/freetype/
     - name: Build V
       run: |
+        exit
         cd ..\v
         .\make.bat -msvc
-        exit
     - name: Build UI demo
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
