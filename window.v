@@ -87,6 +87,7 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 	ui_ctx.gg.window.onchar(window_char)
 	ui_ctx.gg.window.onmousemove(window_mouse_move)
 	ui_ctx.gg.window.on_click(window_click)
+	ui_ctx.gg.window.on_resize(window_resize)
 	mut window := &ui.Window{
 		user_ptr: cfg.user_ptr
 		ui: ui_ctx
@@ -122,6 +123,13 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 		}
 	} */
 	window.eventbus.publish(events.on_mouse_move, &window, e)
+}
+
+fn window_resize(glfw_wnd voidptr, width int, height int) {
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
+
+	window.resize(width, height)
 }
 
 fn window_click(glfw_wnd voidptr, button, action, mods int) {
@@ -292,6 +300,9 @@ pub fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
 
 fn (w &ui.Window) get_size() (int, int) {
 	return w.width, w.height
+}
+
+fn (w &ui.Window) resize(w, h int) {
 }
 
 fn (window &ui.Window) unfocus_all() {

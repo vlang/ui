@@ -170,6 +170,8 @@ fn (t &Stack) is_focused() bool {
 	return false // t.is_focused
 }
 
+fn (t &Stack) resize(width, height int) {
+}
 
 /* Helpers to correctly get height, width, x, y for both row & column
    Column & Row are identical except everything is reversed. These methods

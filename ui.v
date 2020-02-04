@@ -77,6 +77,7 @@ pub interface ILayouter {
 	unfocus_all()
 	//on_mousemove(MouseMoveFn)
 	draw()
+	resize(w,h int)
 }
 
 
