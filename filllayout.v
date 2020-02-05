@@ -119,3 +119,6 @@ fn (b mut FillLayout) unfocus() {}
 fn (t &FillLayout) is_focused() bool {
 	return false
 }
+
+fn (t &FillLayout) resize(width, height int) {
+}
