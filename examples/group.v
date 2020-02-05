@@ -1,8 +1,8 @@
 import ui
 
 const (
-	win_width = 250
-	win_height = 250
+	win_width = 300
+	win_height = 300
 )
 
 struct App {
@@ -21,9 +21,7 @@ fn main() {
 		ui.group({
 		    x:20
 		    y:20
-			title: 'Demo'
-			width: 100
-			height: 100
+			title: 'Group Demo'
 			children: [
 				ui.textbox({
 					max_len: 20
@@ -34,7 +32,22 @@ fn main() {
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'
-				})
+				}),
+				ui.checkbox({
+					checked: true
+					text: 'Online registration1'
+				}),
+				ui.checkbox({
+					checked: true
+					text: 'Online registration2'
+				}),
+				ui.checkbox({
+					checked: true
+					text: 'Online registration3'
+				}),
+				ui.button({
+					text: 'Add user'
+				}) as ui.IWidgeter,
 			]
 		}) as ui.IWidgeter
 	])

@@ -61,6 +61,10 @@ fn (t &Transition) propose_size(w, h int) (int, int) {
 	return 0,0
 }
 
+fn (b mut Transition) get_size() (int,int) {
+	return 0,0
+}
+
 fn (t mut Transition) draw() {
 	if t.animated_value == 0 {return}
 	if t.target_value != *t.animated_value && !t.animating {
