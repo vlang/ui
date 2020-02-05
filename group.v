@@ -34,7 +34,7 @@ fn (r mut Group)init(p &ILayouter) {
 	r.ui = ui
 	
 	for child in r.children {
-		child.init(p)
+		child.init(r)
 	}
 }
 
@@ -85,4 +85,31 @@ fn (b mut Group) unfocus() {
 
 fn (t &Group) is_focused() bool {
 	return false
+}
+
+fn (t &Group) get_ui() &UI {
+	return t.ui
+}
+
+fn (t &Group) unfocus_all() {
+	for child in t.children {
+		child.unfocus()
+	}
+}
+
+fn (t &Group) resize(width, height int) {
+}
+
+fn (t &Group) get_user_ptr() voidptr {
+	parent := t.parent
+	return parent.get_user_ptr()
+}
+
+fn (b &Group) get_subscriber() &eventbus.Subscriber {
+	parent := b.parent
+	return parent.get_subscriber()
+}
+
+fn (c &Group) get_size() (int, int) {
+	return c.width, c.height
 }
