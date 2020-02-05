@@ -24,6 +24,18 @@ fn main() {
 			title: 'Demo'
 			width: 100
 			height: 100
+			children: [
+				ui.textbox({
+					max_len: 20
+					width: 200
+					placeholder: 'First name'
+				}) as ui.IWidgeter,
+				ui.textbox({
+					max_len: 50
+					width: 200
+					placeholder: 'Last name'
+				})
+			]
 		}) as ui.IWidgeter
 	])
 	app.window = window

@@ -14,14 +14,17 @@ pub mut:
 	y              int
 	parent ILayouter
 	ui             &UI
+	children []IWidgeter
 }
 
 pub struct GroupConfig {
+pub mut:
 	title  string
 	x          int
 	y          int
 	width  int
 	height int
+	children []IWidgeter
 }
 
 fn (r mut Group)init(p &ILayouter) {
@@ -29,6 +32,10 @@ fn (r mut Group)init(p &ILayouter) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
+	
+	for child in r.children {
+		child.init(p)
+	}
 }
 
 pub fn group(c GroupConfig) &Group {
@@ -38,6 +45,7 @@ pub fn group(c GroupConfig) &Group {
 		y:c.y
 		width: c.width
 		height: c.height
+		children: c.children
 	}
 	return cb
 }
@@ -59,6 +67,10 @@ fn (b mut Group) draw() {
 	// Title
 	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.ft.text_width(b.title) + 5, 10, default_window_color)
 	b.ui.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
+
+	for child in b.children {
+		child.draw()
+	}
 }
 
 fn (t &Group) point_inside(x, y f64) bool {
