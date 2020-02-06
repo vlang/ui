@@ -273,6 +273,7 @@ fn bar() {
 	foo(&Stack{})
 	foo(&Switch{})
 	foo(&Rectangle{})
+	foo(&Group{})
 }
 
 fn bar2() {

@@ -58,6 +58,10 @@ fn (r mut Rectangle) set_pos(x, y int) {
 	r.y = y
 }
 
+fn (b mut Rectangle) get_size() (int,int) {
+	return b.width, b.height 
+}
+
 fn (r mut Rectangle) propose_size(w, h int) (int, int) {
 	return r.width, r.height
 }

@@ -63,6 +63,10 @@ fn (b mut ProgressBar) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut ProgressBar) get_size() (int,int) {
+	return b.width, b.height
+}
+
 fn (b mut ProgressBar) propose_size(w, h int) (int, int) {
 	/* b.width = w
 	b.height = h

@@ -80,6 +80,10 @@ fn (b mut CheckBox) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut CheckBox) get_size() (int,int) {
+	return b.width, b.height
+}
+
 fn (b mut CheckBox) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h
