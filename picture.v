@@ -66,7 +66,7 @@ fn (b mut Picture) set_pos(x, y int) {
 	b.y = y + b.offset_y
 }
 
-fn (b mut Picture) get_size() (int,int) {
+fn (b mut Picture) size() (int,int) {
 	return b.width, b.height
 }
 

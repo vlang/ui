@@ -40,7 +40,7 @@ fn (b mut Label) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Label) get_size() (int,int) {
+fn (b mut Label) size() (int,int) {
 	size := b.ui.ft.text_size(b.text)
 
 	// First return the width, then the height multiplied by line count.

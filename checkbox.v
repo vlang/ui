@@ -80,7 +80,7 @@ fn (b mut CheckBox) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut CheckBox) get_size() (int,int) {
+fn (b mut CheckBox) size() (int,int) {
 	return b.width, b.height
 }
 
