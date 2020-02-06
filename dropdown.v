@@ -44,6 +44,7 @@ pub struct DropdownConfig {
 }
 
 pub struct DropdownItem {
+pub:
 	text string
 }
 
