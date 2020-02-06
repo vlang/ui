@@ -13,3 +13,4 @@ examples/message
 examples/resizable_window
 examples/filllayout
 .project
+examples/group

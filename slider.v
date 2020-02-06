@@ -105,6 +105,14 @@ fn (b mut Slider) set_pos(x, y int) {
 	b.y = y
 }
 
+fn (b mut Slider) get_size() (int,int) {
+	if b.orientation == .horizontal {
+		return b.track_width, b.thumb_height
+	} else {
+		return b.thumb_width, b.track_height
+	}
+}
+
 fn (b mut Slider) propose_size(w, h int) (int, int) {
 	/* p.track_width = w
 	p.track_height = h

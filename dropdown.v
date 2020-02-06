@@ -44,6 +44,7 @@ pub struct DropdownConfig {
 }
 
 pub struct DropdownItem {
+pub:
 	text string
 }
 
@@ -72,6 +73,10 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 fn (dd mut Dropdown) set_pos(x, y int) {
 	dd.x = x
 	dd.y = y
+}
+
+fn (b mut Dropdown) get_size() (int,int) {
+	return b.width, dropdown_height
 }
 
 fn (dd mut Dropdown) propose_size(w, h int) (int, int) {

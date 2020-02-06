@@ -274,6 +274,7 @@ fn bar() {
 	foo(&Switch{})
 	foo(&Rectangle{})
 	foo(&FillLayout{})
+	foo(&Group{})
 }
 
 fn bar2() {
