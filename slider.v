@@ -94,9 +94,9 @@ fn (b &Slider) draw_thumb() {
 	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
 
 	if b.orientation == .horizontal {
-		b.ui.gg.draw_rect(pos, middle, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(pos - b.thumb_width / 2, middle, b.thumb_width, b.thumb_height, thumb_color)
 	} else {
-		b.ui.gg.draw_rect(middle, pos, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(middle, pos - b.thumb_height / 2, b.thumb_width, b.thumb_height, thumb_color)
 	}
 }
 
