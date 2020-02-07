@@ -75,7 +75,7 @@ fn (dd mut Dropdown) set_pos(x, y int) {
 	dd.y = y
 }
 
-fn (b mut Dropdown) size() (int,int) {
+fn (b mut Dropdown) size() (int, int) {
 	return b.width, dropdown_height
 }
 

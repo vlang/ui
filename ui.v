@@ -64,7 +64,7 @@ pub interface IWidgeter {
 	focus()
 	set_pos(x,y int)
 	propose_size(w, h int) (int,int)
-	size() (int,int)
+	size() (int, int)
 	is_focused() bool
 }
 

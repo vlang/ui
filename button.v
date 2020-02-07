@@ -89,7 +89,7 @@ fn (b mut Button) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Button) size() (int,int) {
+fn (b mut Button) size() (int, int) {
 	return b.width, b.height
 }
 

@@ -58,7 +58,7 @@ fn (r mut Rectangle) set_pos(x, y int) {
 	r.y = y
 }
 
-fn (b mut Rectangle) size() (int,int) {
+fn (b mut Rectangle) size() (int, int) {
 	return b.width, b.height 
 }
 

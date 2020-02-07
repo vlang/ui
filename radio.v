@@ -81,7 +81,7 @@ fn (b mut Radio) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Radio) size() (int,int) {
+fn (b mut Radio) size() (int, int) {
 	return b.width, b.height
 }
 
