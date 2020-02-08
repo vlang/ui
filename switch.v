@@ -58,7 +58,7 @@ fn (b mut Switch) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Switch) get_size() (int,int) {
+fn (b mut Switch) size() (int, int) {
 	return b.width, b.height 
 }
 

@@ -37,7 +37,7 @@ fn (b mut Stack) init(p &ILayouter) {
 	parent := *p
 	b.parent = parent
 	ui := parent.get_ui()
-	w, h := parent.get_size()
+	w, h := parent.size()
 	b.ui = ui
 
 	if b.stretch {
@@ -91,7 +91,7 @@ fn (b mut Stack) propose_size(w, h int) (int,int) {
 	return b.width, b.height
 }
 
-fn (c &Stack) get_size() (int, int) {
+fn (c &Stack) size() (int, int) {
 	return c.width, c.height
 }
 

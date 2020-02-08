@@ -299,7 +299,7 @@ pub fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
 	return w.eventbus.subscriber
 }
 
-fn (w &ui.Window) get_size() (int, int) {
+fn (w &ui.Window) size() (int, int) {
 	return w.width, w.height
 }
 

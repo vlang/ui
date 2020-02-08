@@ -135,7 +135,7 @@ fn (b mut TextBox) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut TextBox) get_size() (int,int) {
+fn (b mut TextBox) size() (int, int) {
 	return b.width, b.height
 }
 

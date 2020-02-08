@@ -61,7 +61,7 @@ fn (t &Transition) propose_size(w, h int) (int, int) {
 	return 0,0
 }
 
-fn (b mut Transition) get_size() (int,int) {
+fn (b mut Transition) size() (int, int) {
 	return 0,0
 }
 

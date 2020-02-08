@@ -52,7 +52,7 @@ fn (b mut Menu) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Menu) get_size() (int,int) {
+fn (b mut Menu) size() (int, int) {
 	return 0, 0
 }
 

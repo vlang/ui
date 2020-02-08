@@ -46,7 +46,7 @@ fn (r mut Group)init(p &ILayouter) {
     mut start_x := r.x + r.margin_left
     mut start_y := r.y + r.margin_top
     for widget in widgets {
-        mut pw, ph := widget.get_size()
+        mut pw, ph := widget.size()
         widget.set_pos(start_x, start_y)
         start_y = start_y + ph + r.spacing
         if(pw > r.width - r.margin_left - r.margin_right){
@@ -130,6 +130,6 @@ fn (b &Group) get_subscriber() &eventbus.Subscriber {
     return parent.get_subscriber()
 }
 
-fn (c &Group) get_size() (int, int) {
+fn (c &Group) size() (int, int) {
     return c.width, c.height
 }

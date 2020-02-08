@@ -105,7 +105,7 @@ fn (b mut Slider) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut Slider) get_size() (int,int) {
+fn (b mut Slider) size() (int, int) {
 	if b.orientation == .horizontal {
 		return b.track_width, b.thumb_height
 	} else {

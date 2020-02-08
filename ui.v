@@ -64,7 +64,7 @@ pub interface IWidgeter {
 	focus()
 	set_pos(x,y int)
 	propose_size(w, h int) (int,int)
-	get_size() (int,int)
+	size() (int, int)
 	is_focused() bool
 }
 
@@ -72,7 +72,7 @@ pub interface IWidgeter {
 pub interface ILayouter {
 	get_ui() &UI
 	get_user_ptr() voidptr
-	get_size() (int, int)
+	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
 	//on_click(ClickFn)
 	unfocus_all()
