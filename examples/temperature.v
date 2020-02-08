@@ -22,15 +22,15 @@ fn main() {
         title: 'Temperature Conv.'
         user_ptr: app
     },[
-     ui.row({
+     ui.IWidgeter(ui.row({
             stretch: true
             alignment: .center
             margin: ui.MarginConfig{5,5,5,5}
             spacing: 10
         }, [
-            ui.label({
+            ui.IWidgeter(ui.label({
                 text: 'Celsius = '
-            }) as ui.IWidgeter, 
+            })), 
             ui.textbox({
                 width: 70
                 on_key_up: on_cel_key_up
@@ -47,7 +47,7 @@ fn main() {
                 ref: &app.txt_box_fahrenheit
             })
             
-        ]) as ui.IWidgeter,
+        ])),
     ])
 
     app.window = window

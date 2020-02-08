@@ -20,20 +20,20 @@ fn main() {
 		title: 'Slider Example'
 		user_ptr: app
 	}, [
-		ui.row({
+		ui.IWidgeter(ui.row({
 			stretch: true
 			alignment: .center
 			margin: ui.MarginConfig{5,5,5,5}
 			spacing: 10
 		}, [
-			ui.slider({
+			ui.IWidgeter(ui.slider({
 				width: 20
 				height: 200
 				orientation: .vertical
 				max: 100
 				val: 0
 				on_value_changed: on_vert_value_changed
-			}) as ui.IWidgeter,
+			})),
 			ui.slider({
 				width: 200
 				height: 20
@@ -42,7 +42,7 @@ fn main() {
 				val: 0
 				on_value_changed: on_hor_value_changed
 			})
-		]) as ui.IWidgeter
+		]))
 	])
 	app.window = window
 	ui.run(window)
