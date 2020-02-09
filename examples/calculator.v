@@ -48,11 +48,11 @@ fn main() {
 		title: 'V Calc'
 		user_ptr: app
 	}, [
-		ui.column({
+		ui.IWidgeter(ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 			spacing: 5
-		}, children) as ui.IWidgeter
+		}, children))
 	])
 	ui.run(app.window)
 }

@@ -19,24 +19,24 @@ fn main() {
 		title: 'Counter'
 		user_ptr: app
 	}, [
-		ui.row({
+		ui.IWidgeter(ui.row({
 			alignment: .top
 			spacing: 5
 			stretch : true
 			margin: ui.MarginConfig{5,5,5,5}
 		}, [
-			ui.textbox({
+			ui.IWidgeter(ui.textbox({
 				max_len: 20
 				read_only: true
 				is_numeric: true
 				text: '0'
 				ref: &app.counter
-			}) as ui.IWidgeter,
-			ui.button({
+			})),
+			ui.IWidgeter(ui.button({
 				text: 'Count'
 				onclick: btn_count_click
-			})
-		]) as ui.IWidgeter
+			}))
+		]))
 	])
 
 	app.window = window

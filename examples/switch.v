@@ -18,9 +18,9 @@ fn main() {
 		title: 'Switch'
 		user_ptr: app
 	}, [
-		ui.switcher({
+		ui.IWidgeter(ui.switcher({
 			open: true
-		}) as ui.IWidgeter
+		}))
 	])
 	app.window = window
 	ui.run(window)

@@ -27,14 +27,14 @@ fn main() {
 		user_ptr: app
 	},
 	[
-		ui.column({
+		ui.IWidgeter(ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 		},[
-			ui.button({
+			ui.IWidgeter(ui.button({
 				text: 'Slide'
 				onclick: btn_toggle_click
-			}) as ui.IWidgeter,
+			})),
 			ui.picture({
 				width: picture_width_and_height
 				height: picture_width_and_height
@@ -51,7 +51,7 @@ fn main() {
 				easing: ui.easing(.ease_in_out_quart)
 				ref: &app.y_transition
 			})
-		]) as ui.IWidgeter
+		]))
 	])
 	app.window = window
 	ui.run(window)
