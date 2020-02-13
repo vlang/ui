@@ -175,7 +175,7 @@ fn system_font_path() string {
 	$if windows {
 		return 'C:\\Windows\\Fonts\\arial.ttf'
 	}
-	mut fonts := ['Ubuntu-R.ttf', 'Arial.ttf', 'LiberationSans-Regular.ttf', ' NotoSans-Regular.ttf',
+	mut fonts := ['Ubuntu-R.ttf', 'Arial.ttf', 'LiberationSans-Regular.ttf', 'NotoSans-Regular.ttf',
 	'FreeSans.ttf', 'DejaVuSans.ttf']
 	$if macos {
 		fonts = ['SFNS.ttf', 'SFNSText.ttf']
