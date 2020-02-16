@@ -52,7 +52,7 @@ v run temperature.v
 v run ...
 ```
 
-**NOTE : This is pre-alpha software.**
+**This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
 for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM). V UI
@@ -67,7 +67,7 @@ On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
 [0.1 roadmap](https://github.com/vlang/ui/issues/31)
 
-Discord: [`#v-ui` channel](https://discord.gg/pDEXKTe0)
+Discord: [`#v-ui` channel](https://discord.gg/vlang)
 
 Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward. 
 
