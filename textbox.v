@@ -32,7 +32,7 @@ type KeyUpFn fn(voidptr, voidptr, u32)
 
 pub struct TextBox {
 pub mut:
-	
+
 	height      int
 	width       int
 	x           int
@@ -166,7 +166,7 @@ fn (t mut TextBox) draw() {
 			sel_width := width - t.ui.ft.text_width(right) - t.ui.ft.text_width(left)
 			x := t.ui.ft.text_width(left) + t.x + textbox_padding
 			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height-6, selection_color)
-		/* 	
+		/*
 			sel_width := t.ui.ft.text_width(right) + 1
 			 */
 		}
@@ -273,7 +273,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &ui.Window ) {
 						if i > 0 {
 							i--
 						}
-						if t.text[i].is_white() || i == 0 {
+						if t.text[i].is_space() || i == 0 {
 							t.text = u.left(i) + u.right(t.cursor_pos)
 							break
 						}
@@ -369,7 +369,7 @@ fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
 fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 	mut sel_start := if t.sel_direction == .right_to_left {t.sel_start} else {t.sel_end}
 	mut sel_end := if t.sel_direction == .right_to_left {t.sel_end} else {t.sel_start}
-	
+
 	if mods == .shift + .ctrl {
 		mut i := t.cursor_pos
 		if sel_start > 0 {
@@ -392,7 +392,7 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 			} else if i == t.text.len {
 				sel_start = t.text.len
 				break
-			} else if t.text[i].is_white() {
+			} else if t.text[i].is_space() {
 				sel_start = if t.sel_direction == .right_to_left { i + 1 } else {i}
 				break
 			}
@@ -421,7 +421,7 @@ fn (t &TextBox) point_inside(x, y f64) bool {
 
 fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
 	if !t.point_inside(e.x, e.y) {return}
-	
+
 	if t.dragging {
 		x := e.x - t.x - textbox_padding
 		reverse := x - t.last_x < 0
