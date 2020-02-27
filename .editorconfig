@@ -11,3 +11,4 @@ insert_final_newline = true
 [*.v]
 indent_style = tab
 indent_size = 4
+trim_trailing_whitespace = true
