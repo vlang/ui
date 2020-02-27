@@ -35,7 +35,7 @@ pub struct ButtonConfig {
 
 pub struct Button {
 pub mut:
-	
+
 	state      ButtonState
 	height     int
 	width      int
@@ -48,8 +48,7 @@ pub mut:
 	text       string
 }
 
-fn (b mut Button) init(p &ILayouter) {
-	parent := *p
+fn (b mut Button) init(parent ILayouter) {
 	b.parent = parent
 	ui := parent.get_ui()
 	b.ui = ui
@@ -57,7 +56,7 @@ fn (b mut Button) init(p &ILayouter) {
 	b.width = if b.width == 0 { b.ui.ft.text_width(b.text) + button_horizontal_padding } else { b.width }
 	b.height = if b.height == 0 { b.ui.ft.text_height(b.text) + button_vertical_padding } else { b.height }
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, btn_click, b) 
+	subscriber.subscribe_method(events.on_click, btn_click, b)
 }
 
 pub fn button(c ButtonConfig) &Button {

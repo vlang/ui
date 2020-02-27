@@ -17,8 +17,7 @@ pub struct LabelConfig {
 	ref		&Label
 }
 
-fn (l mut Label)init(p &ILayouter) {
-	parent := *p
+fn (l mut Label)init(parent ILayouter) {
 	ui := parent.get_ui()
 	l.ui = ui
 }

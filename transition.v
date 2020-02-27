@@ -26,8 +26,7 @@ pub struct TransitionConfig {
 	ref				&Transition
 }
 
-fn (t mut Transition) init(p &ILayouter) {
-	parent := *p
+fn (t mut Transition) init(parent ILayouter) {
 	t.parent = parent
 	ui := parent.get_ui()
 	t.ui = ui
