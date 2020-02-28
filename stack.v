@@ -33,7 +33,8 @@ mut:
 	margin 	MarginConfig
 }
 
-fn (b mut Stack) init(parent ILayouter) {
+fn (b mut Stack) init(p &ILayouter) {
+	parent := *p
 	b.parent = parent
 	ui := parent.get_ui()
 	w, h := parent.size()

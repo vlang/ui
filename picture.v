@@ -30,7 +30,8 @@ pub struct PictureConfig {
 	ref       &Picture
 }
 
-fn (pic mut Picture)init(parent ILayouter) {
+fn (pic mut Picture)init(p &ILayouter) {
+	parent := *p
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	if !pic.use_cache && pic.path in ui.resource_cache {

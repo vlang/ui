@@ -34,7 +34,8 @@ pub struct MenuItem {
 	action MenuFn
 }
 
-fn (m mut Menu)init(parent ILayouter) {
+fn (m mut Menu)init(p &ILayouter) {
+	parent := *p
 	ui := parent.get_ui()
 	m.ui = ui
 }

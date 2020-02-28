@@ -30,7 +30,8 @@ pub struct RectangleConfig {
 	ref		&Rectangle
 }
 
-fn (r mut Rectangle)init(parent ILayouter) {
+fn (r mut Rectangle)init(p &ILayouter) {
+	parent := *p
 	ui := parent.get_ui()
 	r.ui = ui
 }
@@ -58,7 +59,7 @@ fn (r mut Rectangle) set_pos(x, y int) {
 }
 
 fn (b mut Rectangle) size() (int, int) {
-	return b.width, b.height
+	return b.width, b.height 
 }
 
 fn (r mut Rectangle) propose_size(w, h int) (int, int) {

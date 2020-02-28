@@ -32,7 +32,8 @@ pub mut:
     children []IWidgeter
 }
 
-fn (r mut Group)init(parent ILayouter) {
+fn (r mut Group)init(p &ILayouter) {
+    parent := *p
     r.parent = parent
     ui := parent.get_ui()
     r.ui = ui

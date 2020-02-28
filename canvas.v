@@ -13,7 +13,7 @@ mut:
 	y		int
 	parent ILayouter
 	draw_fn DrawFn
-
+	
 }
 
 pub struct CanvasConfig {
@@ -23,7 +23,8 @@ pub struct CanvasConfig {
 	draw_fn DrawFn
 }
 
-fn (c mut Canvas)init(parent ILayouter) {
+fn (c mut Canvas)init(p &ILayouter) {
+	parent := *p
 	c.parent = parent
 }
 
@@ -72,3 +73,4 @@ fn (t &Canvas) unfocus() {}
 fn (t &Canvas) point_inside(x, y f64) bool {
 	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
+

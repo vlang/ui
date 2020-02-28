@@ -35,7 +35,8 @@ pub struct ProgressBarConfig {
 	ref		&ProgressBar
 }
 
-fn (pb mut ProgressBar)init(parent ILayouter) {
+fn (pb mut ProgressBar)init(p &ILayouter) {
+	parent := *p
 	pb.parent = parent
 	ui := parent.get_ui()
 	pb.ui = ui
