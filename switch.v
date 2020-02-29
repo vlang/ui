@@ -34,8 +34,7 @@ pub struct SwitchConfig {
 	open bool
 }
 
-fn (s mut Switch) init(p &ILayouter){
-	parent := *p
+fn (s mut Switch) init(parent ILayouter){
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
@@ -59,7 +58,7 @@ fn (b mut Switch) set_pos(x, y int) {
 }
 
 fn (b mut Switch) size() (int, int) {
-	return b.width, b.height 
+	return b.width, b.height
 }
 
 fn (b mut Switch) propose_size(w, h int) (int, int) {
