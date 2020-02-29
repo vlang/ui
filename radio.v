@@ -40,8 +40,7 @@ pub struct RadioConfig {
 	ref		&Radio
 }
 
-fn (r mut Radio)init(p &ILayouter) {
-	parent := *p
+fn (r mut Radio)init(parent ILayouter) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui

@@ -22,7 +22,7 @@ type CheckChangedFn fn(voidptr, bool)
 
 pub struct CheckBox {
 pub mut:
-	
+
 	//state      CheckBoxState
 	height     int
 	width      int
@@ -45,15 +45,14 @@ pub struct CheckBoxConfig {
 	checked bool
 }
 
-fn (cb mut CheckBox)init(p &ILayouter) {
-	parent := *p
+fn (cb mut CheckBox)init(parent ILayouter) {
 	cb.parent = parent
 	ui := parent.get_ui()
 	cb.ui = ui
 	cb.width = cb.ui.ft.text_width(cb.text) + 5 + check_mark_size
-	
+
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, cb_click, cb) 
+	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
 pub fn checkbox(c CheckBoxConfig) &CheckBox {

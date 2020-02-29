@@ -17,7 +17,7 @@ pub enum Orientation {
 
 pub struct Slider {
 pub mut:
-	
+
 	track_height     int
 	track_width      int
 	thumb_width 	 int
@@ -46,8 +46,7 @@ pub struct SliderConfig {
 	ref		&Slider
 }
 
-fn (s mut Slider)init(p &ILayouter) {
-	parent := *p
+fn (s mut Slider)init(parent ILayouter) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui

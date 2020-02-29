@@ -87,8 +87,7 @@ pub struct TextBoxConfig {
 	ref			&TextBox
 }
 
-fn (tb mut TextBox)init(p &ILayouter) {
-	parent := *p
+fn (tb mut TextBox)init(parent ILayouter) {
 	tb.parent = parent
 	ui :=  parent.get_ui()
 	tb.ui = ui

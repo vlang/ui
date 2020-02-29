@@ -22,7 +22,7 @@ mut:
 	parent ILayouter
 	x      int
 	y      int
-	
+
 	ui     &UI
 	items []DropdownItem
 	open bool
@@ -48,8 +48,7 @@ pub:
 	text string
 }
 
-fn (dd mut Dropdown)init(p &ILayouter) {
-	parent := *p
+fn (dd mut Dropdown)init(parent ILayouter) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
@@ -148,7 +147,7 @@ fn dd_key_down(dd mut Dropdown, e &KeyEvent) {
 
 fn dd_click(dd mut Dropdown, e &MouseEvent) {
 	if !dd.point_inside(e.x, e.y) || e.action == 1 {return}
-	
+
 	if e.y >= dd.y && e.y <= dd.y + dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
 	} else if dd.open {
