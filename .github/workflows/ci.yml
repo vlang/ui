@@ -61,7 +61,7 @@ jobs:
     - name: Build V
       run: |
         cd ..\v
-        make.bat -msvc
+        .\make.bat -msvc
     - name: cp ui => vlib/ui, without installing
       run: |
         xcopy ..\ui ..\v\vlib\ui /e /i /h
