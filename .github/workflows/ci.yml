@@ -21,7 +21,7 @@ jobs:
       run: cp -rf ../ui ../v/vlib/ui
     - name: Build UI examples
       run: |
-        for f in examples/*.v; do echo; echo "Building $f ..."; ../v/v $f ; echo; done
+        for f in examples/*.v; do echo "Building $f ..."; ../v/v $f ; done
     - name: Results
       run: |
         ls -lart examples/* | grep -v .v$
@@ -42,7 +42,7 @@ jobs:
       run: cp -rf ../ui ../v/vlib/ui
     - name: Build UI examples
       run: |        
-        for f in examples/*.v; do echo; echo "Building $f ..."; ../v/v $f ; echo; done
+        for f in examples/*.v; do echo "Building $f ..."; ../v/v $f ; done
     - name: Results
       run: |        
         ls -lart examples/* | grep -v .v$
