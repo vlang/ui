@@ -20,13 +20,13 @@ fn main() {
 		title: 'Slider Example'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.row({
+		ui.iwidget(ui.row({
 			stretch: true
 			alignment: .center
 			margin: ui.MarginConfig{5,5,5,5}
 			spacing: 10
 		}, [
-			ui.IWidgeter(ui.slider({
+			ui.iwidget(ui.slider({
 				width: 20
 				height: 200
 				orientation: .vertical

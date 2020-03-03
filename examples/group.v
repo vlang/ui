@@ -18,17 +18,17 @@ fn main() {
 		title: 'Group Demo'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.group({
+		ui.iwidget(ui.group({
 		    x:20
 		    y:20
 			title: 'Group Demo'
 			children: [
-				ui.IWidgeter(ui.textbox({
+				ui.iwidget(ui.textbox({
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
 				})),
-				ui.IWidgeter(ui.textbox({
+				ui.iwidget(ui.textbox({
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'

@@ -55,15 +55,15 @@ fn main() {
 		user_ptr: app
 		title: 'V UI Demo'
 	}, [
-		ui.IWidgeter(ui.row({
+		ui.iwidget(ui.row({
 			stretch: true,
 			margin: ui.MarginConfig{10,10,10,10}
 		}, [
-			ui.IWidgeter(ui.column({
+			ui.iwidget(ui.column({
 				width: 200
 				spacing: 13
 			}, [
-				ui.IWidgeter(ui.textbox({
+				ui.iwidget(ui.textbox({
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
@@ -105,7 +105,7 @@ fn main() {
 				ui.row({
 					spacing: 85
 				}, [
-					ui.IWidgeter(ui.button({
+					ui.iwidget(ui.button({
 						text: 'Add user'
 						onclick: btn_add_click
 					})),
@@ -118,7 +118,7 @@ fn main() {
 					spacing: 5
 					alignment: .center
 				}, [
-					ui.IWidgeter(ui.progressbar({
+					ui.iwidget(ui.progressbar({
 						width: 170
 						max: 10
 						val: 2
@@ -134,7 +134,7 @@ fn main() {
 				stretch: true
 				alignment: .right
 			},[
-				ui.IWidgeter(ui.canvas({
+				ui.iwidget(ui.canvas({
 					height: 275
 					draw_fn:canvas_draw
 				})),

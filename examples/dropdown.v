@@ -19,13 +19,13 @@ fn main() {
 		title: 'Dropdown'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.column({
+		ui.iwidget(ui.column({
 			stretch: true
 			alignment: .left
 			margin: ui.MarginConfig{5,5,5,5}
 		},
 		[
-			ui.IWidgeter(ui.dropdown({
+			ui.iwidget(ui.dropdown({
 				width: 140
 				def_text: "Select an option"
 				items: [

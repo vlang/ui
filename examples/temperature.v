@@ -22,13 +22,13 @@ fn main() {
         title: 'Temperature Conv.'
         user_ptr: app
     },[
-     ui.IWidgeter(ui.row({
+     ui.iwidget(ui.row({
             stretch: true
             alignment: .center
             margin: ui.MarginConfig{5,5,5,5}
             spacing: 10
         }, [
-            ui.IWidgeter(ui.label({
+            ui.iwidget(ui.label({
                 text: 'Celsius = '
             })), 
             ui.textbox({
