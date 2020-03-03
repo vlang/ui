@@ -67,7 +67,9 @@ jobs:
         xcopy ..\ui ..\v\vlib\ui /e /i /h
     - name: Build UI demo
       run: |
+        ..\v\v.exe examples\group.v
         ..\v\v.exe examples\users.v
+        ..\v\v.exe examples\calculator.v
     - name: Results
       run: |
         dir examples\
