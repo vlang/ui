@@ -67,6 +67,7 @@ pub interface IWidgeter {
 	size() (int, int)
 	is_focused() bool
 }
+pub fn iwidget(x IWidgeter) IWidgeter { return x }
 
 // TODO rename to `Layouter` once interfaces allow that :)
 pub interface ILayouter {
@@ -80,7 +81,7 @@ pub interface ILayouter {
 	draw()
 	resize(w,h int)
 }
-
+pub fn ilayout(x ILayouter) ILayouter { return x }
 
 pub struct KeyEvent {
 pub:

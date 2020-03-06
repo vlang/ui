@@ -27,11 +27,11 @@ fn main() {
 		user_ptr: app
 	},
 	[
-		ui.IWidgeter(ui.column({
+		ui.iwidget(ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 		},[
-			ui.IWidgeter(ui.button({
+			ui.iwidget(ui.button({
 				text: 'Slide'
 				onclick: btn_toggle_click
 			})),

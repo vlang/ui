@@ -18,7 +18,7 @@ fn main() {
 		title: 'Switch'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.switcher({
+		ui.iwidget(ui.switcher({
 			open: true
 		}))
 	])

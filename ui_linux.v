@@ -39,17 +39,17 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 	mut height := 40
 	mut widgets := [
 		// TODO: add hspace and vspace separators
-		ui.IWidgeter( ui.label({
+		ui.iwidget( ui.label({
 			text: ''
 		}))
 	]
 	for tline in text_lines {
-		widgets << 	ui.IWidgeter( ui.label({
+		widgets << 	ui.iwidget( ui.label({
 			text: tline
 		}))
 		height += 14
 	}
-	widgets << ui.IWidgeter( ui.label({
+	widgets << ui.iwidget( ui.label({
 		text: ' '
 	}))
 	widgets << ui.button({
@@ -63,7 +63,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 		bg_color: default_window_color
 		user_ptr: message_app
 		}, [
-			IWidgeter(column({
+			iwidget(column({
 				stretch: true
 				alignment: .center
 				margin: ui.MarginConfig{5,5,5,5}

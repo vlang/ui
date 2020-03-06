@@ -19,20 +19,20 @@ fn main() {
 		title: 'Counter'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.row({
+		ui.iwidget(ui.row({
 			alignment: .top
 			spacing: 5
 			stretch : true
 			margin: ui.MarginConfig{5,5,5,5}
 		}, [
-			ui.IWidgeter(ui.textbox({
+			ui.iwidget(ui.textbox({
 				max_len: 20
 				read_only: true
 				is_numeric: true
 				text: '0'
 				ref: &app.counter
 			})),
-			ui.IWidgeter(ui.button({
+			ui.iwidget(ui.button({
 				text: 'Count'
 				onclick: btn_count_click
 			}))

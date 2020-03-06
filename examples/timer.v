@@ -24,20 +24,20 @@ fn main() {
 		title: 'Timer'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.column({
+		ui.iwidget(ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 			alignment: .left
 		}, [
-		ui.IWidgeter(ui.row({
+		ui.iwidget(ui.row({
 			alignment: .top
 			spacing: 10
 		}, [
-			ui.IWidgeter(ui.column({
+			ui.iwidget(ui.column({
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.IWidgeter(ui.label({
+				ui.iwidget(ui.label({
 					text: 'Elapsed Time:'
 				})),
 				ui.label({
@@ -52,7 +52,7 @@ fn main() {
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.IWidgeter(ui.label({
+				ui.iwidget(ui.label({
 					text: '00.0s'
 					ref:  &app.lbl_elapsed_value
 				})),
