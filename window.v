@@ -282,7 +282,8 @@ fn bar2() {
 }
 
 pub fn (w mut ui.Window) set_title(title string) {
-
+	w.title = title
+	w.glfw_obj.set_title(title)
 }
 
 /*ILayouter Interface Methods*/
