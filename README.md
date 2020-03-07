@@ -80,7 +80,7 @@ To develop V UI apps, you need to install [V](https://github.com/vlang/v#install
 
 ```markdown
 macOS:
-brew install glfw freetype
+brew install glfw freetype fontconfig
 
 Debian/Ubuntu:
 sudo apt install libglfw3 libglfw3-dev libfreetype6-dev
