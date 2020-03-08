@@ -9,7 +9,6 @@ import (
 	time
 	gg
 	os
-	filepath
 )
 
 const (
@@ -120,7 +119,7 @@ fn (ui mut UI) idle_loop() {
 	for {
 		ui.show_cursor = !ui.show_cursor
 		glfw.post_empty_event()
-		
+
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
 		// 500ms after the button for closing the dialog/window was clicked.
@@ -197,13 +196,13 @@ fn system_font_path() string {
 
 fn (ui mut UI) load_icos() {
 	// TODO figure out how to use load_from_memory
-	tmp := filepath.join( os.tmpdir() , 'v_ui' ) + os.path_separator
-	if !os.is_dir( tmp ) {
-		os.mkdir( tmp ) or {
+	tmp := os.join(os.tmpdir() , 'v_ui') + os.path_separator
+	if !os.is_dir(tmp) {
+		os.mkdir(tmp) or {
 			panic(err)
 		}
 	}
-	ui.cb_image     = gg.create_image( tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len) )
+	ui.cb_image = gg.create_image(tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len))
 	/*
 	$if macos {
 		ui.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_darwin_circle_png,
@@ -213,8 +212,8 @@ fn (ui mut UI) load_icos() {
 			bytes_circle_png_len))
 	}
 	*/
-	ui.down_arrow = gg.create_image( tmp_save_pic(tmp, 'arrow.png', bytes_arrow_png, bytes_arrow_png_len))
-	ui.selected_radio_image = gg.create_image( tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len) )
+	ui.down_arrow = gg.create_image(tmp_save_pic(tmp, 'arrow.png', bytes_arrow_png, bytes_arrow_png_len))
+	ui.selected_radio_image = gg.create_image(tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len))
 }
 
 fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string {
