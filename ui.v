@@ -196,7 +196,7 @@ fn system_font_path() string {
 
 fn (ui mut UI) load_icos() {
 	// TODO figure out how to use load_from_memory
-	tmp := os.join_path(os.tmpdir() , 'v_ui') + os.path_separator
+	tmp := os.join_path(os.temp_dir() , 'v_ui') + os.path_separator
 	if !os.is_dir(tmp) {
 		os.mkdir(tmp) or {
 			panic(err)
