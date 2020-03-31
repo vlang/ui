@@ -8,7 +8,7 @@ const (
     _item_height = 20
     _col_list_bkgrnd = gx.White
     _col_item_select = gx.LightBlue
-    _col_border = gx.gray
+    _col_border = gx.Gray
     _text_offset_y = 3
     _text_offset_x = 5
 )
@@ -26,6 +26,7 @@ mut:
     col_selected   gx.Color = _col_item_select // Selected item background color
     item_height    int = _item_height
     text_offset_y  int = _text_offset_y
+    id             string = '' // To use one callback for multiple ListBoxes
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -43,6 +44,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
         col_border:      c.col_border
         item_height:     c.item_height
         text_offset_y:   c.text_offset_y
+        id:              c.id
     }
 
     for id, text in items {
@@ -75,6 +77,7 @@ pub mut:
     col_border      gx.Color = _col_border
     item_height     int = _item_height
     text_offset_y   int = _text_offset_y
+    id              string = ''
 }
 
 struct ListItem {
@@ -121,7 +124,7 @@ pub fn (lb &ListBox) is_selected() bool {
 // Returns the ID and the text of the selected item
 pub fn (lb &ListBox) selected() ?(string, string) {
     if !lb.is_selected() {
-        return error("Nothing is selected")
+        return error('Nothing is selected')
     }
     return lb.items[lb.selection].id, lb.items[lb.selection].text
 }
@@ -129,7 +132,7 @@ pub fn (lb &ListBox) selected() ?(string, string) {
 // Returns the index of the selected item
 pub fn (lb &ListBox) selected_inx() ?int {
     if !lb.is_selected() {
-        return error("Nothing is selected")
+        return error('Nothing is selected')
     }
     return lb.selection
 }
@@ -138,6 +141,7 @@ pub fn (lb mut ListBox) set_text(id, text string) {
     for i in 0..lb.items.len {
         if lb.items[i].id == id {
             lb.items[i].text = text
+            lb.items[i].draw_text = text[0..lb.get_draw_to(text)]
             break
         }
     }
@@ -178,7 +182,7 @@ fn (lb mut ListBox) init(parent ILayouter) {
     lb.parent = parent
     lb.ui = parent.get_ui()
     lb.draw_count = lb.height / lb.item_height
-    lb.text_offset_y = (lb.item_height - lb.ui.ft.text_height("W")) / 2
+    lb.text_offset_y = (lb.item_height - lb.ui.ft.text_height('W')) / 2
     if lb.text_offset_y < 0 {
         lb.text_offset_y = 0
     }
