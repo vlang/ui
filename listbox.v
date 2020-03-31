@@ -163,7 +163,7 @@ pub fn (lb mut ListBox) clear() {
 fn (lb mut ListBox) draw_item(li ListItem, selected bool) {
     col := if selected { lb.col_selected } else { lb.col_bkgrnd }
     lb.ui.gg.draw_rect(li.x, li.y, lb.width, lb.item_height, col)
-	lb.ui.ft.draw_text_def(li.x+_text_offset_x, li.y+lb.text_offset_y, li.draw_text)
+    lb.ui.ft.draw_text_def(li.x+_text_offset_x, li.y+lb.text_offset_y, li.draw_text)
 
     if lb.draw_lines {
        lb.ui.gg.draw_empty_rect(li.x, li.y, lb.width, lb.item_height, lb.col_border)
@@ -225,6 +225,7 @@ fn on_click(lb mut ListBox, e &MouseEvent, window &ui.Window) {
     lb.focus()
 
     for inx, item in lb.items {
+        if inx >= lb.draw_count { break }
         if item.point_inside(e.x, e.y) {
             if lb.selection != inx {
                 lb.selection = inx
