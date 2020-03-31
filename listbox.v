@@ -255,6 +255,7 @@ fn on_key_up(lb mut ListBox, e &KeyEvent, window &ui.Window ) {
     match e.key {
         .arrow_down {
             if lb.selection >= lb.draw_count - 1 { return }
+            if lb.selection >= lb.items.len - 1 { return }
             lb.selection++
         }
         .arrow_up {
