@@ -146,13 +146,17 @@ pub fn (lb mut ListBox) set_text(id, text string) {
 pub fn (lb mut ListBox) remove_item(id string) {
     for i in 0..lb.items.len {
         if lb.items[i].id == id {
-           for j in (i+1)..lb.items.len {
-               lb.items[j].y -= lb.item_height
-           }
-           lb.items.delete(i)
+           lb.remove_inx(i)
            break
         }
     }
+}
+
+pub fn (lb mut ListBox) remove_inx(i int) {
+   for j in (i+1)..lb.items.len {
+       lb.items[j].y -= lb.item_height
+   }
+   lb.items.delete(i)
 }
 
 pub fn (lb mut ListBox) clear() {
