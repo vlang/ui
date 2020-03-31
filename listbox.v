@@ -157,6 +157,7 @@ pub fn (lb mut ListBox) remove_item(id string) {
 }
 
 pub fn (lb mut ListBox) remove_inx(i int) {
+   if i < 0 || i >= lb.items.len { return }
    for j in (i+1)..lb.items.len {
        lb.items[j].y -= lb.item_height
    }
