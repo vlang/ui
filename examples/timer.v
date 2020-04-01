@@ -12,8 +12,8 @@ mut:
 	progress_bar ui.ProgressBar
 	slider ui.Slider
 	window     &ui.Window
-	duration f32 = 25.0
-	elapsed_time f32 = 0.0
+	duration f64 = 25.0
+	elapsed_time f64 = 0.0
 }
 
 fn main() {
