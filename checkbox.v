@@ -65,7 +65,7 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	return cb
 }
 
-fn cb_click(cb mut CheckBox, e &MouseEvent, window &ui.Window) {
+fn cb_click(cb mut CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) && e.action == 0 {
 		cb.checked = !cb.checked
 		if cb.on_check_changed != 0 {

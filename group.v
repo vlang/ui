@@ -4,9 +4,11 @@
 module ui
 
 import gx
+import eventbus
 
 pub struct Group {
 pub mut:
+
     title          string
     height         int
     width          int

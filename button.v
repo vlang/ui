@@ -69,7 +69,7 @@ pub fn button(c ButtonConfig) &Button {
 	return b
 }
 
-fn btn_click(b mut Button, e &MouseEvent, window &ui.Window) {
+fn btn_click(b mut Button, e &MouseEvent, window &Window) {
 	if b.point_inside(e.x, e.y) {
 		if e.action == 1 {
 			b.state = .pressed

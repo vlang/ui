@@ -9,6 +9,8 @@ import (
 	time
 	gg
 	os
+	freetype
+	clipboard
 )
 
 const (
@@ -19,7 +21,7 @@ pub struct UI {
 mut:
 	gg                   &gg.GG
 	ft                   &freetype.FreeType
-	window               ui.Window
+	window               Window
 	show_cursor          bool
 	cb_image             u32
 	//circle_image         u32
@@ -84,10 +86,10 @@ pub fn ilayout(x ILayouter) ILayouter { return x }
 
 pub struct KeyEvent {
 pub:
-	key       ui.Key
+	key       Key
 	action    int
 	code      int
-	mods      ui.KeyMod
+	mods      KeyMod
 	codepoint u32
 }
 
@@ -136,7 +138,7 @@ fn (ui mut UI) idle_loop() {
 	}
 }
 
-pub fn run(window ui.Window) {
+pub fn run(window Window) {
 	mut ui := window.ui
 	ui.window = window
 	go ui.idle_loop()

@@ -216,7 +216,7 @@ fn (t mut TextBox) draw() {
 		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
 	}
 }
-fn tb_key_up(t mut TextBox, e &KeyEvent, window &ui.Window ) {
+fn tb_key_up(t mut TextBox, e &KeyEvent, window &Window ) {
 	if !t.is_focused {
 		return
 	}
@@ -225,7 +225,7 @@ fn tb_key_up(t mut TextBox, e &KeyEvent, window &ui.Window ) {
 	}
 }
 
-fn tb_key_down(t mut TextBox, e &KeyEvent, window &ui.Window ) {
+fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 	if !t.is_focused {
 		//println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
