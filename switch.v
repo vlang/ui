@@ -81,6 +81,7 @@ fn (t &Switch) point_inside(x, y f64) bool {
 }
 
 fn sw_click(b mut Switch, e &MouseEvent, w &Window) {
+	if !b.point_inside(e.x, e.y) { return }	//<===== mouse position test added
 	if e.action == 0 {
 		b.open = !b.open
 		if b.onclick != 0 {
