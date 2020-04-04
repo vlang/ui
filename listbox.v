@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import eventbus
 
 type SelectionChangedFn fn(voidptr, voidptr) // The second will be ListBox
 
@@ -224,7 +225,7 @@ fn (li &ListItem) point_inside(x, y f64) bool {
         && y <= li.y + li.list.item_height
 }
 
-fn on_click(lb mut ListBox, e &MouseEvent, window &ui.Window) {
+fn on_click(lb mut ListBox, e &MouseEvent, window &Window) {
     if e.action != 1 { return }
     if !lb.point_inside(e.x, e.y) {
         lb.unfocus()
@@ -248,7 +249,7 @@ fn on_click(lb mut ListBox, e &MouseEvent, window &ui.Window) {
 }
 
 // Up and Down keys work on the list when it's focused
-fn on_key_up(lb mut ListBox, e &KeyEvent, window &ui.Window ) {
+fn on_key_up(lb mut ListBox, e &KeyEvent, window &Window ) {
 	if !lb.focused {
 		return
 	}
