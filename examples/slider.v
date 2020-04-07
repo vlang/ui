@@ -7,8 +7,8 @@ const (
 
 struct App {
 mut:
-	hor_slider  &ui.Slider
-	vert_slider &ui.Slider
+	hor_slider  ui.Slider
+	vert_slider ui.Slider
 	window      &ui.Window
 }
 
@@ -33,6 +33,7 @@ fn main() {
 				max: 100
 				val: 0
 				on_value_changed: on_vert_value_changed
+				ref: &app.vert_slider
 			})),
 			ui.slider({
 				width: 200
@@ -41,6 +42,7 @@ fn main() {
 				max: 100
 				val: 0
 				on_value_changed: on_hor_value_changed
+				ref: &app.hor_slider
 			})
 		]))
 	])
@@ -49,9 +51,9 @@ fn main() {
 }
 
 fn on_hor_value_changed(app mut App) {
-	//app.vert_slider.val = app.hor_slider.val
+	app.vert_slider.val = app.hor_slider.val
 }
 
 fn on_vert_value_changed(app mut App) {
-	//app.hor_slider.val = app.vert_slider.val
+	app.hor_slider.val = app.vert_slider.val
 }
