@@ -242,7 +242,7 @@ pub fn (w &ui.Window) onkeydown(cb voidptr) {
 }
 
 pub fn (w mut ui.Window) on_click(func ClickFn) {	w.click_fn = func }
-pub fn (w mut ui.Window) on_mouse_move(func MouseMoveFn) {	w.mouse_move_fn = func }
+pub fn (w mut ui.Window) on_mousemove(func MouseMoveFn) {	w.mouse_move_fn = func }
 pub fn (w mut ui.Window) on_scroll(func ScrollFn) {	w.scroll_fn = func }
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
