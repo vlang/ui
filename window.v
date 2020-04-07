@@ -109,9 +109,10 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
+	x0, y0 := glfw.get_cursor_pos(glfw_wnd)
 	e := MouseEvent{
-		x: int(x)
-		y: int(y)
+		x: int(x0)
+		y: int(y0)
 	}
 	/* if window.mouse_move_fn != 0 {
 		window.mouse_move_fn(e, &ui.window)
@@ -241,7 +242,7 @@ pub fn (w &ui.Window) onkeydown(cb voidptr) {
 }
 
 pub fn (w mut ui.Window) on_click(func ClickFn) {	w.click_fn = func }
-pub fn (w mut ui.Window) on_mousemove(func MouseMoveFn) {	w.mouse_move_fn = func }
+pub fn (w mut ui.Window) on_mouse_move(func MouseMoveFn) {	w.mouse_move_fn = func }
 pub fn (w mut ui.Window) on_scroll(func ScrollFn) {	w.scroll_fn = func }
 
 pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
