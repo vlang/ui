@@ -1,4 +1,6 @@
-import ui
+import (
+	ui
+)
 
 const (
 	win_width = 650
@@ -21,7 +23,7 @@ fn main() {
 	win_cfg := ui.WindowConfig{
 		width: win_width
 		height: win_height
-		title: 'Slider Example'
+		title: 'Slider & textbox Example'
 		user_ptr: app
 	}
 	slider_row_cfg := ui.RowConfig{
@@ -70,19 +72,21 @@ fn main() {
 		width: 40
 		height: 20
 		max_len: 20
-		read_only: true
+		read_only: false
 		is_numeric: true
 		text: hor_slider_val.str()
 		ref: &app.hor_textbox
+		on_key_up: on_hor_key_up		
 	}
 	vert_textbox_cfg := ui.TextBoxConfig{
 		width: 40
 		height: 20
 		max_len: 20
-		read_only: true
+		read_only: false
 		is_numeric: true
 		text: vert_slider_val.str()
 		ref: &app.vert_textbox
+		on_key_up: on_vert_key_up
 	}
 	window := ui.window(win_cfg, [ui.iwidget(ui.row(textbox_row_cfg, [ui.iwidget(ui.textbox(hor_textbox_cfg)),
 	ui.iwidget(ui.textbox(vert_textbox_cfg))])),
@@ -94,8 +98,36 @@ fn main() {
 
 fn on_hor_value_changed(app mut App) {
 	app.hor_textbox.text = int(app.hor_slider.val).str()
+	app.hor_textbox.border_accentuated = false
 }
 
 fn on_vert_value_changed(app mut App) {
 	app.vert_textbox.text = int(app.vert_slider.val).str()
+	app.vert_textbox.border_accentuated = false
+}
+
+fn on_hor_key_up(app mut App) {
+	val := app.hor_textbox.text.int()
+	min := app.hor_slider.min
+	max := app.hor_slider.max
+	if val >= min && val <= max {
+		app.hor_slider.val = f32(val)
+		app.hor_textbox.border_accentuated = false
+	}
+	else {
+		app.hor_textbox.border_accentuated = true
+	}
+}
+
+fn on_vert_key_up(app mut App) {
+	val := app.vert_textbox.text.int()
+	min := app.vert_slider.min
+	max := app.vert_slider.max
+	if val >= min && val <= max {
+		app.vert_slider.val = f32(val)
+		app.vert_textbox.border_accentuated = false
+	}
+	else {
+		app.vert_textbox.border_accentuated = true
+	}
 }
