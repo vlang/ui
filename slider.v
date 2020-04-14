@@ -18,36 +18,40 @@ pub enum Orientation {
 
 pub struct Slider {
 pub mut:
-	track_height        int
-	track_width         int
-	thumb_width         int
-	thumb_height        int
-	orientation         Orientation=Orientation.horizontal
-	x                   int
-	y                   int
-	parent              ILayouter
-	ui                  &UI
-	val                 f32
-	min                 int=0
-	max                 int=100
-	is_focused          bool
-	dragging            bool
-	on_value_changed    SliderValueChangedFn
-	focus_on_thumb_only bool
-	rev_min_max_pos     bool
+	track_height         int
+	track_width          int
+	thumb_width          int
+	thumb_height         int
+	orientation          Orientation=Orientation.horizontal
+	x                    int
+	y                    int
+	parent               ILayouter
+	ui                   &UI
+	val                  f32
+	min                  int=0
+	max                  int=100
+	is_focused           bool
+	dragging             bool
+	on_value_changed     SliderValueChangedFn
+	focus_on_thumb_only  bool
+	rev_min_max_pos      bool
+	thumb_in_track       bool
+	track_line_displayed bool
 }
 
 pub struct SliderConfig {
-	width               int
-	height              int
-	min                 int
-	max                 int
-	val                 f32
-	orientation         Orientation
-	on_value_changed    SliderValueChangedFn
-	ref                 &Slider
-	focus_on_thumb_only bool
-	rev_min_max_pos     bool
+	width                int
+	height               int
+	min                  int
+	max                  int
+	val                  f32
+	orientation          Orientation
+	on_value_changed     SliderValueChangedFn
+	ref                  &Slider
+	focus_on_thumb_only  bool=true
+	rev_min_max_pos      bool=false
+	thumb_in_track       bool=false
+	track_line_displayed bool=true
 }
 
 fn (s mut Slider) init(parent ILayouter) {
@@ -71,9 +75,17 @@ pub fn slider(c SliderConfig) &Slider {
 		on_value_changed: c.on_value_changed
 		focus_on_thumb_only: c.focus_on_thumb_only
 		rev_min_max_pos: c.rev_min_max_pos
+		thumb_in_track: c.thumb_in_track
+		track_line_displayed: c.track_line_displayed
 	}
-	p.thumb_height = if p.orientation == .horizontal { p.track_height + 10 } else { 10 }
-	p.thumb_width = if p.orientation == .horizontal { 10 } else { p.track_width + 10 }
+	if !c.thumb_in_track {
+		p.thumb_height = if p.orientation == .horizontal { p.track_height + 10 } else { 10 }
+		p.thumb_width = if p.orientation == .horizontal { 10 } else { p.track_width + 10 }
+	}
+	else {
+		p.thumb_height = if p.orientation == .horizontal { p.track_height - 3 } else { 10 }
+		p.thumb_width = if p.orientation == .horizontal { 10 } else { p.track_width - 3 }
+	}
 	if p.min > p.max {
 		tmp := p.max
 		p.max = p.min
@@ -145,6 +157,14 @@ fn (b mut Slider) propose_size(w, h int) (int,int) {
 fn (b &Slider) draw() {
 	// Draw the track
 	b.ui.gg.draw_rect(b.x, b.y, b.track_width, b.track_height, slider_background_color)
+	if b.track_line_displayed {
+		if b.orientation == .horizontal {
+			b.ui.gg.draw_line(b.x + 2, b.y + b.track_height / 2, b.x + b.track_width - 4, b.y + b.track_height / 2, gx.rgb(0, 0, 0))
+		}
+		else {
+			b.ui.gg.draw_line(b.x + b.track_width / 2, b.y + 2, b.x + b.track_width / 2, b.y + b.track_height - 4, gx.rgb(0, 0, 0))
+		}
+	}
 	if !b.is_focused {
 		b.ui.gg.draw_empty_rect(b.x, b.y, b.track_width, b.track_height, slider_background_border_color)
 	}
