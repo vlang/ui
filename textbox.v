@@ -22,41 +22,43 @@ const (
 	}
 	text_border_color = gx.rgb(177, 177, 177)
 	text_inner_border_color = gx.rgb(240, 240, 240)
+	text_border_accentuated_color = gx.rgb(255, 0, 0)
 	textbox_padding = 5
-	//selection_color = gx.rgb(226, 233, 241)
+	// selection_color = gx.rgb(226, 233, 241)
 	selection_color = gx.rgb(186, 214, 251)
 )
 
 type KeyDownFn fn(voidptr, voidptr, u32)
+
 type KeyUpFn fn(voidptr, voidptr, u32)
 
 pub struct TextBox {
 pub mut:
-
-	height      int
-	width       int
-	x           int
-	y           int
-	parent ILayouter
-	is_focused  bool
+	height             int
+	width              int
+	x                  int
+	y                  int
+	parent             ILayouter
+	is_focused         bool
 	// gg &gg.GG
-	ui          &UI
-	text        string
-	max_len     int
-	is_multi    bool
-	placeholder string
-	cursor_pos  int
-	is_numeric  bool
-	is_password bool
-	sel_start   int
-	sel_end     int
-	last_x		int
-	read_only   bool
-	borderless  bool
-	on_key_down KeyDownFn = KeyDownFn(0)
-	on_key_up KeyUpFn = KeyUpFn(0)
-	dragging	bool
-	sel_direction SelectionDirection
+	ui                 &UI
+	text               string
+	max_len            int
+	is_multi           bool
+	placeholder        string
+	cursor_pos         int
+	is_numeric         bool
+	is_password        bool
+	sel_start          int
+	sel_end            int
+	last_x             int
+	read_only          bool
+	borderless         bool
+	on_key_down        KeyDownFn=KeyDownFn(0)
+	on_key_up          KeyUpFn=KeyUpFn(0)
+	dragging           bool
+	sel_direction      SelectionDirection
+	border_accentuated bool
 }
 
 /*
@@ -68,28 +70,30 @@ struct Rect {
 }
 */
 
+
 pub struct TextBoxConfig {
-	width       int
-	height      int=22
-	min         int
-	max         int
-	val         int
-	placeholder string
-	max_len     int
-	is_numeric  bool
-	is_password bool
-	read_only   bool
-	is_multi    bool
-	text        string
-	borderless  bool
-	on_key_down KeyDownFn
-	on_key_up   KeyUpFn
-	ref			&TextBox
+	width              int
+	height             int=22
+	min                int
+	max                int
+	val                int
+	placeholder        string
+	max_len            int
+	is_numeric         bool
+	is_password        bool
+	read_only          bool
+	is_multi           bool
+	text               string
+	borderless         bool
+	on_key_down        KeyDownFn
+	on_key_up          KeyUpFn
+	ref                &TextBox
+	border_accentuated bool=false
 }
 
-fn (tb mut TextBox)init(parent ILayouter) {
+fn (tb mut TextBox) init(parent ILayouter) {
 	tb.parent = parent
-	ui :=  parent.get_ui()
+	ui := parent.get_ui()
 	tb.ui = ui
 	// return widget
 	mut subscriber := parent.get_subscriber()
@@ -102,10 +106,12 @@ fn (tb mut TextBox)init(parent ILayouter) {
 pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
 		height: c.height
-		width: if c.width < 30  { 30 } else { c.width }
-		//sel_start: 0
+		width: if c.width < 30 { 30 } else { c.width }
+		// sel_start: 0
+		
 		placeholder: c.placeholder
-		//TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
+		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
+		
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
@@ -114,6 +120,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		borderless: c.borderless
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
+		border_accentuated: c.border_accentuated
 	}
 	if c.ref != 0 {
 		mut ref := c.ref
@@ -123,10 +130,16 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	return tb
 }
 
-fn draw_inner_border(gg &gg.GG, x, y, width, height int) {
-	gg.draw_empty_rect(x, y, width, height, text_border_color)
-	// TODO this should be +-1, not 0.5, a bug in gg/opengl
-	gg.draw_empty_rect(0.5 + x, 0.5 + y, width - 1, height - 1, text_inner_border_color) // inner lighter border
+fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int) {	
+	if !border_accentuated {
+		gg.draw_empty_rect(x, y, width, height, text_border_color)
+		// TODO this should be +-1, not 0.5, a bug in gg/opengl
+		gg.draw_empty_rect(0.5 + x, 0.5 + y, width - 1, height - 1, text_inner_border_color) // inner lighter border
+	}
+	else {
+		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)		
+		gg.draw_empty_rect(1.5 + x, 1.5 + y, width - 3, height - 3, text_border_accentuated_color) // inner lighter border
+	}
 }
 
 fn (b mut TextBox) set_pos(x, y int) {
@@ -134,18 +147,18 @@ fn (b mut TextBox) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut TextBox) size() (int, int) {
-	return b.width, b.height
+fn (b mut TextBox) size() (int,int) {
+	return b.width,b.height
 }
 
-fn (b mut TextBox) propose_size(w, h int) (int, int) {
-	return b.width, b.height
+fn (b mut TextBox) propose_size(w, h int) (int,int) {
+	return b.width,b.height
 }
 
 fn (t mut TextBox) draw() {
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
 	if !t.borderless {
-		draw_inner_border(t.ui.gg, t.x, t.y, t.width, t.height)
+		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height)
 	}
 	width := if t.text.len == 0 { 0 } else { t.ui.ft.text_width(t.text) }
 	text_y := t.y + 4 // TODO off by 1px
@@ -157,19 +170,19 @@ fn (t mut TextBox) draw() {
 	// Text
 	else {
 		// Selection box
-		//if t.sel_start != 0 {
+		// if t.sel_start != 0 {
 		ustr := t.text.ustring()
 		if t.sel_start < t.sel_end && t.sel_start < ustr.len {
 			left := ustr.left(t.sel_start)
 			right := ustr.right(t.sel_end)
 			sel_width := width - t.ui.ft.text_width(right) - t.ui.ft.text_width(left)
 			x := t.ui.ft.text_width(left) + t.x + textbox_padding
-			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height-6, selection_color)
-		/*
+			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height - 6, selection_color)
+			/*
 			sel_width := t.ui.ft.text_width(right) + 1
 			 */
-		}
 
+		}
 		// The text doesn't fit, find the largest substring we can draw
 		if width > t.width {
 			for i := t.text.len - 1; i >= 0; i-- {
@@ -199,7 +212,8 @@ fn (t mut TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if t.is_focused && !t.read_only && t.ui.show_cursor && t.sel_start == 0 && t.sel_end == 0 { // no cursor in sel mode
+	if t.is_focused && !t.read_only && t.ui.show_cursor && t.sel_start == 0 && t.sel_end == 0 {
+		// no cursor in sel mode
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
 			cursor_x += t.ui.ft.text_width(strings.repeat(`*`, t.cursor_pos))
@@ -208,7 +222,7 @@ fn (t mut TextBox) draw() {
 			cursor_x += t.ui.ft.text_width(t.text[skip_idx..])
 		}
 		else if t.text.len > 0 {
-			//left := t.text[..t.cursor_pos]
+			// left := t.text[..t.cursor_pos]
 			left := t.text.ustring().left(t.cursor_pos)
 			cursor_x += t.ui.ft.text_width(left)
 		}
@@ -216,7 +230,8 @@ fn (t mut TextBox) draw() {
 		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
 	}
 }
-fn tb_key_up(t mut TextBox, e &KeyEvent, window &Window ) {
+
+fn tb_key_up(t mut TextBox, e &KeyEvent, window &Window) {
 	if !t.is_focused {
 		return
 	}
@@ -225,9 +240,9 @@ fn tb_key_up(t mut TextBox, e &KeyEvent, window &Window ) {
 	}
 }
 
-fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
+fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 	if !t.is_focused {
-		//println('textbox.key_down on an unfocused textbox, this should never happen')
+		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
 	if t.on_key_down != 0 {
@@ -241,15 +256,16 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 			return
 		}
 		s := utf32_to_str(e.codepoint)
-		if t.is_numeric && (s.len > 1 || !s[0].is_digit()) {
+		// if (t.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
+		if t.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((t.text.len > 0) && (t.cursor_pos > 0))))) {
 			return
 		}
 		t.insert(s)
-		//t.text += s
-		//t.cursor_pos ++//= utf8_char_len(s[0])// s.len
+		// t.text += s
+		// t.cursor_pos ++//= utf8_char_len(s[0])// s.le-112
 		return
 	}
-	//println(e.key)
+	// println(e.key)
 	// println('mods=$e.mods')
 	match e.key {
 		.backspace {
@@ -265,7 +281,8 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 					t.cursor_pos = t.sel_start
 					t.sel_start = 0
 					t.sel_end = 0
-				} else if e.mods in [.super, .ctrl] {
+				}
+				else if e.mods in [.super, .ctrl] {
 					// Delete until previous whitespace
 					mut i := t.cursor_pos
 					for {
@@ -278,13 +295,14 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 						}
 					}
 					t.cursor_pos = i
-				} else {
+				}
+				else {
 					// Delete just one character
 					t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
 					t.cursor_pos--
 				}
-				//u.free() // TODO remove
-				//t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
+				// u.free() // TODO remove
+				// t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
 			}
 		}
 		.delete {
@@ -293,9 +311,9 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 				return
 			}
 			u := t.text.ustring()
-			t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos+1)
-			//t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
-			//u.free() // TODO remove
+			t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos + 1)
+			// t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
+			// u.free() // TODO remove
 		}
 		.left {
 			if t.sel(e.mods, e.key) {
@@ -344,6 +362,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 				t.parent.just_tabbed = false
 				return
 			} */
+
 			// println('TAB $t.idx')
 			/* if e.mods == .shift {
 				t.parent.focus_previous()
@@ -351,48 +370,55 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window ) {
 			else {
 				t.parent.focus_next()
 			} */
+
 		}
 		else {}
 	}
 }
+
 fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
 	if t.sel_direction == .right_to_left {
 		t.sel_start = sel_start
 		t.sel_end = sel_end
-	} else {
+	}
+	else {
 		t.sel_start = sel_end
 		t.sel_end = sel_start
 	}
 }
 
 fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
-	mut sel_start := if t.sel_direction == .right_to_left {t.sel_start} else {t.sel_end}
-	mut sel_end := if t.sel_direction == .right_to_left {t.sel_end} else {t.sel_start}
-
+	mut sel_start := if t.sel_direction == .right_to_left { t.sel_start } else { t.sel_end }
+	mut sel_end := if t.sel_direction == .right_to_left { t.sel_end } else { t.sel_start }
 	if mods == .shift + .ctrl {
 		mut i := t.cursor_pos
 		if sel_start > 0 {
-			i = if key == .left { sel_start - 1 } else { sel_start + 1}
-		} else if sel_start == 0 && sel_end > 0 {
+			i = if key == .left { sel_start - 1 } else { sel_start + 1 }
+		}
+		else if sel_start == 0 && sel_end > 0 {
 			i = 0
-		} else {
+		}
+		else {
 			t.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
 		}
 		sel_end = t.cursor_pos
 		for {
 			if key == .left && i > 0 {
 				i--
-			} else if key == .right && i < t.text.len {
+			}
+			else if key == .right && i < t.text.len {
 				i++
 			}
-			 if i == 0 {
+			if i == 0 {
 				sel_start = 0
 				break
-			} else if i == t.text.len {
+			}
+			else if i == t.text.len {
 				sel_start = t.text.len
 				break
-			} else if t.text[i].is_space() {
-				sel_start = if t.sel_direction == .right_to_left { i + 1 } else {i}
+			}
+			else if t.text[i].is_space() {
+				sel_start = if t.sel_direction == .right_to_left { i + 1 } else { i }
 				break
 			}
 		}
@@ -400,13 +426,16 @@ fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 		return true
 	}
 	if mods == .shift {
-		if (t.sel_direction == .right_to_left && sel_start == 0 && sel_end > 0) || (t.sel_direction == .left_to_right && sel_end == t.text.len ) {return true}
+		if (t.sel_direction == .right_to_left && sel_start == 0 && sel_end > 0) || (t.sel_direction == .left_to_right && sel_end == t.text.len) {
+			return true
+		}
 		if sel_start <= 0 {
 			sel_end = t.cursor_pos
-			sel_start = if key == .left { t.cursor_pos - 1 } else {t.cursor_pos + 1}
+			sel_start = if key == .left { t.cursor_pos - 1 } else { t.cursor_pos + 1 }
 			t.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
-		} else {
-			sel_start = if key == .left { sel_start - 1 } else { sel_start + 1}
+		}
+		else {
+			sel_start = if key == .left { sel_start - 1 } else { sel_start + 1 }
 		}
 		t.set_sel(sel_start, sel_end, key)
 		return true
@@ -419,16 +448,15 @@ fn (t &TextBox) point_inside(x, y f64) bool {
 }
 
 fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
-	if !t.point_inside(e.x, e.y) {return}
-
+	if !t.point_inside(e.x, e.y) {
+		return
+	}
 	if t.dragging {
 		x := e.x - t.x - textbox_padding
 		reverse := x - t.last_x < 0
-
 		if t.sel_start <= 0 {
 			t.sel_start = t.cursor_pos
 		}
-
 		t.last_x = x
 		mut prev_width := 0
 		ustr := t.text.ustring()
@@ -442,7 +470,8 @@ fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
 				}
 				if reverse {
 					t.sel_start = i
-				} else {
+				}
+				else {
 					t.sel_end = i
 				}
 				return
@@ -451,7 +480,8 @@ fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
 		}
 		if reverse {
 			t.sel_start = 0
-		} else {
+		}
+		else {
 			t.sel_end = t.text.len
 		}
 	}
@@ -481,7 +511,7 @@ fn tb_click(t mut TextBox, e &MouseEvent) {
 	mut prev_width := 0
 	ustr := t.text.ustring()
 	for i in 1 .. ustr.len {
-		//width := t.ui.ft.text_width(t.text[..i])
+		// width := t.ui.ft.text_width(t.text[..i])
 		width := t.ui.ft.text_width(ustr.left(i))
 		if prev_width <= x && x <= width {
 			t.cursor_pos = i
@@ -493,7 +523,9 @@ fn tb_click(t mut TextBox, e &MouseEvent) {
 }
 
 pub fn (t mut TextBox) focus() {
-	if t.is_focused {return}
+	if t.is_focused {
+		return
+	}
 	parent := t.parent
 	parent.unfocus_all()
 	t.is_focused = true
@@ -513,9 +545,7 @@ fn (t mut TextBox) update() {
 	t.cursor_pos = t.text.ustring().len
 }
 
-pub fn (t mut TextBox) hide() {
-
-}
+pub fn (t mut TextBox) hide() {}
 
 pub fn (t mut TextBox) set_text(s string) {
 	t.text = s
@@ -536,19 +566,20 @@ pub fn (t mut TextBox) insert(s string) {
 	// Remove the selection
 	if t.sel_start < t.sel_end {
 		t.text = ustr.left(t.sel_start) + s + ustr.right(t.sel_end + 1)
-	} else {
+	}
+	else {
 		// Insert one character
-		//t.text = t.text[..t.cursor_pos] + s + t.text[t.cursor_pos..]
+		// t.text = t.text[..t.cursor_pos] + s + t.text[t.cursor_pos..]
 		t.text = ustr.left(t.cursor_pos) + s + ustr.right(t.cursor_pos)
 		ustr = t.text.ustring()
 		// The string is too long
-		if t.max_len > 0  && ustr.len >= t.max_len {
-			//t.text = t.text.limit(t.max_len)
+		if t.max_len > 0 && ustr.len >= t.max_len {
+			// t.text = t.text.limit(t.max_len)
 			t.text = ustr.left(t.max_len)
 			ustr = t.text.ustring()
 		}
 	}
-	//t.cursor_pos += t.text.len - old_len
+	// t.cursor_pos += t.text.len - old_len
 	t.cursor_pos += ustr.len - old_len
 	t.sel_start = 0
 	t.sel_end = 0
