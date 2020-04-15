@@ -10,7 +10,6 @@ const (
 	cb_border_color = gx.rgb(76, 145, 244)
 	cb_image = u32(0)
 )
-
 /*
 enum CheckBoxState {
 	normal
@@ -18,46 +17,46 @@ enum CheckBoxState {
 }
 */
 
+
 type CheckChangedFn fn(voidptr, bool)
 
 pub struct CheckBox {
 pub mut:
-
-	//state      CheckBoxState
-	height     int
-	width      int
-	x          int
-	y          int
-	parent ILayouter
-	is_focused bool
-	checked bool
-	ui         &UI
+// state      CheckBoxState
+	height           int
+	width            int
+	x                int
+	y                int
+	parent           ILayouter
+	is_focused       bool
+	checked          bool
+	ui               &UI
 	on_check_changed CheckChangedFn
-	text       string
+	text             string
 }
 
 pub struct CheckBoxConfig {
-	x       int
-	y       int
-	parent ILayouter
-	text    string
+	x                int
+	y                int
+	parent           ILayouter
+	text             string
 	on_check_changed CheckChangedFn
-	checked bool
+	checked          bool
 }
 
-fn (cb mut CheckBox)init(parent ILayouter) {
+fn (cb mut CheckBox) init(parent ILayouter) {
 	cb.parent = parent
 	ui := parent.get_ui()
 	cb.ui = ui
 	cb.width = cb.ui.ft.text_width(cb.text) + 5 + check_mark_size
-
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
-		height: 20 //TODO
+		height: 20 // TODO
+		
 		text: c.text
 		on_check_changed: c.on_check_changed
 		checked: c.checked
@@ -79,21 +78,21 @@ fn (b mut CheckBox) set_pos(x, y int) {
 	b.y = y
 }
 
-fn (b mut CheckBox) size() (int, int) {
-	return b.width, b.height
+fn (b mut CheckBox) size() (int,int) {
+	return b.width,b.height
 }
 
-fn (b mut CheckBox) propose_size(w, h int) (int, int) {
-	//b.width = w
-	//b.height = h
-	//width := check_mark_size + 5 + b.ui.ft.text_width(b.text)
-	return b.width, check_mark_size
+fn (b mut CheckBox) propose_size(w, h int) (int,int) {
+	// b.width = w
+	// b.height = h
+	// width := check_mark_size + 5 + b.ui.ft.text_width(b.text)
+	return b.width,check_mark_size
 }
 
 fn (b mut CheckBox) draw() {
 	b.ui.gg.draw_rect(b.x, b.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
 	// b.ui.gg.draw_empty_rect(b.x, b.y, check_mark_size, check_mark_size, cb_border_color)
-	draw_inner_border(b.ui.gg, b.x, b.y, check_mark_size, check_mark_size)
+	draw_inner_border(false, b.ui.gg, b.x, b.y, check_mark_size, check_mark_size)
 	// Draw X (TODO draw a check mark instead)
 	if b.checked {
 		/*
@@ -125,7 +124,6 @@ fn (b mut CheckBox) focus() {
 fn (b mut CheckBox) unfocus() {
 	b.is_focused = false
 }
-
 
 fn (t &CheckBox) is_focused() bool {
 	return t.is_focused
