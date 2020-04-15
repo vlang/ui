@@ -8,6 +8,10 @@
 <img src='https://raw.githubusercontent.com/vlang/ui/c2f802a137b5171dade1d5fdc364cd92d34e3ca7/examples/users/screenshot.png' width=712>
 </a>
 
+For now use V 0.1.25 to build V UI and examples:
+
+https://github.com/vlang/v0.1.25
+
 ```v
 ui.window({
     width:  600
