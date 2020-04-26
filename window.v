@@ -57,7 +57,7 @@ pub:
 	bg_color      gx.Color=default_window_color
 }
 
-pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
+pub fn window(cfg WindowConfig, children []IWidgeter) &Window {
 	fpath := system_font_path()
 	gcontext := gg.new_context(gg.Cfg{
 		width: cfg.width
@@ -93,7 +93,7 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &ui.Window {
 	ui_ctx.gg.window.onmousemove(window_mouse_move)
 	ui_ctx.gg.window.on_click(window_click)
 	ui_ctx.gg.window.on_resize(window_resize)
-	mut window := &ui.Window{
+	mut window := &Window{
 		user_ptr: cfg.user_ptr
 		ui: ui_ctx
 		glfw_obj: ui_ctx.gg.window
@@ -206,7 +206,7 @@ fn window_char(glfw_wnd voidptr, codepoint u32) {
 
 }
 
-fn (w mut ui.Window) focus_next() {
+fn (w mut Window) focus_next() {
 	mut doit := false
 	for child in w.children {
 		// Focus on the next widget
@@ -222,7 +222,7 @@ fn (w mut ui.Window) focus_next() {
 	w.just_tabbed = true
 }
 
-fn (w &ui.Window) focus_previous() {
+fn (w &Window) focus_previous() {
 	for i, child in w.children {
 		is_focused := child.is_focused()
 		if is_focused && i > 0 {
@@ -233,38 +233,38 @@ fn (w &ui.Window) focus_previous() {
 	}
 }
 
-pub fn (w &ui.Window) set_cursor(cursor Cursor) {
+pub fn (w &Window) set_cursor(cursor Cursor) {
 	// glfw.set_cursor(.ibeam)
 	// w.glfw_obj.set_cursor(.ibeam)
 	}
 
-	pub fn (w &ui.Window) close() {}
+	pub fn (w &Window) close() {}
 
-	pub fn (w &ui.Window) refresh() {}
+	pub fn (w &Window) refresh() {}
 
-	pub fn (w &ui.Window) onmousedown(cb voidptr) {}
+	pub fn (w &Window) onmousedown(cb voidptr) {}
 
-	pub fn (w &ui.Window) onkeydown(cb voidptr) {}
+	pub fn (w &Window) onkeydown(cb voidptr) {}
 
-	pub fn (w mut ui.Window) on_click(func ClickFn) {
+	pub fn (w mut Window) on_click(func ClickFn) {
 		w.click_fn = func
 	}
 
-	pub fn (w mut ui.Window) on_mousemove(func MouseMoveFn) {
+	pub fn (w mut Window) on_mousemove(func MouseMoveFn) {
 		w.mouse_move_fn = func
 	}
 
-	pub fn (w mut ui.Window) on_scroll(func ScrollFn) {
+	pub fn (w mut Window) on_scroll(func ScrollFn) {
 		w.scroll_fn = func
 	}
 
-	pub fn (w &ui.Window) mouse_inside(x, y, width, height int) bool {
+	pub fn (w &Window) mouse_inside(x, y, width, height int) bool {
 		return false
 	}
 
-	pub fn (b &ui.Window) focus() {}
+	pub fn (b &Window) focus() {}
 
-	pub fn (b &ui.Window) always_on_top(val bool) {}
+	pub fn (b &Window) always_on_top(val bool) {}
 	// TODO remove this
 	fn foo(w IWidgeter) {}
 
@@ -290,38 +290,38 @@ pub fn (w &ui.Window) set_cursor(cursor Cursor) {
 	}
 
 	fn bar2() {
-		foo2(&ui.Window{})
+		foo2(&Window{})
 		foo2(&Stack{})
 	}
 
-	pub fn (w mut ui.Window) set_title(title string) {
+	pub fn (w mut Window) set_title(title string) {
 		w.title = title
 		w.glfw_obj.set_title(title)
 	}
 	/*ILayouter Interface Methods*/
 
 
-	fn (w &ui.Window) draw() {}
+	fn (w &Window) draw() {}
 
-	fn (w &ui.Window) get_ui() &UI {
+	fn (w &Window) get_ui() &UI {
 		return w.ui
 	}
 
-	fn (w &ui.Window) get_user_ptr() voidptr {
+	fn (w &Window) get_user_ptr() voidptr {
 		return w.user_ptr
 	}
 
-	pub fn (w &ui.Window) get_subscriber() &eventbus.Subscriber {
+	pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 		return w.eventbus.subscriber
 	}
 
-	fn (w &ui.Window) size() (int,int) {
+	fn (w &Window) size() (int,int) {
 		return w.width,w.height
 	}
 
-	fn (window &ui.Window) resize(width, height int) {}
+	fn (window &Window) resize(width, height int) {}
 
-	fn (window &ui.Window) unfocus_all() {
+	fn (window &Window) unfocus_all() {
 		for child in window.children {
 			child.unfocus()
 		}
