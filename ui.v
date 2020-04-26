@@ -11,6 +11,7 @@ import (
 	os
 	freetype
 	clipboard
+	eventbus
 )
 
 const (
