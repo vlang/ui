@@ -1,8 +1,6 @@
 module ui
 
-import (
-	eventbus
-)
+import eventbus
 
 enum Direction {
 	row

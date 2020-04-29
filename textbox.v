@@ -390,7 +390,7 @@ fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
 fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
 	mut sel_start := if t.sel_direction == .right_to_left { t.sel_start } else { t.sel_end }
 	mut sel_end := if t.sel_direction == .right_to_left { t.sel_end } else { t.sel_start }
-	if mods == .shift + .ctrl {
+	if mods == int(KeyMod.shift) + int(KeyMod.ctrl) {
 		mut i := t.cursor_pos
 		if sel_start > 0 {
 			i = if key == .left { sel_start - 1 } else { sel_start + 1 }

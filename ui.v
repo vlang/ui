@@ -3,16 +3,14 @@
 // that can be found in the LICENSE file.
 module ui
 
-import (
-	glfw
-	stbi
-	time
-	gg
-	os
-	freetype
-	clipboard
-	eventbus
-)
+import glfw
+import stbi
+import time
+import gg
+import os
+import freetype
+import clipboard
+import eventbus
 
 const (
 	version = '0.0.2'
