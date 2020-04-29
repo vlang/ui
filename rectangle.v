@@ -34,6 +34,8 @@ pub struct RectangleConfig {
 		b: 190
 	}
 	ref          &Rectangle
+	x	int
+	y	int
 }
 
 fn (r mut Rectangle) init(parent ILayouter) {
@@ -50,6 +52,8 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		color: c.color
 		border: c.border
 		border_color: c.border_color
+		x:c.x
+		y:c.y
 	}
 	if c.ref != 0 {
 		mut ref := c.ref
@@ -89,7 +93,7 @@ fn (r mut Rectangle) draw() {
 		color: gx.red
 		size: freetype.default_font_size
 		align: gx.ALIGN_LEFT
-		max_width: r.width
+		max_width: r.x + r.width
 	}
 	// Display rectangle text
 	if r.text != '' {
