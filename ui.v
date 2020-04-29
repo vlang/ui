@@ -108,6 +108,7 @@ pub enum Cursor {
 }
 
 fn init() {
+	$if windows { set_process_default_dpi_awareness_level(1) }
 	glfw.init_glfw()
 	stbi.set_flip_vertically_on_load(true)
 }
