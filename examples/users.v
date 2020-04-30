@@ -134,10 +134,10 @@ fn main() {
 				stretch: true
 				alignment: .right
 			},[
-				ui.iwidget(ui.canvas({
+				ui.canvas({
 					height: 275
 					draw_fn:canvas_draw
-				})),
+				}),
 				ui.picture({
 					width: 100
 					height: 100

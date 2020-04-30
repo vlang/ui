@@ -54,6 +54,5 @@ pub fn easing(easingtype EasingType) EasingFunction {
 		.ease_in_quint      { return ease_in_quint }
 		.ease_out_quint     { return ease_out_quint }
 		.ease_in_out_quint  { return ease_in_out_quint }
-		else { return linear }
 	}
 }

@@ -52,7 +52,6 @@ pub struct MarginConfig {
 	bottom int
 }
 
-// TODO rename to `Widget` once interfaces allow that :)
 pub interface IWidgeter {
 	init(ILayouter)
 	//key_down(KeyEvent)
@@ -67,9 +66,8 @@ pub interface IWidgeter {
 	size() (int, int)
 	is_focused() bool
 }
-pub fn iwidget(x IWidgeter) IWidgeter { return x }
+//pub fn iwidget(x IWidgeter) IWidgeter { return x }
 
-// TODO rename to `Layouter` once interfaces allow that :)
 pub interface ILayouter {
 	get_ui() &UI
 	get_user_ptr() voidptr

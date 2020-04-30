@@ -50,10 +50,10 @@ fn (r mut Group)init(parent ILayouter) {
         mut pw, ph := widget.size()
         widget.set_pos(start_x, start_y)
         start_y = start_y + ph + r.spacing
-        if(pw > r.width - r.margin_left - r.margin_right){
+        if pw > r.width - r.margin_left - r.margin_right {
             r.width = pw + r.margin_left + r.margin_right
         }
-        if(start_y + r.margin_bottom > r.height){
+        if start_y + r.margin_bottom > r.height {
             r.height = start_y -ph
         }
     }

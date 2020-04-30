@@ -18,7 +18,7 @@ const (
 	placeholder_cfg = gx.TextCfg{
 		color: gx.gray
 		size: freetype.default_font_size
-		align: gx.ALIGN_LEFT
+		align: gx.align_left
 	}
 	text_border_color = gx.rgb(177, 177, 177)
 	text_inner_border_color = gx.rgb(240, 240, 240)
@@ -108,10 +108,10 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		// sel_start: 0
-		
+
 		placeholder: c.placeholder
 		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
-		
+
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
@@ -130,14 +130,14 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	return tb
 }
 
-fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int) {	
+fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int) {
 	if !border_accentuated {
 		gg.draw_empty_rect(x, y, width, height, text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
 		gg.draw_empty_rect(0.5 + x, 0.5 + y, width - 1, height - 1, text_inner_border_color) // inner lighter border
 	}
 	else {
-		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)		
+		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)
 		gg.draw_empty_rect(1.5 + x, 1.5 + y, width - 3, height - 3, text_border_accentuated_color) // inner lighter border
 	}
 }

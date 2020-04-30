@@ -13,7 +13,7 @@ const (
 		// color: gx.white
 		color: gx.rgb(38, 38, 38)
 		size: freetype.default_font_size
-		align: gx.ALIGN_LEFT
+		align: gx.align_left
 	}
 	button_horizontal_padding = 26
 	button_vertical_padding = 8

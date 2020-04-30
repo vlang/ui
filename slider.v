@@ -110,10 +110,10 @@ fn (b &Slider) draw_thumb() {
 		pos = -pos + dim
 	}
 	pos += axis
-	if (pos > axis + dim) {
+	if  pos > axis + dim {
 		pos = f32(dim) + axis
 	}
-	if (pos < axis) {
+	if  pos < axis {
 		pos = axis
 	}
 	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
@@ -282,10 +282,10 @@ fn (t &Slider) point_inside_thumb(x, y f64) bool {
 		pos = -pos + dim
 	}
 	pos += axis
-	if (pos > axis + dim) {
+	if  pos > axis + dim {
 		pos = f32(dim) + axis
 	}
-	if (pos < axis) {
+	if pos < axis {
 		pos = axis
 	}
 	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
