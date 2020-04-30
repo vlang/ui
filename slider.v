@@ -239,7 +239,9 @@ fn slider_mouse_move(b mut Slider, e &MouseEvent) {
 fn (b mut Slider) change_value(x, y int) {
 	dim := if b.orientation == .horizontal { b.track_width } else { b.track_height }
 	axis := if b.orientation == .horizontal { b.x } else { b.y }
-	mut pos := if b.orientation == .horizontal { x } else { y } - axis
+	// TODO parser bug ` - axis`
+	mut pos := if b.orientation == .horizontal { x } else { y }
+	pos -= axis
 	if b.rev_min_max_pos {
 		pos = -pos + dim
 	}

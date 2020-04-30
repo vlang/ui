@@ -90,7 +90,7 @@ fn (t mut Transition) draw() {
 			mapped = t.target_value
 		}
 		// Update the target value and request a redraw
-		*t.animated_value = mapped
+		(*t.animated_value) = mapped
 		t.ui.redraw_requested = true
 		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value

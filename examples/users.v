@@ -55,20 +55,20 @@ fn main() {
 		user_ptr: app
 		title: 'V UI Demo'
 	}, [
-		ui.iwidget(ui.row({
+		ui.row({
 			stretch: true,
 			margin: ui.MarginConfig{10,10,10,10}
 		}, [
-			ui.iwidget(ui.column({
+			ui.column({
 				width: 200
 				spacing: 13
 			}, [
-				ui.iwidget(ui.textbox({
+				ui.textbox({
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
 					ref: &app.first_name
-				})),
+				}),
 				ui.textbox({
 					max_len: 50
 					width: 200
@@ -105,10 +105,10 @@ fn main() {
 				ui.row({
 					spacing: 85
 				}, [
-					ui.iwidget(ui.button({
+					ui.button({
 						text: 'Add user'
 						onclick: btn_add_click
-					})),
+					}),
 					ui.button({
 						text: '?'
 						onclick: btn_help_click
@@ -118,18 +118,18 @@ fn main() {
 					spacing: 5
 					alignment: .center
 				}, [
-					ui.iwidget(ui.progressbar({
+					ui.progressbar({
 						width: 170
 						max: 10
 						val: 2
 						ref: &app.pbar
-					})),
+					}),
 					ui.label({
 						text: '2/10'
 						ref: &app.label
 					})
 				])
-			])),
+			]),
 			ui.column({
 				stretch: true
 				alignment: .right
@@ -144,7 +144,7 @@ fn main() {
 					path: os.resource_abs_path( 'logo.png' )
 				})
 			])
-		])),
+		]),
 		ui.menu({
 			items: [
 				ui.MenuItem{'Delete all users', menu_click},

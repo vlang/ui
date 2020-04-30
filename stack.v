@@ -195,8 +195,10 @@ fn (b &Stack) get_x_axis() int {
 	return if b.direction == .row {b.y} else {b.x}
 }
 fn (b mut Stack) set_height(h int) int {
-	return if b.direction == .row {b.width = h} else {b.height = h}
+	if b.direction == .row {b.width = h} else {b.height = h}
+	return h
 }
 fn (b mut Stack) set_width(w int) int {
-	return if b.direction == .row {b.height = w} else {b.width = w}
+	if b.direction == .row {b.height = w} else {b.width = w}
+	return w
 }
