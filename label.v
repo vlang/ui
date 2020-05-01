@@ -40,17 +40,17 @@ fn (b mut Label) set_pos(x, y int) {
 }
 
 fn (b mut Label) size() (int, int) {
-	size := b.ui.ft.text_size(b.text)
+	w,h := b.ui.ft.text_size(b.text)
 
 	// First return the width, then the height multiplied by line count.
-	return size.var_0, size.var_1 * b.text.split('\n').len
+	return w, h * b.text.split('\n').len
 }
 
 fn (b mut Label) propose_size(w, h int) (int, int) {
-	size := b.ui.ft.text_size(b.text)
+	ww,hh := b.ui.ft.text_size(b.text)
 
 	// First return the width, then the height multiplied by line count.
-	return size.var_0, size.var_1 * b.text.split('\n').len
+	return ww, hh * b.text.split('\n').len
 }
 
 fn (b mut Label) draw() {

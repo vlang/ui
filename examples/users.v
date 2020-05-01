@@ -111,7 +111,7 @@ fn main() {
 					}),
 					ui.button({
 						text: '?'
-						onclick: btn_help_click
+						//onclick: btn_help_click
 					})
 				]),
 				ui.row({
@@ -136,7 +136,7 @@ fn main() {
 			},[
 				ui.canvas({
 					height: 275
-					draw_fn:canvas_draw
+					//draw_fn:canvas_draw
 				}),
 				ui.picture({
 					width: 100
@@ -165,7 +165,9 @@ fn btn_help_click() {
 	ui.message_box('Built with V UI')
 }
 
-fn btn_add_click(app mut App) {
+//fn btn_add_click(app mut App, x voidptr) {
+fn btn_add_click(app_ voidptr, x voidptr) {
+	mut app := &App(app_)
 	//ui.notify('user', 'done')
 	//app.window.set_cursor(.hand)
 	if app.users.len >= 10 {
