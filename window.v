@@ -63,19 +63,17 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &Window {
 		width: cfg.width
 		height: cfg.height
 		use_ortho: true // This is needed for 2D drawing
-		
+
 		create_window: true
 		window_title: cfg.title
 		resizable: cfg.resizable
 		// window_user_ptr: ui
-		
+
 	})
 	wsize := gcontext.window.get_window_size()
 	fsize := gcontext.window.get_framebuffer_size()
 	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
-	mut ui_ctx := &UI{
-		gg: gcontext
-		ft: freetype.new_context(gg.Cfg{
+		ft:=freetype.new_context(gg.Cfg{
 			width: cfg.width
 			height: cfg.height
 			use_ortho: true
@@ -84,6 +82,9 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &Window {
 			window_user_ptr: 0
 			font_path: fpath
 		})
+	mut ui_ctx := &UI{
+		gg: gcontext
+		ft:ft
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_icos()
