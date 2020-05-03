@@ -22,22 +22,22 @@ fn main() {
         title: 'Temperature Conv.'
         user_ptr: app
     },[
-     ui.iwidget(ui.row({
+     ui.row({
             stretch: true
             alignment: .center
             margin: ui.MarginConfig{5,5,5,5}
             spacing: 10
         }, [
-            ui.iwidget(ui.label({
+            ui.label({
                 text: 'Celsius = '
-            })), 
+            }),
             ui.textbox({
                 width: 70
                 on_key_up: on_cel_key_up
                 is_numeric: true
                 ref: &app.txt_box_celsius
             }),
-			ui.label({
+		ui.label({
                 text: 'Fahrenheit'
             }),
             ui.textbox({
@@ -46,8 +46,8 @@ fn main() {
                 is_numeric: true
                 ref: &app.txt_box_fahrenheit
             })
-            
-        ])),
+
+        ]),
     ])
 
     app.window = window
@@ -72,4 +72,4 @@ fn on_fah_key_up(app mut App){
     fah := app.txt_box_fahrenheit.text.f64()
     cel := (fah - 32.0)*(5.0/9.0)
     app.txt_box_celsius.set_text(int(cel).str())
-} 
+}

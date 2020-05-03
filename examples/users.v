@@ -33,6 +33,7 @@ mut:
 }
 
 fn main() {
+	println('start')
 	mut app := &App{
 		users: [
 			User{
@@ -56,8 +57,8 @@ fn main() {
 		title: 'V UI Demo'
 	}, [
 		ui.row({
-			stretch: true,
-			margin: ui.MarginConfig{10,10,10,10}
+			stretch: true
+			margin: {top:10,left:10,right:10,bottom:10}
 		}, [
 			ui.column({
 				width: 200

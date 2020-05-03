@@ -105,7 +105,21 @@ pub fn window(cfg WindowConfig, children []IWidgeter) &Window {
 		height: cfg.height
 		children: children
 	}
-	for child in window.children {
+	for i, child in window.children {
+		//if child is Stack {
+
+		//}
+		/*
+		match child {
+			Stack {
+				println('column')
+			}
+			TextBox {
+				println('textbox')
+			}
+			else{}
+		}
+		*/
 		child.init(window)
 	}
 	// window.set_cursor()

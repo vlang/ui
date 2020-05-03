@@ -7,12 +7,12 @@ import sync
 
 pub fn message_box(s string) {
 	// Running the message box dialog window
-	// in a new thread ensures that glfw's context 
+	// in a new thread ensures that glfw's context
 	// of the main window will not be messed up.
 	//
 	// We use a waitgroup to wait for the end of the thread,
 	// to ensure that message_box shows a modal dialog, i.e. that
-	// its behaviour is as close to the behaviour of the native 
+	// its behaviour is as close to the behaviour of the native
 	// message box dialogs on other platforms.
 	//
 	mut message_app := &MessageApp{
@@ -28,7 +28,7 @@ pub fn message_box(s string) {
 
 struct MessageApp{
 mut:
-	window  &ui.Window
+	window  &Window
 	waitgroup &sync.WaitGroup
 }
 
@@ -37,24 +37,25 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 	// and will block until the dialog window is closed
 	text_lines := word_wrap_to_lines(s, 70)
 	mut height := 40
-	mut widgets := [
+	mut widgets := []IWidgeter{}
+	widgets = [
 		// TODO: add hspace and vspace separators
-		ui.iwidget( ui.label({
+		ui.label({
 			text: ''
-		}))
+		})
 	]
 	for tline in text_lines {
-		widgets << 	ui.iwidget( ui.label({
+		widgets << 	ui.label({
 			text: tline
-		}))
+		})
 		height += 14
 	}
-	widgets << ui.iwidget( ui.label({
+	widgets << ui.label({
 		text: ' '
-	}))
+	})
 	widgets << ui.button({
 		text: 'OK'
-		onclick: msgbox_btn_ok_click
+		//onclick: msgbox_btn_ok_click
 	})
 	message_app.window = window({
 		width: 400
@@ -63,22 +64,22 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 		bg_color: default_window_color
 		user_ptr: message_app
 		}, [
-			iwidget(column({
+			column({
 				stretch: true
 				alignment: .center
-				margin: ui.MarginConfig{5,5,5,5}
+				margin: MarginConfig{5,5,5,5}
 				}, widgets)
-			)
+
 		])
 
 	mut subscriber := message_app.window.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
 
-	ui.run(message_app.window)
+	run(message_app.window)
 	message_app.waitgroup.done()
 }
 
-fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &ui.Window ) {
+fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &Window ) {
 	match e.key {
 		.enter, .escape, .space {
 			app.window.glfw_obj.set_should_close(true)

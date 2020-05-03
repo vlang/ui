@@ -32,12 +32,12 @@ fn main() {
 		window: 0
 	}
 	mut children := [
-		ui.iwidget(ui.textbox({
+		ui.textbox({
 			placeholder: '0'
 			width: 135
 			read_only: true
 			ref: &app.txtbox
-		}))
+		})
 	]
 	for op in ops {
 		children << ui.row({spacing: 5}, get_row(op))
@@ -48,11 +48,11 @@ fn main() {
 		title: 'V Calc'
 		user_ptr: app
 	}, [
-		ui.iwidget(ui.column({
+		ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 			spacing: 5
-		}, children))
+		}, children)
 	])
 	ui.run(app.window)
 }
@@ -192,12 +192,12 @@ fn get_row(ops []string) []ui.IWidgeter {
 	mut children := []ui.IWidgeter
 	for op in ops {
 		if op == ' ' {continue}
-		children << ui.iwidget(ui.button({
+		children << ui.button({
 			text: op
 			onclick: btn_click
 			width: bwidth
 			height: bheight
-		}))
+		})
 	}
 	return children
 }
