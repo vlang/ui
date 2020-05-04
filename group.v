@@ -14,9 +14,9 @@ pub mut:
     width          int
     x              int
     y              int
-    parent ILayouter
+    parent Layout
     ui             &UI
-    children []IWidgeter
+    children []Widget
     margin_left int = 5
     margin_top int = 10
     margin_right int = 5
@@ -31,10 +31,10 @@ pub mut:
     y          int
     width  int
     height int
-    children []IWidgeter
+    children []Widget
 }
 
-fn (r mut Group)init(parent ILayouter) {
+fn (r mut Group)init(parent Layout) {
     r.parent = parent
     ui := parent.get_ui()
     r.ui = ui

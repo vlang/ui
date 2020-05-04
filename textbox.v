@@ -38,7 +38,7 @@ pub mut:
 	width              int
 	x                  int
 	y                  int
-	parent             ILayouter
+	parent             Layout
 	is_focused         bool
 	// gg &gg.GG
 	ui                 &UI
@@ -91,7 +91,7 @@ pub struct TextBoxConfig {
 	border_accentuated bool=false
 }
 
-fn (tb mut TextBox) init(parent ILayouter) {
+fn (tb mut TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui

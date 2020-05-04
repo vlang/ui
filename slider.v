@@ -25,7 +25,7 @@ pub mut:
 	orientation          Orientation=Orientation.horizontal
 	x                    int
 	y                    int
-	parent               ILayouter
+	parent               Layout
 	ui                   &UI
 	val                  f32
 	min                  int=0
@@ -54,7 +54,7 @@ pub struct SliderConfig {
 	track_line_displayed bool=true
 }
 
-fn (s mut Slider) init(parent ILayouter) {
+fn (s mut Slider) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui

@@ -65,7 +65,7 @@ pub mut:
     width           int
     x               int
     y               int
-    parent          ILayouter
+    parent          Layout
     ui              &UI
     items           []ListItem
     selection       int = -1
@@ -180,7 +180,7 @@ fn (lb mut ListBox) draw_item(li ListItem, selected bool) {
     }
 }
 
-fn (lb mut ListBox) init(parent ILayouter) {
+fn (lb mut ListBox) init(parent Layout) {
     lb.parent = parent
     lb.ui = parent.get_ui()
     lb.draw_count = lb.height / lb.item_height

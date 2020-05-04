@@ -12,7 +12,7 @@ struct App {
 mut:
 	txtbox     ui.TextBox
 	window     &ui.Window
-	rows       []&ui.ILayouter
+	rows       []&ui.Layout
 	result     f64
 	is_float   bool
 	new_number bool
@@ -188,8 +188,8 @@ fn (app mut App) calculate() {
 	// eprintln('-------- result: $result | i: $i -------------------')
 }
 
-fn get_row(ops []string) []ui.IWidgeter {
-	mut children := []ui.IWidgeter
+fn get_row(ops []string) []ui.Widget {
+	mut children := []ui.Widget
 	for op in ops {
 		if op == ' ' {continue}
 		children << ui.button({

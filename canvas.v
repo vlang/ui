@@ -11,7 +11,7 @@ mut:
 	height int
 	x		int
 	y		int
-	parent ILayouter
+	parent Layout
 	draw_fn DrawFn
 
 }
@@ -23,7 +23,7 @@ pub struct CanvasConfig {
 	draw_fn DrawFn
 }
 
-fn (c mut Canvas)init(parent ILayouter) {
+fn (c mut Canvas)init(parent Layout) {
 	c.parent = parent
 }
 

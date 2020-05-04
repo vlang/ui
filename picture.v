@@ -9,7 +9,7 @@ import gg
 pub struct Picture {
 mut:
 	text      string
-	parent    ILayouter
+	parent    Layout
 	x         int
 	y         int
 	offset_x  int
@@ -30,7 +30,7 @@ pub struct PictureConfig {
 	ref       &Picture
 }
 
-fn (pic mut Picture)init(parent ILayouter) {
+fn (pic mut Picture)init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	if !pic.use_cache && pic.path in ui.resource_cache {

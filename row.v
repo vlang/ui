@@ -9,7 +9,7 @@ pub struct RowConfig {
 	margin	MarginConfig
 }
 
-pub fn row(c RowConfig, children []IWidgeter) &Stack {
+pub fn row(c RowConfig, children []Widget) &Stack {
 	return stack({
 		height: c.height
 		vertical_alignment: c.alignment

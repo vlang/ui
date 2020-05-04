@@ -52,8 +52,8 @@ pub struct MarginConfig {
 	bottom int
 }
 
-pub interface IWidgeter {
-	init(ILayouter)
+pub interface Widget {
+	init(Layout)
 	//key_down(KeyEvent)
 	draw()
 	//click(MouseEvent)
@@ -66,9 +66,9 @@ pub interface IWidgeter {
 	size() (int, int)
 	is_focused() bool
 }
-//pub fn iwidget(x IWidgeter) IWidgeter { return x }
+//pub fn iwidget(x Widget) Widget { return x }
 
-pub interface ILayouter {
+pub interface Layout {
 	get_ui() &UI
 	get_user_ptr() voidptr
 	size() (int, int)
@@ -79,7 +79,7 @@ pub interface ILayouter {
 	draw()
 	resize(w,h int)
 }
-pub fn ilayout(x ILayouter) ILayouter { return x }
+pub fn ilayout(x Layout) Layout { return x }
 
 pub struct KeyEvent {
 pub:

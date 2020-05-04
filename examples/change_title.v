@@ -19,26 +19,26 @@ fn main() {
 		title: 'Name'
 		user_ptr: app
 	}, [
-		ui.IWidgeter(ui.column({
+		ui.Widget(ui.column({
 			stretch: true,
 			spacing: 20,
 			margin: ui.MarginConfig{30,30,30,30}
 		}, [
-			ui.IWidgeter(ui.row({
+			ui.Widget(ui.row({
 				spacing: 10,
 				alignment: .center
 			}, [
-				ui.IWidgeter(ui.label({
+				ui.Widget(ui.label({
 					text: 'Title name: '
 				})),
-				ui.IWidgeter(ui.textbox({
+				ui.Widget(ui.textbox({
 					max_len: 20
 					width: 300
 					placeholder: 'Please enter new title name'
 					ref: &app.title_box
 				}))
 			])),
-			ui.IWidgeter(ui.button({
+			ui.Widget(ui.button({
 				text: 'Change title'
 				onclick: btn_change_title
 			}))

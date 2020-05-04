@@ -11,7 +11,7 @@ mut:
 	duration         i64
 	animating        bool
 	easing           EasingFunction
-	parent           ILayouter
+	parent           Layout
 	animated_value   &int
 	start_value      int
 	target_value     int
@@ -26,7 +26,7 @@ pub struct TransitionConfig {
 	ref				&Transition
 }
 
-fn (t mut Transition) init(parent ILayouter) {
+fn (t mut Transition) init(parent Layout) {
 	t.parent = parent
 	ui := parent.get_ui()
 	t.ui = ui

@@ -37,7 +37,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 	// and will block until the dialog window is closed
 	text_lines := word_wrap_to_lines(s, 70)
 	mut height := 40
-	mut widgets := []IWidgeter{}
+	mut widgets := []Widget{}
 	widgets = [
 		// TODO: add hspace and vspace separators
 		ui.label({

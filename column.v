@@ -8,7 +8,7 @@ pub struct ColumnConfig {
 	margin	MarginConfig
 }
 
-pub fn column(c ColumnConfig, children []IWidgeter) &Stack {
+pub fn column(c ColumnConfig, children []Widget) &Stack {
 	return stack({
 		width: c.width
 		horizontal_alignment: c.alignment

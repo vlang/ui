@@ -27,7 +27,7 @@ pub struct Window {
 mut:
 	glfw_obj      &glfw.Window
 	ui            &UI
-	children      []IWidgeter
+	children      []Widget
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -57,7 +57,7 @@ pub:
 	bg_color      gx.Color=default_window_color
 }
 
-pub fn window(cfg WindowConfig, children []IWidgeter) &Window {
+pub fn window(cfg WindowConfig, children []Widget) &Window {
 	fpath := system_font_path()
 	gcontext := gg.new_context(gg.Cfg{
 		width: cfg.width
@@ -281,9 +281,9 @@ pub fn (w &Window) set_cursor(cursor Cursor) {
 
 	pub fn (b &Window) always_on_top(val bool) {}
 	// TODO remove this
-	fn foo(w IWidgeter) {}
+	fn foo(w Widget) {}
 
-	fn foo2(l ILayouter) {}
+	fn foo2(l Layout) {}
 
 	fn bar() {
 		foo(&TextBox{})
@@ -313,7 +313,7 @@ pub fn (w &Window) set_cursor(cursor Cursor) {
 		w.title = title
 		w.glfw_obj.set_title(title)
 	}
-	/*ILayouter Interface Methods*/
+	/*Layout Interface Methods*/
 
 
 	fn (w &Window) draw() {}

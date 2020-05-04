@@ -24,8 +24,8 @@ mut:
 	y        int
 	width    int
 	height   int
-	children []IWidgeter
-	parent   ILayouter
+	children []Widget
+	parent   Layout
 	ui     &UI
 	vertical_alignment VerticalAlignment
 	horizontal_alignment HorizontalAlignment
@@ -35,7 +35,7 @@ mut:
 	margin 	MarginConfig
 }
 
-fn (b mut Stack) init(parent ILayouter) {
+fn (b mut Stack) init(parent Layout) {
 	b.parent = parent
 	ui := parent.get_ui()
 	w, h := parent.size()
@@ -59,7 +59,7 @@ fn (b mut Stack) init(parent ILayouter) {
 	}
 }
 
-fn stack(c StackConfig, children []IWidgeter) &Stack {
+fn stack(c StackConfig, children []Widget) &Stack {
 	mut b := &Stack{
 		height: c.height
 		width: c.width

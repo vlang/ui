@@ -14,7 +14,7 @@ const (
 pub struct Menu {
 mut:
 	text   string
-	parent ILayouter
+	parent Layout
 	x      int
 	y      int
 	ui     &UI
@@ -34,7 +34,7 @@ pub struct MenuItem {
 	action MenuFn
 }
 
-fn (m mut Menu)init(parent ILayouter) {
+fn (m mut Menu)init(parent Layout) {
 	ui := parent.get_ui()
 	m.ui = ui
 }

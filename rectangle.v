@@ -9,7 +9,7 @@ import freetype
 pub struct Rectangle {
 mut:
 	text         string
-	parent       ILayouter
+	parent       Layout
 	x            int
 	y            int
 	height       int
@@ -36,7 +36,7 @@ pub struct RectangleConfig {
 	ref          &Rectangle
 }
 
-fn (r mut Rectangle) init(parent ILayouter) {
+fn (r mut Rectangle) init(parent Layout) {
 	ui := parent.get_ui()
 	r.ui = ui
 }

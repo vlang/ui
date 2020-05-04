@@ -19,7 +19,7 @@ pub struct Dropdown {
 mut:
 	def_text string
 	width	int = 150
-	parent ILayouter
+	parent Layout
 	x      int
 	y      int
 
@@ -37,7 +37,7 @@ pub struct DropdownConfig {
 	x      int
 	y      int
 	width  int
-	parent ILayouter
+	parent Layout
 	items []DropdownItem
 	selected_index int = -1
 	on_selection_changed SelectionChangedFn
@@ -48,7 +48,7 @@ pub:
 	text string
 }
 
-fn (dd mut Dropdown)init(parent ILayouter) {
+fn (dd mut Dropdown)init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui

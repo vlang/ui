@@ -27,7 +27,7 @@ pub mut:
 	width            int
 	x                int
 	y                int
-	parent           ILayouter
+	parent           Layout
 	is_focused       bool
 	checked          bool
 	ui               &UI
@@ -38,13 +38,13 @@ pub mut:
 pub struct CheckBoxConfig {
 	x                int
 	y                int
-	parent           ILayouter
+	parent           Layout
 	text             string
 	on_check_changed CheckChangedFn
 	checked          bool
 }
 
-fn (cb mut CheckBox) init(parent ILayouter) {
+fn (cb mut CheckBox) init(parent Layout) {
 	cb.parent = parent
 	ui := parent.get_ui()
 	cb.ui = ui

@@ -24,7 +24,7 @@ pub mut:
 	width          int
 	x              int
 	y              int
-	parent ILayouter
+	parent Layout
 	is_focused     bool
 	is_checked     bool
 	ui             &UI
@@ -40,7 +40,7 @@ pub struct RadioConfig {
 	ref		&Radio
 }
 
-fn (r mut Radio)init(parent ILayouter) {
+fn (r mut Radio)init(parent Layout) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
