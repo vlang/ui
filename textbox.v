@@ -447,7 +447,7 @@ fn (t &TextBox) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
+fn tb_mouse_move(t mut TextBox, e &MouseEvent, zzz voidptr) {
 	if !t.point_inside(e.x, e.y) {
 		return
 	}
@@ -487,7 +487,7 @@ fn tb_mouse_move(t mut TextBox, e &MouseEvent) {
 	}
 }
 
-fn tb_click(t mut TextBox, e &MouseEvent) {
+fn tb_click(t mut TextBox, e &MouseEvent, zzz voidptr) {
 	if !t.point_inside(e.x, e.y) {
 		t.dragging = false
 		return

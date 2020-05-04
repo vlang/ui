@@ -105,7 +105,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		height: cfg.height
 		children: children
 	}
-	for i, child in window.children {
+	for _, child in window.children {
 		//if child is Stack {
 
 		//}
