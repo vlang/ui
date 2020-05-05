@@ -10,32 +10,35 @@
 
 
 ```v
-ui.window({
-    width:  600
-    height: 400
-    title:  'V UI Demo'
-}, [
-    ui.row({
-        stretch: true
-        margin:  {10, 10, 10, 10}
-    }, [
-        ui.column({
-            width:   200
-            spacing: 13
-        }, [
-            ui.textbox({
-                max_len:     20
-                width:       200
-                placeholder: 'First name'
-            })
-            ui.textbox({
-                max_len:     50
-                width:       200
-                placeholder: 'Last name'
-            })
-        ])
-   ])
-]);
+ui.window(
+    width:    600
+    height:   400
+    title:    'V UI Demo'
+    children: [
+        ui.row(
+            stretch: true
+            margin:  {10, 10, 10, 10}
+            children: [
+                ui.column(
+                    width:   200
+                    spacing: 13
+                    children: [
+                        ui.textbox(
+                            max_len:     20
+                            width:       200
+                            placeholder: 'First name'
+                        )
+                        ui.textbox(
+                            max_len:     50
+                            width:       200
+                            placeholder: 'Last name'
+                        )
+                    ]
+                )
+            ]
+        )
+    ]
+)
 ````
 ### Installation
 
