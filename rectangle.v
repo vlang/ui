@@ -50,6 +50,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		color: c.color
 		border: c.border
 		border_color: c.border_color
+		ui: 0
 	}
 	if c.ref != 0 {
 		mut ref := c.ref

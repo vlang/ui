@@ -39,6 +39,8 @@ pub fn transition(config TransitionConfig) &Transition {
 		duration: config.duration
 		animating: false
 		easing: config.easing
+		ui: 0
+		animated_value: 0
 	}
 	if config.ref != 0 {
 		mut ref := config.ref

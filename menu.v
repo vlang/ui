@@ -43,6 +43,7 @@ pub fn menu(c MenuConfig) &Menu {
 	return &Menu {
 		text: c.text
 		items: c.items
+		ui: 0
 	}
 }
 

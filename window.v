@@ -42,7 +42,7 @@ mut:
 	click_fn      ClickFn
 	scroll_fn     ScrollFn
 	mouse_move_fn MouseMoveFn
-	eventbus      &eventbus.EventBus=eventbus.new()
+	eventbus      &eventbus.EventBus = eventbus.new()
 }
 
 pub struct WindowConfig {
@@ -79,7 +79,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	wsize := gcontext.window.get_window_size()
 	fsize := gcontext.window.get_framebuffer_size()
 	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
-		ft:=freetype.new_context(gg.Cfg{
+	ft := freetype.new_context(gg.Cfg{
 			width: cfg.width
 			height: cfg.height
 			use_ortho: true
@@ -90,7 +90,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		})
 	mut ui_ctx := &UI{
 		gg: gcontext
-		ft:ft
+		ft: ft
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_icos()
@@ -292,27 +292,34 @@ pub fn (w &Window) set_cursor(cursor Cursor) {
 	fn foo2(l Layout) {}
 
 	fn bar() {
-		foo(&TextBox{})
-		foo(&Button{})
-		foo(&ProgressBar{})
-		foo(&Slider{})
-		foo(&CheckBox{})
-		foo(&Label{})
-		foo(&Radio{})
-		foo(&Picture{})
+		foo(&TextBox{ui: 0})
+		foo(&Button{ui: 0})
+		foo(&ProgressBar{ui: 0})
+		foo(&Slider{ui: 0})
+		foo(&CheckBox{ui: 0})
+		foo(&Label{ui: 0})
+		foo(&Radio{ui: 0})
+		foo(&Picture{ui: 0})
 		foo(&Canvas{})
-		foo(&Menu{})
-		foo(&Dropdown{})
-		foo(&Transition{})
-		foo(&Stack{})
-		foo(&Switch{})
-		foo(&Rectangle{})
-		foo(&Group{})
+		foo(&Menu{ui: 0})
+		foo(&Dropdown{ui: 0})
+		foo(&Transition{
+			ui: 0
+			animated_value: 0
+		})
+		foo(&Stack{ui: 0})
+		foo(&Switch{ui: 0})
+		foo(&Rectangle{ui: 0})
+		foo(&Group{ui: 0})
 	}
 
 	fn bar2() {
-		foo2(&Window{})
-		foo2(&Stack{})
+		foo2(&Window{
+			ui: 0
+			glfw_obj: 0
+			eventbus: eventbus.new()
+		})
+		foo2(&Stack{ui: 0})
 	}
 
 	pub fn (w mut Window) set_title(title string) {

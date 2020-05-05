@@ -56,7 +56,7 @@ fn (cb mut CheckBox) init(parent Layout) {
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
 		height: 20 // TODO
-		
+		ui: 0
 		text: c.text
 		on_check_changed: c.on_check_changed
 		checked: c.checked

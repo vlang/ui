@@ -121,6 +121,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
 		border_accentuated: c.border_accentuated
+		ui: 0
 	}
 	if c.ref != 0 {
 		mut ref := c.ref

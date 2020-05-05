@@ -65,6 +65,7 @@ pub fn radio(c RadioConfig) &Radio {
 		values: c.values
 		title: c.title
 		width: c.width
+		ui: 0
 		// onclick: c.onclick
 	}
 	if c.ref != 0 {
