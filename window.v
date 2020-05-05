@@ -55,9 +55,15 @@ pub:
 	user_ptr      voidptr
 	draw_fn       DrawFn
 	bg_color      gx.Color=default_window_color
+	children []Widget
+}
+
+pub fn window2(cfg WindowConfig) &Window {
+	return window(cfg, cfg.children)
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
+	println('window()')
 	fpath := system_font_path()
 	gcontext := gg.new_context(gg.Cfg{
 		width: cfg.width

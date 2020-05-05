@@ -156,6 +156,9 @@ fn (b mut TextBox) propose_size(w, h int) (int,int) {
 }
 
 fn (t mut TextBox) draw() {
+	if true {
+	//return
+	}
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
 	if !t.borderless {
 		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height)

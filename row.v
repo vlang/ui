@@ -7,6 +7,7 @@ pub struct RowConfig {
 	spacing int
 	stretch bool
 	margin	MarginConfig
+	children []Widget
 }
 
 pub fn row(c RowConfig, children []Widget) &Stack {
@@ -18,4 +19,15 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		direction: .row
 		margin: c.margin
 	}, children)
+}
+
+pub fn row2(c RowConfig) &Stack {
+	return stack({
+		height: c.height
+		vertical_alignment: c.alignment
+		spacing: c.spacing
+		stretch: c.stretch
+		direction: .row
+		margin: c.margin
+	}, c.children)
 }
