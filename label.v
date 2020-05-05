@@ -25,6 +25,7 @@ fn (l mut Label)init(parent Layout) {
 pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
 		text: c.text
+		ui: 0
 	}
 	if c.ref != 0 {
 		mut ref := c.ref

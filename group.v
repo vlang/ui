@@ -67,6 +67,7 @@ pub fn group(c GroupConfig) &Group {
         width: c.width
         height: c.height
         children: c.children
+		ui: 0
     }
     return cb
 }

@@ -77,6 +77,7 @@ pub fn slider(c SliderConfig) &Slider {
 		rev_min_max_pos: c.rev_min_max_pos
 		thumb_in_track: c.thumb_in_track
 		track_line_displayed: c.track_line_displayed
+		ui: 0
 	}
 	if !c.thumb_in_track {
 		p.thumb_height = if p.orientation == .horizontal { p.track_height + 10 } else { 10 }

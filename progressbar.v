@@ -48,6 +48,7 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		min: c.min
 		max: c.max
 		val: c.val
+		ui: 0
 	}
 	if c.ref != 0 {
 		mut ref := c.ref

@@ -48,6 +48,7 @@ pub fn switcher(c SwitchConfig) &Switch {
 		width: sw_width
 		open:c.open
 		onclick: c.onclick
+		ui: 0
 	}
 	return sw
 }

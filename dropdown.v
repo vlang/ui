@@ -65,6 +65,7 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
 		def_text: c.def_text
+		ui: 0
 	}
 	return dd
 }

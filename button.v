@@ -65,6 +65,7 @@ pub fn button(c ButtonConfig) &Button {
 		height: c.height
 		text: c.text
 		onclick: c.onclick
+		ui: 0
 	}
 	return b
 }

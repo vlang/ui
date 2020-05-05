@@ -46,6 +46,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
         item_height:     c.item_height
         text_offset_y:   c.text_offset_y
         id:              c.id
+		ui:              0
     }
 
     for id, text in items {

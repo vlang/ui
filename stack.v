@@ -70,6 +70,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		direction: c.direction
 		margin: c.margin
 		children: children
+		ui: 0
 	}
 	return b
 }
