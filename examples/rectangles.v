@@ -13,25 +13,24 @@ mut:
 
 fn main() {
 	mut app := &App{ window: 0 }
-	window := ui.window2(
+	rect := ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 100))
+	window := ui.window({
 		width: win_width
 		height: win_height
 		title: 'V UI: Rectangles'
 		user_ptr: app
-		children: [
-			ui.row2(
-				alignment: .center
-				spacing:   5
-				margin:    ui.MarginConfig{5,5,5,5}
-				children:  [
-					ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 100))
-					ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 255, 100), border: true, border_color: gx.black)
-					ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 100, 255), radius: 24)
-					ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black)
-				]
-			)
-		]
-	)
+	}, [
+		ui.row({
+			alignment: .center
+			spacing:   5
+			margin:    ui.MarginConfig{5,5,5,5}
+		}, [
+			rect,
+			{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
+			{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
+			{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
+		])
+	])
 
 	app.window = window
 	ui.run(window)
