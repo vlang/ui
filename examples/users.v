@@ -137,7 +137,7 @@ fn main() {
 			},[
 				ui.canvas({
 					height: 275
-					//draw_fn:canvas_draw
+					//draw_fn: canvas_draw
 				}),
 				ui.picture({
 					width: 100

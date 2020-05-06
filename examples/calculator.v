@@ -189,7 +189,7 @@ fn (app mut App) calculate() {
 }
 
 fn get_row(ops []string) []ui.Widget {
-	mut children := []ui.Widget
+	mut children := []ui.Widget{}
 	for op in ops {
 		if op == ' ' {continue}
 		children << ui.button({

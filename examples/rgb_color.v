@@ -158,16 +158,16 @@ fn main() {
 		ref: 0
 	}
 	// UI window
-	window := ui.window(win_cfg, [ui.iwidget(ui.row(textbox_row_cfg, [ui.iwidget(ui.textbox(r_textbox_cfg)),
-	ui.iwidget(ui.textbox(g_textbox_cfg)),
-	ui.iwidget(ui.textbox(b_textbox_cfg))])),
-	ui.iwidget(ui.row(slider_row_cfg, [ui.iwidget(ui.slider(r_slider_cfg)),
-	ui.iwidget(ui.slider(g_slider_cfg)),
-	ui.iwidget(ui.slider(b_slider_cfg))])),
-	ui.iwidget(ui.row(rectangle_row_cfg, [ui.iwidget(ui.rectangle(rgb_rectangle_cfg))])),
-	ui.iwidget(ui.row(label_row_cfg, [ui.iwidget(ui.label(r_label_cfg)),
-	ui.iwidget(ui.label(g_label_cfg)),
-	ui.iwidget(ui.label(b_label_cfg))])),
+	window := ui.window(win_cfg, [ui.row(textbox_row_cfg, [ui.textbox(r_textbox_cfg),
+	ui.textbox(g_textbox_cfg),
+	ui.textbox(b_textbox_cfg)]),
+	ui.row(slider_row_cfg, [ui.slider(r_slider_cfg),
+	ui.slider(g_slider_cfg),
+	ui.slider(b_slider_cfg)]),
+	ui.row(rectangle_row_cfg, [ui.rectangle(rgb_rectangle_cfg)]),
+	ui.row(label_row_cfg, [ui.label(r_label_cfg),
+	ui.label(g_label_cfg),
+	ui.label(b_label_cfg)]),
 	])
 	app.window = window
 	ui.run(window)
