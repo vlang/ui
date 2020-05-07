@@ -25,10 +25,15 @@ fn main() {
 			spacing:   5
 			margin:    ui.MarginConfig{5,5,5,5}
 		}, [
-			rect,
+			rect
+			/*
 			{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
 			{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
 			{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
+			*/
+			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 255, 100))
+			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 100, 255))
+			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 255))
 		])
 	])
 
