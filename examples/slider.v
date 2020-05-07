@@ -19,13 +19,13 @@ fn main() {
 		height: win_height
 		title: 'Slider Example'
 		user_ptr: app
-	}, [ui.iwidget(ui.row({
+	}, [ui.row({
 		stretch: true
 		alignment: .center
 		margin: ui.MarginConfig{
 			5,5,5,5}
 		spacing: 10
-	}, [ui.iwidget(ui.slider({
+	}, [ui.slider({
 		width: 20
 		height: 200
 		orientation: .vertical
@@ -33,7 +33,7 @@ fn main() {
 		val: 0
 		on_value_changed: on_vert_value_changed
 		ref: &app.vert_slider
-	})),
+	}),
 	ui.slider({
 		width: 200
 		height: 20
@@ -42,7 +42,7 @@ fn main() {
 		val: 0
 		on_value_changed: on_hor_value_changed
 		ref: &app.hor_slider
-	})]))])
+	})])])
 	app.window = window
 	ui.run(window)
 }

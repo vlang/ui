@@ -27,14 +27,14 @@ fn main() {
 		user_ptr: app
 	},
 	[
-		ui.iwidget(ui.column({
+		ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 		},[
-			ui.iwidget(ui.button({
+			ui.button({
 				text: 'Slide'
-				onclick: btn_toggle_click
-			})),
+//				onclick: btn_toggle_click
+			}),
 			ui.picture({
 				width: picture_width_and_height
 				height: picture_width_and_height
@@ -51,7 +51,7 @@ fn main() {
 				easing: ui.easing(.ease_in_out_quart)
 				ref: &app.y_transition
 			})
-		]))
+		])
 	])
 	app.window = window
 	ui.run(window)

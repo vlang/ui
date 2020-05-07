@@ -24,38 +24,38 @@ fn main() {
 		title: 'Timer'
 		user_ptr: app
 	}, [
-		ui.iwidget(ui.column({
+		ui.column({
 			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 			alignment: .left
 		}, [
-		ui.iwidget(ui.row({
+		ui.row({
 			alignment: .top
 			spacing: 10
 		}, [
-			ui.iwidget(ui.column({
+			ui.column({
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.iwidget(ui.label({
+				ui.label({
 					text: 'Elapsed Time:'
-				})),
+				}),
 				ui.label({
 					text: 'Duration:'
 				}),
 				ui.button({
 					text: 'Reset'
-					onclick: on_reset
+//					onclick: on_reset
 				})
-			])),
+			]),
 			ui.column({
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.iwidget(ui.label({
+				ui.label({
 					text: '00.0s'
 					ref:  &app.lbl_elapsed_value
-				})),
+				}),
 				ui.slider({
 					width: 180
 					height: 20
@@ -63,18 +63,18 @@ fn main() {
 					max: 50
 					min: 0
 					val: app.duration
-					on_value_changed: on_value_changed
+//					on_value_changed: on_value_changed
 					ref: &app.slider
 				})
 			])
-		])),
+		]),
 			ui.progressbar({
 				height: 20
 				val: 0
 				max: 100
 				ref: &app.progress_bar
 			})
-		]))
+		])
 	])
 	app.window = window
 	go app.timer()
