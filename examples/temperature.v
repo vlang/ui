@@ -37,7 +37,7 @@ fn main() {
                 is_numeric: true
                 ref: &app.txt_box_celsius
             }),
-		ui.label({
+			ui.label({
                 text: 'Fahrenheit'
             }),
             ui.textbox({

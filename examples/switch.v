@@ -18,9 +18,9 @@ fn main() {
 		title: 'Switch'
 		user_ptr: app
 	}, [
-		ui.iwidget(ui.switcher({
+		ui.switcher({
 			open: true
-		}))
+		})
 	])
 	app.window = window
 	ui.run(window)

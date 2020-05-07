@@ -76,7 +76,7 @@ fn main() {
 		is_numeric: true
 		text: hor_slider_val.str()
 		ref: &app.hor_textbox
-		on_key_up: on_hor_key_up		
+		on_key_up: on_hor_key_up
 	}
 	vert_textbox_cfg := ui.TextBoxConfig{
 		width: 40
@@ -88,10 +88,10 @@ fn main() {
 		ref: &app.vert_textbox
 		on_key_up: on_vert_key_up
 	}
-	window := ui.window(win_cfg, [ui.iwidget(ui.row(textbox_row_cfg, [ui.iwidget(ui.textbox(hor_textbox_cfg)),
-	ui.iwidget(ui.textbox(vert_textbox_cfg))])),
-	ui.iwidget(ui.row(slider_row_cfg, [ui.iwidget(ui.slider(hor_slider_cfg)),
-	ui.iwidget(ui.slider(vert_slider_cfg))]))])
+	window := ui.window(win_cfg, [ui.row(textbox_row_cfg, [ui.textbox(hor_textbox_cfg),
+	ui.textbox(vert_textbox_cfg)]),
+	ui.row(slider_row_cfg, [ui.slider(hor_slider_cfg),
+	ui.slider(vert_slider_cfg)])])
 	app.window = window
 	ui.run(window)
 }

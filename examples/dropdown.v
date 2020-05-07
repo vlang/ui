@@ -19,13 +19,13 @@ fn main() {
 		title: 'Dropdown'
 		user_ptr: app
 	}, [
-		ui.iwidget(ui.column({
+		ui.column({
 			stretch: true
 			alignment: .left
 			margin: ui.MarginConfig{5,5,5,5}
 		},
 		[
-			ui.iwidget(ui.dropdown({
+			ui.dropdown({
 				width: 140
 				def_text: "Select an option"
 				items: [
@@ -33,8 +33,8 @@ fn main() {
 					ui.DropdownItem{text:'Export users'},
 					ui.DropdownItem{text:'Exit'},
 				]
-			}))
-		]))
+			})
+		])
 	])
 	app.window = window
 	ui.run(window)

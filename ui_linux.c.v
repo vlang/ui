@@ -94,9 +94,9 @@ fn msgbox_btn_ok_click(app mut MessageApp) {
 
 fn word_wrap_to_lines(s string, max_line_length int) []string {
 	words := s.split(' ')
-	mut line := []string
+	mut line := []string{}
 	mut line_len := 0
-	mut text_lines := []string
+	mut text_lines := []string{}
 	for word in words {
 		if line_len + word.len < max_line_length {
 			line << word

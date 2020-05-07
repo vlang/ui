@@ -19,30 +19,30 @@ fn main() {
 		title: 'Name'
 		user_ptr: app
 	}, [
-		ui.Widget(ui.column({
+		ui.column({
 			stretch: true,
 			spacing: 20,
 			margin: ui.MarginConfig{30,30,30,30}
 		}, [
-			ui.Widget(ui.row({
+			ui.row({
 				spacing: 10,
 				alignment: .center
 			}, [
-				ui.Widget(ui.label({
+				ui.label({
 					text: 'Title name: '
-				})),
-				ui.Widget(ui.textbox({
+				}),
+				ui.textbox({
 					max_len: 20
 					width: 300
 					placeholder: 'Please enter new title name'
 					ref: &app.title_box
-				}))
-			])),
-			ui.Widget(ui.button({
+				})
+			]),
+			ui.button({
 				text: 'Change title'
 				onclick: btn_change_title
-			}))
-		]))]
+			})
+		])]
 	)
 
 	app.window = window

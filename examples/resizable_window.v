@@ -19,14 +19,14 @@ fn main() {
 		resizable: true
 		user_ptr: app
 	}, [
-		ui.iwidget(ui.row({
+		ui.row({
 			stretch: true,
 			margin: ui.MarginConfig{10,10,10,10}
 		}, [
-			ui.iwidget(ui.button({
+			ui.button({
 				text: 'Add user'
-			}))
-		]))]
+			})
+		])]
 	)
 
 	app.window = window
