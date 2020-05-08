@@ -68,12 +68,15 @@ pub fn radio(c RadioConfig) &Radio {
 		ui: 0
 		// onclick: c.onclick
 	}
+	/*
 	if c.ref != 0 {
 		mut ref := c.ref
 		*ref = *cb
 		return &ref
 	}
+	*/
 	return cb
+
 }
 
 fn (b mut Radio) set_pos(x, y int) {

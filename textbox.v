@@ -123,11 +123,13 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		border_accentuated: c.border_accentuated
 		ui: 0
 	}
+	/*
 	if c.ref != 0 {
 		mut ref := c.ref
 		*ref = *tb
 		return &ref
 	}
+	*/
 	return tb
 }
 

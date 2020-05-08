@@ -27,11 +27,13 @@ pub fn label(c LabelConfig) &Label {
 		text: c.text
 		ui: 0
 	}
+	/*
 	if c.ref != 0 {
 		mut ref := c.ref
 		*ref = *lbl
 		return &ref
 	}
+	*/
 	return lbl
 }
 

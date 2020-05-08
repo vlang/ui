@@ -50,11 +50,13 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		val: c.val
 		ui: 0
 	}
+	/*
 	if c.ref != 0 {
 		mut ref := c.ref
 		*ref = *p
 		return &ref
 	}
+	*/
 	return p
 }
 
