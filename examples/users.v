@@ -33,9 +33,7 @@ mut:
 }
 
 fn main() {
-	println('start')
-	mut app := &App{
-		users: [
+	users := [
 			User{
 				first_name: 'Sam'
 				last_name: 'Johnson'
@@ -48,7 +46,10 @@ fn main() {
 				age: 26
 				country: 'Canada'
 			}
-		]
+			]
+	println('start')
+	mut app := &App{
+		users: users
 	}
 	window := ui.window({
 		width: win_width
@@ -137,7 +138,7 @@ fn main() {
 			},[
 				ui.canvas({
 					height: 275
-					//draw_fn: canvas_draw
+					draw_fn: canvas_draw
 				}),
 				ui.picture({
 					width: 100
