@@ -24,9 +24,10 @@ pub type ScrollFn fn(e MouseEvent, func voidptr)
 pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 
 pub struct Window {
+pub:
+	ui            &UI
 mut:
 	glfw_obj      &glfw.Window
-	ui            &UI
 	children      []Widget
 	has_textbox   bool // for initial focus
 	tab_index     int

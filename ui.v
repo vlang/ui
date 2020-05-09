@@ -17,9 +17,10 @@ const (
 )
 
 pub struct UI {
-mut:
-	gg                   &gg.GG
+pub:
 	ft                   &freetype.FreeType
+	gg                   &gg.GG
+mut:
 	window               Window
 	show_cursor          bool
 	cb_image             u32

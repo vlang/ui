@@ -5,6 +5,7 @@ module ui
 import time
 
 pub struct Transition {
+//pub:
 mut:
 	last_draw_time   i64
 	started_time     i64
@@ -12,11 +13,12 @@ mut:
 	animating        bool
 	easing           EasingFunction
 	parent           Layout
-	animated_value   &int
 	start_value      int
-	target_value     int
 	last_draw_target int
 	ui               &UI
+pub mut:
+	target_value     int
+	animated_value   &int
 }
 
 pub struct TransitionConfig {

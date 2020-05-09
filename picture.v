@@ -7,13 +7,14 @@ import os
 import gg
 
 pub struct Picture {
+pub:
+	offset_x  int
+	offset_y  int
 mut:
 	text      string
 	parent    Layout
 	x         int
 	y         int
-	offset_x  int
-	offset_y  int
 	width     int
 	height    int
 	path      string
