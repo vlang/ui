@@ -53,11 +53,6 @@ pub fn picture(c PictureConfig) &Picture {
 		use_cache: c.use_cache
 		ui: 0
 	}
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *pic
-		return &ref
-	}
 	return pic
 }
 

@@ -1,6 +1,4 @@
-import (
-	ui
-)
+import ui
 
 const (
 	win_width = 650
@@ -50,7 +48,7 @@ fn main() {
 		val: vert_slider_val
 		focus_on_thumb_only: true
 		rev_min_max_pos: true
-		on_value_changed: on_vert_value_changed
+		//on_value_changed: on_vert_value_changed
 		ref: &app.vert_slider
 	}
 	hor_slider_min := -20
@@ -65,7 +63,7 @@ fn main() {
 		val: hor_slider_val
 		focus_on_thumb_only: true
 		rev_min_max_pos: true
-		on_value_changed: on_hor_value_changed
+		//on_value_changed: on_hor_value_changed
 		ref: &app.hor_slider
 	}
 	hor_textbox_cfg := ui.TextBoxConfig{
@@ -76,7 +74,7 @@ fn main() {
 		is_numeric: true
 		text: hor_slider_val.str()
 		ref: &app.hor_textbox
-		on_key_up: on_hor_key_up
+		//on_key_up: on_hor_key_up
 	}
 	vert_textbox_cfg := ui.TextBoxConfig{
 		width: 40
@@ -86,7 +84,7 @@ fn main() {
 		is_numeric: true
 		text: vert_slider_val.str()
 		ref: &app.vert_textbox
-		on_key_up: on_vert_key_up
+		//on_key_up: on_vert_key_up
 	}
 	window := ui.window(win_cfg, [ui.row(textbox_row_cfg, [ui.textbox(hor_textbox_cfg),
 	ui.textbox(vert_textbox_cfg)]),

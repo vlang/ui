@@ -33,7 +33,7 @@ fn main() {
             }),
             ui.textbox({
                 width: 70
-                on_key_up: on_cel_key_up
+//                on_key_up: on_cel_key_up
                 is_numeric: true
                 ref: &app.txt_box_celsius
             }),
@@ -42,7 +42,7 @@ fn main() {
             }),
             ui.textbox({
                 width: 70
-                on_key_up: on_fah_key_up
+//                on_key_up: on_fah_key_up
                 is_numeric: true
                 ref: &app.txt_box_fahrenheit
             })

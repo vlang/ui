@@ -33,7 +33,8 @@ mut:
 }
 
 fn main() {
-	users := [
+	mut app := &App{
+		users: [
 			User{
 				first_name: 'Sam'
 				last_name: 'Johnson'
@@ -46,11 +47,12 @@ fn main() {
 				age: 26
 				country: 'Canada'
 			}
-			]
-	println('start')
-	mut app := &App{
-		users: users
+		]
 	}
+	println('start')
+	//mut app := &App{
+		//users: users
+	//}
 	window := ui.window({
 		width: win_width
 		height: win_height

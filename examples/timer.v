@@ -45,7 +45,7 @@ fn main() {
 				}),
 				ui.button({
 					text: 'Reset'
-					onclick: on_reset
+					//onclick: on_reset
 				})
 			]),
 			ui.column({
@@ -63,7 +63,7 @@ fn main() {
 					max: 50
 					min: 0
 					val: app.duration
-					on_value_changed: on_value_changed
+					//on_value_changed: on_value_changed
 					ref: &app.slider
 				})
 			])

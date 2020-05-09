@@ -33,7 +33,7 @@ fn main() {
 		},[
 			ui.button({
 				text: 'Slide'
-				onclick: btn_toggle_click
+				//onclick: btn_toggle_click
 			}),
 			ui.picture({
 				width: picture_width_and_height

@@ -34,7 +34,7 @@ fn main() {
 			}),
 			ui.button({
 				text: 'Count'
-				onclick: btn_count_click
+				//onclick: btn_count_click
 			})
 		])
 	])

@@ -31,7 +31,7 @@ fn main() {
 		orientation: .vertical
 		max: 100
 		val: 0
-		on_value_changed: on_vert_value_changed
+		//on_value_changed: on_vert_value_changed
 		ref: &app.vert_slider
 	}),
 	ui.slider({
@@ -40,7 +40,7 @@ fn main() {
 		orientation: .horizontal
 		max: 100
 		val: 0
-		on_value_changed: on_hor_value_changed
+		//on_value_changed: on_hor_value_changed
 		ref: &app.hor_slider
 	})])])
 	app.window = window

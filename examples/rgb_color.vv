@@ -1,10 +1,8 @@
 // Color struct in \vlib\gx.v needs to be mutable
 
 
-import (
-	ui
-	gx
-)
+import ui
+import gx
 
 const (
 	win_width = 220
@@ -83,7 +81,7 @@ fn main() {
 		is_numeric: true
 		text: slider_val.str()
 		ref: &app.r_textbox
-		on_key_up: on_r_key_up
+		//on_key_up: on_r_key_up
 	}
 	g_textbox_cfg := ui.TextBoxConfig{
 		width: 40
@@ -93,7 +91,7 @@ fn main() {
 		is_numeric: true
 		text: slider_val.str()
 		ref: &app.g_textbox
-		on_key_up: on_g_key_up
+		//on_key_up: on_g_key_up
 	}
 	b_textbox_cfg := ui.TextBoxConfig{
 		width: 40
@@ -103,7 +101,7 @@ fn main() {
 		is_numeric: true
 		text: slider_val.str()
 		ref: &app.b_textbox
-		on_key_up: on_b_key_up
+		//on_key_up: on_b_key_up
 	}
 	// sliders cfg
 	slider_min := 0
@@ -117,7 +115,7 @@ fn main() {
 		val: slider_val
 		focus_on_thumb_only: true
 		rev_min_max_pos: true
-		on_value_changed: on_r_value_changed
+		//on_value_changed: on_r_value_changed
 		ref: &app.r_slider
 	}
 	g_slider_cfg := ui.SliderConfig{
@@ -129,7 +127,7 @@ fn main() {
 		val: slider_val
 		focus_on_thumb_only: true
 		rev_min_max_pos: true
-		on_value_changed: on_g_value_changed
+		//on_value_changed: on_g_value_changed
 		ref: &app.g_slider
 	}
 	b_slider_cfg := ui.SliderConfig{
@@ -141,7 +139,7 @@ fn main() {
 		val: slider_val
 		focus_on_thumb_only: true
 		rev_min_max_pos: true
-		on_value_changed: on_b_value_changed
+		//on_value_changed: on_b_value_changed
 		ref: &app.b_slider
 	}
 	// labels cfg

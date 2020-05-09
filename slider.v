@@ -92,11 +92,6 @@ pub fn slider(c SliderConfig) &Slider {
 		p.max = p.min
 		p.min = tmp
 	}
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *p
-		return &ref
-	}
 	return p
 }
 
@@ -256,7 +251,7 @@ fn (b mut Slider) change_value(x, y int) {
 	if b.on_value_changed != 0 {
 		parent := b.parent
 		user_ptr := parent.get_user_ptr()
-		b.on_value_changed(user_ptr, b)
+		//b.on_value_changed(user_ptr, b)
 	}
 }
 
