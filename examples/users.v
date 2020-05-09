@@ -20,10 +20,10 @@ struct User {
 
 struct App {
 mut:
-	first_name ui.TextBox
-	last_name  ui.TextBox
-	age        ui.TextBox
-	password   ui.TextBox
+	first_name &ui.TextBox
+	last_name  &ui.TextBox
+	age        &ui.TextBox
+	password   &ui.TextBox
 	pbar       ui.ProgressBar
 	users      []User
 	window     &ui.Window
@@ -48,11 +48,29 @@ fn main() {
 				country: 'Canada'
 			}
 		]
+		first_name: ui.textbox(
+			max_len: 20
+			width: 200
+			placeholder: 'First name'
+		)
+		last_name: ui.textbox(
+			max_len: 50
+			width: 200
+			placeholder: 'Last name'
+		)
+		age: ui.textbox(
+			max_len: 3
+			width: 200
+			placeholder: 'Age'
+			is_numeric: true
+		)
+		password: ui.textbox(
+			width: 200
+			placeholder: 'Password'
+			is_password: true
+			max_len: 20
+		)
 	}
-	println('start')
-	//mut app := &App{
-		//users: users
-	//}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -67,32 +85,10 @@ fn main() {
 				width: 200
 				spacing: 13
 			}, [
-				ui.textbox({
-					max_len: 20
-					width: 200
-					placeholder: 'First name'
-					ref: &app.first_name
-				}),
-				ui.textbox({
-					max_len: 50
-					width: 200
-					placeholder: 'Last name'
-					ref: &app.last_name
-				}),
-				ui.textbox({
-					max_len: 3
-					width: 200
-					placeholder: 'Age'
-					is_numeric: true
-					ref: &app.age
-				}),
-				ui.textbox({
-					width: 200
-					placeholder: 'Password'
-					is_password: true
-					max_len: 20
-					ref: &app.password
-				}),
+				app.first_name,
+				app.last_name,
+				app.age,
+				app.password,
 				ui.checkbox({
 					checked: true
 					text: 'Online registration'
@@ -104,34 +100,34 @@ fn main() {
 					width: 200
 					values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 					title: 'Country'
-					ref: &app.country
+					//ref: &app.country
 				}),
 				ui.row({
 					spacing: 85
 				}, [
-					ui.button({
+					ui.button(
 						text: 'Add user'
 						onclick: btn_add_click
-					}),
-					ui.button({
+					)
+					ui.button(
 						text: '?'
 						//onclick: btn_help_click
-					})
+					)
 				]),
 				ui.row({
 					spacing: 5
 					alignment: .center
 				}, [
-					ui.progressbar({
+					ui.progressbar(
 						width: 170
 						max: 10
 						val: 2
-						ref: &app.pbar
-					}),
-					ui.label({
+						//ref: &app.pbar
+					),
+					ui.label(
 						text: '2/10'
-						ref: &app.label
-					})
+						//ref: &app.label
+					)
 				])
 			]),
 			ui.column({

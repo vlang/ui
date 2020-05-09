@@ -10,7 +10,7 @@ const (
 
 struct App {
 mut:
-	txtbox     ui.TextBox
+	txtbox     &ui.TextBox
 	window     &ui.Window
 	rows       []&ui.Layout
 	result     f64
@@ -30,15 +30,15 @@ fn main() {
 		]
 	mut app := &App{
 		window: 0
-	}
-	mut children := []ui.Widget
-	children = [
-		ui.textbox(
+		txtbox: ui.textbox(
 			placeholder: '0'
 			width: 135
 			read_only: true
-			ref: &app.txtbox
 		)
+	}
+	mut children := []ui.Widget
+	children = [
+		app.txtbox
 	]
 	for op in ops {
 		children << ui.row({spacing: 5}, get_row(op))
