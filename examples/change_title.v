@@ -40,7 +40,7 @@ fn main() {
 			]),
 			ui.button({
 				text: 'Change title'
-				onclick: btn_change_title
+				//onclick: btn_change_title
 			})
 		])]
 	)
