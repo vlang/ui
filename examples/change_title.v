@@ -41,7 +41,7 @@ fn main() {
 			]),
 			ui.button(
 				text: 'Change title'
-				//onclick: btn_change_title
+				onclick: btn_change_title
 			)
 		])]
 	)
@@ -50,6 +50,6 @@ fn main() {
 	ui.run(window)
 }
 
-fn btn_change_title(app mut App) {
+fn btn_change_title(app mut App, btn &ui.Button) {
 	app.window.set_title(app.title_box.text)
 }
