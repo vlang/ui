@@ -23,7 +23,7 @@ mut:
 fn main() {
 	mut app := &App{
 		window: 0
-		hor_textbox: ui.textbox({
+		hor_textbox: ui.textbox(
 			width: 40
 			height: 20
 			max_len: 20
@@ -31,8 +31,8 @@ fn main() {
 			is_numeric: true
 			text: hor_slider_val.str()
 			on_key_up: on_hor_key_up
-		})
-		vert_textbox: ui.textbox({
+		)
+		vert_textbox: ui.textbox(
 			width: 40
 			height: 20
 			max_len: 20
@@ -40,8 +40,8 @@ fn main() {
 			is_numeric: true
 			text: vert_slider_val.str()
 			on_key_up: on_vert_key_up
-		})
-		hor_slider: ui.slider({
+		)
+		hor_slider: ui.slider(
 			width: 200
 			height: 10
 			orientation: .horizontal
@@ -51,8 +51,8 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_hor_value_changed
-		})
-		vert_slider: ui.slider({
+		)
+		vert_slider: ui.slider(
 			width: 10
 			height: 200
 			orientation: .vertical
@@ -62,7 +62,7 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_vert_value_changed
-		})
+		)
 	}
 	app.window = ui.window({
 		width: win_width
