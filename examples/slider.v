@@ -7,42 +7,47 @@ const (
 
 struct App {
 mut:
-	hor_slider  ui.Slider
-	vert_slider ui.Slider
+	hor_slider  &ui.Slider
+	vert_slider &ui.Slider
 	window      &ui.Window
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		hor_slider: ui.slider(
+			width: 200
+			height: 20
+			orientation: .horizontal
+			max: 100
+			val: 0
+			//on_value_changed: on_hor_value_changed
+		)
+		vert_slider: ui.slider(
+			width: 20
+			height: 200
+			orientation: .vertical
+			max: 100
+			val: 0
+			//on_value_changed: on_vert_value_changed
+		)
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
 		title: 'Slider Example'
 		user_ptr: app
-	}, [ui.row({
-		stretch: true
-		alignment: .center
-		margin: ui.MarginConfig{
-			5,5,5,5}
-		spacing: 10
-	}, [ui.slider({
-		width: 20
-		height: 200
-		orientation: .vertical
-		max: 100
-		val: 0
-		//on_value_changed: on_vert_value_changed
-		ref: &app.vert_slider
-	}),
-	ui.slider({
-		width: 200
-		height: 20
-		orientation: .horizontal
-		max: 100
-		val: 0
-		//on_value_changed: on_hor_value_changed
-		ref: &app.hor_slider
-	})])])
+	}, [
+		ui.row({
+			stretch: true
+			alignment: .center
+			margin: ui.MarginConfig{5,5,5,5}
+			spacing: 10
+		}, [
+			app.vert_slider
+			app.hor_slider
+		])
+	])
+
 	app.window = window
 	ui.run(window)
 }

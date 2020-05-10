@@ -14,6 +14,7 @@ enum RadioState {
 
 type RadioClickFn fn()
 
+[ref_only]
 pub struct Radio {
 pub mut:
 	selected_index int

@@ -24,11 +24,11 @@ mut:
 	last_name  &ui.TextBox
 	age        &ui.TextBox
 	password   &ui.TextBox
-	pbar       ui.ProgressBar
+	pbar       &ui.ProgressBar
 	users      []User
 	window     &ui.Window
-	label      ui.Label
-	country    ui.Radio
+	label      &ui.Label
+	country    &ui.Radio
 	txt_pos    int
 }
 
@@ -89,19 +89,19 @@ fn main() {
 				app.last_name,
 				app.age,
 				app.password,
-				ui.checkbox({
+				ui.checkbox(
 					checked: true
 					text: 'Online registration'
-				}),
-				ui.checkbox({
+				)
+				ui.checkbox(
 					text: 'Subscribe to the newsletter'
-				}),
-				ui.radio({
+				)
+				ui.radio(
 					width: 200
 					values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 					title: 'Country'
 					//ref: &app.country
-				}),
+				)
 				ui.row({
 					spacing: 85
 				}, [
@@ -113,7 +113,7 @@ fn main() {
 						text: '?'
 						//onclick: btn_help_click
 					)
-				]),
+				])
 				ui.row({
 					spacing: 5
 					alignment: .center
@@ -123,35 +123,35 @@ fn main() {
 						max: 10
 						val: 2
 						//ref: &app.pbar
-					),
+					)
 					ui.label(
 						text: '2/10'
 						//ref: &app.label
 					)
 				])
-			]),
+			])
 			ui.column({
 				stretch: true
 				alignment: .right
 			},[
-				ui.canvas({
+				ui.canvas(
 					height: 275
 					draw_fn: canvas_draw
-				}),
-				ui.picture({
+				),
+				ui.picture(
 					width: 100
 					height: 100
 					path: os.resource_abs_path( 'logo.png' )
-				})
+				)
 			])
 		]),
-		ui.menu({
+		ui.menu(
 			items: [
 				ui.MenuItem{'Delete all users', menu_click},
 				ui.MenuItem{'Export users', menu_click},
 				ui.MenuItem{'Exit', menu_click},
 			]
-		})
+		)
 	])
 	app.window = window
 	ui.run(window)

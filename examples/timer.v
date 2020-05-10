@@ -8,16 +8,31 @@ const (
 
 struct App {
 mut:
-	lbl_elapsed_value ui.Label
-	progress_bar ui.ProgressBar
-	slider ui.Slider
+	lbl_elapsed_value &ui.Label
+	progress_bar &ui.ProgressBar
+	slider &ui.Slider
 	window     &ui.Window
 	duration f64 = 25.0
 	elapsed_time f64 = 0.0
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		slider:	ui.slider(
+			width: 180
+			height: 20
+			orientation: .horizontal
+			max: 50
+			min: 0
+			val: app.duration
+			//on_value_changed: on_value_changed
+		)
+		progress_bar: ui.progressbar(
+				height: 20
+				val: 0
+				max: 100
+		)
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -37,43 +52,29 @@ fn main() {
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.label({
+				ui.label(
 					text: 'Elapsed Time:'
-				}),
-				ui.label({
+				)
+				ui.label(
 					text: 'Duration:'
-				}),
-				ui.button({
+				)
+				ui.button(
 					text: 'Reset'
 					//onclick: on_reset
-				})
+				)
 			]),
 			ui.column({
 				alignment: .left
 				spacing: 10
 			}, [
-				ui.label({
+				ui.label(
 					text: '00.0s'
-					ref:  &app.lbl_elapsed_value
-				}),
-				ui.slider({
-					width: 180
-					height: 20
-					orientation: .horizontal
-					max: 50
-					min: 0
-					val: app.duration
-					//on_value_changed: on_value_changed
-					ref: &app.slider
-				})
+					//ref:  &app.lbl_elapsed_value
+				)
+				app.slider
 			])
 		]),
-		ui.progressbar({
-				height: 20
-				val: 0
-				max: 100
-				ref: &app.progress_bar
-			})
+		app.progress_bar
 		])
 	])
 	app.window = window

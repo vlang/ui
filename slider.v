@@ -16,6 +16,7 @@ pub enum Orientation {
 	horizontal = 1
 }
 
+[ref_only]
 pub struct Slider {
 pub mut:
 	track_height         int
@@ -47,7 +48,6 @@ pub struct SliderConfig {
 	val                  f32
 	orientation          Orientation
 	on_value_changed     SliderValueChangedFn
-	ref                  &Slider
 	focus_on_thumb_only  bool=true
 	rev_min_max_pos      bool=false
 	thumb_in_track       bool=false
@@ -250,7 +250,7 @@ fn (b mut Slider) change_value(x, y int) {
 	}
 	if b.on_value_changed != 0 {
 		parent := b.parent
-		user_ptr := parent.get_user_ptr()
+		//user_ptr := parent.get_user_ptr()
 		//b.on_value_changed(user_ptr, b)
 	}
 }

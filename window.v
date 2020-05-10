@@ -26,7 +26,7 @@ pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 pub struct Window {
 pub:
 	ui            &UI
-mut:
+pub mut:
 	glfw_obj      &glfw.Window
 	children      []Widget
 	has_textbox   bool // for initial focus
@@ -56,6 +56,8 @@ pub:
 	user_ptr      voidptr
 	draw_fn       DrawFn
 	bg_color      gx.Color=default_window_color
+	on_click ClickFn
+	on_scroll ScrollFn
 	children []Widget
 }
 
@@ -260,98 +262,98 @@ pub fn (w &Window) set_cursor(cursor Cursor) {
 	// w.glfw_obj.set_cursor(.ibeam)
 	}
 
-	pub fn (w &Window) close() {}
+pub fn (w &Window) close() {}
 
-	pub fn (w &Window) refresh() {}
+pub fn (w &Window) refresh() {}
 
-	pub fn (w &Window) onmousedown(cb voidptr) {}
+pub fn (w &Window) onmousedown(cb voidptr) {}
 
-	pub fn (w &Window) onkeydown(cb voidptr) {}
+pub fn (w &Window) onkeydown(cb voidptr) {}
 
-	pub fn (w mut Window) on_click(func ClickFn) {
-		w.click_fn = func
+pub fn (w mut Window) on_click(func ClickFn) {
+	w.click_fn = func
+}
+
+pub fn (w mut Window) on_mousemove(func MouseMoveFn) {
+	w.mouse_move_fn = func
+}
+
+pub fn (w mut Window) on_scroll(func ScrollFn) {
+	w.scroll_fn = func
+}
+
+pub fn (w &Window) mouse_inside(x, y, width, height int) bool {
+	return false
+}
+
+pub fn (b &Window) focus() {}
+
+pub fn (b &Window) always_on_top(val bool) {}
+// TODO remove this
+fn foo(w Widget) {}
+
+fn foo2(l Layout) {}
+
+fn bar() {
+	foo(&TextBox{ui: 0})
+	foo(&Button{ui: 0})
+	foo(&ProgressBar{ui: 0})
+	foo(&Slider{ui: 0})
+	foo(&CheckBox{ui: 0})
+	foo(&Label{ui: 0})
+	foo(&Radio{ui: 0})
+	foo(&Picture{ui: 0})
+	foo(&Canvas{})
+	foo(&Menu{ui: 0})
+	foo(&Dropdown{ui: 0})
+	foo(&Transition{
+		ui: 0
+		animated_value: 0
+	})
+	foo(&Stack{ui: 0})
+	foo(&Switch{ui: 0})
+	foo(&Rectangle{ui: 0})
+	foo(&Group{ui: 0})
+}
+
+fn bar2() {
+	foo2(&Window{
+		ui: 0
+		glfw_obj: 0
+		eventbus: eventbus.new()
+	})
+	foo2(&Stack{ui: 0})
+}
+
+pub fn (w mut Window) set_title(title string) {
+	w.title = title
+	w.glfw_obj.set_title(title)
+}
+/*Layout Interface Methods*/
+
+
+fn (w &Window) draw() {}
+
+fn (w &Window) get_ui() &UI {
+	return w.ui
+}
+
+fn (w &Window) get_user_ptr() voidptr {
+	return w.user_ptr
+}
+
+pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
+	return w.eventbus.subscriber
+}
+
+fn (w &Window) size() (int,int) {
+	return w.width,w.height
+}
+
+fn (window &Window) resize(width, height int) {}
+
+fn (window &Window) unfocus_all() {
+	for child in window.children {
+		child.unfocus()
 	}
-
-	pub fn (w mut Window) on_mousemove(func MouseMoveFn) {
-		w.mouse_move_fn = func
-	}
-
-	pub fn (w mut Window) on_scroll(func ScrollFn) {
-		w.scroll_fn = func
-	}
-
-	pub fn (w &Window) mouse_inside(x, y, width, height int) bool {
-		return false
-	}
-
-	pub fn (b &Window) focus() {}
-
-	pub fn (b &Window) always_on_top(val bool) {}
-	// TODO remove this
-	fn foo(w Widget) {}
-
-	fn foo2(l Layout) {}
-
-	fn bar() {
-		foo(&TextBox{ui: 0})
-		foo(&Button{ui: 0})
-		foo(&ProgressBar{ui: 0})
-		foo(&Slider{ui: 0})
-		foo(&CheckBox{ui: 0})
-		foo(&Label{ui: 0})
-		foo(&Radio{ui: 0})
-		foo(&Picture{ui: 0})
-		foo(&Canvas{})
-		foo(&Menu{ui: 0})
-		foo(&Dropdown{ui: 0})
-		foo(&Transition{
-			ui: 0
-			animated_value: 0
-		})
-		foo(&Stack{ui: 0})
-		foo(&Switch{ui: 0})
-		foo(&Rectangle{ui: 0})
-		foo(&Group{ui: 0})
-	}
-
-	fn bar2() {
-		foo2(&Window{
-			ui: 0
-			glfw_obj: 0
-			eventbus: eventbus.new()
-		})
-		foo2(&Stack{ui: 0})
-	}
-
-	pub fn (w mut Window) set_title(title string) {
-		w.title = title
-		w.glfw_obj.set_title(title)
-	}
-	/*Layout Interface Methods*/
-
-
-	fn (w &Window) draw() {}
-
-	fn (w &Window) get_ui() &UI {
-		return w.ui
-	}
-
-	fn (w &Window) get_user_ptr() voidptr {
-		return w.user_ptr
-	}
-
-	pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
-		return w.eventbus.subscriber
-	}
-
-	fn (w &Window) size() (int,int) {
-		return w.width,w.height
-	}
-
-	fn (window &Window) resize(width, height int) {}
-
-	fn (window &Window) unfocus_all() {
-		for child in window.children {
-			child.unfocus()
-		}
-	}
+}

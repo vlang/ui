@@ -33,6 +33,7 @@ pub struct ButtonConfig {
 	width   int
 }
 
+[ref_only]
 pub struct Button {
 pub mut:
 

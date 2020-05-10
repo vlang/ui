@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
+[ref_only]
 pub struct Label {
 mut:
 	text   string
@@ -14,7 +15,6 @@ mut:
 
 pub struct LabelConfig {
 	text   string
-	ref		&Label
 }
 
 fn (l mut Label)init(parent Layout) {
@@ -27,13 +27,6 @@ pub fn label(c LabelConfig) &Label {
 		text: c.text
 		ui: 0
 	}
-	/*
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *lbl
-		return &ref
-	}
-	*/
 	return lbl
 }
 

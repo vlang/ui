@@ -7,12 +7,18 @@ const (
 
 struct App {
 mut:
-	window   &ui.Window
-	title_box    ui.TextBox
+	window    &ui.Window
+	title_box &ui.TextBox
 }
 
 fn main() {
-	mut app := &App{}
+	mut app := &App{
+		title_box: ui.textbox(
+			max_len: 20
+			width: 300
+			placeholder: 'Please enter new title name'
+		)
+	}
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -20,28 +26,23 @@ fn main() {
 		user_ptr: app
 	}, [
 		ui.column({
-			stretch: true,
-			spacing: 20,
+			stretch: true
+			spacing: 20
 			margin: ui.MarginConfig{30,30,30,30}
 		}, [
 			ui.row({
-				spacing: 10,
+				spacing: 10
 				alignment: .center
 			}, [
-				ui.label({
+				ui.label(
 					text: 'Title name: '
-				}),
-				ui.textbox({
-					max_len: 20
-					width: 300
-					placeholder: 'Please enter new title name'
-					ref: &app.title_box
-				})
+				)
+				app.title_box
 			]),
-			ui.button({
+			ui.button(
 				text: 'Change title'
 				//onclick: btn_change_title
-			})
+			)
 		])]
 	)
 

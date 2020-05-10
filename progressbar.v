@@ -12,6 +12,7 @@ const (
 	progress_bar_background_border_color = gx.rgb(191, 191, 191)
 )
 
+[ref_only]
 pub struct ProgressBar {
 pub mut:
 	height     int
@@ -32,7 +33,6 @@ pub struct ProgressBarConfig {
 	min    int
 	max    int
 	val    int
-	ref		&ProgressBar
 }
 
 fn (pb mut ProgressBar)init(parent Layout) {
@@ -50,13 +50,6 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		val: c.val
 		ui: 0
 	}
-	/*
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *p
-		return &ref
-	}
-	*/
 	return p
 }
 

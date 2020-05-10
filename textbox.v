@@ -32,6 +32,7 @@ type KeyDownFn fn(voidptr, voidptr, u32)
 
 type KeyUpFn fn(voidptr, voidptr, u32)
 
+[ref_only]
 pub struct TextBox {
 pub mut:
 	height             int

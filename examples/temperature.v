@@ -7,16 +7,28 @@ const (
 
 struct App {
 mut:
-    txt_box_celsius ui.TextBox
-    txt_box_fahrenheit ui.TextBox
+    txt_box_celsius &ui.TextBox
+    txt_box_fahrenheit &ui.TextBox
     lbl_fahrenheit &ui.Label
     lbl_celsius &ui.Label
     window     &ui.Window
 }
 
 fn main() {
-    mut app := &App{}
-    window := ui.window({
+	mut app := &App{
+		txt_box_celsius: ui.textbox(
+                width: 70
+//                on_key_up: on_cel_key_up
+                is_numeric: true
+            )
+		txt_box_fahrenheit: ui.textbox(
+                width: 70
+//                on_key_up: on_fah_key_up
+                is_numeric: true
+            )
+
+	}
+	    window := ui.window({
         width: win_width
         height: win_height
         title: 'Temperature Conv.'
@@ -28,24 +40,14 @@ fn main() {
             margin: ui.MarginConfig{5,5,5,5}
             spacing: 10
         }, [
-            ui.label({
+            ui.label(
                 text: 'Celsius = '
-            }),
-            ui.textbox({
-                width: 70
-//                on_key_up: on_cel_key_up
-                is_numeric: true
-                ref: &app.txt_box_celsius
-            }),
-			ui.label({
+            )
+           app.txt_box_celsius
+		ui.label(
                 text: 'Fahrenheit'
-            }),
-            ui.textbox({
-                width: 70
-//                on_key_up: on_fah_key_up
-                is_numeric: true
-                ref: &app.txt_box_fahrenheit
-            })
+            )
+           app.txt_box_fahrenheit
 
         ]),
     ])
