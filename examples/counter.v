@@ -13,14 +13,15 @@ mut:
 
 fn main() {
 	mut app := &App{
-		counter:	ui.textbox(
+		window: 0
+		counter: ui.textbox(
 			max_len: 20
 			read_only: true
 			is_numeric: true
 			text: '0'
 		)
 	}
-	window := ui.window({
+	app.window = ui.window({
 		width: win_width
 		height: win_height
 		title: 'Counter'
@@ -35,16 +36,14 @@ fn main() {
 			app.counter
 			ui.button(
 				text: 'Count'
-				//onclick: btn_count_click
+				onclick: btn_count_click
 			)
 		])
 	])
-
-	app.window = window
-	ui.run(window)
+	ui.run(app.window)
 }
 
-fn btn_count_click(app mut App) {
+fn btn_count_click(app mut App, btn &ui.Button) {
 	mut old_count := app.counter.text.int()
 	old_count++
 	app.counter.set_text(old_count.str())
