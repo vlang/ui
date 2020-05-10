@@ -6,7 +6,14 @@ jobs:
   ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout V
+      uses: actions/checkout@v2
+      with:
+        repository: vlang/v
+    - name: Checkout V UI
+      uses: actions/checkout@v2
+      with:
+        path: vlib/ui
     - name: Install dependencies
       run: |
         sudo rm -f /etc/apt/sources.list.d/dotnetdev.list /etc/apt/sources.list.d/microsoft-prod.list
@@ -14,62 +21,61 @@ jobs:
         sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev libgtk-3-dev
     - name: Build V
       run: |
-        git clone --depth 1 https://github.com/vlang/v ../v
-        cd ../v
         make
-    - name: cp ui => vlib/ui, without installing
-      run: cp -rf ../ui ../v/vlib/ui
+        sudo ./v symlink
     - name: Build UI examples
       run: |
-        for f in examples/*.v; do echo "Building $f ..."; ../v/v $f ; done
-    - name: Results
-      run: |
-        ls -lart examples/* | grep -v .v$
+        cd ./vlib/ui/examples/
+        v run ./build_examples.vsh
 
   macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout V
+      uses: actions/checkout@v2
+      with:
+        repository: vlang/v
+    - name: Checkout V UI
+      uses: actions/checkout@v2
+      with:
+        path: vlib/ui
     - name: Install dependencies
       run: |
         brew install freetype glfw
     - name: Build V
       run: |
-        git clone --depth 1 https://github.com/vlang/v ../v
-        cd ../v
         make
-    - name: cp ui => vlib/ui, without installing
-      run: cp -rf ../ui ../v/vlib/ui
+        ./v symlink
     - name: Build UI examples
-      run: |        
-        for f in examples/*.v; do echo "Building $f ..."; ../v/v $f ; done
-    - name: Results
-      run: |        
-        ls -lart examples/* | grep -v .v$
+      run: |
+        cd ./vlib/ui/examples/
+        v run ./build_examples.vsh
 
   windows-msvc:
     runs-on: windows-latest
     env:
         VFLAGS: -cc msvc
     steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: |
-        echo %VFLAGS%
-        git clone --depth 1 https://github.com/vlang/v ..\v
-        git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries.git ..\v\thirdparty\freetype
+    - name: Checkout V
+      uses: actions/checkout@v2
+      with:
+        repository: vlang/v
+    - name: Checkout V UI
+      uses: actions/checkout@v2
+      with:
+        path: vlib/ui
+    - name: Checkout dependencies
+      uses: actions/checkout@v2
+      with:
+        path: thirdparty/freetype
+        repository: ubawurinna/freetype-windows-binaries
     - name: Build V
       run: |
-        cd ..\v
-        .\make.bat -msvc
-    - name: cp ui => vlib/ui, without installing
+        .\make.bat
+    # Don't move applying V directory to PATH, to other steps
+    # otherwise this step and V script won't see V executable.
+    - name: Build UI examples
       run: |
-        xcopy ..\ui ..\v\vlib\ui /e /i /h
-    - name: Build UI demo
-      run: |
-        ..\v\v.exe examples\group.v
-        ..\v\v.exe examples\users.v
-        ..\v\v.exe examples\calculator.v
-    - name: Results
-      run: |
-        dir examples\
+        $env:path += ";$(get-location)"
+        cd .\vlib\ui\examples\
+        & v run .\build_examples.vsh
