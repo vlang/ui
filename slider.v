@@ -250,8 +250,8 @@ fn (b mut Slider) change_value(x, y int) {
 	}
 	if b.on_value_changed != 0 {
 		parent := b.parent
-		//user_ptr := parent.get_user_ptr()
-		//b.on_value_changed(user_ptr, b)
+		user_ptr := parent.get_user_ptr()
+		b.on_value_changed(user_ptr, b)
 	}
 }
 
