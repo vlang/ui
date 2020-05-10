@@ -24,7 +24,7 @@ fn main() {
 			orientation: .horizontal
 			max: 50
 			min: 0
-			val: app.duration
+			val: 25.0
 			//on_value_changed: on_value_changed
 		)
 		progress_bar: ui.progressbar(
