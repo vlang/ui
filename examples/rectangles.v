@@ -13,7 +13,7 @@ mut:
 
 fn main() {
 	mut app := &App{ window: 0 }
-	rect := ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 100))
+	rect := ui.rectangle(height: 64, width: 64, color: gx.rgb(255, 100, 100))
 	window := ui.window({
 		width: win_width
 		height: win_height
@@ -31,9 +31,9 @@ fn main() {
 			{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
 			{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
 			*/
-			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 255, 100))
-			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(100, 100, 255))
-			ui.rectangle(ref: 0, height: 64, width: 64, color: gx.rgb(255, 100, 255))
+			ui.rectangle(height: 64, width: 64, color: gx.rgb(100, 255, 100))
+			ui.rectangle(height: 64, width: 64, color: gx.rgb(100, 100, 255))
+			ui.rectangle(height: 64, width: 64, color: gx.rgb(255, 100, 255))
 		])
 	])
 

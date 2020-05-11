@@ -33,7 +33,6 @@ pub struct RectangleConfig {
 		g: 180
 		b: 190
 	}
-	ref          &Rectangle
 }
 
 fn (r mut Rectangle) init(parent Layout) {
@@ -51,11 +50,6 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		border: c.border
 		border_color: c.border_color
 		ui: 0
-	}
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *rect
-		return &ref
 	}
 	return rect
 }
