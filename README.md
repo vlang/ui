@@ -73,7 +73,7 @@ On Linux, V UI will be a full-featured lightweight alternative to GTK and Qt.
 
 Discord: [`#v-ui` channel](https://discord.gg/vlang)
 
-Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward. 
+Documentation will be available soon. In the meantime use the examples as the documentation. The framework is very simple and straightforward.
 
 ### Dependencies
 
@@ -99,7 +99,7 @@ ClearLinux:
 sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype devpkg-glfw3
 
 Windows:
-git clone --depth=1 https://github.com/ubawurinna/freetype-windows-binaries [path to v repo]/thirdparty/freetype/
+v setup-freetype
 ```
 
 ### License
