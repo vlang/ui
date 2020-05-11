@@ -113,6 +113,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		width: cfg.width
 		height: cfg.height
 		children: children
+		click_fn: cfg.on_click
 	}
 	for _, child in window.children {
 		//if child is Stack {
@@ -173,9 +174,10 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		x: int(x)
 		y: int(y)
 	}
-	/* if window.click_fn != 0 {
+	if window.click_fn != 0 {
 		window.click_fn(e, &ui.window)
 	}
+	/*
 	for child in window.children {
 		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
 		if inside {
