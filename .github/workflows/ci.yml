@@ -16,9 +16,8 @@ jobs:
         path: vlib/ui
     - name: Install dependencies
       run: |
-        sudo rm -f /etc/apt/sources.list.d/dotnetdev.list /etc/apt/sources.list.d/microsoft-prod.list
         sudo apt-get update
-        sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev libgtk-3-dev
+        sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev
     - name: Build V
       run: |
         make
@@ -64,14 +63,12 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: vlib/ui
-    - name: Checkout dependencies
-      uses: actions/checkout@v2
-      with:
-        path: thirdparty/freetype
-        repository: ubawurinna/freetype-windows-binaries
     - name: Build V
       run: |
         .\make.bat
+    - name: Install dependencies
+      run: |
+        .\v.exe setup-freetype
     # Don't move applying V directory to PATH, to other steps
     # otherwise this step and V script won't see V executable.
     - name: Build UI examples
