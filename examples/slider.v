@@ -20,7 +20,7 @@ fn main() {
 			orientation: .horizontal
 			max: 100
 			val: 0
-			//on_value_changed: on_hor_value_changed
+			on_value_changed: on_hor_value_changed
 		)
 		vert_slider: ui.slider(
 			width: 20
@@ -28,10 +28,11 @@ fn main() {
 			orientation: .vertical
 			max: 100
 			val: 0
-			//on_value_changed: on_vert_value_changed
+			on_value_changed: on_vert_value_changed
 		)
+		window: 0
 	}
-	window := ui.window({
+	app.window = ui.window({
 		width: win_width
 		height: win_height
 		title: 'Slider Example'
@@ -47,15 +48,13 @@ fn main() {
 			app.hor_slider
 		])
 	])
-
-	app.window = window
-	ui.run(window)
+	ui.run(app.window)
 }
 
-fn on_hor_value_changed(app mut App) {
+fn on_hor_value_changed(app mut App, slider &ui.Slider) {
 	app.vert_slider.val = app.hor_slider.val
 }
 
-fn on_vert_value_changed(app mut App) {
+fn on_vert_value_changed(app mut App, slider &ui.Slider) {
 	app.hor_slider.val = app.vert_slider.val
 }
