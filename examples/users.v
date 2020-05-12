@@ -70,6 +70,19 @@ fn main() {
 			is_password: true
 			max_len: 20
 		)
+		country: ui.radio(
+			width: 200
+			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+			title: 'Country'
+		)
+		pbar: ui.progressbar(
+			width: 170
+			max: 10
+			val: 2
+		)
+		label: ui.label(
+			text: '2/10'
+		)
 	}
 	window := ui.window({
 		width: win_width
@@ -96,12 +109,7 @@ fn main() {
 				ui.checkbox(
 					text: 'Subscribe to the newsletter'
 				)
-				ui.radio(
-					width: 200
-					values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-					title: 'Country'
-					//ref: &app.country
-				)
+				app.country
 				ui.row({
 					spacing: 85
 				}, [
@@ -118,16 +126,8 @@ fn main() {
 					spacing: 5
 					alignment: .center
 				}, [
-					ui.progressbar(
-						width: 170
-						max: 10
-						val: 2
-						//ref: &app.pbar
-					)
-					ui.label(
-						text: '2/10'
-						//ref: &app.label
-					)
+					app.pbar
+					app.label
 				])
 			])
 			ui.column({
@@ -174,6 +174,7 @@ fn (app mut App) btn_add_click(b &Button) {
 //fn btn_add_click(app mut App, x voidptr) {
 fn btn_add_click(app_ voidptr, x voidptr) {
 	mut app := &App(app_)
+	//println('nr users=$app.users.len')
 	//ui.notify('user', 'done')
 	//app.window.set_cursor(.hand)
 	if app.users.len >= 10 {
