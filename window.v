@@ -201,9 +201,9 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 }
 
 fn window_click(glfw_wnd voidptr, button, action, mods int) {
-	if action != 0 {
-		return
-	}
+	//if action != 0 {
+		//return
+	//}
 	//println('action=$action')
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
@@ -215,7 +215,7 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		x: int(x)
 		y: int(y)
 	}
-	if window.click_fn != 0 {
+	if window.click_fn != 0 && action == 0{
 		window.click_fn(e, window)
 	}
 	/*
