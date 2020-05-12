@@ -165,6 +165,12 @@ fn btn_help_click() {
 	ui.message_box('Built with V UI')
 }
 
+/*
+fn (app mut App) btn_add_click(b &Button) {
+
+}
+*/
+
 //fn btn_add_click(app mut App, x voidptr) {
 fn btn_add_click(app_ voidptr, x voidptr) {
 	mut app := &App(app_)

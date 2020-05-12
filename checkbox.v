@@ -20,6 +20,7 @@ enum CheckBoxState {
 
 type CheckChangedFn fn(voidptr, bool)
 
+[ref_only]
 pub struct CheckBox {
 pub mut:
 // state      CheckBoxState
@@ -33,6 +34,7 @@ pub mut:
 	ui               &UI
 	on_check_changed CheckChangedFn
 	text             string
+	disabled         bool
 }
 
 pub struct CheckBoxConfig {
@@ -42,6 +44,7 @@ pub struct CheckBoxConfig {
 	text             string
 	on_check_changed CheckChangedFn
 	checked          bool
+	disabled         bool
 }
 
 fn (cb mut CheckBox) init(parent Layout) {
@@ -60,6 +63,7 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		text: c.text
 		on_check_changed: c.on_check_changed
 		checked: c.checked
+		disabled: c.disabled
 	}
 	return cb
 }

@@ -18,17 +18,21 @@ const (
 pub type DrawFn fn(voidptr)
 
 pub type ClickFn fn(e MouseEvent, func voidptr)
+pub type KeyFn fn(e KeyEvent, func voidptr)
 
 pub type ScrollFn fn(e MouseEvent, func voidptr)
 
 pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 
+[ref_only]
 pub struct Window {
 pub:
 	ui            &UI
 pub mut:
 	glfw_obj      &glfw.Window
 	children      []Widget
+	child_window  &Window = 0
+	parent_window &Window
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -42,6 +46,7 @@ pub mut:
 	bg_color      gx.Color
 	click_fn      ClickFn
 	scroll_fn     ScrollFn
+	key_down_fn     KeyFn
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 }
@@ -57,13 +62,18 @@ pub:
 	draw_fn       DrawFn
 	bg_color      gx.Color=default_window_color
 	on_click ClickFn
+	on_key_down KeyFn
 	on_scroll ScrollFn
 	children []Widget
+//pub mut:
+	//parent_window &Window
 }
 
+/*
 pub fn window2(cfg WindowConfig) &Window {
 	return window(cfg, cfg.children)
 }
+*/
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
 	println('window()')
@@ -114,7 +124,10 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		height: cfg.height
 		children: children
 		click_fn: cfg.on_click
+		key_down_fn: cfg.on_key_down
 	}
+	//q := int(window)
+	//println('created window $q.hex()')
 	for _, child in window.children {
 		//if child is Stack {
 
@@ -131,6 +144,30 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		}
 		*/
 		child.init(window)
+	}
+	// window.set_cursor()
+	return window
+}
+
+pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widget) &Window {
+	//q := int(parent_window)
+	//println('child_window() parent=$q.hex()')
+	mut window := &Window{
+		parent_window: parent_window
+		//user_ptr: parent_window.user_ptr
+		ui: parent_window.ui
+		glfw_obj: parent_window.ui.gg.window
+		draw_fn: cfg.draw_fn
+		title: cfg.title
+		bg_color: cfg.bg_color
+		width: cfg.width
+		height: cfg.height
+		children: children
+		click_fn: cfg.on_click
+	}
+	parent_window.child_window = window
+	for _, child in window.children {
+		child.init(parent_window)
 	}
 	// window.set_cursor()
 	return window
@@ -164,6 +201,10 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 }
 
 fn window_click(glfw_wnd voidptr, button, action, mods int) {
+	if action != 0 {
+		return
+	}
+	//println('action=$action')
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	x,y := glfw.get_cursor_pos(glfw_wnd)
@@ -175,7 +216,7 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		y: int(y)
 	}
 	if window.click_fn != 0 {
-		window.click_fn(e, &ui.window)
+		window.click_fn(e, window)
 	}
 	/*
 	for child in window.children {
@@ -183,13 +224,13 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		if inside {
 			child.click(e)
 		}
-	} */
+	}
+	*/
 
-	window.eventbus.publish(events.on_click, &window, e)
+	window.eventbus.publish(events.on_click, window, e)
 }
 
 fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
-	// println("key down")
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	// C.printf('g child=%p\n', child)
@@ -199,11 +240,18 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 		action: action
 		mods: mods
 	}
+	if e.key == .escape && window.child_window != 0 {
+		// Close the child window on Escape
+		window.child_window = 0
+	}
+	if window.key_down_fn != 0 {
+		window.key_down_fn(e, window)
+	}
 	if action == 2 || action == 1 {
-		window.eventbus.publish(events.on_key_down, &window, e)
+		window.eventbus.publish(events.on_key_down, window, e)
 	}
 	else {
-		window.eventbus.publish(events.on_key_up, &window, e)
+		window.eventbus.publish(events.on_key_up, window, e)
 	}
 	/* for child in window.children {
 		is_focused := child.is_focused()
@@ -327,14 +375,27 @@ fn bar2() {
 	foo2(&Stack{ui: 0})
 }
 
+fn (w &Window) draw() {
+/*
+	// Render all widgets, including Canvas
+	for child in w.children {
+		child.draw()
+	}
+	if w.child_window != 0 {
+		for child in w.child_window.children {
+			child.draw()
+		}
+	}
+	*/
+}
+
 pub fn (w mut Window) set_title(title string) {
 	w.title = title
 	w.glfw_obj.set_title(title)
 }
-/*Layout Interface Methods*/
+//Layout Interface Methods
 
 
-fn (w &Window) draw() {}
 
 fn (w &Window) get_ui() &UI {
 	return w.ui

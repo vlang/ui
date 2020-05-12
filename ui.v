@@ -11,6 +11,7 @@ import os
 import freetype
 import clipboard
 import eventbus
+import gx
 
 const (
 	version = '0.0.2'
@@ -21,7 +22,7 @@ pub:
 	ft                   &freetype.FreeType
 	gg                   &gg.GG
 mut:
-	window               Window
+	window               &Window
 	show_cursor          bool
 	cb_image             u32
 	//circle_image         u32
@@ -137,19 +138,27 @@ fn (ui mut UI) idle_loop() {
 	}
 }
 
-pub fn run(window Window) {
+pub fn run(window &Window) {
 	mut ui := window.ui
 	ui.window = window
 	go ui.idle_loop()
 	for !window.glfw_obj.should_close() {
-		gg.clear(window.bg_color) //default_window_color
-		// The user can define a custom drawing function for the entire window (advanced mode)
-		if window.draw_fn != 0 {
-			window.draw_fn(window.user_ptr)
+		if window.child_window != 0 {
+			gg.clear(gx.rgb(230,230,230))
+			for child in window.child_window.children {
+				child.draw()
+			}
 		}
-		// Render all widgets, including Canvas
-		for child in window.children {
-			child.draw()
+		else {
+			gg.clear(window.bg_color)
+			// The user can define a custom drawing function for the entire window (advanced mode)
+			if window.draw_fn != 0 {
+				window.draw_fn(window.user_ptr)
+			}
+			// Render all widgets, including Canvas
+			for child in window.children {
+				child.draw()
+			}
 		}
 		// Triggers a re-render in case any function requests it.
 		// Transitions & animations, for example.

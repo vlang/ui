@@ -24,7 +24,7 @@ enum ButtonState {
 	pressed
 }
 
-type ButtonClickFn fn(voidptr, voidptr)
+type ButtonClickFn fn(voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
 	text    string
