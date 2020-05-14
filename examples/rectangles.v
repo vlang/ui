@@ -19,6 +19,9 @@ fn main() {
 		height: win_height
 		title: 'V UI: Rectangles'
 		user_ptr: app
+		on_key_down: fn(e &ui.KeyEvent, wnd &ui.Window) {
+			println('key down')
+		}
 	}, [
 		ui.row({
 			alignment: .center
