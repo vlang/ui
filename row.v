@@ -2,6 +2,7 @@
 module ui
 
 pub struct RowConfig {
+pub:
 	height  int
 	alignment VerticalAlignment
 	spacing int

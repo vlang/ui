@@ -6,6 +6,7 @@ pub:
 	on_mouse_move string = "on_mouse_move"
 	on_key_down   string = "on_key_down"
 	on_key_up	  string = "on_key_up"
+	on_scroll	  string = "on_scroll"
 }
 
 pub const (

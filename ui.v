@@ -19,10 +19,10 @@ const (
 
 pub struct UI {
 pub:
-	ft                   &freetype.FreeType
-	gg                   &gg.GG
+	ft                   &freetype.FreeType = 0
+	gg                   &gg.GG = 0
 mut:
-	window               &Window
+	window               &Window = 0
 	show_cursor          bool
 	cb_image             u32
 	//circle_image         u32
@@ -101,6 +101,12 @@ pub:
 	mods   int
 }
 
+pub struct ScrollEvent {
+pub:
+	xoff f64
+	yoff f64
+}
+
 pub enum Cursor {
 	hand
 	arrow
@@ -145,6 +151,9 @@ pub fn run(window &Window) {
 	for !window.glfw_obj.should_close() {
 		if window.child_window != 0 {
 			gg.clear(gx.rgb(230,230,230))
+			if window.child_window.draw_fn != 0 {
+				window.child_window.draw_fn(window.child_window.user_ptr)
+			}
 			for child in window.child_window.children {
 				child.draw()
 			}

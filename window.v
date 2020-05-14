@@ -20,19 +20,19 @@ pub type DrawFn fn(voidptr)
 pub type ClickFn fn(e MouseEvent, func voidptr)
 pub type KeyFn fn(e KeyEvent, func voidptr)
 
-pub type ScrollFn fn(e MouseEvent, func voidptr)
+pub type ScrollFn fn(e ScrollEvent, func voidptr)
 
 pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 
 [ref_only]
 pub struct Window {
 pub:
-	ui            &UI
+	ui            &UI = 0
 pub mut:
-	glfw_obj      &glfw.Window
+	glfw_obj      &glfw.Window = 0
 	children      []Widget
 	child_window  &Window = 0
-	parent_window &Window
+	parent_window &Window = 0
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -113,6 +113,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	ui_ctx.gg.window.onmousemove(window_mouse_move)
 	ui_ctx.gg.window.on_click(window_click)
 	ui_ctx.gg.window.on_resize(window_resize)
+	ui_ctx.gg.window.on_scroll(window_scroll)
 	mut window := &Window{
 		user_ptr: cfg.user_ptr
 		ui: ui_ctx
@@ -125,6 +126,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
+		scroll_fn: cfg.on_scroll
 	}
 	//q := int(window)
 	//println('created window $q.hex()')
@@ -155,6 +157,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 	mut window := &Window{
 		parent_window: parent_window
 		//user_ptr: parent_window.user_ptr
+		user_ptr: cfg.user_ptr
 		ui: parent_window.ui
 		glfw_obj: parent_window.ui.gg.window
 		draw_fn: cfg.draw_fn
@@ -167,6 +170,8 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 	}
 	parent_window.child_window = window
 	for _, child in window.children {
+		// using `parent_window` here so that all events handled by the main window are redirected
+		// to parent_window.child_window.child
 		child.init(parent_window)
 	}
 	// window.set_cursor()
@@ -175,8 +180,10 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 
 fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	window := ui.window
+	mut window := ui.window
 	x0,y0 := glfw.get_cursor_pos(glfw_wnd)
+	window.mx = int(x0)
+	window.my = int(y0)
 	e := MouseEvent{
 		x: int(x0)
 		y: int(y0)
@@ -198,6 +205,21 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	window.resize(width, height)
+}
+
+fn window_scroll(glfw_wnd voidptr, xoff, yoff f64) {
+	//println('window scroll')
+	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+	window := ui.window
+	//println('title =$window.title')
+	e := ScrollEvent{
+		xoff: xoff
+		yoff: yoff
+	}
+	if window.scroll_fn != 0 {
+		window.scroll_fn(e, window)
+	}
+	window.eventbus.publish(events.on_scroll, window, e)
 }
 
 fn window_click(glfw_wnd voidptr, button, action, mods int) {
@@ -227,7 +249,12 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 	}
 	*/
 
-	window.eventbus.publish(events.on_click, window, e)
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_click, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_click, window, e)
+	}
 }
 
 fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
@@ -338,7 +365,10 @@ pub fn (w &Window) mouse_inside(x, y, width, height int) bool {
 
 pub fn (b &Window) focus() {}
 
-pub fn (b &Window) always_on_top(val bool) {}
+pub fn (w &Window) always_on_top(val bool) {
+	//w.glfw_obj.window_hint(
+}
+
 // TODO remove this
 fn foo(w Widget) {}
 

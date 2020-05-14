@@ -88,6 +88,10 @@ pub struct TextBoxConfig {
 	borderless         bool
 	on_key_down        KeyDownFn
 	on_key_up          KeyUpFn
+	on_change voidptr
+	on_return voidptr
+
+
 	border_accentuated bool=false
 }
 
