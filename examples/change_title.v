@@ -13,6 +13,7 @@ mut:
 
 fn main() {
 	mut app := &App{
+		window: 0
 		title_box: ui.textbox(
 			max_len: 20
 			width: 300

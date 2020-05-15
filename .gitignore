@@ -3,6 +3,7 @@ examples/*.exe
 examples/*.ilk
 examples/*.pdb
 examples/calculator
+examples/change_title
 examples/counter
 examples/dropdown
 examples/group
