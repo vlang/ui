@@ -10,7 +10,7 @@ const (
 
 struct App {
 mut:
-	txtbox     &ui.TextBox
+	text       string
 	window     &ui.Window
 	rows       []&ui.Layout
 	result     f64
@@ -30,15 +30,15 @@ fn main() {
 		]
 	mut app := &App{
 		window: 0
-		txtbox: ui.textbox(
+	}
+	mut children := []ui.Widget
+	children = [
+		ui.textbox(
+			text: &app.text
 			placeholder: '0'
 			width: 135
 			read_only: true
 		)
-	}
-	mut children := []ui.Widget
-	children = [
-		app.txtbox
 	]
 	for op in ops {
 		children << ui.row({spacing: 5}, get_row(op))
@@ -60,7 +60,7 @@ fn main() {
 
 fn btn_click(app mut App, btn &ui.Button) {
 	op := btn.text
-	number := app.txtbox.text
+	number := app.text
 	if op == 'C' {
 		app.result = 0
 		app.operands = []
@@ -76,13 +76,13 @@ fn btn_click(app mut App, btn &ui.Button) {
 			return
 		}
 		if app.new_number {
-			app.txtbox.set_text(btn.text)
+			app.text = btn.text
 			app.new_number = false
 			app.is_float = false
 		}
 		else {
 			// Append a new digit
-			app.txtbox.set_text(number + btn.text)
+			app.text = number + btn.text
 		}
 		return
 	}
@@ -103,10 +103,10 @@ fn btn_click(app mut App, btn &ui.Button) {
 fn (app mut App) update_result() {
 	// Format and print the result
 	if !math.trunc(app.result).eq(app.result) {
-		app.txtbox.set_text('${app.result:-15.10f}')
+		app.text = '${app.result:-15.10f}'
 	}
 	else {
-		app.txtbox.set_text(int(app.result).str())
+		app.text = int(app.result).str()
 	}
 }
 
