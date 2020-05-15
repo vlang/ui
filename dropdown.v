@@ -157,8 +157,8 @@ fn dd_click(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
 		dd.selected_index = index
 		if dd.on_selection_changed != 0 {
 			parent := dd.parent
-			user_ptr := parent.get_user_ptr()
-			dd.on_selection_changed(user_ptr, dd)
+			state := parent.get_state()
+			dd.on_selection_changed(state, dd)
 		}
 		dd.unfocus()
 	}

@@ -16,7 +16,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Group Demo'
-		user_ptr: app
+		state: app
 	}, [
 		ui.group({
 		    x:20

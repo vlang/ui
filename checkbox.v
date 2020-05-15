@@ -72,7 +72,7 @@ fn cb_click(cb mut CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) && e.action == 0 {
 		cb.checked = !cb.checked
 		if cb.on_check_changed != 0 {
-			cb.on_check_changed(window.user_ptr, cb.checked)
+			cb.on_check_changed(window.state, cb.checked)
 		}
 	}
 }

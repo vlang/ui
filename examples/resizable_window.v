@@ -17,7 +17,7 @@ fn main() {
 		height: win_height
 		title: 'Resizable Window'
 		resizable: true
-		user_ptr: app
+		state: app
 	}, [
 		ui.row({
 			stretch: true,

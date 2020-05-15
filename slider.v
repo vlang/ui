@@ -204,8 +204,8 @@ fn slider_key_down(b mut Slider, e &KeyEvent, zzz voidptr) {
 	}
 	if b.on_value_changed != 0 {
 		parent := b.parent
-		user_ptr := parent.get_user_ptr()
-		b.on_value_changed(user_ptr, b)
+		state := parent.get_state()
+		b.on_value_changed(state, b)
 	}
 }
 
@@ -250,8 +250,8 @@ fn (b mut Slider) change_value(x, y int) {
 	}
 	if b.on_value_changed != 0 {
 		parent := b.parent
-		user_ptr := parent.get_user_ptr()
-		b.on_value_changed(user_ptr, b)
+		state := parent.get_state()
+		b.on_value_changed(state, b)
 	}
 }
 

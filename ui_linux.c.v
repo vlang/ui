@@ -62,7 +62,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 		height: height
 		title: 'Message box'
 		bg_color: default_window_color
-		user_ptr: message_app
+		state: message_app
 		}, [
 			column({
 				stretch: true

@@ -30,7 +30,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Temperature Converter'
-		user_ptr: app
+		state: app
 	}, [
 		ui.row({
 			stretch: true

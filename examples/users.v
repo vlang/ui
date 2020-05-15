@@ -18,29 +18,30 @@ struct User {
 	country    string
 }
 
-struct App {
+struct State {
 mut:
-	first_name &ui.TextBox
-	last_name  &ui.TextBox
-	age        &ui.TextBox
-	password   &ui.TextBox
+	first_name string
+	last_name  string
+	age        string
+	password   string
 	pbar       &ui.ProgressBar
 	users      []User
 	window     &ui.Window
 	label      &ui.Label
 	country    &ui.Radio
 	txt_pos    int
+	started    bool
 }
 
 fn main() {
-	mut app := &App{
+	mut app := &State{
 		users: [
 			User{
 				first_name: 'Sam'
 				last_name: 'Johnson'
 				age: 29
 				country: 'United States'
-			},
+			}
 			User{
 				first_name: 'Kate'
 				last_name: 'Williams'
@@ -48,28 +49,6 @@ fn main() {
 				country: 'Canada'
 			}
 		]
-		first_name: ui.textbox(
-			max_len: 20
-			width: 200
-			placeholder: 'First name'
-		)
-		last_name: ui.textbox(
-			max_len: 50
-			width: 200
-			placeholder: 'Last name'
-		)
-		age: ui.textbox(
-			max_len: 3
-			width: 200
-			placeholder: 'Age'
-			is_numeric: true
-		)
-		password: ui.textbox(
-			width: 200
-			placeholder: 'Password'
-			is_password: true
-			max_len: 20
-		)
 		country: ui.radio(
 			width: 200
 			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
@@ -87,7 +66,7 @@ fn main() {
 	window := ui.window({
 		width: win_width
 		height: win_height
-		user_ptr: app
+		state: app
 		title: 'V UI Demo'
 	}, [
 		ui.row({
@@ -98,10 +77,33 @@ fn main() {
 				width: 200
 				spacing: 13
 			}, [
-				app.first_name,
-				app.last_name,
-				app.age,
-				app.password,
+				ui.textbox(
+					max_len: 20
+					width: 200
+					placeholder: 'First name'
+					text: &app.first_name
+					//is_focused: &app.started
+				)
+				ui.textbox(
+					max_len: 50
+					width: 200
+					placeholder: 'Last name'
+					text: &app.last_name
+				)
+				ui.textbox(
+					max_len: 3
+					width: 200
+					placeholder: 'Age'
+					is_numeric: true
+					text: &app.age
+				)
+				ui.textbox(
+					width: 200
+					placeholder: 'Password'
+					is_password: true
+					max_len: 20
+					text: &app.password
+				)
 				ui.checkbox(
 					checked: true
 					text: 'Online registration'
@@ -171,34 +173,34 @@ fn (app mut App) btn_add_click(b &Button) {
 }
 */
 
-fn btn_add_click(mut app App, x voidptr) {
+fn btn_add_click(mut app State, x voidptr) {
 	//println('nr users=$app.users.len')
 	//ui.notify('user', 'done')
 	//app.window.set_cursor(.hand)
 	if app.users.len >= 10 {
 		return
 	}
-	if app.first_name.text == '' ||  app.last_name.text == '' {
+	if app.first_name == '' ||  app.last_name == '' {
 		return
 	}
 	new_user := User{
-		first_name: app.first_name.text
-		last_name: app.last_name.text
-		age: app.age.text.int()
+		first_name: app.first_name //first_name.text
+		last_name: app.last_name//.text
+		age: app.age.int()
 		country: app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
-	app.first_name.set_text('')
-	app.first_name.focus()
-	app.last_name.set_text('')
-	app.age.set_text('')
-	app.password.set_text('')
+	app.first_name = ''
+	//app.first_name.focus()
+	app.last_name = ''
+	app.age = ''
+	app.password = ''
 	app.label.set_text('$app.users.len/10')
 	//ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(app &App) {
+fn canvas_draw(app &State) {
 	gg := app.window.ui.gg
 	mut ft := app.window.ui.ft
 	x := 240

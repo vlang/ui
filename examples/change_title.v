@@ -24,7 +24,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Name'
-		user_ptr: app
+		state: app
 	}, [
 		ui.column({
 			stretch: true

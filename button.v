@@ -80,7 +80,7 @@ fn btn_click(b mut Button, e &MouseEvent, window &Window) {
 		else if e.action == 0 {
 			b.state = .normal
 			if b.onclick != 0 {
-				b.onclick(window.user_ptr, b)
+				b.onclick(window.state, b)
 			}
 		}
 	}

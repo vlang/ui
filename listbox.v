@@ -241,7 +241,7 @@ fn on_click(lb mut ListBox, e &MouseEvent, window &Window) {
             if lb.selection != inx {
                 lb.selection = inx
                 if lb.clbk != 0 {
-                    lb.clbk(window.user_ptr, lb)
+                    lb.clbk(window.state, lb)
                 }
             }
             break
@@ -269,7 +269,7 @@ fn on_key_up(lb mut ListBox, e &KeyEvent, window &Window ) {
     }
 
     if lb.clbk != 0 {
-        lb.clbk(window.user_ptr, lb)
+        lb.clbk(window.state, lb)
     }
 }
 
@@ -304,9 +304,9 @@ fn (list mut ListBox) resize(width, height int) {
     list.draw_count = list.height / list.item_height
 }
 
-fn (list &ListBox) get_user_ptr() voidptr {
+fn (list &ListBox) get_state() voidptr {
     parent := list.parent
-    return parent.get_user_ptr()
+    return parent.get_state()
 }
 
 fn (list &ListBox) get_subscriber() &eventbus.Subscriber {

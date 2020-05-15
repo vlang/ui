@@ -36,7 +36,7 @@ pub mut:
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
-	user_ptr      voidptr
+	state      voidptr
 	draw_fn       DrawFn
 	title         string
 	mx            int
@@ -58,7 +58,7 @@ pub:
 	resizable     bool
 	title         string
 	always_on_top bool
-	user_ptr      voidptr
+	state      voidptr
 	draw_fn       DrawFn
 	bg_color      gx.Color=default_window_color
 	on_click ClickFn
@@ -86,7 +86,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		create_window: true
 		window_title: cfg.title
 		resizable: cfg.resizable
-		// window_user_ptr: ui
+		// window_state: ui
 
 	})
 	wsize := gcontext.window.get_window_size()
@@ -115,7 +115,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	ui_ctx.gg.window.on_resize(window_resize)
 	ui_ctx.gg.window.on_scroll(window_scroll)
 	mut window := &Window{
-		user_ptr: cfg.user_ptr
+		state: cfg.state
 		ui: ui_ctx
 		glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
@@ -156,8 +156,8 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 	//println('child_window() parent=$q.hex()')
 	mut window := &Window{
 		parent_window: parent_window
-		//user_ptr: parent_window.user_ptr
-		user_ptr: cfg.user_ptr
+		//state: parent_window.state
+		state: cfg.state
 		ui: parent_window.ui
 		glfw_obj: parent_window.ui.gg.window
 		draw_fn: cfg.draw_fn
@@ -431,8 +431,8 @@ fn (w &Window) get_ui() &UI {
 	return w.ui
 }
 
-fn (w &Window) get_user_ptr() voidptr {
-	return w.user_ptr
+fn (w &Window) get_state() voidptr {
+	return w.state
 }
 
 pub fn (w &Window) get_subscriber() &eventbus.Subscriber {

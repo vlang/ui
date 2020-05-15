@@ -86,7 +86,7 @@ fn sw_click(b mut Switch, e &MouseEvent, w &Window) {
 	if e.action == 0 {
 		b.open = !b.open
 		if b.onclick != 0 {
-			b.onclick(w.user_ptr, b)
+			b.onclick(w.state, b)
 		}
 	}
 }

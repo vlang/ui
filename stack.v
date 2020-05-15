@@ -149,9 +149,9 @@ fn (t &Stack) unfocus_all() {
 	}
 }
 
-fn (t &Stack) get_user_ptr() voidptr {
+fn (t &Stack) get_state() voidptr {
 	parent := t.parent
-	return parent.get_user_ptr()
+	return parent.get_state()
 }
 
 fn (t &Stack) point_inside(x, y f64) bool {

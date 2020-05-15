@@ -41,7 +41,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Timer'
-		user_ptr: app
+		state: app
 	}, [
 		ui.column({
 			stretch: true

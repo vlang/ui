@@ -47,7 +47,7 @@ fn main() {
 		width: 145
 		height: 210
 		title: 'V Calc'
-		user_ptr: app
+		state: app
 	}, [
 		ui.column({
 			stretch: true

@@ -25,7 +25,7 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Counter'
-		user_ptr: app
+		state: app
 	}, [
 		ui.row({
 			alignment: .top

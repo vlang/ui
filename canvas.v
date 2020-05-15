@@ -57,8 +57,8 @@ fn (b mut Canvas) propose_size(w, h int) (int, int) {
 
 fn (c mut Canvas) draw() {
 	parent := c.parent
-	user_ptr := parent.get_user_ptr()
-	c.draw_fn(user_ptr)
+	state := parent.get_state()
+	c.draw_fn(state)
 }
 
 fn (t &Canvas) focus() {}

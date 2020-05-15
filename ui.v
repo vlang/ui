@@ -72,7 +72,7 @@ pub interface Widget {
 
 pub interface Layout {
 	get_ui() &UI
-	get_user_ptr() voidptr
+	get_state() voidptr
 	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
 	//on_click(ClickFn)
@@ -152,7 +152,7 @@ pub fn run(window &Window) {
 		if window.child_window != 0 {
 			gg.clear(gx.rgb(230,230,230))
 			if window.child_window.draw_fn != 0 {
-				window.child_window.draw_fn(window.child_window.user_ptr)
+				window.child_window.draw_fn(window.child_window.state)
 			}
 			for child in window.child_window.children {
 				child.draw()
@@ -162,7 +162,7 @@ pub fn run(window &Window) {
 			gg.clear(window.bg_color)
 			// The user can define a custom drawing function for the entire window (advanced mode)
 			if window.draw_fn != 0 {
-				window.draw_fn(window.user_ptr)
+				window.draw_fn(window.state)
 			}
 			// Render all widgets, including Canvas
 			for child in window.children {
