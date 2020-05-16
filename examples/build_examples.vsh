@@ -6,7 +6,7 @@ for file in files {
 		continue
 	}
 	println(file)
-	ret := os.system('v $file')
+	ret := os.system('v -w $file')
 	if ret != 0 {
 		println('failed')
 		exit(1)
