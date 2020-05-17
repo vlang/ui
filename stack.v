@@ -35,7 +35,7 @@ mut:
 	margin 	MarginConfig
 }
 
-fn (b mut Stack) init(parent Layout) {
+fn (mut b Stack) init(parent Layout) {
 	b.parent = parent
 	ui := parent.get_ui()
 	w, h := parent.size()
@@ -75,7 +75,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 	return b
 }
 
-fn (b mut Stack) set_pos(x, y int) {
+fn (mut b Stack) set_pos(x, y int) {
 	b.x = x + b.margin.left
 	b.y = y + b.margin.top
 }
@@ -85,7 +85,7 @@ fn (b &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (b mut Stack) propose_size(w, h int) (int,int) {
+fn (mut b Stack) propose_size(w, h int) (int,int) {
 	if b.stretch {
 		b.width = w
 		b.height = h
@@ -97,7 +97,7 @@ fn (c &Stack) size() (int, int) {
 	return c.width, c.height
 }
 
-fn (b mut Stack) draw() {
+fn (mut b Stack) draw() {
 	mut per_child_size := b.get_height()
 	mut pos := b.get_y_axis()
 	mut size := 0
@@ -158,12 +158,12 @@ fn (t &Stack) point_inside(x, y f64) bool {
 	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn (b mut Stack) focus() {
+fn (mut b Stack) focus() {
 	// b.is_focused = true
 	//println('')
 }
 
-fn (b mut Stack) unfocus() {
+fn (mut b Stack) unfocus() {
 	// b.is_focused = false
 	//println('')
 }
@@ -195,11 +195,11 @@ fn (b &Stack) get_y_axis() int {
 fn (b &Stack) get_x_axis() int {
 	return if b.direction == .row {b.y} else {b.x}
 }
-fn (b mut Stack) set_height(h int) int {
+fn (mut b Stack) set_height(h int) int {
 	if b.direction == .row {b.width = h} else {b.height = h}
 	return h
 }
-fn (b mut Stack) set_width(w int) int {
+fn (mut b Stack) set_width(w int) int {
 	if b.direction == .row {b.height = w} else {b.width = w}
 	return w
 }

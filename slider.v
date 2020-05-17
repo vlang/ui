@@ -54,7 +54,7 @@ pub struct SliderConfig {
 	track_line_displayed bool=true
 }
 
-fn (s mut Slider) init(parent Layout) {
+fn (mut s Slider) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
@@ -121,12 +121,12 @@ fn (b &Slider) draw_thumb() {
 	}
 }
 
-fn (b mut Slider) set_pos(x, y int) {
+fn (mut b Slider) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Slider) size() (int,int) {
+fn (mut b Slider) size() (int,int) {
 	if b.orientation == .horizontal {
 		return b.track_width,b.thumb_height
 	}
@@ -135,7 +135,7 @@ fn (b mut Slider) size() (int,int) {
 	}
 }
 
-fn (b mut Slider) propose_size(w, h int) (int,int) {
+fn (mut b Slider) propose_size(w, h int) (int,int) {
 	/* p.track_width = w
 	p.track_height = h
 	if p.track_height > 20 {p.track_height = 20} //TODO constrain
@@ -232,7 +232,7 @@ fn slider_mouse_move(b mut Slider, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn (b mut Slider) change_value(x, y int) {
+fn (mut b Slider) change_value(x, y int) {
 	dim := if b.orientation == .horizontal { b.track_width } else { b.track_height }
 	axis := if b.orientation == .horizontal { b.x } else { b.y }
 	// TODO parser bug ` - axis`
@@ -255,7 +255,7 @@ fn (b mut Slider) change_value(x, y int) {
 	}
 }
 
-fn (b mut Slider) focus() {
+fn (mut b Slider) focus() {
 	parent := b.parent
 	parent.unfocus_all()
 	b.is_focused = true
@@ -265,7 +265,7 @@ fn (t &Slider) is_focused() bool {
 	return t.is_focused
 }
 
-fn (b mut Slider) unfocus() {
+fn (mut b Slider) unfocus() {
 	b.is_focused = false
 }
 

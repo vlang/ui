@@ -97,7 +97,7 @@ pub struct TextBoxConfig {
 	border_accentuated bool=false
 }
 
-fn (tb mut TextBox) init(parent Layout) {
+fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
@@ -145,20 +145,20 @@ fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int
 	}
 }
 
-fn (b mut TextBox) set_pos(x, y int) {
+fn (mut b TextBox) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut TextBox) size() (int,int) {
+fn (mut b TextBox) size() (int,int) {
 	return b.width,b.height
 }
 
-fn (b mut TextBox) propose_size(w, h int) (int,int) {
+fn (mut b TextBox) propose_size(w, h int) (int,int) {
 	return b.width,b.height
 }
 
-fn (t mut TextBox) draw() {
+fn (mut t TextBox) draw() {
 	text:=*(t.text)
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
 	if !t.borderless {
@@ -392,7 +392,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
+fn (mut t TextBox) set_sel(sel_start, sel_end int, key Key) {
 	if t.sel_direction == .right_to_left {
 		t.sel_start = sel_start
 		t.sel_end = sel_end
@@ -403,7 +403,7 @@ fn (t mut TextBox) set_sel(sel_start, sel_end int, key Key) {
 	}
 }
 
-fn (t mut TextBox) sel(mods KeyMod, key Key) bool {
+fn (mut t TextBox) sel(mods KeyMod, key Key) bool {
 	mut sel_start := if t.sel_direction == .right_to_left { t.sel_start } else { t.sel_end }
 	mut sel_end := if t.sel_direction == .right_to_left { t.sel_end } else { t.sel_start }
 	text := *t.text
@@ -539,7 +539,7 @@ fn tb_click(t mut TextBox, e &MouseEvent, zzz voidptr) {
 	t.cursor_pos = t.text.len
 }
 
-pub fn (t mut TextBox) focus() {
+pub fn (mut t TextBox) focus() {
 	if t.is_focused {
 		return
 	}
@@ -552,32 +552,32 @@ fn (t &TextBox) is_focused() bool {
 	return t.is_focused
 }
 
-fn (t mut TextBox) unfocus() {
+fn (mut t TextBox) unfocus() {
 	t.is_focused = false
 	t.sel_start = 0
 	t.sel_end = 0
 }
 
-fn (t mut TextBox) update() {
+fn (mut t TextBox) update() {
 	t.cursor_pos = t.text.ustring().len
 }
 
-pub fn (t mut TextBox) hide() {}
+pub fn (mut t TextBox) hide() {}
 
-pub fn (t mut TextBox) set_text(s string) {
+pub fn (mut t TextBox) set_text(s string) {
 	//t.text = s
 	//t.update()
 }
 
-pub fn (t mut TextBox) on_change(func voidptr) {
+pub fn (mut t TextBox) on_change(func voidptr) {
 	//t.text = t.text
 }
 
-pub fn (t mut TextBox) on_return(func voidptr) {
+pub fn (mut t TextBox) on_return(func voidptr) {
 	//t.text = t.text
 }
 
-pub fn (t mut TextBox) insert(s string) {
+pub fn (mut t TextBox) insert(s string) {
 	mut ustr := t.text.ustring()
 	old_len := ustr.len
 	// Remove the selection

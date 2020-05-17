@@ -119,7 +119,7 @@ fn init() {
 	stbi.set_flip_vertically_on_load(true)
 }
 
-fn (ui mut UI) idle_loop() {
+fn (mut ui UI) idle_loop() {
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
 	// the cursor will blink at a rate of 1Hz, even if
@@ -213,7 +213,7 @@ fn system_font_path() string {
 	panic('failed to init the font')
 }
 
-fn (ui mut UI) load_icos() {
+fn (mut ui UI) load_icos() {
 	// TODO figure out how to use load_from_memory
 	tmp := os.join_path(os.temp_dir() , 'v_ui') + os.path_separator
 	if !os.is_dir(tmp) {

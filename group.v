@@ -34,7 +34,7 @@ pub mut:
     children []Widget
 }
 
-fn (r mut Group)init(parent Layout) {
+fn (mut r Group)init(parent Layout) {
     r.parent = parent
     ui := parent.get_ui()
     r.ui = ui
@@ -72,18 +72,18 @@ pub fn group(c GroupConfig) &Group {
     return cb
 }
 
-fn (g mut Group) set_pos(x, y int) {
+fn (mut g Group) set_pos(x, y int) {
     g.x = x
     g.y = y
 }
 
-fn (g mut Group) propose_size(w, h int) (int, int) {
+fn (mut g Group) propose_size(w, h int) (int, int) {
     g.width = w
     g.height = h
     return g.width, g.height
 }
 
-fn (b mut Group) draw() {
+fn (mut b Group) draw() {
     // Border
     b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.gray)
     // Title
@@ -99,10 +99,10 @@ fn (t &Group) point_inside(x, y f64) bool {
     return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn (b mut Group) focus() {
+fn (mut b Group) focus() {
 }
 
-fn (b mut Group) unfocus() {
+fn (mut b Group) unfocus() {
 }
 
 fn (t &Group) is_focused() bool {

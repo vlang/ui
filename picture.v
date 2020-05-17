@@ -31,7 +31,7 @@ pub struct PictureConfig {
 	ref       &Picture
 }
 
-fn (pic mut Picture)init(parent Layout) {
+fn (mut pic Picture)init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	if !pic.use_cache && pic.path in ui.resource_cache {
@@ -57,22 +57,22 @@ pub fn picture(c PictureConfig) &Picture {
 	return pic
 }
 
-fn (b mut Picture) set_pos(x, y int) {
+fn (mut b Picture) set_pos(x, y int) {
 	b.x = x + b.offset_x
 	b.y = y + b.offset_y
 }
 
-fn (b mut Picture) size() (int, int) {
+fn (mut b Picture) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Picture) propose_size(w, h int) (int, int) {
+fn (mut b Picture) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h
 	return b.width, b.height
 }
 
-fn (b mut Picture) draw() {
+fn (mut b Picture) draw() {
 	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
 }
 

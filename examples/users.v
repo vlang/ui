@@ -168,7 +168,7 @@ fn btn_help_click(a, b voidptr) {
 }
 
 /*
-fn (app mut App) btn_add_click(b &Button) {
+fn (mut app App) btn_add_click(b &Button) {
 
 }
 */

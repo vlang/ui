@@ -34,7 +34,7 @@ pub struct MenuItem {
 	action MenuFn
 }
 
-fn (m mut Menu)init(parent Layout) {
+fn (mut m Menu)init(parent Layout) {
 	ui := parent.get_ui()
 	m.ui = ui
 }
@@ -47,22 +47,22 @@ pub fn menu(c MenuConfig) &Menu {
 	}
 }
 
-fn (b mut Menu) set_pos(x, y int) {
+fn (mut b Menu) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Menu) size() (int, int) {
+fn (mut b Menu) size() (int, int) {
 	return 0, 0
 }
 
-fn (b mut Menu) propose_size(w, h int) (int, int) {
+fn (mut b Menu) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h
 	return 0,0
 }
 
-fn (m mut Menu) draw() {
+fn (mut m Menu) draw() {
 	if !m.visible {
 		return
 	}
@@ -74,7 +74,7 @@ fn (m mut Menu) draw() {
 	}
 }
 
-pub fn (m mut Menu) add_item(text string, action MenuFn) {
+pub fn (mut m Menu) add_item(text string, action MenuFn) {
 	m.items << MenuItem{text:text, action: action}
 
 }
@@ -91,6 +91,6 @@ fn (t &Menu) point_inside(x, y f64) bool {
 	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-pub fn (l mut Menu) set_text(s string) {
+pub fn (mut l Menu) set_text(s string) {
 	l.text = s
 }

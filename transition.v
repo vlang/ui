@@ -28,7 +28,7 @@ pub struct TransitionConfig {
 	ref				&Transition
 }
 
-fn (t mut Transition) init(parent Layout) {
+fn (mut t Transition) init(parent Layout) {
 	t.parent = parent
 	ui := parent.get_ui()
 	t.ui = ui
@@ -47,7 +47,7 @@ pub fn transition(config TransitionConfig) &Transition {
 	return transition
 }
 
-pub fn (t mut Transition) set_value(animated_value &int){
+pub fn (mut t Transition) set_value(animated_value &int){
 	t.animated_value = animated_value
 	t.start_value = *animated_value
 	t.target_value =  *animated_value
@@ -59,11 +59,11 @@ fn (t &Transition) propose_size(w, h int) (int, int) {
 	return 0,0
 }
 
-fn (b mut Transition) size() (int, int) {
+fn (mut b Transition) size() (int, int) {
 	return 0,0
 }
 
-fn (t mut Transition) draw() {
+fn (mut t Transition) draw() {
 	if t.animated_value == 0 {return}
 	if t.target_value != *t.animated_value && !t.animating {
 		// Initiate the transition by setting start_time to the current time

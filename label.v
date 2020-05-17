@@ -17,7 +17,7 @@ pub struct LabelConfig {
 	text   string
 }
 
-fn (l mut Label)init(parent Layout) {
+fn (mut l Label)init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
 }
@@ -30,26 +30,26 @@ pub fn label(c LabelConfig) &Label {
 	return lbl
 }
 
-fn (b mut Label) set_pos(x, y int) {
+fn (mut b Label) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Label) size() (int, int) {
+fn (mut b Label) size() (int, int) {
 	w,h := b.ui.ft.text_size(b.text)
 
 	// First return the width, then the height multiplied by line count.
 	return w, h * b.text.split('\n').len
 }
 
-fn (b mut Label) propose_size(w, h int) (int, int) {
+fn (mut b Label) propose_size(w, h int) (int, int) {
 	ww,hh := b.ui.ft.text_size(b.text)
 
 	// First return the width, then the height multiplied by line count.
 	return ww, hh * b.text.split('\n').len
 }
 
-fn (b mut Label) draw() {
+fn (mut b Label) draw() {
 	splits := b.text.split('\n') // Split the text into an array of lines.
 	height := b.ui.ft.text_height('W') // Get the height of the current font.
 
@@ -71,6 +71,6 @@ fn (t &Label) point_inside(x, y f64) bool {
 	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-pub fn (l mut Label) set_text(s string) {
+pub fn (mut l Label) set_text(s string) {
 	l.text = s
 }
