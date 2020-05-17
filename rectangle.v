@@ -35,7 +35,7 @@ pub struct RectangleConfig {
 	}
 }
 
-fn (r mut Rectangle) init(parent Layout) {
+fn (mut r Rectangle) init(parent Layout) {
 	ui := parent.get_ui()
 	r.ui = ui
 }
@@ -54,20 +54,20 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 	return rect
 }
 
-fn (r mut Rectangle) set_pos(x, y int) {
+fn (mut r Rectangle) set_pos(x, y int) {
 	r.x = x
 	r.y = y
 }
 
-fn (b mut Rectangle) size() (int,int) {
+fn (mut b Rectangle) size() (int,int) {
 	return b.width,b.height
 }
 
-fn (r mut Rectangle) propose_size(w, h int) (int,int) {
+fn (mut r Rectangle) propose_size(w, h int) (int,int) {
 	return r.width,r.height
 }
 
-fn (r mut Rectangle) draw() {
+fn (mut r Rectangle) draw() {
 	if r.radius > 0 {
 		r.ui.gg.draw_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.color)
 		if r.border {

@@ -35,7 +35,7 @@ pub struct ProgressBarConfig {
 	val    int
 }
 
-fn (pb mut ProgressBar)init(parent Layout) {
+fn (mut pb ProgressBar)init(parent Layout) {
 	pb.parent = parent
 	ui := parent.get_ui()
 	pb.ui = ui
@@ -53,16 +53,16 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 	return p
 }
 
-fn (b mut ProgressBar) set_pos(x, y int) {
+fn (mut b ProgressBar) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut ProgressBar) size() (int, int) {
+fn (mut b ProgressBar) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut ProgressBar) propose_size(w, h int) (int, int) {
+fn (mut b ProgressBar) propose_size(w, h int) (int, int) {
 	/* b.width = w
 	b.height = h
 	return w, h */

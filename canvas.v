@@ -23,7 +23,7 @@ pub struct CanvasConfig {
 	draw_fn DrawFn
 }
 
-fn (c mut Canvas)init(parent Layout) {
+fn (mut c Canvas)init(parent Layout) {
 	c.parent = parent
 }
 
@@ -36,16 +36,16 @@ pub fn canvas(c CanvasConfig) &Canvas {
 	return canvas
 }
 
-fn (b mut Canvas) set_pos(x, y int) {
+fn (mut b Canvas) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Canvas) size() (int, int) {
+fn (mut b Canvas) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Canvas) propose_size(w, h int) (int, int) {
+fn (mut b Canvas) propose_size(w, h int) (int, int) {
 	/* b.width = w
 	b.height = h
 	return w, h */
@@ -55,7 +55,7 @@ fn (b mut Canvas) propose_size(w, h int) (int, int) {
 	return b.width, b.height
 }
 
-fn (c mut Canvas) draw() {
+fn (mut c Canvas) draw() {
 	parent := c.parent
 	state := parent.get_state()
 	c.draw_fn(state)

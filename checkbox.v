@@ -47,7 +47,7 @@ pub struct CheckBoxConfig {
 	disabled         bool
 }
 
-fn (cb mut CheckBox) init(parent Layout) {
+fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	ui := parent.get_ui()
 	cb.ui = ui
@@ -77,23 +77,23 @@ fn cb_click(cb mut CheckBox, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (b mut CheckBox) set_pos(x, y int) {
+fn (mut b CheckBox) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut CheckBox) size() (int,int) {
+fn (mut b CheckBox) size() (int,int) {
 	return b.width,b.height
 }
 
-fn (b mut CheckBox) propose_size(w, h int) (int,int) {
+fn (mut b CheckBox) propose_size(w, h int) (int,int) {
 	// b.width = w
 	// b.height = h
 	// width := check_mark_size + 5 + b.ui.ft.text_width(b.text)
 	return b.width,check_mark_size
 }
 
-fn (b mut CheckBox) draw() {
+fn (mut b CheckBox) draw() {
 	b.ui.gg.draw_rect(b.x, b.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
 	// b.ui.gg.draw_empty_rect(b.x, b.y, check_mark_size, check_mark_size, cb_border_color)
 	draw_inner_border(false, b.ui.gg, b.x, b.y, check_mark_size, check_mark_size)
@@ -119,13 +119,13 @@ fn (t &CheckBox) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn (b mut CheckBox) mouse_move(e MouseEvent) {}
+fn (mut b CheckBox) mouse_move(e MouseEvent) {}
 
-fn (b mut CheckBox) focus() {
+fn (mut b CheckBox) focus() {
 	b.is_focused = true
 }
 
-fn (b mut CheckBox) unfocus() {
+fn (mut b CheckBox) unfocus() {
 	b.is_focused = false
 }
 

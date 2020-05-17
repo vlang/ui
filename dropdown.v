@@ -48,7 +48,7 @@ pub:
 	text string
 }
 
-fn (dd mut Dropdown)init(parent Layout) {
+fn (mut dd Dropdown)init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
@@ -70,22 +70,22 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 	return dd
 }
 
-fn (dd mut Dropdown) set_pos(x, y int) {
+fn (mut dd Dropdown) set_pos(x, y int) {
 	dd.x = x
 	dd.y = y
 }
 
-fn (b mut Dropdown) size() (int, int) {
+fn (mut b Dropdown) size() (int, int) {
 	return b.width, dropdown_height
 }
 
-fn (dd mut Dropdown) propose_size(w, h int) (int, int) {
+fn (mut dd Dropdown) propose_size(w, h int) (int, int) {
 	dd.width = w
 	//b.height = h
 	return w, dropdown_height
 }
 
-fn (dd mut Dropdown) draw() {
+fn (mut dd Dropdown) draw() {
 	gg := dd.ui.gg
 	mut ft := dd.ui.ft
 
@@ -114,7 +114,7 @@ fn (dd mut Dropdown) draw() {
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 }
 
-pub fn (dd mut Dropdown) add_item(text string) {
+pub fn (mut dd Dropdown) add_item(text string) {
 	dd.items << DropdownItem{text}
 }
 
@@ -172,11 +172,11 @@ fn dd_mouse_move(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn (dd mut Dropdown) focus() {
+fn (mut dd Dropdown) focus() {
 	dd.is_focused = true
 }
 
-fn (dd mut Dropdown) open_drawer() {
+fn (mut dd Dropdown) open_drawer() {
 	dd.open = !dd.open
 	if !dd.open {
 		dd.hover_index = dd.selected_index
@@ -188,7 +188,7 @@ fn (dd &Dropdown) is_focused() bool {
 	return dd.is_focused
 }
 
-fn (dd mut Dropdown) unfocus() {
+fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
 }

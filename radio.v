@@ -41,7 +41,7 @@ pub struct RadioConfig {
 	ref		&Radio
 }
 
-fn (r mut Radio)init(parent Layout) {
+fn (mut r Radio)init(parent Layout) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
@@ -80,22 +80,22 @@ pub fn radio(c RadioConfig) &Radio {
 
 }
 
-fn (b mut Radio) set_pos(x, y int) {
+fn (mut b Radio) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Radio) size() (int, int) {
+fn (mut b Radio) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (cb mut Radio) propose_size(w, h int) (int, int) {
+fn (mut cb Radio) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = 20//default_font_size
 	return cb.width, cb.values.len * (cb.height + 5)
 }
 
-fn (b mut Radio) draw() {
+fn (mut b Radio) draw() {
 	// Border
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
 	// Title
@@ -132,11 +132,11 @@ fn radio_click(r mut Radio, e &MouseEvent, zzz voidptr) {
 	//println(r.selected_index)
 }
 
-fn (b mut Radio) focus() {
+fn (mut b Radio) focus() {
 	b.is_focused = true
 }
 
-fn (b mut Radio) unfocus() {
+fn (mut b Radio) unfocus() {
 	b.is_focused = false
 }
 

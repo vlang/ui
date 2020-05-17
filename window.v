@@ -307,7 +307,7 @@ fn window_char(glfw_wnd voidptr, codepoint u32) {
 
 }
 
-fn (w mut Window) focus_next() {
+fn (mut w Window) focus_next() {
 	mut doit := false
 	for child in w.children {
 		// Focus on the next widget
@@ -347,15 +347,15 @@ pub fn (w &Window) onmousedown(cb voidptr) {}
 
 pub fn (w &Window) onkeydown(cb voidptr) {}
 
-pub fn (w mut Window) on_click(func ClickFn) {
+pub fn (mut w Window) on_click(func ClickFn) {
 	w.click_fn = func
 }
 
-pub fn (w mut Window) on_mousemove(func MouseMoveFn) {
+pub fn (mut w Window) on_mousemove(func MouseMoveFn) {
 	w.mouse_move_fn = func
 }
 
-pub fn (w mut Window) on_scroll(func ScrollFn) {
+pub fn (mut w Window) on_scroll(func ScrollFn) {
 	w.scroll_fn = func
 }
 
@@ -419,7 +419,7 @@ fn (w &Window) draw() {
 	*/
 }
 
-pub fn (w mut Window) set_title(title string) {
+pub fn (mut w Window) set_title(title string) {
 	w.title = title
 	w.glfw_obj.set_title(title)
 }

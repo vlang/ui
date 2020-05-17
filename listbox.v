@@ -56,7 +56,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
     return list
 }
 
-pub fn (list mut ListBox) add_item(id, text string) {
+pub fn (mut list ListBox) add_item(id, text string) {
     list.append_item(id, text, list.get_draw_to(text))
 }
 
@@ -92,7 +92,7 @@ mut:
     draw_text   string
 }
 
-fn (lb mut ListBox) get_draw_to(text string) int {
+fn (mut lb ListBox) get_draw_to(text string) int {
     width := lb.ui.ft.text_width(text)
     real_w := lb.width - _text_offset_x * 2
     mut draw_to := text.len
@@ -105,7 +105,7 @@ fn (lb mut ListBox) get_draw_to(text string) int {
     return draw_to
 }
 
-fn (lb mut ListBox) append_item(id, text string, draw_to int) {
+fn (mut lb ListBox) append_item(id, text string, draw_to int) {
     lb.items << ListItem{
         x:           lb.x
         y:           lb.y + lb.item_height * lb.items.len
@@ -139,7 +139,7 @@ pub fn (lb &ListBox) selected_inx() ?int {
     return lb.selection
 }
 
-pub fn (lb mut ListBox) set_text(id, text string) {
+pub fn (mut lb ListBox) set_text(id, text string) {
     for i in 0..lb.items.len {
         if lb.items[i].id == id {
             lb.items[i].text = text
@@ -149,7 +149,7 @@ pub fn (lb mut ListBox) set_text(id, text string) {
     }
 }
 
-pub fn (lb mut ListBox) remove_item(id string) {
+pub fn (mut lb ListBox) remove_item(id string) {
     for i in 0..lb.items.len {
         if lb.items[i].id == id {
            lb.remove_inx(i)
@@ -158,7 +158,7 @@ pub fn (lb mut ListBox) remove_item(id string) {
     }
 }
 
-pub fn (lb mut ListBox) remove_inx(i int) {
+pub fn (mut lb ListBox) remove_inx(i int) {
    if i < 0 || i >= lb.items.len { return }
    for j in (i+1)..lb.items.len {
        lb.items[j].y -= lb.item_height
@@ -166,12 +166,12 @@ pub fn (lb mut ListBox) remove_inx(i int) {
    lb.items.delete(i)
 }
 
-pub fn (lb mut ListBox) clear() {
+pub fn (mut lb ListBox) clear() {
     lb.items.clear()
     lb.selection = -1
 }
 
-fn (lb mut ListBox) draw_item(li ListItem, selected bool) {
+fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
     col := if selected { lb.col_selected } else { lb.col_bkgrnd }
     lb.ui.gg.draw_rect(li.x, li.y, lb.width, lb.item_height, col)
     lb.ui.ft.draw_text_def(li.x+_text_offset_x, li.y+lb.text_offset_y, li.draw_text)
@@ -181,7 +181,7 @@ fn (lb mut ListBox) draw_item(li ListItem, selected bool) {
     }
 }
 
-fn (lb mut ListBox) init(parent Layout) {
+fn (mut lb ListBox) init(parent Layout) {
     lb.parent = parent
     lb.ui = parent.get_ui()
     lb.draw_count = lb.height / lb.item_height
@@ -199,7 +199,7 @@ fn (lb mut ListBox) init(parent Layout) {
     subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
 }
 
-fn (lb mut ListBox) draw() {
+fn (mut lb ListBox) draw() {
     lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 
     if !lb.draw_lines {
@@ -273,16 +273,16 @@ fn on_key_up(lb mut ListBox, e &KeyEvent, window &Window ) {
     }
 }
 
-fn (list mut ListBox) set_pos(x, y int) {
+fn (mut list ListBox) set_pos(x, y int) {
     list.x = x
     list.y = y
 }
 
-fn (list mut ListBox) focus() {
+fn (mut list ListBox) focus() {
     list.focused = true
 }
 
-fn (list mut ListBox) unfocus() {
+fn (mut list ListBox) unfocus() {
     list.focused = false
 }
 
@@ -294,11 +294,11 @@ fn (list &ListBox) get_ui() &UI {
     return list.ui
 }
 
-fn (list mut ListBox) unfocus_all() {
+fn (mut list ListBox) unfocus_all() {
     list.focused = false
 }
 
-fn (list mut ListBox) resize(width, height int) {
+fn (mut list ListBox) resize(width, height int) {
     list.width = width
     list.height = height
     list.draw_count = list.height / list.item_height
@@ -318,7 +318,7 @@ fn (list &ListBox) size() (int, int) {
     return list.width, list.height
 }
 
-fn (list mut ListBox) propose_size(w, h int) (int, int) {
+fn (mut list ListBox) propose_size(w, h int) (int, int) {
     list.resize(w, h)
     return list.width, list.height
 }

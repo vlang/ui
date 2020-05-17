@@ -34,7 +34,7 @@ pub struct SwitchConfig {
 	open bool
 }
 
-fn (s mut Switch) init(parent Layout){
+fn (mut s Switch) init(parent Layout){
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
@@ -53,20 +53,20 @@ pub fn switcher(c SwitchConfig) &Switch {
 	return sw
 }
 
-fn (b mut Switch) set_pos(x, y int) {
+fn (mut b Switch) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Switch) size() (int, int) {
+fn (mut b Switch) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Switch) propose_size(w, h int) (int, int) {
+fn (mut b Switch) propose_size(w, h int) (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Switch) draw() {
+fn (mut b Switch) draw() {
 	padding := (b.height-sw_dot_size)/2
 	if b.open {
 	    b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, sw_open_bg_color)
@@ -91,11 +91,11 @@ fn sw_click(b mut Switch, e &MouseEvent, w &Window) {
 	}
 }
 
-fn (b mut Switch) focus() {
+fn (mut b Switch) focus() {
 	b.is_focused = true
 }
 
-fn (b mut Switch) unfocus() {
+fn (mut b Switch) unfocus() {
 	b.is_focused = false
 }
 

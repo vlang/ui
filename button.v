@@ -49,7 +49,7 @@ pub mut:
 	text       string
 }
 
-fn (b mut Button) init(parent Layout) {
+fn (mut b Button) init(parent Layout) {
 	b.parent = parent
 	ui := parent.get_ui()
 	b.ui = ui
@@ -86,16 +86,16 @@ fn btn_click(b mut Button, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (b mut Button) set_pos(x, y int) {
+fn (mut b Button) set_pos(x, y int) {
 	b.x = x
 	b.y = y
 }
 
-fn (b mut Button) size() (int, int) {
+fn (mut b Button) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Button) propose_size(w, h int) (int, int) {
+fn (mut b Button) propose_size(w, h int) (int, int) {
 	//b.width = w
 	//b.height = h
 	//b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
@@ -103,7 +103,7 @@ fn (b mut Button) propose_size(w, h int) (int, int) {
 	return b.width, b.height
 }
 
-fn (b mut Button) draw() {
+fn (mut b Button) draw() {
 	// b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
 	text_width, text_height := b.ui.ft.text_size(b.text)
 	w2 := text_width /2
@@ -128,13 +128,13 @@ fn (t &Button) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-//fn (b mut Button) mouse_move(e MouseEvent) {}
+//fn (mut b Button) mouse_move(e MouseEvent) {}
 
-fn (b mut Button) focus() {
+fn (mut b Button) focus() {
 	b.is_focused = true
 }
 
-fn (b mut Button) unfocus() {
+fn (mut b Button) unfocus() {
 	b.is_focused = false
 	b.state = .normal
 }

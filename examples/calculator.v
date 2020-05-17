@@ -100,7 +100,7 @@ fn btn_click(app mut App, btn &ui.Button) {
 	app.update_result()
 }
 
-fn (app mut App) update_result() {
+fn (mut app App) update_result() {
 	// Format and print the result
 	if !math.trunc(app.result).eq(app.result) {
 		app.text = '${app.result:-15.10f}'
@@ -120,7 +120,7 @@ fn pop_string(a []string) (string,[]string) {
 	return res,a[0..a.len - 1]
 }
 
-fn (app mut App) calculate() {
+fn (mut app App) calculate() {
 	mut a := f64(0)
 	mut b := f64(0)
 	mut op := ''
@@ -203,7 +203,7 @@ fn get_row(ops []string) []ui.Widget {
 	return children
 }
 
-/* fn (app mut App) add_button(text string, button_idx int) {
+/* fn (mut app App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
 	x := bpadding + (button_idx % buttons_per_row) * (bwidth + bpadding)
 	y := bpadding + bheight + (button_idx / buttons_per_row) * (bwidth + bpadding)
