@@ -15,15 +15,18 @@ struct App {
 mut:
 	window       &ui.Window
 	vert_slider  &ui.Slider
-	vert_text    string	= ((vert_slider_max + vert_slider_min) / 2).str()
+	vert_textbox &ui.TextBox
+	vert_text    string = ((vert_slider_max + vert_slider_min) / 2).str()
 	hor_slider   &ui.Slider
 	hor_text     string = ((hor_slider_max + hor_slider_min) / 2).str()
+	hor_textbox  &ui.TextBox
+	
 }
 
 fn main() {
 	mut app := &App{
 		window: 0
-		hor_slider: ui.slider(
+		hor_slider: ui.slider({
 			width: 200
 			height: 10
 			orientation: .horizontal
@@ -32,9 +35,9 @@ fn main() {
 			val: hor_slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_hor_value_changed
+			on_value_changed: on_hor_value_changed }
 		)
-		vert_slider: ui.slider(
+		vert_slider: ui.slider({
 			width: 10
 			height: 200
 			orientation: .vertical
@@ -43,59 +46,66 @@ fn main() {
 			val: vert_slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_vert_value_changed
+			on_value_changed: on_vert_value_changed }
+		)		
+		hor_textbox: ui.textbox({
+				width: 40
+				height: 20
+				max_len: 20
+				read_only: false
+				is_numeric: true
+				on_key_up: on_hor_key_up }
+		)
+		vert_textbox: ui.textbox({
+				width: 40
+				height: 20
+				max_len: 20
+				read_only: false
+				is_numeric: true
+				on_key_up: on_vert_key_up }
 		)
 	}
-	app.window = ui.window({
-		width: win_width
-		height: win_height
-		title: 'Slider & textbox Example'
-		state: app
-	}, [
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{50,115,30,30}
-			spacing: 100
-		}, [
-			ui.textbox(
-				width: 40
-				height: 20
-				max_len: 20
-				read_only: false
-				is_numeric: true
-				text: &app.hor_text
-				on_key_up: on_hor_key_up
+	app.hor_textbox.text = &app.hor_text
+	app.vert_textbox.text = &app.vert_text
+	app.window = ui.window(
+		{
+			width: win_width
+			height: win_height
+			title: 'Slider & textbox Example'
+			state: app
+		},
+		[
+			ui.row(
+				{	alignment: .top
+					margin: ui.MarginConfig{50,115,30,30}
+					spacing: 100
+				},
+				[	app.hor_textbox
+					app.vert_textbox
+				]
+			),
+			ui.row(
+				{	alignment: .top
+					margin: ui.MarginConfig{100,30,30,30}
+					spacing: 30
+				},
+				[	app.hor_slider,
+					app.vert_slider
+				]
 			)
-			ui.textbox(
-				width: 40
-				height: 20
-				max_len: 20
-				read_only: false
-				is_numeric: true
-				text: &app.vert_text
-				on_key_up: on_vert_key_up
-			)
-		]),
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{100,30,30,30}
-			spacing: 30
-		}, [
-			app.hor_slider,
-			app.vert_slider
-		])
-	])
+		]
+	)
 	ui.run(app.window)
 }
 
 fn on_hor_value_changed(mut app App, slider &ui.Slider) {
 	app.hor_text = int(app.hor_slider.val).str()
-	//app.hor_textbox.border_accentuated = false
+	app.hor_textbox.border_accentuated = false
 }
 
 fn on_vert_value_changed(mut app App, slider &ui.Slider) {
 	app.vert_text = int(app.vert_slider.val).str()
-	//app.vert_textbox.border_accentuated = false
+	app.vert_textbox.border_accentuated = false
 }
 
 fn on_hor_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
@@ -104,9 +114,9 @@ fn on_hor_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	max := app.hor_slider.max
 	if val >= min && val <= max {
 		app.hor_slider.val = f32(val)
-		//app.hor_textbox.border_accentuated = false
+		app.hor_textbox.border_accentuated = false
 	} else {
-		//app.hor_textbox.border_accentuated = true
+		app.hor_textbox.border_accentuated = true
 	}
 }
 
@@ -116,8 +126,8 @@ fn on_vert_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	max := app.vert_slider.max
 	if val >= min && val <= max {
 		app.vert_slider.val = f32(val)
-		//app.vert_textbox.border_accentuated = false
+		app.vert_textbox.border_accentuated = false
 	} else {
-		//app.vert_textbox.border_accentuated = true
+		app.vert_textbox.border_accentuated = true
 	}
 }
