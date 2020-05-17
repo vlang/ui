@@ -326,7 +326,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 			}
 			u := text.ustring()
 			unsafe {
-			//*t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos + 1)
+			*t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos + 1)
 			}
 			// t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
 			// u.free() // TODO remove
