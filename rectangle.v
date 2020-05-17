@@ -8,7 +8,6 @@ import freetype
 
 pub struct Rectangle {
 mut:
-	text         string
 	parent       Layout
 	x            int
 	y            int
@@ -17,8 +16,10 @@ mut:
 	radius       int
 	border       bool
 	border_color gx.Color
-	color        gx.Color
 	ui           &UI
+pub mut:
+	text         string
+	color        gx.Color
 }
 
 pub struct RectangleConfig {
@@ -33,6 +34,8 @@ pub struct RectangleConfig {
 		g: 180
 		b: 190
 	}
+	x	int
+	y	int
 }
 
 fn (mut r Rectangle) init(parent Layout) {
@@ -50,6 +53,8 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		border: c.border
 		border_color: c.border_color
 		ui: 0
+		x:c.x
+		y:c.y
 	}
 	return rect
 }
@@ -84,7 +89,7 @@ fn (mut r Rectangle) draw() {
 		color: gx.red
 		size: freetype.default_font_size
 		align: gx.align_left
-		max_width: r.width
+		max_width: r.x + r.width
 	}
 	// Display rectangle text
 	if r.text != '' {
