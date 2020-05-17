@@ -7,20 +7,24 @@ const (
 
 struct App {
 mut:
-	window    &ui.Window
-	title_box &ui.TextBox
+	window			&ui.Window
+	title_box		&ui.TextBox
+	title_box_text	string = ''
 }
 
 fn main() {
 	mut app := &App{
 		window: 0
-		title_box: ui.textbox(
-			max_len: 20
-			width: 300
-			placeholder: 'Please enter new title name'
-		)
 	}
-	window := ui.window({
+
+	app.title_box = ui.textbox({
+		max_len: 20
+		width: 300
+		placeholder: 'Please enter new title name'
+		text: &app.title_box_text
+		}
+	)
+	app.window = ui.window({
 		width: win_width
 		height: win_height
 		title: 'Name'
@@ -46,11 +50,9 @@ fn main() {
 			)
 		])]
 	)
-
-	app.window = window
-	ui.run(window)
+	ui.run(app.window)
 }
 
 fn btn_change_title(app mut App, btn &ui.Button) {
-	app.window.set_title(app.title_box.text)
+	app.window.set_title(app.title_box_text)
 }
