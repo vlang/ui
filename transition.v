@@ -23,7 +23,7 @@ pub mut:
 
 pub struct TransitionConfig {
 	duration       int
-	animated_value &int
+	animated_value &int = 0
 	easing         EasingFunction
 	ref				&Transition = 0
 }
