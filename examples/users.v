@@ -26,7 +26,7 @@ mut:
 	password   string
 	pbar       &ui.ProgressBar
 	users      []User
-	window     &ui.Window
+	window     &ui.Window = 0
 	label      &ui.Label
 	country    &ui.Radio
 	txt_pos    int
