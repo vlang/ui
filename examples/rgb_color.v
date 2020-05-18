@@ -11,7 +11,7 @@ const (
 
 struct App {
 mut:
-	window        &ui.Window
+	window        &ui.Window = 0
 	r_slider      &ui.Slider
 	r_textbox     &ui.TextBox
 	r_label       &ui.Label
@@ -118,8 +118,7 @@ fn main() {
 	}
 	
 	// app widgets
-	mut app := &App{
-		window: 0
+	mut app := &App{		
 		rgb_rectangle: ui.rectangle(rgb_rectangle_cfg)
 		r_textbox: ui.textbox(r_textbox_cfg)
 		g_textbox: ui.textbox(g_textbox_cfg)
