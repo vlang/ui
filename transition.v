@@ -25,7 +25,7 @@ pub struct TransitionConfig {
 	duration       int
 	animated_value &int
 	easing         EasingFunction
-	ref				&Transition
+	ref				&Transition = 0
 }
 
 fn (mut t Transition) init(parent Layout) {
