@@ -38,7 +38,7 @@ pub struct RadioConfig {
 	values []string
 	title  string
 	width  int
-	ref		&Radio
+	ref		&Radio = 0
 }
 
 fn (mut r Radio)init(parent Layout) {
