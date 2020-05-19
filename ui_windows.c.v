@@ -2,7 +2,7 @@
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
-#flag -L @VROOT/shcore/x64
+#flag -L @VROOT/windows_shcore/x64
 #flag -l shcore
 
 #define ui__setprocessdpiwareness SetProcessDpiAwareness
