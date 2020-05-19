@@ -12,7 +12,6 @@ import freetype
 import clipboard
 import eventbus
 import gx
-import windows
 
 const (
 	version = '0.0.2'
@@ -115,7 +114,7 @@ pub enum Cursor {
 }
 
 fn init() {
-	$if windows { windows.set_process_dpi_awareness(1) }
+	$if windows { ui.set_process_dpi_awareness(1) }
 	println('ui.init()')
 	glfw.init_glfw()
 	stbi.set_flip_vertically_on_load(true)
