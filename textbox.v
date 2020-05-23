@@ -130,6 +130,9 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text:c.text
 		is_focused: c.is_focused
 	}
+	if c.text == 0 {
+		panic('textbox.text binding is not set')
+	}
 	return tb
 }
 
@@ -234,7 +237,7 @@ fn (mut t TextBox) draw() {
 			cursor_x = t.x + textbox_padding
 		}
 		// t.ui.gg.draw_line(cursor_x, t.y+2, cursor_x, t.y-2+t.height-1)//, gx.Black)
-		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.Black) // , gx.Black)
+		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.black) // , gx.Black)
 	}
 }
 

@@ -7,9 +7,9 @@ type SelectionChangedFn fn(voidptr, voidptr) // The second will be ListBox
 
 const (
     _item_height = 20
-    _col_list_bkgrnd = gx.White
-    _col_item_select = gx.LightBlue
-    _col_border = gx.Gray
+    _col_list_bkgrnd = gx.white
+    _col_item_select = gx.light_blue
+    _col_border = gx.gray
     _text_offset_y = 3
     _text_offset_x = 5
 )
