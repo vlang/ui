@@ -208,11 +208,11 @@ fn canvas_draw(app &State) {
 	for i, user in app.users {
 		y := 20 + i * cell_height
 		// Outer border
-		gg.draw_empty_rect(x, y, table_width, cell_height, gx.Gray)
+		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
 		// Vertical separators
-		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.Gray)
-		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.Gray)
-		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.Gray)
+		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
+		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
+		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
 		// Text values
 		ft.draw_text_def(x + 5, y + 5, user.first_name)
 		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
