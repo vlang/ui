@@ -31,7 +31,7 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	mut children := []ui.Widget
+	mut children := []ui.Widget{}
 	children = [
 		ui.textbox(
 			text: &app.text
