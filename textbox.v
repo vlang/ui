@@ -44,7 +44,7 @@ pub mut:
 	// gg &gg.GG
 	ui                 &UI
 	//text               string
-	text               &string = 0
+	text               &string = voidptr(0)
 	max_len            int
 	is_multi           bool
 	placeholder        string
@@ -85,7 +85,7 @@ pub struct TextBoxConfig {
 	is_password        bool
 	read_only          bool
 	is_multi           bool
-	text               &string = 0
+	text               &string = voidptr(0)
 	is_focused         bool
 	borderless         bool
 	on_key_down        KeyDownFn
