@@ -44,7 +44,7 @@ pub mut:
 	// gg &gg.GG
 	ui                 &UI
 	//text               string
-	text &string
+	text               &string = 0
 	max_len            int
 	is_multi           bool
 	placeholder        string
@@ -85,7 +85,7 @@ pub struct TextBoxConfig {
 	is_password        bool
 	read_only          bool
 	is_multi           bool
-	text               &string
+	text               &string = 0
 	is_focused         bool
 	borderless         bool
 	on_key_down        KeyDownFn
@@ -285,7 +285,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 				if t.cursor_pos == 0 {
 					return
 				}
-				u := text.ustring()
+				//u := text.ustring()
 				// Delete the entire selection
 				if t.sel_start < t.sel_end {
 					unsafe {
@@ -329,7 +329,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 			}
 			u := text.ustring()
 			unsafe {
-			//*t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos + 1)
+			*t.text = u.left(t.cursor_pos) + u.right(t.cursor_pos + 1)
 			}
 			// t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
 			// u.free() // TODO remove

@@ -7,7 +7,7 @@ const (
 
 struct App {
 mut:
-	window     &ui.Window
+	window     &ui.Window = 0
 }
 
 fn main() {

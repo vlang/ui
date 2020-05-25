@@ -8,11 +8,13 @@ const (
 struct App {
 mut:
 	window     &ui.Window
+	first_name string = ''
+	last_name string = ''
 }
 
 fn main() {
-	mut app := &App{}
-	window := ui.window({
+	mut app := &App{window: 0}
+	app.window = ui.window({
 		width: win_width
 		height: win_height
 		title: 'Group Demo'
@@ -27,11 +29,13 @@ fn main() {
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
+					text: &app.first_name
 				)
 				ui.textbox(
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'
+					text: &app.last_name
 				)
 				ui.checkbox(
 					checked: true
@@ -51,6 +55,5 @@ fn main() {
 			]
 		})
 	])
-	app.window = window
-	ui.run(window)
+	ui.run(app.window)
 }
