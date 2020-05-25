@@ -19,10 +19,10 @@ const (
 
 pub struct UI {
 pub:
-	ft                   &freetype.FreeType = 0
-	gg                   &gg.GG = 0
+	ft                   &freetype.FreeType = voidptr(0)
+	gg                   &gg.GG = voidptr(0)
 mut:
-	window               &Window = 0
+	window               &Window = voidptr(0)
 	show_cursor          bool
 	cb_image             u32
 	//circle_image         u32
@@ -151,7 +151,7 @@ pub fn run(window &Window) {
 	for !window.glfw_obj.should_close() {
 		if window.child_window != 0 {
 			gg.clear(gx.rgb(230,230,230))
-			if window.child_window.draw_fn != 0 {
+			if window.child_window.draw_fn != voidptr(0) {
 				window.child_window.draw_fn(window.child_window.state)
 			}
 			for child in window.child_window.children {
@@ -161,7 +161,7 @@ pub fn run(window &Window) {
 		else {
 			gg.clear(window.bg_color)
 			// The user can define a custom drawing function for the entire window (advanced mode)
-			if window.draw_fn != 0 {
+			if window.draw_fn != voidptr(0) {
 				window.draw_fn(window.state)
 			}
 			// Render all widgets, including Canvas

@@ -27,12 +27,12 @@ pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 [ref_only]
 pub struct Window {
 pub:
-	ui            &UI = 0
+	ui            &UI = voidptr(0)
 pub mut:
-	glfw_obj      &glfw.Window = 0
+	glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
-	child_window  &Window = 0
-	parent_window &Window = 0
+	child_window  &Window = voidptr(0)
+	parent_window &Window = voidptr(0)
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -216,7 +216,7 @@ fn window_scroll(glfw_wnd voidptr, xoff, yoff f64) {
 		xoff: xoff
 		yoff: yoff
 	}
-	if window.scroll_fn != 0 {
+	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)
 	}
 	window.eventbus.publish(events.on_scroll, window, e)
@@ -237,7 +237,7 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		x: int(x)
 		y: int(y)
 	}
-	if window.click_fn != 0 && action == 0{
+	if window.click_fn != voidptr(0) && action == voidptr(0) {
 		window.click_fn(e, window)
 	}
 	/*
@@ -271,7 +271,7 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 		// Close the child window on Escape
 		window.child_window = 0
 	}
-	if window.key_down_fn != 0 {
+	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window)
 	}
 	if action == 2 || action == 1 {

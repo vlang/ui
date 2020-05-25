@@ -140,11 +140,11 @@ fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int
 	if !border_accentuated {
 		gg.draw_empty_rect(x, y, width, height, text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_empty_rect(0.5 + x, 0.5 + y, width - 1, height - 1, text_inner_border_color) // inner lighter border
+		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, text_inner_border_color) // inner lighter border
 	}
 	else {
 		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)
-		gg.draw_empty_rect(1.5 + x, 1.5 + y, width - 3, height - 3, text_border_accentuated_color) // inner lighter border
+		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, text_border_accentuated_color) // inner lighter border
 	}
 }
 
@@ -245,7 +245,7 @@ fn tb_key_up(t mut TextBox, e &KeyEvent, window &Window) {
 	if !t.is_focused {
 		return
 	}
-	if t.on_key_up != 0 {
+	if t.on_key_up != voidptr(0) {
 		t.on_key_up(window.state, t, e.codepoint)
 	}
 }
@@ -256,7 +256,7 @@ fn tb_key_down(t mut TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if t.on_key_down != 0 {
+	if t.on_key_down != voidptr(0) {
 		t.on_key_down(window.state, t, e.codepoint)
 	}
 	if e.codepoint != 0 {
