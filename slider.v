@@ -101,23 +101,23 @@ fn (b &Slider) draw_thumb() {
 	rev_dim := if b.orientation == .horizontal { b.track_height } else { b.track_width }
 	rev_thumb_dim := if b.orientation == .horizontal { b.thumb_height } else { b.thumb_width }
 	dim := if b.orientation == .horizontal { b.track_width } else { b.track_height }
-	mut pos := f32(dim) * ((b.val - b.min) / f32(b.max - b.min))
+	mut pos := f32(dim) * ((b.val - f32(b.min)) / f32(b.max - b.min))
 	if b.rev_min_max_pos {
-		pos = -pos + dim
+		pos = -pos + f32(dim)
 	}
-	pos += axis
+	pos += f32(axis)
 	if  pos > axis + dim {
-		pos = f32(dim) + axis
+		pos = f32(dim) + f32(axis)
 	}
 	if  pos < axis {
-		pos = axis
+		pos = f32(axis)
 	}
-	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if b.orientation == .horizontal {
-		b.ui.gg.draw_rect(pos - b.thumb_width / 2, middle, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(pos - f32(b.thumb_width) / 2, middle, b.thumb_width, b.thumb_height, thumb_color)
 	}
 	else {
-		b.ui.gg.draw_rect(middle, pos - b.thumb_height / 2, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(middle, pos - f32(b.thumb_height) / 2, b.thumb_width, b.thumb_height, thumb_color)
 	}
 }
 
@@ -202,7 +202,7 @@ fn slider_key_down(b mut Slider, e &KeyEvent, zzz voidptr) {
 		}
 		else {}
 	}
-	if b.on_value_changed != 0 {
+	if b.on_value_changed != voidptr(0) {
 		parent := b.parent
 		state := parent.get_state()
 		b.on_value_changed(state, b)
@@ -243,12 +243,12 @@ fn (mut b Slider) change_value(x, y int) {
 	}
 	b.val = f32(b.min) + (f32(pos) * f32(b.max - b.min)) / f32(dim)
 	if int(b.val) < b.min {
-		b.val = b.min
+		b.val = f32(b.min)
 	}
 	else if int(b.val) > b.max {
-		b.val = b.max
+		b.val = f32(b.max)
 	}
-	if b.on_value_changed != 0 {
+	if b.on_value_changed != voidptr(0) {
 		parent := b.parent
 		state := parent.get_state()
 		b.on_value_changed(state, b)
@@ -275,26 +275,26 @@ fn (t &Slider) point_inside_thumb(x, y f64) bool {
 	rev_dim := if t.orientation == .horizontal { t.track_height } else { t.track_width }
 	rev_thumb_dim := if t.orientation == .horizontal { t.thumb_height } else { t.thumb_width }
 	dim := if t.orientation == .horizontal { t.track_width } else { t.track_height }
-	mut pos := f32(dim) * ((t.val - t.min) / f32(t.max - t.min))
+	mut pos := f32(dim) * ((t.val - f32(t.min)) / f32(t.max - t.min))
 	if t.rev_min_max_pos {
-		pos = -pos + dim
+		pos = -pos + f32(dim)
 	}
-	pos += axis
+	pos += f32(axis)
 	if  pos > axis + dim {
-		pos = f32(dim) + axis
+		pos = f32(dim) + f32(axis)
 	}
 	if pos < axis {
-		pos = axis
+		pos = f32(axis)
 	}
-	middle := f32(rev_axis) - ((rev_thumb_dim - rev_dim) / 2)
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if t.orientation == .horizontal {
-		t_x := pos - t.thumb_width / 2
+		t_x := pos - f32(t.thumb_width) / 2
 		t_y := middle
-		return x >= t_x && x <= t_x + t.thumb_width && y >= t_y && y <= t_y + t.thumb_height
+		return x >= t_x && x <= t_x + f32(t.thumb_width) && y >= t_y && y <= t_y + f32(t.thumb_height)
 	}
 	else {
 		t_x := middle
-		t_y := pos - t.thumb_height / 2
-		return x >= t_x && x <= t_x + t.thumb_width && y >= t_y && y <= t_y + t.thumb_height
+		t_y := pos - f32(t.thumb_height) / 2
+		return x >= t_x && x <= t_x + f32(t.thumb_width) && y >= t_y && y <= t_y + f32(t.thumb_height)
 	}
 }

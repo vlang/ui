@@ -28,7 +28,7 @@ pub struct PictureConfig {
 	width      int
 	height     int
 	use_cache  bool = true
-	ref       &Picture = 0
+	ref       &Picture = voidptr(0)
 }
 
 fn (mut pic Picture)init(parent Layout) {

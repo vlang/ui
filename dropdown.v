@@ -155,7 +155,7 @@ fn dd_click(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
 		th := dd.y + (dd.items.len * dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.selected_index = index
-		if dd.on_selection_changed != 0 {
+		if dd.on_selection_changed != voidptr(0) {
 			parent := dd.parent
 			state := parent.get_state()
 			dd.on_selection_changed(state, dd)

@@ -240,7 +240,7 @@ fn on_click(lb mut ListBox, e &MouseEvent, window &Window) {
         if item.point_inside(e.x, e.y) {
             if lb.selection != inx {
                 lb.selection = inx
-                if lb.clbk != 0 {
+                if lb.clbk != voidptr(0) {
                     lb.clbk(window.state, lb)
                 }
             }
@@ -268,7 +268,7 @@ fn on_key_up(lb mut ListBox, e &KeyEvent, window &Window ) {
         else { return }
     }
 
-    if lb.clbk != 0 {
+    if lb.clbk != voidptr(0) {
         lb.clbk(window.state, lb)
     }
 }
