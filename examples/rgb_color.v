@@ -11,7 +11,7 @@ const (
 
 struct App {
 mut:
-	window        &ui.Window = 0
+	window        &ui.Window
 	r_slider      &ui.Slider
 	r_textbox     &ui.TextBox
 	r_label       &ui.Label
@@ -141,7 +141,7 @@ fn main() {
 }
 
 // on_.... functions
-fn on_r_value_changed(mut app App, slider &ui.Slider) {	
+fn on_r_value_changed(mut app App, slider &ui.Slider) {
 	app.r_textbox_text = int(app.r_slider.val).str()
 	app.r_textbox.border_accentuated = false
 	textbox_color_update(mut app)
@@ -191,9 +191,9 @@ fn on_b_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 
 // others functions
 fn textbox_color_update(mut app App) {
-	r := app.r_textbox.text.int()
-	g := app.g_textbox.text.int()
-	b := app.b_textbox.text.int()
+	r := byte(app.r_textbox.text.int())
+	g := byte(app.g_textbox.text.int())
+	b := byte(app.b_textbox.text.int())
 	if !is_rgb_valid(r) || !is_rgb_valid(g) || !is_rgb_valid(b) {
 		app.rgb_rectangle.color = gx.Color{ 255, 255, 255 }
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'
