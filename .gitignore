@@ -11,6 +11,7 @@ examples/message
 examples/rectangles
 examples/resizable_window
 examples/slider
+examples/slider_textbox
 examples/switch
 examples/temperature
 examples/timer
