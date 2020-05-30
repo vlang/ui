@@ -7,8 +7,8 @@ const (
 
 struct App {
 mut:
-	dropdown   &ui.Dropdown = 0
-	window     &ui.Window = 0
+	dropdown   &ui.Dropdown
+	window     &ui.Window
 }
 
 fn main() {

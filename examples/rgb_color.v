@@ -11,7 +11,7 @@ const (
 
 struct App {
 mut:
-	window        &ui.Window = 0
+	window        &ui.Window
 	r_slider      &ui.Slider
 	r_textbox     &ui.TextBox
 	r_label       &ui.Label
@@ -141,7 +141,7 @@ fn main() {
 }
 
 // on_.... functions
-fn on_r_value_changed(mut app App, slider &ui.Slider) {	
+fn on_r_value_changed(mut app App, slider &ui.Slider) {
 	app.r_textbox_text = int(app.r_slider.val).str()
 	app.r_textbox.border_accentuated = false
 	textbox_color_update(mut app)

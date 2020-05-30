@@ -7,8 +7,8 @@ const (
 
 struct App {
 mut:
-	window    &ui.Window = 0
-	title_box &ui.TextBox = 0
+	window    &ui.Window
+	title_box &ui.TextBox
 	title_box_text	string
 }
 
