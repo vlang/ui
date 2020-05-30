@@ -17,3 +17,6 @@ examples/timer
 examples/transitions
 examples/users
 fns.txt
+
+# Ignore editor files
+*.code-workspace
