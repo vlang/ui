@@ -1,22 +1,12 @@
+fns.txt
+
+# Ignore binary files
+examples/*
+!examples/*.*
 examples/*.dll
 examples/*.exe
 examples/*.ilk
 examples/*.pdb
-examples/calculator
-examples/change_title
-examples/counter
-examples/dropdown
-examples/group
-examples/message
-examples/rectangles
-examples/resizable_window
-examples/slider
-examples/switch
-examples/temperature
-examples/timer
-examples/transitions
-examples/users
-fns.txt
 
 # Ignore editor files
 *.code-workspace
