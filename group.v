@@ -85,9 +85,9 @@ fn (mut g Group) propose_size(w, h int) (int, int) {
 
 fn (mut b Group) draw() {
     // Border
-    b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.gray)
+    b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), gx.gray)
     // Title
-    b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.ft.text_width(b.title) + 5, 10, default_window_color)
+    b.ui.gg.draw_rect(f32(b.x + check_mark_size), f32(b.y - 5), f32(b.ui.ft.text_width(b.title) + 5), 10, default_window_color)
     b.ui.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
 
     for child in b.children {

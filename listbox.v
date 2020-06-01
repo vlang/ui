@@ -173,11 +173,11 @@ pub fn (mut lb ListBox) clear() {
 
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
     col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-    lb.ui.gg.draw_rect(li.x, li.y, lb.width, lb.item_height, col)
+    lb.ui.gg.draw_rect(f32(li.x), f32(li.y), f32(lb.width), f32(lb.item_height), col)
     lb.ui.ft.draw_text_def(li.x+_text_offset_x, li.y+lb.text_offset_y, li.draw_text)
 
     if lb.draw_lines {
-       lb.ui.gg.draw_empty_rect(li.x, li.y, lb.width, lb.item_height, lb.col_border)
+		lb.ui.gg.draw_empty_rect(f32(li.x), f32(li.y), f32(lb.width), f32(lb.item_height), lb.col_border)
     }
 }
 
@@ -200,10 +200,10 @@ fn (mut lb ListBox) init(parent Layout) {
 }
 
 fn (mut lb ListBox) draw() {
-    lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
+    lb.ui.gg.draw_rect(f32(lb.x), f32(lb.y), f32(lb.width), f32(lb.height), lb.col_bkgrnd)
 
     if !lb.draw_lines {
-        lb.ui.gg.draw_empty_rect(lb.x, lb.y, lb.width+1, lb.height+1, lb.col_border)
+        lb.ui.gg.draw_empty_rect(f32(lb.x), f32(lb.y), f32(lb.width+1), f32(lb.height+1), lb.col_border)
     }
 
     for inx, item in lb.items {

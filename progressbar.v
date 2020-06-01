@@ -74,12 +74,12 @@ fn (mut b ProgressBar) propose_size(w, h int) (int, int) {
 
 fn (b &ProgressBar) draw() {
 	// Draw the gray background
-	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, progress_bar_background_color)
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, progress_bar_background_border_color)
+	b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), progress_bar_background_color)
+	b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), progress_bar_background_border_color)
 	// Draw the value
 	width := int(f64(b.width) * (f64(b.val) / f64(b.max)))
-	b.ui.gg.draw_empty_rect(b.x, b.y, width, b.height, progress_bar_border_color) // gx.Black)
-	b.ui.gg.draw_rect(b.x, b.y, width, b.height, progress_bar_color) // gx.Black)
+	b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(width), f32(b.height), progress_bar_border_color) // gx.Black)
+	b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(width), f32(b.height), progress_bar_color) // gx.Black)
 }
 
 fn (t &ProgressBar) point_inside(x, y f64) bool {
