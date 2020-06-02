@@ -204,15 +204,15 @@ fn canvas_draw(app &State) {
 	gg := app.window.ui.gg
 	mut ft := app.window.ui.ft
 	x := 240
-	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
+	gg.draw_rect(f32(x) - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
 		y := 20 + i * cell_height
 		// Outer border
-		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
+		gg.draw_empty_rect(f32(x), f32(y), table_width, cell_height, gx.gray)
 		// Vertical separators
-		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
-		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
-		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
+		gg.draw_line(f32(x + cell_width), f32(y), f32(x + cell_width), f32(y + cell_height), gx.gray)
+		gg.draw_line(f32(x + cell_width) * 2, f32(y), f32(x + cell_width) * 2, f32(y + cell_height), gx.gray)
+		gg.draw_line(f32(x + cell_width) * 3, f32(y), f32(x + cell_width) * 3, f32(y + cell_height), gx.gray)
 		// Text values
 		ft.draw_text_def(x + 5, y + 5, user.first_name)
 		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
