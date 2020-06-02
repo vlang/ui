@@ -90,8 +90,8 @@ fn (mut dd Dropdown) draw() {
 	mut ft := dd.ui.ft
 
 	//draw the main dropdown
-	gg.draw_rect(dd.x, dd.y, dd.width, dropdown_height, dropdown_color)
-	gg.draw_empty_rect(dd.x, dd.y, dd.width, dropdown_height, border_color)
+	gg.draw_rect(f32(dd.x), f32(dd.y), f32(dd.width), f32(dropdown_height), dropdown_color)
+	gg.draw_empty_rect(f32(dd.x), f32(dd.y), f32(dd.width), f32(dropdown_height), border_color)
 	if dd.selected_index >= 0 {
 		ft.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
@@ -100,18 +100,18 @@ fn (mut dd Dropdown) draw() {
 
 	//draw the drawer
 	if dd.open {
-		gg.draw_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height, drawer_color)
-		gg.draw_empty_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height, border_color)
+		gg.draw_rect(f32(dd.x), f32(dd.y + dropdown_height), f32(dd.width), f32(dd.items.len * dropdown_height), drawer_color)
+		gg.draw_empty_rect(f32(dd.x), f32(dd.y + dropdown_height), f32(dd.width), f32(dd.items.len * dropdown_height), border_color)
 		y := dd.y + dropdown_height
 		for i, item in dd.items {
 			color := if i == dd.hover_index {border_color} else {drawer_color}
-			gg.draw_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, color)
-			gg.draw_empty_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, border_color)
+			gg.draw_rect(f32(dd.x), f32(y + i * dropdown_height), f32(dd.width), dropdown_height, color)
+			gg.draw_empty_rect(f32(dd.x), f32(y + i * dropdown_height), f32(dd.width), dropdown_height, border_color)
 			dd.ui.ft.draw_text_def(dd.x + 5, y + i * dropdown_height + 5, item.text)
 		}
 	}
 	//draw the arrow
-	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	gg.draw_image(f32(dd.x + dd.width) - 28, f32(dd.y) - 3, 28, 28, dd.ui.down_arrow)
 }
 
 pub fn (mut dd Dropdown) add_item(text string) {

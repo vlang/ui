@@ -97,17 +97,17 @@ fn (mut cb Radio) propose_size(w, h int) (int, int) {
 
 fn (mut b Radio) draw() {
 	// Border
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
+	b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.values.len * (b.height + 5)), gx.gray)
 	// Title
-	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.ft.text_width(b.title) + 5, 10, default_window_color)
+	b.ui.gg.draw_rect(f32(b.x) + check_mark_size, f32(b.y) - 5, f32(b.ui.ft.text_width(b.title)) + 5, 10, default_window_color)
 	b.ui.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
 	// Values
 	for i, val in b.values {
 		y := b.y + b.height * i + 15
 		x := b.x + 5
-		b.ui.gg.draw_image(x, y-1, 16, 16, b.ui.selected_radio_image)
+		b.ui.gg.draw_image(f32(x), f32(y) - 1, 16, 16, b.ui.selected_radio_image)
 		if i != b.selected_index {
-			b.ui.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
+			b.ui.gg.draw_rect(f32(x) + 4, f32(y) + 3, 8, 8, gx.white) // hide the black circle
 			//b.ui.gg.draw_image(x, y-3, 16, 16, b.ui.circle_image)
 		}
 		// Text

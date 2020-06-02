@@ -69,11 +69,11 @@ fn (mut b Switch) propose_size(w, h int) (int, int) {
 fn (mut b Switch) draw() {
 	padding := (b.height-sw_dot_size)/2
 	if b.open {
-	    b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, sw_open_bg_color)
-		b.ui.gg.draw_rect(b.x - padding + b.width - sw_dot_size , b.y + padding, sw_dot_size, sw_dot_size, gx.white)
+	    b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), sw_open_bg_color)
+		b.ui.gg.draw_rect(f32(b.x - padding + b.width - sw_dot_size), f32(b.y + padding), sw_dot_size, sw_dot_size, gx.white)
 	}else{
-	    b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, sw_close_bg_color)
-	    b.ui.gg.draw_rect(b.x + padding, b.y + padding, sw_dot_size, sw_dot_size, gx.white)
+	    b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), sw_close_bg_color)
+	    b.ui.gg.draw_rect(f32(b.x + padding), f32(b.y + padding), sw_dot_size, sw_dot_size, gx.white)
 	}
 }
 

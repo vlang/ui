@@ -73,7 +73,7 @@ fn (mut b Picture) propose_size(w, h int) (int, int) {
 }
 
 fn (mut b Picture) draw() {
-	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
+	b.ui.gg.draw_image(f32(b.x), f32(b.y), f32(b.width), f32(b.height), b.texture)
 }
 
 fn (t &Picture) focus() {}

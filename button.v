@@ -111,8 +111,8 @@ fn (mut b Button) draw() {
 	bcenter_x := b.x + b.width/2
 	bcenter_y := b.y + b.height/2
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
-	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
+	b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), bg_color) // gx.white)
+	b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.width), f32(b.height), button_border_color)
 	mut y := bcenter_y-h2-1
 	//if b.ui.gg.scale == 2 {
 	$if macos { // TODO

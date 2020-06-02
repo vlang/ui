@@ -138,13 +138,13 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 
 fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int) {
 	if !border_accentuated {
-		gg.draw_empty_rect(x, y, width, height, text_border_color)
+		gg.draw_empty_rect(f32(x), f32(y), f32(width), f32(height), text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, text_inner_border_color) // inner lighter border
+		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), f32(width) - 1, f32(height) - 1, text_inner_border_color) // inner lighter border
 	}
 	else {
-		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)
-		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, text_border_accentuated_color) // inner lighter border
+		gg.draw_empty_rect(f32(x), f32(y), f32(width), f32(height), text_border_accentuated_color)
+		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), f32(width) - 3, f32(height) - 3, text_border_accentuated_color) // inner lighter border
 	}
 }
 
@@ -163,7 +163,7 @@ fn (mut b TextBox) propose_size(w, h int) (int,int) {
 
 fn (mut t TextBox) draw() {
 	text:=*(t.text)
-	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
+	t.ui.gg.draw_rect(f32(t.x), f32(t.y), f32(t.width), f32(t.height), gx.white)
 	if !t.borderless {
 		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height)
 	}
@@ -184,7 +184,7 @@ fn (mut t TextBox) draw() {
 			right := ustr.right(t.sel_end)
 			sel_width := width - t.ui.ft.text_width(right) - t.ui.ft.text_width(left)
 			x := t.ui.ft.text_width(left) + t.x + textbox_padding
-			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height - 6, selection_color)
+			t.ui.gg.draw_rect(f32(x), f32(t.y + 3), f32(sel_width), f32(t.height - 6), selection_color)
 			/*
 			sel_width := t.ui.ft.text_width(right) + 1
 			 */
@@ -237,7 +237,7 @@ fn (mut t TextBox) draw() {
 			cursor_x = t.x + textbox_padding
 		}
 		// t.ui.gg.draw_line(cursor_x, t.y+2, cursor_x, t.y-2+t.height-1)//, gx.Black)
-		t.ui.gg.draw_rect(cursor_x, t.y + 3, 1, t.height - 6, gx.black) // , gx.Black)
+		t.ui.gg.draw_rect(f32(cursor_x), f32(t.y + 3), 1, f32(t.height - 6), gx.black) // , gx.Black)
 	}
 }
 

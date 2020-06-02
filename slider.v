@@ -114,10 +114,10 @@ fn (b &Slider) draw_thumb() {
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if b.orientation == .horizontal {
-		b.ui.gg.draw_rect(pos - f32(b.thumb_width) / 2, middle, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(pos - f32(b.thumb_width) / 2, middle, f32(b.thumb_width), f32(b.thumb_height), thumb_color)
 	}
 	else {
-		b.ui.gg.draw_rect(middle, pos - f32(b.thumb_height) / 2, b.thumb_width, b.thumb_height, thumb_color)
+		b.ui.gg.draw_rect(middle, pos - f32(b.thumb_height) / 2, f32(b.thumb_width), f32(b.thumb_height), thumb_color)
 	}
 }
 
@@ -152,20 +152,20 @@ fn (mut b Slider) propose_size(w, h int) (int,int) {
 
 fn (b &Slider) draw() {
 	// Draw the track
-	b.ui.gg.draw_rect(b.x, b.y, b.track_width, b.track_height, slider_background_color)
+	b.ui.gg.draw_rect(f32(b.x), f32(b.y), f32(b.track_width), f32(b.track_height), slider_background_color)
 	if b.track_line_displayed {
 		if b.orientation == .horizontal {
-			b.ui.gg.draw_line(b.x + 2, b.y + b.track_height / 2, b.x + b.track_width - 4, b.y + b.track_height / 2, gx.rgb(0, 0, 0))
+			b.ui.gg.draw_line(f32(b.x) + 2, f32(b.y + b.track_height / 2), f32(b.x + b.track_width - 4), f32(b.y + b.track_height / 2), gx.rgb(0, 0, 0))
 		}
 		else {
-			b.ui.gg.draw_line(b.x + b.track_width / 2, b.y + 2, b.x + b.track_width / 2, b.y + b.track_height - 4, gx.rgb(0, 0, 0))
+			b.ui.gg.draw_line(f32(b.x + b.track_width / 2), f32(b.y) + 2, f32(b.x + b.track_width / 2), f32(b.y + b.track_height - 4), gx.rgb(0, 0, 0))
 		}
 	}
 	if !b.is_focused {
-		b.ui.gg.draw_empty_rect(b.x, b.y, b.track_width, b.track_height, slider_background_border_color)
+		b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.track_width), f32(b.track_height), slider_background_border_color)
 	}
 	else {
-		b.ui.gg.draw_empty_rect(b.x, b.y, b.track_width, b.track_height, slider_focused_background_border_color)
+		b.ui.gg.draw_empty_rect(f32(b.x), f32(b.y), f32(b.track_width), f32(b.track_height), slider_focused_background_border_color)
 	}
 	// Draw the thumb
 	b.draw_thumb()
