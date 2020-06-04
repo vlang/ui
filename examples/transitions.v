@@ -15,7 +15,7 @@ mut:
 	picture			&ui.Picture
 	button			&ui.Button
 	state			int
-	
+
 }
 
 fn main() {
@@ -26,7 +26,7 @@ fn main() {
 			{	duration: 750
 				easing: ui.easing(.ease_in_out_cubic)
 			}
-		)	
+		)
 		y_transition: ui.transition(
 			{	duration: 750
 				easing: ui.easing(.ease_in_out_quart)
@@ -65,7 +65,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_toggle_click(app mut App,  button &ui.Button) {
+fn btn_toggle_click(mut app App,  button &ui.Button) {
 	if app.x_transition.animated_value == 0 || app.y_transition.animated_value == 0 {
 		app.x_transition.set_value(&app.picture.offset_x)
 		app.y_transition.set_value(&app.picture.offset_y)

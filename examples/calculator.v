@@ -58,7 +58,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_click(app mut App, btn &ui.Button) {
+fn btn_click(mut app App, btn &ui.Button) {
 	op := btn.text
 	number := app.text
 	if op == 'C' {

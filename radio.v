@@ -119,7 +119,7 @@ fn (t &Radio) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + (t.height + 5) * t.values.len
 }
 
-fn radio_click(r mut Radio, e &MouseEvent, zzz voidptr) {
+fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 	if !r.point_inside(e.x, e.y) {
 		return
 	}

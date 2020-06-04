@@ -81,7 +81,7 @@ fn (t &Switch) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
 
-fn sw_click(b mut Switch, e &MouseEvent, w &Window) {
+fn sw_click(mut b Switch, e &MouseEvent, w &Window) {
 	if !b.point_inside(e.x, e.y) { return }	//<===== mouse position test added
 	if e.action == 0 {
 		b.open = !b.open

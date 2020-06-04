@@ -118,7 +118,7 @@ pub fn (mut dd Dropdown) add_item(text string) {
 	dd.items << DropdownItem{text}
 }
 
-fn dd_key_down(dd mut Dropdown, e &KeyEvent, zzz voidptr) {
+fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 	if dd.hover_index < 0 {
 		dd.hover_index = 0
 		return
@@ -146,7 +146,7 @@ fn dd_key_down(dd mut Dropdown, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-fn dd_click(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if !dd.point_inside(e.x, e.y) || e.action == 1 {return}
 
 	if e.y >= dd.y && e.y <= dd.y + dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
@@ -164,7 +164,7 @@ fn dd_click(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn dd_mouse_move(dd mut Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.open {
 		th := dd.y + (dd.items.len * dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
