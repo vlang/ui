@@ -102,7 +102,7 @@ fn btn_click(app mut App, btn &ui.Button) {
 
 fn (mut app App) update_result() {
 	// Format and print the result
-	if !math.trunc(app.result).eq(app.result) {
+	if !math.trunc(app.result).eq_epsilon(app.result) {
 		app.text = '${app.result:-15.10f}'
 	}
 	else {
@@ -164,7 +164,7 @@ fn (mut app App) calculate() {
 				result = a * b
 			}
 			'÷' {
-				if b.eq(f64(0.0)) {
+				if int(b) == 0 {
 					eprintln('Division by zero!')
 					b = 0.0000000001
 				}
