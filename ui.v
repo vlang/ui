@@ -18,7 +18,7 @@ const (
 )
 
 pub struct UI {
-pub:
+pub mut:
 	ft                   &freetype.FreeType = voidptr(0)
 	gg                   &gg.GG = voidptr(0)
 mut:
