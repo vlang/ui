@@ -4,7 +4,7 @@
 module ui
 
 import os
-import gg
+import oldgg as gg
 
 pub struct Picture {
 pub:

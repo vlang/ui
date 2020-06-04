@@ -6,7 +6,7 @@ module ui
 import glfw
 import stbi
 import time
-import gg
+import oldgg as gg
 import os
 import freetype
 import clipboard

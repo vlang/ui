@@ -4,7 +4,7 @@
 module ui
 
 import gx
-import gg
+import oldgg as gg
 import glfw
 import freetype
 import clipboard
