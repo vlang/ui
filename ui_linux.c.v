@@ -32,7 +32,7 @@ mut:
 	waitgroup &sync.WaitGroup
 }
 
-fn run_message_dialog(message_app mut MessageApp, s string){
+fn run_message_dialog(mut message_app MessageApp, s string){
 	// run_message_dialog is run in a separate thread
 	// and will block until the dialog window is closed
 	text_lines := word_wrap_to_lines(s, 70)
@@ -79,7 +79,7 @@ fn run_message_dialog(message_app mut MessageApp, s string){
 	message_app.waitgroup.done()
 }
 
-fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &Window ) {
+fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window ) {
 	match e.key {
 		.enter, .escape, .space {
 			app.window.glfw_obj.set_should_close(true)
@@ -88,7 +88,7 @@ fn msgbox_on_key_down(app mut MessageApp, e &KeyEvent, window &Window ) {
 	}
 }
 
-fn msgbox_btn_ok_click(app mut MessageApp) {
+fn msgbox_btn_ok_click(mut app MessageApp) {
 	app.window.glfw_obj.set_should_close(true)
 }
 

@@ -42,6 +42,6 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_count_click(app mut App, btn &ui.Button) {
+fn btn_count_click(mut app App, btn &ui.Button) {
 	app.counter = (app.counter.int() + 1).str()
 }

@@ -171,7 +171,7 @@ fn (b &Slider) draw() {
 	b.draw_thumb()
 }
 
-fn slider_key_down(b mut Slider, e &KeyEvent, zzz voidptr) {
+fn slider_key_down(mut b Slider, e &KeyEvent, zzz voidptr) {
 	if !b.is_focused {
 		return
 	}
@@ -213,7 +213,7 @@ fn (t &Slider) point_inside(x, y f64) bool {
 	return x >= t.x && x <= t.x + t.track_width && y >= t.y && y <= t.y + t.track_height
 }
 
-fn slider_click(b mut Slider, e &MouseEvent, zzz voidptr) {
+fn slider_click(mut b Slider, e &MouseEvent, zzz voidptr) {
 	if !b.point_inside_thumb(e.x, e.y) && (!b.point_inside(e.x, e.y) || b.focus_on_thumb_only) {
 		b.dragging = false
 		b.is_focused = false
@@ -226,7 +226,7 @@ fn slider_click(b mut Slider, e &MouseEvent, zzz voidptr) {
 	b.dragging = e.action == 1
 }
 
-fn slider_mouse_move(b mut Slider, e &MouseEvent, zzz voidptr) {
+fn slider_mouse_move(mut b Slider, e &MouseEvent, zzz voidptr) {
 	if b.dragging {
 		b.change_value(e.x, e.y)
 	}
