@@ -9,7 +9,7 @@ pub fn message_box(s string) {
 		# NSAlert *alert = [[NSAlert alloc] init] ;
 		# [alert setMessageText:ns_string];
 		# [alert runModal];
-		_ = ns_string // hide warning
+		_ := ns_string // hide warning
   }
 }
 
@@ -30,8 +30,8 @@ pub fn notify(title, msg string) {
 		# notification.informativeText = ns_msg;
 		# NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
 		# [center deliverNotification:notification];
-		_ = ns_msg
-		_ = ns_title
+		_ := ns_msg
+		_ := ns_title
 	}
 }
 
