@@ -12,7 +12,7 @@ mut:
 	x		int
 	y		int
 	parent Layout
-	draw_fn DrawFn
+	draw_fn DrawFn = voidptr(0)
 
 }
 
@@ -20,7 +20,7 @@ pub struct CanvasConfig {
 	width int
 	height int
 	text   string
-	draw_fn DrawFn
+	draw_fn DrawFn = voidptr(0)
 }
 
 fn (mut c Canvas)init(parent Layout) {
@@ -58,7 +58,9 @@ fn (mut b Canvas) propose_size(w, h int) (int, int) {
 fn (mut c Canvas) draw() {
 	parent := c.parent
 	state := parent.get_state()
-	c.draw_fn(state)
+	if c.draw_fn != voidptr(0) {
+		c.draw_fn(state)
+	}
 }
 
 fn (t &Canvas) focus() {}
