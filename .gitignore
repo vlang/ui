@@ -10,3 +10,4 @@ examples/*.pdb
 
 # Ignore editor files
 *.code-workspace
+.lite_workspace.lua

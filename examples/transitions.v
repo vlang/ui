@@ -36,6 +36,7 @@ fn main() {
 			{	width: picture_width_and_height
 				height: picture_width_and_height
 				path: os.resource_abs_path('logo.png')
+				on_click: example_pic_click
 			}
 		)
 		button: ui.button(
@@ -63,6 +64,10 @@ fn main() {
 		]
 	)
 	ui.run(app.window)
+}
+
+fn example_pic_click(mut app App, pic &ui.Picture) {
+	println('Clicked pic')
 }
 
 fn btn_toggle_click(mut app App,  button &ui.Button) {
