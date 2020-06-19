@@ -6,6 +6,8 @@ module ui
 import os
 import oldgg as gg
 
+type PictureClickFn fn(voidptr, voidptr) // userptr, picture
+
 pub struct Picture {
 pub:
 	offset_x  int
@@ -20,6 +22,7 @@ mut:
 	path      string
 	ui       &UI
 	texture   u32
+	onclick   PictureClickFn
 	use_cache bool
 }
 
@@ -27,6 +30,7 @@ pub struct PictureConfig {
 	path       string
 	width      int
 	height     int
+	onclick    PictureClickFn
 	use_cache  bool = true
 	ref       &Picture = voidptr(0)
 }
@@ -41,6 +45,8 @@ fn (mut pic Picture)init(parent Layout) {
 		pic.texture = texture
 		ui.resource_cache[pic.path] = texture
 	}
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, pic_click, pic)
 }
 
 pub fn picture(c PictureConfig) &Picture {
@@ -52,9 +58,20 @@ pub fn picture(c PictureConfig) &Picture {
 		height: c.height
 		path: c.path
 		use_cache: c.use_cache
+		onclick: c.onclick
 		ui: 0
 	}
 	return pic
+}
+
+fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
+	if pic.point_inside(e.x, e.y) {
+		if e.action == 0 {
+			if pic.onclick != voidptr(0) {
+				pic.onclick(window.state, pic)
+			}
+		}
+	}
 }
 
 fn (mut b Picture) set_pos(x, y int) {
@@ -85,5 +102,5 @@ fn (t &Picture) is_focused() bool {
 fn (t &Picture) unfocus() {}
 
 fn (t &Picture) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
 }
