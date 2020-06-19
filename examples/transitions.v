@@ -36,7 +36,7 @@ fn main() {
 			{	width: picture_width_and_height
 				height: picture_width_and_height
 				path: os.resource_abs_path('logo.png')
-				onclick: example_pic_click
+				on_click: example_pic_click
 			}
 		)
 		button: ui.button(
