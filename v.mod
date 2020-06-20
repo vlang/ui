@@ -1,7 +1,7 @@
 Module {
         name: 'ui'
         author: 'medvednikov'
-        version: '0.0.2'
+        version: '0.0.3'
         repo_url: 'https://github.com/vlang/ui'
         vcs: 'git'
         tags: ['gui','user interface']
