@@ -36,6 +36,7 @@ fn main() {
 				width: 24
 				height: 24
 				icon_path: os.resource_abs_path('plus.png')
+				text: 'Alt'
 				onclick: btn_count_click
 			)
 		])
