@@ -1,6 +1,6 @@
 import os
 
-examples_dir := @FILE.all_before('build_examples.vsh')
+examples_dir := os.resource_abs_path('.') + '/'
 files := os.ls(examples_dir) or { return }
 for file in files {
 	if !file.ends_with('.v') {
