@@ -73,7 +73,7 @@ jobs:
         path: vlib/ui
     - name: Build V
       run: |
-        .\make.bat -msvc
+        .\make.bat -msvc -skip-path
     - name: Install dependencies
       run: |
         .\v.exe setup-freetype
