@@ -1,4 +1,5 @@
 import ui
+import os
 
 const (
 	win_width = 208
@@ -8,13 +9,11 @@ const (
 struct App {
 mut:
 	counter string = '0'
-	window  &ui.Window
+	window  &ui.Window = 0
 }
 
 fn main() {
-	mut app := &App{
-		window: 0
-	}
+	mut app := &App{}
 	app.window = ui.window({
 		width: win_width
 		height: win_height
@@ -24,7 +23,7 @@ fn main() {
 		ui.row({
 			alignment: .top
 			spacing: 5
-			stretch : true
+			stretch: true
 			margin: ui.MarginConfig{5,5,5,5}
 		}, [
 			ui.textbox(
@@ -34,7 +33,9 @@ fn main() {
 				text: &app.counter
 			)
 			ui.button(
-				text: 'Count'
+				width: 24
+				height: 24
+				icon_path: os.resource_abs_path('plus.png')
 				onclick: btn_count_click
 			)
 		])
