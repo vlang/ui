@@ -11,7 +11,7 @@ const (
 
 struct App {
 mut:
-	window        &ui.Window
+	window        &ui.Window = 0
 	r_slider      &ui.Slider
 	r_textbox     &ui.TextBox
 	r_label       &ui.Label
