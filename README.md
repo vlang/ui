@@ -15,7 +15,7 @@ ui.window({
     height:   400
     title:    'V UI Demo'
 }, [
-    ui.row(
+    ui.row({
         stretch: true
         margin:  {10, 10, 10, 10}
     }, [
