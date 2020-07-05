@@ -6,8 +6,8 @@ module ui
 import stbi
 import time
 import gg
+import gg.ft
 import os
-import freetype
 import clipboard
 import eventbus
 //import gx
@@ -19,7 +19,7 @@ const (
 
 pub struct UI {
 pub mut:
-	ft                   &freetype.FreeType = voidptr(0)
+	ft                   &ft.FT = voidptr(0)
 	gg                   &gg.Context = voidptr(0)
 mut:
 	window               &Window = voidptr(0)

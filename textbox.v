@@ -5,7 +5,6 @@ module ui
 
 import gx
 import gg
-import freetype
 import strings
 
 enum SelectionDirection {
@@ -17,7 +16,7 @@ enum SelectionDirection {
 const (
 	placeholder_cfg = gx.TextCfg{
 		color: gx.gray
-		size: freetype.default_font_size
+		size: 12//freetype.default_font_size
 		align: gx.align_left
 	}
 	text_border_color = gx.rgb(177, 177, 177)
