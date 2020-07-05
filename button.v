@@ -4,7 +4,7 @@
 module ui
 
 import gx
-import oldgg as gg
+import gg
 import freetype
 import os
 
