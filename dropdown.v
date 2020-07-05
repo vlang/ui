@@ -124,7 +124,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		return
 	}
 	match e.key {
-		.arrow_down {
+		.down {
 			if !dd.open {
 				dd.open_drawer()
 				return
@@ -134,7 +134,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		.escape {
 			dd.unfocus()
 		}
-		.arrow_up {
+		.up {
 			if dd.hover_index > 0 {
 				dd.hover_index--
 			}

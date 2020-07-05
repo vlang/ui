@@ -4,7 +4,7 @@
 module ui
 
 import os
-import oldgg as gg
+import gg
 
 type PictureClickFn = fn (arg_1, arg_2 voidptr) // userptr, picture
 pub struct Picture {

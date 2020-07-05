@@ -3,24 +3,24 @@
 // that can be found in the LICENSE file.
 module ui
 
-import glfw
 import stbi
 import time
-import oldgg as gg
+import gg
 import os
 import freetype
 import clipboard
 import eventbus
-import gx
+//import gx
+//import sokol.sapp
 
 const (
-	version = '0.0.3'
+	version = '0.0.4'
 )
 
 pub struct UI {
 pub mut:
 	ft                   &freetype.FreeType = voidptr(0)
-	gg                   &gg.GG = voidptr(0)
+	gg                   &gg.Context = voidptr(0)
 mut:
 	window               &Window = voidptr(0)
 	show_cursor          bool
@@ -33,6 +33,8 @@ mut:
 	redraw_requested     bool
 	resource_cache       map[string]u32
 	closed               bool = false
+	needs_refresh bool = true
+	ticks int
 }
 
 pub enum VerticalAlignment {
@@ -83,15 +85,6 @@ pub interface Layout {
 }
 pub fn ilayout(x Layout) Layout { return x }
 
-pub struct KeyEvent {
-pub:
-	key       Key
-	action    int
-	code      int
-	mods      KeyMod
-	codepoint u32
-}
-
 pub struct MouseEvent {
 pub:
 	x      int
@@ -115,7 +108,7 @@ pub enum Cursor {
 
 fn init() {
 	println('ui.init()')
-	glfw.init_glfw()
+	//glfw.init_glfw()
 	stbi.set_flip_vertically_on_load(true)
 }
 
@@ -126,7 +119,7 @@ fn (mut ui UI) idle_loop() {
 	// there are no other user events.
 	for {
 		ui.show_cursor = !ui.show_cursor
-		glfw.post_empty_event()
+		//glfw.post_empty_event()
 
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
@@ -148,9 +141,11 @@ pub fn run(window &Window) {
 	mut ui := window.ui
 	ui.window = window
 	go ui.idle_loop()
+	ui.gg.run()
+	/*
 	for !window.glfw_obj.should_close() {
 		if window.child_window != 0 {
-			gg.clear(gx.rgb(230,230,230))
+			//gg.clear(gx.rgb(230,230,230))
 			if window.child_window.draw_fn != voidptr(0) {
 				window.child_window.draw_fn(window.child_window.state)
 			}
@@ -159,7 +154,7 @@ pub fn run(window &Window) {
 			}
 		}
 		else {
-			gg.clear(window.bg_color)
+			//gg.clear(window.bg_color)
 			// The user can define a custom drawing function for the entire window (advanced mode)
 			if window.draw_fn != voidptr(0) {
 				window.draw_fn(window.state)
@@ -173,11 +168,12 @@ pub fn run(window &Window) {
 		// Transitions & animations, for example.
 		if ui.redraw_requested {
 			ui.redraw_requested = false
-			glfw.post_empty_event()
+			//glfw.post_empty_event()
 		}
 		ui.gg.render()
 	}
 	ui.window.glfw_obj.destroy()
+	*/
 	ui.closed = true
 	// the ui.idle_loop thread checks every 10 ms if ui.closed is true;
 	// waiting 2x this time should be enough to ensure the ui.loop

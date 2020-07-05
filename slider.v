@@ -176,7 +176,7 @@ fn slider_key_down(mut b Slider, e &KeyEvent, zzz voidptr) {
 		return
 	}
 	match e.key {
-		.arrow_up, .left {
+		.up, .left {
 			if !b.rev_min_max_pos {
 				if int(b.val) > b.min {
 					b.val--
@@ -188,7 +188,7 @@ fn slider_key_down(mut b Slider, e &KeyEvent, zzz voidptr) {
 				}
 			}
 		}
-		.arrow_down, .right {
+		.down, .right {
 			if !b.rev_min_max_pos {
 				if int(b.val) < b.max {
 					b.val++

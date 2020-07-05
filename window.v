@@ -4,11 +4,12 @@
 module ui
 
 import gx
-import oldgg as gg
-import glfw
-import freetype
+//import oldgg as gg
+import gg
+import gg.ft
 import clipboard
 import eventbus
+import sokol.sapp
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -26,10 +27,10 @@ pub type MouseMoveFn fn(e MouseEvent, func voidptr)
 
 [ref_only]
 pub struct Window {
-pub:
-	ui            &UI = voidptr(0)
+//pub:
 pub mut:
-	glfw_obj      &glfw.Window = voidptr(0)
+	ui            &UI = voidptr(0)
+	//glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
@@ -75,49 +76,27 @@ pub fn window2(cfg WindowConfig) &Window {
 }
 */
 
+fn on_event(e &sapp.Event, mut window Window) {
+	//println('code=$e.char_code')
+	window.ui.needs_refresh = true
+	window.ui.ticks = 0
+	//window.ui.ticks_since_refresh = 0
+	/*
+	if e.typ == .key_down {
+		game.key_down(e.key_code)
+	}
+	*/
+}
+
 pub fn window(cfg WindowConfig, children []Widget) &Window {
 	println('window()')
-	fpath := system_font_path()
-	gcontext := gg.new_context(gg.Cfg{
-		width: cfg.width
-		height: cfg.height
-		use_ortho: true // This is needed for 2D drawing
-
-		create_window: true
-		window_title: cfg.title
-		resizable: cfg.resizable
-		// window_state: ui
-
-	})
-	wsize := gcontext.window.get_window_size()
-	fsize := gcontext.window.get_framebuffer_size()
-	scale := if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
-	ft := freetype.new_context(gg.Cfg{
-			width: cfg.width
-			height: cfg.height
-			use_ortho: true
-			font_size: default_font_size
-			scale: scale
-			window_user_ptr: 0
-			font_path: fpath
-		})
-	mut ui_ctx := &UI{
-		gg: gcontext
-		ft: ft
-		clipboard: clipboard.new()
+	defer {
+		println('end of window()')
 	}
-	ui_ctx.load_icos()
-	ui_ctx.gg.window.set_user_ptr(ui_ctx)
-	ui_ctx.gg.window.onkeydown(window_key_down)
-	ui_ctx.gg.window.onchar(window_char)
-	ui_ctx.gg.window.onmousemove(window_mouse_move)
-	ui_ctx.gg.window.on_click(window_click)
-	ui_ctx.gg.window.on_resize(window_resize)
-	ui_ctx.gg.window.on_scroll(window_scroll)
+	fpath := system_font_path()
 	mut window := &Window{
 		state: cfg.state
-		ui: ui_ctx
-		glfw_obj: ui_ctx.gg.window
+		//glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
@@ -128,6 +107,71 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		key_down_fn: cfg.on_key_down
 		scroll_fn: cfg.on_scroll
 	}
+
+	gcontext := gg.new_context({
+		width: cfg.width
+		height: cfg.height
+		use_ortho: true // This is needed for 2D drawing
+
+		create_window: true
+		window_title: cfg.title
+		resizable: cfg.resizable
+		frame_fn:  frame
+		event_fn: on_event
+		user_data: window
+		//init_fn:
+		//keydown_fn: window_key_down
+		//char_fn: window_char
+		bg_color: gx.rgb(230,230,230)
+		// window_state: ui
+
+	})
+	//wsize := gcontext.window.get_window_size()
+	//fsize := gcontext.window.get_framebuffer_size()
+	scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
+	/*
+	ft := freetype.new_context({
+			width: cfg.width
+			height: cfg.height
+			use_ortho: true
+			font_size: default_font_size
+			scale: scale
+			window_user_ptr: 0
+			font_path: fpath
+		})
+	*/
+	mut ui_ctx := &UI{
+		gg: gcontext
+		//ft: ft
+		clipboard: clipboard.new()
+	}
+	ui_ctx.load_icos()
+	/*
+	ui_ctx.gg.window.set_user_ptr(ui_ctx)
+	ui_ctx.gg.window.onkeydown(window_key_down)
+	ui_ctx.gg.window.onchar(window_char)
+	ui_ctx.gg.window.onmousemove(window_mouse_move)
+	ui_ctx.gg.window.on_click(window_click)
+	ui_ctx.gg.window.on_resize(window_resize)
+	ui_ctx.gg.window.on_scroll(window_scroll)
+	*/
+	window.ui=ui_ctx
+	/*
+	mut window := &Window{
+		state: cfg.state
+		ui: ui_ctx
+		//glfw_obj: ui_ctx.gg.window
+		draw_fn: cfg.draw_fn
+		title: cfg.title
+		bg_color: cfg.bg_color
+		width: cfg.width
+		height: cfg.height
+		children: children
+		click_fn: cfg.on_click
+		key_down_fn: cfg.on_key_down
+		scroll_fn: cfg.on_scroll
+	}
+	*/
 	//q := int(window)
 	//println('created window $q.hex()')
 	for _, child in window.children {
@@ -159,7 +203,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 		//state: parent_window.state
 		state: cfg.state
 		ui: parent_window.ui
-		glfw_obj: parent_window.ui.gg.window
+		//glfw_obj: parent_window.ui.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
@@ -178,6 +222,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window  Window, children []Widg
 	return window
 }
 
+/*
 fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	mut window := ui.window
@@ -202,9 +247,11 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 }
 
 fn window_resize(glfw_wnd voidptr, width int, height int) {
+	/*
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	window.resize(width, height)
+	*/
 }
 
 fn window_scroll(glfw_wnd voidptr, xoff, yoff f64) {
@@ -256,16 +303,17 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		window.eventbus.publish(events.on_click, window, e)
 	}
 }
+*/
 
-fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+//fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
+fn window_key_down(key Key, mod KeyMod, ui &UI) {
 	window := ui.window
 	// C.printf('g child=%p\n', child)
 	e := KeyEvent{
 		key: key
-		code: code
-		action: action
-		mods: mods
+		//code: code
+		//action: action
+		mods: mod
 	}
 	if e.key == .escape && window.child_window != 0 {
 		// Close the child window on Escape
@@ -274,7 +322,8 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window)
 	}
-	if action == 2 || action == 1 {
+	// TODO
+	if true { //action == 2 || action == 1 {
 		window.eventbus.publish(events.on_key_down, window, e)
 	}
 	else {
@@ -291,12 +340,14 @@ fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
 }
 
 fn window_char(glfw_wnd voidptr, codepoint u32) {
+	/*
 	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
 	e := KeyEvent{
 		codepoint: codepoint
 	}
 	window.eventbus.publish(events.on_key_down, &window, e)
+	*/
 	/* for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
@@ -399,34 +450,48 @@ fn bar() {
 fn bar2() {
 	foo2(&Window{
 		ui: 0
-		glfw_obj: 0
+		//glfw_obj: 0
 		eventbus: eventbus.new()
 	})
 	foo2(&Stack{ui: 0})
 }
 
-fn (w &Window) draw() {
-/*
+fn (w &Window) draw() {}
+
+fn frame(w &Window) {
+	if !w.ui.needs_refresh {
+		// Draw 3 more frames after the "stop refresh" command
+		w.ui.ticks++
+		if w.ui.ticks > 3 {
+			return
+		}
+	}
+	//println('frame() needs_refresh=$w.ui.needs_refresh $w.ui.ticks nr children=$w.children.len')
+	//game.frame_sw.restart()
+	//game.ft.flush()
+	w.ui.gg.begin()
+	//draw_scene()
 	// Render all widgets, including Canvas
 	for child in w.children {
 		child.draw()
 	}
+	//w.showfps()
 	if w.child_window != 0 {
 		for child in w.child_window.children {
 			child.draw()
 		}
 	}
-	*/
+	w.ui.gg.end()
+	w.ui.needs_refresh = false
 }
 
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
-	w.glfw_obj.set_title(title)
+	// TODO no set_title in Sokol
+	//w.glfw_obj.set_title(title)
 }
+
 //Layout Interface Methods
-
-
-
 fn (w &Window) get_ui() &UI {
 	return w.ui
 }

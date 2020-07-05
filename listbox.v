@@ -256,12 +256,12 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window ) {
 	}
 
     match e.key {
-        .arrow_down {
+        .down {
             if lb.selection >= lb.draw_count - 1 { return }
             if lb.selection >= lb.items.len - 1 { return }
             lb.selection++
         }
-        .arrow_up {
+        .up {
             if lb.selection <= 0 { return }
             lb.selection--
         }

@@ -4,7 +4,7 @@
 module ui
 
 import gx
-import oldgg as gg
+import gg
 import freetype
 import strings
 
@@ -136,7 +136,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	return tb
 }
 
-fn draw_inner_border(border_accentuated bool, gg &gg.GG, x, y, width, height int) {
+fn draw_inner_border(border_accentuated bool, gg &gg.Context, x, y, width, height int) {
 	if !border_accentuated {
 		gg.draw_empty_rect(x, y, width, height, text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
@@ -364,13 +364,13 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 				t.cursor_pos = text.len
 			}
 		}
-		.key_a {
+		.a {
 			if e.mods in [.super, .ctrl] {
 				t.sel_start = 0
 				t.sel_end = text.ustring().len - 1
 			}
 		}
-		.key_v {
+		.v {
 			if e.mods in [.super, .ctrl] {
 				t.insert(t.ui.clipboard.paste())
 			}
