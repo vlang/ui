@@ -82,14 +82,14 @@ fn run_message_dialog(mut message_app MessageApp, s string){
 fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window ) {
 	match e.key {
 		.enter, .escape, .space {
-			app.window.glfw_obj.set_should_close(true)
+			//app.window.glfw_obj.set_should_close(true)
 		}
 		else {}
 	}
 }
 
 fn msgbox_btn_ok_click(mut app MessageApp) {
-	app.window.glfw_obj.set_should_close(true)
+	//app.window.glfw_obj.set_should_close(true)
 }
 
 fn word_wrap_to_lines(s string, max_line_length int) []string {
