@@ -202,7 +202,6 @@ fn btn_add_click(mut app State, x voidptr) {
 
 fn canvas_draw(app &State) {
 	gg := app.window.ui.gg
-	mut ft := app.window.ui.ft
 	x := 240
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
@@ -214,9 +213,9 @@ fn canvas_draw(app &State) {
 		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
 		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
 		// Text values
-		ft.draw_text_def(x + 5, y + 5, user.first_name)
-		ft.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
-		ft.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
-		ft.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
+		gg.draw_text_def(x + 5, y + 5, user.first_name)
+		gg.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
+		gg.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
+		gg.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
 	}
 }

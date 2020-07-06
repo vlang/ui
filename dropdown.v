@@ -87,15 +87,14 @@ fn (mut dd Dropdown) propose_size(w, h int) (int, int) {
 
 fn (mut dd Dropdown) draw() {
 	gg := dd.ui.gg
-	mut ft := dd.ui.ft
 
 	//draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, dropdown_height, dropdown_color)
 	gg.draw_empty_rect(dd.x, dd.y, dd.width, dropdown_height, border_color)
 	if dd.selected_index >= 0 {
-		ft.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
-		ft.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
 
 	//draw the drawer
@@ -107,7 +106,7 @@ fn (mut dd Dropdown) draw() {
 			color := if i == dd.hover_index {border_color} else {drawer_color}
 			gg.draw_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, color)
 			gg.draw_empty_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, border_color)
-			dd.ui.ft.draw_text_def(dd.x + 5, y + i * dropdown_height + 5, item.text)
+			gg.draw_text_def(dd.x + 5, y + i * dropdown_height + 5, item.text)
 		}
 	}
 	//draw the arrow

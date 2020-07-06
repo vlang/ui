@@ -92,7 +92,7 @@ fn (mut r Rectangle) draw() {
 	}
 	// Display rectangle text
 	if r.text != '' {
-		text_width,text_height := r.ui.ft.text_size(r.text)
+		text_width,text_height := r.ui.gg.text_size(r.text)
 		mut dx := (r.width - text_width) / 2
 		mut dy := (r.height - text_height) / 2
 		if dx < 0 {
@@ -101,7 +101,7 @@ fn (mut r Rectangle) draw() {
 		if dy < 0 {
 			dy = 0
 		}
-		r.ui.ft.draw_text(r.x + dx, r.y + dy, r.text, text_cfg)
+		r.ui.gg.draw_text(r.x + dx, r.y + dy, r.text, text_cfg)
 	}
 }
 

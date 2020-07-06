@@ -6,7 +6,6 @@ module ui
 import stbi
 import time
 import gg
-import gg.ft
 import os
 import clipboard
 import eventbus
@@ -19,7 +18,6 @@ const (
 
 pub struct UI {
 pub mut:
-	ft                   &ft.FT = voidptr(0)
 	gg                   &gg.Context = voidptr(0)
 mut:
 	window               &Window = voidptr(0)

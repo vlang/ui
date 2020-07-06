@@ -51,7 +51,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	ui := parent.get_ui()
 	cb.ui = ui
-	cb.width = cb.ui.ft.text_width(cb.text) + 5 + check_mark_size
+	cb.width = cb.ui.gg.text_width(cb.text) + 5 + check_mark_size
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -112,7 +112,7 @@ fn (mut b CheckBox) draw() {
 		b.ui.gg.draw_image(b.x + 3, b.y + 3, 8, 8, b.ui.cb_image)
 	}
 	// Text
-	b.ui.ft.draw_text(b.x + check_mark_size + 5, b.y, b.text, btn_text_cfg)
+	b.ui.gg.draw_text(b.x + check_mark_size + 5, b.y, b.text, btn_text_cfg)
 }
 
 fn (t &CheckBox) point_inside(x, y f64) bool {

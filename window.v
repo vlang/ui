@@ -6,7 +6,6 @@ module ui
 import gx
 //import oldgg as gg
 import gg
-import gg.ft
 import clipboard
 import eventbus
 import sokol.sapp
@@ -93,7 +92,6 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	defer {
 		println('end of window()')
 	}
-	fpath := system_font_path()
 	mut window := &Window{
 		state: cfg.state
 		//glfw_obj: ui_ctx.gg.window
@@ -119,6 +117,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		frame_fn:  frame
 		event_fn: on_event
 		user_data: window
+		font_path: system_font_path()
 		//init_fn:
 		//keydown_fn: window_key_down
 		//char_fn: window_char

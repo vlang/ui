@@ -58,8 +58,8 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	//TODO
-	b.width = if b.width == 0 { b.ui.ft.text_width(b.text) + button_horizontal_padding } else { b.width }
-	b.height = if b.height == 0 { b.ui.ft.text_height(b.text) + button_vertical_padding } else { b.height }
+	b.width = if b.width == 0 { b.ui.gg.text_width(b.text) + button_horizontal_padding } else { b.width }
+	b.height = if b.height == 0 { b.ui.gg.text_height(b.text) + button_vertical_padding } else { b.height }
 	if b.use_icon {
 		texture := gg.create_image(b.icon_path)
 		b.texture = texture
@@ -120,7 +120,7 @@ fn (mut b Button) propose_size(w, h int) (int, int) {
 
 fn (mut b Button) draw() {
 	// b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
-	text_width, text_height := b.ui.ft.text_size(b.text)
+	text_width, text_height := b.ui.gg.text_size(b.text)
 	w2 := text_width /2
 	h2 := text_height /2
 	bcenter_x := b.x + b.width/2
@@ -137,7 +137,7 @@ fn (mut b Button) draw() {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
 	}
 	else {
-		b.ui.ft.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)
+		b.ui.gg.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)
 	}
 	//b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }

@@ -166,12 +166,12 @@ fn (mut t TextBox) draw() {
 	if !t.borderless {
 		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height)
 	}
-	width := if text.len == 0 { 0 } else { t.ui.ft.text_width(text) }
+	width := if text.len == 0 { 0 } else { t.ui.gg.text_width(text) }
 	text_y := t.y + 4 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && t.placeholder != '' {
-		t.ui.ft.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
+		t.ui.gg.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
 	}
 	// Text
 	else {
@@ -181,11 +181,11 @@ fn (mut t TextBox) draw() {
 		if t.sel_start < t.sel_end && t.sel_start < ustr.len {
 			left := ustr.left(t.sel_start)
 			right := ustr.right(t.sel_end)
-			sel_width := width - t.ui.ft.text_width(right) - t.ui.ft.text_width(left)
-			x := t.ui.ft.text_width(left) + t.x + textbox_padding
+			sel_width := width - t.ui.gg.text_width(right) - t.ui.gg.text_width(left)
+			x := t.ui.gg.text_width(left) + t.x + textbox_padding
 			t.ui.gg.draw_rect(x, t.y + 3, sel_width, t.height - 6, selection_color)
 			/*
-			sel_width := t.ui.ft.text_width(right) + 1
+			sel_width := t.ui.gg.text_width(right) + 1
 			 */
 
 		}
@@ -195,12 +195,12 @@ fn (mut t TextBox) draw() {
 				if i >= text.len {
 					continue
 				}
-				if t.ui.ft.text_width(text[i..]) > t.width {
+				if t.ui.gg.text_width(text[i..]) > t.width {
 					skip_idx = i + 3
 					break
 				}
 			}
-			t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, text[skip_idx..])
+			t.ui.gg.draw_text_def(t.x + textbox_padding, text_y, text[skip_idx..])
 		}
 		else {
 			if t.is_password {
@@ -210,10 +210,10 @@ fn (mut t TextBox) draw() {
 					//t.ui.gg.draw_image(t.x + 5 + i * 12, t.y + 5, 8, 8, t.ui.circle_image)
 				}
 				*/
-				t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, strings.repeat(`*`, text.len))
+				t.ui.gg.draw_text_def(t.x + textbox_padding, text_y, strings.repeat(`*`, text.len))
 			}
 			else {
-				t.ui.ft.draw_text_def(t.x + textbox_padding, text_y, text)
+				t.ui.gg.draw_text_def(t.x + textbox_padding, text_y, text)
 			}
 		}
 	}
@@ -222,15 +222,15 @@ fn (mut t TextBox) draw() {
 		// no cursor in sel mode
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
-			cursor_x += t.ui.ft.text_width(strings.repeat(`*`, t.cursor_pos))
+			cursor_x += t.ui.gg.text_width(strings.repeat(`*`, t.cursor_pos))
 		}
 		else if skip_idx > 0 {
-			cursor_x += t.ui.ft.text_width(text[skip_idx..])
+			cursor_x += t.ui.gg.text_width(text[skip_idx..])
 		}
 		else if text.len > 0 {
 			// left := t.text[..t.cursor_pos]
 			left := text.ustring().left(t.cursor_pos)
-			cursor_x += t.ui.ft.text_width(left)
+			cursor_x += t.ui.gg.text_width(left)
 		}
 		if text.len == 0 {
 			cursor_x = t.x + textbox_padding
@@ -480,7 +480,7 @@ fn tb_mouse_move(mut t TextBox, e &MouseEvent, zzz voidptr) {
 		mut prev_width := 0
 		ustr := t.text.ustring()
 		for i in 1 .. ustr.len {
-			width := t.ui.ft.text_width(ustr.left(i))
+			width := t.ui.gg.text_width(ustr.left(i))
 			if prev_width <= x && x <= width {
 				if i < t.sel_start && t.sel_end < t.sel_start {
 					t.sel_end = t.sel_start
@@ -530,8 +530,8 @@ fn tb_click(mut t TextBox, e &MouseEvent, zzz voidptr) {
 	mut prev_width := 0
 	ustr := t.text.ustring()
 	for i in 1 .. ustr.len {
-		// width := t.ui.ft.text_width(t.text[..i])
-		width := t.ui.ft.text_width(ustr.left(i))
+		// width := t.ui.gg.text_width(t.text[..i])
+		width := t.ui.gg.text_width(ustr.left(i))
 		if prev_width <= x && x <= width {
 			t.cursor_pos = i
 			return

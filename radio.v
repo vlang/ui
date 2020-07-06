@@ -49,7 +49,7 @@ fn (mut r Radio)init(parent Layout) {
 	if r.width == 0 {
 		mut max := 0
 		for value in r.values {
-			width := r.ui.ft.text_width(value)
+			width := r.ui.gg.text_width(value)
 			if width > max {
 				max = width
 			}
@@ -99,8 +99,8 @@ fn (mut b Radio) draw() {
 	// Border
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
 	// Title
-	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.ft.text_width(b.title) + 5, 10, default_window_color)
-	b.ui.ft.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
+	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.gg.text_width(b.title) + 5, 10, default_window_color)
+	b.ui.gg.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
 	// Values
 	for i, val in b.values {
 		y := b.y + b.height * i + 15
@@ -111,7 +111,7 @@ fn (mut b Radio) draw() {
 			//b.ui.gg.draw_image(x, y-3, 16, 16, b.ui.circle_image)
 		}
 		// Text
-		b.ui.ft.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
+		b.ui.gg.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
 	}
 }
 
