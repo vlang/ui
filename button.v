@@ -13,7 +13,7 @@ const (
 	btn_text_cfg = gx.TextCfg{
 		// color: gx.white
 		color: gx.rgb(38, 38, 38)
-		size: 12 //freetype.default_font_size
+		size: gg.default_font_size
 		align: gx.align_left
 	}
 	button_horizontal_padding = 26
