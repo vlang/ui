@@ -1,4 +1,4 @@
-# V UI 0.0.3
+# V UI 0.0.4
 
 [![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/commits/master)
 <a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fvlang%2Fpledges&style=for-the-badge' height='20'></a>
@@ -79,24 +79,23 @@ Documentation will be available soon. In the meantime use the examples as the do
 
 Binaries built with V UI will have no dependencies.
 
-To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source),
-`glfw` and `freetype`. `glfw` dependency will soon be removed.
+To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source) and `freetype`.
 
 ```markdown
 macOS:
-brew install glfw freetype
+brew install freetype
 
 Debian/Ubuntu:
-sudo apt install libglfw3 libglfw3-dev libfreetype6-dev
+sudo apt install libfreetype6-dev
 
 Arch/Manjaro:
-sudo pacman -S glfw-x11 freetype2
+sudo pacman -S freetype2
 
 Fedora:
-sudo dnf install glfw glfw-devel freetype-devel
+sudo dnf install freetype-devel
 
 ClearLinux:
-sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype devpkg-glfw3
+sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype
 
 Windows:
 v setup-freetype
