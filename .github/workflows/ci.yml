@@ -34,6 +34,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
+        v -prod users.v
 
   macos:
     runs-on: macos-latest

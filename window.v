@@ -127,7 +127,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	})
 	//wsize := gcontext.window.get_window_size()
 	//fsize := gcontext.window.get_framebuffer_size()
-	scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
+	//scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
 	/*
 	ft := freetype.new_context({
 			width: cfg.width
