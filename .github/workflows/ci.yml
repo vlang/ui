@@ -85,3 +85,5 @@ jobs:
         $env:path += ";$(get-location)"
         cd .\vlib\ui\examples\
         & v run .\build_examples.vsh
+        echo "=========================="
+        echo "v -showcc .\users.v"
