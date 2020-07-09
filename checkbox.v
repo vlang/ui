@@ -69,7 +69,7 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
-	if cb.point_inside(e.x, e.y) && e.action == 0 {
+	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		if cb.on_check_changed != voidptr(0) {
 			cb.on_check_changed(window.state, cb.checked)
@@ -99,6 +99,7 @@ fn (mut b CheckBox) draw() {
 	draw_inner_border(false, b.ui.gg, b.x, b.y, check_mark_size, check_mark_size)
 	// Draw X (TODO draw a check mark instead)
 	if b.checked {
+		b.ui.gg.draw_rect(b.x+3,b.y+3,2,2, gx.black)
 		/*
 		x0 := b.x +2
 		y0 := b.y +2

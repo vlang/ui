@@ -253,7 +253,7 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 	text := *t.text
 	if !t.is_focused {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
-		return
+		//return
 	}
 	if t.on_key_down != voidptr(0) {
 		t.on_key_down(window.state, t, e.codepoint)

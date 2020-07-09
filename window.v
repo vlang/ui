@@ -80,6 +80,19 @@ fn on_event(e &sapp.Event, mut window Window) {
 	window.ui.needs_refresh = true
 	window.ui.ticks = 0
 	//window.ui.ticks_since_refresh = 0
+	match e.typ {
+		.mouse_up {
+			//println('click')
+			window_click(e, window.ui)
+		}
+		.key_down {
+			//println('key down')
+			window_key_down(e, window.ui)
+		}
+		else {
+
+		}
+	}
 	/*
 	if e.typ == .key_down {
 		game.key_down(e.key_code)
@@ -267,23 +280,24 @@ fn window_scroll(glfw_wnd voidptr, xoff, yoff f64) {
 	}
 	window.eventbus.publish(events.on_scroll, window, e)
 }
+*/
 
-fn window_click(glfw_wnd voidptr, button, action, mods int) {
+fn window_click(event sapp.Event, ui &UI) {
+//fn window_click(glfw_wnd voidptr, button, action, mods int) {
 	//if action != 0 {
 		//return
 	//}
 	//println('action=$action')
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
 	window := ui.window
-	x,y := glfw.get_cursor_pos(glfw_wnd)
+	//x,y := event. glfw.get_cursor_pos(glfw_wnd)
 	e := MouseEvent{
-		button: button
-		action: action
-		mods: mods
-		x: int(x)
-		y: int(y)
+		//button: button
+		//action: action
+		//mods: mods
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
 	}
-	if window.click_fn != voidptr(0) && action == voidptr(0) {
+	if window.click_fn != voidptr(0)  { //&& action == voidptr(0) {
 		window.click_fn(e, window)
 	}
 	/*
@@ -302,17 +316,21 @@ fn window_click(glfw_wnd voidptr, button, action, mods int) {
 		window.eventbus.publish(events.on_click, window, e)
 	}
 }
-*/
 
-//fn window_key_down(glfw_wnd voidptr, key, code, action, mods int) {
-fn window_key_down(key Key, mod KeyMod, ui &UI) {
+fn window_key_down(event sapp.Event, ui &UI) {
+	//println('keydown char=$event.char_code')
 	window := ui.window
 	// C.printf('g child=%p\n', child)
 	e := KeyEvent{
-		key: key
+		key: Key(event.key_code)
+		mods: KeyMod(event.modifiers)
+		codepoint: event.char_code
 		//code: code
 		//action: action
-		mods: mod
+		//mods: mod
+	}
+	if e.key == .escape {
+		println('escape')
 	}
 	if e.key == .escape && window.child_window != 0 {
 		// Close the child window on Escape
@@ -328,13 +346,15 @@ fn window_key_down(key Key, mod KeyMod, ui &UI) {
 	else {
 		window.eventbus.publish(events.on_key_up, window, e)
 	}
-	/* for child in window.children {
+	/*
+	for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
 			continue
 		}
 		child.key_down()
-	} */
+	}
+	*/
 
 }
 
