@@ -83,6 +83,7 @@ fn main() {
 					placeholder: 'First name'
 					text: &app.first_name
 					//is_focused: &app.started
+					is_focused: true
 				)
 				ui.textbox(
 					max_len: 50

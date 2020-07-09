@@ -117,6 +117,8 @@ fn (mut ui UI) idle_loop() {
 	// there are no other user events.
 	for {
 		ui.show_cursor = !ui.show_cursor
+		ui.needs_refresh = true
+		ui.ticks = 0
 		//glfw.post_empty_event()
 
 		// Sleeping for a monolithic block of 500ms means, that the thread
