@@ -252,8 +252,8 @@ fn tb_key_up(mut t TextBox, e &KeyEvent, window &Window) {
 fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 	text := *t.text
 	if !t.is_focused {
-		// println('textbox.key_down on an unfocused textbox, this should never happen')
-		//return
+		//println('textbox.key_down on an unfocused textbox, this should never happen')
+		return
 	}
 	if t.on_key_down != voidptr(0) {
 		t.on_key_down(window.state, t, e.codepoint)
@@ -265,12 +265,17 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 		if t.max_len > 0 && text.len >= t.max_len {
 			return
 		}
+		if byte(e.codepoint) in [`\t`, 127] {
+			// Do not print the tab character, delete etc
+			return
+		}
 		s := utf32_to_str(e.codepoint)
 		// if (t.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 		if t.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((text.len > 0) && (t.cursor_pos > 0))))) {
 			return
 		}
 		t.insert(s)
+		//println('T "$s " $t.cursor_pos')
 		// t.text += s
 		// t.cursor_pos ++//= utf8_char_len(s[0])// s.le-112
 		return

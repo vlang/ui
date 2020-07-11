@@ -89,6 +89,9 @@ fn on_event(e &sapp.Event, mut window Window) {
 			//println('key down')
 			window_key_down(e, window.ui)
 		}
+		.char {
+			window_char(e, window.ui)
+		}
 		else {
 
 		}
@@ -324,7 +327,7 @@ fn window_key_down(event sapp.Event, ui &UI) {
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		codepoint: event.char_code
+		codepoint: 0//event.char_code
 		//code: code
 		//action: action
 		//mods: mod
@@ -358,15 +361,14 @@ fn window_key_down(event sapp.Event, ui &UI) {
 
 }
 
-fn window_char(glfw_wnd voidptr, codepoint u32) {
-	/*
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+//fn window_char(glfw_wnd voidptr, codepoint u32) {
+fn window_char(event sapp.Event, ui &UI) {
+	//println('keychar char=$event.char_code')
 	window := ui.window
 	e := KeyEvent{
-		codepoint: codepoint
+		codepoint: event.char_code
 	}
-	window.eventbus.publish(events.on_key_down, &window, e)
-	*/
+	window.eventbus.publish(events.on_key_down, window, e)
 	/* for child in window.children {
 		is_focused := child.is_focused()
 		if !is_focused {
