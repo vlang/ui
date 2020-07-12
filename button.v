@@ -37,6 +37,9 @@ pub struct ButtonConfig {
 
 [ref_only]
 pub struct Button {
+mut:
+	text_width int
+	text_height int
 pub mut:
 	state      ButtonState
 	height     int
@@ -57,9 +60,6 @@ fn (mut b Button) init(parent Layout) {
 	b.parent = parent
 	ui := parent.get_ui()
 	b.ui = ui
-	//TODO
-	b.width = if b.width == 0 { b.ui.gg.text_width(b.text) + button_horizontal_padding } else { b.width }
-	b.height = if b.height == 0 { b.ui.gg.text_height(b.text) + button_vertical_padding } else { b.height }
 	if b.use_icon {
 		texture := gg.create_image(b.icon_path)
 		b.texture = texture
@@ -119,10 +119,13 @@ fn (mut b Button) propose_size(w, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	// b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.Black)
-	text_width, text_height := b.ui.gg.text_size(b.text)
-	w2 := text_width /2
-	h2 := text_height /2
+	if b.text_width == 0 || b.text_height == 0 {
+		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
+		b.width = b.text_width + button_horizontal_padding
+		b.height = b.text_height + button_vertical_padding
+	}
+	w2 := b.text_width /2
+	h2 := b.text_height /2
 	bcenter_x := b.x + b.width/2
 	bcenter_y := b.y + b.height/2
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
@@ -131,7 +134,7 @@ fn (mut b Button) draw() {
 	mut y := bcenter_y-h2-1
 	//if b.ui.gg.scale == 2 {
 	$if macos { // TODO
-		y += 2
+		y -= 2
 	}
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
