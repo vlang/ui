@@ -31,6 +31,8 @@ type KeyDownFn fn(voidptr, voidptr, u32)
 
 type KeyUpFn fn(voidptr, voidptr, u32)
 
+type TextBoxChangeFn fn(string, voidptr)
+
 [ref_only]
 pub struct TextBox {
 pub mut:
@@ -61,6 +63,7 @@ pub mut:
 	sel_direction      SelectionDirection
 	border_accentuated bool
 	is_error &bool = voidptr(0)
+	on_change TextBoxChangeFn = TextBoxChangeFn(0)
 }
 
 /*
@@ -127,6 +130,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		borderless: c.borderless
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
+		on_change: c.on_change
 		border_accentuated: c.border_accentuated
 		ui: 0
 		text:c.text
@@ -287,6 +291,9 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 			return
 		}
 		t.insert(s)
+		if t.on_change != TextBoxChangeFn(0) {
+			t.on_change(*t.text, window.state)
+		}
 		//println('T "$s " $t.cursor_pos')
 		// t.text += s
 		// t.cursor_pos ++//= utf8_char_len(s[0])// s.le-112
@@ -301,7 +308,7 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 				if t.cursor_pos == 0 {
 					return
 				}
-				//u := text.ustring()
+				u := text.ustring()
 				// Delete the entire selection
 				if t.sel_start < t.sel_end {
 					unsafe {
@@ -330,12 +337,15 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 				else {
 					// Delete just one character
 					unsafe {
-					//*t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
+					*t.text = u.left(t.cursor_pos - 1) + u.right(t.cursor_pos)
 					}
 					t.cursor_pos--
 				}
 				// u.free() // TODO remove
 				// t.text = t.text[..t.cursor_pos - 1] + t.text[t.cursor_pos..]
+			}
+			if t.on_change != TextBoxChangeFn(0) {
+				//t.on_change(*t.text, window.state)
 			}
 		}
 		.delete {
@@ -349,6 +359,9 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 			}
 			// t.text = t.text[..t.cursor_pos] + t.text[t.cursor_pos + 1..]
 			// u.free() // TODO remove
+			if t.on_change != TextBoxChangeFn(0) {
+				//t.on_change(*t.text, window.state)
+			}
 		}
 		.left {
 			if t.sel(e.mods, e.key) {
@@ -588,12 +601,10 @@ pub fn (mut t TextBox) set_text(s string) {
 	//t.update()
 }
 
-pub fn (mut t TextBox) on_change(func voidptr) {
-	//t.text = t.text
-}
+//pub fn (mut t TextBox) on_change(func voidptr) {
+//}
 
 pub fn (mut t TextBox) on_return(func voidptr) {
-	//t.text = t.text
 }
 
 pub fn (mut t TextBox) insert(s string) {

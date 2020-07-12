@@ -136,7 +136,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		//init_fn:
 		//keydown_fn: window_key_down
 		//char_fn: window_char
-		bg_color: gx.rgb(230,230,230)
+		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 
 	})
@@ -429,7 +429,7 @@ pub fn (w &Window) always_on_top(val bool) {
 	//w.glfw_obj.window_hint(
 }
 
-// TODO remove this
+// TODO remove this once interfaces are smarter
 fn foo(w Widget) {}
 
 fn foo2(l Layout) {}
