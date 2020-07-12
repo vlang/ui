@@ -31,6 +31,7 @@ mut:
 	country    &ui.Radio
 	txt_pos    int
 	started    bool
+	is_error bool
 }
 
 fn main() {
@@ -83,6 +84,7 @@ fn main() {
 					placeholder: 'First name'
 					text: &app.first_name
 					//is_focused: &app.started
+					is_error: &app.is_error
 					is_focused: true
 				)
 				ui.textbox(
@@ -90,6 +92,7 @@ fn main() {
 					width: 200
 					placeholder: 'Last name'
 					text: &app.last_name
+					is_error: &app.is_error
 				)
 				ui.textbox(
 					max_len: 3
@@ -97,6 +100,7 @@ fn main() {
 					placeholder: 'Age'
 					is_numeric: true
 					text: &app.age
+					is_error: &app.is_error
 				)
 				ui.textbox(
 					width: 200
@@ -181,7 +185,8 @@ fn btn_add_click(mut app State, x voidptr) {
 	if app.users.len >= 10 {
 		return
 	}
-	if app.first_name == '' ||  app.last_name == '' {
+	if app.first_name == '' ||  app.last_name == '' || app.age == '' {
+		app.is_error = true
 		return
 	}
 	new_user := User{

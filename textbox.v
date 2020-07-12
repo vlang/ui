@@ -60,6 +60,7 @@ pub mut:
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
+	is_error &bool = voidptr(0)
 }
 
 /*
@@ -85,7 +86,9 @@ pub struct TextBoxConfig {
 	read_only          bool
 	is_multi           bool
 	text               &string = voidptr(0)
+	is_error &bool = voidptr(0)
 	is_focused         bool
+	//is_error bool
 	borderless         bool
 	on_key_down        KeyDownFn
 	on_key_up          KeyUpFn
@@ -128,6 +131,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		ui: 0
 		text:c.text
 		is_focused: c.is_focused
+		is_error: c.is_error
 	}
 	if c.text == 0 {
 		panic('textbox.text binding is not set')
@@ -135,9 +139,12 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	return tb
 }
 
-fn draw_inner_border(border_accentuated bool, gg &gg.Context, x, y, width, height int) {
+//fn (t &TextBox) draw_inner_border() {
+fn draw_inner_border(border_accentuated bool, gg &gg.Context, x, y, width, height int, is_error bool) {
 	if !border_accentuated {
-		gg.draw_empty_rect(x, y, width, height, text_border_color)
+		color := if is_error { gx.rgb(255,0,0) } else { text_border_color }
+		gg.draw_empty_rect(x, y, width, height, color)
+		//gg.draw_empty_rect(t.x, t.y, t.width, t.height, color) //text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
 		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, text_inner_border_color) // inner lighter border
 	}
@@ -164,7 +171,7 @@ fn (mut t TextBox) draw() {
 	text:=*(t.text)
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
 	if !t.borderless {
-		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height)
+		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height, t.is_error != 0 && *t.is_error)
 	}
 	width := if text.len == 0 { 0 } else { t.ui.gg.text_width(text) }
 	text_y := t.y + 4 // TODO off by 1px
@@ -254,6 +261,11 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 	if !t.is_focused {
 		//println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
+	}
+	if t.is_error != voidptr(0) {
+		unsafe {
+			*t.is_error = false
+		}
 	}
 	if t.on_key_down != voidptr(0) {
 		t.on_key_down(window.state, t, e.codepoint)
