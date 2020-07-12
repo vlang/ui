@@ -83,12 +83,17 @@ pub interface Layout {
 }
 pub fn ilayout(x Layout) Layout { return x }
 
+pub enum MouseAction {
+	up
+	down
+}
+
 pub struct MouseEvent {
 pub:
 	x      int
 	y      int
 	button int
-	action int
+	action MouseAction
 	mods   int
 }
 

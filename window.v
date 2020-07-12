@@ -1,10 +1,8 @@
 // Copyright (c) 2020 Alexander Medvednikov. All rights reserved.
-// Use of this source code is governed by a GPL license
-// that can be found in the LICENSE file.
+// Use of this source code is governed by a GPL license that can be found in the LICENSE file.
 module ui
 
 import gx
-//import oldgg as gg
 import gg
 import clipboard
 import eventbus
@@ -81,7 +79,7 @@ fn on_event(e &sapp.Event, mut window Window) {
 	window.ui.ticks = 0
 	//window.ui.ticks_since_refresh = 0
 	match e.typ {
-		.mouse_up {
+		.mouse_up, .mouse_down{
 			//println('click')
 			window_click(e, window.ui)
 		}
@@ -104,13 +102,14 @@ fn on_event(e &sapp.Event, mut window Window) {
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
+	/*
 	println('window()')
 	defer {
 		println('end of window()')
 	}
+	*/
 	mut window := &Window{
 		state: cfg.state
-		//glfw_obj: ui_ctx.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
@@ -144,20 +143,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	//wsize := gcontext.window.get_window_size()
 	//fsize := gcontext.window.get_framebuffer_size()
 	//scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
-	/*
-	ft := freetype.new_context({
-			width: cfg.width
-			height: cfg.height
-			use_ortho: true
-			font_size: default_font_size
-			scale: scale
-			window_user_ptr: 0
-			font_path: fpath
-		})
-	*/
 	mut ui_ctx := &UI{
 		gg: gcontext
-		//ft: ft
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_icos()
@@ -297,6 +284,7 @@ fn window_click(event sapp.Event, ui &UI) {
 		//button: button
 		//action: action
 		//mods: mods
+		action:  if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 	}
