@@ -1,15 +1,18 @@
-import os
-
-examples_dir := os.resource_abs_path('.') + '/'
-files := os.ls(examples_dir) or { return }
+examples_dir := resource_abs_path('.')
+files := ls(examples_dir) or { return }
+mut err := 0
 for file in files {
 	if !file.ends_with('.v') {
 		continue
 	}
 	println(file)
-	ret := os.system('v -w ${examples_dir + file}')
+	ret := system('v -w $examples_dir/$file')
 	if ret != 0 {
-		println('failed')
-		exit(1)
+		err++
 	}
+}
+if err > 0 {
+	err_count := if err == 1 { '1 error' } else { '$err errors' }
+	println('\nFailed with ${err_count}.')
+	exit(1)
 }
