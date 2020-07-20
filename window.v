@@ -13,7 +13,7 @@ const (
 	default_font_size = 13
 )
 
-pub type DrawFn fn(voidptr)
+pub type DrawFn fn(ctx &gg.Context, state voidptr)
 
 pub type ClickFn fn(e MouseEvent, func voidptr)
 pub type KeyFn fn(e KeyEvent, func voidptr)
@@ -45,6 +45,7 @@ pub mut:
 	click_fn      ClickFn
 	scroll_fn     ScrollFn
 	key_down_fn     KeyFn
+	char_fn     KeyFn
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 }
@@ -63,6 +64,7 @@ pub:
 	on_key_down KeyFn
 	on_scroll ScrollFn
 	children []Widget
+	font_path string
 //pub mut:
 	//parent_window &Window
 }
@@ -84,10 +86,11 @@ fn on_event(e &sapp.Event, mut window Window) {
 			window_click(e, window.ui)
 		}
 		.key_down {
-			//println('key down')
+			println('key down')
 			window_key_down(e, window.ui)
 		}
 		.char {
+			println('char')
 			window_char(e, window.ui)
 		}
 		else {
@@ -132,7 +135,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		frame_fn:  frame
 		event_fn: on_event
 		user_data: window
-		font_path: system_font_path()
+		font_path: if cfg.font_path == '' {  system_font_path() } else { cfg.font_path }
 		//init_fn:
 		//keydown_fn: window_key_down
 		//char_fn: window_char
@@ -328,7 +331,7 @@ fn window_key_down(event sapp.Event, ui &UI) {
 		window.child_window = 0
 	}
 	if window.key_down_fn != voidptr(0) {
-		window.key_down_fn(e, window)
+		window.key_down_fn(e, window.state)
 	}
 	// TODO
 	if true { //action == 2 || action == 1 {
@@ -355,6 +358,9 @@ fn window_char(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
+	}
+	if window.key_down_fn != voidptr(0) {
+		window.key_down_fn(e, window.state)
 	}
 	window.eventbus.publish(events.on_key_down, window, e)
 	/* for child in window.children {

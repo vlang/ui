@@ -16,12 +16,18 @@ const (
 	version = '0.0.4'
 )
 
+const (
+	cursor_show_delay = 100 // ms
+)
+
 pub struct UI {
 pub mut:
 	gg                   &gg.Context = voidptr(0)
 mut:
 	window               &Window = voidptr(0)
 	show_cursor          bool
+	//just_typed           bool
+	last_type_time          i64
 	cb_image             u32
 	//circle_image         u32
 	radio_image          u32
@@ -121,7 +127,12 @@ fn (mut ui UI) idle_loop() {
 	// the cursor will blink at a rate of 1Hz, even if
 	// there are no other user events.
 	for {
-		ui.show_cursor = !ui.show_cursor
+		if time.ticks() - ui.last_type_time < cursor_show_delay {
+			// Always show the cursor if the user is typing right now
+			ui.show_cursor = true
+		} else {
+			ui.show_cursor = !ui.show_cursor
+		}
 		ui.needs_refresh = true
 		ui.ticks = 0
 		//glfw.post_empty_event()

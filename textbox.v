@@ -6,6 +6,7 @@ module ui
 import gx
 import gg
 import strings
+import time
 
 enum SelectionDirection {
 	nil = 0
@@ -64,6 +65,8 @@ pub mut:
 	border_accentuated bool
 	is_error &bool = voidptr(0)
 	on_change TextBoxChangeFn = TextBoxChangeFn(0)
+mut:
+	is_typing bool
 }
 
 /*
@@ -178,7 +181,7 @@ fn (mut t TextBox) draw() {
 		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height, t.is_error != 0 && *t.is_error)
 	}
 	width := if text.len == 0 { 0 } else { t.ui.gg.text_width(text) }
-	text_y := t.y + 4 // TODO off by 1px
+	text_y := t.y + 2 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && t.placeholder != '' {
@@ -229,7 +232,8 @@ fn (mut t TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if t.is_focused && !t.read_only && t.ui.show_cursor && t.sel_start == 0 && t.sel_end == 0 {
+	if t.is_focused && !t.read_only && t.ui.show_cursor && t.sel_start == 0 &&
+		t.sel_end == 0 {
 		// no cursor in sel mode
 		mut cursor_x := t.x + textbox_padding
 		if t.is_password {
@@ -271,9 +275,11 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 			*t.is_error = false
 		}
 	}
+	t.is_typing = true
 	if t.on_key_down != voidptr(0) {
 		t.on_key_down(window.state, t, e.codepoint)
 	}
+	t.ui.last_type_time = time.ticks() // TODO perf?
 	if e.codepoint != 0 {
 		if t.read_only {
 			return
@@ -312,7 +318,7 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 				// Delete the entire selection
 				if t.sel_start < t.sel_end {
 					unsafe {
-					//*t.text = u.left(t.sel_start) + u.right(t.sel_end)
+						*t.text = u.left(t.sel_start) + u.right(t.sel_end)
 					}
 					t.cursor_pos = t.sel_start
 					t.sel_start = 0
@@ -411,7 +417,7 @@ fn tb_key_down(mut t TextBox, e &KeyEvent, window &Window) {
 				return
 			} */
 
-			// println('TAB $t.idx')
+			//println('TAB $t.id')
 			/* if e.mods == .shift {
 				t.parent.focus_previous()
 			}

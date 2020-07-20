@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-pub type DrawFn fn(voidptr)
+import gg
 
 pub struct Canvas {
 mut:
@@ -13,7 +13,7 @@ mut:
 	y		int
 	parent Layout
 	draw_fn DrawFn = voidptr(0)
-
+	gg &gg.Context
 }
 
 pub struct CanvasConfig {
@@ -25,6 +25,7 @@ pub struct CanvasConfig {
 
 fn (mut c Canvas)init(parent Layout) {
 	c.parent = parent
+	c.gg = parent.get_ui().gg
 }
 
 pub fn canvas(c CanvasConfig) &Canvas {
@@ -55,11 +56,11 @@ fn (mut b Canvas) propose_size(w, h int) (int, int) {
 	return b.width, b.height
 }
 
-fn (mut c Canvas) draw() {
+fn (c &Canvas) draw() {
 	parent := c.parent
 	state := parent.get_state()
 	if c.draw_fn != voidptr(0) {
-		c.draw_fn(state)
+		c.draw_fn(c.gg, state)
 	}
 }
 
