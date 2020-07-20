@@ -1,4 +1,5 @@
 import ui
+import gg
 import gx
 import os
 
@@ -206,8 +207,7 @@ fn btn_add_click(mut app State, x voidptr) {
 	//ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(app &State) {
-	gg := app.window.ui.gg
+fn canvas_draw(gg &gg.Context, app &State) {
 	x := 240
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
