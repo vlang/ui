@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install --quiet -y libglfw3 libglfw3-dev libfreetype6-dev
+        sudo apt-get install --quiet -y libglfw3-dev libfreetype6-dev
     - name: Build V
       run: |
         make
@@ -49,7 +49,7 @@ jobs:
         path: vlib/ui
     - name: Install dependencies
       run: |
-        brew install freetype glfw
+        brew install freetype
     - name: Build V
       run: |
         make
@@ -74,7 +74,7 @@ jobs:
         path: vlib/ui
     - name: Build V
       run: |
-        .\make.bat -msvc -skip-path
+        .\make.bat -msvc
     - name: Install dependencies
       run: |
         .\v.exe setup-freetype
