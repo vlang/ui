@@ -13,7 +13,7 @@ mut:
 	y		int
 	parent Layout
 	draw_fn DrawFn = voidptr(0)
-	gg &gg.Context
+	gg &gg.Context = 0
 }
 
 pub struct CanvasConfig {
