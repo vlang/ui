@@ -313,7 +313,7 @@ fn window_click(event sapp.Event, ui &UI) {
 
 fn window_key_down(event sapp.Event, ui &UI) {
 	//println('keydown char=$event.char_code')
-	window := ui.window
+	mut window := ui.window
 	// C.printf('g child=%p\n', child)
 	e := KeyEvent{
 		key: Key(event.key_code)
@@ -473,7 +473,7 @@ fn bar2() {
 
 fn (w &Window) draw() {}
 
-fn frame(w &Window) {
+fn frame(mut w &Window) {
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
 		w.ui.ticks++
