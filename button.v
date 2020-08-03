@@ -52,7 +52,7 @@ pub mut:
 	onclick    ButtonClickFn
 	text       string
 	icon_path  string
-	texture    u32
+	image      gg.Image
 	use_icon   bool
 }
 
@@ -61,8 +61,8 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		texture := gg.create_image(b.icon_path)
-		b.texture = texture
+		img := gg.create_image2(b.icon_path)
+		b.image = img
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -137,7 +137,7 @@ fn (mut b Button) draw() {
 		y -= 2
 	}
 	if b.use_icon {
-		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
+		b.ui.gg.draw_image2(b.x, b.y, b.width, b.height, b.image)
 	}
 	else {
 		b.ui.gg.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)
