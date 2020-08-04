@@ -40,7 +40,7 @@ fn (mut pic Picture) init(parent Layout) {
 	if !pic.use_cache && pic.path in ui.resource_cache {
 		pic.image = ui.resource_cache[pic.path]
 	} else {
-		img := gg.create_image2(pic.path)
+		img := gg.create_image(pic.path)
 		pic.image = img
 		ui.resource_cache[pic.path] = img
 	}
@@ -89,7 +89,7 @@ fn (mut b Picture) propose_size(w, h int) (int, int) {
 }
 
 fn (mut b Picture) draw() {
-	b.ui.gg.draw_image2(b.x, b.y, b.width, b.height, b.image)
+	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 }
 
 fn (t &Picture) focus() {

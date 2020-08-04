@@ -26,13 +26,13 @@ pub mut:
 mut:
 	window               &Window = voidptr(0)
 	show_cursor          bool
-	//just_typed           bool
-	last_type_time          i64
-	cb_image             u32
-	//circle_image         u32
-	radio_image          u32
-	selected_radio_image u32
-	down_arrow           u32
+	//just_typed         bool
+	last_type_time       i64
+	cb_image             gg.Image
+	//circle_image       gg.Image
+	radio_image          gg.Image
+	selected_radio_image gg.Image
+	down_arrow           gg.Image
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
 	resource_cache       map[string]gg.Image

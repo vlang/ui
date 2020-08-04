@@ -61,7 +61,7 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		img := gg.create_image2(b.icon_path)
+		img := gg.create_image(b.icon_path)
 		b.image = img
 	}
 	mut subscriber := parent.get_subscriber()
@@ -137,7 +137,7 @@ fn (mut b Button) draw() {
 		y -= 2
 	}
 	if b.use_icon {
-		b.ui.gg.draw_image2(b.x, b.y, b.width, b.height, b.image)
+		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	}
 	else {
 		b.ui.gg.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)

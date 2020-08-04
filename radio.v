@@ -19,7 +19,7 @@ pub struct Radio {
 pub mut:
 	selected_index int
 	values         []string
-	// state      RadioState
+	// state       RadioState
 	title          string
 	height         int
 	width          int
@@ -30,7 +30,7 @@ pub mut:
 	is_checked     bool
 	ui             &UI
 	//selected_value string
-	// onclick    RadioClickFn
+	// onclick     RadioClickFn
 }
 
 pub struct RadioConfig {
