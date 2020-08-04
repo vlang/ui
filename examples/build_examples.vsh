@@ -1,18 +1,17 @@
 examples_dir := resource_abs_path('.')
-files := ls(examples_dir) or { return }
+chdir(examples_dir)
+files := ls('.') or { return }
+v_files := files.filter(it.ends_with('.v'))
 mut err := 0
-for file in files {
-	if !file.ends_with('.v') {
-		continue
-	}
+for file in v_files {
 	println(file)
-	ret := system('v -w $examples_dir/$file')
+	ret := system('v -w $file')
 	if ret != 0 {
 		err++
 	}
 }
 if err > 0 {
-	err_count := if err == 1 { '1 error' } else { '$err errors' }
-	println('\nFailed with ${err_count}.')
+	success := v_files.len - err
+	println('\nFailed with $err errors and $success successful')
 	exit(1)
 }
