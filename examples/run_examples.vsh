@@ -16,7 +16,7 @@ for exe in executables {
 	go launch_exe(exe, mut &ret, mut wg)
 }
 wg.wait()
-err := ret.filter(it != 0).len
+err := ret.filter(it != 124).len
 if err > 0 {
 	success := executables.len - err
 	println('\nFailed with $err errors and $success successful')
