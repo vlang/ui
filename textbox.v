@@ -50,6 +50,7 @@ pub mut:
 	max_len            int
 	is_multi           bool
 	placeholder        string
+	placeholder_bind &string = voidptr(0)
 	cursor_pos         int
 	is_numeric         bool
 	is_password        bool
@@ -86,6 +87,7 @@ pub struct TextBoxConfig {
 	max                int
 	val                int
 	placeholder        string
+	placeholder_bind &string = voidptr(0)
 	max_len            int
 	is_numeric         bool
 	is_password        bool
@@ -124,6 +126,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		// sel_start: 0
 
 		placeholder: c.placeholder
+		placeholder_bind: c.placeholder_bind
 		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
 
 		is_numeric: c.is_numeric
@@ -176,6 +179,10 @@ fn (mut b TextBox) propose_size(w, h int) (int,int) {
 
 fn (mut t TextBox) draw() {
 	text:=*(t.text)
+	mut placeholder := t.placeholder
+	if t.placeholder_bind != 0 {
+	placeholder=*(t.placeholder_bind)
+	}
 	t.ui.gg.draw_rect(t.x, t.y, t.width, t.height, gx.white)
 	if !t.borderless {
 		draw_inner_border(t.border_accentuated, t.ui.gg, t.x, t.y, t.width, t.height, t.is_error != 0 && *t.is_error)
@@ -184,8 +191,8 @@ fn (mut t TextBox) draw() {
 	text_y := t.y + 2 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
-	if text == '' && t.placeholder != '' {
-		t.ui.gg.draw_text(t.x + textbox_padding, text_y, t.placeholder, placeholder_cfg)
+	if text == '' && placeholder != '' {
+		t.ui.gg.draw_text(t.x + textbox_padding, text_y, placeholder, placeholder_cfg)
 	}
 	// Text
 	else {
