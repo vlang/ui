@@ -238,6 +238,9 @@ pub fn open_url(url string) {
 	$if macos {
 		os.exec('open "$url"')
 	}
+	$if linux {
+		os.exec('xdg-open "$url"')
+	}
 }
 
 pub fn confirm(s string) bool {
