@@ -93,6 +93,9 @@ fn on_event(e &sapp.Event, mut window Window) {
 			println('char')
 			window_char(e, window.ui)
 		}
+		.mouse_scroll {
+			window_scroll(e, window.ui)
+		}
 		else {
 
 		}
@@ -259,21 +262,19 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 	*/
 }
 
-fn window_scroll(glfw_wnd voidptr, xoff, yoff f64) {
-	//println('window scroll')
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
+*/
+fn window_scroll(event sapp.Event, ui &UI) {
 	window := ui.window
 	//println('title =$window.title')
 	e := ScrollEvent{
-		xoff: xoff
-		yoff: yoff
+		x: event.scroll_x
+		y: event.scroll_y
 	}
 	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)
 	}
 	window.eventbus.publish(events.on_scroll, window, e)
 }
-*/
 
 fn window_click(event sapp.Event, ui &UI) {
 //fn window_click(glfw_wnd voidptr, button, action, mods int) {
@@ -407,7 +408,10 @@ pub fn (w &Window) set_cursor(cursor Cursor) {
 
 pub fn (w &Window) close() {}
 
-pub fn (w &Window) refresh() {}
+pub fn (mut w Window) refresh() {
+	//println('Window.refresh()')
+	w.ui.needs_refresh = true
+}
 
 pub fn (w &Window) onmousedown(cb voidptr) {}
 
@@ -500,8 +504,35 @@ fn frame(mut w &Window) {
 	w.ui.needs_refresh = false
 }
 
+//fn C.sapp_macos_get_window() voidptr
+fn C.sapp_macos_set_title(charptr)
+
+//#define cls objc_getClass
+//#define sel sel_getUid
+#define objc_msg ((id (*)(id, SEL, ...))objc_msgSend)
+#define objc_cls_msg ((id (*)(Class, SEL, ...))objc_msgSend)
+
+
+fn C.objc_msg()
+fn C.objc_cls_msg()
+fn C.sel_getUid()
+fn C.objc_getClass()
+
+
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
+	$if macos {
+		/*
+		x := C.sapp_macos_get_window()
+		C.objc_msg(x, C.sel_getUid("setTitle:"), C.objc_cls_msg(C.objc_getClass("NSString"),
+			C.sel_getUid("stringWithUTF8String:"),"Pure C App"))
+
+
+		println('SETTING')
+		#[nsw setTitlee:"test string"];
+		*/
+		C.sapp_macos_set_title(title.str)
+	}
 	// TODO no set_title in Sokol
 	//w.glfw_obj.set_title(title)
 }

@@ -28,14 +28,14 @@ mut:
 	show_cursor          bool
 	//just_typed           bool
 	last_type_time          i64
-	cb_image             u32
+	cb_image             gg.Image
 	//circle_image         u32
-	radio_image          u32
-	selected_radio_image u32
-	down_arrow           u32
+	radio_image          gg.Image
+	selected_radio_image gg.Image
+	down_arrow           gg.Image
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
-	resource_cache       map[string]u32
+	resource_cache       map[string]gg.Image
 	closed               bool = false
 	needs_refresh bool = true
 	ticks int
@@ -105,8 +105,8 @@ pub:
 
 pub struct ScrollEvent {
 pub:
-	xoff f64
-	yoff f64
+	x f64
+	y f64
 }
 
 pub enum Cursor {
@@ -258,7 +258,12 @@ fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string
 }
 
 pub fn open_url(url string) {
-
+	if !url.starts_with('https://') && !url.starts_with('http://') {
+		return
+	}
+	$if macos {
+		os.exec('open "$url"')
+	}
 }
 
 pub fn confirm(s string) bool {

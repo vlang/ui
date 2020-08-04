@@ -20,7 +20,7 @@ mut:
 	height    int
 	path      string
 	ui        &UI
-	texture   u32
+	image     gg.Image
 	on_click  PictureClickFn
 	use_cache bool
 }
@@ -38,11 +38,10 @@ fn (mut pic Picture) init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	if !pic.use_cache && pic.path in ui.resource_cache {
-		pic.texture = ui.resource_cache[pic.path]
+		pic.image = ui.resource_cache[pic.path]
 	} else {
-		texture := gg.create_image(pic.path)
-		pic.texture = texture
-		ui.resource_cache[pic.path] = texture
+		pic.image = gg.create_image(pic.path)
+		ui.resource_cache[pic.path] = pic.image
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, pic_click, pic)
@@ -89,7 +88,7 @@ fn (mut b Picture) propose_size(w, h int) (int, int) {
 }
 
 fn (mut b Picture) draw() {
-	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.texture)
+	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 }
 
 fn (t &Picture) focus() {
