@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import stbi
 import time
 import gg
 import os
@@ -113,12 +112,6 @@ pub enum Cursor {
 	hand
 	arrow
 	ibeam
-}
-
-fn init() {
-	println('ui.init()')
-	//glfw.init_glfw()
-	stbi.set_flip_vertically_on_load(true)
 }
 
 fn (mut ui UI) idle_loop() {
