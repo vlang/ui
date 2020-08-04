@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import stbi
 import time
 import gg
 import os
@@ -115,12 +114,6 @@ pub enum Cursor {
 	ibeam
 }
 
-fn init() {
-	println('ui.init()')
-	//glfw.init_glfw()
-	stbi.set_flip_vertically_on_load(true)
-}
-
 fn (mut ui UI) idle_loop() {
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
@@ -226,35 +219,16 @@ fn system_font_path() string {
 }
 
 fn (mut ui UI) load_icos() {
-	// TODO figure out how to use load_from_memory
-	tmp := os.join_path(os.temp_dir() , 'v_ui') + os.path_separator
-	if !os.is_dir(tmp) {
-		os.mkdir(tmp) or {
-			panic(err)
-		}
-	}
-	ui.cb_image = gg.create_image(tmp_save_pic(tmp, 'check.png',   bytes_check_png,  bytes_check_png_len))
+	ui.cb_image = gg.create_image_from_memory(bytes_check_png,  bytes_check_png_len)
 	/*
 	$if macos {
-		ui.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_darwin_circle_png,
-			bytes_darwin_circle_png_len))
+		ui.circle_image = gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
 	} $else {
-		ui.circle_image = gg.create_image(tmp_save_pic(tmp, 'circle.png',  bytes_circle_png,
-			bytes_circle_png_len))
+		ui.circle_image = gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
 	}
 	*/
-	ui.down_arrow = gg.create_image(tmp_save_pic(tmp, 'arrow.png', bytes_arrow_png, bytes_arrow_png_len))
-	ui.selected_radio_image = gg.create_image(tmp_save_pic(tmp, 'selected_radio.png', bytes_selected_radio_png, bytes_selected_radio_png_len))
-}
-
-fn tmp_save_pic(tmp string, picname string, bytes byteptr, bytes_len int) string {
-	tmp_path := tmp + picname
-	mut f := os.create( tmp_path ) or {
-		panic(err)
-	}
-	f.write_bytes(bytes, bytes_len)
-	f.close()
-	return tmp_path
+	ui.down_arrow = gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
+	ui.selected_radio_image = gg.create_image_from_memory(bytes_selected_radio_png, bytes_selected_radio_png_len)
 }
 
 pub fn open_url(url string) {
@@ -263,6 +237,9 @@ pub fn open_url(url string) {
 	}
 	$if macos {
 		os.exec('open "$url"')
+	}
+	$if linux {
+		os.exec('xdg-open "$url"')
 	}
 }
 
