@@ -40,7 +40,7 @@ fn (mut pic Picture) init(parent Layout) {
 	if !pic.use_cache && pic.path in ui.resource_cache {
 		pic.image = ui.resource_cache[pic.path]
 	} else {
-		pic.image = gg.create_image(pic.path)
+		pic.image = pic.ui.gg.create_image(pic.path)
 		ui.resource_cache[pic.path] = pic.image
 	}
 	mut subscriber := parent.get_subscriber()

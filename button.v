@@ -61,7 +61,7 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		b.image = gg.create_image(b.icon_path)
+		b.image = b.ui.gg.create_image(b.icon_path)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, btn_click, b)
