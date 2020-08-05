@@ -107,6 +107,27 @@ fn on_event(e &sapp.Event, mut window Window) {
 	*/
 }
 
+fn gg_init(mut window Window) {
+	for _, child in window.children {
+		//if child is Stack {
+
+		//}
+		/*
+		match child {
+			Stack {
+				println('column')
+			}
+			TextBox {
+				println('textbox')
+			}
+			else{}
+		}
+		*/
+		child.init(window)
+	}
+
+}
+
 pub fn window(cfg WindowConfig, children []Widget) &Window {
 	/*
 	println('window()')
@@ -139,7 +160,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		event_fn: on_event
 		user_data: window
 		font_path: if cfg.font_path == '' {  system_font_path() } else { cfg.font_path }
-		//init_fn:
+		init_fn: gg_init
 		//keydown_fn: window_key_down
 		//char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
@@ -182,24 +203,6 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	*/
 	//q := int(window)
 	//println('created window $q.hex()')
-	for _, child in window.children {
-		//if child is Stack {
-
-		//}
-		/*
-		match child {
-			Stack {
-				println('column')
-			}
-			TextBox {
-				println('textbox')
-			}
-			else{}
-		}
-		*/
-		child.init(window)
-	}
-	// window.set_cursor()
 	return window
 }
 
