@@ -79,27 +79,7 @@ Documentation will be available soon. In the meantime use the examples as the do
 
 Binaries built with V UI will have no dependencies.
 
-To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source) and `freetype`.
-
-```markdown
-macOS:
-brew install freetype
-
-Debian/Ubuntu:
-sudo apt install libfreetype6-dev
-
-Arch/Manjaro:
-sudo pacman -S freetype2
-
-Fedora:
-sudo dnf install freetype-devel
-
-ClearLinux:
-sudo swupd bundle-add devpkg-libX11 devpkg-mesa devpkg-freetype
-
-Windows:
-v setup-freetype
-```
+To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source). This takes a couple of seconds.
 
 ### License
 
