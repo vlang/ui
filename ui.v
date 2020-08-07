@@ -202,7 +202,8 @@ fn system_font_path() string {
 	mut fonts := ['Ubuntu-R.ttf', 'Arial.ttf', 'LiberationSans-Regular.ttf', 'NotoSans-Regular.ttf',
 	'FreeSans.ttf', 'DejaVuSans.ttf']
 	$if macos {
-		fonts = ['SFNS.ttf', 'SFNSText.ttf']
+		return '/System/Library/Fonts/SFNS.ttf'
+		//fonts = ['SFNS.ttf', 'SFNSText.ttf']
 	}
 	s := os.exec('fc-list') or { panic('failed to fetch system fonts') }
 	system_fonts := s.output.split('\n')
