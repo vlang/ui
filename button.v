@@ -13,7 +13,6 @@ const (
 	btn_text_cfg = gx.TextCfg{
 		// color: gx.white
 		color: gx.rgb(38, 38, 38)
-		size: gg.default_font_size
 		align: gx.align_left
 	}
 	button_horizontal_padding = 26
@@ -119,7 +118,7 @@ fn (mut b Button) propose_size(w, h int) (int, int) {
 
 fn (mut b Button) draw() {
 	if b.text_width == 0 || b.text_height == 0 {
-		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
+		b.text_width, b.text_height = b.ui.gg.text_size(b.text, btn_text_cfg)
 		b.width = b.text_width + button_horizontal_padding
 		b.height = b.text_height + button_vertical_padding
 	}
