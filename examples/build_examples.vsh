@@ -5,6 +5,11 @@ for file in files {
 	if !file.ends_with('.v') {
 		continue
 	}
+	if file == 'webview.v' {
+		$if !macos {
+			continue
+		}
+	}
 	println(file)
 	ret := system('v -w $examples_dir/$file')
 	if ret != 0 {
