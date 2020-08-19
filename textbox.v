@@ -17,7 +17,6 @@ enum SelectionDirection {
 const (
 	placeholder_cfg = gx.TextCfg{
 		color: gx.gray
-		size: gg.default_font_size
 		align: gx.align_left
 	}
 	text_border_color = gx.rgb(177, 177, 177)

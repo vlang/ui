@@ -87,7 +87,6 @@ fn (mut r Rectangle) draw() {
 	}
 	text_cfg := gx.TextCfg{
 		color: gx.red
-		size: gg.default_font_size
 		align: gx.align_left
 		max_width: r.x + r.width
 	}
