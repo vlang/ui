@@ -52,9 +52,9 @@ fn main() {
 }
 
 fn on_hor_value_changed(mut app App, slider &ui.Slider) {
-	app.vert_slider.val = app.hor_slider.val
+	app.hor_slider.val = app.hor_slider.val
 }
 
 fn on_vert_value_changed(mut app App, slider &ui.Slider) {
-	app.hor_slider.val = app.vert_slider.val
+	app.vert_slider.val = app.vert_slider.val
 }
