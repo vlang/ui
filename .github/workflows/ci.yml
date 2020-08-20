@@ -55,6 +55,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
+        v -prod users.v
 
   windows-msvc:
     runs-on: windows-latest
@@ -79,5 +80,6 @@ jobs:
         $env:path += ";$(get-location)"
         cd .\vlib\ui\examples\
         & v run .\build_examples.vsh
+        v -prod users.v
         echo "=========================="
         echo "v -showcc .\users.v"
