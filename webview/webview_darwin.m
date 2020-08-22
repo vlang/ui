@@ -37,6 +37,7 @@ WKWebView *new_darwin_web_view(string url, string title) {
                          // MyBrowser* webView = [[MyBrowser alloc]
                          // initWithFrame:frame //ns->view.frame
                          configuration:config];
+webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
 
   //[webView retain];
   // Create a new window

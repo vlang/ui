@@ -20,7 +20,7 @@ pub type KeyFn fn(e KeyEvent, func voidptr)
 
 pub type ScrollFn fn(e ScrollEvent, func voidptr)
 
-pub type MouseMoveFn fn(e MouseEvent, func voidptr)
+pub type MouseMoveFn fn(e MouseMoveEvent, func voidptr)
 
 [ref_only]
 pub struct Window {
@@ -37,12 +37,14 @@ pub mut:
 	state      voidptr
 	draw_fn       DrawFn
 	title         string
-	mx            int
-	my            int
+	mx            f64
+	my            f64
 	width         int
 	height        int
 	bg_color      gx.Color
 	click_fn      ClickFn
+	mouse_down_fn      ClickFn
+	mouse_up_fn      ClickFn
 	scroll_fn     ScrollFn
 	key_down_fn     KeyFn
 	char_fn     KeyFn
@@ -61,8 +63,11 @@ pub:
 	draw_fn       DrawFn
 	bg_color      gx.Color=default_window_color
 	on_click ClickFn
+	on_mouse_down ClickFn
+	on_mouse_up      ClickFn
 	on_key_down KeyFn
 	on_scroll ScrollFn
+	on_mouse_move MouseMoveFn
 	children []Widget
 	font_path string
 //pub mut:
@@ -81,10 +86,14 @@ fn on_event(e &sapp.Event, mut window Window) {
 	window.ui.ticks = 0
 	//window.ui.ticks_since_refresh = 0
 	match e.typ {
-		.mouse_up, .mouse_down{
+		.mouse_up {
 			//println('click')
+			window_mouse_up(e, window.ui)
 			window_click(e, window.ui)
 		}
+		 .mouse_down{
+			window_mouse_down(e, window.ui)
+		 	}
 		.key_down {
 			println('key down')
 			window_key_down(e, window.ui)
@@ -95,6 +104,10 @@ fn on_event(e &sapp.Event, mut window Window) {
 		}
 		.mouse_scroll {
 			window_scroll(e, window.ui)
+		}
+		.mouse_move {
+			window_mouse_move(e, window.ui)
+
 		}
 		else {
 
@@ -146,6 +159,9 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
 		scroll_fn: cfg.on_scroll
+		mouse_move_fn: cfg.on_mouse_move
+		mouse_down_fn: cfg.on_mouse_down
+		mouse_up_fn: cfg.on_mouse_up
 	}
 
 	gcontext := gg.new_context({
@@ -266,6 +282,19 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 }
 
 */
+
+fn window_mouse_move(event sapp.Event, ui &UI) {
+	window := ui.window
+	e := MouseMoveEvent{
+		x: event.mouse_x / ui.gg.scale
+		y: event.mouse_y / ui.gg.scale
+	}
+	if window.mouse_move_fn != voidptr(0) {
+		window.mouse_move_fn(e, window)
+	}
+	window.eventbus.publish(events.on_mouse_move, window, e)
+}
+
 fn window_scroll(event sapp.Event, ui &UI) {
 	window := ui.window
 	//println('title =$window.title')
@@ -279,18 +308,62 @@ fn window_scroll(event sapp.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_click(event sapp.Event, ui &UI) {
-//fn window_click(glfw_wnd voidptr, button, action, mods int) {
-	//if action != 0 {
-		//return
-	//}
-	//println('action=$action')
+fn window_mouse_down(event sapp.Event, ui &UI) {
 	window := ui.window
-	//x,y := event. glfw.get_cursor_pos(glfw_wnd)
 	e := MouseEvent{
-		//button: button
-		//action: action
-		//mods: mods
+		action: .down
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+	}
+	if window.mouse_down_fn != voidptr(0)  { //&& action == voidptr(0) {
+		window.mouse_down_fn(e, window)
+	}
+	/*
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
+		}
+	}
+	*/
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_mouse_down, window, e)
+	}
+}
+
+
+fn window_mouse_up(event sapp.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: .up
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+	}
+	if window.mouse_up_fn != voidptr(0)  { //&& action == voidptr(0) {
+		window.mouse_up_fn(e, window)
+	}
+	/*
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
+		}
+	}
+	*/
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_mouse_up, window, e)
+	}
+	}
+
+fn window_click(event sapp.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
 		action:  if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
@@ -493,10 +566,13 @@ fn frame(mut w &Window) {
 	//game.ft.flush()
 	w.ui.gg.begin()
 	//draw_scene()
+	if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for child in w.children {
 		child.draw()
 	}
+	}
+	else
 	//w.showfps()
 	if w.child_window != 0 {
 		for child in w.child_window.children {

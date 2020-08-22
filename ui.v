@@ -108,6 +108,12 @@ pub:
 	y f64
 }
 
+pub struct MouseMoveEvent{
+pub:
+	x f64
+	y f64
+}
+
 pub enum Cursor {
 	hand
 	arrow

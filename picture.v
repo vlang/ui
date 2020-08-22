@@ -32,31 +32,48 @@ pub struct PictureConfig {
 	on_click  PictureClickFn
 	use_cache bool = true
 	ref       &Picture = voidptr(0)
+	image gg.Image
 }
 
 fn (mut pic Picture) init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, pic_click, pic)
+	/*
+	if pic.image.width > 0 {
+		// .image was set by the user, skip path  TODO
+		ui.resource_cache[pic.path] = pic.image
+		return
+	}
+	*/
 	if !pic.use_cache && pic.path in ui.resource_cache {
 		pic.image = ui.resource_cache[pic.path]
 	} else {
 		pic.image = pic.ui.gg.create_image(pic.path)
 		ui.resource_cache[pic.path] = pic.image
 	}
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, pic_click, pic)
+	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
+	if pic.width == 0 || pic.height == 0 {
+		pic.width = pic.image.width
+		pic.height = pic.image.height
+	}
 }
 
 pub fn picture(c PictureConfig) &Picture {
 	if !os.exists(c.path) {
-		println('V UI: picture file "$c.path" not found')
+		eprintln('V UI: picture file "$c.path" not found')
 	}
+	//if c.width == 0 || c.height == 0 {
+		//eprintln('V UI: Picture.width/height is 0, it will not be displayed')
+	//}
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
 		path: c.path
 		use_cache: c.use_cache
 		on_click: c.on_click
+		image: c.image
 		ui: 0
 	}
 	return pic
