@@ -7,7 +7,10 @@ assignees: ''
 
 ---
 
-**V and UI versions:** 
+<!-- Please make sure to run `v up` and `v upgrade` before reporting any issues as it may have already been fixed. -->
+     
+**V version:**
+**UI version:**
 **OS:** 
 
 **What did you do?**
