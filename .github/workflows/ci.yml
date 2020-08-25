@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install --quiet -y libglfw3-dev
+        sudo apt-get install --quiet -y libglfw3-dev libxi-dev libxcursor-dev
     - name: Build V
       run: |
         make
