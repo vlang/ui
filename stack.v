@@ -35,32 +35,32 @@ mut:
 	margin 	MarginConfig
 }
 
-fn (mut b Stack) init(parent Layout) {
-	b.parent = parent
+fn (mut s Stack) init(parent Layout) {
+	s.parent = parent
 	ui := parent.get_ui()
 	w, h := parent.size()
-	b.ui = ui
+	s.ui = ui
 
-	if b.stretch {
-		b.height = h
-		b.width = w
+	if s.stretch {
+		s.height = h
+		s.width = w
 	} else {
-		if b.direction == .row {
-			b.width = w
+		if s.direction == .row {
+			s.width = w
 		} else {
-			b.height = h
+			s.height = h
 		}
 	}
-	b.height -= b.margin.top + b.margin.bottom
-	b.width -= b.margin.left + b.margin.right
-	b.set_pos(b.x, b.y)
-	for child in b.children {
-		child.init(b)
+	s.height -= s.margin.top + s.margin.bottom
+	s.width -= s.margin.left + s.margin.right
+	s.set_pos(s.x, s.y)
+	for child in s.children {
+		child.init(s)
 	}
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
-	mut b := &Stack{
+	mut s := &Stack{
 		height: c.height
 		width: c.width
 		vertical_alignment: c.vertical_alignment
@@ -72,107 +72,107 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		children: children
 		ui: 0
 	}
-	return b
+	return s
 }
 
-fn (mut b Stack) set_pos(x, y int) {
-	b.x = x + b.margin.left
-	b.y = y + b.margin.top
+fn (mut s Stack) set_pos(x, y int) {
+	s.x = x + s.margin.left
+	s.y = y + s.margin.top
 }
 
-fn (b &Stack) get_subscriber() &eventbus.Subscriber {
-	parent := b.parent
+fn (s &Stack) get_subscriber() &eventbus.Subscriber {
+	parent := s.parent
 	return parent.get_subscriber()
 }
 
-fn (mut b Stack) propose_size(w, h int) (int,int) {
-	if b.stretch {
-		b.width = w
-		b.height = h
+fn (mut s Stack) propose_size(w, h int) (int,int) {
+	if s.stretch {
+		s.width = w
+		s.height = h
 	}
-	return b.width, b.height
+	return s.width, s.height
 }
 
 fn (c &Stack) size() (int, int) {
 	return c.width, c.height
 }
 
-fn (mut b Stack) draw() {
-	mut per_child_size := b.get_height()
-	mut pos := b.get_y_axis()
+fn (mut s Stack) draw() {
+	mut per_child_size := s.get_height()
+	mut pos := s.get_y_axis()
 	mut size := 0
-	for child in b.children {
+	for child in s.children {
 		mut h := 0
 		mut w := 0
-		if b.direction == .row {
-			h, w = child.propose_size(per_child_size, b.height)
-			child.set_pos(pos, b.align(w))
+		if s.direction == .row {
+			h, w = child.propose_size(per_child_size, s.height)
+			child.set_pos(pos, s.align(w))
 		} else {
-			w, h = child.propose_size(b.width, per_child_size)
-			child.set_pos(b.align(w), pos)
+			w, h = child.propose_size(s.width, per_child_size)
+			child.set_pos(s.align(w), pos)
 		}
 		if w > size {size = w}
 		child.draw()
-		pos += h + b.spacing
-		per_child_size -= h + b.spacing
+		pos += h + s.spacing
+		per_child_size -= h + s.spacing
 	}
-	if b.stretch {return}
-	b.set_height(pos - b.get_y_axis())
-	s := b.get_width()
-	if s == 0 || s < size {
-		b.set_width(size)
+	if s.stretch {return}
+	s.set_height(pos - s.get_y_axis())
+	w := s.get_width()
+	if w == 0 || w < size {
+		s.set_width(size)
 	}
 }
-fn (b &Stack) align(size int) int {
-	align := if b.direction == .row { int(b.vertical_alignment) } else { int(b.horizontal_alignment) }
+fn (s &Stack) align(size int) int {
+	align := if s.direction == .row { int(s.vertical_alignment) } else { int(s.horizontal_alignment) }
 	match align {
 		0 {
-			return b.get_x_axis()
+			return s.get_x_axis()
 		}
 		1 {
-			return b.get_x_axis() + ((b.get_width() - size) / 2)
+			return s.get_x_axis() + ((s.get_width() - size) / 2)
 		}
 		2 {
-			return (b.get_x_axis() + b.get_width()) - size
+			return (s.get_x_axis() + s.get_width()) - size
 		}
-		else {return b.get_x_axis()}
+		else {return s.get_x_axis()}
 	}
 }
 
-fn (t &Stack) get_ui() &UI {
-	return t.ui
+fn (s &Stack) get_ui() &UI {
+	return s.ui
 }
 
-fn (t &Stack) unfocus_all() {
-	for child in t.children {
+fn (s &Stack) unfocus_all() {
+	for child in s.children {
 		child.unfocus()
 	}
 }
 
-fn (t &Stack) get_state() voidptr {
-	parent := t.parent
+fn (s &Stack) get_state() voidptr {
+	parent := s.parent
 	return parent.get_state()
 }
 
-fn (t &Stack) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (s &Stack) point_inside(x, y f64) bool {
+	return false // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
-fn (mut b Stack) focus() {
-	// b.is_focused = true
+fn (mut s Stack) focus() {
+	// s.is_focused = true
 	//println('')
 }
 
-fn (mut b Stack) unfocus() {
-	// b.is_focused = false
+fn (mut s Stack) unfocus() {
+	// s.is_focused = false
 	//println('')
 }
 
-fn (t &Stack) is_focused() bool {
-	return false // t.is_focused
+fn (s &Stack) is_focused() bool {
+	return false // s.is_focused
 }
 
-fn (t &Stack) resize(width, height int) {
+fn (s &Stack) resize(width, height int) {
 }
 
 /* Helpers to correctly get height, width, x, y for both row & column
@@ -183,23 +183,23 @@ fn (t &Stack) resize(width, height int) {
    X -> Y
    Y -> X
  */
-fn (b &Stack) get_height() int {
-	return if b.direction == .row {b.width} else {b.height}
+fn (s &Stack) get_height() int {
+	return if s.direction == .row {s.width} else {s.height}
 }
-fn (b &Stack) get_width() int {
-	return if b.direction == .row {b.height} else {b.width}
+fn (s &Stack) get_width() int {
+	return if s.direction == .row {s.height} else {s.width}
 }
-fn (b &Stack) get_y_axis() int {
-	return if b.direction == .row {b.x} else {b.y}
+fn (s &Stack) get_y_axis() int {
+	return if s.direction == .row {s.x} else {s.y}
 }
-fn (b &Stack) get_x_axis() int {
-	return if b.direction == .row {b.y} else {b.x}
+fn (s &Stack) get_x_axis() int {
+	return if s.direction == .row {s.y} else {s.x}
 }
-fn (mut b Stack) set_height(h int) int {
-	if b.direction == .row {b.width = h} else {b.height = h}
+fn (mut s Stack) set_height(h int) int {
+	if s.direction == .row {s.width = h} else {s.height = h}
 	return h
 }
-fn (mut b Stack) set_width(w int) int {
-	if b.direction == .row {b.height = w} else {b.width = w}
+fn (mut s Stack) set_width(w int) int {
+	if s.direction == .row {s.height = w} else {s.width = w}
 	return w
 }
