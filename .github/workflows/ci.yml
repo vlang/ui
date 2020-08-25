@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install --quiet -y libglfw3-dev
+        sudo apt-get install --quiet -y libglfw3-dev libxi-dev libxcursor-dev
     - name: Build V
       run: |
         make
@@ -34,6 +34,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
+        echo 'Build users.v with -prod'
         v -prod users.v
 
   macos:
@@ -55,6 +56,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
+        echo 'Build users.v with -prod'
         v -prod users.v
 
   windows-msvc:
@@ -80,6 +82,7 @@ jobs:
         $env:path += ";$(get-location)"
         cd .\vlib\ui\examples\
         & v run .\build_examples.vsh
+        echo 'Build users.v with -prod'
         v -prod users.v
         echo "=========================="
         echo "v -showcc .\users.v"
