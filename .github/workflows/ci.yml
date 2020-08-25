@@ -34,7 +34,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
-        echo '\nBuild users.v with -prod'
+        echo 'Build users.v with -prod'
         v -prod users.v
 
   macos:
@@ -56,7 +56,7 @@ jobs:
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
-        echo '\nBuild users.v with -prod'
+        echo 'Build users.v with -prod'
         v -prod users.v
 
   windows-msvc:
@@ -82,7 +82,7 @@ jobs:
         $env:path += ";$(get-location)"
         cd .\vlib\ui\examples\
         & v run .\build_examples.vsh
-        echo '\nBuild users.v with -prod'
+        echo 'Build users.v with -prod'
         v -prod users.v
         echo "=========================="
         echo "v -showcc .\users.v"
