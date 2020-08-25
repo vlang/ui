@@ -31,7 +31,6 @@ pub mut:
     y          int
     width  int
     height int
-    children []Widget
 }
 
 fn (mut r Group)init(parent Layout) {
@@ -59,14 +58,14 @@ fn (mut r Group)init(parent Layout) {
     }
 }
 
-pub fn group(c GroupConfig) &Group {
+pub fn group(c GroupConfig, children []Widget) &Group {
     mut cb := &Group{
         title: c.title
         x: c.x
         y:c.y
         width: c.width
         height: c.height
-        children: c.children
+        children: children
 		ui: 0
     }
     return cb
