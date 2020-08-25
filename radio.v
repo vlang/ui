@@ -61,7 +61,7 @@ fn (mut r Radio)init(parent Layout) {
 }
 
 pub fn radio(c RadioConfig) &Radio {
-	mut cb := &Radio{
+	mut r := &Radio{
 		height: 20
 		values: c.values
 		title: c.title
@@ -72,51 +72,51 @@ pub fn radio(c RadioConfig) &Radio {
 	/*
 	if c.ref != 0 {
 		mut ref := c.ref
-		*ref = *cb
+		*ref = *r
 		return &ref
 	}
 	*/
-	return cb
+	return r
 
 }
 
-fn (mut b Radio) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut r Radio) set_pos(x, y int) {
+	r.x = x
+	r.y = y
 }
 
-fn (mut b Radio) size() (int, int) {
-	return b.width, b.height
+fn (mut r Radio) size() (int, int) {
+	return r.width, r.height
 }
 
-fn (mut cb Radio) propose_size(w, h int) (int, int) {
-	//b.width = w
-	//b.height = 20//default_font_size
-	return cb.width, cb.values.len * (cb.height + 5)
+fn (mut r Radio) propose_size(w, h int) (int, int) {
+	//r.width = w
+	//r.height = 20//default_font_size
+	return r.width, r.values.len * (r.height + 5)
 }
 
-fn (mut b Radio) draw() {
+fn (mut r Radio) draw() {
 	// Border
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.values.len * (b.height + 5), gx.gray)
+	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
 	// Title
-	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.gg.text_width(b.title) + 5, 10, default_window_color)
-	b.ui.gg.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
+	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5, 10, default_window_color)
+	r.ui.gg.draw_text_def(r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
-	for i, val in b.values {
-		y := b.y + b.height * i + 15
-		x := b.x + 5
-		b.ui.gg.draw_image(x, y-1, 16, 16, b.ui.selected_radio_image)
-		if i != b.selected_index {
-			b.ui.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
-			//b.ui.gg.draw_image(x, y-3, 16, 16, b.ui.circle_image)
+	for i, val in r.values {
+		y := r.y + r.height * i + 15
+		x := r.x + 5
+		r.ui.gg.draw_image(x, y-1, 16, 16, r.ui.selected_radio_image)
+		if i != r.selected_index {
+			r.ui.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
+			//r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		b.ui.gg.draw_text(b.x + check_mark_size + 10, y, val, btn_text_cfg)
+		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, btn_text_cfg)
 	}
 }
 
-fn (t &Radio) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + (t.height + 5) * t.values.len
+fn (r &Radio) point_inside(x, y f64) bool {
+	return x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + (r.height + 5) * r.values.len
 }
 
 fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
@@ -132,18 +132,18 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 	//println(r.selected_index)
 }
 
-fn (mut b Radio) focus() {
-	b.is_focused = true
+fn (mut r Radio) focus() {
+	r.is_focused = true
 }
 
-fn (mut b Radio) unfocus() {
-	b.is_focused = false
+fn (mut r Radio) unfocus() {
+	r.is_focused = false
 }
 
 pub fn (r &Radio) selected_value() string {
 	return r.values[r.selected_index]
 }
 
-fn (t &Radio) is_focused() bool {
-	return t.is_focused
+fn (r &Radio) is_focused() bool {
+	return r.is_focused
 }

@@ -273,52 +273,52 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window ) {
     }
 }
 
-fn (mut list ListBox) set_pos(x, y int) {
-    list.x = x
-    list.y = y
+fn (mut lb ListBox) set_pos(x, y int) {
+    lb.x = x
+    lb.y = y
 }
 
-fn (mut list ListBox) focus() {
-    list.focused = true
+fn (mut lb ListBox) focus() {
+    lb.focused = true
 }
 
-fn (mut list ListBox) unfocus() {
-    list.focused = false
+fn (mut lb ListBox) unfocus() {
+    lb.focused = false
 }
 
-fn (list &ListBox) is_focused() bool {
-    return list.focused
+fn (lb &ListBox) is_focused() bool {
+    return lb.focused
 }
 
-fn (list &ListBox) get_ui() &UI {
-    return list.ui
+fn (lb &ListBox) get_ui() &UI {
+    return lb.ui
 }
 
-fn (mut list ListBox) unfocus_all() {
-    list.focused = false
+fn (mut lb ListBox) unfocus_all() {
+    lb.focused = false
 }
 
-fn (mut list ListBox) resize(width, height int) {
-    list.width = width
-    list.height = height
-    list.draw_count = list.height / list.item_height
+fn (mut lb ListBox) resize(width, height int) {
+    lb.width = width
+    lb.height = height
+    lb.draw_count = lb.height / lb.item_height
 }
 
-fn (list &ListBox) get_state() voidptr {
-    parent := list.parent
+fn (lb &ListBox) get_state() voidptr {
+    parent := lb.parent
     return parent.get_state()
 }
 
-fn (list &ListBox) get_subscriber() &eventbus.Subscriber {
-    parent := list.parent
+fn (lb &ListBox) get_subscriber() &eventbus.Subscriber {
+    parent := lb.parent
     return parent.get_subscriber()
 }
 
-fn (list &ListBox) size() (int, int) {
-    return list.width, list.height
+fn (lb &ListBox) size() (int, int) {
+    return lb.width, lb.height
 }
 
-fn (mut list ListBox) propose_size(w, h int) (int, int) {
-    list.resize(w, h)
-    return list.width, list.height
+fn (mut lb ListBox) propose_size(w, h int) (int, int) {
+    lb.resize(w, h)
+    return lb.width, lb.height
 }

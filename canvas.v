@@ -37,23 +37,23 @@ pub fn canvas(c CanvasConfig) &Canvas {
 	return canvas
 }
 
-fn (mut b Canvas) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut c Canvas) set_pos(x, y int) {
+	c.x = x
+	c.y = y
 }
 
-fn (mut b Canvas) size() (int, int) {
-	return b.width, b.height
+fn (mut c Canvas) size() (int, int) {
+	return c.width, c.height
 }
 
-fn (mut b Canvas) propose_size(w, h int) (int, int) {
-	/* b.width = w
-	b.height = h
+fn (mut c Canvas) propose_size(w, h int) (int, int) {
+	/* c.width = w
+	c.height = h
 	return w, h */
-	if b.width == 0 {
-		b.width = w
+	if c.width == 0 {
+		c.width = w
 	}
-	return b.width, b.height
+	return c.width, c.height
 }
 
 fn (c &Canvas) draw() {
@@ -64,14 +64,14 @@ fn (c &Canvas) draw() {
 	}
 }
 
-fn (t &Canvas) focus() {}
+fn (c &Canvas) focus() {}
 
-fn (t &Canvas) is_focused() bool {
+fn (c &Canvas) is_focused() bool {
 	return false
 }
 
-fn (t &Canvas) unfocus() {}
+fn (c &Canvas) unfocus() {}
 
-fn (t &Canvas) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (c &Canvas) point_inside(x, y f64) bool {
+	return false // x >= c.x && x <= c.x + c.width && y >= c.y && y <= c.y + c.height
 }

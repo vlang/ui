@@ -47,18 +47,18 @@ pub fn menu(c MenuConfig) &Menu {
 	}
 }
 
-fn (mut b Menu) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut m Menu) set_pos(x, y int) {
+	m.x = x
+	m.y = y
 }
 
-fn (mut b Menu) size() (int, int) {
+fn (mut m Menu) size() (int, int) {
 	return 0, 0
 }
 
-fn (mut b Menu) propose_size(w, h int) (int, int) {
-	//b.width = w
-	//b.height = h
+fn (mut m Menu) propose_size(w, h int) (int, int) {
+	//m.width = w
+	//m.height = h
 	return 0,0
 }
 
@@ -79,18 +79,18 @@ pub fn (mut m Menu) add_item(text string, action MenuFn) {
 
 }
 
-fn (t &Menu) focus() {}
+fn (m &Menu) focus() {}
 
-fn (t &Menu) is_focused() bool {
+fn (m &Menu) is_focused() bool {
 	return false
 }
 
-fn (t &Menu) unfocus() {}
+fn (m &Menu) unfocus() {}
 
-fn (t &Menu) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (m &Menu) point_inside(x, y f64) bool {
+	return false // x >= m.x && x <= m.x + m.width && y >= m.y && y <= m.y + m.height
 }
 
-pub fn (mut l Menu) set_text(s string) {
-	l.text = s
+pub fn (mut m Menu) set_text(s string) {
+	m.text = s
 }

@@ -75,13 +75,13 @@ fn (mut dd Dropdown) set_pos(x, y int) {
 	dd.y = y
 }
 
-fn (mut b Dropdown) size() (int, int) {
-	return b.width, dropdown_height
+fn (mut dd Dropdown) size() (int, int) {
+	return dd.width, dropdown_height
 }
 
 fn (mut dd Dropdown) propose_size(w, h int) (int, int) {
 	dd.width = w
-	//b.height = h
+	//dd.height = h
 	return w, dropdown_height
 }
 

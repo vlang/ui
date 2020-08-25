@@ -43,62 +43,62 @@ fn (mut s Switch) init(parent Layout){
 }
 
 pub fn switcher(c SwitchConfig) &Switch {
-	mut sw := &Switch{
+	mut s := &Switch{
 		height: sw_height
 		width: sw_width
 		open:c.open
 		onclick: c.onclick
 		ui: 0
 	}
-	return sw
+	return s
 }
 
-fn (mut b Switch) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut s Switch) set_pos(x, y int) {
+	s.x = x
+	s.y = y
 }
 
-fn (mut b Switch) size() (int, int) {
-	return b.width, b.height
+fn (mut s Switch) size() (int, int) {
+	return s.width, s.height
 }
 
-fn (mut b Switch) propose_size(w, h int) (int, int) {
-	return b.width, b.height
+fn (mut s Switch) propose_size(w, h int) (int, int) {
+	return s.width, s.height
 }
 
-fn (mut b Switch) draw() {
-	padding := (b.height-sw_dot_size)/2
-	if b.open {
-	    b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, sw_open_bg_color)
-		b.ui.gg.draw_rect(b.x - padding + b.width - sw_dot_size , b.y + padding, sw_dot_size, sw_dot_size, gx.white)
+fn (mut s Switch) draw() {
+	padding := (s.height-sw_dot_size)/2
+	if s.open {
+	    s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_open_bg_color)
+		s.ui.gg.draw_rect(s.x - padding + s.width - sw_dot_size , s.y + padding, sw_dot_size, sw_dot_size, gx.white)
 	}else{
-	    b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, sw_close_bg_color)
-	    b.ui.gg.draw_rect(b.x + padding, b.y + padding, sw_dot_size, sw_dot_size, gx.white)
+	    s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_close_bg_color)
+	    s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
 	}
 }
 
-fn (t &Switch) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (s &Switch) point_inside(x, y f64) bool {
+	return x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
-fn sw_click(mut b Switch, e &MouseEvent, w &Window) {
-	if !b.point_inside(e.x, e.y) { return }	//<===== mouse position test added
+fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
+	if !s.point_inside(e.x, e.y) { return }	//<===== mouse position test added
 	if e.action == 0 {
-		b.open = !b.open
-		if b.onclick != voidptr(0) {
-			b.onclick(w.state, b)
+		s.open = !s.open
+		if s.onclick != voidptr(0) {
+			s.onclick(w.state, s)
 		}
 	}
 }
 
-fn (mut b Switch) focus() {
-	b.is_focused = true
+fn (mut s Switch) focus() {
+	s.is_focused = true
 }
 
-fn (mut b Switch) unfocus() {
-	b.is_focused = false
+fn (mut s Switch) unfocus() {
+	s.is_focused = false
 }
 
-fn (t &Switch) is_focused() bool {
-	return t.is_focused
+fn (s &Switch) is_focused() bool {
+	return s.is_focused
 }
