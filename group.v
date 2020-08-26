@@ -39,20 +39,7 @@ fn (mut g Group) init(parent Layout) {
 	for child in g.children {
 		child.init(g)
 	}
-	mut widgets := g.children
-	mut start_x := g.x + g.margin_left
-	mut start_y := g.y + g.margin_top
-	for widget in widgets {
-		mut pw, ph := widget.size()
-		widget.set_pos(start_x, start_y)
-		start_y = start_y + ph + g.spacing
-		if pw > g.width - g.margin_left - g.margin_right {
-			g.width = pw + g.margin_left + g.margin_right
-		}
-		if start_y + g.margin_bottom > g.height {
-			g.height = start_y - ph
-		}
-	}
+	g.calculate_child_positions()
 }
 
 pub fn group(c GroupConfig, children []Widget) &Group {
@@ -71,6 +58,24 @@ pub fn group(c GroupConfig, children []Widget) &Group {
 fn (mut g Group) set_pos(x, y int) {
 	g.x = x
 	g.y = y
+	g.calculate_child_positions()
+}
+
+fn (mut g Group) calculate_child_positions() {
+	mut widgets := g.children
+	mut start_x := g.x + g.margin_left
+	mut start_y := g.y + g.margin_top
+	for widget in widgets {
+		mut wid_w, wid_h := widget.size()
+		widget.set_pos(start_x, start_y)
+		start_y = start_y + wid_h + g.spacing
+		if wid_w > g.width - g.margin_left - g.margin_right {
+			g.width = wid_w + g.margin_left + g.margin_right
+		}
+		if start_y + g.margin_bottom > g.height {
+			g.height = start_y - wid_h
+		}
+	}
 }
 
 fn (mut g Group) propose_size(w, h int) (int, int) {
