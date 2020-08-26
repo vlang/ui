@@ -43,7 +43,7 @@ fn (mut g Group) init(parent Layout) {
 }
 
 pub fn group(c GroupConfig, children []Widget) &Group {
-	mut cb := &Group{
+	mut g := &Group{
 		title: c.title
 		x: c.x
 		y: c.y
@@ -52,7 +52,7 @@ pub fn group(c GroupConfig, children []Widget) &Group {
 		children: children
 		ui: 0
 	}
-	return cb
+	return g
 }
 
 fn (mut g Group) set_pos(x, y int) {
