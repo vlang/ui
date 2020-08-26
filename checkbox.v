@@ -77,59 +77,59 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut b CheckBox) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut cb CheckBox) set_pos(x, y int) {
+	cb.x = x
+	cb.y = y
 }
 
-fn (mut b CheckBox) size() (int,int) {
-	return b.width,b.height
+fn (mut cb CheckBox) size() (int,int) {
+	return cb.width,cb.height
 }
 
-fn (mut b CheckBox) propose_size(w, h int) (int,int) {
-	// b.width = w
-	// b.height = h
-	// width := check_mark_size + 5 + b.ui.ft.text_width(b.text)
-	return b.width,check_mark_size
+fn (mut cb CheckBox) propose_size(w, h int) (int,int) {
+	// cb.width = w
+	// cb.height = h
+	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
+	return cb.width,check_mark_size
 }
 
-fn (mut b CheckBox) draw() {
-	b.ui.gg.draw_rect(b.x, b.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
-	// b.ui.gg.draw_empty_rect(b.x, b.y, check_mark_size, check_mark_size, cb_border_color)
-	draw_inner_border(false, b.ui.gg, b.x, b.y, check_mark_size, check_mark_size, false)
+fn (mut cb CheckBox) draw() {
+	cb.ui.gg.draw_rect(cb.x, cb.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
+	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
+	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, check_mark_size, check_mark_size, false)
 	// Draw X (TODO draw a check mark instead)
-	if b.checked {
-		b.ui.gg.draw_rect(b.x+3,b.y+3,2,2, gx.black)
+	if cb.checked {
+		cb.ui.gg.draw_rect(cb.x+3,cb.y+3,2,2, gx.black)
 		/*
-		x0 := b.x +2
-		y0 := b.y +2
-		b.ui.gg.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gx.black)
-		b.ui.gg.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gx.black)
+		x0 := cb.x +2
+		y0 := cb.y +2
+		cb.ui.gg.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gx.black)
+		cb.ui.gg.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gx.black)
 		//
-		y1 := b.y + check_mark_size - 2
-		b.ui.gg.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
-		b.ui.gg.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
+		y1 := cb.y + check_mark_size - 2
+		cb.ui.gg.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
+		cb.ui.gg.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
 		*/
-		b.ui.gg.draw_image(b.x + 3, b.y + 3, 8, 8, b.ui.cb_image)
+		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	b.ui.gg.draw_text(b.x + check_mark_size + 5, b.y, b.text, btn_text_cfg)
+	cb.ui.gg.draw_text(cb.x + check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
 }
 
-fn (t &CheckBox) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (cb &CheckBox) point_inside(x, y f64) bool {
+	return x >= cb.x && x <= cb.x + cb.width && y >= cb.y && y <= cb.y + cb.height
 }
 
-fn (mut b CheckBox) mouse_move(e MouseEvent) {}
+fn (mut cb CheckBox) mouse_move(e MouseEvent) {}
 
-fn (mut b CheckBox) focus() {
-	b.is_focused = true
+fn (mut cb CheckBox) focus() {
+	cb.is_focused = true
 }
 
-fn (mut b CheckBox) unfocus() {
-	b.is_focused = false
+fn (mut cb CheckBox) unfocus() {
+	cb.is_focused = false
 }
 
-fn (t &CheckBox) is_focused() bool {
-	return t.is_focused
+fn (cb &CheckBox) is_focused() bool {
+	return cb.is_focused
 }

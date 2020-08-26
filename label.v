@@ -30,45 +30,45 @@ pub fn label(c LabelConfig) &Label {
 	return lbl
 }
 
-fn (mut b Label) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut l Label) set_pos(x, y int) {
+	l.x = x
+	l.y = y
 }
 
-fn (mut b Label) size() (int, int) {
-	w,h := b.ui.gg.text_size(b.text)
+fn (mut l Label) size() (int, int) {
+	w,h := l.ui.gg.text_size(l.text)
 
 	// First return the width, then the height multiplied by line count.
-	return w, h * b.text.split('\n').len
+	return w, h * l.text.split('\n').len
 }
 
-fn (mut b Label) propose_size(w, h int) (int, int) {
-	ww,hh := b.ui.gg.text_size(b.text)
+fn (mut l Label) propose_size(w, h int) (int, int) {
+	ww,hh := l.ui.gg.text_size(l.text)
 
 	// First return the width, then the height multiplied by line count.
-	return ww, hh * b.text.split('\n').len
+	return ww, hh * l.text.split('\n').len
 }
 
-fn (mut b Label) draw() {
-	splits := b.text.split('\n') // Split the text into an array of lines.
-	height := b.ui.gg.text_height('W') // Get the height of the current font.
+fn (mut l Label) draw() {
+	splits := l.text.split('\n') // Split the text into an array of lines.
+	height := l.ui.gg.text_height('W') // Get the height of the current font.
 
 	for i, split in splits {
-		// Draw the text at b.x and b.y + line height * current line
-		b.ui.gg.draw_text(b.x, b.y + (height * i), split, btn_text_cfg)
+		// Draw the text at l.x and l.y + line height * current line
+		l.ui.gg.draw_text(l.x, l.y + (height * i), split, btn_text_cfg)
 	}
 }
 
-fn (t &Label) focus() {}
+fn (l &Label) focus() {}
 
-fn (t &Label) is_focused() bool {
+fn (l &Label) is_focused() bool {
 	return false
 }
 
-fn (t &Label) unfocus() {}
+fn (l &Label) unfocus() {}
 
-fn (t &Label) point_inside(x, y f64) bool {
-	return false // x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (l &Label) point_inside(x, y f64) bool {
+	return false // x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height
 }
 
 pub fn (mut l Label) set_text(s string) {

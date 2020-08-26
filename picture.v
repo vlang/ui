@@ -89,35 +89,35 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut b Picture) set_pos(x, y int) {
-	b.x = x + b.offset_x
-	b.y = y + b.offset_y
+fn (mut pic Picture) set_pos(x, y int) {
+	pic.x = x + pic.offset_x
+	pic.y = y + pic.offset_y
 }
 
-fn (mut b Picture) size() (int, int) {
-	return b.width, b.height
+fn (mut pic Picture) size() (int, int) {
+	return pic.width, pic.height
 }
 
-fn (mut b Picture) propose_size(w, h int) (int, int) {
-	// b.width = w
-	// b.height = h
-	return b.width, b.height
+fn (mut pic Picture) propose_size(w, h int) (int, int) {
+	// pic.width = w
+	// pic.height = h
+	return pic.width, pic.height
 }
 
-fn (mut b Picture) draw() {
-	b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
+fn (mut pic Picture) draw() {
+	pic.ui.gg.draw_image(pic.x, pic.y, pic.width, pic.height, pic.image)
 }
 
-fn (t &Picture) focus() {
+fn (pic &Picture) focus() {
 }
 
-fn (t &Picture) is_focused() bool {
+fn (pic &Picture) is_focused() bool {
 	return false
 }
 
-fn (t &Picture) unfocus() {
+fn (pic &Picture) unfocus() {
 }
 
-fn (t &Picture) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (pic &Picture) point_inside(x, y f64) bool {
+	return x >= pic.x && x <= pic.x + pic.width && y >= pic.y && y <= pic.y + pic.height
 }

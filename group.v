@@ -32,25 +32,25 @@ pub mut:
 	height int
 }
 
-fn (mut r Group) init(parent Layout) {
-	r.parent = parent
+fn (mut g Group) init(parent Layout) {
+	g.parent = parent
 	ui := parent.get_ui()
-	r.ui = ui
-	for child in r.children {
-		child.init(r)
+	g.ui = ui
+	for child in g.children {
+		child.init(g)
 	}
-	mut widgets := r.children
-	mut start_x := r.x + r.margin_left
-	mut start_y := r.y + r.margin_top
+	mut widgets := g.children
+	mut start_x := g.x + g.margin_left
+	mut start_y := g.y + g.margin_top
 	for widget in widgets {
 		mut pw, ph := widget.size()
 		widget.set_pos(start_x, start_y)
-		start_y = start_y + ph + r.spacing
-		if pw > r.width - r.margin_left - r.margin_right {
-			r.width = pw + r.margin_left + r.margin_right
+		start_y = start_y + ph + g.spacing
+		if pw > g.width - g.margin_left - g.margin_right {
+			g.width = pw + g.margin_left + g.margin_right
 		}
-		if start_y + r.margin_bottom > r.height {
-			r.height = start_y - ph
+		if start_y + g.margin_bottom > g.height {
+			g.height = start_y - ph
 		}
 	}
 }
@@ -79,55 +79,55 @@ fn (mut g Group) propose_size(w, h int) (int, int) {
 	return g.width, g.height
 }
 
-fn (mut b Group) draw() {
+fn (mut g Group) draw() {
 	// Border
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, gx.gray)
+	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	// Title
-	b.ui.gg.draw_rect(b.x + check_mark_size, b.y - 5, b.ui.gg.text_width(b.title) + 5,
+	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, g.ui.gg.text_width(g.title) + 5,
 		10, default_window_color)
-	b.ui.gg.draw_text_def(b.x + check_mark_size + 3, b.y - 7, b.title)
-	for child in b.children {
+	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, g.title)
+	for child in g.children {
 		child.draw()
 	}
 }
 
-fn (t &Group) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (g &Group) point_inside(x, y f64) bool {
+	return x >= g.x && x <= g.x + g.width && y >= g.y && y <= g.y + g.height
 }
 
-fn (mut b Group) focus() {
+fn (mut g Group) focus() {
 }
 
-fn (mut b Group) unfocus() {
+fn (mut g Group) unfocus() {
 }
 
-fn (t &Group) is_focused() bool {
+fn (g &Group) is_focused() bool {
 	return false
 }
 
-fn (t &Group) get_ui() &UI {
-	return t.ui
+fn (g &Group) get_ui() &UI {
+	return g.ui
 }
 
-fn (t &Group) unfocus_all() {
-	for child in t.children {
+fn (g &Group) unfocus_all() {
+	for child in g.children {
 		child.unfocus()
 	}
 }
 
-fn (t &Group) resize(width, height int) {
+fn (g &Group) resize(width, height int) {
 }
 
-fn (t &Group) get_state() voidptr {
-	parent := t.parent
+fn (g &Group) get_state() voidptr {
+	parent := g.parent
 	return parent.get_state()
 }
 
-fn (b &Group) get_subscriber() &eventbus.Subscriber {
-	parent := b.parent
+fn (g &Group) get_subscriber() &eventbus.Subscriber {
+	parent := g.parent
 	return parent.get_subscriber()
 }
 
-fn (c &Group) size() (int, int) {
-	return c.width, c.height
+fn (g &Group) size() (int, int) {
+	return g.width, g.height
 }

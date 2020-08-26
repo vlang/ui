@@ -509,7 +509,7 @@ pub fn (w &Window) mouse_inside(x, y, width, height int) bool {
 	return false
 }
 
-pub fn (b &Window) focus() {}
+pub fn (w &Window) focus() {}
 
 pub fn (w &Window) always_on_top(val bool) {
 	//w.glfw_obj.window_hint(

@@ -42,7 +42,7 @@ fn (mut pb ProgressBar)init(parent Layout) {
 }
 
 pub fn progressbar(c ProgressBarConfig) &ProgressBar {
-	mut p := &ProgressBar{
+	mut pb := &ProgressBar{
 		height: c.height
 		width: c.width
 		min: c.min
@@ -50,48 +50,48 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		val: c.val
 		ui: 0
 	}
-	return p
+	return pb
 }
 
-fn (mut b ProgressBar) set_pos(x, y int) {
-	b.x = x
-	b.y = y
+fn (mut pb ProgressBar) set_pos(x, y int) {
+	pb.x = x
+	pb.y = y
 }
 
-fn (mut b ProgressBar) size() (int, int) {
-	return b.width, b.height
+fn (mut pb ProgressBar) size() (int, int) {
+	return pb.width, pb.height
 }
 
-fn (mut b ProgressBar) propose_size(w, h int) (int, int) {
-	/* b.width = w
-	b.height = h
+fn (mut pb ProgressBar) propose_size(w, h int) (int, int) {
+	/* pb.width = w
+	pb.height = h
 	return w, h */
-	if b.width == 0 {
-		b.width = w
+	if pb.width == 0 {
+		pb.width = w
 	}
-	return b.width, b.height
+	return pb.width, pb.height
 }
 
-fn (b &ProgressBar) draw() {
+fn (pb &ProgressBar) draw() {
 	// Draw the gray background
-	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, progress_bar_background_color)
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, progress_bar_background_border_color)
+	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, progress_bar_background_color)
+	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, progress_bar_background_border_color)
 	// Draw the value
-	width := int(f64(b.width) * (f64(b.val) / f64(b.max)))
-	b.ui.gg.draw_empty_rect(b.x, b.y, width, b.height, progress_bar_border_color) // gx.Black)
-	b.ui.gg.draw_rect(b.x, b.y, width, b.height, progress_bar_color) // gx.Black)
+	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
+	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, progress_bar_border_color) // gx.Black)
+	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, progress_bar_color) // gx.Black)
 }
 
-fn (t &ProgressBar) point_inside(x, y f64) bool {
-	return false//x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (pb &ProgressBar) point_inside(x, y f64) bool {
+	return false//x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
 }
 
-fn (b &ProgressBar) focus() {
+fn (pb &ProgressBar) focus() {
 }
 
-fn (t &ProgressBar) is_focused() bool {
-	return t.is_focused
+fn (pb &ProgressBar) is_focused() bool {
+	return pb.is_focused
 }
 
-fn (b &ProgressBar) unfocus() {
+fn (pb &ProgressBar) unfocus() {
 }

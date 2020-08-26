@@ -145,8 +145,8 @@ fn (mut b Button) draw() {
 
 //fn (b &Button) key_down(e KeyEvent) {}
 
-fn (t &Button) point_inside(x, y f64) bool {
-	return x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height
+fn (b &Button) point_inside(x, y f64) bool {
+	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
 }
 
 //fn (mut b Button) mouse_move(e MouseEvent) {}
@@ -160,6 +160,6 @@ fn (mut b Button) unfocus() {
 	b.state = .normal
 }
 
-fn (t &Button) is_focused() bool {
-	return t.is_focused
+fn (b &Button) is_focused() bool {
+	return b.is_focused
 }
