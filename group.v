@@ -88,7 +88,8 @@ fn (mut g Group) draw() {
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	// Title
-	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, g.ui.gg.text_width(g.title) + 5, 10, g.ui.window.bg_color)
+	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, g.ui.gg.text_width(g.title) + 5,
+		10, g.ui.window.bg_color)
 	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, g.title)
 	for child in g.children {
 		child.draw()
