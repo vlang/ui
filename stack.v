@@ -45,10 +45,10 @@ fn (mut s Stack) init(parent Layout) {
 		s.height = h
 		s.width = w
 	} else {
-		if s.direction == .row {
-			s.width = w
-		} else {
+		if s.direction == .column {
 			s.height = h
+		} else {
+			s.width = w
 		}
 	}
 	s.height -= s.margin.top + s.margin.bottom
@@ -102,14 +102,14 @@ fn (mut s Stack) draw() {
 	mut pos := s.get_oriented_y_axis()
 	mut size := 0
 	for child in s.children {
-		mut h := 0
 		mut w := 0
-		if s.direction == .row {
-			h, w = child.propose_size(per_child_size, s.height)
-			child.set_pos(pos, s.align(w))
-		} else {
+		mut h := 0
+		if s.direction == .column {
 			w, h = child.propose_size(s.width, per_child_size)
 			child.set_pos(s.align(w), pos)
+		} else {
+			h, w = child.propose_size(per_child_size, s.height)
+			child.set_pos(pos, s.align(w))
 		}
 		if w > size {size = w}
 		child.draw()
@@ -124,7 +124,7 @@ fn (mut s Stack) draw() {
 	}
 }
 fn (s &Stack) align(size int) int {
-	align := if s.direction == .row { int(s.vertical_alignment) } else { int(s.horizontal_alignment) }
+	align := if s.direction == .column { int(s.horizontal_alignment) } else { int(s.vertical_alignment) }
 	match align {
 		0 {
 			return s.get_oriented_x_axis()
@@ -185,22 +185,22 @@ fn (s &Stack) resize(width, height int) {
    Y -> X
  */
 fn (s &Stack) get_oriented_height() int {
-	return if s.direction == .row {s.width} else {s.height}
+	return if s.direction == .column {s.height} else {s.width}
 }
 fn (s &Stack) get_oriented_width() int {
-	return if s.direction == .row {s.height} else {s.width}
+	return if s.direction == .column {s.width} else {s.height}
 }
 fn (s &Stack) get_oriented_y_axis() int {
-	return if s.direction == .row {s.x} else {s.y}
+	return if s.direction == .column {s.y} else {s.x}
 }
 fn (s &Stack) get_oriented_x_axis() int {
-	return if s.direction == .row {s.y} else {s.x}
+	return if s.direction == .column {s.x} else {s.y}
 }
 fn (mut s Stack) set_oriented_height(h int) int {
-	if s.direction == .row {s.width = h} else {s.height = h}
+	if s.direction == .column {s.height = h} else {s.width = h}
 	return h
 }
 fn (mut s Stack) set_oriented_width(w int) int {
-	if s.direction == .row {s.height = w} else {s.width = w}
+	if s.direction == .column {s.width = w} else {s.height = w}
 	return w
 }
