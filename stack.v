@@ -35,6 +35,14 @@ mut:
 	margin 	MarginConfig
 }
 
+/*
+   Column & Row are identical except everything is reversed:
+   Row is treated like a column turned by 90 degrees, so values for row are reversed.
+   Width  -> Height
+   Height -> Width
+   X -> Y
+   Y -> X
+ */
 fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
@@ -98,29 +106,29 @@ fn (c &Stack) size() (int, int) {
 }
 
 fn (mut s Stack) draw() {
-	mut per_child_size := s.get_oriented_height()
-	mut pos := s.get_oriented_y_axis()
-	mut size := 0
+	mut per_child_height := s.get_oriented_height()
+	mut pos_y := s.get_oriented_y_axis()
+	mut size_x := 0
 	for child in s.children {
 		mut w := 0
 		mut h := 0
 		if s.direction == .column {
-			w, h = child.propose_size(s.width, per_child_size)
-			child.set_pos(s.align(w), pos)
+			w, h = child.propose_size(s.width, per_child_height)
+			child.set_pos(s.align(w), pos_y)
 		} else {
-			h, w = child.propose_size(per_child_size, s.height)
-			child.set_pos(pos, s.align(w))
+			h, w = child.propose_size(per_child_height, s.height)
+			child.set_pos(pos_y, s.align(w))
 		}
-		if w > size {size = w}
+		if w > size_x {size_x = w}
 		child.draw()
-		pos += h + s.spacing
-		per_child_size -= h + s.spacing
+		pos_y += h + s.spacing
+		per_child_height -= h + s.spacing
 	}
 	if s.stretch {return}
-	s.set_oriented_height(pos - s.get_oriented_y_axis())
+	s.set_oriented_height(pos_y - s.get_oriented_y_axis())
 	w := s.get_oriented_width()
-	if w == 0 || w < size {
-		s.set_oriented_width(size)
+	if w == 0 || w < size_x {
+		s.set_oriented_width(size_x)
 	}
 }
 fn (s &Stack) align(size int) int {
@@ -175,15 +183,7 @@ fn (s &Stack) is_focused() bool {
 fn (s &Stack) resize(width, height int) {
 }
 
-/* Helpers to correctly get height, width, x, y for both row & column
-   Column & Row are identical except everything is reversed.
-   Row is treated like a column turned by 90 degrees, so these methods
-   get/set reverse values for row.
-   Width  -> Height
-   Height -> Width
-   X -> Y
-   Y -> X
- */
+ // Helpers to correctly get width, height, x, y for both row & column.
 fn (s &Stack) get_oriented_height() int {
 	return if s.direction == .column {s.height} else {s.width}
 }
