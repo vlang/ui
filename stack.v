@@ -98,8 +98,8 @@ fn (c &Stack) size() (int, int) {
 }
 
 fn (mut s Stack) draw() {
-	mut per_child_size := s.get_height()
-	mut pos := s.get_y_axis()
+	mut per_child_size := s.get_oriented_height()
+	mut pos := s.get_oriented_y_axis()
 	mut size := 0
 	for child in s.children {
 		mut h := 0
@@ -117,25 +117,25 @@ fn (mut s Stack) draw() {
 		per_child_size -= h + s.spacing
 	}
 	if s.stretch {return}
-	s.set_height(pos - s.get_y_axis())
-	w := s.get_width()
+	s.set_oriented_height(pos - s.get_oriented_y_axis())
+	w := s.get_oriented_width()
 	if w == 0 || w < size {
-		s.set_width(size)
+		s.set_oriented_width(size)
 	}
 }
 fn (s &Stack) align(size int) int {
 	align := if s.direction == .row { int(s.vertical_alignment) } else { int(s.horizontal_alignment) }
 	match align {
 		0 {
-			return s.get_x_axis()
+			return s.get_oriented_x_axis()
 		}
 		1 {
-			return s.get_x_axis() + ((s.get_width() - size) / 2)
+			return s.get_oriented_x_axis() + ((s.get_oriented_width() - size) / 2)
 		}
 		2 {
-			return (s.get_x_axis() + s.get_width()) - size
+			return (s.get_oriented_x_axis() + s.get_oriented_width()) - size
 		}
-		else {return s.get_x_axis()}
+		else {return s.get_oriented_x_axis()}
 	}
 }
 
@@ -176,30 +176,31 @@ fn (s &Stack) resize(width, height int) {
 }
 
 /* Helpers to correctly get height, width, x, y for both row & column
-   Column & Row are identical except everything is reversed. These methods
+   Column & Row are identical except everything is reversed.
+   Row is treated like a column turned by 90 degrees, so these methods
    get/set reverse values for row.
+   Width  -> Height
    Height -> Width
-   Width -> Height
    X -> Y
    Y -> X
  */
-fn (s &Stack) get_height() int {
+fn (s &Stack) get_oriented_height() int {
 	return if s.direction == .row {s.width} else {s.height}
 }
-fn (s &Stack) get_width() int {
+fn (s &Stack) get_oriented_width() int {
 	return if s.direction == .row {s.height} else {s.width}
 }
-fn (s &Stack) get_y_axis() int {
+fn (s &Stack) get_oriented_y_axis() int {
 	return if s.direction == .row {s.x} else {s.y}
 }
-fn (s &Stack) get_x_axis() int {
+fn (s &Stack) get_oriented_x_axis() int {
 	return if s.direction == .row {s.y} else {s.x}
 }
-fn (mut s Stack) set_height(h int) int {
+fn (mut s Stack) set_oriented_height(h int) int {
 	if s.direction == .row {s.width = h} else {s.height = h}
 	return h
 }
-fn (mut s Stack) set_width(w int) int {
+fn (mut s Stack) set_oriented_width(w int) int {
 	if s.direction == .row {s.height = w} else {s.width = w}
 	return w
 }
