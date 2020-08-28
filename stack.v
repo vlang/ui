@@ -106,7 +106,8 @@ fn (c &Stack) size() (int, int) {
 }
 
 fn (mut s Stack) draw() {
-	mut per_child_height := s.get_oriented_height()
+	total_spacing := (s.children.len - 1) * s.spacing
+	per_child_height := (s.get_oriented_height() - total_spacing) / s.children.len
 	mut pos_y := s.get_oriented_y_axis()
 	mut size_x := 0
 	for child in s.children {
@@ -122,7 +123,6 @@ fn (mut s Stack) draw() {
 		if w > size_x {size_x = w}
 		child.draw()
 		pos_y += h + s.spacing
-		per_child_height -= h + s.spacing
 	}
 	if s.stretch {return}
 	s.set_oriented_height(pos_y - s.get_oriented_y_axis())
