@@ -7,15 +7,13 @@ const (
 
 struct App {
 mut:
-	window     &ui.Window
+	window     &ui.Window = 0
 	first_name string = ''
 	last_name  string = ''
 }
 
 fn main() {
-	mut app := &App{
-		window: 0
-	}
+	mut app := &App{}
 	app.window = ui.window({
 		width: win_width
 		height: win_height
