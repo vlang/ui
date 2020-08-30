@@ -77,7 +77,7 @@ pub fn button(c ButtonConfig) &Button {
 		ui: 0
 	}
 	if !os.exists(c.icon_path) {
-		println('V UI: icon file "$c.icon_path" not found\nThe alternate text will be used.')
+		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
 		b.use_icon = false
 	}
 
@@ -117,7 +117,10 @@ fn (mut b Button) propose_size(w, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	if b.text_width == 0 || b.text_height == 0 {
+	if b.use_icon {
+		b.width = b.image.width
+		b.height = b.image.height
+	} else if b.text_width == 0 || b.text_height == 0 {
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
 		b.width = b.text_width + button_horizontal_padding
 		b.height = b.text_height + button_vertical_padding
