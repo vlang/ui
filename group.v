@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
+import math
 import gx
 import eventbus
 
@@ -87,10 +88,17 @@ fn (mut g Group) propose_size(w, h int) (int, int) {
 fn (mut g Group) draw() {
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
+	mut title := g.title
+	mut text_width := g.ui.gg.text_width(title)
+	if text_width > g.width {
+		proportion := f32(g.width) / f32(text_width)
+		target_len := int(math.floor(title.len * proportion))
+		title = title.substr(0, target_len - 4) + '..'
+		text_width = g.ui.gg.text_width(title)
+	}
 	// Title
-	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, g.ui.gg.text_width(g.title) + 5,
-		10, g.ui.window.bg_color)
-	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, g.title)
+	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
+	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
 	for child in g.children {
 		child.draw()
 	}
