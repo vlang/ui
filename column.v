@@ -4,11 +4,11 @@
 module ui
 
 pub struct ColumnConfig {
-	width  int
+	width     int
 	alignment HorizontalAlignment
-	spacing int
-	stretch bool
-	margin	MarginConfig
+	spacing   int
+	stretch   bool
+	margin    MarginConfig
 }
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {

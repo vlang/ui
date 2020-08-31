@@ -11,47 +11,46 @@ enum Direction {
 }
 
 struct StackConfig {
-	width  int
-	height int
-	vertical_alignment VerticalAlignment
+	width                int
+	height               int
+	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacing int
-	stretch bool
-	direction Direction
-	margin	MarginConfig
+	spacing              int
+	stretch              bool
+	direction            Direction
+	margin               MarginConfig
 }
 
 struct Stack {
 mut:
-	x		 int
-	y        int
-	width    int
-	height   int
-	children []Widget
-	parent   Layout
-	ui     &UI
-	vertical_alignment VerticalAlignment
+	x                    int
+	y                    int
+	width                int
+	height               int
+	children             []Widget
+	parent               Layout
+	ui                   &UI
+	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacing int
-	stretch bool
-	direction Direction
-	margin 	MarginConfig
+	spacing              int
+	stretch              bool
+	direction            Direction
+	margin               MarginConfig
 }
 
 /*
-   Column & Row are identical except everything is reversed:
+Column & Row are identical except everything is reversed:
    Row is treated like a column turned by 90 degrees, so values for row are reversed.
    Width  -> Height
    Height -> Width
    X -> Y
    Y -> X
- */
+*/
 fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	w, h := parent.size()
 	s.ui = ui
-
 	if s.stretch {
 		s.height = h
 		s.width = w
@@ -96,7 +95,7 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (mut s Stack) propose_size(w, h int) (int,int) {
+fn (mut s Stack) propose_size(w, h int) (int, int) {
 	if s.stretch {
 		s.width = w
 		s.height = h
@@ -123,30 +122,29 @@ fn (mut s Stack) draw() {
 			h, w = child.propose_size(per_child_height, s.height)
 			child.set_pos(pos_y, s.align(w))
 		}
-		if w > size_x {size_x = w}
+		if w > size_x {
+			size_x = w
+		}
 		child.draw()
 		pos_y += h + s.spacing
 	}
-	if s.stretch {return}
+	if s.stretch {
+		return
+	}
 	s.set_oriented_height(pos_y - s.get_oriented_y_axis())
 	w := s.get_oriented_width()
 	if w == 0 || w < size_x {
 		s.set_oriented_width(size_x)
 	}
 }
+
 fn (s &Stack) align(size int) int {
 	align := if s.direction == .column { int(s.horizontal_alignment) } else { int(s.vertical_alignment) }
 	match align {
-		0 {
-			return s.get_oriented_x_axis()
-		}
-		1 {
-			return s.get_oriented_x_axis() + ((s.get_oriented_width() - size) / 2)
-		}
-		2 {
-			return (s.get_oriented_x_axis() + s.get_oriented_width()) - size
-		}
-		else {return s.get_oriented_x_axis()}
+		0 { return s.get_oriented_x_axis() }
+		1 { return s.get_oriented_x_axis() + ((s.get_oriented_width() - size) / 2) }
+		2 { return (s.get_oriented_x_axis() + s.get_oriented_width()) - size }
+		else { return s.get_oriented_x_axis() }
 	}
 }
 
@@ -171,12 +169,12 @@ fn (s &Stack) point_inside(x, y f64) bool {
 
 fn (mut s Stack) focus() {
 	// s.is_focused = true
-	//println('')
+	// println('')
 }
 
 fn (mut s Stack) unfocus() {
 	// s.is_focused = false
-	//println('')
+	// println('')
 }
 
 fn (s &Stack) is_focused() bool {
@@ -186,24 +184,53 @@ fn (s &Stack) is_focused() bool {
 fn (s &Stack) resize(width, height int) {
 }
 
- // Helpers to correctly get width, height, x, y for both row & column.
+// Helpers to correctly get width, height, x, y for both row & column.
 fn (s &Stack) get_oriented_height() int {
-	return if s.direction == .column {s.height} else {s.width}
+	return if s.direction == .column {
+		s.height
+	} else {
+		s.width
+	}
 }
+
 fn (s &Stack) get_oriented_width() int {
-	return if s.direction == .column {s.width} else {s.height}
+	return if s.direction == .column {
+		s.width
+	} else {
+		s.height
+	}
 }
+
 fn (s &Stack) get_oriented_y_axis() int {
-	return if s.direction == .column {s.y} else {s.x}
+	return if s.direction == .column {
+		s.y
+	} else {
+		s.x
+	}
 }
+
 fn (s &Stack) get_oriented_x_axis() int {
-	return if s.direction == .column {s.x} else {s.y}
+	return if s.direction == .column {
+		s.x
+	} else {
+		s.y
+	}
 }
+
 fn (mut s Stack) set_oriented_height(h int) int {
-	if s.direction == .column {s.height = h} else {s.width = h}
+	if s.direction == .column {
+		s.height = h
+	} else {
+		s.width = h
+	}
 	return h
 }
+
 fn (mut s Stack) set_oriented_width(w int) int {
-	if s.direction == .column {s.width = w} else {s.height = w}
+	if s.direction == .column {
+		s.width = w
+	} else {
+		s.height = w
+	}
 	return w
 }
