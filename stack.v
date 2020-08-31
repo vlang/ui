@@ -109,7 +109,8 @@ fn (c &Stack) size() (int, int) {
 
 fn (mut s Stack) draw() {
 	total_spacing := (s.children.len - 1) * s.spacing
-	per_child_height := (s.get_oriented_height() - total_spacing) / s.children.len
+	per_child_height := if s.children.len > 0 { (s.get_oriented_height() - total_spacing) /
+			s.children.len } else { 0 }
 	mut pos_y := s.get_oriented_y_axis()
 	mut size_x := 0
 	for child in s.children {
