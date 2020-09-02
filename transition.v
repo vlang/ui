@@ -2,11 +2,12 @@
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
+
 import time
 
 pub struct Transition {
-//pub:
 mut:
+	// pub:
 	last_draw_time   i64
 	started_time     i64
 	duration         i64
@@ -25,7 +26,7 @@ pub struct TransitionConfig {
 	duration       int
 	animated_value &int = 0
 	easing         EasingFunction
-	ref				&Transition = voidptr(0)
+	ref            &Transition = voidptr(0)
 }
 
 fn (mut t Transition) init(parent Layout) {
@@ -47,24 +48,28 @@ pub fn transition(config TransitionConfig) &Transition {
 	return transition
 }
 
-pub fn (mut t Transition) set_value(animated_value &int){
+pub fn (mut t Transition) set_value(animated_value &int) {
 	t.animated_value = animated_value
 	t.start_value = *animated_value
-	t.target_value =  *animated_value
+	t.target_value = *animated_value
 	t.last_draw_target = *animated_value
 }
 
-fn (t &Transition) set_pos(x, y int) {}
+fn (t &Transition) set_pos(x, y int) {
+}
+
 fn (t &Transition) propose_size(w, h int) (int, int) {
-	return 0,0
+	return 0, 0
 }
 
 fn (mut t Transition) size() (int, int) {
-	return 0,0
+	return 0, 0
 }
 
 fn (mut t Transition) draw() {
-	if t.animated_value == 0 {return}
+	if t.animated_value == 0 {
+		return
+	}
 	if t.target_value != *t.animated_value && !t.animating {
 		// Initiate the transition by setting start_time to the current time
 		// and set the start value to the current value of the transition target.
@@ -98,13 +103,15 @@ fn (mut t Transition) draw() {
 	}
 }
 
-fn (t &Transition) focus() {}
+fn (t &Transition) focus() {
+}
 
 fn (t &Transition) is_focused() bool {
 	return false
 }
 
-fn (t &Transition) unfocus() {}
+fn (t &Transition) unfocus() {
+}
 
 fn (t &Transition) point_inside(x, y f64) bool {
 	return false
