@@ -30,14 +30,14 @@ jobs:
       run: |
         make
         sudo ./v symlink
-    - name: Run fmt
-      run: v run fmt_verify_all.vsh
     - name: Build UI examples
       run: |
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
         echo 'Build users.v with -prod'
         v -prod users.v
+    - name: Run fmt
+      run: v run fmt_verify_all.vsh
 
   macos:
     runs-on: macos-latest
