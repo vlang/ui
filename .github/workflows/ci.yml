@@ -37,7 +37,9 @@ jobs:
         echo 'Build users.v with -prod'
         v -prod users.v
     - name: Run fmt
-      run: v run fmt_verify_all.vsh
+      run: |
+        cd ..
+        v run fmt_verify_all.vsh
 
   macos:
     runs-on: macos-latest
