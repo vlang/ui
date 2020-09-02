@@ -7,6 +7,7 @@ const (
 		'radio.v', // struct comment removal
 		'textbox.v', // struct comment removal
 		'pngs.v', // bin2v file
+		'examples/users.v', // struct comment removal
 	]
 )
 

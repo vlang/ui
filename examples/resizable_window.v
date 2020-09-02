@@ -1,13 +1,13 @@
 import ui
 
 const (
-	win_width = 250
+	win_width  = 250
 	win_height = 250
 )
 
 struct App {
 mut:
-	window     &ui.Window = 0
+	window &ui.Window = 0
 }
 
 fn main() {
@@ -20,15 +20,14 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			stretch: true,
-			margin: ui.MarginConfig{10,10,10,10}
+			stretch: true
+			margin: ui.MarginConfig{10, 10, 10, 10}
 		}, [
 			ui.button({
 				text: 'Add user'
-			})
-		])]
-	)
-
+			}),
+		]),
+	])
 	app.window = window
 	ui.run(window)
 }

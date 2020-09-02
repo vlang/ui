@@ -23,7 +23,12 @@ fn main() {
 	}, [
 		ui.column({
 			stretch: true
-			margin: { top: 10, left: 10, right: 10, bottom: 10 }
+			margin: {
+				top: 10
+				left: 10
+				right: 10
+				bottom: 10
+			}
 		}, [
 			ui.row({
 				stretch: true
@@ -49,7 +54,7 @@ fn main() {
 						onclick: fn (a, b voidptr) {
 							ui.open_url('https://lipsum.com/feed/html')
 						}
-					})
+					}),
 				]),
 				ui.group({
 					title: 'Second group'
@@ -67,8 +72,8 @@ fn main() {
 					ui.button({
 						text: 'Submit'
 					}),
-				])
-			])
+				]),
+			]),
 		]),
 	])
 	ui.run(app.window)
