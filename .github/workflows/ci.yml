@@ -30,6 +30,8 @@ jobs:
       run: |
         make
         sudo ./v symlink
+    - name: Run fmt
+      run: v run fmt_verify_all.vsh
     - name: Build UI examples
       run: |
         cd ./vlib/ui/examples/
