@@ -38,7 +38,7 @@ jobs:
         v -prod users.v
     - name: Run fmt
       run: |
-        cd /home/vlib/ui/
+        cd ./vlib/ui
         v run ./fmt_verify_all.vsh
 
   macos:
