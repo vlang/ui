@@ -37,7 +37,6 @@ pub struct DropdownConfig {
 	y                    int
 	width                int
 	parent               Layout
-	items                []DropdownItem
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
 }
@@ -57,10 +56,10 @@ fn (mut dd Dropdown) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
 }
 
-pub fn dropdown(c DropdownConfig) &Dropdown {
+pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
 		width: c.width
-		items: c.items
+		items: items
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
 		def_text: c.def_text
