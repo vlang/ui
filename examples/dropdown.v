@@ -7,8 +7,7 @@ const (
 
 struct App {
 mut:
-	dropdown &ui.Dropdown = 0
-	window   &ui.Window = 0
+	window &ui.Window = 0
 }
 
 fn main() {
@@ -27,18 +26,17 @@ fn main() {
 			ui.dropdown({
 				width: 140
 				def_text: 'Select an option'
-				items: [
-					ui.DropdownItem{
-						text: 'Delete all users'
-					},
-					ui.DropdownItem{
-						text: 'Export users'
-					},
-					ui.DropdownItem{
-						text: 'Exit'
-					},
-				]
-			}),
+			}, [
+				ui.DropdownItem{
+					text: 'Delete all users'
+				},
+				ui.DropdownItem{
+					text: 'Export users'
+				},
+				ui.DropdownItem{
+					text: 'Exit'
+				},
+			]),
 		]),
 	])
 	app.window = window
