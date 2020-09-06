@@ -6,9 +6,9 @@ module ui
 import gx
 
 const (
-	progress_bar_color = gx.rgb(87, 153, 245)
-	progress_bar_border_color = gx.rgb(76, 133, 213)
-	progress_bar_background_color = gx.rgb(219, 219, 219)
+	progress_bar_color                   = gx.rgb(87, 153, 245)
+	progress_bar_border_color            = gx.rgb(76, 133, 213)
+	progress_bar_background_color        = gx.rgb(219, 219, 219)
 	progress_bar_background_border_color = gx.rgb(191, 191, 191)
 )
 
@@ -19,7 +19,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
-	parent Layout
+	parent     Layout
 	ui         &UI
 	val        int
 	min        int
@@ -29,13 +29,13 @@ pub mut:
 
 pub struct ProgressBarConfig {
 	width  int
-	height int=16
+	height int = 16
 	min    int
 	max    int
 	val    int
 }
 
-fn (mut pb ProgressBar)init(parent Layout) {
+fn (mut pb ProgressBar) init(parent Layout) {
 	pb.parent = parent
 	ui := parent.get_ui()
 	pb.ui = ui
@@ -63,9 +63,11 @@ fn (mut pb ProgressBar) size() (int, int) {
 }
 
 fn (mut pb ProgressBar) propose_size(w, h int) (int, int) {
-	/* pb.width = w
+	/*
+	pb.width = w
 	pb.height = h
-	return w, h */
+	return w, h
+	*/
 	if pb.width == 0 {
 		pb.width = w
 	}
@@ -83,7 +85,7 @@ fn (pb &ProgressBar) draw() {
 }
 
 fn (pb &ProgressBar) point_inside(x, y f64) bool {
-	return false//x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
+	return false // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
 }
 
 fn (pb &ProgressBar) focus() {

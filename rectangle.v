@@ -27,15 +27,15 @@ pub struct RectangleConfig {
 	height       int
 	width        int
 	color        gx.Color
-	radius       int=0
-	border       bool=false
-	border_color gx.Color=gx.Color {
-		r: 180
-		g: 180
-		b: 190
-	}
-	x	int
-	y	int
+	radius       int = 0
+	border       bool = false
+	border_color gx.Color = gx.Color{
+	r: 180
+	g: 180
+	b: 190
+}
+	x            int
+	y            int
 }
 
 fn (mut r Rectangle) init(parent Layout) {
@@ -53,8 +53,8 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		border: c.border
 		border_color: c.border_color
 		ui: 0
-		x:c.x
-		y:c.y
+		x: c.x
+		y: c.y
 	}
 	return rect
 }
@@ -64,12 +64,12 @@ fn (mut r Rectangle) set_pos(x, y int) {
 	r.y = y
 }
 
-fn (mut r Rectangle) size() (int,int) {
-	return r.width,r.height
+fn (mut r Rectangle) size() (int, int) {
+	return r.width, r.height
 }
 
-fn (mut r Rectangle) propose_size(w, h int) (int,int) {
-	return r.width,r.height
+fn (mut r Rectangle) propose_size(w, h int) (int, int) {
+	return r.width, r.height
 }
 
 fn (mut r Rectangle) draw() {
@@ -78,8 +78,7 @@ fn (mut r Rectangle) draw() {
 		if r.border {
 			r.ui.gg.draw_empty_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.border_color)
 		}
-	}
-	else {
+	} else {
 		r.ui.gg.draw_rect(r.x, r.y, r.width, r.height, r.color)
 		if r.border {
 			r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.height, r.border_color)
@@ -92,7 +91,7 @@ fn (mut r Rectangle) draw() {
 	}
 	// Display rectangle text
 	if r.text != '' {
-		text_width,text_height := r.ui.gg.text_size(r.text)
+		text_width, text_height := r.ui.gg.text_size(r.text)
 		mut dx := (r.width - text_width) / 2
 		mut dy := (r.height - text_height) / 2
 		if dx < 0 {
@@ -105,13 +104,15 @@ fn (mut r Rectangle) draw() {
 	}
 }
 
-fn (r &Rectangle) focus() {}
+fn (r &Rectangle) focus() {
+}
 
 fn (r &Rectangle) is_focused() bool {
 	return false
 }
 
-fn (r &Rectangle) unfocus() {}
+fn (r &Rectangle) unfocus() {
+}
 
 fn (r &Rectangle) point_inside(x, y f64) bool {
 	return false

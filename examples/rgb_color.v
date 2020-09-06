@@ -11,17 +11,17 @@ const (
 
 struct App {
 mut:
-	window        &ui.Window = 0
-	r_slider      &ui.Slider
-	r_textbox     &ui.TextBox
-	r_label       &ui.Label
-	g_slider      &ui.Slider
-	g_textbox     &ui.TextBox
-	g_label       &ui.Label
-	b_slider      &ui.Slider
-	b_textbox     &ui.TextBox
-	b_label       &ui.Label
-	rgb_rectangle &ui.Rectangle
+	window         &ui.Window = 0
+	r_slider       &ui.Slider
+	r_textbox      &ui.TextBox
+	r_label        &ui.Label
+	g_slider       &ui.Slider
+	g_textbox      &ui.TextBox
+	g_label        &ui.Label
+	b_slider       &ui.Slider
+	b_textbox      &ui.TextBox
+	b_label        &ui.Label
+	rgb_rectangle  &ui.Rectangle
 	r_textbox_text string = slider_val.str()
 	g_textbox_text string = slider_val.str()
 	b_textbox_text string = slider_val.str()
@@ -99,15 +99,19 @@ fn main() {
 			rev_min_max_pos: true
 			on_value_changed: on_b_value_changed
 		})
-		r_label: ui.label({ text: 'R' })
-		g_label: ui.label({ text: 'G' })
-		b_label: ui.label({ text: 'B' })
+		r_label: ui.label({
+			text: 'R'
+		})
+		g_label: ui.label({
+			text: 'G'
+		})
+		b_label: ui.label({
+			text: 'B'
+		})
 	}
-
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
-
 	app.window = ui.window({
 		width: win_width
 		height: win_height
@@ -119,23 +123,20 @@ fn main() {
 			margin: ui.MarginConfig{120, 30, 30, 30}
 			spacing: 23
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]),
-
 		ui.row({
 			alignment: .top
-			margin: ui.MarginConfig{ 150, 40, 30, 30 }
+			margin: ui.MarginConfig{150, 40, 30, 30}
 			spacing: 38
 		}, [app.r_slider, app.g_slider, app.b_slider]),
-
 		ui.row({
 			alignment: .top
-			margin: ui.MarginConfig{ 10, 10, 30, 30 }
+			margin: ui.MarginConfig{10, 10, 30, 30}
 		}, [app.rgb_rectangle]),
-
 		ui.row({
 			alignment: .top
-			margin: ui.MarginConfig{ 354, 43, 30, 30 }
+			margin: ui.MarginConfig{354, 43, 30, 30}
 			spacing: 54
-		}, [app.r_label, app.g_label, app.b_label])
+		}, [app.r_label, app.g_label, app.b_label]),
 	])
 	ui.run(app.window)
 }

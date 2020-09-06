@@ -36,6 +36,10 @@ jobs:
         v run ./build_examples.vsh
         echo 'Build users.v with -prod'
         v -prod users.v
+    - name: Run fmt
+      run: |
+        cd ./vlib/ui
+        v run ./fmt_verify_all.vsh
 
   macos:
     runs-on: macos-latest

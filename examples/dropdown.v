@@ -1,14 +1,14 @@
 import ui
 
 const (
-	win_width = 250
+	win_width  = 250
 	win_height = 250
 )
 
 struct App {
 mut:
-	dropdown   &ui.Dropdown = 0
-	window     &ui.Window = 0
+	dropdown &ui.Dropdown = 0
+	window   &ui.Window = 0
 }
 
 fn main() {
@@ -22,19 +22,24 @@ fn main() {
 		ui.column({
 			stretch: true
 			alignment: .left
-			margin: ui.MarginConfig{5,5,5,5}
-		},
-		[
+			margin: ui.MarginConfig{5, 5, 5, 5}
+		}, [
 			ui.dropdown({
 				width: 140
-				def_text: "Select an option"
+				def_text: 'Select an option'
 				items: [
-					ui.DropdownItem{text:'Delete all users'},
-					ui.DropdownItem{text:'Export users'},
-					ui.DropdownItem{text:'Exit'},
+					ui.DropdownItem{
+						text: 'Delete all users'
+					},
+					ui.DropdownItem{
+						text: 'Export users'
+					},
+					ui.DropdownItem{
+						text: 'Exit'
+					},
 				]
-			})
-		])
+			}),
+		]),
 	])
 	app.window = window
 	ui.run(window)

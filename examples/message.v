@@ -1,5 +1,5 @@
 import ui
 
-fn main(){
+fn main() {
 	ui.message_box('Hello World')
 }
