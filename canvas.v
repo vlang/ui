@@ -7,23 +7,23 @@ import gg
 
 pub struct Canvas {
 mut:
-	width int
-	height int
-	x		int
-	y		int
-	parent Layout
+	width   int
+	height  int
+	x       int
+	y       int
+	parent  Layout
 	draw_fn DrawFn = voidptr(0)
-	gg &gg.Context = 0
+	gg      &gg.Context = 0
 }
 
 pub struct CanvasConfig {
-	width int
-	height int
-	text   string
+	width   int
+	height  int
+	text    string
 	draw_fn DrawFn = voidptr(0)
 }
 
-fn (mut c Canvas)init(parent Layout) {
+fn (mut c Canvas) init(parent Layout) {
 	c.parent = parent
 	c.gg = parent.get_ui().gg
 }
@@ -47,9 +47,11 @@ fn (mut c Canvas) size() (int, int) {
 }
 
 fn (mut c Canvas) propose_size(w, h int) (int, int) {
-	/* c.width = w
+	/*
+	c.width = w
 	c.height = h
-	return w, h */
+	return w, h
+	*/
 	if c.width == 0 {
 		c.width = w
 	}
@@ -64,13 +66,15 @@ fn (c &Canvas) draw() {
 	}
 }
 
-fn (c &Canvas) focus() {}
+fn (c &Canvas) focus() {
+}
 
 fn (c &Canvas) is_focused() bool {
 	return false
 }
 
-fn (c &Canvas) unfocus() {}
+fn (c &Canvas) unfocus() {
+}
 
 fn (c &Canvas) point_inside(x, y f64) bool {
 	return false // x >= c.x && x <= c.x + c.width && y >= c.y && y <= c.y + c.height

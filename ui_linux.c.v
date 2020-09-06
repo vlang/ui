@@ -24,15 +24,14 @@ pub fn message_box(s string) {
 	message_app.waitgroup.wait()
 }
 
-/////////////////////////////////////////////////////////////
-
-struct MessageApp{
+// ///////////////////////////////////////////////////////////
+struct MessageApp {
 mut:
-	window  &Window
+	window    &Window
 	waitgroup &sync.WaitGroup
 }
 
-fn run_message_dialog(mut message_app MessageApp, s string){
+fn run_message_dialog(mut message_app MessageApp, s string) {
 	// run_message_dialog is run in a separate thread
 	// and will block until the dialog window is closed
 	text_lines := word_wrap_to_lines(s, 70)
@@ -40,22 +39,21 @@ fn run_message_dialog(mut message_app MessageApp, s string){
 	mut widgets := []Widget{}
 	widgets = [
 		// TODO: add hspace and vspace separators
-		ui.label({
+		label({
 			text: ''
-		})
+		}),
 	]
 	for tline in text_lines {
-		widgets << 	ui.label({
+		widgets << label({
 			text: tline
 		})
 		height += 14
 	}
-	widgets << ui.label({
+	widgets << label({
 		text: ' '
 	})
-	widgets << ui.button({
+	widgets << button({
 		text: 'OK'
-		//onclick: msgbox_btn_ok_click
 	})
 	message_app.window = window({
 		width: 400
@@ -63,33 +61,30 @@ fn run_message_dialog(mut message_app MessageApp, s string){
 		title: 'Message box'
 		bg_color: default_window_color
 		state: message_app
-		}, [
-			column({
-				stretch: true
-				alignment: .center
-				margin: MarginConfig{5,5,5,5}
-				}, widgets)
-
-		])
-
+	}, [
+		column({
+			stretch: true
+			alignment: .center
+			margin: MarginConfig{5, 5, 5, 5}
+		}, widgets),
+	])
 	mut subscriber := message_app.window.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
-
 	run(message_app.window)
 	message_app.waitgroup.done()
 }
 
-fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window ) {
+fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window) {
 	match e.key {
 		.enter, .escape, .space {
-			//app.window.glfw_obj.set_should_close(true)
+			// app.window.glfw_obj.set_should_close(true)
 		}
 		else {}
 	}
 }
 
 fn msgbox_btn_ok_click(mut app MessageApp) {
-	//app.window.glfw_obj.set_should_close(true)
+	// app.window.glfw_obj.set_should_close(true)
 }
 
 fn word_wrap_to_lines(s string, max_line_length int) []string {
@@ -108,7 +103,7 @@ fn word_wrap_to_lines(s string, max_line_length int) []string {
 			line_len = 0
 		}
 	}
-	if line_len>0{
+	if line_len > 0 {
 		text_lines << line.join(' ')
 	}
 	return text_lines

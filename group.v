@@ -90,10 +90,10 @@ fn (mut g Group) draw() {
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.gg.text_width(title)
-	if text_width > g.width {
+	if text_width > (g.width - check_mark_size - 3) {
 		proportion := f32(g.width) / f32(text_width)
-		target_len := int(math.floor(title.len * proportion))
-		title = title.substr(0, target_len - 4) + '..'
+		target_len := int(math.floor(title.len * proportion)) - 5
+		title = if target_len < 0 { '' } else { title.substr(0, target_len) + '..' }
 		text_width = g.ui.gg.text_width(title)
 	}
 	// Title

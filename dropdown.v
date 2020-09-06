@@ -7,39 +7,38 @@ import gx
 
 const (
 	dropdown_height = 25
-	dropdown_width = 150
-	dropdown_color=gx.rgb(240, 240, 240)
-	border_color=gx.rgb(223,223,223)
-	drawer_color = gx.rgb(255,255,255)
+	dropdown_width  = 150
+	dropdown_color  = gx.rgb(240, 240, 240)
+	border_color    = gx.rgb(223, 223, 223)
+	drawer_color    = gx.rgb(255, 255, 255)
 )
 
-pub type SelectionChangedFn fn(voidptr, voidptr)
+pub type SelectionChangedFn = fn (arg_1, arg_2 voidptr)
 
 pub struct Dropdown {
 mut:
-	def_text string
-	width	int = 150
-	parent Layout
-	x      int
-	y      int
-
-	ui     &UI
-	items []DropdownItem
-	open bool
-	selected_index int
-	hover_index    int
-	is_focused     bool
+	def_text             string
+	width                int = 150
+	parent               Layout
+	x                    int
+	y                    int
+	ui                   &UI
+	items                []DropdownItem
+	open                 bool
+	selected_index       int
+	hover_index          int
+	is_focused           bool
 	on_selection_changed SelectionChangedFn
 }
 
 pub struct DropdownConfig {
-	def_text   string
-	x      int
-	y      int
-	width  int
-	parent Layout
-	items []DropdownItem
-	selected_index int = -1
+	def_text             string
+	x                    int
+	y                    int
+	width                int
+	parent               Layout
+	items                []DropdownItem
+	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
 }
 
@@ -48,7 +47,7 @@ pub:
 	text string
 }
 
-fn (mut dd Dropdown)init(parent Layout) {
+fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
@@ -81,14 +80,13 @@ fn (mut dd Dropdown) size() (int, int) {
 
 fn (mut dd Dropdown) propose_size(w, h int) (int, int) {
 	dd.width = w
-	//dd.height = h
+	// dd.height = h
 	return w, dropdown_height
 }
 
 fn (mut dd Dropdown) draw() {
 	gg := dd.ui.gg
-
-	//draw the main dropdown
+	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, dropdown_height, dropdown_color)
 	gg.draw_empty_rect(dd.x, dd.y, dd.width, dropdown_height, border_color)
 	if dd.selected_index >= 0 {
@@ -96,20 +94,22 @@ fn (mut dd Dropdown) draw() {
 	} else {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
-
-	//draw the drawer
+	// draw the drawer
 	if dd.open {
-		gg.draw_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height, drawer_color)
-		gg.draw_empty_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height, border_color)
+		gg.draw_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height,
+			drawer_color)
+		gg.draw_empty_rect(dd.x, dd.y + dropdown_height, dd.width, dd.items.len * dropdown_height,
+			border_color)
 		y := dd.y + dropdown_height
 		for i, item in dd.items {
-			color := if i == dd.hover_index {border_color} else {drawer_color}
+			color := if i == dd.hover_index { border_color } else { drawer_color }
 			gg.draw_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, color)
-			gg.draw_empty_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, border_color)
+			gg.draw_empty_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height,
+				border_color)
 			gg.draw_text_def(dd.x + 5, y + i * dropdown_height + 5, item.text)
 		}
 	}
-	//draw the arrow
+	// draw the arrow
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 }
 
@@ -128,7 +128,9 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 				dd.open_drawer()
 				return
 			}
-			if dd.hover_index < dd.items.len - 1{ dd.hover_index++ }
+			if dd.hover_index < dd.items.len - 1 {
+				dd.hover_index++
+			}
 		}
 		.escape {
 			dd.unfocus()
@@ -141,13 +143,15 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		.enter {
 			dd.selected_index = dd.hover_index
 			dd.unfocus()
-		} else {}
+		}
+		else {}
 	}
 }
 
 fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
-	if !dd.point_inside(e.x, e.y) || e.action == 1 {return}
-
+	if !dd.point_inside(e.x, e.y) || e.action == 1 {
+		return
+	}
 	if e.y >= dd.y && e.y <= dd.y + dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
 	} else if dd.open {
@@ -193,5 +197,6 @@ fn (mut dd Dropdown) unfocus() {
 }
 
 fn (dd &Dropdown) point_inside(x, y f64) bool {
-	return y >= dd.y && y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x && x <= dd.x + dd.width
+	return y >= dd.y &&
+		y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x && x <= dd.x + dd.width
 }

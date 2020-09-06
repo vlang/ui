@@ -3,9 +3,9 @@ import math
 
 const (
 	buttons_per_row = 4
-	bwidth = 30
-	bheight = 30
-	bpadding = 5
+	bwidth          = 30
+	bheight         = 30
+	bpadding        = 5
 )
 
 struct App {
@@ -26,22 +26,24 @@ fn main() {
 		['7', '8', '9', '*'],
 		['4', '5', '6', '-'],
 		['1', '2', '3', '+'],
-		['0', '.', '±', '=']
-		]
+		['0', '.', '±', '='],
+	]
 	mut app := &App{
 		window: 0
 	}
 	mut children := []ui.Widget{}
 	children = [
-		ui.textbox(
+		ui.textbox({
 			text: &app.text
 			placeholder: '0'
 			width: 135
 			read_only: true
-		)
+		}),
 	]
 	for op in ops {
-		children << ui.row({spacing: 5}, get_row(op))
+		children << ui.row({
+			spacing: 5
+		}, get_row(op))
 	}
 	app.window = ui.window({
 		width: 145
@@ -51,9 +53,9 @@ fn main() {
 	}, [
 		ui.column({
 			stretch: true
-			margin: ui.MarginConfig{5,5,5,5}
+			margin: ui.MarginConfig{5, 5, 5, 5}
 			spacing: 5
-		}, children)
+		}, children),
 	])
 	ui.run(app.window)
 }
@@ -79,8 +81,7 @@ fn btn_click(mut app App, btn &ui.Button) {
 			app.text = btn.text
 			app.new_number = false
 			app.is_float = false
-		}
-		else {
+		} else {
 			// Append a new digit
 			app.text = number + btn.text
 		}
@@ -104,20 +105,19 @@ fn (mut app App) update_result() {
 	// Format and print the result
 	if !math.trunc(app.result).eq_epsilon(app.result) {
 		app.text = '${app.result:-15.10f}'
-	}
-	else {
+	} else {
 		app.text = int(app.result).str()
 	}
 }
 
-fn pop_f64(a []f64) (f64,[]f64) {
+fn pop_f64(a []f64) (f64, []f64) {
 	res := a.last()
-	return res,a[0..a.len - 1]
+	return res, a[0..a.len - 1]
 }
 
-fn pop_string(a []string) (string,[]string) {
+fn pop_string(a []string) (string, []string) {
 	res := a.last()
-	return res,a[0..a.len - 1]
+	return res, a[0..a.len - 1]
 }
 
 fn (mut app App) calculate() {
@@ -133,7 +133,7 @@ fn (mut app App) calculate() {
 		if operations.len == 0 {
 			break
 		}
-		op,operations = pop_string(operations)
+		op, operations = pop_string(operations)
 		if op == '=' {
 			continue
 		}
@@ -141,7 +141,7 @@ fn (mut app App) calculate() {
 			operations << op
 			break
 		}
-		b,operands = pop_f64(operands)
+		b, operands = pop_f64(operands)
 		if op == '±' {
 			result = -b
 			operands << result
@@ -152,7 +152,7 @@ fn (mut app App) calculate() {
 			operands << b
 			break
 		}
-		a,operands = pop_f64(operands)
+		a, operands = pop_f64(operands)
 		match op {
 			'+' {
 				result = a + b
@@ -177,7 +177,7 @@ fn (mut app App) calculate() {
 				eprintln('Unknown op: $op ')
 				break
 			}
-	}
+		}
 		operands << result
 		// eprintln('i: ${i:4d} | res: ${result} | op: $op | operands: $operands | operations: $operations')
 	}
@@ -192,18 +192,21 @@ fn (mut app App) calculate() {
 fn get_row(ops []string) []ui.Widget {
 	mut children := []ui.Widget{}
 	for op in ops {
-		if op == ' ' {continue}
-		children << ui.button(
+		if op == ' ' {
+			continue
+		}
+		children << ui.button({
 			text: op
 			onclick: btn_click
 			width: bwidth
 			height: bheight
-		)
+		})
 	}
 	return children
 }
 
-/* fn (mut app App) add_button(text string, button_idx int) {
+/*
+fn (mut app App) add_button(text string, button_idx int) {
 	// Calculate button's coordinates from its index
 	x := bpadding + (button_idx % buttons_per_row) * (bwidth + bpadding)
 	y := bpadding + bheight + (button_idx / buttons_per_row) * (bwidth + bpadding)
@@ -220,4 +223,4 @@ fn get_row(ops []string) []ui.Widget {
 		})
 	}
 }
- */
+*/

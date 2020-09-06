@@ -7,11 +7,11 @@ const (
 
 struct App {
 mut:
-	txt_box_celsius    &ui.TextBox
-	txt_box_fahrenheit &ui.TextBox
-	txt_box_celsius_text string = ''
+	txt_box_celsius         &ui.TextBox
+	txt_box_fahrenheit      &ui.TextBox
+	txt_box_celsius_text    string = ''
 	txt_box_fahrenheit_text string = ''
-	window             &ui.Window
+	window                  &ui.Window
 }
 
 fn main() {
@@ -41,7 +41,7 @@ fn main() {
 		ui.row({
 			stretch: true
 			alignment: .center
-			margin: ui.MarginConfig{5,5,5,5}
+			margin: ui.MarginConfig{5, 5, 5, 5}
 			spacing: 10
 		}, [
 			ui.label({
@@ -51,8 +51,8 @@ fn main() {
 			ui.label({
 				text: 'Fahrenheit'
 			}),
-			app.txt_box_fahrenheit
-		])
+			app.txt_box_fahrenheit,
+		]),
 	])
 	ui.run(app.window)
 }

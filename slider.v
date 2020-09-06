@@ -3,13 +3,13 @@ module ui
 import gx
 
 const (
-	thumb_color = gx.rgb(87, 153, 245)
-	slider_background_color = gx.rgb(219, 219, 219)
-	slider_background_border_color = gx.rgb(191, 191, 191)
+	thumb_color                            = gx.rgb(87, 153, 245)
+	slider_background_color                = gx.rgb(219, 219, 219)
+	slider_background_border_color         = gx.rgb(191, 191, 191)
 	slider_focused_background_border_color = gx.rgb(255, 0, 0)
 )
 
-type SliderValueChangedFn fn(voidptr, voidptr)
+type SliderValueChangedFn = fn (arg_1, arg_2 voidptr)
 
 pub enum Orientation {
 	vertical = 0
@@ -23,14 +23,14 @@ pub mut:
 	track_width          int
 	thumb_width          int
 	thumb_height         int
-	orientation          Orientation=Orientation.horizontal
+	orientation          Orientation = Orientation.horizontal
 	x                    int
 	y                    int
 	parent               Layout
 	ui                   &UI
 	val                  f32
-	min                  int=0
-	max                  int=100
+	min                  int = 0
+	max                  int = 100
 	is_focused           bool
 	dragging             bool
 	on_value_changed     SliderValueChangedFn
@@ -48,10 +48,10 @@ pub struct SliderConfig {
 	val                  f32
 	orientation          Orientation
 	on_value_changed     SliderValueChangedFn
-	focus_on_thumb_only  bool=true
-	rev_min_max_pos      bool=false
-	thumb_in_track       bool=false
-	track_line_displayed bool=true
+	focus_on_thumb_only  bool = true
+	rev_min_max_pos      bool = false
+	thumb_in_track       bool = false
+	track_line_displayed bool = true
 }
 
 fn (mut s Slider) init(parent Layout) {
@@ -82,8 +82,7 @@ pub fn slider(c SliderConfig) &Slider {
 	if !c.thumb_in_track {
 		s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
 		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
-	}
-	else {
+	} else {
 		s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
 		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
 	}
@@ -106,18 +105,19 @@ fn (s &Slider) draw_thumb() {
 		pos = -pos + f32(dim)
 	}
 	pos += f32(axis)
-	if  pos > axis + dim {
+	if pos > axis + dim {
 		pos = f32(dim) + f32(axis)
 	}
-	if  pos < axis {
+	if pos < axis {
 		pos = f32(axis)
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
-		s.ui.gg.draw_rect(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height, thumb_color)
-	}
-	else {
-		s.ui.gg.draw_rect(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height, thumb_color)
+		s.ui.gg.draw_rect(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
+			thumb_color)
+	} else {
+		s.ui.gg.draw_rect(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
+			thumb_color)
 	}
 }
 
@@ -126,27 +126,27 @@ fn (mut s Slider) set_pos(x, y int) {
 	s.y = y
 }
 
-fn (mut s Slider) size() (int,int) {
+fn (mut s Slider) size() (int, int) {
 	if s.orientation == .horizontal {
-		return s.track_width,s.thumb_height
-	}
-	else {
-		return s.thumb_width,s.track_height
+		return s.track_width, s.thumb_height
+	} else {
+		return s.thumb_width, s.track_height
 	}
 }
 
-fn (mut s Slider) propose_size(w, h int) (int,int) {
-	/* s.track_width = w
+fn (mut s Slider) propose_size(w, h int) (int, int) {
+	/*
+	s.track_width = w
 	s.track_height = h
 	if s.track_height > 20 {s.track_height = 20} //TODO constrain
 	s.thumb_height = if s.orientation == .horizontal {s.track_height + 10} else {10}
 	s.thumb_width = if s.orientation == .horizontal { 10 } else {s.track_width + 10}
-	return w, s.thumb_height */
+	return w, s.thumb_height
+	*/
 	if s.orientation == .horizontal {
-		return s.track_width,s.thumb_height
-	}
-	else {
-		return s.thumb_width,s.track_height
+		return s.track_width, s.thumb_height
+	} else {
+		return s.thumb_width, s.track_height
 	}
 }
 
@@ -155,16 +155,16 @@ fn (s &Slider) draw() {
 	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			s.ui.gg.draw_line(s.x + 2, s.y + s.track_height / 2, s.x + s.track_width - 4, s.y + s.track_height / 2, gx.rgb(0, 0, 0))
-		}
-		else {
-			s.ui.gg.draw_line(s.x + s.track_width / 2, s.y + 2, s.x + s.track_width / 2, s.y + s.track_height - 4, gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(s.x + 2, s.y + s.track_height / 2, s.x + s.track_width - 4,
+				s.y + s.track_height / 2, gx.rgb(0, 0, 0))
+		} else {
+			s.ui.gg.draw_line(s.x + s.track_width / 2, s.y + 2, s.x + s.track_width / 2,
+				s.y + s.track_height - 4, gx.rgb(0, 0, 0))
 		}
 	}
 	if !s.is_focused {
 		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_background_border_color)
-	}
-	else {
+	} else {
 		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_focused_background_border_color)
 	}
 	// Draw the thumb
@@ -181,8 +181,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 				if int(s.val) > s.min {
 					s.val--
 				}
-			}
-			else {
+			} else {
 				if int(s.val) < s.max {
 					s.val++
 				}
@@ -193,8 +192,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 				if int(s.val) < s.max {
 					s.val++
 				}
-			}
-			else {
+			} else {
 				if int(s.val) > s.min {
 					s.val--
 				}
@@ -244,8 +242,7 @@ fn (mut s Slider) change_value(x, y int) {
 	s.val = f32(s.min) + (f32(pos) * f32(s.max - s.min)) / f32(dim)
 	if int(s.val) < s.min {
 		s.val = f32(s.min)
-	}
-	else if int(s.val) > s.max {
+	} else if int(s.val) > s.max {
 		s.val = f32(s.max)
 	}
 	if s.on_value_changed != voidptr(0) {
@@ -280,7 +277,7 @@ fn (s &Slider) point_inside_thumb(x, y f64) bool {
 		pos = -pos + f32(dim)
 	}
 	pos += f32(axis)
-	if  pos > axis + dim {
+	if pos > axis + dim {
 		pos = f32(dim) + f32(axis)
 	}
 	if pos < axis {
@@ -290,11 +287,12 @@ fn (s &Slider) point_inside_thumb(x, y f64) bool {
 	if s.orientation == .horizontal {
 		t_x := pos - f32(s.thumb_width) / 2
 		t_y := middle
-		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
-	}
-	else {
+		return x >= t_x &&
+			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+	} else {
 		t_x := middle
 		t_y := pos - f32(s.thumb_height) / 2
-		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+		return x >= t_x &&
+			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
 	}
 }

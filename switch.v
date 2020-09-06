@@ -6,14 +6,14 @@ module ui
 import gx
 
 const (
-	sw_height = 20
-	sw_width = 40
-	sw_dot_size = 16
-	sw_open_bg_color = gx.rgb(19, 206, 102)
+	sw_height         = 20
+	sw_width          = 40
+	sw_dot_size       = 16
+	sw_open_bg_color  = gx.rgb(19, 206, 102)
 	sw_close_bg_color = gx.rgb(220, 223, 230)
 )
 
-type SwitchClickFn fn(voidptr, voidptr)
+type SwitchClickFn = fn (arg_1, arg_2 voidptr)
 
 pub struct Switch {
 pub mut:
@@ -24,17 +24,17 @@ pub mut:
 	y          int
 	parent     Layout
 	is_focused bool
-	open bool
+	open       bool
 	ui         &UI
 	onclick    SwitchClickFn
 }
 
 pub struct SwitchConfig {
 	onclick SwitchClickFn
-	open bool
+	open    bool
 }
 
-fn (mut s Switch) init(parent Layout){
+fn (mut s Switch) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
@@ -46,7 +46,7 @@ pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
 		height: sw_height
 		width: sw_width
-		open:c.open
+		open: c.open
 		onclick: c.onclick
 		ui: 0
 	}
@@ -67,13 +67,14 @@ fn (mut s Switch) propose_size(w, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
-	padding := (s.height-sw_dot_size)/2
+	padding := (s.height - sw_dot_size) / 2
 	if s.open {
-	    s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_open_bg_color)
-		s.ui.gg.draw_rect(s.x - padding + s.width - sw_dot_size , s.y + padding, sw_dot_size, sw_dot_size, gx.white)
-	}else{
-	    s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_close_bg_color)
-	    s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
+		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_open_bg_color)
+		s.ui.gg.draw_rect(s.x - padding + s.width - sw_dot_size, s.y + padding, sw_dot_size,
+			sw_dot_size, gx.white)
+	} else {
+		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_close_bg_color)
+		s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
 	}
 }
 
@@ -82,7 +83,10 @@ fn (s &Switch) point_inside(x, y f64) bool {
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
-	if !s.point_inside(e.x, e.y) { return }	//<===== mouse position test added
+	if !s.point_inside(e.x, e.y) {
+		return
+	}
+	// <===== mouse position test added
 	if e.action == 0 {
 		s.open = !s.open
 		if s.onclick != voidptr(0) {

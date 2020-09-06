@@ -45,7 +45,7 @@ fn main() {
 	}, [
 		ui.column({
 			stretch: true
-			margin: ui.MarginConfig{5,5,5,5}
+			margin: ui.MarginConfig{5, 5, 5, 5}
 			alignment: .left
 		}, [
 			ui.row({
@@ -65,18 +65,18 @@ fn main() {
 					ui.button({
 						text: 'Reset'
 						onclick: on_reset
-					})
+					}),
 				]),
 				ui.column({
 					alignment: .left
 					spacing: 10
 				}, [
 					app.lbl_elapsed_value,
-					app.slider
-				])
+					app.slider,
+				]),
 			]),
-			app.progress_bar
-		])
+			app.progress_bar,
+		]),
 	])
 	app.window = window
 	go app.timer()
@@ -101,7 +101,7 @@ fn (mut app App) timer() {
 		} else {
 			app.elapsed_time += 0.1
 		}
-		app.lbl_elapsed_value.set_text('${app.elapsed_time} s')
+		app.lbl_elapsed_value.set_text('$app.elapsed_time s')
 		if app.duration == 0 {
 			app.progress_bar.val = 100
 		} else {
