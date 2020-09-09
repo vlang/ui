@@ -103,7 +103,7 @@ pub struct TextBoxConfig {
 	on_return voidptr
 
 
-	border_accentuated bool=false
+	border_accentuated bool
 }
 
 fn (mut tb TextBox) init(parent Layout) {

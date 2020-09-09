@@ -72,8 +72,8 @@ pub mut:
     selection       int = -1
     draw_count      int
     clbk            SelectionChangedFn = SelectionChangedFn(0)
-    focused         bool = false
-    draw_lines      bool = false
+    focused         bool
+    draw_lines      bool
     col_bkgrnd      gx.Color = _col_list_bkgrnd
     col_selected    gx.Color = _col_item_select
     col_border      gx.Color = _col_border

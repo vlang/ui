@@ -35,7 +35,7 @@ mut:
 	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
 	resource_cache       map[string]gg.Image
-	closed               bool = false
+	closed               bool
 	needs_refresh bool = true
 	ticks int
 }
