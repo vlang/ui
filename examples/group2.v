@@ -8,9 +8,9 @@ const (
 struct App {
 mut:
 	window       &ui.Window = 0
-	first_ipsum  string = ''
-	second_ipsum string = ''
-	full_name    string = ''
+	first_ipsum  string
+	second_ipsum string
+	full_name    string
 }
 
 fn main() {

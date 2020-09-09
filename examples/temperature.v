@@ -9,8 +9,8 @@ struct App {
 mut:
 	txt_box_celsius         &ui.TextBox
 	txt_box_fahrenheit      &ui.TextBox
-	txt_box_celsius_text    string = ''
-	txt_box_fahrenheit_text string = ''
+	txt_box_celsius_text    string
+	txt_box_fahrenheit_text string
 	window                  &ui.Window
 }
 

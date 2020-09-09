@@ -29,7 +29,7 @@ pub mut:
 	parent               Layout
 	ui                   &UI
 	val                  f32
-	min                  int = 0
+	min                  int
 	max                  int = 100
 	is_focused           bool
 	dragging             bool
@@ -49,8 +49,8 @@ pub struct SliderConfig {
 	orientation          Orientation
 	on_value_changed     SliderValueChangedFn
 	focus_on_thumb_only  bool = true
-	rev_min_max_pos      bool = false
-	thumb_in_track       bool = false
+	rev_min_max_pos      bool
+	thumb_in_track       bool
 	track_line_displayed bool = true
 }
 

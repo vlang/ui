@@ -21,13 +21,13 @@ mut:
     width          int
     height         int
     callback       SelectionChangedFn = SelectionChangedFn(0)
-    draw_lines     bool = false // Draw a rectangle around every item?
+    draw_lines     bool // Draw a rectangle around every item?
     col_border     gx.Color = _col_border // Item and list border color
     col_bkgrnd     gx.Color = _col_list_bkgrnd // ListBox background color
     col_selected   gx.Color = _col_item_select // Selected item background color
     item_height    int = _item_height
     text_offset_y  int = _text_offset_y
-    id             string = '' // To use one callback for multiple ListBoxes
+    id             string // To use one callback for multiple ListBoxes
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -79,7 +79,7 @@ pub mut:
     col_border      gx.Color = _col_border
     item_height     int = _item_height
     text_offset_y   int = _text_offset_y
-    id              string = ''
+    id              string
 }
 
 struct ListItem {
