@@ -163,25 +163,22 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
 	}
-
 	gcontext := gg.new_context({
 		width: cfg.width
 		height: cfg.height
 		use_ortho: true // This is needed for 2D drawing
-
 		create_window: true
 		window_title: cfg.title
 		resizable: cfg.resizable
 		frame_fn:  frame
 		event_fn: on_event
 		user_data: window
-		font_path: if cfg.font_path == '' {  system_font_path() } else { cfg.font_path }
+		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 		init_fn: gg_init
 		//keydown_fn: window_key_down
 		//char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
-
 	})
 	//wsize := gcontext.window.get_window_size()
 	//fsize := gcontext.window.get_framebuffer_size()
