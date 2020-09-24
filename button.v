@@ -72,11 +72,11 @@ pub fn button(c ButtonConfig) &Button {
 		height: c.height
 		text: c.text
 		icon_path: c.icon_path
-		use_icon: true
+		use_icon: c.icon_path != ''
 		onclick: c.onclick
 		ui: 0
 	}
-	if !os.exists(c.icon_path) {
+	if b.use_icon && !os.exists(c.icon_path) {
 		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
 		b.use_icon = false
 	}
