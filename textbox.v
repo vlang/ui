@@ -27,11 +27,11 @@ const (
 	selection_color = gx.rgb(186, 214, 251)
 )
 
-type KeyDownFn fn(voidptr, voidptr, u32)
+type KeyDownFn = fn (voidptr, voidptr, u32)
 
-type KeyUpFn fn(voidptr, voidptr, u32)
+type KeyUpFn = fn (voidptr, voidptr, u32)
 
-type TextBoxChangeFn fn(string, voidptr)
+type TextBoxChangeFn = fn (string, voidptr)
 
 [ref_only]
 pub struct TextBox {

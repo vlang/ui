@@ -12,7 +12,7 @@ enum RadioState {
 }
 */
 
-type RadioClickFn fn()
+type RadioClickFn = fn()
 
 [ref_only]
 pub struct Radio {
