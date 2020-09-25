@@ -3,7 +3,7 @@ module ui
 import gx
 import eventbus
 
-type SelectionChangedFn fn(voidptr, voidptr) // The second will be ListBox
+type SelectionChangedFn = fn (voidptr, voidptr) // The second will be ListBox
 
 const (
     _item_height = 20
