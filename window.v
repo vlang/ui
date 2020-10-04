@@ -581,7 +581,7 @@ fn frame(mut w &Window) {
 }
 
 //fn C.sapp_macos_get_window() voidptr
-fn C.sapp_macos_set_title(charptr)
+fn C.sapp_set_window_title(charptr)
 
 //#define cls objc_getClass
 //#define sel sel_getUid
@@ -597,20 +597,14 @@ fn C.objc_getClass()
 
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
-	$if macos {
-		/*
+	/* $if macos {
 		x := C.sapp_macos_get_window()
 		C.objc_msg(x, C.sel_getUid("setTitle:"), C.objc_cls_msg(C.objc_getClass("NSString"),
 			C.sel_getUid("stringWithUTF8String:"),"Pure C App"))
-
-
 		println('SETTING')
 		#[nsw setTitlee:"test string"];
-		*/
-		C.sapp_macos_set_title(title.str)
-	}
-	// TODO no set_title in Sokol
-	//w.glfw_obj.set_title(title)
+	} */
+	C.sapp_set_window_title(title.str)
 }
 
 //Layout Interface Methods
