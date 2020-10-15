@@ -10,7 +10,6 @@ const (
 		'ui.v', // err
 		'window.v', // err
 		'examples/webview.v', // err
-		'examples/rectangles.v', // err
 	]
 )
 
