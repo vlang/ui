@@ -19,7 +19,7 @@ pub struct Cfg {
 	url             string
 	title           string
 	// parent          &ui.Window
-	nav_finished_fn NavFinishedFn
+	nav_finished_fn webview.NavFinishedFn
 	// js_on_init      string
 }
 

@@ -26,11 +26,11 @@ pub mut:
 	is_focused bool
 	open       bool
 	ui         &UI
-	onclick    SwitchClickFn
+	onclick    ui.SwitchClickFn
 }
 
 pub struct SwitchConfig {
-	onclick SwitchClickFn
+	onclick ui.SwitchClickFn
 	open    bool
 }
 

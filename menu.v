@@ -31,7 +31,7 @@ pub type MenuFn = fn ()
 
 pub struct MenuItem {
 	text   string
-	action MenuFn
+	action ui.MenuFn
 }
 
 fn (mut m Menu) init(parent Layout) {

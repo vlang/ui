@@ -33,7 +33,7 @@ pub mut:
 	max                  int = 100
 	is_focused           bool
 	dragging             bool
-	on_value_changed     SliderValueChangedFn
+	on_value_changed     ui.SliderValueChangedFn
 	focus_on_thumb_only  bool
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -47,7 +47,7 @@ pub struct SliderConfig {
 	max                  int
 	val                  f32
 	orientation          Orientation
-	on_value_changed     SliderValueChangedFn
+	on_value_changed     ui.SliderValueChangedFn
 	focus_on_thumb_only  bool = true
 	rev_min_max_pos      bool
 	thumb_in_track       bool

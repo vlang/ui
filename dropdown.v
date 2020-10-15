@@ -28,7 +28,7 @@ mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed SelectionChangedFn
+	on_selection_changed ui.SelectionChangedFn
 }
 
 pub struct DropdownConfig {
@@ -38,7 +38,7 @@ pub struct DropdownConfig {
 	width                int
 	parent               Layout
 	selected_index       int = -1
-	on_selection_changed SelectionChangedFn
+	on_selection_changed ui.SelectionChangedFn
 }
 
 pub struct DropdownItem {
