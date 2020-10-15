@@ -2,12 +2,11 @@ const (
 	files_to_skip = [
 		'button.v', // struct syntax, struct comment removal, type comment err
 		'checkbox.v', // struct comment removal
-		'listbox.v', // type comment err
-		'picture.v', // type comment err
+		'listbox.v', // fn param removed, type comment misplacement
+		'picture.v', // type comment misplacement
 		'radio.v', // struct comment removal
 		'textbox.v', // struct comment removal
 		'pngs.v', // bin2v file
-		'examples/users.v', // struct comment removal
 		'ui.v', // err
 		'window.v', // err
 		'examples/webview.v', // err
