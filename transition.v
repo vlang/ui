@@ -55,10 +55,10 @@ pub fn (mut t Transition) set_value(animated_value &int) {
 	t.last_draw_target = *animated_value
 }
 
-fn (t &Transition) set_pos(x, y int) {
+fn (t &Transition) set_pos(x int, y int) {
 }
 
-fn (t &Transition) propose_size(w, h int) (int, int) {
+fn (t &Transition) propose_size(w int, h int) (int, int) {
 	return 0, 0
 }
 
@@ -113,6 +113,6 @@ fn (t &Transition) is_focused() bool {
 fn (t &Transition) unfocus() {
 }
 
-fn (t &Transition) point_inside(x, y f64) bool {
+fn (t &Transition) point_inside(x f64, y f64) bool {
 	return false
 }

@@ -21,8 +21,9 @@ v_files = v_files.filter(!it.contains('examples/modules/'))
 mut skipped := 0
 mut errs := 0
 for file in v_files {
-	if file.trim_prefix(root_dir) in files_to_skip {
-		println('Skipping $file')
+	fname := file.trim_prefix(root_dir)
+	if fname in files_to_skip {
+		println('Skipping $fname')
 		skipped++
 		continue
 	}

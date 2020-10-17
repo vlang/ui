@@ -59,7 +59,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 	return rect
 }
 
-fn (mut r Rectangle) set_pos(x, y int) {
+fn (mut r Rectangle) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
 }
@@ -68,7 +68,7 @@ fn (mut r Rectangle) size() (int, int) {
 	return r.width, r.height
 }
 
-fn (mut r Rectangle) propose_size(w, h int) (int, int) {
+fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 	return r.width, r.height
 }
 
@@ -114,6 +114,6 @@ fn (r &Rectangle) is_focused() bool {
 fn (r &Rectangle) unfocus() {
 }
 
-fn (r &Rectangle) point_inside(x, y f64) bool {
+fn (r &Rectangle) point_inside(x f64, y f64) bool {
 	return false
 }
