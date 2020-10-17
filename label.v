@@ -30,7 +30,7 @@ pub fn label(c LabelConfig) &Label {
 	return lbl
 }
 
-fn (mut l Label) set_pos(x, y int) {
+fn (mut l Label) set_pos(x int, y int) {
 	l.x = x
 	l.y = y
 }
@@ -41,7 +41,7 @@ fn (mut l Label) size() (int, int) {
 	return w, h * l.text.split('\n').len
 }
 
-fn (mut l Label) propose_size(w, h int) (int, int) {
+fn (mut l Label) propose_size(w int, h int) (int, int) {
 	ww, hh := l.ui.gg.text_size(l.text)
 	// First return the width, then the height multiplied by line count.
 	return ww, hh * l.text.split('\n').len
@@ -66,7 +66,7 @@ fn (l &Label) is_focused() bool {
 fn (l &Label) unfocus() {
 }
 
-fn (l &Label) point_inside(x, y f64) bool {
+fn (l &Label) point_inside(x f64, y f64) bool {
 	return false // x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height
 }
 

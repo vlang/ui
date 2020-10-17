@@ -1,17 +1,25 @@
 const (
 	files_to_skip = [
-		'button.v', // struct syntax, struct comment removal, type comment err
-		'checkbox.v', // struct comment removal
-		'listbox.v', // type comment err
-		'picture.v', // type comment err
-		'radio.v', // struct comment removal
-		'textbox.v', // struct comment removal
 		'pngs.v', // bin2v file
-		'examples/users.v', // struct comment removal
-		'ui.v', // err
-		'window.v', // err
-		'examples/webview.v', // err
-		'examples/rectangles.v', // err
+		// misplaced comments:
+		'examples/rectangles.v',
+		'examples/users.v',
+		'listbox.v',
+		'radio.v',
+		'window.v',
+		// cannot compile afterwards:
+		'dropdown.v', // invalid module prefixing
+		'menu.v', // ^^
+		'slider.v', // ^^
+		'switch.v', // ^^
+		'webview/webview.v', // ^^
+		'checkbox.v', // ^^
+		'picture.v', // ^^; misplaced comments
+		'textbox.v', // ^^; removed args in type decl
+		'button.v', // ^^; ^^; misplaced comments
+		// vfmt fails on those:
+		'ui.v', // unexpected comment
+		'examples/webview.v', // expecting struct key
 	]
 )
 
@@ -21,7 +29,9 @@ v_files = v_files.filter(!it.contains('examples/modules/'))
 mut skipped := 0
 mut errs := 0
 for file in v_files {
-	if file.trim_prefix(root_dir) in files_to_skip {
+	fname := file.trim_prefix(root_dir)
+	if fname in files_to_skip {
+		println('Skipping $fname')
 		skipped++
 		continue
 	}

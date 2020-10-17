@@ -37,7 +37,7 @@ pub fn canvas(c CanvasConfig) &Canvas {
 	return canvas
 }
 
-fn (mut c Canvas) set_pos(x, y int) {
+fn (mut c Canvas) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
 }
@@ -46,7 +46,7 @@ fn (mut c Canvas) size() (int, int) {
 	return c.width, c.height
 }
 
-fn (mut c Canvas) propose_size(w, h int) (int, int) {
+fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 	/*
 	c.width = w
 	c.height = h
@@ -76,6 +76,6 @@ fn (c &Canvas) is_focused() bool {
 fn (c &Canvas) unfocus() {
 }
 
-fn (c &Canvas) point_inside(x, y f64) bool {
+fn (c &Canvas) point_inside(x f64, y f64) bool {
 	return false // x >= c.x && x <= c.x + c.width && y >= c.y && y <= c.y + c.height
 }

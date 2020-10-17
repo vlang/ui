@@ -56,7 +56,7 @@ pub fn group(c GroupConfig, children []Widget) &Group {
 	return g
 }
 
-fn (mut g Group) set_pos(x, y int) {
+fn (mut g Group) set_pos(x int, y int) {
 	g.x = x
 	g.y = y
 	g.calculate_child_positions()
@@ -79,7 +79,7 @@ fn (mut g Group) calculate_child_positions() {
 	}
 }
 
-fn (mut g Group) propose_size(w, h int) (int, int) {
+fn (mut g Group) propose_size(w int, h int) (int, int) {
 	g.width = w
 	g.height = h
 	return g.width, g.height
@@ -104,7 +104,7 @@ fn (mut g Group) draw() {
 	}
 }
 
-fn (g &Group) point_inside(x, y f64) bool {
+fn (g &Group) point_inside(x f64, y f64) bool {
 	return x >= g.x && x <= g.x + g.width && y >= g.y && y <= g.y + g.height
 }
 
@@ -128,7 +128,7 @@ fn (g &Group) unfocus_all() {
 	}
 }
 
-fn (g &Group) resize(width, height int) {
+fn (g &Group) resize(width int, height int) {
 }
 
 fn (g &Group) get_state() voidptr {

@@ -51,7 +51,7 @@ fn main() {
 					}),
 					ui.button({
 						text: 'More ipsum!'
-						onclick: fn (a, b voidptr) {
+						onclick: fn (a voidptr, b voidptr) {
 							ui.open_url('https://lipsum.com/feed/html')
 						}
 					}),

@@ -21,7 +21,7 @@ fn nsstring(s string) voidptr {
 	return 0
 }
 
-pub fn notify(title, msg string) {
+pub fn notify(title string, msg string) {
 	unsafe {
 		ns_msg := nsstring(msg)
 		ns_title := nsstring(title)

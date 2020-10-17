@@ -85,7 +85,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 	return s
 }
 
-fn (mut s Stack) set_pos(x, y int) {
+fn (mut s Stack) set_pos(x int, y int) {
 	s.x = x + s.margin.left
 	s.y = y + s.margin.top
 }
@@ -95,7 +95,7 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (mut s Stack) propose_size(w, h int) (int, int) {
+fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	if s.stretch {
 		s.width = w
 		s.height = h
@@ -165,7 +165,7 @@ fn (s &Stack) get_state() voidptr {
 	return parent.get_state()
 }
 
-fn (s &Stack) point_inside(x, y f64) bool {
+fn (s &Stack) point_inside(x f64, y f64) bool {
 	return false // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
@@ -183,7 +183,7 @@ fn (s &Stack) is_focused() bool {
 	return false // s.is_focused
 }
 
-fn (s &Stack) resize(width, height int) {
+fn (s &Stack) resize(width int, height int) {
 }
 
 // Helpers to correctly get width, height, x, y for both row & column.

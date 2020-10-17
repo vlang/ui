@@ -16,9 +16,7 @@ mut:
 	window       &ui.Window
 	vert_slider  &ui.Slider
 	vert_textbox &ui.TextBox
-	vert_text    string = ((vert_slider_max +
-	vert_slider_min) /
-	2).str()
+	vert_text    string = ((vert_slider_max + vert_slider_min) / 2).str()
 	hor_slider   &ui.Slider
 	hor_text     string = ((hor_slider_max + hor_slider_min) / 2).str()
 	hor_textbox  &ui.TextBox

@@ -53,7 +53,7 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 	return pb
 }
 
-fn (mut pb ProgressBar) set_pos(x, y int) {
+fn (mut pb ProgressBar) set_pos(x int, y int) {
 	pb.x = x
 	pb.y = y
 }
@@ -62,7 +62,7 @@ fn (mut pb ProgressBar) size() (int, int) {
 	return pb.width, pb.height
 }
 
-fn (mut pb ProgressBar) propose_size(w, h int) (int, int) {
+fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	/*
 	pb.width = w
 	pb.height = h
@@ -84,7 +84,7 @@ fn (pb &ProgressBar) draw() {
 	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, progress_bar_color) // gx.Black)
 }
 
-fn (pb &ProgressBar) point_inside(x, y f64) bool {
+fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
 	return false // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
 }
 
