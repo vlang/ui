@@ -12,6 +12,11 @@ const (
 		'window.v', // err
 		'examples/webview.v', // err
 		'examples/rectangles.v', // err
+		'dropdown.v', // invalid module prefixing
+		'menu.v', // invalid module prefixing
+		'slider.v', // invalid module prefixing
+		'switch.v', // invalid module prefixing
+		'webview/webview.v', // invalid module prefixing
 	]
 )
 
