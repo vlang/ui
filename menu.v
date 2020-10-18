@@ -47,7 +47,7 @@ pub fn menu(c MenuConfig) &Menu {
 	}
 }
 
-fn (mut m Menu) set_pos(x, y int) {
+fn (mut m Menu) set_pos(x int, y int) {
 	m.x = x
 	m.y = y
 }
@@ -56,7 +56,7 @@ fn (mut m Menu) size() (int, int) {
 	return 0, 0
 }
 
-fn (mut m Menu) propose_size(w, h int) (int, int) {
+fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	// m.width = w
 	// m.height = h
 	return 0, 0
@@ -91,7 +91,7 @@ fn (m &Menu) is_focused() bool {
 fn (m &Menu) unfocus() {
 }
 
-fn (m &Menu) point_inside(x, y f64) bool {
+fn (m &Menu) point_inside(x f64, y f64) bool {
 	return false // x >= m.x && x <= m.x + m.width && y >= m.y && y <= m.y + m.height
 }
 

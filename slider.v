@@ -9,7 +9,7 @@ const (
 	slider_focused_background_border_color = gx.rgb(255, 0, 0)
 )
 
-type SliderValueChangedFn = fn (arg_1, arg_2 voidptr)
+type SliderValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 pub enum Orientation {
 	vertical = 0
@@ -121,7 +121,7 @@ fn (s &Slider) draw_thumb() {
 	}
 }
 
-fn (mut s Slider) set_pos(x, y int) {
+fn (mut s Slider) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
@@ -134,7 +134,7 @@ fn (mut s Slider) size() (int, int) {
 	}
 }
 
-fn (mut s Slider) propose_size(w, h int) (int, int) {
+fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	/*
 	s.track_width = w
 	s.track_height = h
@@ -207,7 +207,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-fn (s &Slider) point_inside(x, y f64) bool {
+fn (s &Slider) point_inside(x f64, y f64) bool {
 	return x >= s.x && x <= s.x + s.track_width && y >= s.y && y <= s.y + s.track_height
 }
 
@@ -230,7 +230,7 @@ fn slider_mouse_move(mut s Slider, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn (mut s Slider) change_value(x, y int) {
+fn (mut s Slider) change_value(x int, y int) {
 	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	// TODO parser bug ` - axis`
@@ -266,7 +266,7 @@ fn (mut s Slider) unfocus() {
 	s.is_focused = false
 }
 
-fn (s &Slider) point_inside_thumb(x, y f64) bool {
+fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
 	rev_dim := if s.orientation == .horizontal { s.track_height } else { s.track_width }

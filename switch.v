@@ -13,7 +13,7 @@ const (
 	sw_close_bg_color = gx.rgb(220, 223, 230)
 )
 
-type SwitchClickFn = fn (arg_1, arg_2 voidptr)
+type SwitchClickFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 pub struct Switch {
 pub mut:
@@ -53,7 +53,7 @@ pub fn switcher(c SwitchConfig) &Switch {
 	return s
 }
 
-fn (mut s Switch) set_pos(x, y int) {
+fn (mut s Switch) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
@@ -62,7 +62,7 @@ fn (mut s Switch) size() (int, int) {
 	return s.width, s.height
 }
 
-fn (mut s Switch) propose_size(w, h int) (int, int) {
+fn (mut s Switch) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
@@ -78,7 +78,7 @@ fn (mut s Switch) draw() {
 	}
 }
 
-fn (s &Switch) point_inside(x, y f64) bool {
+fn (s &Switch) point_inside(x f64, y f64) bool {
 	return x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
