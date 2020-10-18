@@ -13,7 +13,7 @@ const (
 	drawer_color    = gx.rgb(255, 255, 255)
 )
 
-pub type SelectionChangedFn = fn (arg_1, arg_2 voidptr)
+pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 pub struct Dropdown {
 mut:
@@ -68,7 +68,7 @@ pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	return dd
 }
 
-fn (mut dd Dropdown) set_pos(x, y int) {
+fn (mut dd Dropdown) set_pos(x int, y int) {
 	dd.x = x
 	dd.y = y
 }
@@ -77,7 +77,7 @@ fn (mut dd Dropdown) size() (int, int) {
 	return dd.width, dropdown_height
 }
 
-fn (mut dd Dropdown) propose_size(w, h int) (int, int) {
+fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	dd.width = w
 	// dd.height = h
 	return w, dropdown_height
@@ -195,7 +195,7 @@ fn (mut dd Dropdown) unfocus() {
 	dd.is_focused = false
 }
 
-fn (dd &Dropdown) point_inside(x, y f64) bool {
+fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 	return y >= dd.y &&
 		y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x && x <= dd.x + dd.width
 }

@@ -1,22 +1,17 @@
 const (
 	files_to_skip = [
 		'pngs.v', // bin2v file
-		// misplaced comments:
+		// misplaced comments and more:
 		'examples/rectangles.v',
 		'examples/users.v',
 		'listbox.v',
 		'radio.v',
 		'window.v',
-		// cannot compile afterwards:
-		'dropdown.v', // invalid module prefixing
-		'menu.v', // ^^
-		'slider.v', // ^^
-		'switch.v', // ^^
-		'webview/webview.v', // ^^
+		'picture.v',
+		'button.v', // space before first fn arg in type decl
 		'checkbox.v', // ^^
-		'picture.v', // ^^; misplaced comments
-		'textbox.v', // ^^; removed args in type decl
-		'button.v', // ^^; ^^; misplaced comments
+		// cannot compile afterwards:
+		'textbox.v', // invalid module prefixing, space before first fn arg in type decl
 		// vfmt fails on those:
 		'ui.v', // unexpected comment
 		'examples/webview.v', // expecting struct key
