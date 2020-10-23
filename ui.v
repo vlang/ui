@@ -65,11 +65,11 @@ pub interface Widget {
 	draw()
 	//click(MouseEvent)
 	//mouse_move(MouseEvent)
-	point_inside(x, y f64) bool
+	point_inside(x f64, y f64) bool
 	unfocus()
 	focus()
-	set_pos(x,y int)
-	propose_size(w, h int) (int,int)
+	set_pos(x int,y int)
+	propose_size(w int, h int) (int,int)
 	size() (int, int)
 	is_focused() bool
 }
@@ -84,7 +84,7 @@ pub interface Layout {
 	unfocus_all()
 	//on_mousemove(MouseMoveFn)
 	draw()
-	resize(w,h int)
+	resize(w int,h int)
 }
 pub fn ilayout(x Layout) Layout { return x }
 

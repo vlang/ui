@@ -6,7 +6,7 @@ module ui
 import os
 import gg
 
-type PictureClickFn = fn (arg_1, arg_2 voidptr) // userptr, picture
+type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 pub struct Picture {
 pub:
 	offset_x  int
