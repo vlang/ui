@@ -10,7 +10,7 @@ const (
 		'picture.v', // fn type decl: misplaced comment
 		'checkbox.v', // fn type decl: extra spaces; misplaced comments
 		// cannot compile afterwards:
-		'textbox.v', // invalid module prefixing, space before first fn arg in type decl
+		'textbox.v', // invalid module prefixing; extra spaces in fn type decl; misformatted unsafe
 		'button.v', // space before first fn arg in type decl; doubled closing "}"
 		// vfmt fails on those:
 		'ui.v', // unexpected comment
