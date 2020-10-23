@@ -8,15 +8,14 @@ import gg
 import os
 
 const (
-	button_bg_color = gx.rgb(28, 28, 28)
-	button_border_color = gx.rgb(200, 200, 200)
-	btn_text_cfg = gx.TextCfg{
-		// color: gx.white
+	button_bg_color           = gx.rgb(28, 28, 28)
+	button_border_color       = gx.rgb(200, 200, 200)
+	btn_text_cfg              = gx.TextCfg{// color: gx.white, {
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
 	}
 	button_horizontal_padding = 26
-	button_vertical_padding = 8
+	button_vertical_padding   = 8
 )
 
 enum ButtonState {
@@ -37,22 +36,22 @@ pub struct ButtonConfig {
 [ref_only]
 pub struct Button {
 mut:
-	text_width int
+	text_width  int
 	text_height int
 pub mut:
-	state      ButtonState
-	height     int
-	width      int
-	x          int
-	y          int
-	parent     Layout
-	is_focused bool
-	ui         &UI
-	onclick    ButtonClickFn
-	text       string
-	icon_path  string
-	image      gg.Image
-	use_icon   bool
+	state       ButtonState
+	height      int
+	width       int
+	x           int
+	y           int
+	parent      Layout
+	is_focused  bool
+	ui          &UI
+	onclick     ButtonClickFn
+	text        string
+	icon_path   string
+	image       gg.Image
+	use_icon    bool
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -80,17 +79,15 @@ pub fn button(c ButtonConfig) &Button {
 		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
 		b.use_icon = false
 	}
-
 	return b
 }
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
-	//println('btn_click for window=$window.title')
+	// println('btn_click for window=$window.title')
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
-		}
-		else if e.action == 0 {
+		} else if e.action == 0 {
 			b.state = .normal
 			if b.onclick != voidptr(0) {
 				b.onclick(window.state, b)
@@ -99,7 +96,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut b Button) set_pos(x, y int) {
+fn (mut b Button) set_pos(x int, y int) {
 	b.x = x
 	b.y = y
 }
@@ -108,11 +105,11 @@ fn (mut b Button) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (mut b Button) propose_size(w, h int) (int, int) {
-	//b.width = w
-	//b.height = h
-	//b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
-	//b.height = 20 // vertical padding
+fn (mut b Button) propose_size(w int, h int) (int, int) {
+	// b.width = w
+	// b.height = h
+	// b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
+	// b.height = 20 // vertical padding
 	return b.width, b.height
 }
 
@@ -125,35 +122,32 @@ fn (mut b Button) draw() {
 		b.width = b.text_width + button_horizontal_padding
 		b.height = b.text_height + button_vertical_padding
 	}
-	w2 := b.text_width /2
-	h2 := b.text_height /2
-	bcenter_x := b.x + b.width/2
-	bcenter_y := b.y + b.height/2
+	w2 := b.text_width / 2
+	h2 := b.text_height / 2
+	bcenter_x := b.x + b.width / 2
+	bcenter_y := b.y + b.height / 2
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
-	mut y := bcenter_y-h2-1
-	//if b.ui.gg.scale == 2 {
+	mut y := bcenter_y - h2 - 1
+	// if b.ui.gg.scale == 2 {
 	$if macos { // TODO
 		y -= 2
 	}
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
+	} else {
+		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, btn_text_cfg)
 	}
-	else {
-		b.ui.gg.draw_text(bcenter_x-w2, y, b.text, btn_text_cfg)
-	}
-	//b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
+	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }
 
-//fn (b &Button) key_down(e KeyEvent) {}
-
-fn (b &Button) point_inside(x, y f64) bool {
+// fn (b &Button) key_down(e KeyEvent) {}
+fn (b &Button) point_inside(x f64, y f64) bool {
 	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
 }
 
-//fn (mut b Button) mouse_move(e MouseEvent) {}
-
+// fn (mut b Button) mouse_move(e MouseEvent) {}
 fn (mut b Button) focus() {
 	b.is_focused = true
 }

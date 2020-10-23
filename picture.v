@@ -6,7 +6,7 @@ module ui
 import os
 import gg
 
-type PictureClickFn = fn (arg_1, arg_2 voidptr) // userptr, picture
+type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 pub struct Picture {
 pub:
 	offset_x  int
@@ -32,7 +32,7 @@ pub struct PictureConfig {
 	on_click  PictureClickFn
 	use_cache bool = true
 	ref       &Picture = voidptr(0)
-	image gg.Image
+	image     gg.Image
 }
 
 fn (mut pic Picture) init(parent Layout) {
@@ -64,9 +64,9 @@ pub fn picture(c PictureConfig) &Picture {
 	if !os.exists(c.path) {
 		eprintln('V UI: picture file "$c.path" not found')
 	}
-	//if c.width == 0 || c.height == 0 {
-		//eprintln('V UI: Picture.width/height is 0, it will not be displayed')
-	//}
+	// if c.width == 0 || c.height == 0 {
+	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
+	// }
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
@@ -89,7 +89,7 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut pic Picture) set_pos(x, y int) {
+fn (mut pic Picture) set_pos(x int, y int) {
 	pic.x = x + pic.offset_x
 	pic.y = y + pic.offset_y
 }
@@ -98,7 +98,7 @@ fn (mut pic Picture) size() (int, int) {
 	return pic.width, pic.height
 }
 
-fn (mut pic Picture) propose_size(w, h int) (int, int) {
+fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 	// pic.width = w
 	// pic.height = h
 	return pic.width, pic.height
@@ -118,6 +118,6 @@ fn (pic &Picture) is_focused() bool {
 fn (pic &Picture) unfocus() {
 }
 
-fn (pic &Picture) point_inside(x, y f64) bool {
+fn (pic &Picture) point_inside(x f64, y f64) bool {
 	return x >= pic.x && x <= pic.x + pic.width && y >= pic.y && y <= pic.y + pic.height
 }

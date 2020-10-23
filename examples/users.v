@@ -4,11 +4,11 @@ import gx
 import os
 
 const (
-	win_width = 700
-	win_height = 385
-	nr_cols = 4
+	win_width   = 700
+	win_height  = 385
+	nr_cols     = 4
 	cell_height = 25
-	cell_width = 100
+	cell_width  = 100
 	table_width = cell_width * nr_cols
 )
 
@@ -32,7 +32,7 @@ mut:
 	country    &ui.Radio
 	txt_pos    int
 	started    bool
-	is_error bool
+	is_error   bool
 }
 
 fn main() {
@@ -43,27 +43,27 @@ fn main() {
 				last_name: 'Johnson'
 				age: 29
 				country: 'United States'
-			}
+			},
 			User{
 				first_name: 'Kate'
 				last_name: 'Williams'
 				age: 26
 				country: 'Canada'
-			}
+			},
 		]
-		country: ui.radio(
+		country: ui.radio({
 			width: 200
 			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 			title: 'Country'
-		)
-		pbar: ui.progressbar(
+		})
+		pbar: ui.progressbar({
 			width: 170
 			max: 10
 			val: 2
-		)
-		label: ui.label(
+		})
+		label: ui.label({
 			text: '2/10'
-		)
+		})
 	}
 	window := ui.window({
 		width: win_width
@@ -73,13 +73,18 @@ fn main() {
 	}, [
 		ui.row({
 			stretch: true
-			margin: {top:10,left:10,right:10,bottom:10}
+			margin: {
+				top: 10
+				left: 10
+				right: 10
+				bottom: 10
+			}
 		}, [
 			ui.column({
 				width: 200
 				spacing: 13
 			}, [
-				ui.textbox(
+				ui.textbox({
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
@@ -87,89 +92,88 @@ fn main() {
 					//is_focused: &app.started
 					is_error: &app.is_error
 					is_focused: true
-				)
-				ui.textbox(
+				}),
+				ui.textbox({
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'
 					text: &app.last_name
 					is_error: &app.is_error
-				)
-				ui.textbox(
+				}),
+				ui.textbox({
 					max_len: 3
 					width: 200
 					placeholder: 'Age'
 					is_numeric: true
 					text: &app.age
 					is_error: &app.is_error
-				)
-				ui.textbox(
+				}),
+				ui.textbox({
 					width: 200
 					placeholder: 'Password'
 					is_password: true
 					max_len: 20
 					text: &app.password
-				)
-				ui.checkbox(
+				}),
+				ui.checkbox({
 					checked: true
 					text: 'Online registration'
-				)
-				ui.checkbox(
+				}),
+				ui.checkbox({
 					text: 'Subscribe to the newsletter'
-				)
-				app.country
+				}),
+				app.country,
 				ui.row({
 					spacing: 85
 				}, [
-					ui.button(
+					ui.button({
 						text: 'Add user'
 						onclick: btn_add_click
-					)
-					ui.button(
+					}),
+					ui.button({
 						text: '?'
 						onclick: btn_help_click
-					)
-				])
+					}),
+				]),
 				ui.row({
 					spacing: 5
 					alignment: .center
 				}, [
-					app.pbar
-					app.label
-				])
-			])
+					app.pbar,
+					app.label,
+				]),
+			]),
 			ui.column({
 				stretch: true
 				alignment: .right
-			},[
-				ui.canvas(
+			}, [
+				ui.canvas({
 					height: 275
 					draw_fn: canvas_draw
-				),
-				ui.picture(
+				}),
+				ui.picture({
 					width: 100
 					height: 100
-					path: os.resource_abs_path( 'logo.png' )
-				)
-			])
+					path: os.resource_abs_path('logo.png')
+				}),
+			]),
 		]),
-		ui.menu(
+		ui.menu({
 			items: [
 				ui.MenuItem{'Delete all users', menu_click},
 				ui.MenuItem{'Export users', menu_click},
 				ui.MenuItem{'Exit', menu_click},
 			]
-		)
+		}),
 	])
 	app.window = window
 	ui.run(window)
 }
 
 fn menu_click() {
-
 }
 
-fn btn_help_click(a, b voidptr) {
+fn btn_help_click(a voidptr, b voidptr) {
 	ui.message_box('Built with V UI')
 }
 
@@ -178,33 +182,32 @@ fn (mut app App) btn_add_click(b &Button) {
 
 }
 */
-
 fn btn_add_click(mut app State, x voidptr) {
-	//println('nr users=$app.users.len')
-	//ui.notify('user', 'done')
-	//app.window.set_cursor(.hand)
+	// println('nr users=$app.users.len')
+	// ui.notify('user', 'done')
+	// app.window.set_cursor(.hand)
 	if app.users.len >= 10 {
 		return
 	}
-	if app.first_name == '' ||  app.last_name == '' || app.age == '' {
+	if app.first_name == '' || app.last_name == '' || app.age == '' {
 		app.is_error = true
 		return
 	}
 	new_user := User{
-		first_name: app.first_name //first_name.text
-		last_name: app.last_name//.text
+		first_name: app.first_name // first_name.text
+		last_name: app.last_name // .text
 		age: app.age.int()
 		country: app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
 	app.first_name = ''
-	//app.first_name.focus()
+	// app.first_name.focus()
 	app.last_name = ''
 	app.age = ''
 	app.password = ''
 	app.label.set_text('$app.users.len/10')
-	//ui.message_box('$new_user.first_name $new_user.last_name has been added')
+	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
 fn canvas_draw(gg &gg.Context, app &State) {
