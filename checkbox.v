@@ -8,8 +8,9 @@ import gx
 const (
 	check_mark_size = 14
 	cb_border_color = gx.rgb(76, 145, 244)
-	cb_image = u32(0)
+	cb_image        = u32(0)
 )
+
 /*
 enum CheckBoxState {
 	normal
@@ -77,20 +78,20 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut cb CheckBox) set_pos(x, y int) {
+fn (mut cb CheckBox) set_pos(x int, y int) {
 	cb.x = x
 	cb.y = y
 }
 
-fn (mut cb CheckBox) size() (int,int) {
-	return cb.width,cb.height
+fn (mut cb CheckBox) size() (int, int) {
+	return cb.width, cb.height
 }
 
-fn (mut cb CheckBox) propose_size(w, h int) (int,int) {
+fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 	// cb.width = w
 	// cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
-	return cb.width,check_mark_size
+	return cb.width, check_mark_size
 }
 
 fn (mut cb CheckBox) draw() {
@@ -99,7 +100,7 @@ fn (mut cb CheckBox) draw() {
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, check_mark_size, check_mark_size, false)
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		cb.ui.gg.draw_rect(cb.x+3,cb.y+3,2,2, gx.black)
+		cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2
@@ -116,11 +117,12 @@ fn (mut cb CheckBox) draw() {
 	cb.ui.gg.draw_text(cb.x + check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
 }
 
-fn (cb &CheckBox) point_inside(x, y f64) bool {
+fn (cb &CheckBox) point_inside(x f64, y f64) bool {
 	return x >= cb.x && x <= cb.x + cb.width && y >= cb.y && y <= cb.y + cb.height
 }
 
-fn (mut cb CheckBox) mouse_move(e MouseEvent) {}
+fn (mut cb CheckBox) mouse_move(e MouseEvent) {
+}
 
 fn (mut cb CheckBox) focus() {
 	cb.is_focused = true
