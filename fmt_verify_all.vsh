@@ -1,13 +1,13 @@
 const (
 	files_to_skip = [
 		'pngs.v', // bin2v file
-		// misplaced comments and more:
+		// visual problems:
 		'examples/rectangles.v',
 		'examples/users.v',
-		'listbox.v',
-		'radio.v',
-		'window.v',
-		'picture.v',
+		'listbox.v', // fn type decl: misplaced comment, extra space; struct: some comments are moved to new lines
+		'radio.v', // struct: misplaced comment
+		'window.v', // lots of misplaced comment
+		'picture.v', // fn type decl: misplaced comment
 		'button.v', // space before first fn arg in type decl
 		'checkbox.v', // ^^
 		// cannot compile afterwards:

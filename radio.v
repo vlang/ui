@@ -11,8 +11,7 @@ enum RadioState {
 	check
 }
 */
-
-type RadioClickFn = fn()
+type RadioClickFn = fn ()
 
 [ref_only]
 pub struct Radio {
@@ -25,11 +24,11 @@ pub mut:
 	width          int
 	x              int
 	y              int
-	parent Layout
+	parent         Layout
 	is_focused     bool
 	is_checked     bool
 	ui             &UI
-	//selected_value string
+	// selected_value string
 	// onclick    RadioClickFn
 }
 
@@ -38,10 +37,10 @@ pub struct RadioConfig {
 	values []string
 	title  string
 	width  int
-	ref		&Radio = voidptr(0)
+	ref    &Radio = voidptr(0)
 }
 
-fn (mut r Radio)init(parent Layout) {
+fn (mut r Radio) init(parent Layout) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
@@ -77,10 +76,9 @@ pub fn radio(c RadioConfig) &Radio {
 	}
 	*/
 	return r
-
 }
 
-fn (mut r Radio) set_pos(x, y int) {
+fn (mut r Radio) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
 }
@@ -89,9 +87,9 @@ fn (mut r Radio) size() (int, int) {
 	return r.width, r.height
 }
 
-fn (mut r Radio) propose_size(w, h int) (int, int) {
-	//r.width = w
-	//r.height = 20//default_font_size
+fn (mut r Radio) propose_size(w int, h int) (int, int) {
+	// r.width = w
+	// r.height = 20//default_font_size
 	return r.width, r.values.len * (r.height + 5)
 }
 
@@ -99,23 +97,24 @@ fn (mut r Radio) draw() {
 	// Border
 	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
 	// Title
-	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5, 10, default_window_color)
+	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
+		10, default_window_color)
 	r.ui.gg.draw_text_def(r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
 		x := r.x + 5
-		r.ui.gg.draw_image(x, y-1, 16, 16, r.ui.selected_radio_image)
+		r.ui.gg.draw_image(x, y - 1, 16, 16, r.ui.selected_radio_image)
 		if i != r.selected_index {
-			r.ui.gg.draw_rect(x+4,y+3,8,8,gx.white) // hide the black circle
-			//r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
+			r.ui.gg.draw_rect(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
+			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
 		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, btn_text_cfg)
 	}
 }
 
-fn (r &Radio) point_inside(x, y f64) bool {
+fn (r &Radio) point_inside(x f64, y f64) bool {
 	return x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + (r.height + 5) * r.values.len
 }
 
@@ -129,7 +128,7 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 	if r.selected_index == r.values.len {
 		r.selected_index = r.values.len - 1
 	}
-	//println(r.selected_index)
+	// println(r.selected_index)
 }
 
 fn (mut r Radio) focus() {
