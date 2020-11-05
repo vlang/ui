@@ -11,6 +11,22 @@ on:
     - cron:  '31 1,12 * * *'
 
 jobs:
+  code-formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout V
+      uses: actions/checkout@v2
+      with:
+        repository: vlang/v
+    - name: Checkout V UI
+      uses: actions/checkout@v2
+      with:
+        path: vlib/ui
+    - name: v fmt -verify
+      run: |
+        cd ./vlib/ui
+        v run ./fmt_verify_all.vsh
+
   ubuntu:
     runs-on: ubuntu-latest
     steps:
@@ -36,10 +52,6 @@ jobs:
         v run ./build_examples.vsh
         echo 'Build users.v with -prod'
         v -prod users.v
-    - name: Run fmt
-      run: |
-        cd ./vlib/ui
-        v run ./fmt_verify_all.vsh
 
   macos:
     runs-on: macos-latest
