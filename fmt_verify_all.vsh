@@ -8,7 +8,7 @@ const (
 		'radio.v', // struct: misplaced comment
 		'window.v', // lots of misplaced comment
 		'picture.v', // fn type decl: misplaced comment
-		'checkbox.v', // fn type decl: extra spaces; misplaced comments
+		'checkbox.v', // fn type decl: extra spaces
 		// cannot compile afterwards:
 		'textbox.v', // invalid module prefixing; extra spaces in fn type decl; misformatted unsafe
 		'button.v', // space before first fn arg in type decl; doubled closing "}"
