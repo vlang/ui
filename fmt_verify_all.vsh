@@ -9,9 +9,9 @@ const (
 		'window.v', // lots of misplaced comment
 		'picture.v', // fn type decl: misplaced comment
 		'checkbox.v', // fn type decl: extra spaces
+		'button.v', // fn type decl: extra spaces, misplaced comment
 		// cannot compile afterwards:
 		'textbox.v', // invalid module prefixing; extra spaces in fn type decl; misformatted unsafe
-		'button.v', // space before first fn arg in type decl; doubled closing "}"
 		// vfmt fails on those:
 		'ui.v', // unexpected comment
 		'examples/webview.v', // expecting struct key
