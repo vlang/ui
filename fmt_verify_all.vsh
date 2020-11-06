@@ -1,6 +1,5 @@
 const (
 	files_to_skip = [
-		'pngs.v', // bin2v file
 		// visual problems:
 		'examples/rectangles.v', // misplaced comment in a struct
 		'examples/users.v', // misplaced comment in a struct
