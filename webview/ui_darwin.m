@@ -7,3 +7,7 @@ NSString *nsstring(string str) {
                                       encoding:NSUTF8StringEncoding
                                   freeWhenDone:false];
 }
+
+UTF8String *bundle_path() {
+    return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
+}

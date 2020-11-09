@@ -6,6 +6,7 @@ module ui
 #include "@VROOT/ui_darwin.m"
 
 fn C.nsstring(s string)
+fn C.bundle_path()
 
 pub fn message_box(s string) {
 	unsafe {
@@ -37,9 +38,7 @@ pub fn text_width(s string) int {
 }
 */
 pub fn bundle_path() string {
-	s := ''
-	#s = tos2( [[[NSBundle mainBundle] bundlePath] UTF8String]);
-	return s
+	return C.bundle_path()
 }
 
 pub fn wait_events() {
