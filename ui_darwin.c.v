@@ -5,8 +5,8 @@ module ui
 
 #include "@VROOT/ui_darwin.m"
 
-fn C.nsstring(s string)
-fn C.bundle_path()
+fn C.nsstring(s string) string
+fn C.bundle_path() string
 
 pub fn message_box(s string) {
 	unsafe {
