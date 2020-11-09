@@ -3,9 +3,13 @@
 // that can be found in the LICENSE file.
 module ui
 
+#include "@VROOT/ui_darwin.m"
+
+fn C.nsstring(s string)
+
 pub fn message_box(s string) {
 	unsafe {
-		ns_string := nsstring(s)
+		ns_string := C.nsstring(s)
 		#NSAlert *alert = [[NSAlert alloc] init] ;
 		#[alert setMessageText:ns_string];
 		#[alert runModal];
@@ -13,18 +17,10 @@ pub fn message_box(s string) {
 	}
 }
 
-fn nsstring(s string) voidptr {
-	unsafe {
-		#return [ [ NSString alloc ] initWithBytesNoCopy:s.str  length:s.len
-		#encoding:NSUTF8StringEncoding freeWhenDone: false];
-	}
-	return 0
-}
-
 pub fn notify(title string, msg string) {
 	unsafe {
-		ns_msg := nsstring(msg)
-		ns_title := nsstring(title)
+		ns_msg := C.nsstring(msg)
+		ns_title := C.nsstring(title)
 		#NSUserNotification *notification = [[[NSUserNotification alloc] init] retain];
 		#notification.title = ns_title;
 		#notification.informativeText = ns_msg;
