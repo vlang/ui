@@ -17,14 +17,12 @@ enum CheckBoxState {
 	check
 }
 */
-
-
 type CheckChangedFn = fn (voidptr, bool)
 
 [ref_only]
 pub struct CheckBox {
 pub mut:
-// state      CheckBoxState
+	// state      CheckBoxState
 	height           int
 	width            int
 	x                int
