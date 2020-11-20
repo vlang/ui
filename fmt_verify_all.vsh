@@ -3,14 +3,12 @@ const (
 		// visual problems:
 		'examples/rectangles.v', // misplaced comment in a struct
 		'examples/users.v', // misplaced comment in a struct
-		'listbox.v', // fn type decl: extra space; struct: some comments are moved to new lines
+		'listbox.v', // struct: some comments are moved to new lines
 		'radio.v', // struct: misplaced comment
 		'window.v', // lots of misplaced comment
-		'checkbox.v', // fn type decl: extra spaces
-		'button.v', // fn type decl: extra spaces
 		'ui.v', // struct, interface: misplaced comment
 		// cannot compile afterwards:
-		'textbox.v', // invalid module prefixing; extra spaces in fn type decl; misformatted unsafe
+		'textbox.v', // invalid module prefixing; misformatted unsafe
 		// vfmt fails on those:
 		'examples/webview.v', // unexpected `stretch: true`, expecting struct key
 	]

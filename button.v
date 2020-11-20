@@ -10,7 +10,7 @@ import os
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
 	button_border_color       = gx.rgb(200, 200, 200)
-	btn_text_cfg              = gx.TextCfg{// color: gx.white, {
+	btn_text_cfg              = gx.TextCfg{ // color: gx.white, {
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
 	}
