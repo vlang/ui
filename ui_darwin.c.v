@@ -4,6 +4,7 @@
 module ui
 
 pub fn message_box(s string) {
+	/*
 	unsafe {
 		ns_string := nsstring(s)
 		#NSAlert *alert = [[NSAlert alloc] init] ;
@@ -11,17 +12,19 @@ pub fn message_box(s string) {
 		#[alert runModal];
 		_ = ns_string // hide warning
 	}
+	*/
 }
 
 fn nsstring(s string) voidptr {
 	unsafe {
-		#return [ [ NSString alloc ] initWithBytesNoCopy:s.str  length:s.len
-		#encoding:NSUTF8StringEncoding freeWhenDone: false];
+		//#return [ [ NSString alloc ] initWithBytesNoCopy:s.str  length:s.len
+		//#encoding:NSUTF8StringEncoding freeWhenDone: false];
 	}
 	return 0
 }
 
 pub fn notify(title string, msg string) {
+	/*
 	unsafe {
 		ns_msg := nsstring(msg)
 		ns_title := nsstring(title)
@@ -33,6 +36,7 @@ pub fn notify(title string, msg string) {
 		_ = ns_msg
 		_ = ns_title
 	}
+	*/
 }
 
 /*
@@ -42,11 +46,12 @@ pub fn text_width(s string) int {
 */
 pub fn bundle_path() string {
 	s := ''
-	#s = tos2( [[[NSBundle mainBundle] bundlePath] UTF8String]);
+	//#s = tos2( [[[NSBundle mainBundle] bundlePath] UTF8String]);
 	return s
 }
 
 pub fn wait_events() {
+	/*
 	unsafe {
 		#NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
 		#untilDate:[NSDate distantFuture]
@@ -54,4 +59,5 @@ pub fn wait_events() {
 		#dequeue:YES];
 		#[NSApp sendEvent:event];
 	}
+	*/
 }
