@@ -4,16 +4,17 @@
 module ui
 
 #include "@VROOT/ui_darwin.m"
-
 fn C.vui_message_box(s string)
+
 fn C.vui_notify(title string, msg string)
+
 fn C.vui_wait_events()
+
 fn C.vui_bundle_path() string
 
 pub fn message_box(s string) {
 	C.vui_message_box(s)
 }
-
 
 pub fn notify(title string, msg string) {
 	C.vui_notify(title, msg)

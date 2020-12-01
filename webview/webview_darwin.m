@@ -4,6 +4,8 @@
 
 #import <WebKit/WebKit.h>
 
+NSString* nsstring(string);
+
 @interface MyBrowserDelegate : NSObject <WKNavigationDelegate> {
 @public
   // NSWindow *parent_window;
