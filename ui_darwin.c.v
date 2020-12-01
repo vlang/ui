@@ -3,40 +3,20 @@
 // that can be found in the LICENSE file.
 module ui
 
+#include "@VROOT/ui_darwin.m"
+
+fn C.vui_message_box(s string)
+fn C.vui_notify(title string, msg string)
+fn C.vui_wait_events()
+fn C.vui_bundle_path() string
+
 pub fn message_box(s string) {
-	/*
-	unsafe {
-		ns_string := nsstring(s)
-		#NSAlert *alert = [[NSAlert alloc] init] ;
-		#[alert setMessageText:ns_string];
-		#[alert runModal];
-		_ = ns_string // hide warning
-	}
-	*/
+	C.vui_message_box(s)
 }
 
-fn nsstring(s string) voidptr {
-	unsafe {
-		//#return [ [ NSString alloc ] initWithBytesNoCopy:s.str  length:s.len
-		//#encoding:NSUTF8StringEncoding freeWhenDone: false];
-	}
-	return 0
-}
 
 pub fn notify(title string, msg string) {
-	/*
-	unsafe {
-		ns_msg := nsstring(msg)
-		ns_title := nsstring(title)
-		#NSUserNotification *notification = [[[NSUserNotification alloc] init] retain];
-		#notification.title = ns_title;
-		#notification.informativeText = ns_msg;
-		#NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
-		#[center deliverNotification:notification];
-		_ = ns_msg
-		_ = ns_title
-	}
-	*/
+	C.vui_notify(title, msg)
 }
 
 /*
@@ -45,19 +25,9 @@ pub fn text_width(s string) int {
 }
 */
 pub fn bundle_path() string {
-	s := ''
-	//#s = tos2( [[[NSBundle mainBundle] bundlePath] UTF8String]);
-	return s
+	return C.vui_bundle_path()
 }
 
 pub fn wait_events() {
-	/*
-	unsafe {
-		#NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
-		#untilDate:[NSDate distantFuture]
-		#inMode:NSDefaultRunLoopMode
-		#dequeue:YES];
-		#[NSApp sendEvent:event];
-	}
-	*/
+	C.vui_wait_events()
 }

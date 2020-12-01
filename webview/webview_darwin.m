@@ -1,5 +1,6 @@
 // Copyright (c) 2020 Alexander Medvednikov. All rights reserved.
-// Use of this source code is governed by a GPL license that can be found in the LICENSE file.
+// Use of this source code is governed by a GPL license
+// that can be found in the LICENSE file.
 
 #import <WebKit/WebKit.h>
 
@@ -13,13 +14,6 @@
 
 @implementation MyBrowserDelegate
 @end
-
-NSString *nsstring(string str) {
-  return [[NSString alloc] initWithBytesNoCopy:str.str
-                                        length:str.len
-                                      encoding:NSUTF8StringEncoding
-                                  freeWhenDone:false];
-}
 
 WKWebView *new_darwin_web_view(string url, string title) {
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
