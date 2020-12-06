@@ -71,6 +71,7 @@ pub:
 	on_mouse_move MouseMoveFn
 	children      []Widget
 	font_path     string
+	custom_bold_font_path     string
 	// pub mut:
 	// parent_window &Window
 }
@@ -169,6 +170,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		event_fn: on_event
 		user_data: window
 		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
+		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
 		//keydown_fn: window_key_down
 		//char_fn: window_char
