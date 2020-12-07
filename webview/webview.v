@@ -12,8 +12,6 @@ struct WebView {
 
 type NavFinishedFn = fn (url string)
 
-fn C.new_darwin_web_view(s string)
-
 pub struct Cfg {
 	url             string
 	title           string
