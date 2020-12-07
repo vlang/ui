@@ -3,8 +3,7 @@
 module webview
 
 // import ui
-#flag darwin -framework WebKit
-#include "@VROOT/webview/webview_darwin.m"
+
 // fn C.webview_create(voidptr, voidptr)
 struct WebView {
 	// widget ui.Widget
