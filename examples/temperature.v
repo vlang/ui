@@ -16,18 +16,18 @@ mut:
 
 fn main() {
 	mut app := &App{
-		txt_box_celsius: ui.textbox({
+		txt_box_celsius: ui.textbox(
 			width: 70
 			on_key_up: on_cel_key_up
 			is_numeric: true
 			text: -1
-		})
-		txt_box_fahrenheit: ui.textbox({
+		)
+		txt_box_fahrenheit: ui.textbox(
 			width: 70
 			on_key_up: on_fah_key_up
 			is_numeric: true
 			text: -1
-		})
+		)
 		window: 0
 	}
 	app.txt_box_celsius.text = &app.txt_box_celsius_text
@@ -44,13 +44,9 @@ fn main() {
 			margin: ui.MarginConfig{5, 5, 5, 5}
 			spacing: 10
 		}, [
-			ui.label({
-				text: 'Celsius'
-			}),
+			ui.label(text: 'Celsius'),
 			app.txt_box_celsius,
-			ui.label({
-				text: 'Fahrenheit'
-			}),
+			ui.label(text: 'Fahrenheit'),
 			app.txt_box_fahrenheit,
 		]),
 	])

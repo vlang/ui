@@ -7,6 +7,7 @@ const (
 		'radio.v', // struct: misplaced comment
 		'window.v', // lots of misplaced comment
 		'ui.v', // struct, interface: misplaced comment
+		'examples/calculator.v', // wrong indent for pushing struct to array
 		// cannot compile afterwards:
 		'textbox.v', // invalid module prefixing; misformatted unsafe
 		// vfmt fails on those:

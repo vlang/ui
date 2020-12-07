@@ -14,22 +14,22 @@ mut:
 
 fn main() {
 	mut app := &App{
-		hor_slider: ui.slider({
+		hor_slider: ui.slider(
 			width: 200
 			height: 20
 			orientation: .horizontal
 			max: 100
 			val: 0
 			on_value_changed: on_hor_value_changed
-		})
-		vert_slider: ui.slider({
+		)
+		vert_slider: ui.slider(
 			width: 20
 			height: 200
 			orientation: .vertical
 			max: 100
 			val: 0
 			on_value_changed: on_vert_value_changed
-		})
+		)
 		window: 0
 	}
 	app.window = ui.window({
