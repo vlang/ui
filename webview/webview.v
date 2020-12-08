@@ -23,7 +23,7 @@ pub fn new_window(cfg Cfg) &WebView {
 		create_darwin_web_view(cfg.url, cfg.title)
 	}
 	$if linux {
-		new_linux_web_view(cfg.url, cfg.title)
+		create_linux_web_view(cfg.url, cfg.title)
 	}
 	$if windows {
 		println('webview not implemented on windows yet')
