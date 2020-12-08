@@ -4,14 +4,15 @@ module webview
 #pkgconfig gtk+-3.0 webkit2gtk-4.0
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-
-struct C.GtkWidget{}
+struct C.GtkWidget {
+}
 
 fn C.gtk_init(argc int, argv voidptr)
 
 fn C.gtk_window_new() &C.GtkWidget
 
 fn C.gtk_window_set_default_size(win C.GtkWidget, w int, h int)
+
 fn C.gtk_window_set_title(win C.GtkWidget, title charptr)
 
 fn C.gtk_container_add(container voidptr, widget voidptr)
@@ -28,7 +29,8 @@ fn C.gtk_widget_grab_focus(widget voidptr)
 
 fn C.gtk_main_quit()
 
-struct C.WebKitWebView{}
+struct C.WebKitWebView {
+}
 
 fn C.webkit_web_view_new() &C.WebKitWebView
 

@@ -3,7 +3,6 @@
 module webview
 
 // import ui
-
 struct WebView {
 	// widget ui.Widget
 	url string
@@ -25,7 +24,6 @@ pub fn new_window(cfg Cfg) &WebView {
 	}
 	$if linux {
 		new_linux_web_view(cfg.url, cfg.title)
-		// println('webview not implemented on linux yet')
 	}
 	$if windows {
 		println('webview not implemented on windows yet')
