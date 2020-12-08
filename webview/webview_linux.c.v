@@ -12,6 +12,7 @@ fn C.gtk_init(argc int, argv voidptr)
 fn C.gtk_window_new() &C.GtkWidget
 
 fn C.gtk_window_set_default_size(win C.GtkWidget, w int, h int)
+fn C.gtk_window_set_title(win C.GtkWidget, title charptr)
 
 fn C.gtk_container_add(container voidptr, widget voidptr)
 
@@ -33,10 +34,11 @@ fn C.webkit_web_view_new() &C.WebKitWebView
 
 fn C.webkit_web_view_load_uri(webview voidptr, uri string)
 
-fn new_linux_web_view(url string) {
+fn new_linux_web_view(url string, title string) {
 	C.gtk_init(0, voidptr(0))
 	win := C.gtk_window_new(0)
 	C.gtk_window_set_default_size(win, 1000, 600)
+	C.gtk_window_set_title(win, charptr(title.str))
 	webview := C.webkit_web_view_new()
 	C.gtk_container_add(win, webview)
 	C.g_signal_connect(win, 'destroy', destroy_window_cb, voidptr(0))
