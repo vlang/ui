@@ -4,7 +4,6 @@ module webview
 
 // import ui
 
-// fn C.webview_create(voidptr, voidptr)
 struct WebView {
 	// widget ui.Widget
 	url string
@@ -25,6 +24,7 @@ pub fn new_window(cfg Cfg) &WebView {
 		C.new_darwin_web_view(cfg.url, cfg.title)
 	}
 	$if linux {
+		new_linux_web_view()
 		println('webview not implemented on linux yet')
 	}
 	$if windows {
