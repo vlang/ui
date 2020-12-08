@@ -25,7 +25,7 @@ pub fn new_window(cfg Cfg) &WebView {
 	}
 	$if linux {
 		new_linux_web_view()
-		println('webview not implemented on linux yet')
+		// println('webview not implemented on linux yet')
 	}
 	$if windows {
 		println('webview not implemented on windows yet')
