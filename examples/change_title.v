@@ -14,12 +14,12 @@ mut:
 
 fn main() {
 	mut app := &App{}
-	app.title_box = ui.textbox({
+	app.title_box = ui.textbox(
 		max_len: 20
 		width: 300
 		placeholder: 'Please enter new title name'
 		text: &app.title_box_text
-	})
+	)
 	app.window = ui.window({
 		width: win_width
 		height: win_height
@@ -35,15 +35,10 @@ fn main() {
 				spacing: 10
 				alignment: .center
 			}, [
-				ui.label({
-					text: 'Title name: '
-				}),
+				ui.label(text: 'Title name: '),
 				app.title_box,
 			]),
-			ui.button({
-				text: 'Change title'
-				onclick: btn_change_title
-			}),
+			ui.button(text: 'Change title', onclick: btn_change_title),
 		]),
 	])
 	ui.run(app.window)

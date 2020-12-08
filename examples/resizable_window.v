@@ -23,9 +23,7 @@ fn main() {
 			stretch: true
 			margin: ui.MarginConfig{10, 10, 10, 10}
 		}, [
-			ui.button({
-				text: 'Add user'
-			}),
+			ui.button(text: 'Add user'),
 		]),
 	])
 	app.window = window

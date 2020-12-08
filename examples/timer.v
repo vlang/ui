@@ -18,7 +18,7 @@ mut:
 
 fn main() {
 	mut app := &App{
-		slider: ui.slider({
+		slider: ui.slider(
 			width: 180
 			height: 20
 			orientation: .horizontal
@@ -26,15 +26,9 @@ fn main() {
 			min: 0
 			val: 25.0
 			on_value_changed: on_value_changed
-		})
-		lbl_elapsed_value: ui.label({
-			text: '00.0s'
-		})
-		progress_bar: ui.progressbar({
-			height: 20
-			val: 0
-			max: 100
-		})
+		)
+		lbl_elapsed_value: ui.label(text: '00.0s')
+		progress_bar: ui.progressbar(height: 20, val: 0, max: 100)
 		window: 0
 	}
 	window := ui.window({
@@ -56,16 +50,9 @@ fn main() {
 					alignment: .left
 					spacing: 10
 				}, [
-					ui.label({
-						text: 'Elapsed Time:'
-					}),
-					ui.label({
-						text: 'Duration:'
-					}),
-					ui.button({
-						text: 'Reset'
-						onclick: on_reset
-					}),
+					ui.label(text: 'Elapsed Time:'),
+					ui.label(text: 'Duration:'),
+					ui.button(text: 'Reset', onclick: on_reset),
 				]),
 				ui.column({
 					alignment: .left

@@ -29,7 +29,7 @@ mut:
 
 fn main() {
 	mut app := &App{
-		rgb_rectangle: ui.rectangle({
+		rgb_rectangle: ui.rectangle(
 			width: 200
 			height: 100
 			border: true
@@ -38,8 +38,8 @@ fn main() {
 				g: slider_val
 				b: slider_val
 			}
-		})
-		r_textbox: ui.textbox({
+		)
+		r_textbox: ui.textbox(
 			width: 40
 			height: 20
 			max_len: 3
@@ -47,8 +47,8 @@ fn main() {
 			is_numeric: true
 			on_key_up: on_r_key_up
 			text: -1
-		})
-		g_textbox: ui.textbox({
+		)
+		g_textbox: ui.textbox(
 			width: 40
 			height: 20
 			max_len: 3
@@ -56,8 +56,8 @@ fn main() {
 			is_numeric: true
 			on_key_up: on_g_key_up
 			text: -1
-		})
-		b_textbox: ui.textbox({
+		)
+		b_textbox: ui.textbox(
 			width: 40
 			height: 20
 			max_len: 3
@@ -65,8 +65,8 @@ fn main() {
 			is_numeric: true
 			on_key_up: on_b_key_up
 			text: -1
-		})
-		r_slider: ui.slider({
+		)
+		r_slider: ui.slider(
 			width: 16
 			height: 200
 			orientation: .vertical
@@ -76,8 +76,8 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_r_value_changed
-		})
-		g_slider: ui.slider({
+		)
+		g_slider: ui.slider(
 			width: 16
 			height: 200
 			orientation: .vertical
@@ -87,8 +87,8 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_g_value_changed
-		})
-		b_slider: ui.slider({
+		)
+		b_slider: ui.slider(
 			width: 16
 			height: 200
 			orientation: .vertical
@@ -98,16 +98,10 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_b_value_changed
-		})
-		r_label: ui.label({
-			text: 'R'
-		})
-		g_label: ui.label({
-			text: 'G'
-		})
-		b_label: ui.label({
-			text: 'B'
-		})
+		)
+		r_label: ui.label(text: 'R')
+		g_label: ui.label(text: 'G')
+		b_label: ui.label(text: 'B')
 	}
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
