@@ -9,9 +9,11 @@ struct C.GtkWidget{}
 
 fn C.gtk_init(argc int, argv voidptr)
 
-fn C.gtk_window_new() &C.GtkWidget{}
+fn C.gtk_window_new() &C.GtkWidget
 
 fn C.gtk_window_set_default_size(win C.GtkWidget, w int, h int)
+
+fn C.gtk_container_add(container voidptr, widget voidptr)
 
 fn C.gtk_widget_show_all(win C.GtkWidget)
 
@@ -19,20 +21,37 @@ fn C.gtk_main()
 
 fn C.g_signal_connect(ins voidptr, signal string, cb voidptr, data voidptr)
 
+fn C.gtk_widget_destroy(widget voidptr)
+
+fn C.gtk_widget_grab_focus(widget voidptr)
+
 fn C.gtk_main_quit()
 
-// fn C.webkit_web_view_new()
+struct C.WebKitWebView{}
 
-fn new_linux_web_view() {
+fn C.webkit_web_view_new() &C.WebKitWebView
+
+fn C.webkit_web_view_load_uri(webview voidptr, uri string)
+
+fn new_linux_web_view(url string) {
 	C.gtk_init(0, voidptr(0))
 	win := C.gtk_window_new(0)
 	C.gtk_window_set_default_size(win, 1000, 600)
+	webview := C.webkit_web_view_new()
+	C.gtk_container_add(win, webview)
 	C.g_signal_connect(win, 'destroy', destroy_window_cb, voidptr(0))
+	C.g_signal_connect(webview, 'close', destroy_window_cb, win)
+	C.webkit_web_view_load_uri(webview, charptr(url.str))
+	C.gtk_widget_grab_focus(webview)
 	C.gtk_widget_show_all(win)
 	C.gtk_main()
-	// C.webkit_web_view_new()
 }
 
 fn destroy_window_cb(widget voidptr, window voidptr) {
 	C.gtk_main_quit()
+}
+
+fn close_webview_cb(webview voidptr, window voidptr) bool {
+	C.gtk_widget_destroy(window)
+	return true
 }
