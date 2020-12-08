@@ -59,7 +59,8 @@ fn (mut s Slider) init(parent Layout) {
 	ui := parent.get_ui()
 	s.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, slider_click, s)
+	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_button, s)
+	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_button, s)
 	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
 	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
 }
@@ -211,7 +212,7 @@ fn (s &Slider) point_inside(x f64, y f64) bool {
 	return x >= s.x && x <= s.x + s.track_width && y >= s.y && y <= s.y + s.track_height
 }
 
-fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn slider_mouse_button(mut s Slider, e &MouseEvent, zzz voidptr) {
 	if !s.point_inside_thumb(e.x, e.y) && (!s.point_inside(e.x, e.y) || s.focus_on_thumb_only) {
 		s.dragging = false
 		s.is_focused = false
@@ -221,10 +222,10 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 		s.change_value(e.x, e.y)
 	}
 	s.is_focused = true
-	s.dragging = e.action == 1
+	s.dragging = e.action == .down
 }
 
-fn slider_mouse_move(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	if s.dragging {
 		s.change_value(e.x, e.y)
 	}

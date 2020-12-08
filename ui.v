@@ -110,8 +110,8 @@ pub:
 
 pub struct MouseMoveEvent{
 pub:
-	x f64
-	y f64
+	x int
+	y int
 }
 
 pub enum Cursor {

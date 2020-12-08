@@ -278,8 +278,8 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 fn window_mouse_move(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := MouseMoveEvent{
-		x: event.mouse_x / ui.gg.scale
-		y: event.mouse_y / ui.gg.scale
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
 	}
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
