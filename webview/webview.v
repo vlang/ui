@@ -3,17 +3,12 @@
 module webview
 
 // import ui
-#flag darwin -framework WebKit
-#include "@VROOT/webview/webview_darwin.m"
-// fn C.webview_create(voidptr, voidptr)
 struct WebView {
 	// widget ui.Widget
 	url string
 }
 
 type NavFinishedFn = fn (url string)
-
-fn C.new_darwin_web_view(s string)
 
 pub struct Cfg {
 	url             string
@@ -25,10 +20,10 @@ pub struct Cfg {
 
 pub fn new_window(cfg Cfg) &WebView {
 	$if macos {
-		C.new_darwin_web_view(cfg.url, cfg.title)
+		create_darwin_web_view(cfg.url, cfg.title)
 	}
 	$if linux {
-		println('webview not implemented on linux yet')
+		create_linux_web_view(cfg.url, cfg.title)
 	}
 	$if windows {
 		println('webview not implemented on windows yet')
