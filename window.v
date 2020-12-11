@@ -395,7 +395,7 @@ fn window_key_down(event sapp.Event, ui &UI) {
 	}
 	if e.key == .escape && window.child_window != 0 {
 		// Close the child window on Escape
-		window.child_window = 0
+		window.child_window = &Window(0)
 	}
 	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window.state)
