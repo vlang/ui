@@ -28,7 +28,7 @@ mut:
 	//just_typed           bool
 	last_type_time          i64
 	cb_image             gg.Image
-	//circle_image         u32
+	circle_image         gg.Image
 	radio_image          gg.Image
 	selected_radio_image gg.Image
 	down_arrow           gg.Image
@@ -197,16 +197,14 @@ pub fn run(window &Window) {
 }
 
 fn (mut ui UI) load_icos() {
-	ui.cb_image = gg.create_image_from_memory(bytes_check_png,  bytes_check_png_len)
-	/*
+	ui.cb_image = ui.gg.create_image_from_memory(bytes_check_png,  bytes_check_png_len)
 	$if macos {
-		ui.circle_image = gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
+		ui.circle_image = ui.gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
 	} $else {
-		ui.circle_image = gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
+		ui.circle_image = ui.gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
 	}
-	*/
-	ui.down_arrow = gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
-	ui.selected_radio_image = gg.create_image_from_memory(bytes_selected_radio_png, bytes_selected_radio_png_len)
+	ui.down_arrow = ui.gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
+	ui.selected_radio_image = ui.gg.create_image_from_memory(bytes_selected_radio_png, bytes_selected_radio_png_len)
 }
 
 pub fn open_url(url string) {

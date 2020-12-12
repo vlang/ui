@@ -657,6 +657,7 @@ fn (window &Window) resize(width int, height int) {
 }
 
 fn (window &Window) unfocus_all() {
+	println('window.unfocus_all()')
 	for child in window.children {
 		child.unfocus()
 	}
