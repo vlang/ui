@@ -25,8 +25,8 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, func voidptr)
 
 [ref_only]
 pub struct Window {
-//pub:
 pub mut:
+	// pub:
 	ui            &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
@@ -55,23 +55,23 @@ pub mut:
 
 pub struct WindowConfig {
 pub:
-	width         int
-	height        int
-	resizable     bool
-	title         string
-	always_on_top bool
-	state         voidptr
-	draw_fn       DrawFn
-	bg_color      gx.Color = default_window_color
-	on_click      ClickFn
-	on_mouse_down ClickFn
-	on_mouse_up   ClickFn
-	on_key_down   KeyFn
-	on_scroll     ScrollFn
-	on_mouse_move MouseMoveFn
-	children      []Widget
-	font_path     string
-	custom_bold_font_path     string
+	width                 int
+	height                int
+	resizable             bool
+	title                 string
+	always_on_top         bool
+	state                 voidptr
+	draw_fn               DrawFn
+	bg_color              gx.Color = default_window_color
+	on_click              ClickFn
+	on_mouse_down         ClickFn
+	on_mouse_up           ClickFn
+	on_key_down           KeyFn
+	on_scroll             ScrollFn
+	on_mouse_move         MouseMoveFn
+	children              []Widget
+	font_path             string
+	custom_bold_font_path string
 	// pub mut:
 	// parent_window &Window
 }
@@ -144,6 +144,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		println('end of window()')
 	}
 	*/
+	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
 		draw_fn: cfg.draw_fn
@@ -159,7 +160,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
 	}
-	gcontext := gg.new_context({
+	gcontext := gg.new_context(
 		width: cfg.width
 		height: cfg.height
 		use_ortho: true // This is needed for 2D drawing
@@ -172,11 +173,11 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
-		//keydown_fn: window_key_down
-		//char_fn: window_char
+		// keydown_fn: window_key_down
+		// char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
-			// window_state: ui
-	})
+		// window_state: ui
+	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
 	// scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
@@ -221,10 +222,10 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 	// println('child_window() parent=$q.hex()')
 	mut window := &Window{
 		parent_window: parent_window
-		//state: parent_window.state
+		// state: parent_window.state
 		state: cfg.state
 		ui: parent_window.ui
-		//glfw_obj: parent_window.ui.gg.window
+		// glfw_obj: parent_window.ui.gg.window
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
@@ -385,10 +386,10 @@ fn window_key_down(event sapp.Event, ui &UI) {
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		codepoint: 0//event.char_code
-		//code: code
-		//action: action
-		//mods: mod
+		codepoint: 0 // event.char_code
+		// code: code
+		// action: action
+		// mods: mod
 	}
 	if e.key == .escape {
 		println('escape')
@@ -423,6 +424,7 @@ fn window_char(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
+		mods: event.modifiers
 	}
 	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window.state)
@@ -567,7 +569,7 @@ fn bar() {
 
 fn bar2() {
 	foo2(&Window{
-		ui: 0	// glfw_obj: 0
+		ui: 0 // glfw_obj: 0
 		eventbus: eventbus.new()
 	})
 	foo2(&Stack{

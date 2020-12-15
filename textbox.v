@@ -161,7 +161,7 @@ fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, widt
 }
 
 fn (mut t TextBox) set_pos(x int, y int) {
-	xx := t.placeholder
+	// xx := t.placeholder
 	// println('text box $xx set pos $x, $y')
 	t.x = x
 	t.y = y
@@ -279,7 +279,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
-	if int(e.codepoint) !in [0, 13] && e.key != .enter {
+	// Entering text
+	if int(e.codepoint) !in [0, 13, 27] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
 		if tb.read_only {
 			return
 		}
@@ -296,7 +297,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			(s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((text.len > 0) && (tb.cursor_pos > 0))))) {
 			return
 		}
-		// println('inserting..')
+		println('inserting codepoint=$e.codepoint mods=$e.mods ..')
 		tb.insert(s)
 		if tb.on_change != TextBoxChangeFn(0) {
 			tb.on_change(*tb.text, window.state)
@@ -583,7 +584,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 
 pub fn (mut tb TextBox) focus() {
 	if tb.is_focused {
-		// return
+		return
 	}
 	parent := tb.parent
 	parent.unfocus_all()
