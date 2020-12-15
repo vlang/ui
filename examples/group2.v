@@ -37,41 +37,33 @@ fn main() {
 				ui.group({
 					title: 'First group'
 				}, [
-					ui.textbox({
+					ui.textbox(
 						max_len: 20
 						width: 200
 						placeholder: 'Lorem ipsum'
 						text: &app.first_ipsum
-					}),
-					ui.textbox({
+					),
+					ui.textbox(
 						max_len: 20
 						width: 200
 						placeholder: 'dolor sit amet'
 						text: &app.second_ipsum
-					}),
-					ui.button({
-						text: 'More ipsum!'
-						onclick: fn (a voidptr, b voidptr) {
+					),
+					ui.button(text: 'More ipsum!', onclick: fn (a voidptr, b voidptr) {
 							ui.open_url('https://lipsum.com/feed/html')
-						}
-					}),
+						}),
 				]),
 				ui.group({
 					title: 'Second group'
 				}, [
-					ui.textbox({
+					ui.textbox(
 						max_len: 20
 						width: 200
 						placeholder: 'Full name'
 						text: &app.full_name
-					}),
-					ui.checkbox({
-						checked: true
-						text: 'Do you like V?'
-					}),
-					ui.button({
-						text: 'Submit'
-					}),
+					),
+					ui.checkbox(checked: true, text: 'Do you like V?'),
+					ui.button(text: 'Submit'),
 				]),
 			]),
 		]),

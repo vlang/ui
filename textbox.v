@@ -33,6 +33,8 @@ type KeyUpFn = fn (voidptr, voidptr, u32)
 
 type TextBoxChangeFn = fn (string, voidptr)
 
+type TextBoxEnterFn = fn (string, voidptr)
+
 [ref_only]
 pub struct TextBox {
 pub mut:
@@ -58,13 +60,14 @@ pub mut:
 	last_x             int
 	read_only          bool
 	borderless         bool
-	on_key_down        KeyDownFn=KeyDownFn(0)
-	on_key_up          KeyUpFn=KeyUpFn(0)
+	on_key_down        KeyDownFn = KeyDownFn(0)
+	on_key_up          KeyUpFn = KeyUpFn(0)
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
-	is_error &bool = voidptr(0)
-	on_change TextBoxChangeFn = TextBoxChangeFn(0)
+	is_error           &bool = voidptr(0)
+	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
+	on_enter           TextBoxEnterFn = TextBoxEnterFn(0)
 mut:
 	is_typing          bool
 }
@@ -98,7 +101,7 @@ pub struct TextBoxConfig {
 	on_key_down        KeyDownFn
 	on_key_up          KeyUpFn
 	on_change          voidptr
-	on_return          voidptr
+	on_enter           voidptr
 	border_accentuated bool
 }
 
@@ -119,11 +122,9 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		// sel_start: 0
-
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
 		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
-
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
@@ -132,6 +133,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		on_key_down: c.on_key_down
 		on_key_up: c.on_key_up
 		on_change: c.on_change
+		on_enter: c.on_enter
 		border_accentuated: c.border_accentuated
 		ui: 0
 		text: c.text
@@ -158,9 +160,11 @@ fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, widt
 	}
 }
 
-fn (mut tb TextBox) set_pos(x int, y int) {
-	tb.x = x
-	tb.y = y
+fn (mut t TextBox) set_pos(x int, y int) {
+	xx := t.placeholder
+	// println('text box $xx set pos $x, $y')
+	t.x = x
+	t.y = y
 }
 
 fn (mut tb TextBox) size() (int, int) {
@@ -259,6 +263,7 @@ fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
 }
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
+	// println('key down $e')
 	text := *tb.text
 	if !tb.is_focused {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
@@ -274,7 +279,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
-	if e.codepoint != 0 {
+	if int(e.codepoint) !in [0, 13] && e.key != .enter {
 		if tb.read_only {
 			return
 		}
@@ -291,8 +296,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			(s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((text.len > 0) && (tb.cursor_pos > 0))))) {
 			return
 		}
+		// println('inserting..')
 		tb.insert(s)
-		if tb.on_change != ui.TextBoxChangeFn(0) {
+		if tb.on_change != TextBoxChangeFn(0) {
 			tb.on_change(*tb.text, window.state)
 		}
 		// println('T "$s " $tb.cursor_pos')
@@ -302,7 +308,19 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 	// println(e.key)
 	// println('mods=$e.mods')
+	defer {
+		if tb.on_change != TextBoxChangeFn(0) {
+			if e.key == .backspace {
+				tb.on_change(*tb.text, window.state)
+			}
+		}
+	}
 	match e.key {
+		.enter {
+			if tb.on_enter != TextBoxEnterFn(0) {
+				tb.on_enter(*tb.text, window.state)
+			}
+		}
 		.backspace {
 			tb.ui.show_cursor = true
 			if text != '' {
@@ -326,9 +344,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 							i--
 						}
 						if text[i].is_space() || i == 0 {
-							unsafe {
-							//*tb.text = u.left(i) + u.right(tb.cursor_pos)
-							}
+							// unsafe { *tb.text = u.left(i) + u.right(tb.cursor_pos)}
 							break
 						}
 					}
@@ -343,7 +359,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// u.free() // TODO remove
 				// tb.text = tb.text[..tb.cursor_pos - 1] + tb.text[tb.cursor_pos..]
 			}
-			if tb.on_change != ui.TextBoxChangeFn(0) {
+			if tb.on_change != TextBoxChangeFn(0) {
 				// tb.on_change(*tb.text, window.state)
 			}
 		}
@@ -358,7 +374,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 			// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 			// u.free() // TODO remove
-			if tb.on_change != ui.TextBoxChangeFn(0) {
+			if tb.on_change != TextBoxChangeFn(0) {
 				// tb.on_change(*tb.text, window.state)
 			}
 		}
@@ -567,10 +583,12 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 
 pub fn (mut tb TextBox) focus() {
 	if tb.is_focused {
-		return
+		// return
 	}
 	parent := tb.parent
 	parent.unfocus_all()
+	mut wnd := parent.get_ui().window
+	wnd.unfocus_all()
 	tb.is_focused = true
 }
 
@@ -578,10 +596,11 @@ fn (tb &TextBox) is_focused() bool {
 	return tb.is_focused
 }
 
-fn (mut tb TextBox) unfocus() {
-	tb.is_focused = false
-	tb.sel_start = 0
-	tb.sel_end = 0
+fn (mut t TextBox) unfocus() {
+	// println('textbox $t.placeholder unfocus()')
+	t.is_focused = false
+	t.sel_start = 0
+	t.sel_end = 0
 }
 
 fn (mut tb TextBox) update() {
@@ -598,9 +617,6 @@ pub fn (mut tb TextBox) set_text(s string) {
 
 // pub fn (mut tb TextBox) on_change(func voidptr) {
 // }
-pub fn (mut tb TextBox) on_return(func voidptr) {
-}
-
 pub fn (mut tb TextBox) insert(s string) {
 	mut ustr := tb.text.ustring()
 	old_len := ustr.len

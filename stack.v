@@ -4,6 +4,7 @@
 module ui
 
 import eventbus
+import gx
 
 enum Direction {
 	row
@@ -64,9 +65,26 @@ fn (mut s Stack) init(parent Layout) {
 	s.height -= s.margin.top + s.margin.bottom
 	s.width -= s.margin.left + s.margin.right
 	s.set_pos(s.x, s.y)
+	mut x := s.x
+	mut y := s.y
+	// println('\nstack children')
 	for child in s.children {
 		child.init(s)
+		child_width, child_height := child.size()
+		// Set correct position for each child
+		if s.direction == .row {
+			x += child_width + s.spacing
+		} else {
+			y += child_height + s.spacing
+		}
+		if s.vertical_alignment == .bottom {
+			_, parent_height := s.parent.size()
+			y = parent_height - s.height
+		}
+		println('setting dget pos $x, $y')
+		child.set_pos(x, y)
 	}
+	println('\n')
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -98,7 +116,9 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	if s.stretch {
 		s.width = w
-		s.height = h
+		if s.height == 0 {
+			s.height = h
+		}
 	}
 	return s.width, s.height
 }
@@ -110,16 +130,36 @@ fn (c &Stack) size() (int, int) {
 fn (mut s Stack) draw() {
 	child_len := s.children.len
 	total_spacing := (child_len - 1) * s.spacing
-	per_child_height := if child_len > 0 { (s.get_oriented_height() - total_spacing) / child_len } else { 0 }
+	mut pos_y := s.y
+	if s.vertical_alignment == .bottom {
+		// Move the stack to the bottom. First find the biggest height.
+		_, parent_height := s.parent.size()
+		// println('parent_height=$parent_height s.height= $s.height')
+		pos_y = parent_height - s.height
+	}
+	// s.ui.gg.draw_empty_rect(0, pos_y, 500, 30, gx.red) // for debugging
+	for child in s.children {
+		child.draw()
+	}
+	/*
+	per_child_height := if child_len > 0 {
+ (s.get_oriented_height() - total_spacing) / child_len } else { 0 }
 	mut pos_y := s.get_oriented_y_axis()
+	if s.vertical_alignment == .bottom {
+		// Move the stack to the bottom. First find the biggest height.
+		_, parent_height := s.parent.size()
+	println('parent_height=$parent_height xxx $s.height')
+		pos_y = parent_height - s.height
+	}
 	mut size_x := 0
+
 	for child in s.children {
 		mut w := 0
 		mut h := 0
-		if s.direction == .column {
+		if s.direction == .column || s.vertical_alignment == .bottom {
 			w, h = child.propose_size(s.width, per_child_height)
 			child.set_pos(s.align(w), pos_y)
-		} else {
+		} else  {//if s.direction == .row {
 			h, w = child.propose_size(per_child_height, s.height)
 			child.set_pos(pos_y, s.align(w))
 		}
@@ -133,13 +173,17 @@ fn (mut s Stack) draw() {
 		return
 	}
 	pos_y -= s.spacing
-	s.set_oriented_height(pos_y - s.get_oriented_y_axis())
+	if s.height == 0 {
+	//s.set_oriented_height(pos_y - s.get_oriented_y_axis())
+	}
 	w := s.get_oriented_width()
 	if w == 0 || w < size_x {
 		s.set_oriented_width(size_x)
 	}
+	*/
 }
 
+/*
 fn (s &Stack) align(size int) int {
 	align := if s.direction == .column { int(s.horizontal_alignment) } else { int(s.vertical_alignment) }
 	match align {
@@ -149,7 +193,7 @@ fn (s &Stack) align(size int) int {
 		else { return s.get_oriented_x_axis() }
 	}
 }
-
+*/
 fn (s &Stack) get_ui() &UI {
 	return s.ui
 }
@@ -175,6 +219,7 @@ fn (mut s Stack) focus() {
 }
 
 fn (mut s Stack) unfocus() {
+	s.unfocus_all()
 	// s.is_focused = false
 	// println('')
 }
@@ -187,6 +232,7 @@ fn (s &Stack) resize(width int, height int) {
 }
 
 // Helpers to correctly get width, height, x, y for both row & column.
+/*
 fn (s &Stack) get_oriented_height() int {
 	return if s.direction == .column {
 		s.height
@@ -202,6 +248,7 @@ fn (s &Stack) get_oriented_width() int {
 		s.height
 	}
 }
+
 
 fn (s &Stack) get_oriented_y_axis() int {
 	return if s.direction == .column {
@@ -221,7 +268,9 @@ fn (s &Stack) get_oriented_x_axis() int {
 
 fn (mut s Stack) set_oriented_height(h int) int {
 	if s.direction == .column {
+		if s.height == 0 {
 		s.height = h
+		}
 	} else {
 		s.width = h
 	}
@@ -232,7 +281,10 @@ fn (mut s Stack) set_oriented_width(w int) int {
 	if s.direction == .column {
 		s.width = w
 	} else {
+		if s.height == 0 {
 		s.height = w
+		}
 	}
 	return w
 }
+*/

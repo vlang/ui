@@ -26,19 +26,19 @@ fn main() {
 			stretch: true
 			margin: ui.MarginConfig{5, 5, 5, 5}
 		}, [
-			ui.textbox({
+			ui.textbox(
 				max_len: 20
 				read_only: true
 				is_numeric: true
 				text: &app.counter
-			}),
-			ui.button({
+			),
+			ui.button(
 				width: 24
 				height: 24
 				icon_path: os.resource_abs_path('plus.png')
 				text: 'Alt'
 				onclick: btn_count_click
-			}),
+			),
 		]),
 	])
 	ui.run(app.window)

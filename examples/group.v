@@ -25,33 +25,22 @@ fn main() {
 			y: 20
 			title: 'Group Demo'
 		}, [
-			ui.textbox({
+			ui.textbox(
 				max_len: 20
 				width: 200
 				placeholder: 'First name'
 				text: &app.first_name
-			}),
-			ui.textbox({
+			),
+			ui.textbox(
 				max_len: 50
 				width: 200
 				placeholder: 'Last name'
 				text: &app.last_name
-			}),
-			ui.checkbox({
-				checked: true
-				text: 'Online registration1'
-			}),
-			ui.checkbox({
-				checked: true
-				text: 'Online registration2'
-			}),
-			ui.checkbox({
-				checked: true
-				text: 'Online registration3'
-			}),
-			ui.button({
-				text: 'Add user'
-			}),
+			),
+			ui.checkbox(checked: true, text: 'Online registration1'),
+			ui.checkbox(checked: true, text: 'Online registration2'),
+			ui.checkbox(checked: true, text: 'Online registration3'),
+			ui.button(text: 'Add user'),
 		]),
 	])
 	ui.run(app.window)

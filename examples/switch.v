@@ -15,13 +15,8 @@ mut:
 fn main() {
 	mut app := &App{
 		window: 0
-		label: ui.label({
-			text: 'Enabled'
-		})
-		switcher: ui.switcher({
-			open: true
-			onclick: on_switch_click
-		})
+		label: ui.label(text: 'Enabled')
+		switcher: ui.switcher(open: true, onclick: on_switch_click)
 	}
 	app.window = ui.window({
 		width: win_width
