@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import math
 
 const (
 	thumb_color                            = gx.rgb(87, 153, 245)
@@ -89,8 +90,6 @@ pub fn slider(c SliderConfig) &Slider {
 
 fn (s &Slider) draw_thumb() {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
-	// rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
-	// rev_dim := if s.orientation == .horizontal { s.track_height } else { s.track_width }
 	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
 	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
 	if s.rev_min_max_pos {
@@ -103,17 +102,12 @@ fn (s &Slider) draw_thumb() {
 	if pos < axis {
 		pos = f32(axis)
 	}
-	// middle := f32(rev_axis) - (f32(s.thumb_size - rev_dim) / 2)
 	if s.orientation == .horizontal {
-		s.ui.gg.draw_circle_with_segments(pos, s.y + 3, s.thumb_size, 32, thumb_color)
-		s.ui.gg.draw_circle_line(pos, s.y + 3, s.thumb_size, 32, thumb_border_color)
-	// // 	s.ui.gg.draw_rect(pos - f32(s.thumb_size) / 2, middle, s.thumb_size, s.thumb_size,
-	// // 		thumb_color)
+		s.ui.gg.draw_circle_with_segments(pos, s.y + 3, s.thumb_size, 16, thumb_border_color)
+		s.ui.gg.draw_circle_with_segments(pos, s.y + 3, s.thumb_size-1, 16, thumb_color)
 	} else {
-		s.ui.gg.draw_circle_with_segments(s.x + 3, pos, s.thumb_size, 32, thumb_color)
-		s.ui.gg.draw_circle_line(s.x + 3, pos, s.thumb_size, 32, thumb_border_color)
-
-	// // 	s.ui.gg.draw_rect(middle, middle, s.thumb_size, thumb_color)
+		s.ui.gg.draw_circle_with_segments(s.x + 3, pos, s.thumb_size, 16, thumb_border_color)
+		s.ui.gg.draw_circle_with_segments(s.x + 3, pos, s.thumb_size-1, 16, thumb_color)
 	}
 }
 
@@ -256,9 +250,6 @@ fn (mut s Slider) unfocus() {
 
 fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
-	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
-	rev_dim := if s.orientation == .horizontal { s.track_height } else { s.track_width }
-	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_size } else { s.thumb_size }
 	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
 	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
 	if s.rev_min_max_pos {
@@ -271,16 +262,8 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	if pos < axis {
 		pos = f32(axis)
 	}
-	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
-	if s.orientation == .horizontal {
-		t_x := pos - f32(s.thumb_size) / 2
-		t_y := middle
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_size) && y >= t_y && y <= t_y + f32(s.thumb_size)
-	} else {
-		t_x := middle
-		t_y := pos - f32(s.thumb_size) / 2
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_size) && y >= t_y && y <= t_y + f32(s.thumb_size)
-	}
+	px := if s.orientation == .horizontal { pos } else { f32(s.x + 3) }
+	py := if s.orientation == .horizontal { f32(s.y + 3) } else { pos }
+
+	return math.sqrt(math.pow((x - px), 2) + math.pow((y - py), 2)) <= s.thumb_size
 }
