@@ -1,12 +1,12 @@
 fns.txt
 
 # Ignore build binaries
+examples/*
+!examples/*.*
 *.dll
 *.exe
 *.ilk
 *.pdb
-examples/*
-!examples/*.*
 fmt_verify_all
 
 # Ignore editor files
