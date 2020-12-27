@@ -72,19 +72,25 @@ fn (mut s Stack) init(parent Layout) {
 		child.init(s)
 		child_width, child_height := child.size()
 		// Set correct position for each child
-		if s.direction == .row {
-			x += child_width + s.spacing
-		} else {
-			y += child_height + s.spacing
-		}
+		mut yy := y
 		if s.vertical_alignment == .bottom {
 			_, parent_height := s.parent.size()
-			y = parent_height - s.height
+			yy = parent_height - s.height
 		}
-		println('setting dget pos $x, $y')
-		child.set_pos(x, y)
+		if s.direction == .row {
+			x += s.spacing
+		} else {
+			y += s.spacing
+		}
+		// println('setting widget pos $x, $y')
+		child.set_pos(x, yy)
+		if s.direction == .row {
+			x += child_width
+		} else {
+			y += child_height
+		}
 	}
-	println('\n')
+	// println('\n')
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
