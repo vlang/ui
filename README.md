@@ -87,7 +87,9 @@ Binaries built with V UI will have no dependencies.
 
 To develop V UI apps, you need to install [V](https://github.com/vlang/v#installing-v-from-source). This takes a couple of seconds.
 
-On some Linux distros you also need `libxi-dev` and `libxcursor-dev`.
+On some Linux distros you also need a few development dependencies:
+- Debian/Ubuntu: `sudo apt install libxi-dev libxcursor-dev mesa-common-dev`
+- Fedora: `sudo dnf install libxi-dev libxcursor-dev mesa-libGL-devel`
 
 ### License
 
