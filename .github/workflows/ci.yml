@@ -77,7 +77,7 @@ jobs:
         cd ./vlib/ui/examples/
         v run ./build_examples.vsh
         echo 'Build users.v with -prod'
-        #v -prod users.v
+        v -prod users.v
         v users.v
 
   windows-msvc:
