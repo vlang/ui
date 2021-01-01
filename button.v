@@ -8,7 +8,7 @@ import gg
 import os
 
 const (
-	button_bg_color           = gx.rgb(28, 28, 28)
+// 	button_bg_color           = gx.rgb(28, 28, 28)
 	button_border_color       = gx.rgb(200, 200, 200)
 	btn_text_cfg              = gx.TextCfg{ // color: gx.white, {
 		color: gx.rgb(38, 38, 38)
@@ -31,6 +31,7 @@ pub struct ButtonConfig {
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
+	color	  gx.Color=gx.white
 }
 
 [ref_only]
@@ -52,6 +53,7 @@ pub mut:
 	icon_path   string
 	image       gg.Image
 	use_icon    bool
+	color 		gx.Color
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -74,6 +76,7 @@ pub fn button(c ButtonConfig) &Button {
 		use_icon: c.icon_path != ''
 		onclick: c.onclick
 		ui: 0
+		color:c.color
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
 		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
@@ -126,7 +129,7 @@ fn (mut b Button) draw() {
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
-	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
+	bg_color := if b.state == .normal { b.color } else { progress_bar_background_color } // gx.gray }
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
 	mut y := bcenter_y - h2 - 1
