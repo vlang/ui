@@ -3,14 +3,16 @@
 module webview
 
 // import ui
+[ref_only]
 struct WebView {
 	// widget ui.Widget
 	url string
+	obj voidptr
 }
 
 type NavFinishedFn = fn (url string)
 
-pub struct Cfg {
+pub struct Config {
 	url             string
 	title           string
 	// parent          &ui.Window
@@ -18,9 +20,10 @@ pub struct Cfg {
 	// js_on_init      string
 }
 
-pub fn new_window(cfg Cfg) &WebView {
+pub fn new_window(cfg Config) &WebView {
+	mut obj := voidptr(0)
 	$if macos {
-		create_darwin_web_view(cfg.url, cfg.title)
+		obj = C.new_darwin_web_view(cfg.url, cfg.title)
 	}
 	$if linux {
 		create_linux_web_view(cfg.url, cfg.title)
@@ -30,5 +33,6 @@ pub fn new_window(cfg Cfg) &WebView {
 	}
 	return &WebView{
 		url: cfg.url
+		obj: obj
 	}
 }

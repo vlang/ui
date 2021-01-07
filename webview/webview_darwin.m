@@ -17,13 +17,13 @@ NSString* nsstring(string);
 @implementation MyBrowserDelegate
 @end
 
-WKWebView *new_darwin_web_view(string url, string title) {
+void* new_darwin_web_view(string url, string title) {
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
   bool enable_js = 1;
   WKPreferences *prefs = [[WKPreferences alloc] init];
-  if (!enable_js) {
-    prefs.javaScriptEnabled = NO;
-  }
+//  if (!enable_js) {
+//    prefs.javaScriptEnabled = NO;
+//  }
   // Create a configuration for the preferences
   WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
   config.preferences = prefs;
@@ -70,5 +70,22 @@ webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) Appl
   //[NSApp activateIgnoringOtherApps:YES];
   [window setContentView:webView];
   [window makeKeyAndOrderFront:nil];
-  return webView;
+return         (__bridge void *)(  webView );
 }
+
+void darwin_webview_eval_js(void* web_view_, string js) {
+	WKWebView* web_view = (__bridge WKWebView*)(web_view_);
+
+	//[web_view evaluateJavaScript:@"document.body.hidden=true;" completionHandler:nil];
+	[web_view evaluateJavaScript:nsstring(js) completionHandler:^(id result, NSError *error) {
+        NSLog(@"DA RESULT = %@", result);
+}];
+}
+
+void darwin_webview_load(void* web_view_, string url) {
+	WKWebView* web_view = (__bridge WKWebView*)(web_view_);
+  NSURL *nsurl = [NSURL URLWithString:nsstring(url)];
+  NSURLRequest *nsrequest = [NSURLRequest requestWithURL:nsurl];
+  [web_view loadRequest:nsrequest];
+ }
+
