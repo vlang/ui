@@ -1,24 +1,17 @@
 const (
 	files_to_skip = [
-		/* visual problems: */
-		'examples/rectangles.v',
-		/* misplaced comment in a struct */
-		'examples/users.v',
-		/* misplaced comment in a struct */
-		'listbox.v',
-		/* struct: some comments are moved to new lines */
-		'radio.v',
-		/* struct: misplaced comment */
-		'window.v',
-		/* lots of misplaced comment */
-		'ui.v',
-		/* struct, interface: misplaced comment */
-		'examples/calculator.v',
-		/* wrong indent for pushing struct to array */ /* cannot compile afterwards: */
-		'textbox.v',
-		/* invalid module prefixing; misformatted unsafe */ /* vfmt fails on those: */
-		'examples/webview.v',
-		/* unexpected `stretch: true`, expecting struct key */
+		// visual problems:
+		'examples/rectangles.v', // misplaced comment in a struct
+		'examples/users.v', // misplaced comment in a struct
+		'listbox.v', // struct: some comments are moved to new lines
+		'radio.v', // struct: misplaced comment
+		'window.v', // lots of misplaced comment
+		'ui.v', // struct, interface: misplaced comment
+		'examples/calculator.v', // wrong indent for pushing struct to array
+		// cannot compile afterwards:
+		'textbox.v', // invalid module prefixing; misformatted unsafe
+		// vfmt fails on those:
+		'examples/webview.v', // unexpected `stretch: true`, expecting struct key
 	]
 )
 

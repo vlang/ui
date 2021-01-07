@@ -12,7 +12,7 @@ mut:
 	x       int
 	y       int
 	parent  Layout
-	draw_fn DrawFn      = voidptr(0)
+	draw_fn DrawFn = voidptr(0)
 	gg      &gg.Context = 0
 }
 
