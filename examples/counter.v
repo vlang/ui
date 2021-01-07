@@ -8,7 +8,7 @@ const (
 
 struct App {
 mut:
-	counter string = '0'
+	counter string     = '0'
 	window  &ui.Window = 0
 }
 
@@ -26,12 +26,7 @@ fn main() {
 			stretch: true
 			margin: ui.MarginConfig{5, 5, 5, 5}
 		}, [
-			ui.textbox(
-				max_len: 20
-				read_only: true
-				is_numeric: true
-				text: &app.counter
-			),
+			ui.textbox(max_len: 20, read_only: true, is_numeric: true, text: &app.counter),
 			ui.button(
 				width: 24
 				height: 24

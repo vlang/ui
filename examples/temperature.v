@@ -16,12 +16,7 @@ mut:
 
 fn main() {
 	mut app := &App{
-		txt_box_celsius: ui.textbox(
-			width: 70
-			on_key_up: on_cel_key_up
-			is_numeric: true
-			text: -1
-		)
+		txt_box_celsius: ui.textbox(width: 70, on_key_up: on_cel_key_up, is_numeric: true, text: -1)
 		txt_box_fahrenheit: ui.textbox(
 			width: 70
 			on_key_up: on_fah_key_up

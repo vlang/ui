@@ -31,7 +31,7 @@ pub struct PictureConfig {
 	width     int
 	height    int
 	on_click  PictureClickFn
-	use_cache bool = true
+	use_cache bool     = true
 	ref       &Picture = voidptr(0)
 	image     gg.Image
 }

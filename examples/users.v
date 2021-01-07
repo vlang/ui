@@ -51,19 +51,13 @@ fn main() {
 				country: 'Canada'
 			},
 		]
-		country: ui.radio({
+		country: ui.radio(
 			width: 200
 			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
 			title: 'Country'
-		})
-		pbar: ui.progressbar({
-			width: 170
-			max: 10
-			val: 2
-		})
-		label: ui.label({
-			text: '2/10'
-		})
+		)
+		pbar: ui.progressbar(width: 170, max: 10, val: 2)
+		label: ui.label(text: '2/10')
 	}
 	window := ui.window({
 		width: win_width
@@ -84,56 +78,39 @@ fn main() {
 				width: 200
 				spacing: 13
 			}, [
-				ui.textbox({
+				ui.textbox(
 					max_len: 20
 					width: 200
 					placeholder: 'First name'
 					text: &app.first_name
-					//is_focused: &app.started
+					// is_focused: &app.started
 					is_error: &app.is_error
 					is_focused: true
-				}),
-				ui.textbox({
+				),
+				ui.textbox(
 					max_len: 50
 					width: 200
 					placeholder: 'Last name'
 					text: &app.last_name
 					is_error: &app.is_error
-				}),
-				ui.textbox({
+				),
+				ui.textbox(
 					max_len: 3
 					width: 200
 					placeholder: 'Age'
 					is_numeric: true
 					text: &app.age
 					is_error: &app.is_error
-				}),
-				ui.textbox({
-					width: 200
-					placeholder: 'Password'
-					is_password: true
-					max_len: 20
-					text: &app.password
-				}),
-				ui.checkbox({
-					checked: true
-					text: 'Online registration'
-				}),
-				ui.checkbox({
-					text: 'Subscribe to the newsletter'
-				}),
+				),
+				ui.textbox(width: 200, placeholder: 'Password', is_password: true, max_len: 20, text: &app.password),
+				ui.checkbox(checked: true, text: 'Online registration'),
+				ui.checkbox(text: 'Subscribe to the newsletter'),
 				app.country,
 				ui.row({
 					spacing: 85
 				}, [
-					ui.button({
-						text: 'Add user'
-						onclick: btn_add_click
-					}),
-					ui.button({
-						text: '?'
-						onclick: btn_help_click
-					}),
+					ui.button(text: 'Add user', onclick: btn_add_click),
+					ui.button(text: '?', onclick: btn_help_click),
 				]),
 				ui.row({
 					spacing: 5
@@ -147,24 +124,15 @@ fn main() {
 				stretch: true
 				alignment: .right
 			}, [
-				ui.canvas({
-					height: 275
-					draw_fn: canvas_draw
-				}),
-				ui.picture({
-					width: 100
-					height: 100
-					path: os.resource_abs_path('logo.png')
-				}),
+				ui.canvas(height: 275, draw_fn: canvas_draw),
+				ui.picture(width: 100, height: 100, path: os.resource_abs_path('logo.png')),
 			]),
 		]),
-		ui.menu({
-			items: [
+		ui.menu(items: [
 				ui.MenuItem{'Delete all users', menu_click},
 				ui.MenuItem{'Export users', menu_click},
 				ui.MenuItem{'Exit', menu_click},
-			]
-		}),
+			]),
 	])
 	app.window = window
 	ui.run(window)

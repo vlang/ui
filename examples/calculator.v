@@ -33,12 +33,7 @@ fn main() {
 	}
 	mut children := []ui.Widget{}
 	children = [
-		ui.textbox(
-			text: &app.text
-			placeholder: '0'
-			width: 135
-			read_only: true
-		),
+		ui.textbox(text: &app.text, placeholder: '0', width: 135, read_only: true),
 	]
 	for op in ops {
 		children << ui.row({
@@ -195,12 +190,7 @@ fn get_row(ops []string) []ui.Widget {
 		if op == ' ' {
 			continue
 		}
-		children << ui.button(
-			text: op
-			onclick: btn_click
-			width: bwidth
-			height: bheight
-		)
+		children << ui.button(text: op, onclick: btn_click, width: bwidth, height: bheight)
 	}
 	return children
 }

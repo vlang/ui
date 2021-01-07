@@ -8,9 +8,9 @@ import gg
 import os
 import clipboard
 import eventbus
-//import gx
-//import sokol.sapp
 
+// import gx
+// import sokol.sapp
 const (
 	version = '0.0.4'
 )
@@ -25,8 +25,8 @@ pub mut:
 mut:
 	window               &Window = voidptr(0)
 	show_cursor          bool
-	//just_typed           bool
-	last_type_time          i64
+	// just_typed           bool
+	last_type_time       i64
 	cb_image             gg.Image
 	circle_image         gg.Image
 	radio_image          gg.Image
@@ -36,8 +36,8 @@ mut:
 	redraw_requested     bool
 	resource_cache       map[string]gg.Image
 	closed               bool
-	needs_refresh bool = true
-	ticks int
+	needs_refresh        bool = true
+	ticks                int
 }
 
 pub enum VerticalAlignment {
@@ -53,40 +53,43 @@ pub enum HorizontalAlignment {
 }
 
 pub struct MarginConfig {
-	top int
-	left int
-	right int
+	top    int
+	left   int
+	right  int
 	bottom int
 }
 
 pub interface Widget {
 	init(Layout)
-	//key_down(KeyEvent)
+	// key_down(KeyEvent)
 	draw()
-	//click(MouseEvent)
-	//mouse_move(MouseEvent)
+	// click(MouseEvent)
+	// mouse_move(MouseEvent)
 	point_inside(x f64, y f64) bool
 	unfocus()
 	focus()
-	set_pos(x int,y int)
-	propose_size(w int, h int) (int,int)
+	set_pos(x int, y int)
+	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	is_focused() bool
 }
-//pub fn iwidget(x Widget) Widget { return x }
 
+// pub fn iwidget(x Widget) Widget { return x }
 pub interface Layout {
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
-	//on_click(ClickFn)
+	// on_click(ClickFn)
 	unfocus_all()
-	//on_mousemove(MouseMoveFn)
+	// on_mousemove(MouseMoveFn)
 	draw()
-	resize(w int,h int)
+	resize(w int, h int)
 }
-pub fn ilayout(x Layout) Layout { return x }
+
+pub fn ilayout(x Layout) Layout {
+	return x
+}
 
 pub enum MouseAction {
 	up
@@ -108,7 +111,7 @@ pub:
 	y f64
 }
 
-pub struct MouseMoveEvent{
+pub struct MouseMoveEvent {
 pub:
 	x f64
 	y f64
@@ -134,8 +137,7 @@ fn (mut ui UI) idle_loop() {
 		}
 		ui.needs_refresh = true
 		ui.ticks = 0
-		//glfw.post_empty_event()
-
+		// glfw.post_empty_event()
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
 		// 500ms after the button for closing the dialog/window was clicked.
@@ -143,7 +145,7 @@ fn (mut ui UI) idle_loop() {
 		// in between the sleeps, whether the dialog window had been closed.
 		// This guarantees that the thread will exit at most 10ms after the
 		// closing event.
-		for i:=0; i<50; i++ {
+		for i := 0; i < 50; i++ {
 			time.sleep_ms(10)
 			if ui.closed {
 				return
@@ -197,14 +199,15 @@ pub fn run(window &Window) {
 }
 
 fn (mut ui UI) load_icos() {
-	ui.cb_image = ui.gg.create_image_from_memory(bytes_check_png,  bytes_check_png_len)
+	ui.cb_image = ui.gg.create_image_from_memory(bytes_check_png, bytes_check_png_len)
 	$if macos {
 		ui.circle_image = ui.gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
 	} $else {
 		ui.circle_image = ui.gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
 	}
 	ui.down_arrow = ui.gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
-	ui.selected_radio_image = ui.gg.create_image_from_memory(bytes_selected_radio_png, bytes_selected_radio_png_len)
+	ui.selected_radio_image = ui.gg.create_image_from_memory(bytes_selected_radio_png,
+		bytes_selected_radio_png_len)
 }
 
 pub fn open_url(url string) {
