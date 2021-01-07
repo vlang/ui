@@ -218,7 +218,7 @@ fn (li &ListItem) point_inside(x f64, y f64) bool {
 }
 
 fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
-	if e.action != 1 {
+	if int(e.action) != 1 {
 		return
 	}
 	if !lb.point_inside(e.x, e.y) {
