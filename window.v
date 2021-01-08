@@ -15,13 +15,13 @@ const (
 
 pub type DrawFn = fn (ctx &gg.Context, state voidptr)
 
-pub type ClickFn = fn (e MouseEvent, func voidptr)
+pub type ClickFn = fn (e MouseEvent, window &Window)
 
 pub type KeyFn = fn (e KeyEvent, func voidptr)
 
-pub type ScrollFn = fn (e ScrollEvent, func voidptr)
+pub type ScrollFn = fn (e ScrollEvent, window &Window)
 
-pub type MouseMoveFn = fn (e MouseMoveEvent, func voidptr)
+pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 [ref_only]
 pub struct Window {
