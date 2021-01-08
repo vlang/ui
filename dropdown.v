@@ -148,7 +148,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 }
 
 fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
-	if !dd.point_inside(e.x, e.y) || int(e.action) == 1 {
+	if !dd.point_inside(e.x, e.y) || e.action == .down {
 		return
 	}
 	if e.y >= dd.y && e.y <= dd.y + dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
