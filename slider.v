@@ -221,7 +221,7 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 		s.change_value(e.x, e.y)
 	}
 	s.is_focused = true
-	s.dragging = e.action == 1
+	s.dragging = int(e.action) == 1
 }
 
 fn slider_mouse_move(mut s Slider, e &MouseEvent, zzz voidptr) {

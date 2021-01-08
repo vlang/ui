@@ -87,7 +87,7 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 		return
 	}
 	// <===== mouse position test added
-	if e.action == 0 {
+	if int(e.action) == 0 {
 		s.open = !s.open
 		if s.onclick != voidptr(0) {
 			s.onclick(w.state, s)

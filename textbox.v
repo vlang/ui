@@ -456,7 +456,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 	mut sel_start := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
 	mut sel_end := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
 	text := *tb.text
-	if mods == int(KeyMod.shift) + int(KeyMod.ctrl) {
+	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
 		mut i := tb.cursor_pos
 		if sel_start > 0 {
 			i = if key == .left { sel_start - 1 } else { sel_start + 1 }
@@ -552,11 +552,11 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.dragging = false
 		return
 	}
-	if !tb.dragging && e.action == 1 {
+	if !tb.dragging && e.action == ui.MouseAction(1) {
 		tb.sel_start = 0
 		tb.sel_end = 0
 	}
-	tb.dragging = e.action == 1
+	tb.dragging = int(e.action) == 1
 	tb.ui.show_cursor = true
 	tb.focus()
 	if *tb.text == '' {

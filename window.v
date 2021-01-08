@@ -424,7 +424,7 @@ fn window_char(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
-		mods: event.modifiers
+		mods: KeyMod(event.modifiers)
 	}
 	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window.state)

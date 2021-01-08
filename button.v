@@ -87,7 +87,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
-		} else if e.action == 0 {
+		} else if e.action == .up {
 			b.state = .normal
 			if b.onclick != voidptr(0) {
 				b.onclick(window.state, b)
