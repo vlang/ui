@@ -15,18 +15,18 @@ const (
 
 pub type DrawFn = fn (ctx &gg.Context, state voidptr)
 
-pub type ClickFn = fn (e MouseEvent, window &Window)
+pub type ClickFn = fn (e MouseEvent, func voidptr)
 
 pub type KeyFn = fn (e KeyEvent, func voidptr)
 
-pub type ScrollFn = fn (e ScrollEvent, window &Window)
+pub type ScrollFn = fn (e ScrollEvent, func voidptr)
 
-pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
+pub type MouseMoveFn = fn (e MouseMoveEvent, func voidptr)
 
 [ref_only]
 pub struct Window {
 pub mut:
-	// pub:
+	cursor		  int// = C.IDC_ARROW//C.LPCSTR //= C.IDC_ARROW	//
 	ui            &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
@@ -54,7 +54,7 @@ pub mut:
 }
 
 pub struct WindowConfig {
-pub:
+pub:cursor		  		  int// = C.IDC_ARROW
 	width                 int
 	height                int
 	resizable             bool
@@ -117,6 +117,40 @@ fn on_event(e &sapp.Event, mut window Window) {
 	}
 	*/
 }
+fn (mut w Window) init(parent Layout) {
+	// b.parent = parent
+	// ui := parent.get_ui()
+	// b.ui = ui
+	// if b.use_icon {
+	// 	b.image = b.ui.gg.create_image(b.icon_path)
+	// }
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, win_click, w)
+	subscriber.subscribe_method(events.on_mouse_move, win_hover, w)
+}
+
+fn win_click(mut b Window, e &MouseEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	// if b.point_inside(e.x, e.y) {
+	// 	// if e.action == .down {
+	// 	// 	b.state = .pressed
+	// 	// } else if e.action == 0 {
+	// 	// 	b.state = .normal
+	// 	// 	if b.onclick != voidptr(0) {
+	// 	// 		b.onclick(window.state, b)
+	// 	// 	}
+	// 	// }
+	// }
+}
+
+fn win_hover(mut b Window, e &MouseMoveEvent, window &Window) {
+	gg.set_cursor(C.IDC_HAND)
+	// if b.point_inside(e.x, e.y) {
+	// 	// if b.onhover != voidptr(0) {
+	// 	// 	b.onhover(window.state, b)
+	// 	// }
+	// }
+}
 
 fn gg_init(mut window Window) {
 	for _, child in window.children {
@@ -138,6 +172,7 @@ fn gg_init(mut window Window) {
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
+	
 	/*
 	println('window()')
 	defer {
@@ -276,7 +311,7 @@ fn window_resize(glfw_wnd voidptr, width int, height int) {
 	*/
 }
 */
-fn window_mouse_move(event sapp.Event, ui &UI) {
+pub fn window_mouse_move(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
@@ -285,6 +320,9 @@ fn window_mouse_move(event sapp.Event, ui &UI) {
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
+	// if e.y==0 && e.y<=0.5 {gg.set_cursor(C.IDC_HAND)}
+	// gg.set_cursor(C.IDC_HAND)
+	// gg.set_cursor(window.cursor)
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
@@ -307,7 +345,6 @@ fn window_mouse_down(event sapp.Event, ui &UI) {
 		action: .down
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(e, window)
@@ -334,7 +371,6 @@ fn window_mouse_up(event sapp.Event, ui &UI) {
 		action: .up
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
 	}
 	if window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
@@ -361,7 +397,6 @@ fn window_click(event sapp.Event, ui &UI) {
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
 	}
 	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
 		window.click_fn(e, window)
@@ -427,7 +462,7 @@ fn window_char(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
-		mods: KeyMod(event.modifiers)
+		mods: event.modifiers
 	}
 	if window.key_down_fn != voidptr(0) {
 		window.key_down_fn(e, window.state)
