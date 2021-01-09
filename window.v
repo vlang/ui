@@ -84,6 +84,7 @@ pub fn window2(cfg WindowConfig) &Window {
 }
 */
 fn on_event(e &sapp.Event, mut window Window) {
+	ui.set_cursor(window.cursor)
 	// println('code=$e.char_code')
 	window.ui.needs_refresh = true
 	window.ui.ticks = 0
@@ -148,6 +149,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	*/
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
+		cursor: cfg.cursor
 		state: cfg.state
 		draw_fn: cfg.draw_fn
 		title: cfg.title
