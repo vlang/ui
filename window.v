@@ -27,6 +27,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 pub struct Window {
 pub mut:
 	// pub:
+	cursor		  int// = C.IDC_ARROW//C.LPCSTR //= C.IDC_ARROW	//
 	ui            &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
@@ -55,6 +56,7 @@ pub mut:
 
 pub struct WindowConfig {
 pub:
+	cursor		  		  int// = C.IDC_ARROW
 	width                 int
 	height                int
 	resizable             bool
