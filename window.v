@@ -84,7 +84,6 @@ pub fn window2(cfg WindowConfig) &Window {
 }
 */
 fn on_event(e &sapp.Event, mut window Window) {
-	ui.set_cursor(window.cursor)
 	// println('code=$e.char_code')
 	window.ui.needs_refresh = true
 	window.ui.ticks = 0
