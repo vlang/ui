@@ -32,8 +32,7 @@ struct CURSORINFO {
 // fn C.RegisterClassW(class WndClassW) int 
 // fn C.SetCursor(h_cursor C.HCURSOR)
 
-fn C.ClipCursor(&lpRect RECT)bool	//Confines the cursor to a rectangular area on the screen. If a subsequent cursor position (set by the SetCursorPos function or the mouse) lies outside the rectangle, the system automatically adjusts the position to keep the cursor inside the rectangular area.
-//I am very lazy to finish it hehe
+// fn C.ClipCursor(&lpRect RECT)bool	//Confines the cursor to a rectangular area on the screen. If a subsequent cursor position (set by the SetCursorPos function or the mouse) lies outside the rectangle, the system automatically adjusts the position to keep the cursor inside the rectangular area.
 // fn C.CopyCursor(pcur)	//Copies the specified cursor.
 // fn C.CreateCursor() C.HCURSOR	//Creates a cursor having the specified size, bit patterns, and hot spot.
 fn C.DestroyCursor(h_cursor C.HCURSOR) bool	//Destroys a cursor and frees any memory the cursor occupied. Do not use this function to destroy a shared cursor.
