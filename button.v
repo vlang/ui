@@ -32,7 +32,7 @@ pub struct ButtonConfig {
 	text      string
 	icon_path string
 	onclick   ButtonClickFn	
-	onclick   ButtonClickFn
+	onhover   ButtonHoverFn
 	height    int = 20
 	width     int
 	color	  gx.Color=gx.white
@@ -96,7 +96,7 @@ pub fn button(c ButtonConfig) &Button {
 	return b
 }
 
-fn btn_click(mut b Button, e &MouseEvent, window &Window) {
+fn btn_click(mut b Button, e &MouseEvent,mut window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
@@ -158,7 +158,7 @@ fn (mut b Button) draw() {
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
-	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
+	bg_color := if b.state == .normal { b.color } else { progress_bar_background_color } // gx.gray }
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
 	mut y := bcenter_y - h2 - 1
