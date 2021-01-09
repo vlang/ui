@@ -49,3 +49,8 @@ fn C.SetCursorPos(x int, y int) bool	//Moves the cursor to the specified screen 
 fn C.SetPhysicalCursorPos(x int, y int) bool	//Sets the position of the cursor in physical coordinates.
 fn C.SetSystemCursor(hcur C.HCURSOR, id C.DWORD) bool	//Enables an application to customize the system cursors. It replaces the contents of the system cursor specified by the id parameter with the contents of the cursor specified by the hcur parameter and then destroys hcur.
 fn C.ShowCursor(b_show bool) int	//Displays or hides the cursor.
+
+pub fn set_cursor(lpCursorName int) {
+	C.SetCursor(C.LoadCursor(C.NULL, lpCursorName))
+}
+
