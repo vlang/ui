@@ -28,7 +28,7 @@ type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 type ButtonHoverFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
-	cursor	  int//C.LPCSTR
+	cursor	  int = C.IDC_ARROW//C.LPCSTR
 	text      string
 	icon_path string
 	onclick   ButtonClickFn	
