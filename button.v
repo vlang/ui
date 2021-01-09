@@ -6,6 +6,7 @@ module ui
 import gx
 import gg
 import os
+import eventbus
 
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
@@ -24,13 +25,17 @@ enum ButtonState {
 }
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
+type ButtonHoverFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
+	cursor	  int//C.LPCSTR
 	text      string
 	icon_path string
+	onclick   ButtonClickFn	
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
+	color	  gx.Color=gx.white
 }
 
 [ref_only]
@@ -38,6 +43,7 @@ pub struct Button {
 mut:
 	text_width  int
 	text_height int
+	is_toggle   bool
 pub mut:
 	state       ButtonState
 	height      int
@@ -46,12 +52,16 @@ pub mut:
 	y           int
 	parent      Layout
 	is_focused  bool
+	is_hover	bool
 	ui          &UI
-	onclick     ButtonClickFn
+	onclick     ButtonClickFn	
+	onhover     ButtonHoverFn
 	text        string
 	icon_path   string
 	image       gg.Image
 	use_icon    bool
+	color 		gx.Color
+	cursor 	 	int
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -63,6 +73,7 @@ fn (mut b Button) init(parent Layout) {
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, btn_click, b)
+	subscriber.subscribe_method(events.on_mouse_move, btn_hover, b)
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -73,6 +84,9 @@ pub fn button(c ButtonConfig) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		onclick: c.onclick
+		onhover: c.onhover
+		color:c.color
+		cursor: c.cursor
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -91,8 +105,26 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .normal
 			if b.onclick != voidptr(0) {
 				b.onclick(window.state, b)
+				window.cursor=b.cursor//C.IDC_HAND
 			}
 		}
+	}
+}
+
+fn btn_hover(mut b Button, e &MouseMoveEvent,mut window &Window) {
+	 b.is_toggle=false
+		
+	if b.point_inside(e.x, e.y) {
+		if b.onhover != voidptr(0) {
+			b.onhover(window.state, b)
+		}
+		ui.set_cursor(b.cursor)//(C.IDC_HAND)
+		window.cursor=b.cursor//C.IDC_HAND
+		b.is_toggle=false
+	}else if window.cursor!=C.IDC_ARROW && !b.is_toggle{
+		ui.set_cursor(C.IDC_ARROW)
+		window.cursor=C.IDC_ARROW
+		b.is_toggle=true
 	}
 }
 
