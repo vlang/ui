@@ -28,7 +28,7 @@ type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 type ButtonHoverFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
-	cursor	  int = C.IDC_ARROW//C.LPCSTR
+	cursor	  Cursor = C.IDC_ARROW//C.LPCSTR
 	text      string
 	icon_path string
 	onclick   ButtonClickFn	
@@ -61,7 +61,7 @@ pub mut:
 	image       gg.Image
 	use_icon    bool
 	color 		gx.Color
-	cursor 	 	int
+	cursor 	 	Cursor
 }
 
 fn (mut b Button) init(parent Layout) {
