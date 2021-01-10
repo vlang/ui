@@ -310,7 +310,7 @@ fn window_mouse_down(event sapp.Event, ui &UI) {
 		action: .down
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
+		button: int(event.mouse_button)
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(e, window)
@@ -337,7 +337,7 @@ fn window_mouse_up(event sapp.Event, ui &UI) {
 		action: .up
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
+		button: int(event.mouse_button)
 	}
 	if window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
@@ -364,7 +364,7 @@ fn window_click(event sapp.Event, ui &UI) {
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
-		button: event.mouse_button
+		button: int(event.mouse_button)
 	}
 	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
 		window.click_fn(e, window)
