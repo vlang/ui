@@ -115,9 +115,22 @@ pub:
 }
 
 pub enum Cursor {
-	hand
-	arrow
-	ibeam
+	appstarting	=C.IDC_APPSTARTING
+	arrow		=C.IDC_ARROW
+	cross		=C.IDC_CROSS
+	hand		=C.IDC_HAND
+	help		=C.IDC_HELP
+	ibeam		=C.IDC_IBEAM
+	icon		=C.IDC_ICON
+	no 			=C.IDC_NO
+	size		=C.IDC_SIZE
+	sizeall		=C.IDC_SIZEALL
+	sizenesw	=C.IDC_SIZENESW
+	sizens		=C.IDC_SIZENS
+	sizenwse	=C.IDC_SIZENWSE
+	sizewe		=C.IDC_SIZEWE
+	uparrow		=C.IDC_UPARROW
+	wait		=C.IDC_WAIT
 }
 
 fn (mut ui UI) idle_loop() {
