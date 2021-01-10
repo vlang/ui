@@ -308,6 +308,7 @@ fn window_mouse_down(event sapp.Event, ui &UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(e, window)
@@ -335,6 +336,7 @@ fn window_mouse_up(event sapp.Event, ui &UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
 	}
 	if window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
@@ -362,6 +364,7 @@ fn window_click(event sapp.Event, ui &UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
 	}
 	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
 		window.click_fn(e, window)
