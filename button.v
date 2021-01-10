@@ -28,7 +28,7 @@ type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 type ButtonHoverFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
-	cursor	  Cursor = C.IDC_ARROW//C.LPCSTR
+	cursor	  Cursor = .arrow// C.IDC_ARROW//C.LPCSTR
 	text      string
 	icon_path string
 	onclick   ButtonClickFn	
@@ -118,11 +118,11 @@ fn btn_hover(mut b Button, e &MouseMoveEvent,mut window &Window) {
 		if b.onhover != voidptr(0) {
 			b.onhover(window.state, b)
 		}
-		ui.set_cursor(b.cursor)//(C.IDC_HAND)
+		ui.set_cursor(int(b.cursor))//(C.IDC_HAND)
 		window.cursor=b.cursor//C.IDC_HAND
 		b.is_toggle=false
-	}else if window.cursor!=C.IDC_ARROW && !b.is_toggle{
-		ui.set_cursor(C.IDC_ARROW)
+	}else if window.cursor!=.arrow/*C.IDC_ARROW*/  && !b.is_toggle{
+		ui.set_cursor(int(Cursor.arrow))
 		window.cursor=C.IDC_ARROW
 		b.is_toggle=true
 	}
