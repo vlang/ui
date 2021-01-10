@@ -93,11 +93,19 @@ pub enum MouseAction {
 	down
 }
 
+// MouseButton is same to sapp.MouseButton
+pub enum MouseButton {
+    invalid = -1
+    left = 0
+    right = 1
+    middle = 2
+}
+
 pub struct MouseEvent {
 pub:
 	x      int
 	y      int
-	button int
+	button MouseButton
 	action MouseAction
 	mods   int
 }
