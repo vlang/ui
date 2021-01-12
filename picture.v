@@ -10,8 +10,8 @@ type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 
 pub struct Picture {
 pub:
-	offset_x  int
-	offset_y  int
+	offset_x int
+	offset_y int
 mut:
 	text      string
 	parent    Layout
@@ -31,7 +31,7 @@ pub struct PictureConfig {
 	width     int
 	height    int
 	on_click  PictureClickFn
-	use_cache bool = true
+	use_cache bool     = true
 	ref       &Picture = voidptr(0)
 	image     gg.Image
 }

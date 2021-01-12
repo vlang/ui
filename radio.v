@@ -19,15 +19,15 @@ pub mut:
 	selected_index int
 	values         []string
 	// state      RadioState
-	title          string
-	height         int
-	width          int
-	x              int
-	y              int
-	parent         Layout
-	is_focused     bool
-	is_checked     bool
-	ui             &UI
+	title      string
+	height     int
+	width      int
+	x          int
+	y          int
+	parent     Layout
+	is_focused bool
+	is_checked bool
+	ui         &UI
 	// selected_value string
 	// onclick    RadioClickFn
 }

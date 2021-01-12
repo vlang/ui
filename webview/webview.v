@@ -13,8 +13,8 @@ struct WebView {
 type NavFinishedFn = fn (url string)
 
 pub struct Config {
-	url             string
-	title           string
+	url   string
+	title string
 	// parent          &ui.Window
 	nav_finished_fn NavFinishedFn
 	// js_on_init      string

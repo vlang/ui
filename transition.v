@@ -18,8 +18,8 @@ mut:
 	last_draw_target int
 	ui               &UI
 pub mut:
-	target_value     int
-	animated_value   &int
+	target_value   int
+	animated_value &int
 }
 
 pub struct TransitionConfig {

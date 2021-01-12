@@ -27,7 +27,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 pub struct Window {
 pub mut:
 	// pub:
-	ui            &UI = voidptr(0)
+	ui &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
 	child_window  &Window = voidptr(0)
