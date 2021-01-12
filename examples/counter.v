@@ -8,7 +8,7 @@ const (
 
 struct App {
 mut:
-	counter string = '0'
+	counter string     = '0'
 	window  &ui.Window = 0
 }
 

@@ -49,9 +49,12 @@ fn main() {
 						placeholder: 'dolor sit amet'
 						text: &app.second_ipsum
 					),
-					ui.button(text: 'More ipsum!', onclick: fn (a voidptr, b voidptr) {
+					ui.button(
+						text: 'More ipsum!'
+						onclick: fn (a voidptr, b voidptr) {
 							ui.open_url('https://lipsum.com/feed/html')
-						}),
+						}
+					),
 				]),
 				ui.group({
 					title: 'Second group'
