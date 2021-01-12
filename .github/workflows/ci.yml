@@ -21,7 +21,7 @@ jobs:
     - name: Build V
       run: make
     - name: v fmt -verify
-      run: v fmt -verify vlib/ui
+      run: ./v fmt -verify vlib/ui
 
   ubuntu:
     runs-on: ubuntu-latest
