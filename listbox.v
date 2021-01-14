@@ -20,13 +20,13 @@ mut:
 	y             int
 	width         int
 	height        int
-	callback      SelectionChangedFn = ui.SelectionChangedFn(0)
-	draw_lines    bool // Draw a rectangle around every item?
+	callback      SelectionChangedFn = SelectionChangedFn(0)
+	draw_lines    bool     // Draw a rectangle around every item?
 	col_border    gx.Color = _col_border // Item and list border color
 	col_bkgrnd    gx.Color = _col_list_bkgrnd // ListBox background color
 	col_selected  gx.Color = _col_item_select // Selected item background color
-	item_height   int = _item_height
-	text_offset_y int = _text_offset_y
+	item_height   int      = _item_height
+	text_offset_y int      = _text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 }
 
@@ -69,21 +69,21 @@ pub mut:
 	items         []ListItem
 	selection     int = -1
 	draw_count    int
-	clbk          SelectionChangedFn = ui.SelectionChangedFn(0)
+	clbk          SelectionChangedFn = SelectionChangedFn(0)
 	focused       bool
 	draw_lines    bool
 	col_bkgrnd    gx.Color = _col_list_bkgrnd
 	col_selected  gx.Color = _col_item_select
 	col_border    gx.Color = _col_border
-	item_height   int = _item_height
-	text_offset_y int = _text_offset_y
+	item_height   int      = _item_height
+	text_offset_y int      = _text_offset_y
 	id            string
 }
 
 struct ListItem {
-	x         int
-	id        string
-	list      &ListBox
+	x    int
+	id   string
+	list &ListBox
 mut:
 	y         int
 	text      string

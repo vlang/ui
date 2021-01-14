@@ -38,14 +38,14 @@ type TextBoxEnterFn = fn (string, voidptr)
 [ref_only]
 pub struct TextBox {
 pub mut:
-	height             int
-	width              int
-	x                  int
-	y                  int
-	parent             Layout
-	is_focused         bool
+	height     int
+	width      int
+	x          int
+	y          int
+	parent     Layout
+	is_focused bool
 	// gg &gg.GG
-	ui                 &UI
+	ui &UI
 	// text               string
 	text               &string = voidptr(0)
 	max_len            int
@@ -61,15 +61,15 @@ pub mut:
 	read_only          bool
 	borderless         bool
 	on_key_down        KeyDownFn = KeyDownFn(0)
-	on_key_up          KeyUpFn = KeyUpFn(0)
+	on_key_up          KeyUpFn   = KeyUpFn(0)
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
 	is_error           &bool = voidptr(0)
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
-	on_enter           TextBoxEnterFn = TextBoxEnterFn(0)
+	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
 mut:
-	is_typing          bool
+	is_typing bool
 }
 
 /*
@@ -81,21 +81,21 @@ struct Rect {
 }
 */
 pub struct TextBoxConfig {
-	width              int
-	height             int = 22
-	min                int
-	max                int
-	val                int
-	placeholder        string
-	placeholder_bind   &string = voidptr(0)
-	max_len            int
-	is_numeric         bool
-	is_password        bool
-	read_only          bool
-	is_multi           bool
-	text               &string = voidptr(0)
-	is_error           &bool = voidptr(0)
-	is_focused         bool
+	width            int
+	height           int = 22
+	min              int
+	max              int
+	val              int
+	placeholder      string
+	placeholder_bind &string = voidptr(0)
+	max_len          int
+	is_numeric       bool
+	is_password      bool
+	read_only        bool
+	is_multi         bool
+	text             &string = voidptr(0)
+	is_error         &bool   = voidptr(0)
+	is_focused       bool
 	// is_error bool
 	borderless         bool
 	on_key_down        KeyDownFn
@@ -463,7 +463,11 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 		} else if sel_start == 0 && sel_end > 0 {
 			i = 0
 		} else {
-			tb.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
+			tb.sel_direction = if key == .left {
+				SelectionDirection.right_to_left
+			} else {
+				SelectionDirection.left_to_right
+			}
 		}
 		sel_end = tb.cursor_pos
 		for {
@@ -495,7 +499,11 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 		if sel_start <= 0 {
 			sel_end = tb.cursor_pos
 			sel_start = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
-			tb.sel_direction = if key == .left { SelectionDirection.right_to_left } else { SelectionDirection.left_to_right }
+			tb.sel_direction = if key == .left {
+				SelectionDirection.right_to_left
+			} else {
+				SelectionDirection.left_to_right
+			}
 		} else {
 			sel_start = if key == .left { sel_start - 1 } else { sel_start + 1 }
 		}
@@ -552,7 +560,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.dragging = false
 		return
 	}
-	if !tb.dragging && e.action == ui.MouseAction(1) {
+	if !tb.dragging && e.action == MouseAction(1) {
 		tb.sel_start = 0
 		tb.sel_end = 0
 	}

@@ -62,6 +62,7 @@ pub mut:
 	use_icon    bool
 	color 		gx.Color
 	cursor 	 	Cursor
+
 }
 
 fn (mut b Button) init(parent Layout) {

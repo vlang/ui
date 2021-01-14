@@ -29,6 +29,7 @@ pub mut:
 	// pub:
 	cursor		  Cursor// = C.IDC_ARROW//C.LPCSTR //= C.IDC_ARROW	//
 	ui            &UI = voidptr(0)
+
 	// glfw_obj      &glfw.Window = voidptr(0)
 	children      []Widget
 	child_window  &Window = voidptr(0)

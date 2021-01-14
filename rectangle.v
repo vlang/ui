@@ -8,8 +8,8 @@ import gg
 
 pub struct Rectangle {
 pub mut:
-	color        gx.Color
-	text         string
+	color gx.Color
+	text  string
 mut:
 	parent       Layout
 	x            int
@@ -34,8 +34,8 @@ pub struct RectangleConfig {
 	g: 180
 	b: 190
 }
-	x            int
-	y            int
+	x int
+	y int
 }
 
 fn (mut r Rectangle) init(parent Layout) {
