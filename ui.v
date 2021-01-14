@@ -110,7 +110,7 @@ pub:
 	y      int
 	button MouseButton
 	action MouseAction
-	mods   int
+	mods   KeyMod
 }
 
 pub struct ScrollEvent {
