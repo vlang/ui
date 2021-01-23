@@ -12,6 +12,7 @@ fn C.vui_wait_events()
 
 fn C.vui_bundle_path() string
 
+// fn C.darwin_draw_string(s string)
 pub fn message_box(s string) {
 	C.vui_message_box(s)
 }

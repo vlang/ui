@@ -2,12 +2,14 @@
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 
+/*
 NSString *nsstring(string str) {
   return [[NSString alloc] initWithBytesNoCopy:str.str
                                         length:str.len
                                       encoding:NSUTF8StringEncoding
                                   freeWhenDone:false];
 }
+*/
 
 void vui_message_box(string s) {
 		NSString* ns_string = nsstring(s);
@@ -36,4 +38,5 @@ void vui_wait_events() {
 string vui_bundle_path() {
 	return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
+
 

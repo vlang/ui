@@ -72,6 +72,7 @@ pub:
 	children              []Widget
 	font_path             string
 	custom_bold_font_path string
+	native_rendering      bool
 	// pub mut:
 	// parent_window &Window
 }
@@ -81,9 +82,30 @@ pub fn window2(cfg WindowConfig) &Window {
 	return window(cfg, cfg.children)
 }
 */
+fn C.sapp_mouse_locked() bool
+
 fn on_event(e &sapp.Event, mut window Window) {
-	// println('code=$e.char_code')
+	/*
+	if false && e.typ != .mouse_move {
+		print('window.on_event() $e.typ ') // code=$e.char_code')
+		if C.sapp_mouse_locked() {
+			println('locked')
+		} else {
+			println('unlocked')
+		}
+	}
+	*/
 	window.ui.needs_refresh = true
+	// window.refresh()
+	$if macos {
+		if window.ui.gg.native_rendering {
+			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
+				C.darwin_window_refresh()
+			} else {
+				C.darwin_window_refresh()
+			}
+		}
+	}
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
 	match e.typ {
@@ -96,17 +118,18 @@ fn on_event(e &sapp.Event, mut window Window) {
 			window_mouse_down(e, window.ui)
 		}
 		.key_down {
-			println('key down')
+			// println('key down')
 			window_key_down(e, window.ui)
 		}
 		.char {
-			println('char')
+			// println('char')
 			window_char(e, window.ui)
 		}
 		.mouse_scroll {
 			window_scroll(e, window.ui)
 		}
 		.mouse_move {
+			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
 		else {}
@@ -167,7 +190,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		create_window: true
 		window_title: cfg.title
 		resizable: cfg.resizable
-		frame_fn: frame
+		frame_fn: if cfg.native_rendering { native_frame } else { frame }
+		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
 		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
@@ -177,6 +201,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
+		native_rendering: cfg.native_rendering
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -281,6 +306,7 @@ fn window_mouse_move(event sapp.Event, ui &UI) {
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
 		y: event.mouse_y / ui.gg.scale
+		mouse_button: int(event.mouse_button)
 	}
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
@@ -483,8 +509,11 @@ pub fn (w &Window) close() {
 }
 
 pub fn (mut w Window) refresh() {
-	// println('Window.refresh()')
+	// println('ui: window.refres()')
 	w.ui.needs_refresh = true
+	$if macos {
+		C.darwin_window_refresh()
+	}
 }
 
 pub fn (w &Window) onmousedown(cb voidptr) {
@@ -573,16 +602,6 @@ fn bar() {
 	})
 }
 
-fn bar2() {
-	foo2(&Window{
-		ui: 0 // glfw_obj: 0
-		eventbus: eventbus.new()
-	})
-	foo2(&Stack{
-		ui: 0
-	})
-}
-
 fn (w &Window) draw() {
 }
 
@@ -612,6 +631,30 @@ fn frame(mut w Window) {
 		}
 	}
 	w.ui.gg.end()
+	w.ui.needs_refresh = false
+}
+
+fn native_frame(mut w Window) {
+	// println('naative_frame()')
+	if !w.ui.needs_refresh {
+		// Draw 3 more frames after the "stop refresh" command
+		w.ui.ticks++
+		if w.ui.ticks > 3 {
+			return
+		}
+	}
+	if w.child_window == 0 {
+		// Render all widgets, including Canvas
+		for child in w.children {
+			child.draw()
+		}
+	}
+	// w.showfps()
+	else if w.child_window != 0 {
+		for child in w.child_window.children {
+			child.draw()
+		}
+	}
 	w.ui.needs_refresh = false
 }
 

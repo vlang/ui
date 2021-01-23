@@ -36,3 +36,7 @@ pub fn new_window(cfg Config) &WebView {
 		obj: obj
 	}
 }
+
+pub fn (w &WebView) close() {
+	C.darwin_webview_close()
+}

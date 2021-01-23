@@ -17,6 +17,8 @@ NSString* nsstring(string);
 @implementation MyBrowserDelegate
 @end
 
+NSWindow* g_webview_window;
+
 void* new_darwin_web_view(string url, string title) {
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
   bool enable_js = 1;
@@ -43,13 +45,13 @@ webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) Appl
 
   NSRect window_rect =
       NSMakeRect(0, 0, 1000, 600); //_sapp.window_width, _sapp.window_height);
-  NSWindow *window =
+  g_webview_window =
       [[NSWindow alloc] initWithContentRect:window_rect
                                   styleMask:style
                                     backing:NSBackingStoreBuffered
                                       defer:NO];
-  window.title = nsstring(title);
-  window.releasedWhenClosed = false;
+  g_webview_window.title = nsstring(title);
+  g_webview_window.releasedWhenClosed = false;
 
   MyBrowserDelegate *del = [[MyBrowserDelegate alloc] init];
   // del->parent_window = ns->w;
@@ -68,18 +70,30 @@ webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) Appl
   // [[NSWindowController alloc] initWithWindow:window];
 
   //[NSApp activateIgnoringOtherApps:YES];
-  [window setContentView:webView];
-  [window makeKeyAndOrderFront:nil];
+  [g_webview_window setContentView:webView];
+  [g_webview_window makeKeyAndOrderFront:nil];
 return         (__bridge void *)(  webView );
 }
 
-void darwin_webview_eval_js(void* web_view_, string js) {
+void darwin_webview_eval_js(void* web_view_, string js, string* resultt) {
 	WKWebView* web_view = (__bridge WKWebView*)(web_view_);
+
+	//__block NSString *resultString = nil;
+//    __block BOOL finished = NO;
 
 	//[web_view evaluateJavaScript:@"document.body.hidden=true;" completionHandler:nil];
 	[web_view evaluateJavaScript:nsstring(js) completionHandler:^(id result, NSError *error) {
         NSLog(@"DA RESULT = %@", result);
+//       finished = YES;
+if (result != nil) {
+    *resultt = string_clone(tos2([result UTF8String]));
+   }
 }];
+
+//while (!finished)
+//    {
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+//    }
 }
 
 void darwin_webview_load(void* web_view_, string url) {
@@ -89,3 +103,18 @@ void darwin_webview_load(void* web_view_, string url) {
   [web_view loadRequest:nsrequest];
  }
 
+void darwin_webview_close() {
+	[g_webview_window close];
+}
+
+
+void darwin_delete_all_cookies() {
+	NSHTTPCookie *cookie;
+NSHTTPCookieStorage *cookieJar =
+[NSHTTPCookieStorage sharedHTTPCookieStorage];
+NSArray *cookies = [cookieJar cookies];
+for (cookie in cookies) {
+[cookieJar deleteCookie:cookie];
+}
+
+}

@@ -294,10 +294,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		s := utf32_to_str(e.codepoint)
 		// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 		if tb.is_numeric &&
-			(s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((text.len > 0) && (tb.cursor_pos > 0))))) {
+			(s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`) || ((text.len > 0) && (tb.cursor_pos >
+			0)))))
+		{
 			return
 		}
-		println('inserting codepoint=$e.codepoint mods=$e.mods ..')
+		// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
 		tb.insert(s)
 		if tb.on_change != TextBoxChangeFn(0) {
 			tb.on_change(*tb.text, window.state)
@@ -493,7 +495,8 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 	if mods == .shift {
 		if (tb.sel_direction == .right_to_left &&
 			sel_start == 0 && sel_end > 0) ||
-			(tb.sel_direction == .left_to_right && sel_end == tb.text.len) {
+			(tb.sel_direction == .left_to_right && sel_end == tb.text.len)
+		{
 			return true
 		}
 		if sel_start <= 0 {

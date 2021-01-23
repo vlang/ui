@@ -121,8 +121,9 @@ pub:
 
 pub struct MouseMoveEvent {
 pub:
-	x f64
-	y f64
+	x            f64
+	y            f64
+	mouse_button int // TODO enum
 }
 
 pub enum Cursor {
@@ -144,6 +145,11 @@ fn (mut ui UI) idle_loop() {
 			ui.show_cursor = !ui.show_cursor
 		}
 		ui.needs_refresh = true
+		$if macos {
+			if ui.gg.native_rendering {
+				C.darwin_window_refresh()
+			}
+		}
 		ui.ticks = 0
 		// glfw.post_empty_event()
 		// Sleeping for a monolithic block of 500ms means, that the thread
