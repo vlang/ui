@@ -51,6 +51,8 @@ pub mut:
 	char_fn       KeyFn
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
+	// resizable has limitation https://github.com/vlang/ui/issues/231
+	resizable bool // currently only for events.on_resized not modify children
 }
 
 pub struct WindowConfig {
@@ -132,6 +134,9 @@ fn on_event(e &sapp.Event, mut window Window) {
 			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
+		.resized {
+			window_resize(e, window.ui)
+		}
 		else {}
 	}
 	/*
@@ -182,6 +187,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
+		resizable: cfg.resizable
 	}
 	gcontext := gg.new_context(
 		width: cfg.width
@@ -473,6 +479,14 @@ fn window_char(event sapp.Event, ui &UI) {
 	*/
 }
 
+fn window_resize(event sapp.Event, ui &UI) {
+	mut window := ui.window
+	if window.resizable {
+		window.resize(event.window_width, event.window_height)
+		window.eventbus.publish(events.on_resize, window, voidptr(0))
+	}
+}
+
 fn (mut w Window) focus_next() {
 	mut doit := false
 	for child in w.children {
@@ -704,7 +718,9 @@ fn (w &Window) size() (int, int) {
 	return w.width, w.height
 }
 
-fn (window &Window) resize(width int, height int) {
+fn (mut window Window) resize(width int, height int) {
+	window.width = width
+	window.height = height
 }
 
 fn (window &Window) unfocus_all() {
