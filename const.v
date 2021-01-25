@@ -9,6 +9,7 @@ pub:
 	on_key_down   string = 'on_key_down'
 	on_key_up     string = 'on_key_up'
 	on_scroll     string = 'on_scroll'
+	on_resize     string = 'on_resize'
 }
 
 pub const (
