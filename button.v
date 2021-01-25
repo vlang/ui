@@ -63,7 +63,7 @@ fn (mut b Button) init(parent Layout) {
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
-	subscriber.subscribe_method(events.on_mouse_up, btn_click, b)
+	subscriber.subscribe_method(events.on_click, btn_click, b)
 }
 
 pub fn button(c ButtonConfig) &Button {
