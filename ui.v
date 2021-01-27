@@ -229,10 +229,10 @@ pub fn open_url(url string) {
 		return
 	}
 	$if macos {
-		os.exec('open "$url"')
+		os.exec('open "$url"') or { return }
 	}
 	$if linux {
-		os.exec('xdg-open "$url"')
+		os.exec('xdg-open "$url"') or { return }
 	}
 }
 
