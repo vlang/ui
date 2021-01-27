@@ -66,10 +66,12 @@ fn (mut s Stack) init(parent Layout) {
 	s.set_pos(s.x, s.y)
 	mut x := s.x
 	mut y := s.y
+
 	// println('\nstack children')
 	for child in s.children {
 		child.init(s)
 		child_width, child_height := child.size()
+
 		// Set correct position for each child
 		mut yy := y
 		if s.vertical_alignment == .bottom {
@@ -81,6 +83,7 @@ fn (mut s Stack) init(parent Layout) {
 		} else {
 			y += s.spacing
 		}
+
 		// println('setting widget pos $x, $yy $s.margin')
 		// if child is TextBox {
 		// println('txtbox $child.placeholder')
@@ -92,6 +95,7 @@ fn (mut s Stack) init(parent Layout) {
 			y += child_height
 		}
 	}
+
 	// println('\n')
 }
 
@@ -142,6 +146,7 @@ fn (mut s Stack) draw() {
 	if s.vertical_alignment == .bottom {
 		// Move the stack to the bottom. First find the biggest height.
 		_, parent_height := s.parent.size()
+
 		// println('parent_height=$parent_height s.height= $s.height')
 		pos_y = parent_height - s.height
 	}
@@ -231,6 +236,7 @@ fn (mut s Stack) focus() {
 
 fn (mut s Stack) unfocus() {
 	s.unfocus_all()
+
 	// s.is_focused = false
 	// println('')
 }

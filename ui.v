@@ -123,7 +123,8 @@ pub struct MouseMoveEvent {
 pub:
 	x            f64
 	y            f64
-	mouse_button int // TODO enum
+	mouse_button int
+	// TODO enum
 }
 
 pub enum Cursor {
@@ -138,7 +139,7 @@ fn (mut ui UI) idle_loop() {
 	// the cursor will blink at a rate of 1Hz, even if
 	// there are no other user events.
 	for {
-		if time.ticks() - ui.last_type_time < cursor_show_delay {
+		if time.ticks() - ui.last_type_time < ui.cursor_show_delay {
 			// Always show the cursor if the user is typing right now
 			ui.show_cursor = true
 		} else {
@@ -151,6 +152,7 @@ fn (mut ui UI) idle_loop() {
 			}
 		}
 		ui.ticks = 0
+
 		// glfw.post_empty_event()
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
@@ -206,6 +208,7 @@ pub fn run(window &Window) {
 	ui.window.glfw_obj.destroy()
 	*/
 	ui.closed = true
+
 	// the ui.idle_loop thread checks every 10 ms if ui.closed is true;
 	// waiting 2x this time should be enough to ensure the ui.loop
 	// thread will exit before us, without using a waitgroup here too

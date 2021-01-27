@@ -37,12 +37,14 @@ fn (mut l Label) set_pos(x int, y int) {
 
 fn (mut l Label) size() (int, int) {
 	w, h := l.ui.gg.text_size(l.text)
+
 	// First return the width, then the height multiplied by line count.
 	return w, h * l.text.split('\n').len
 }
 
 fn (mut l Label) propose_size(w int, h int) (int, int) {
 	ww, hh := l.ui.gg.text_size(l.text)
+
 	// First return the width, then the height multiplied by line count.
 	return ww, hh * l.text.split('\n').len
 }

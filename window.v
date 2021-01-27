@@ -32,7 +32,8 @@ pub mut:
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
-	has_textbox   bool // for initial focus
+	has_textbox   bool
+	// for initial focus
 	tab_index     int
 	just_tabbed   bool
 	state         voidptr
@@ -52,7 +53,8 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable bool // currently only for events.on_resized not modify children
+	resizable bool
+	// currently only for events.on_resized not modify children
 }
 
 pub struct WindowConfig {
@@ -64,7 +66,7 @@ pub:
 	always_on_top         bool
 	state                 voidptr
 	draw_fn               DrawFn
-	bg_color              gx.Color = default_window_color
+	bg_color              gx.Color = ui.default_window_color
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -98,6 +100,7 @@ fn on_event(e &sapp.Event, mut window Window) {
 	}
 	*/
 	window.ui.needs_refresh = true
+
 	// window.refresh()
 	$if macos {
 		if window.ui.gg.native_rendering {
@@ -109,6 +112,7 @@ fn on_event(e &sapp.Event, mut window Window) {
 		}
 	}
 	window.ui.ticks = 0
+
 	// window.ui.ticks_since_refresh = 0
 	match e.typ {
 		.mouse_up {
@@ -192,7 +196,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	gcontext := gg.new_context(
 		width: cfg.width
 		height: cfg.height
-		use_ortho: true // This is needed for 2D drawing
+		use_ortho: true
+		// This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
 		resizable: cfg.resizable
@@ -205,10 +210,12 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		init_fn: gg_init
 		// keydown_fn: window_key_down
 		// char_fn: window_char
-		bg_color: cfg.bg_color // gx.rgb(230,230,230)
+		bg_color: cfg.bg_color
+		// gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
 	)
+
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
 	// scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
@@ -243,6 +250,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		scroll_fn: cfg.on_scroll
 	}
 	*/
+
 	// q := int(window)
 	// println('created window $q.hex()')
 	return window
@@ -271,6 +279,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 		// to parent_window.child_window.child
 		child.init(parent_window)
 	}
+
 	// window.set_cursor()
 	return window
 }
@@ -322,6 +331,7 @@ fn window_mouse_move(event sapp.Event, ui &UI) {
 
 fn window_scroll(event sapp.Event, ui &UI) {
 	window := ui.window
+
 	// println('title =$window.title')
 	e := ScrollEvent{
 		x: event.scroll_x
@@ -420,11 +430,13 @@ fn window_click(event sapp.Event, ui &UI) {
 fn window_key_down(event sapp.Event, ui &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := ui.window
+
 	// C.printf('g child=%p\n', child)
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		codepoint: 0 // event.char_code
+		codepoint: 0
+		// event.char_code
 		// code: code
 		// action: action
 		// mods: mod
@@ -509,6 +521,7 @@ fn (w &Window) focus_previous() {
 		if is_focused && i > 0 {
 			prev := w.children[i - 1]
 			prev.focus()
+
 			// w.children[i - 1].focus()
 		}
 	}
@@ -631,6 +644,7 @@ fn frame(mut w Window) {
 	// game.frame_sw.restart()
 	// game.ft.flush()
 	w.ui.gg.begin()
+
 	// draw_scene()
 	if w.child_window == 0 {
 		// Render all widgets, including Canvas

@@ -114,10 +114,10 @@ fn (s &Slider) draw_thumb() {
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
 		s.ui.gg.draw_rect(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			thumb_color)
+			ui.thumb_color)
 	} else {
 		s.ui.gg.draw_rect(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			thumb_color)
+			ui.thumb_color)
 	}
 }
 
@@ -152,7 +152,7 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 
 fn (s &Slider) draw() {
 	// Draw the track
-	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, slider_background_color)
+	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			s.ui.gg.draw_line(s.x + 2, s.y + s.track_height / 2, s.x + s.track_width - 4,
@@ -163,10 +163,11 @@ fn (s &Slider) draw() {
 		}
 	}
 	if !s.is_focused {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_border_color)
 	} else {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_focused_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_focused_background_border_color)
 	}
+
 	// Draw the thumb
 	s.draw_thumb()
 }
@@ -233,6 +234,7 @@ fn slider_mouse_move(mut s Slider, e &MouseEvent, zzz voidptr) {
 fn (mut s Slider) change_value(x int, y int) {
 	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
+
 	// TODO parser bug ` - axis`
 	mut pos := if s.orientation == .horizontal { x } else { y }
 	pos -= axis
@@ -287,12 +289,12 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	if s.orientation == .horizontal {
 		t_x := pos - f32(s.thumb_width) / 2
 		t_y := middle
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+			&& y <= t_y + f32(s.thumb_height)
 	} else {
 		t_x := middle
 		t_y := pos - f32(s.thumb_height) / 2
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+			&& y <= t_y + f32(s.thumb_height)
 	}
 }

@@ -44,6 +44,7 @@ fn (mut r Radio) init(parent Layout) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
+
 	// Get max value text width
 	if r.width == 0 {
 		mut max := 0
@@ -96,10 +97,12 @@ fn (mut r Radio) propose_size(w int, h int) (int, int) {
 fn (mut r Radio) draw() {
 	// Border
 	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
+
 	// Title
 	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 		10, default_window_color)
 	r.ui.gg.draw_text_def(r.x + check_mark_size + 3, r.y - 7, r.title)
+
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15

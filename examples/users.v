@@ -194,19 +194,23 @@ fn btn_add_click(mut app State, x voidptr) {
 		return
 	}
 	new_user := User{
-		first_name: app.first_name // first_name.text
-		last_name: app.last_name // .text
+		first_name: app.first_name
+		// first_name.text
+		last_name: app.last_name
+		// .text
 		age: app.age.int()
 		country: app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
 	app.first_name = ''
+
 	// app.first_name.focus()
 	app.last_name = ''
 	app.age = ''
 	app.password = ''
 	app.label.set_text('$app.users.len/10')
+
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
@@ -215,12 +219,15 @@ fn canvas_draw(gg &gg.Context, app &State) {
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
 		y := 20 + i * cell_height
+
 		// Outer border
 		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
+
 		// Vertical separators
 		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
 		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
 		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
+
 		// Text values
 		gg.draw_text_def(x + 5, y + 5, user.first_name)
 		gg.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)

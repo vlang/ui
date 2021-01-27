@@ -6,8 +6,9 @@ module ui
 import os
 import gg
 
-type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
+type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr)
 
+// userptr, picture
 pub struct Picture {
 pub:
 	offset_x int
@@ -54,6 +55,7 @@ fn (mut pic Picture) init(parent Layout) {
 		pic.image = pic.ui.gg.create_image(pic.path)
 		ui.resource_cache[pic.path] = pic.image
 	}
+
 	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
 	if pic.width == 0 || pic.height == 0 {
 		pic.width = pic.image.width

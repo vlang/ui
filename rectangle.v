@@ -30,10 +30,10 @@ pub struct RectangleConfig {
 	radius       int
 	border       bool
 	border_color gx.Color = gx.Color{
-	r: 180
-	g: 180
-	b: 190
-}
+		r: 180
+		g: 180
+		b: 190
+	}
 	x int
 	y int
 }
@@ -89,6 +89,7 @@ fn (mut r Rectangle) draw() {
 		align: gx.align_left
 		max_width: r.x + r.width
 	}
+
 	// Display rectangle text
 	if r.text != '' {
 		text_width, text_height := r.ui.gg.text_size(r.text)

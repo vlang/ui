@@ -44,8 +44,8 @@ fn (mut s Switch) init(parent Layout) {
 
 pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
-		height: sw_height
-		width: sw_width
+		height: ui.sw_height
+		width: ui.sw_width
 		open: c.open
 		onclick: c.onclick
 		ui: 0
@@ -67,14 +67,15 @@ fn (mut s Switch) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
-	padding := (s.height - sw_dot_size) / 2
+	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
-		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_open_bg_color)
-		s.ui.gg.draw_rect(s.x - padding + s.width - sw_dot_size, s.y + padding, sw_dot_size,
-			sw_dot_size, gx.white)
+		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
+		s.ui.gg.draw_rect(s.x - padding + s.width - ui.sw_dot_size, s.y + padding, ui.sw_dot_size,
+			ui.sw_dot_size, gx.white)
 	} else {
-		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_close_bg_color)
-		s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
+		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
+		s.ui.gg.draw_rect(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
+			gx.white)
 	}
 }
 
