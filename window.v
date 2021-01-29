@@ -23,6 +23,8 @@ pub type ScrollFn = fn (e ScrollEvent, window &Window)
 
 pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
+pub type ResizeFn = fn (w int, h int, window &Window)
+
 [ref_only]
 pub struct Window {
 pub mut:
@@ -47,6 +49,7 @@ pub mut:
 	mouse_down_fn ClickFn
 	mouse_up_fn   ClickFn
 	scroll_fn     ScrollFn
+	resize_fn     ResizeFn
 	key_down_fn   KeyFn
 	char_fn       KeyFn
 	mouse_move_fn MouseMoveFn
@@ -64,12 +67,13 @@ pub:
 	always_on_top         bool
 	state                 voidptr
 	draw_fn               DrawFn
-	bg_color              gx.Color = default_window_color
+	bg_color              gx.Color = ui.default_window_color
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
 	on_key_down           KeyFn
 	on_scroll             ScrollFn
+	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
 	children              []Widget
 	font_path             string
@@ -134,7 +138,7 @@ fn on_event(e &sapp.Event, mut window Window) {
 			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
-		.resized {
+		.resized, .restored, .resumed {
 			window_resize(e, window.ui)
 		}
 		else {}
@@ -188,6 +192,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
 		resizable: cfg.resizable
+		resize_fn: cfg.on_resize
 	}
 	gcontext := gg.new_context(
 		width: cfg.width
@@ -298,15 +303,28 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 
 	window.eventbus.publish(events.on_mouse_move, &window, e)
 }
-
-fn window_resize(glfw_wnd voidptr, width int, height int) {
-	/*
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	window := ui.window
-	window.resize(width, height)
-	*/
-}
 */
+// fn window_resize(glfw_wnd voidptr, width int, height int) {
+fn window_resize(event sapp.Event, ui &UI) {
+	mut window := ui.window
+	if !window.resizable {
+		return
+	}
+	window.resize(event.window_width, event.window_height)
+	window.eventbus.publish(events.on_resize, window, voidptr(0))
+	if window.resize_fn != voidptr(0) {
+		mut scale := sapp.dpi_scale()
+		if scale == 0.0 {
+			scale = 1.0
+		}
+		w := int(sapp.width() / scale)
+		h := int(sapp.height() / scale)
+		// m := f32(min(w, h))
+		// app.ui.dpi_scale = s
+		window.resize_fn(w, h, window)
+	}
+}
+
 fn window_mouse_move(event sapp.Event, ui &UI) {
 	window := ui.window
 	e := MouseMoveEvent{
@@ -477,14 +495,6 @@ fn window_char(event sapp.Event, ui &UI) {
 		child.key_down()
 	}
 	*/
-}
-
-fn window_resize(event sapp.Event, ui &UI) {
-	mut window := ui.window
-	if window.resizable {
-		window.resize(event.window_width, event.window_height)
-		window.eventbus.publish(events.on_resize, window, voidptr(0))
-	}
 }
 
 fn (mut w Window) focus_next() {

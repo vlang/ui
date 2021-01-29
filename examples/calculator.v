@@ -43,6 +43,7 @@ fn main() {
 	for op in ops {
 		children << ui.row({
 			spacing: 5
+			height: 30
 		}, get_row(op))
 	}
 	app.window = ui.window({
