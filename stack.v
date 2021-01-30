@@ -66,7 +66,6 @@ fn (mut s Stack) init(parent Layout) {
 	s.set_pos(s.x, ui.y_offset + s.y)
 	mut x := s.x
 	mut y := s.y
-	// println('\nstack children')
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -78,12 +77,11 @@ fn (mut s Stack) init(parent Layout) {
 			child.set_children_pos()
 		}
 	}
-	// println('\n')
 }
 
 fn (mut s Stack) set_children_pos() {
 	mut ui := s.parent.get_ui()
-	parent_width, parent_height := s.parent.size()
+	_, parent_height := s.parent.size()
 	mut x := s.x
 	mut y := s.y
 	for mut child in s.children {
@@ -95,6 +93,8 @@ fn (mut s Stack) set_children_pos() {
 			child.set_pos(x, y)
 		}
 		if s.direction == .row {
+			width := s.width / s.children.len
+			child.propose_size(width - s.spacing / 2, s.height)
 			x += child_width + s.spacing
 		} else {
 			y += child_height + s.spacing

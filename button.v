@@ -107,7 +107,13 @@ fn (mut b Button) size() (int, int) {
 }
 
 fn (mut b Button) propose_size(w int, h int) (int, int) {
-	// b.width = w
+	// println('prop size $w $h')
+	if w != 0 {
+		b.width = w
+	}
+	if h != 0 {
+		b.height = h
+	}
 	// b.height = h
 	// b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
 	// b.height = 20 // vertical padding
@@ -120,8 +126,12 @@ fn (mut b Button) draw() {
 		b.height = b.image.height
 	} else if b.text_width == 0 || b.text_height == 0 {
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		b.width = b.text_width + button_horizontal_padding
-		b.height = b.text_height + button_vertical_padding
+		if b.width == 0 {
+			b.width = b.text_width + button_horizontal_padding
+		}
+		if b.height == 0 {
+			b.height = b.text_height + button_vertical_padding
+		}
 	}
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
