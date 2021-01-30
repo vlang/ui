@@ -69,6 +69,9 @@ fn (mut s Stack) init(parent Layout) {
 	// println('\nstack children')
 	for mut child in s.children {
 		child.init(s)
+	}
+	s.set_children_pos()
+	for mut child in s.children {
 		child_width, child_height := child.size()
 		// Set correct position for each child
 		mut yy := y
@@ -93,7 +96,7 @@ fn (mut s Stack) init(parent Layout) {
 			// println('row h=$child_height')
 		} else {
 			// println('set_pos($x, $yy)')
-			child.set_pos(x, yy)
+			// child.set_pos(x, yy)
 		}
 		if s.direction == .row {
 			x += child_width
@@ -110,6 +113,7 @@ fn (mut s Stack) set_children_pos() {
 	mut y := s.y
 	for mut child in s.children {
 		child_width, child_height := child.size()
+		ui.y_offset = y
 		child.set_pos(x, y)
 		if s.direction == .row {
 			x += child_width + s.spacing
@@ -117,7 +121,6 @@ fn (mut s Stack) set_children_pos() {
 			y += child_height + s.spacing
 		}
 		if child is Stack {
-			ui.y_offset = y
 			child.set_children_pos()
 		}
 	}
