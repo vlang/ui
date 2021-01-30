@@ -38,6 +38,8 @@ mut:
 	closed               bool
 	needs_refresh        bool = true
 	ticks                int
+	y_offset             int // for correctly setting childrens' position in init()
+	children_pos_mode    bool
 }
 
 pub enum VerticalAlignment {

@@ -48,32 +48,32 @@ Column & Row are identical except everything is reversed:
 */
 fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
-	ui := parent.get_ui()
-	w, h := parent.size()
+	mut ui := parent.get_ui()
+	parent_width, parent_height := parent.size()
 	s.ui = ui
 	if s.stretch {
-		s.height = h
-		s.width = w
+		s.height = parent_height
+		s.width = parent_width
 	} else {
 		if s.direction == .column {
-			s.height = h
+			s.height = parent_height
 		} else {
-			s.width = w
+			s.width = parent_width
 		}
 	}
 	s.height -= s.margin.top + s.margin.bottom
 	s.width -= s.margin.left + s.margin.right
-	s.set_pos(s.x, s.y)
+	s.set_pos(s.x, ui.y_offset + s.y)
 	mut x := s.x
 	mut y := s.y
 	// println('\nstack children')
-	for child in s.children {
+	for mut child in s.children {
 		child.init(s)
 		child_width, child_height := child.size()
 		// Set correct position for each child
 		mut yy := y
 		if s.vertical_alignment == .bottom {
-			_, parent_height := s.parent.size()
+			//_, parent_height := s.parent.size()
 			yy = parent_height - s.height
 		}
 		if s.direction == .row {
@@ -81,11 +81,20 @@ fn (mut s Stack) init(parent Layout) {
 		} else {
 			y += s.spacing
 		}
+		ui.y_offset = y
+		// child.init(s)
 		// println('setting widget pos $x, $yy $s.margin')
 		// if child is TextBox {
 		// println('txtbox $child.placeholder')
 		//}
-		child.set_pos(x, yy)
+		if child is Stack {
+			// child.init()
+			child.set_children_pos()
+			// println('row h=$child_height')
+		} else {
+			// println('set_pos($x, $yy)')
+			child.set_pos(x, yy)
+		}
 		if s.direction == .row {
 			x += child_width
 		} else {
@@ -93,6 +102,25 @@ fn (mut s Stack) init(parent Layout) {
 		}
 	}
 	// println('\n')
+}
+
+fn (mut s Stack) set_children_pos() {
+	mut ui := s.parent.get_ui()
+	mut x := s.x
+	mut y := s.y
+	for mut child in s.children {
+		child_width, child_height := child.size()
+		child.set_pos(x, y)
+		if s.direction == .row {
+			x += child_width + s.spacing
+		} else {
+			y += child_height + s.spacing
+		}
+		if child is Stack {
+			ui.y_offset = y
+			child.set_children_pos()
+		}
+	}
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -191,6 +219,7 @@ fn (mut s Stack) draw() {
 	*/
 }
 
+/*
 fn (s &Stack) align(size int) int {
 	align := if s.direction == .column {
 		int(s.horizontal_alignment)
@@ -204,7 +233,7 @@ fn (s &Stack) align(size int) int {
 		else { return s.get_oriented_x_axis() }
 	}
 }
-
+*/
 fn (s &Stack) get_ui() &UI {
 	return s.ui
 }
@@ -242,6 +271,7 @@ fn (s &Stack) is_focused() bool {
 fn (s &Stack) resize(width int, height int) {
 }
 
+/*
 // Helpers to correctly get width, height, x, y for both row & column.
 fn (s &Stack) get_oriented_height() int {
 	return if s.direction == .column {
@@ -296,3 +326,4 @@ fn (mut s Stack) set_oriented_width(w int) int {
 	}
 	return w
 }
+*/
