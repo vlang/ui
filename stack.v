@@ -64,8 +64,6 @@ fn (mut s Stack) init(parent Layout) {
 	s.height -= s.margin.top + s.margin.bottom
 	s.width -= s.margin.left + s.margin.right
 	s.set_pos(s.x, ui.y_offset + s.y)
-	mut x := s.x
-	mut y := s.y
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
