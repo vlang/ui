@@ -67,41 +67,15 @@ fn (mut s Stack) init(parent Layout) {
 	mut x := s.x
 	mut y := s.y
 	// println('\nstack children')
+	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
+	// Set all children's positions recursively
 	s.set_children_pos()
 	for mut child in s.children {
-		child_width, child_height := child.size()
-		// Set correct position for each child
-		mut yy := y
-		if s.vertical_alignment == .bottom {
-			//_, parent_height := s.parent.size()
-			yy = parent_height - s.height
-		}
-		if s.direction == .row {
-			x += s.spacing
-		} else {
-			y += s.spacing
-		}
-		ui.y_offset = y
-		// child.init(s)
-		// println('setting widget pos $x, $yy $s.margin')
-		// if child is TextBox {
-		// println('txtbox $child.placeholder')
-		//}
 		if child is Stack {
-			// child.init()
 			child.set_children_pos()
-			// println('row h=$child_height')
-		} else {
-			// println('set_pos($x, $yy)')
-			// child.set_pos(x, yy)
-		}
-		if s.direction == .row {
-			x += child_width
-		} else {
-			y += child_height
 		}
 	}
 	// println('\n')
@@ -109,12 +83,17 @@ fn (mut s Stack) init(parent Layout) {
 
 fn (mut s Stack) set_children_pos() {
 	mut ui := s.parent.get_ui()
+	parent_width, parent_height := s.parent.size()
 	mut x := s.x
 	mut y := s.y
 	for mut child in s.children {
 		child_width, child_height := child.size()
 		ui.y_offset = y
-		child.set_pos(x, y)
+		if s.vertical_alignment == .bottom {
+			child.set_pos(x, parent_height - s.height)
+		} else {
+			child.set_pos(x, y)
+		}
 		if s.direction == .row {
 			x += child_width + s.spacing
 		} else {
