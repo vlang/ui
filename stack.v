@@ -115,7 +115,7 @@ fn (mut s Stack) set_size_for_stack_without_stack_children() {
 
 fn (mut s Stack) set_children_pos() {
 	mut ui := s.parent.get_ui()
-	_, parent_height := s.parent.size()
+	parent_width, parent_height := s.parent.size()
 	mut x := s.x
 	mut y := s.y
 	for mut child in s.children {
