@@ -30,10 +30,10 @@ pub struct RectangleConfig {
 	radius       int
 	border       bool
 	border_color gx.Color = gx.Color{
-	r: 180
-	g: 180
-	b: 190
-}
+		r: 180
+		g: 180
+		b: 190
+	}
 	x int
 	y int
 }

@@ -287,12 +287,12 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	if s.orientation == .horizontal {
 		t_x := pos - f32(s.thumb_width) / 2
 		t_y := middle
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+			&& y <= t_y + f32(s.thumb_height)
 	} else {
 		t_x := middle
 		t_y := pos - f32(s.thumb_height) / 2
-		return x >= t_x &&
-			x <= t_x + f32(s.thumb_width) && y >= t_y && y <= t_y + f32(s.thumb_height)
+		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+			&& y <= t_y + f32(s.thumb_height)
 	}
 }

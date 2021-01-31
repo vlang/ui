@@ -196,6 +196,6 @@ fn (mut dd Dropdown) unfocus() {
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
-	return y >= dd.y &&
-		y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x && x <= dd.x + dd.width
+	return y >= dd.y && y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x
+		&& x <= dd.x + dd.width
 }
