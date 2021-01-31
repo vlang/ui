@@ -127,6 +127,10 @@ fn (mut s Stack) set_children_pos() {
 		} else {
 			child.set_pos(x, y)
 		}
+		if s.horizontal_alignment == .right {
+			// Not sure it is the right solution
+			child.set_pos(parent_width - child_width, y)
+		}
 		if s.direction == .row {
 			width := s.width / s.children.len
 			child.propose_size(width - s.spacing / 2, s.height)
