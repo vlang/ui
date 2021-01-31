@@ -68,11 +68,47 @@ fn (mut s Stack) init(parent Layout) {
 	for mut child in s.children {
 		child.init(s)
 	}
+
+	// Before setting children's positions, first set the size recursively for stack children without stack children
+	s.set_size_for_stack_without_stack_children()
+
 	// Set all children's positions recursively
 	s.set_children_pos()
 	for mut child in s.children {
 		if child is Stack {
 			child.set_children_pos()
+		}
+	}
+}
+
+fn (mut s Stack) set_size_for_stack_without_stack_children() {
+	mut no_stack_children := true
+	mut h := 0
+	mut w := 0
+	for mut child in s.children {
+		if child is Stack {
+			no_stack_children = false
+			break
+		}
+		child_width, child_height := child.size()
+		if s.direction == .column {
+			h += child_height + s.spacing / 2
+			if child_width > w {
+				w = child_width
+			}
+		} else {
+			w += child_width + s.spacing / 2
+			if child_height > h {
+				h = child_height
+			}
+		}
+	}
+	if no_stack_children {
+		if s.width < w {
+			s.width = w
+		}
+		if s.height < h {
+			s.height = h
 		}
 	}
 }
@@ -139,8 +175,8 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
-fn (c &Stack) size() (int, int) {
-	return c.width, c.height
+fn (s &Stack) size() (int, int) {
+	return s.width, s.height
 }
 
 fn (mut s Stack) draw() {
