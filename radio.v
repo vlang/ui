@@ -84,7 +84,7 @@ fn (mut r Radio) set_pos(x int, y int) {
 }
 
 fn (mut r Radio) size() (int, int) {
-	return r.width, r.height
+	return r.width, r.values.len * (r.height + 5)
 }
 
 fn (mut r Radio) propose_size(w int, h int) (int, int) {
