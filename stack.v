@@ -63,7 +63,7 @@ fn (mut s Stack) init(parent Layout) {
 	}
 	s.height -= s.margin.top + s.margin.bottom
 	s.width -= s.margin.left + s.margin.right
-	s.set_pos(s.x, ui.y_offset + s.y)
+	s.set_pos(ui.x_offset + s.x, ui.y_offset + s.y)
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -121,6 +121,7 @@ fn (mut s Stack) set_children_pos() {
 	for mut child in s.children {
 		child_width, child_height := child.size()
 		ui.y_offset = y
+		ui.x_offset = x
 		if s.vertical_alignment == .bottom {
 			child.set_pos(x, parent_height - s.height)
 		} else {
