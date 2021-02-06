@@ -26,11 +26,11 @@ fn main() {
 			stretch: true
 			alignment: .left
 			margin: ui.MarginConfig{5, 5, 5, 5}
-			on_selection_changed: dd_change
 		}, [
 			ui.dropdown({
 				width: 140
 				def_text: 'Select an option'
+				on_selection_changed: dd_change
 			}, [
 				ui.DropdownItem{
 					text: 'Delete all users'
