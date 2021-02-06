@@ -10,6 +10,10 @@ mut:
 	window &ui.Window = 0
 }
 
+fn dd_change(mut app App, dd &ui.Dropdown) {
+	println(dd.selected().text)
+}
+
 fn main() {
 	mut app := &App{}
 	window := ui.window({
@@ -22,6 +26,7 @@ fn main() {
 			stretch: true
 			alignment: .left
 			margin: ui.MarginConfig{5, 5, 5, 5}
+			on_selection_changed: dd_change
 		}, [
 			ui.dropdown({
 				width: 140
