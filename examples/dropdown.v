@@ -10,6 +10,10 @@ mut:
 	window &ui.Window = 0
 }
 
+fn dd_change(mut app App, dd &ui.Dropdown) {
+	println(dd.selected().text)
+}
+
 fn main() {
 	mut app := &App{}
 	window := ui.window({
@@ -26,6 +30,7 @@ fn main() {
 			ui.dropdown({
 				width: 140
 				def_text: 'Select an option'
+				on_selection_changed: dd_change
 			}, [
 				ui.DropdownItem{
 					text: 'Delete all users'
