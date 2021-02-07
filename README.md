@@ -89,7 +89,7 @@ To develop V UI apps, you need to install [V](https://github.com/vlang/v#install
 
 On some Linux distros you also need a few development dependencies:
 - Debian/Ubuntu: `sudo apt install libxi-dev libxcursor-dev mesa-common-dev`
-- Fedora: `sudo dnf install libxi-dev libxcursor-dev mesa-libGL-devel`
+- Fedora: `sudo dnf install libXi-devel libXcursor-devel mesa-libGL-devel`
 
 ### License
 
