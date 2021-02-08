@@ -121,7 +121,7 @@ fn (mut s Stack) set_children_pos() {
 	for mut child in s.children {
 		child_width, child_height := child.size()
 		ui.y_offset = y
-		ui.x_offset = x
+		// ui.x_offset = x
 		if s.vertical_alignment == .bottom {
 			child.set_pos(x, parent_height - s.height)
 		} else {
