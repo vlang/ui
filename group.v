@@ -22,15 +22,18 @@ pub mut:
 	margin_right  int = 5
 	margin_bottom int = 5
 	spacing       int = 5
+	adj_height    int
+	adj_width     int
 }
 
 pub struct GroupConfig {
 pub mut:
-	title  string
-	x      int
-	y      int
-	width  int
-	height int
+	title   string
+	x       int
+	y       int
+	width   int
+	height  int
+	spacing int = 5
 }
 
 fn (mut g Group) init(parent Layout) {
@@ -40,6 +43,7 @@ fn (mut g Group) init(parent Layout) {
 	for child in g.children {
 		child.init(g)
 	}
+	g.set_adjusted_size(0, ui)
 	g.calculate_child_positions()
 }
 
@@ -51,6 +55,7 @@ pub fn group(c GroupConfig, children []Widget) &Group {
 		width: c.width
 		height: c.height
 		children: children
+		spacing: c.spacing
 		ui: 0
 	}
 	return g
@@ -143,4 +148,33 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber {
 
 fn (g &Group) size() (int, int) {
 	return g.width, g.height
+}
+
+fn (g &Group) get_children() []Widget {
+	return g.children
+}
+
+fn (mut g Group) set_adjusted_size(i int, ui &UI) {
+	mut h := 0
+	mut w := 0
+	for mut child in g.children {
+		mut child_width, mut child_height := 0, 0
+
+		if child is Label {
+			child.set_ui(ui)
+		}
+		child_width, child_height = child.size()
+
+		println('$i $child.name() => child_width, child_height: $child_width, $child_height')
+		// child_width, child_height := child.size()
+		// child_width, child_height := child.adj_width, child.adj_height
+
+		h += child_height // height of vertical stack means adding children's height
+		if child_width > w { // width of vertical stack means greatest children's width
+			w = child_width
+		}
+	}
+	h += g.spacing * (g.children.len - 1)
+	g.adj_width = w
+	g.adj_height = h
 }

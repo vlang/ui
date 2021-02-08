@@ -4,7 +4,7 @@ import gx
 import os
 
 const (
-	win_width   = 700
+	win_width   = 780
 	win_height  = 385
 	nr_cols     = 4
 	cell_height = 25
@@ -72,7 +72,7 @@ fn main() {
 		title: 'V UI Demo'
 	}, [
 		ui.row({
-			stretch: true
+			// stretch: true
 			margin: {
 				top: 10
 				left: 10
@@ -81,7 +81,7 @@ fn main() {
 			}
 		}, [
 			ui.column({
-				width: 200
+				width: .25
 				spacing: 13
 			}, [
 				ui.textbox(
@@ -124,7 +124,7 @@ fn main() {
 				),
 				app.country,
 				ui.row({
-					spacing: 85
+					spacing: 65
 				}, [
 					ui.button(
 						text: 'Add user'
@@ -144,10 +144,12 @@ fn main() {
 				]),
 			]),
 			ui.column({
-				stretch: true
+				// stretch: true
+				width: .75
 				alignment: .right
 			}, [
 				ui.canvas(
+					width: 450
 					height: 275
 					draw_fn: canvas_draw
 				),
@@ -210,11 +212,11 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(gg &gg.Context, app &State) {
-	x := 240
+fn canvas_draw(gg &gg.Context, app &State, x_offset int, y_offset int) {
+	x := x_offset
 	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
 	for i, user in app.users {
-		y := 20 + i * cell_height
+		y := y_offset + 20 + i * cell_height
 		// Outer border
 		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
 		// Vertical separators

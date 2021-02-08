@@ -4,17 +4,21 @@
 module ui
 
 pub struct ColumnConfig {
-	width     int
-	alignment HorizontalAlignment
-	spacing   int
-	stretch   bool
-	margin    MarginConfig
+	width      f32
+	height     f32
+	alignment  HorizontalAlignment
+	alignments HorizontalAlignments
+	spacing    int
+	stretch    bool
+	margin     MarginConfig
 }
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {
 	return stack({
+		height: c.height
 		width: c.width
 		horizontal_alignment: c.alignment
+		horizontal_alignments: c.alignments
 		spacing: c.spacing
 		stretch: c.stretch
 		direction: .column

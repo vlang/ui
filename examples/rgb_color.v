@@ -2,8 +2,8 @@ import ui
 import gx
 
 const (
-	win_width  = 220
-	win_height = 380
+	win_width  = 286
+	win_height = 565
 	slider_min = 0
 	slider_max = 255
 	slider_val = (slider_max + slider_min) / 2
@@ -112,25 +112,28 @@ fn main() {
 		title: 'RGB color displayed in rectangle'
 		state: app
 	}, [
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{120, 30, 30, 30}
-			spacing: 23
-		}, [app.r_textbox, app.g_textbox, app.b_textbox]),
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{150, 40, 30, 30}
-			spacing: 38
-		}, [app.r_slider, app.g_slider, app.b_slider]),
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{10, 10, 30, 30}
-		}, [app.rgb_rectangle]),
-		ui.row({
-			alignment: .top
-			margin: ui.MarginConfig{354, 43, 30, 30}
-			spacing: 54
-		}, [app.r_label, app.g_label, app.b_label]),
+		ui.column({
+			spacing: 0
+			margin: ui.MarginConfig{30, 30, 30, 30}
+			alignment: .center
+		}, [
+			app.rgb_rectangle,
+			ui.row({
+				alignment: .top
+				margin: ui.MarginConfig{30, 30, 30, 30}
+				spacing: 23
+			}, [app.r_textbox, app.g_textbox, app.b_textbox]),
+			ui.row({
+				alignment: .top
+				margin: ui.MarginConfig{30, 30, 30, 30}
+				spacing: 38
+			}, [app.r_slider, app.g_slider, app.b_slider]),
+			ui.row({
+				alignment: .top
+				margin: ui.MarginConfig{30, 30, 30, 30}
+				spacing: 54
+			}, [app.r_label, app.g_label, app.b_label]),
+		]),
 	])
 	ui.run(app.window)
 }

@@ -38,8 +38,6 @@ mut:
 	closed               bool
 	needs_refresh        bool = true
 	ticks                int
-	y_offset             int // for correctly setting children's position in init()
-	x_offset             int
 }
 
 pub enum VerticalAlignment {
@@ -52,6 +50,18 @@ pub enum HorizontalAlignment {
 	left = 0
 	center
 	right
+}
+
+pub struct VerticalAlignments {
+	top    []int
+	center []int
+	bottom []int
+}
+
+pub struct HorizontalAlignments {
+	left   []int
+	center []int
+	right  []int
 }
 
 pub struct MarginConfig {
@@ -74,10 +84,12 @@ pub interface Widget {
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	is_focused() bool
+	name() string
 }
 
 // pub fn iwidget(x Widget) Widget { return x }
 pub interface Layout {
+	spacing int
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
@@ -87,6 +99,7 @@ pub interface Layout {
 	// on_mousemove(MouseMoveFn)
 	draw()
 	resize(w int, h int)
+	get_children() []Widget
 }
 
 pub fn ilayout(x Layout) Layout {

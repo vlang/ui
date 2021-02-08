@@ -14,3 +14,7 @@ fmt_verify_all
 
 # Other files
 fns.txt
+
+# To develop examples inside ui folder
+examples/modules
+devel

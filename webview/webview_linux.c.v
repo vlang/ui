@@ -4,6 +4,7 @@ module webview
 #pkgconfig gtk+-3.0 webkit2gtk-4.0
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
+
 struct C.GtkWidget {
 }
 
