@@ -34,11 +34,7 @@ fn ease_out_quad(x f64) f64 {
 }
 
 fn ease_in_out_quad(x f64) f64 {
-	return if x < .5 {
-		2.0 * x * x
-	} else {
-		-1.0 + (4.0 - 2.0 * x) * x
-	}
+	return if x < .5 { 2.0 * x * x } else { -1.0 + (4.0 - 2.0 * x) * x }
 }
 
 fn ease_in_cubic(x f64) f64 {
@@ -50,11 +46,7 @@ fn ease_out_cubic(x f64) f64 {
 }
 
 fn ease_in_out_cubic(x f64) f64 {
-	return if x < .5 {
-		4.0 * x * x * x
-	} else {
-		(x - 1.0) * (2.0 * x - 2.0) * (2.0 * x - 2.0) + 1.0
-	}
+	return if x < .5 { 4.0 * x * x * x } else { (x - 1.0) * (2.0 * x - 2.0) * (2.0 * x - 2.0) + 1.0 }
 }
 
 fn ease_in_quart(x f64) f64 {

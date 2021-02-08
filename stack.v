@@ -173,7 +173,7 @@ fn (mut s Stack) decode_size(parent Layout) {
 		s.width = parent_width
 	} else {
 		children_spacing := if ((s.width < 0 && s.direction == .row)
-			|| (s.height < 0 && s.direction == .column))&& s.parent is Stack {
+			|| (s.height < 0 && s.direction == .column)) && s.parent is Stack {
 			(s.parent.get_children().len - 1) * s.parent.spacing
 		} else {
 			0
