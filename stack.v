@@ -60,17 +60,34 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 
-	// Before setting children's positions, first set the size recursively for stack children without stack children
-	s.set_adjusted_size(0, true, s.ui)
+	// Before position all sizes need to be determined
+	s.set_all_sizes(parent)
 
-	// Decode width and height to extend relative
-	s.decode_size(parent)
-
+	// Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 	s.set_pos(s.x, s.y)
+
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
+
+	// Set all children's positions recursively
+	s.set_children_pos()
+	for mut child in s.children {
+		if child is Stack {
+			child.set_children_pos()
+		}
+	}
+}
+
+fn (mut s Stack) set_all_sizes(parent Layout) {
+	// Only once for all children recursively find all the adjusted sizes
+	if parent  is Window {
+		s.set_adjusted_size(0, true, s.ui)
+	}
+
+	// Decode width and height to extend relative
+	s.decode_size(parent)
 
 	// if s.direction == .column {
 	if s.height == 0 {
@@ -87,14 +104,6 @@ fn (mut s Stack) init(parent Layout) {
 	}
 	// println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
 	s.debug_show_sizes('init -> ')
-
-	// Set all children's positions recursively
-	s.set_children_pos()
-	for mut child in s.children {
-		if child is Stack {
-			child.set_children_pos()
-		}
-	}
 }
 
 fn (mut s Stack) set_children_pos() {
@@ -173,13 +182,17 @@ fn (mut s Stack) decode_size(parent Layout) {
 	parent_width, parent_height := parent.size()
 	// s.debug_show_sizes("decode before -> ")
 	if parent is Window {
-		s.stretch = true
-	} 
-	if s.stretch {
-		// I think this is bad because parent has many children
-		s.height = parent_height
-		s.width = parent_width
-	} else {
+		// Default: like stretch = strue
+		s.height = parent_height - s.margin.top - s.margin.right
+		s.width = parent_width - s.margin.left - s.margin.right
+	} else if s.stretch {
+		if s.direction == .row {
+			s.height = parent_height - s.margin.top - s.margin.right
+		} else {
+			s.width = parent_width - s.margin.left - s.margin.right
+		}
+	}
+	if s.width < 0 || s.height < 0 {
 		children_spacing := if ((s.width < 0 && s.direction == .row)
 			|| (s.height < 0 && s.direction == .column))
 			&& (s.parent is Stack || s.parent is Window) {
@@ -205,7 +218,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
 				child.adj_height + child.margin.top + child.margin.bottom
 		} else if child is Group {
-			if child.adj_width == 0 {
+			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
 			}
 			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
