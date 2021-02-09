@@ -253,9 +253,6 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	// q := int(window)
 	// println('created window $q.hex()')
 
-	// Here is a good place to execute stuff before init
-
-	// window.set_adjusted_size(0)
 	return window
 }
 
@@ -755,47 +752,6 @@ fn (window &Window) unfocus_all() {
 	for child in window.children {
 		child.unfocus()
 	}
-}
-
-// Stuff for children size management 
-
-pub fn (mut w Window) set_adjusted_size(i int) {
-	mut width := 0
-	mut height := 0
-	for mut child in w.children {
-		mut child_width, mut child_height := 0, 0
-		if child is Stack {
-			if child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, true, w.ui)
-			}
-			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
-				child.adj_height + child.margin.top + child.margin.bottom
-		} else if child is Group {
-			if child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, w.ui)
-			}
-			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
-				child.adj_height + child.margin_top + child.margin_bottom
-		} else {
-			if child is Label {
-				child.set_ui(w.ui)
-			} else if child is Button {
-				child.set_ui(w.ui)
-			}
-			child_width, child_height = child.size()
-		}
-		println('$i $child.name() => child_width, child_height: $child_width, $child_height')
-
-		if child_width > width {
-			width = child_width
-		}
-		if child_height > height {
-			height = child_height
-		}
-	}
-	w.adj_width = width
-	w.adj_height = height
-	println('adjusted size: $w.width -> $w.adj_width $w.height -> $w.adj_height')
 }
 
 fn (w &Window) get_children() []Widget {
