@@ -4,7 +4,7 @@
 module ui
 
 pub struct ColumnConfig {
-	width      f32 // = 1
+	width      f32
 	height     f32
 	alignment  HorizontalAlignment
 	alignments HorizontalAlignments

@@ -255,7 +255,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 
 	// Here is a good place to execute stuff before init
 
-	window.set_adjusted_size(0)
+	// window.set_adjusted_size(0)
 	return window
 }
 
@@ -766,7 +766,7 @@ pub fn (mut w Window) set_adjusted_size(i int) {
 		mut child_width, mut child_height := 0, 0
 		if child is Stack {
 			if child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, w.ui)
+				child.set_adjusted_size(i + 1, true, w.ui)
 			}
 			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
 				child.adj_height + child.margin.top + child.margin.bottom

@@ -60,6 +60,9 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 
+	// Before setting children's positions, first set the size recursively for stack children without stack children
+	s.set_adjusted_size(0, true, s.ui)
+
 	// Decode width and height to extend relative
 	s.decode_size(parent)
 
@@ -68,9 +71,6 @@ fn (mut s Stack) init(parent Layout) {
 	for mut child in s.children {
 		child.init(s)
 	}
-
-	// Before setting children's positions, first set the size recursively for stack children without stack children
-	// s.set_adjusted_size(0, s.ui)
 
 	// if s.direction == .column {
 	if s.height == 0 {
@@ -172,6 +172,9 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 fn (mut s Stack) decode_size(parent Layout) {
 	parent_width, parent_height := parent.size()
 	// s.debug_show_sizes("decode before -> ")
+	if parent is Window {
+		s.stretch = true
+	} 
 	if s.stretch {
 		// I think this is bad because parent has many children
 		s.height = parent_height
@@ -190,14 +193,14 @@ fn (mut s Stack) decode_size(parent Layout) {
 	// s.debug_show_size("decode after -> ")
 }
 
-fn (mut s Stack) set_adjusted_size(i int, ui &UI) {
+fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in s.children {
 		mut child_width, mut child_height := 0, 0
 		if child is Stack {
-			if child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, ui)
+			if force || child.adj_width == 0 {
+				child.set_adjusted_size(i + 1, force, ui)
 			}
 			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
 				child.adj_height + child.margin.top + child.margin.bottom
@@ -295,12 +298,12 @@ fn (s &Stack) size() (int, int) {
 	mut w := s.width
 	mut h := s.height
 	// TODO: this has to disappear (not depending on adjusted_size)
-	if s.width < s.adj_width {
-		w = s.adj_width
-	}
-	if s.height < s.adj_height {
-		h = s.adj_height
-	}
+	// if s.width < s.adj_width {
+	// 	w = s.adj_width
+	// }
+	// if s.height < s.adj_height {
+	// 	h = s.adj_height
+	// }
 	w += s.margin.left + s.margin.right
 	h += s.margin.top + s.margin.bottom
 	return w, h
