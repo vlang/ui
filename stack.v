@@ -295,12 +295,12 @@ fn (s &Stack) size() (int, int) {
 	mut w := s.width
 	mut h := s.height
 	// TODO: this has to disappear (not depending on adjusted_size)
-	// if s.width < s.adj_width {
-	// 	w = s.adj_width
-	// }
-	// if s.height < s.adj_height {
-	// 	h = s.adj_height
-	// }
+	if s.width < s.adj_width {
+		w = s.adj_width
+	}
+	if s.height < s.adj_height {
+		h = s.adj_height
+	}
 	w += s.margin.left + s.margin.right
 	h += s.margin.top + s.margin.bottom
 	return w, h
