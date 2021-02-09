@@ -24,8 +24,8 @@ struct StackConfig {
 }
 
 struct Stack {
-	cfg_width             f32 // saved width
-	cfg_height            f32 // saved height
+	cfg_width  f32 // saved width
+	cfg_height f32 // saved height
 mut:
 	x                     int
 	y                     int
@@ -74,7 +74,7 @@ fn (mut s Stack) init(parent Layout) {
 
 	// if s.direction == .column {
 	if s.height == 0 {
-		println("stack adjusted height")
+		println('stack adjusted height')
 		s.height = s.adj_height
 	} else {
 		s.height -= s.margin.top + s.margin.bottom
@@ -85,9 +85,9 @@ fn (mut s Stack) init(parent Layout) {
 	} else {
 		s.width -= s.margin.left + s.margin.right
 	}
-	//println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
-	s.debug_show_sizes("init -> ")
-	
+	// println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
+	s.debug_show_sizes('init -> ')
+
 	// Set all children's positions recursively
 	s.set_children_pos()
 	for mut child in s.children {
@@ -178,7 +178,8 @@ fn (mut s Stack) decode_size(parent Layout) {
 		s.width = parent_width
 	} else {
 		children_spacing := if ((s.width < 0 && s.direction == .row)
-			|| (s.height < 0 && s.direction == .column)) && (s.parent is Stack || s.parent is Window) {
+			|| (s.height < 0 && s.direction == .column))
+			&& (s.parent is Stack || s.parent is Window) {
 			(s.parent.get_children().len - 1) * s.parent.spacing
 		} else {
 			0
@@ -294,12 +295,12 @@ fn (s &Stack) size() (int, int) {
 	mut w := s.width
 	mut h := s.height
 	// TODO: this has to disappear (not depending on adjusted_size)
-	if s.width < s.adj_width {
-		w = s.adj_width
-	}
-	if s.height < s.adj_height {
-		h = s.adj_height
-	}
+	// if s.width < s.adj_width {
+	// 	w = s.adj_width
+	// }
+	// if s.height < s.adj_height {
+	// 	h = s.adj_height
+	// }
 	w += s.margin.left + s.margin.right
 	h += s.margin.top + s.margin.bottom
 	return w, h

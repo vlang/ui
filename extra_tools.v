@@ -61,16 +61,15 @@ fn (s &Stack) debug_show_sizes(t string) {
 	C.printf(' %p', s)
 	println(' => size ($sw, $sh), ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) spacing: $s.spacing')
 	if parent is Stack {
-		println('	parent: ${parent.name()} => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
+		println('	parent: $parent.name() => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
 	} else if parent is Window {
 		println('	parent: Window => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) ')
 	}
-	for i,child in s.children {
+	for i, child in s.children {
 		w, h := child.size()
-		println("		$i) ${child.name()} size => $w, $h")
+		println('		$i) $child.name() size => $w, $h')
 	}
-
-} 
+}
 
 // Mainly useful for debugging
 pub fn (w &Stack) name() string {
