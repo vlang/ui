@@ -24,6 +24,8 @@ struct StackConfig {
 }
 
 struct Stack {
+	cfg_width             f32 // saved width
+	cfg_height            f32 // saved height
 mut:
 	x                     int
 	y                     int
@@ -31,6 +33,7 @@ mut:
 	height                int
 	children              []Widget
 	parent                Layout
+	root                  &Window = voidptr(0)
 	ui                    &UI
 	vertical_alignment    VerticalAlignment
 	horizontal_alignment  HorizontalAlignment
@@ -67,11 +70,11 @@ fn (mut s Stack) init(parent Layout) {
 	}
 
 	// Before setting children's positions, first set the size recursively for stack children without stack children
-	s.set_adjusted_size(0, s.ui)
+	// s.set_adjusted_size(0, s.ui)
 
 	// if s.direction == .column {
 	if s.height == 0 {
-		// println("stack adjusted height")
+		println("stack adjusted height")
 		s.height = s.adj_height
 	} else {
 		s.height -= s.margin.top + s.margin.bottom
@@ -82,8 +85,9 @@ fn (mut s Stack) init(parent Layout) {
 	} else {
 		s.width -= s.margin.left + s.margin.right
 	}
-	println('stack $s.name() size $s.width $s.height')
-
+	//println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
+	s.debug_show_sizes("init -> ")
+	
 	// Set all children's positions recursively
 	s.set_children_pos()
 	for mut child in s.children {
@@ -167,13 +171,14 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 
 fn (mut s Stack) decode_size(parent Layout) {
 	parent_width, parent_height := parent.size()
+	// s.debug_show_sizes("decode before -> ")
 	if s.stretch {
 		// I think this is bad because parent has many children
 		s.height = parent_height
 		s.width = parent_width
 	} else {
 		children_spacing := if ((s.width < 0 && s.direction == .row)
-			|| (s.height < 0 && s.direction == .column)) && s.parent is Stack {
+			|| (s.height < 0 && s.direction == .column)) && (s.parent is Stack || s.parent is Window) {
 			(s.parent.get_children().len - 1) * s.parent.spacing
 		} else {
 			0
@@ -181,6 +186,7 @@ fn (mut s Stack) decode_size(parent Layout) {
 		s.width = relative_size_from_parent(s.width, parent_width, children_spacing)
 		s.height = relative_size_from_parent(s.height, parent_height, children_spacing)
 	}
+	// s.debug_show_size("decode after -> ")
 }
 
 fn (mut s Stack) set_adjusted_size(i int, ui &UI) {
@@ -233,6 +239,8 @@ fn (mut s Stack) set_adjusted_size(i int, ui &UI) {
 fn stack(c StackConfig, children []Widget) &Stack {
 	w, h := convert_size_f32_to_int(c.width, c.height)
 	mut s := &Stack{
+		cfg_width: c.width
+		cfg_height: c.height
 		height: h
 		width: w
 		vertical_alignment: c.vertical_alignment
@@ -250,6 +258,8 @@ fn stack(c StackConfig, children []Widget) &Stack {
 }
 
 fn (mut s Stack) set_pos(x int, y int) {
+	// could depend on anchor in the future 
+	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
 	s.x = x + s.margin.left
 	s.y = y + s.margin.top
 }
@@ -269,9 +279,21 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
+/**********************************
+size() returns container_size + margin
+where container_size = (width, height)
+Rmk:
+	free_size_direct = container_size - total_spacing
+	free_size_opposite = container_size
+	adjusted_size = (adj_width, adj_height) (similar to container_size) is size deduced from children
+N.B.: 
+	direct size is the size in the main direction of the stack: height for .column and width  for .row
+	opposite size is the converse
+***********************************/
 fn (s &Stack) size() (int, int) {
 	mut w := s.width
 	mut h := s.height
+	// TODO: this has to disappear (not depending on adjusted_size)
 	if s.width < s.adj_width {
 		w = s.adj_width
 	}
@@ -288,7 +310,7 @@ fn (mut s Stack) draw() {
 		child.draw()
 	}
 	// DEBUG MODE: Uncomment to display the bounding boxes
-	// s.draw_bb()
+	s.draw_bb()
 }
 
 fn (s &Stack) total_spacing() int {
