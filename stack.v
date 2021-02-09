@@ -82,10 +82,9 @@ fn (mut s Stack) init(parent Layout) {
 
 fn (mut s Stack) set_all_sizes(parent Layout) {
 	// Only once for all children recursively find all the adjusted sizes
-	if parent  is Window {
+	if parent is Window {
 		s.set_adjusted_size(0, true, s.ui)
 	}
-
 	// Decode width and height to extend relative
 	s.decode_size(parent)
 
