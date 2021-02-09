@@ -316,6 +316,7 @@ fn window_resize(event sapp.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
+	// println('window resize h=$event.window_height')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 	if window.resize_fn != voidptr(0) {
@@ -746,6 +747,7 @@ fn (w &Window) size() (int, int) {
 fn (mut window Window) resize(width int, height int) {
 	window.width = width
 	window.height = height
+	window.ui.gg.resize(width, height)
 }
 
 fn (window &Window) unfocus_all() {
