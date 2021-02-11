@@ -52,13 +52,6 @@ pub enum HorizontalAlignment {
 	right
 }
 
-pub struct MarginConfig {
-	top    int
-	left   int
-	right  int
-	bottom int
-}
-
 pub interface Widget {
 	init(Layout)
 	// key_down(KeyEvent)
@@ -77,7 +70,7 @@ pub interface Widget {
 
 // pub fn iwidget(x Widget) Widget { return x }
 pub interface Layout {
-	spacing int
+	// spacing int
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)

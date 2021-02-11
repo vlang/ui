@@ -27,6 +27,6 @@ pub fn column(c ColumnConfig, children []Widget) &Stack {
 		spacing: c.spacing
 		stretch: c.stretch
 		direction: .column
-		margin: c.margin
+		margin: c.margin.as_margin()
 	}, children)
 }

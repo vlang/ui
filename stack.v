@@ -69,7 +69,7 @@ mut:
 	spacing               int
 	stretch               bool
 	direction             Direction
-	margin                MarginConfig
+	margin                Margin
 	adj_width             int
 	adj_height            int
 }
@@ -88,7 +88,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		spacing: c.spacing
 		stretch: c.stretch
 		direction: c.direction
-		margin: c.margin
+		margin: c.margin.as_margin()
 		children: children
 		ui: 0
 	}

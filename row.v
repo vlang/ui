@@ -28,6 +28,6 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		spacing: c.spacing
 		stretch: c.stretch
 		direction: .row
-		margin: c.margin
+		margin: c.margin.as_margin()
 	}, children)
 }
