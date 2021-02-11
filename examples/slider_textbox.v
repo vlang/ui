@@ -76,12 +76,12 @@ fn main() {
 	}, [
 		ui.row({
 			alignment: .top
-			margin: ui.MarginConfig{50, 115, 30, 30}
+			margin: ui.Margin{50, 115, 30, 30}
 			spacing: 100
 		}, [app.hor_textbox, app.vert_textbox]),
 		ui.row({
 			alignment: .top
-			margin: ui.MarginConfig{100, 30, 30, 30}
+			margin: ui.Margin{100, 30, 30, 30}
 			spacing: 30
 		}, [app.hor_slider, app.vert_slider]),
 	])

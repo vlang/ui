@@ -38,7 +38,7 @@ fn main() {
 		state: app
 	}, [ui.column({
 		stretch: true
-		margin: ui.MarginConfig{5, 5, 5, 5}
+		margin: ui.Margin{5, 5, 5, 5}
 	}, [app.button, app.picture, app.x_transition, app.y_transition])])
 	ui.run(app.window)
 }

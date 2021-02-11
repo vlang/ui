@@ -39,7 +39,7 @@ fn main() {
 	}, [
 		ui.column({
 			stretch: true
-			margin: ui.MarginConfig{5, 5, 5, 5}
+			margin: ui.Margin{5, 5, 5, 5}
 			alignment: .left
 		}, [
 			ui.row({

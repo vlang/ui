@@ -57,7 +57,7 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 		column({
 			stretch: true
 			alignment: .center
-			margin: MarginConfig{5, 5, 5, 5}
+			margin: Margin{5, 5, 5, 5}
 		}, widgets),
 	])
 	mut subscriber := message_app.window.get_subscriber()
