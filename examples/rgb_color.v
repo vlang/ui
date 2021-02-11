@@ -199,9 +199,5 @@ fn textbox_color_update(mut app App) {
 }
 
 fn is_rgb_valid(c int) bool {
-	return if c >= 0 && c < 256 {
-		true
-	} else {
-		false
-	}
+	return if c >= 0 && c < 256 { true } else { false }
 }

@@ -1,9 +1,10 @@
-// Copyright (c) 2020 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
 
 #include "@VROOT/ui_darwin.m"
+
 fn C.vui_message_box(s string)
 
 fn C.vui_notify(title string, msg string)

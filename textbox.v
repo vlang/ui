@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -294,7 +294,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		s := utf32_to_str(e.codepoint)
 		// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 		if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
-			|| ((text.len > 0)&& (tb.cursor_pos > 0))))) {
+			|| ((text.len > 0) && (tb.cursor_pos > 0))))) {
 			return
 		}
 		// println('inserting codepoint=$e.codepoint mods=$e.mods ..')

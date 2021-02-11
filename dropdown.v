@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -203,7 +203,7 @@ fn (mut dd Dropdown) unfocus() {
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 	return y >= dd.y && y <= dd.y + (dd.items.len * ui.dropdown_height) + ui.dropdown_height
-		&& x >= dd.x&& x <= dd.x + dd.width
+		&& x >= dd.x && x <= dd.x + dd.width
 }
 
 // Returns the currently selected DropdownItem
