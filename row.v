@@ -5,12 +5,12 @@ module ui
 
 pub struct RowConfig {
 pub:
-	width      f32
-	height     f32
-	alignment  VerticalAlignment
-	spacing    int
-	stretch    bool
-	margin     MarginConfig
+	width     f32
+	height    f32
+	alignment VerticalAlignment
+	spacing   int
+	stretch   bool
+	margin    MarginConfig
 	// children related
 	widths     Size //[]f64 // children sizes
 	heights    Size //[]f64

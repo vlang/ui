@@ -4,12 +4,12 @@
 module ui
 
 pub struct ColumnConfig {
-	width      f32 // To remove soon
-	height     f32 // To remove soon
-	alignment  HorizontalAlignment
-	spacing    int
-	stretch    bool
-	margin     MarginConfig
+	width     f32 // To remove soon
+	height    f32 // To remove soon
+	alignment HorizontalAlignment
+	spacing   int
+	stretch   bool
+	margin    MarginConfig
 	// children related
 	widths     Size //[]f64 // children sizes
 	heights    Size //[]f64

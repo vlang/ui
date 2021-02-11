@@ -35,14 +35,14 @@ N.B.:
 ***********************************/
 
 struct StackConfig {
-	width                 f32 // No more int to offer relative size
-	height                f32
-	vertical_alignment    VerticalAlignment
-	horizontal_alignment  HorizontalAlignment
-	spacing               int
-	stretch               bool
-	direction             Direction
-	margin                MarginConfig
+	width                f32 // No more int to offer relative size
+	height               f32
+	vertical_alignment   VerticalAlignment
+	horizontal_alignment HorizontalAlignment
+	spacing              int
+	stretch              bool
+	direction            Direction
+	margin               MarginConfig
 	// children related
 	widths                []f32 // children sizes
 	heights               []f32
@@ -144,7 +144,7 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 	// println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
 	s.debug_show_sizes('init -> ')
 
-	/*** size of children from ***/
+	//** size of children from **
 	// default values for widths and heights
 	if s.direction == .row {
 		if s.heights.len == 0 {
@@ -167,29 +167,28 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 	}
 
 	// set children sizes
-	println("s.widths: $s.widths s.heights: $s.heights")
+	println('s.widths: $s.widths s.heights: $s.heights')
 	mut w := 0
 	mut h := 0
 	free_width, free_height := s.free_size()
 	for i, mut child in s.children {
 		// TODO: replace set_width and set_height by with propose_size
 		w = size_f32_to_int(s.widths[i])
-		println("widths[$i]=  ${w} <- ${s.widths[i]}")
+		println('widths[$i]=  $w <- ${s.widths[i]}')
 		h = size_f32_to_int(s.heights[i])
-		println("heights[$i]= ${h} <- ${s.heights[i]}")
+		println('heights[$i]= $h <- ${s.heights[i]}')
 		w = relative_size_from_parent(w, free_width)
-		println("w[$i]=  ${w}")
+		println('w[$i]=  $w')
 		h = relative_size_from_parent(h, free_height)
-		println("h[$i]=  ${h}")
-		child.propose_size(w,h)
+		println('h[$i]=  $h')
+		child.propose_size(w, h)
 	}
-	/*** end size of children ***/
+	//** end size of children **
 }
 
 /*
 The rules for internal decoding of size (no need for the user to know that) are:
-* size < 0 (get from relative parent size) => 
-
+* size < 0 (get from relative parent size) =>
 */
 fn (mut s Stack) init_size(parent Layout) {
 	parent_width, parent_height := parent.size()
@@ -345,7 +344,7 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	// 		s.height = h
 	// 	}
 	// }
-	s.width , s.height = w - s.margin.left - s.margin.right, h - s.margin.top - s.margin.bottom
+	s.width, s.height = w - s.margin.left - s.margin.right, h - s.margin.top - s.margin.bottom
 	return s.width, s.height
 }
 

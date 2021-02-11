@@ -23,4 +23,3 @@ pub struct Alignments {
 	left_bottom  []int
 	left         []int
 }
-

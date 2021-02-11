@@ -60,9 +60,9 @@ fn (mut g Group) decode_size(parent Layout) {
 	// 	g.height = parent_height - g.margin_top - g.margin_right
 	// 	g.width = parent_width - g.margin_left - g.margin_right
 	// } else {
-		// Relative sizes
-		g.width = relative_size_from_parent(g.width, parent_width)
-		g.height = relative_size_from_parent(g.height, parent_height)
+	// Relative sizes
+	g.width = relative_size_from_parent(g.width, parent_width)
+	g.height = relative_size_from_parent(g.height, parent_height)
 	// }
 	// s.debug_show_size("decode after -> ")
 }

@@ -25,6 +25,7 @@ pub fn size_f32_to_int(size f32) int {
 	}
 	return s
 }
+
 pub fn sizes_f32_to_int(width f32, height f32) (int, int) {
 	return size_f32_to_int(width), size_f32_to_int(height)
 }
