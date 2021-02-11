@@ -43,3 +43,16 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 		size
 	}
 }
+
+// Spacing
+type Spacing = []int | int
+
+fn (i Spacing) as_int_array(len int) []int {
+	return if i is []int {
+		i.clone()
+	} else if i is int {
+		[i].repeat(len)
+	} else {
+		[]int{}
+	}
+}

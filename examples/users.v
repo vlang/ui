@@ -72,13 +72,7 @@ fn main() {
 		title: 'V UI Demo'
 	}, [
 		ui.row({
-			// stretch: true
-			margin: {
-				top: 10
-				left: 10
-				right: 10
-				bottom: 10
-			}
+			margin: 10
 		}, [
 			ui.column({
 				width: .25

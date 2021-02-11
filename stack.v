@@ -39,12 +39,12 @@ struct StackConfig {
 	height               f32
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacing              int
+	spacing              Spacing = Spacing(0) // int
 	stretch              bool
 	direction            Direction
 	margin               MarginConfig
 	// children related
-	widths                []f32 // children sizes
+	widths                []f32   // children sizes
 	heights               []f32
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
@@ -66,7 +66,7 @@ mut:
 	horizontal_alignment  HorizontalAlignment
 	vertical_alignments   VerticalAlignments // Flexible alignments by index overriding alignment.
 	horizontal_alignments HorizontalAlignments
-	spacing               int
+	spacing               []int // int
 	stretch               bool
 	direction             Direction
 	margin                Margin
@@ -85,7 +85,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		horizontal_alignment: c.horizontal_alignment
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
-		spacing: c.spacing
+		spacing: c.spacing.as_int_array(children.len - 1)
 		stretch: c.stretch
 		direction: c.direction
 		margin: c.margin.as_margin()
@@ -213,9 +213,15 @@ fn (mut s Stack) set_children_pos() {
 		child_width, child_height := child.size()
 		s.set_child_pos(child, i, x, y)
 		if s.direction == .row {
-			x += child_width + s.spacing
+			x += child_width
+			if i < s.children.len - 1 {
+				x += s.spacing[i]
+			}
 		} else {
-			y += child_height + s.spacing
+			y += child_height
+			if i < s.children.len - 1 {
+				y += s.spacing[i]
+			}
 		}
 		if child is Stack {
 			child.set_children_pos()
@@ -383,7 +389,14 @@ fn (mut s Stack) draw() {
 }
 
 fn (s &Stack) total_spacing() int {
-	total_spacing := (s.children.len - 1) * s.spacing
+	mut total_spacing := 0
+	println('len $s.children.len $s.spacing')
+	if s.spacing.len > 0 && s.children.len > 1 {
+		for i in 0 .. (s.children.len - 1) {
+			total_spacing += s.spacing[i]
+		}
+	}
+	println('len $total_spacing')
 	return total_spacing
 }
 
