@@ -8,17 +8,21 @@ pub:
 	width      f32
 	height     f32
 	alignment  VerticalAlignment
-	alignments VerticalAlignments
 	spacing    int
 	stretch    bool
 	margin     MarginConfig
-	children   []Widget
+	// children related
+	widths     Size //[]f64 // children sizes
+	heights    Size //[]f64
+	alignments VerticalAlignments
 }
 
 pub fn row(c RowConfig, children []Widget) &Stack {
 	return stack({
 		height: c.height
 		width: c.width
+		widths: c.widths.as_f32_array(children.len) //.map(f32(it))
+		heights: c.heights.as_f32_array(children.len) //.map(f32(it))
 		vertical_alignment: c.alignment
 		vertical_alignments: c.alignments
 		spacing: c.spacing

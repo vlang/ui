@@ -40,11 +40,31 @@ fn (mut g Group) init(parent Layout) {
 	g.parent = parent
 	ui := parent.get_ui()
 	g.ui = ui
+	g.decode_size(parent)
 	for child in g.children {
 		child.init(g)
 	}
 	g.set_adjusted_size(0, ui)
 	g.calculate_child_positions()
+}
+
+fn (mut g Group) decode_size(parent Layout) {
+	parent_width, parent_height := parent.size()
+	// s.debug_show_sizes("decode before -> ")
+	// if parent is Window {
+	// 	// Default: like stretch = strue
+	// 	s.height = parent_height - s.margin.top - s.margin.right
+	// 	s.width = parent_width - s.margin.left - s.margin.right
+	// } else 
+	// if g.stretch {
+	// 	g.height = parent_height - g.margin_top - g.margin_right
+	// 	g.width = parent_width - g.margin_left - g.margin_right
+	// } else {
+		// Relative sizes
+		g.width = relative_size_from_parent(g.width, parent_width)
+		g.height = relative_size_from_parent(g.height, parent_height)
+	// }
+	// s.debug_show_size("decode after -> ")
 }
 
 pub fn group(c GroupConfig, children []Widget) &Group {

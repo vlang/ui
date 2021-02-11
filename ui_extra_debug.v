@@ -2,39 +2,6 @@ module ui
 
 import gx
 
-// Tool to convert width and height from f32 to int
-pub fn convert_size_f32_to_int(width f32, height f32) (int, int) {
-	// Convert c.width and c.height from f32 to int used as a trick to deal with relative size with respect to parent 
-	mut w := int(width)
-	mut h := int(height)
-	// println("f32_int: start ($width, $height) -> ($w, $h)")
-	if 0 < width && width <= 1 {
-		w = -int(width * 100) // to be converted in percentage of parent size inside init call
-		// println("f32_int: width $width $w ${typeof(width).name} ${typeof(w).name}")
-	}
-	if 0 < height && height <= 1 {
-		h = -int(height * 100) // to be converted in percentage of parent size inside init call
-		// println("f32_int: height $height $h ${typeof(height).name} ${typeof(h).name}")
-	}
-	// println("f32_int: size ($width, $height) -> ($w, $h)")
-	return w, h
-}
-
-// if size is negative, it is relative in percentage of the parent 
-pub fn relative_size_from_parent(size int, parent_size int, spacing int) int {
-	return if size == -100 {
-		parent_size - spacing
-	} else if size < 0 {
-		percent := f32(-size) / 100
-		free_size := parent_size - spacing
-		new_size := int(percent * free_size)
-		println('relative size: $size $new_size -> $percent * ($parent_size - $spacing) ')
-		new_size
-	} else {
-		size
-	}
-}
-
 // Draw bounding box for Stack
 fn (s &Stack) draw_bb() {
 	mut col := gx.red
@@ -59,7 +26,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 	sw, sh := s.size()
 	print('${t}Stack $s.name()')
 	C.printf(' %p', s)
-	println(' => size ($sw, $sh), ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) spacing: $s.spacing')
+	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacing')
 	if parent is Stack {
 		println('	parent: $parent.name() => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
 	} else if parent is Window {
@@ -138,4 +105,40 @@ pub fn (w &CheckBox) name() string {
 
 pub fn (w &Slider) name() string {
 	return 'Slider'
+}
+
+// pub fn (w &Widget) get_width() int {
+// 	return if w is Stack {
+// 		w.width
+// 	} else if w is Group {
+// 		w.width
+// 	} else {
+// 		0
+// 	}
+// }
+
+// pub fn (w &Widget) get_height() int {
+// 	return if w is Stack {
+// 		w.height
+// 	} else if w is Group {
+// 		w.height
+// 	} else {
+// 		0
+// 	}
+// }
+
+pub fn set_width(mut w Widget, width int) {
+	if w is Stack {
+		w.width = width
+	} else if w is Group {
+		w.width = width
+	}
+}
+
+pub fn set_height(mut w Widget, height int) {
+	if w is Stack {
+		w.height = height
+	} else if w is Group {
+		w.height = height
+	}
 }

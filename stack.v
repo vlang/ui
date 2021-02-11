@@ -10,27 +10,54 @@ enum Direction {
 	column
 }
 
+/*
+Column & Row are identical except everything is reversed:
+   Row is treated like a column turned by 90 degrees, so values for row are reversed.
+   Width  -> Height
+   Height -> Width
+   X -> Y
+   Y -> X
+*/
+
+/********** different size's definitions ************
+* container_size is simply: (width, height)
+* adjusted_size is (adj_width, adj_height) corresponding of the compact/fitted size inherited from children sizes
+* size() returns full_size, i.e. container_size + margin_size 
+* total_spacing() returns spacing
+* free_size() returns free_size_direct and free_size_opposite (in the proper order) where:
+	* free_size_direct = container_size - total_spacing()
+	* free_size_opposite = container_size
+
+N.B.:
+	* direct size is the size in the main direction of the stack: height for .column and width  for .row
+	* opposite size is the converse
+	* no needs of functions: container_size() and adjusted_size()
+***********************************/
+
 struct StackConfig {
-	width                 f32 // No more int to 
+	width                 f32 // No more int to offer relative size
 	height                f32
 	vertical_alignment    VerticalAlignment
 	horizontal_alignment  HorizontalAlignment
-	vertical_alignments   VerticalAlignments
-	horizontal_alignments HorizontalAlignments
 	spacing               int
 	stretch               bool
 	direction             Direction
 	margin                MarginConfig
+	// children related
+	widths                []f32 // children sizes
+	heights               []f32
+	vertical_alignments   VerticalAlignments
+	horizontal_alignments HorizontalAlignments
 }
 
 struct Stack {
-	cfg_width  f32 // saved width
-	cfg_height f32 // saved height
 mut:
 	x                     int
 	y                     int
 	width                 int
 	height                int
+	widths                []f32 // children sizes
+	heights               []f32
 	children              []Widget
 	parent                Layout
 	root                  &Window = voidptr(0)
@@ -47,14 +74,27 @@ mut:
 	adj_height            int
 }
 
-/*
-Column & Row are identical except everything is reversed:
-   Row is treated like a column turned by 90 degrees, so values for row are reversed.
-   Width  -> Height
-   Height -> Width
-   X -> Y
-   Y -> X
-*/
+fn stack(c StackConfig, children []Widget) &Stack {
+	w, h := sizes_f32_to_int(c.width, c.height)
+	mut s := &Stack{
+		height: h
+		width: w
+		widths: c.widths
+		heights: c.heights
+		vertical_alignment: c.vertical_alignment
+		horizontal_alignment: c.horizontal_alignment
+		vertical_alignments: c.vertical_alignments
+		horizontal_alignments: c.horizontal_alignments
+		spacing: c.spacing
+		stretch: c.stretch
+		direction: c.direction
+		margin: c.margin
+		children: children
+		ui: 0
+	}
+	return s
+}
+
 fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
@@ -85,8 +125,8 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 	if parent is Window {
 		s.set_adjusted_size(0, true, s.ui)
 	}
-	// Decode width and height to extend relative
-	s.decode_size(parent)
+
+	s.init_size(parent)
 
 	// if s.direction == .column {
 	if s.height == 0 {
@@ -103,6 +143,68 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 	}
 	// println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
 	s.debug_show_sizes('init -> ')
+
+	/*** size of children from ***/
+	// default values for widths and heights
+	if s.direction == .row {
+		if s.heights.len == 0 {
+			s.heights = [f32(1)].repeat(s.children.len)
+		}
+		if s.widths.len == 0 {
+			// equispaced
+			p := f32(1) / f32(s.children.len)
+			s.widths = [p].repeat(s.children.len)
+		}
+	} else {
+		if s.widths.len == 0 {
+			s.widths = [f32(1)].repeat(s.children.len)
+		}
+		if s.heights.len == 0 {
+			// equispaced
+			p := f32(1) / f32(s.children.len)
+			s.heights = [p].repeat(s.children.len)
+		}
+	}
+
+	// set children sizes
+	println("s.widths: $s.widths s.heights: $s.heights")
+	mut w := 0
+	mut h := 0
+	free_width, free_height := s.free_size()
+	for i, mut child in s.children {
+		// TODO: replace set_width and set_height by with propose_size
+		w = size_f32_to_int(s.widths[i])
+		println("widths[$i]=  ${w} <- ${s.widths[i]}")
+		h = size_f32_to_int(s.heights[i])
+		println("heights[$i]= ${h} <- ${s.heights[i]}")
+		w = relative_size_from_parent(w, free_width)
+		println("w[$i]=  ${w}")
+		h = relative_size_from_parent(h, free_height)
+		println("h[$i]=  ${h}")
+		child.propose_size(w,h)
+	}
+	/*** end size of children ***/
+}
+
+/*
+The rules for internal decoding of size (no need for the user to know that) are:
+* size < 0 (get from relative parent size) => 
+
+*/
+fn (mut s Stack) init_size(parent Layout) {
+	parent_width, parent_height := parent.size()
+	// s.debug_show_sizes("decode before -> ")
+	if parent is Window {
+		// Default: like stretch = strue
+		s.height = parent_height - s.margin.top - s.margin.right
+		s.width = parent_width - s.margin.left - s.margin.right
+	} else if s.stretch {
+		if s.direction == .row {
+			s.height = parent_height - s.margin.top - s.margin.right
+		} else {
+			s.width = parent_width - s.margin.left - s.margin.right
+		}
+	}
 }
 
 fn (mut s Stack) set_children_pos() {
@@ -177,34 +279,6 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	}
 }
 
-fn (mut s Stack) decode_size(parent Layout) {
-	parent_width, parent_height := parent.size()
-	// s.debug_show_sizes("decode before -> ")
-	if parent is Window {
-		// Default: like stretch = strue
-		s.height = parent_height - s.margin.top - s.margin.right
-		s.width = parent_width - s.margin.left - s.margin.right
-	} else if s.stretch {
-		if s.direction == .row {
-			s.height = parent_height - s.margin.top - s.margin.right
-		} else {
-			s.width = parent_width - s.margin.left - s.margin.right
-		}
-	}
-	if s.width < 0 || s.height < 0 {
-		children_spacing := if ((s.width < 0 && s.direction == .row)
-			|| (s.height < 0 && s.direction == .column))
-			&& (s.parent is Stack || s.parent is Window) {
-			(s.parent.get_children().len - 1) * s.parent.spacing
-		} else {
-			0
-		}
-		s.width = relative_size_from_parent(s.width, parent_width, children_spacing)
-		s.height = relative_size_from_parent(s.height, parent_height, children_spacing)
-	}
-	// s.debug_show_size("decode after -> ")
-}
-
 fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	mut h := 0
 	mut w := 0
@@ -252,27 +326,6 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	s.adj_height = h
 }
 
-fn stack(c StackConfig, children []Widget) &Stack {
-	w, h := convert_size_f32_to_int(c.width, c.height)
-	mut s := &Stack{
-		cfg_width: c.width
-		cfg_height: c.height
-		height: h
-		width: w
-		vertical_alignment: c.vertical_alignment
-		horizontal_alignment: c.horizontal_alignment
-		vertical_alignments: c.vertical_alignments
-		horizontal_alignments: c.horizontal_alignments
-		spacing: c.spacing
-		stretch: c.stretch
-		direction: c.direction
-		margin: c.margin
-		children: children
-		ui: 0
-	}
-	return s
-}
-
 fn (mut s Stack) set_pos(x int, y int) {
 	// could depend on anchor in the future 
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
@@ -286,26 +339,16 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 }
 
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
-	if s.stretch {
-		s.width = w
-		if s.height == 0 {
-			s.height = h
-		}
-	}
+	// if s.stretch {
+	// 	s.width = w
+	// 	if s.height == 0 {
+	// 		s.height = h
+	// 	}
+	// }
+	s.width , s.height = w - s.margin.left - s.margin.right, h - s.margin.top - s.margin.bottom
 	return s.width, s.height
 }
 
-/**********************************
-size() returns container_size + margin
-where container_size = (width, height)
-Rmk:
-	free_size_direct = container_size - total_spacing
-	free_size_opposite = container_size
-	adjusted_size = (adj_width, adj_height) (similar to container_size) is size deduced from children
-N.B.: 
-	direct size is the size in the main direction of the stack: height for .column and width  for .row
-	opposite size is the converse
-***********************************/
 fn (s &Stack) size() (int, int) {
 	mut w := s.width
 	mut h := s.height
@@ -318,6 +361,17 @@ fn (s &Stack) size() (int, int) {
 	// }
 	w += s.margin.left + s.margin.right
 	h += s.margin.top + s.margin.bottom
+	return w, h
+}
+
+fn (s &Stack) free_size() (int, int) {
+	mut w := s.width
+	mut h := s.height
+	if s.direction == .row {
+		w -= s.total_spacing()
+	} else {
+		h -= s.total_spacing()
+	}
 	return w, h
 }
 

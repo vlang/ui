@@ -4,19 +4,24 @@
 module ui
 
 pub struct ColumnConfig {
-	width      f32
-	height     f32
+	width      f32 // To remove soon
+	height     f32 // To remove soon
 	alignment  HorizontalAlignment
-	alignments HorizontalAlignments
 	spacing    int
 	stretch    bool
 	margin     MarginConfig
+	// children related
+	widths     Size //[]f64 // children sizes
+	heights    Size //[]f64
+	alignments HorizontalAlignments
 }
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {
 	return stack({
 		height: c.height
 		width: c.width
+		heights: c.heights.as_f32_array(children.len) //.map(f32(it))
+		widths: c.widths.as_f32_array(children.len) //.map(f32(it))
 		horizontal_alignment: c.alignment
 		horizontal_alignments: c.alignments
 		spacing: c.spacing

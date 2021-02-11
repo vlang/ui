@@ -52,18 +52,6 @@ pub enum HorizontalAlignment {
 	right
 }
 
-pub struct VerticalAlignments {
-	top    []int
-	center []int
-	bottom []int
-}
-
-pub struct HorizontalAlignments {
-	left   []int
-	center []int
-	right  []int
-}
-
 pub struct MarginConfig {
 	top    int
 	left   int
