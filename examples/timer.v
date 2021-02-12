@@ -3,7 +3,7 @@ import time
 
 const (
 	win_width  = 287
-	win_height = 110
+	win_height = 130
 )
 
 struct App {
@@ -44,15 +44,12 @@ fn main() {
 				left: [0]
 				center: [1]
 			}
-			widths: 1.
-			heights: [.9, .1]
-			spacing: 30
+			spacing: 10
 		}, [ui.row({
 			spacing: 10
 			widths: [.3, .7]
 		}, [ui.column({
 			spacing: 10
-			heights: ui.compact
 		}, [
 			ui.label(text: 'Elapsed Time:'),
 			ui.label(text: 'Duration:'),
