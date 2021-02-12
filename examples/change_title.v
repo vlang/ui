@@ -22,12 +22,7 @@ fn main() {
 		ui.column({
 			stretch: true
 			spacing: 20
-			margin: {
-				top: 30
-				left: 30
-				right: 30
-				bottom: 30
-			}
+			margin: 30
 		}, [
 			ui.row({
 				spacing: 10
