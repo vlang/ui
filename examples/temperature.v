@@ -18,13 +18,13 @@ fn main() {
 	mut app := &App{
 		txt_box_celsius: ui.textbox(
 			width: 70
-			on_key_up: on_cel_key_up
+			on_char: on_char_celsius
 			is_numeric: true
 			text: -1
 		)
 		txt_box_fahrenheit: ui.textbox(
 			width: 70
-			on_key_up: on_fah_key_up
+			on_char: on_char_fahrenheit
 			is_numeric: true
 			text: -1
 		)
@@ -39,9 +39,7 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			stretch: true
-			alignment: .center
-			margin: ui.Margin{5, 5, 5, 5}
+			margin: 5
 			spacing: 10
 		}, [
 			ui.label(text: 'Celsius'),
@@ -53,7 +51,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_cel_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_char_celsius(mut app App, textbox &ui.TextBox, keycode u32) {
 	if app.txt_box_celsius.text.len <= 0 {
 		app.txt_box_fahrenheit_text = '0'
 		return
@@ -63,7 +61,7 @@ fn on_cel_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	app.txt_box_fahrenheit_text = int(fah).str()
 }
 
-fn on_fah_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_char_fahrenheit(mut app App, textbox &ui.TextBox, keycode u32) {
 	if app.txt_box_fahrenheit.text.len <= 0 {
 		app.txt_box_celsius_text = '0'
 		return

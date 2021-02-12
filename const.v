@@ -7,6 +7,7 @@ pub:
 	on_mouse_down string = 'on_mouse_down'
 	on_mouse_up   string = 'on_mouse_up'
 	on_key_down   string = 'on_key_down'
+	on_char       string = 'on_char'
 	on_key_up     string = 'on_key_up'
 	on_scroll     string = 'on_scroll'
 	on_resize     string = 'on_resize'
