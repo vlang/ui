@@ -41,7 +41,7 @@ fn main() {
 		ui.row({
 			stretch: true
 			alignment: .center
-			margin: ui.MarginConfig{5, 5, 5, 5}
+			margin: 5
 			spacing: 10
 		}, [
 			app.vert_slider,
