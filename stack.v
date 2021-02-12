@@ -385,7 +385,7 @@ fn (mut s Stack) draw() {
 		child.draw()
 	}
 	// DEBUG MODE: Uncomment to display the bounding boxes
-	s.draw_bb()
+	// s.draw_bb()
 }
 
 fn (s &Stack) total_spacing() int {
