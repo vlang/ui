@@ -135,14 +135,14 @@ fn (mut s Slider) size() (int, int) {
 }
 
 fn (mut s Slider) propose_size(w int, h int) (int, int) {
-	/*
+	//
 	s.track_width = w
 	s.track_height = h
-	if s.track_height > 20 {s.track_height = 20} //TODO constrain
-	s.thumb_height = if s.orientation == .horizontal {s.track_height + 10} else {10}
-	s.thumb_width = if s.orientation == .horizontal { 10 } else {s.track_width + 10}
-	return w, s.thumb_height
-	*/
+	// if s.track_height > 20 {s.track_height = 20} //TODO constrain
+	s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
+	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
+	// return w, s.thumb_height
+	//
 	if s.orientation == .horizontal {
 		return s.track_width, s.thumb_height
 	} else {

@@ -4,8 +4,8 @@
 module ui
 
 pub struct ColumnConfig {
-	width     f32 // To remove soon
-	height    f32 // To remove soon
+	width     int // To remove soon
+	height    int // To remove soon
 	alignment HorizontalAlignment
 	spacing   Spacing = Spacing(0) // int
 	stretch   bool

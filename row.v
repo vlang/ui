@@ -5,8 +5,8 @@ module ui
 
 pub struct RowConfig {
 pub:
-	width     f32
-	height    f32
+	width     int
+	height    int
 	alignment VerticalAlignment
 	spacing   Spacing = Spacing(0) // int
 	stretch   bool

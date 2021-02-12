@@ -8,6 +8,8 @@ import time
 pub struct Transition {
 mut:
 	// pub:
+	x                int
+	y                int
 	last_draw_time   i64
 	started_time     i64
 	duration         i64

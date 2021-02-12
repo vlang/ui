@@ -114,26 +114,22 @@ fn main() {
 	}, [
 		ui.column({
 			spacing: 0
-			margin: ui.Margin{30, 30, 30, 30}
-			alignment: .center
-		}, [
-			app.rgb_rectangle,
-			ui.row({
-				alignment: .top
-				margin: ui.Margin{30, 30, 30, 30}
-				spacing: 23
-			}, [app.r_textbox, app.g_textbox, app.b_textbox]),
-			ui.row({
-				alignment: .top
-				margin: ui.Margin{30, 30, 30, 30}
-				spacing: 38
-			}, [app.r_slider, app.g_slider, app.b_slider]),
-			ui.row({
-				alignment: .top
-				margin: ui.Margin{30, 30, 30, 30}
-				spacing: 54
-			}, [app.r_label, app.g_label, app.b_label]),
-		]),
+			margin: ui.Margin{
+				top: 20
+			}
+			alignments: {
+				center: [0, 1, 2, 3]
+			}
+		}, [app.rgb_rectangle, ui.row({
+			margin: 30
+			spacing: 23
+		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
+			margin: 30
+			spacing: 38
+		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
+			margin: 30
+			spacing: 54
+		}, [app.r_label, app.g_label, app.b_label])]),
 	])
 	ui.run(app.window)
 }

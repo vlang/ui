@@ -35,8 +35,8 @@ N.B.:
 ***********************************/
 
 struct StackConfig {
-	width                f32 // No more int to offer relative size
-	height               f32
+	width                int // To remove soon
+	height               int // To remove soon
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
 	spacing              Spacing = Spacing(0) // int
@@ -75,10 +75,10 @@ mut:
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
-	w, h := sizes_f32_to_int(c.width, c.height)
+	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
-		height: h
-		width: w
+		height: c.height // TODO to remove
+		width: c.width // TODO to remove
 		widths: c.widths
 		heights: c.heights
 		vertical_alignment: c.vertical_alignment
@@ -144,15 +144,19 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 	// println('stack $s.name() => size ($s.width, $s.height) cfg: ($s.cfg_width, $s.cfg_height) adj: ($s.adj_width, $s.adj_height) ')
 	s.debug_show_sizes('init -> ')
 
-	//** size of children from **
+	//* size of children from *
 	// default values for widths and heights
 	if s.direction == .row {
 		if s.heights.len == 0 {
 			s.heights = [f32(1)].repeat(s.children.len)
 		}
 		if s.widths.len == 0 {
-			// equispaced
-			p := f32(1) / f32(s.children.len)
+			p := if is_children_have_widget(s.children) {
+				ui.compact
+			} else {
+				// equispaced
+				f32(1) / f32(s.children.len)
+			}
 			s.widths = [p].repeat(s.children.len)
 		}
 	} else {
@@ -160,30 +164,38 @@ fn (mut s Stack) set_all_sizes(parent Layout) {
 			s.widths = [f32(1)].repeat(s.children.len)
 		}
 		if s.heights.len == 0 {
-			// equispaced
-			p := f32(1) / f32(s.children.len)
+			p := if is_children_have_widget(s.children) {
+				ui.compact
+			} else {
+				// equispaced
+				f32(1) / f32(s.children.len)
+			}
 			s.heights = [p].repeat(s.children.len)
 		}
 	}
 
 	// set children sizes
 	println('s.widths: $s.widths s.heights: $s.heights')
-	mut w := 0
-	mut h := 0
 	free_width, free_height := s.free_size()
 	for i, mut child in s.children {
+		mut w, mut h := child.size()
 		// TODO: replace set_width and set_height by with propose_size
-		w = size_f32_to_int(s.widths[i])
-		println('widths[$i]=  $w <- ${s.widths[i]}')
-		h = size_f32_to_int(s.heights[i])
-		println('heights[$i]= $h <- ${s.heights[i]}')
-		w = relative_size_from_parent(w, free_width)
-		println('w[$i]=  $w')
-		h = relative_size_from_parent(h, free_height)
-		println('h[$i]=  $h')
+		if i < s.widths.len && s.widths[i] > 0 {
+			w = size_f32_to_int(s.widths[i])
+			println('widths[$i]=  $w <- ${s.widths[i]}')
+			w = relative_size_from_parent(w, free_width)
+			println('w[$i]=  $w')
+		}
+		if i < s.heights.len && s.heights[i] > 0 {
+			h = size_f32_to_int(s.heights[i])
+			println('heights[$i]= $h <- ${s.heights[i]}')
+			h = relative_size_from_parent(h, free_height)
+			println('h[$i]=  $h')
+		}
+		// It is then unchanged when 
 		child.propose_size(w, h)
 	}
-	//** end size of children **
+	//* end size of children *
 }
 
 /*
@@ -385,7 +397,7 @@ fn (mut s Stack) draw() {
 		child.draw()
 	}
 	// DEBUG MODE: Uncomment to display the bounding boxes
-	s.draw_bb()
+	// s.draw_bb()
 }
 
 fn (s &Stack) total_spacing() int {
