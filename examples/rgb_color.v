@@ -45,7 +45,7 @@ fn main() {
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_key_up: on_r_key_up
+			on_char: on_r_char
 			text: -1
 		)
 		g_textbox: ui.textbox(
@@ -54,7 +54,7 @@ fn main() {
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_key_up: on_g_key_up
+			on_char: on_g_char
 			text: -1
 		)
 		b_textbox: ui.textbox(
@@ -63,7 +63,7 @@ fn main() {
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_key_up: on_b_key_up
+			on_char: on_b_char
 			text: -1
 		)
 		r_slider: ui.slider(
@@ -153,7 +153,7 @@ fn on_b_value_changed(mut app App, slider &ui.Slider) {
 	textbox_color_update(mut app)
 }
 
-fn on_r_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
 	if is_rgb_valid(app.r_textbox.text.int()) {
 		app.r_slider.val = app.r_textbox_text.f32()
 		app.r_textbox.border_accentuated = false
@@ -163,7 +163,7 @@ fn on_r_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn on_g_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
 	if is_rgb_valid(app.g_textbox.text.int()) {
 		app.g_slider.val = app.g_textbox_text.f32()
 		app.g_textbox.border_accentuated = false
@@ -173,7 +173,7 @@ fn on_g_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn on_b_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
 	if is_rgb_valid(app.b_textbox.text.int()) {
 		app.b_slider.val = app.b_textbox_text.f32()
 		app.b_textbox.border_accentuated = false

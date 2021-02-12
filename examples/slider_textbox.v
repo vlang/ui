@@ -34,7 +34,7 @@ fn main() {
 			val: hor_slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_hor_value_changed
+			on_value_changed: on_value_changed_hor
 		)
 		vert_slider: ui.slider(
 			width: 10
@@ -45,7 +45,7 @@ fn main() {
 			val: vert_slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_vert_value_changed
+			on_value_changed: on_value_changed_vert
 		)
 		hor_textbox: ui.textbox(
 			width: 40
@@ -54,7 +54,7 @@ fn main() {
 			read_only: false
 			is_numeric: true
 			text: -1
-			on_key_up: on_hor_key_up
+			on_char: on_char_hor
 		)
 		vert_textbox: ui.textbox(
 			width: 40
@@ -63,7 +63,7 @@ fn main() {
 			read_only: false
 			is_numeric: true
 			text: -1
-			on_key_up: on_vert_key_up
+			on_char: on_char_vert
 		)
 	}
 	app.hor_textbox.text = &app.hor_text
@@ -88,17 +88,17 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_hor_value_changed(mut app App, slider &ui.Slider) {
+fn on_value_changed_hor(mut app App, slider &ui.Slider) {
 	app.hor_text = int(app.hor_slider.val).str()
 	app.hor_textbox.border_accentuated = false
 }
 
-fn on_vert_value_changed(mut app App, slider &ui.Slider) {
+fn on_value_changed_vert(mut app App, slider &ui.Slider) {
 	app.vert_text = int(app.vert_slider.val).str()
 	app.vert_textbox.border_accentuated = false
 }
 
-fn on_hor_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_char_hor(mut app App, textbox &ui.TextBox, keycode u32) {
 	val := app.hor_text.int()
 	min := app.hor_slider.min
 	max := app.hor_slider.max
@@ -110,7 +110,7 @@ fn on_hor_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
 	}
 }
 
-fn on_vert_key_up(mut app App, textbox &ui.TextBox, keycode u32) {
+fn on_char_vert(mut app App, textbox &ui.TextBox, keycode u32) {
 	val := app.vert_text.int()
 	min := app.vert_slider.min
 	max := app.vert_slider.max
