@@ -1,6 +1,6 @@
 module ui
 
-type Size = []f64 | f64
+pub type Size = []f64 | f64
 
 fn (size Size) as_f32_array(len int) []f32 {
 	mut res := []f32{}
@@ -45,7 +45,7 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 }
 
 // Spacing
-type Spacing = []int | int
+pub type Spacing = []int | int
 
 fn (i Spacing) as_int_array(len int) []int {
 	return if i is []int {

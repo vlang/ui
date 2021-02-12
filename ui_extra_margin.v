@@ -7,7 +7,7 @@ pub struct Margin {
 	bottom int
 }
 
-type MarginConfig = Margin | int
+pub type MarginConfig = Margin | int
 
 fn (m MarginConfig) as_margin() Margin {
 	if m is Margin {
