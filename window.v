@@ -13,8 +13,6 @@ const (
 	default_font_size    = 13
 )
 
-pub type DrawFn = fn (ctx &gg.Context, state voidptr)
-
 pub type ClickFn = fn (e MouseEvent, window &Window)
 
 pub type KeyFn = fn (e KeyEvent, func voidptr)
@@ -56,6 +54,10 @@ pub mut:
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable bool // currently only for events.on_resized not modify children
+	// adjusted size generally depending on children
+	adj_width  int
+	adj_height int
+	spacing    int // ununsed for Window but required for Layout (Stack precisely)
 }
 
 pub struct WindowConfig {
@@ -150,7 +152,7 @@ fn on_event(e &sapp.Event, mut window Window) {
 	*/
 }
 
-fn gg_init(mut window Window) {
+fn gg_init(window &Window) {
 	for _, child in window.children {
 		// if child is Stack {
 		// }
@@ -250,6 +252,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	*/
 	// q := int(window)
 	// println('created window $q.hex()')
+
 	return window
 }
 
@@ -727,7 +730,15 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 }
 
 fn (w &Window) size() (int, int) {
-	return w.width, w.height
+	mut width := w.width
+	mut height := w.height
+	// if w.width < w.adj_width {
+	// 	width = w.adj_width
+	// }
+	// if w.height < w.adj_height {
+	// 	height = w.adj_height
+	// }
+	return width, height
 }
 
 fn (mut window Window) resize(width int, height int) {
@@ -741,4 +752,8 @@ fn (window &Window) unfocus_all() {
 	for child in window.children {
 		child.unfocus()
 	}
+}
+
+fn (w &Window) get_children() []Widget {
+	return w.children
 }

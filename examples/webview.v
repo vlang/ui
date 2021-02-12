@@ -14,7 +14,7 @@ fn main() {
 	}, [
 		ui.row({
 			// stretch: true
-			margin: {
+			margin: ui.Margin{
 				top: 10
 				left: 10
 				right: 10

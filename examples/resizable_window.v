@@ -21,7 +21,7 @@ fn main() {
 	}, [
 		ui.row({
 			stretch: true
-			margin: ui.MarginConfig{10, 10, 10, 10}
+			margin: ui.Margin{10, 10, 10, 10}
 		}, [
 			ui.button(text: 'Add user'),
 		]),

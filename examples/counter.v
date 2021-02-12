@@ -24,7 +24,7 @@ fn main() {
 			alignment: .top
 			spacing: 5
 			stretch: true
-			margin: ui.MarginConfig{5, 5, 5, 5}
+			margin: ui.Margin{5, 5, 5, 5}
 		}, [
 			ui.textbox(
 				max_len: 20

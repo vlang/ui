@@ -23,15 +23,9 @@ fn main() {
 	}, [
 		ui.column({
 			stretch: true
-			margin: {
-				top: 10
-				left: 10
-				right: 10
-				bottom: 10
-			}
+			margin: 10
 		}, [
 			ui.row({
-				stretch: true
 				spacing: 20
 			}, [
 				ui.group({
