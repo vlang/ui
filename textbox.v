@@ -49,21 +49,21 @@ pub mut:
 	// gg &gg.GG
 	ui &UI
 	// text               string
-	text               &string = voidptr(0)
-	max_len            int
-	is_multi           bool
-	placeholder        string
-	placeholder_bind   &string = voidptr(0)
-	cursor_pos         int
-	is_numeric         bool
-	is_password        bool
-	sel_start          int
-	sel_end            int
-	last_x             int
-	read_only          bool
-	borderless         bool
-	on_key_down        KeyDownFn = KeyDownFn(0)
-	on_char            CharFn   = CharFn(0)
+	text             &string = voidptr(0)
+	max_len          int
+	is_multi         bool
+	placeholder      string
+	placeholder_bind &string = voidptr(0)
+	cursor_pos       int
+	is_numeric       bool
+	is_password      bool
+	sel_start        int
+	sel_end          int
+	last_x           int
+	read_only        bool
+	borderless       bool
+	on_key_down      KeyDownFn = KeyDownFn(0)
+	on_char          CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	dragging           bool
 	sel_direction      SelectionDirection
@@ -100,9 +100,9 @@ pub struct TextBoxConfig {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	borderless         bool
-	on_key_down        KeyDownFn
-	on_char            CharFn
+	borderless  bool
+	on_key_down KeyDownFn
+	on_char     CharFn
 	// on_key_up          KeyUpFn
 	on_change          voidptr
 	on_enter           voidptr
@@ -271,7 +271,7 @@ fn (mut tb TextBox) draw() {
 
 fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	//  println("tb_char")
-	 if !tb.is_focused {
+	if !tb.is_focused {
 		return
 	}
 	if tb.on_char != voidptr(0) {
