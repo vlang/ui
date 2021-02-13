@@ -65,3 +65,13 @@ fn is_children_have_widget(children []Widget) bool {
 	tmp := children.filter(!(it is Stack || it is Group))
 	return tmp.len > 0
 }
+
+struct CachedSizes {
+mut:
+	fixed_widths   []int
+	fixed_heights  []int
+	weight_widths  []f64
+	weight_heights []f64
+	alloc_width    int
+	alloc_height   int
+}

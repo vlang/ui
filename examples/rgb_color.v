@@ -115,8 +115,12 @@ fn main() {
 		ui.column({
 			spacing: 0
 			margin: ui.Margin{
-				top: 20
+				top: 40
+				// left: 20
+				// right: 20
+				// bottom: 20
 			}
+			heights: [.3,.1,.5,.1]
 			alignments: {
 				center: [0, 1, 2, 3]
 			}
@@ -126,6 +130,9 @@ fn main() {
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
 			spacing: 38
+			// alignments: {
+			// 	top: [0,1,2]
+			// }
 		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
 			margin: 30
 			spacing: 54
