@@ -336,9 +336,10 @@ fn (mut s Stack) set_cache_sizes() {
 fn (s &Stack) alloc_children_sizes() ([]int, []int) {
 	mut mcw, mut mch := []int{}, []int{}
 	// free size without margin and spacing
-	// free_width, free_height := s.free_size()
-	c := &s.cache
-	
+	free_width, free_height := s.free_size()
+	// c := &s.cache
+
+
 	return mcw, mch
 }
 

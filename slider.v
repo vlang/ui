@@ -16,7 +16,7 @@ pub enum Orientation {
 	horizontal = 1
 }
 
-[ref_only]
+[heap]
 pub struct Slider {
 pub mut:
 	track_height         int

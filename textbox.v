@@ -37,7 +37,7 @@ type TextBoxChangeFn = fn (string, voidptr)
 
 type TextBoxEnterFn = fn (string, voidptr)
 
-[ref_only]
+[heap]
 pub struct TextBox {
 pub mut:
 	height     int

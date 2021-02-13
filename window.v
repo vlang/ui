@@ -23,7 +23,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
-[ref_only]
+[heap]
 pub struct Window {
 pub mut:
 	// pub:

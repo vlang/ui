@@ -3,7 +3,7 @@
 module webview
 
 // import ui
-[ref_only]
+[heap]
 struct WebView {
 	// widget ui.Widget
 	url string
