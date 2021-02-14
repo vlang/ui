@@ -69,6 +69,7 @@ fn (mut r Rectangle) size() (int, int) {
 }
 
 fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
+	r.width, r.height = w, h
 	return r.width, r.height
 }
 

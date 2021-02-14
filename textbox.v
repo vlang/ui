@@ -178,6 +178,7 @@ fn (mut tb TextBox) size() (int, int) {
 }
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
+	tb.width, tb.height = w, h
 	return tb.width, tb.height
 }
 

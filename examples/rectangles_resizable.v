@@ -34,8 +34,8 @@ fn main() {
 			alignment: .center
 			spacing: 5
 			margin: 5
-			widths: [-.25,-.25,-.25,-.25]
-			heights: [-1.,-1.,-1.,-1.]
+			widths: [ui.stretch].repeat(4)
+			heights: [ui.stretch].repeat(4)
 		}, [
 			rect,
 			/*
