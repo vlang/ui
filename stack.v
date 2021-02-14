@@ -202,7 +202,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 	// free size without margin and spacing
 	free_width, free_height := s.free_size()
-	c := &s.cache
+	mut c := &s.cache
 	$if cs ? {
 		println(" children_size: s.widths:  ${s.widths} s.heights:  ${s.heights} ")
 		println("                weight ${c.weight_widths} fixexd ${c.fixed_widths}")
@@ -213,31 +213,41 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 		if (child_w == 0) && (s.widths[i] != ui.stretch) && (s.widths[i] >= 0) {
 			println("WARNINNGS Bad width for ${child.name()}")
 			// Transform it to a ui.stretch (TODO or something else to get a size)
-			s.widths[i] = ui.stretch
+			c.width_type[i] = .stretch
 		}
-		if s.widths[i] == ui.stretch {
+		match c.width_type[i] {
+		  .stretch {
 			mcw[i] = free_width
-		} else if c.weight_widths[i] > 0 {
+		  }
+		  .weighted, .weighted_minsize {
 			weight := c.weight_widths[i] / c.width_mass
 			mcw[i] = int(weight * free_width)
-		} else {
+		  }
+		  .propose, .compact, .fixed {
 			mcw[i] = c.fixed_widths[i]
+		  }
 		}
 
 		$if cs ? {println("child_h == 0 && (s.heights[i] != ui.stretch) && (s.heights[i] >= 0)")}
 		if child_h == 0 && (s.heights[i] != ui.stretch) && (s.heights[i] >= 0) {
 			println("WARNINNGS Bad heights for ${child.name()} ${s.heights}")
-			s.heights[i] = ui.stretch
+			c.height_type[i] = .stretch
 		}
-		if s.heights[i] == ui.stretch {
-			mch[i] = free_height
-		} else if c.weight_heights[i] > 0 {
-			weight := c.weight_heights[i] / c.height_mass
-			mch[i] = int(weight * free_height)
-		} else {
-			mch[i] = c.fixed_heights[i]
+
+		match c.height_type[i] {
+			.stretch {
+				mch[i] = free_height
+			}
+			.weighted, .weighted_minsize {
+				weight := c.weight_heights[i] / c.height_mass
+				mch[i] = int(weight * free_height)
+			}
+			.propose, .compact, .fixed {
+				mch[i] = c.fixed_heights[i]
+			}
 		}
 	}
+	$if cs ? {println("mcw: ${mcw} mch: ${mch}")}
 	return mcw, mch
 }
 
@@ -348,6 +358,7 @@ fn (mut s Stack) set_cache_sizes() {
 			child.adjustable_size()
 		}
 		adj_child_width, adj_child_height := child.size()
+		// TODO: here test if widget is zero sized????
 
 		// cw as child width with type f64 
 		cw := s.widths[i] or { 0. }
@@ -403,8 +414,6 @@ fn (mut s Stack) set_cache_sizes() {
 			// width for Widget and adj_width for Layout
 			c.width_type[i] = .compact
 			c.fixed_widths[i] = adj_child_width
-			// Internally, weight_widths = -1 means that the sizes inherit from children
-			c.weight_widths[i] = -2.
 			if s.direction == .row {
 				c.fixed_width += c.fixed_widths[i]
 				c.min_width += c.fixed_widths[i]
@@ -422,9 +431,9 @@ fn (mut s Stack) set_cache_sizes() {
 			c.width_type[i] = .propose
 			c.weight_widths[i] = -cw
 			// This is the initial size
-			c.fixed_widths[i] = -adj_child_width
+			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row {
-				c.width_mass += -cw
+				c.width_mass += c.weight_widths[i]
 				c.min_width += c.fixed_widths[i]
 			} else {
 				if c.fixed_widths[i] > c.min_width {
@@ -497,8 +506,6 @@ fn (mut s Stack) set_cache_sizes() {
 			// height for Widget and adj_height for Layout
 			c.height_type[i] = .compact
 			c.fixed_heights[i] = adj_child_height
-			// N.B.: Internally, weight_heights = 0 means that the sizes inherit from children
-			c.weight_heights[i] = -2.
 			if s.direction == .column {
 				c.fixed_height += c.fixed_heights[i]
 				c.min_height += c.fixed_heights[i]
@@ -514,11 +521,11 @@ fn (mut s Stack) set_cache_sizes() {
 			// weight_heights is now  means that the children can have their size updated from the parent
 			// even reducing their size!!!
 			c.height_type[i] = .propose
-			c.weight_heights[i] = cw
+			c.weight_heights[i] = -cw
 			// This is the initial size
-			c.fixed_heights[i] = -adj_child_height
+			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column {
-				c.height_mass += -ch
+				c.height_mass += c.weight_heights[i]
 				c.min_height += c.fixed_heights[i]
 			} else {
 				if c.fixed_heights[i] > c.min_height {
