@@ -1,7 +1,7 @@
 module ui
 
 pub const (
-	stretch = -100
+	stretch = -100.
 	compact = 0. // from parent
 )
 

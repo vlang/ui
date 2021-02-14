@@ -45,7 +45,6 @@ fn main() {
 				center: [1]
 			}
 			spacing: 10
-			heights: ui.compact
 		}, [
 			ui.row({
 				spacing: 10

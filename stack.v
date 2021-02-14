@@ -119,17 +119,14 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		$if devel  ? {
-			s.set_children_sizes_tmp()
+			s.set_children_sizes()
 		} $else {
-			s.set_children_sizes(parent)
+			s.set_children_sizes_old(parent)
 		}
 		
 	} else if parent is Stack {
 		s.root = parent.root
 	}
-
-	// 2) set all the sizes
-		// s.set_children_sizes(parent)
 
 	// All sizes have to be set before positionning widgets
 	// Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
@@ -165,8 +162,8 @@ fn (mut s Stack) init_size(parent Layout) {
 	}
 }
 
-fn (mut s Stack) set_children_sizes(parent Layout) {
-	$if debug_sizes ? {s.debug_show_sizes("BEGIN set_children_size ")}
+fn (mut s Stack) set_children_sizes_old(parent Layout) {
+	$if debug_sizes ? {s.debug_show_sizes("BEGIN set_children_size_old ")}
 
 	//* size of children from *
 
@@ -179,10 +176,10 @@ fn (mut s Stack) set_children_sizes(parent Layout) {
 		child.propose_size(w, h)
 
 		if child is Stack {
-			child.set_children_sizes(s)
+			child.set_children_sizes_old(s)
 		}
 	}
-	$if debug_sizes ? {s.debug_show_sizes("END set_children_size ")} 
+	$if debug_sizes ? {s.debug_show_sizes("END set_children_size_old ")} 
 }
 
 // default values for s.widths and s.heights
@@ -471,8 +468,8 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 }
 
 
-fn (mut s Stack) set_children_sizes_tmp() {
-	$if debug_sizes ? {s.debug_show_sizes("BEGIN set_children_size_tmp ")}
+fn (mut s Stack) set_children_sizes() {
+	$if debug_sizes ? {s.debug_show_sizes("BEGIN set_children_size ")}
 
 	//* size of children from *
 	c := &s.cache
@@ -487,10 +484,10 @@ fn (mut s Stack) set_children_sizes_tmp() {
 			w, h= widths[i], heights[i]
 		} else {
 			// For widget, only when proposed mode accepted 
-			if c.weight_widths[i] < 0 {
+			if s.widths[i] == ui.stretch || c.weight_widths[i] < 0 {
 				w = widths[i]
 			}
-			if c.weight_heights[i] < 0 {
+			if s.heights[i] == ui.stretch || c.weight_heights[i] < 0 {
 				h = heights[i]
 			}
 		}
@@ -498,7 +495,7 @@ fn (mut s Stack) set_children_sizes_tmp() {
 		child.propose_size(w, h)
 
 		if child is Stack {
-			child.set_children_sizes_tmp()
+			child.set_children_sizes()
 		}
 	}
 	$if debug_sizes ? {s.debug_show_sizes("END set_children_size ")} 
