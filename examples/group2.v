@@ -22,7 +22,6 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			stretch: true
 			margin: 10
 		}, [
 			ui.row({

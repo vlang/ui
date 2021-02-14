@@ -20,9 +20,10 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			stretch: true
 			spacing: 20
 			margin: 30
+			// uncomment if you don't set the width of the button
+			// widths: [ui.stretch,150] 
 		}, [
 			ui.row({
 				spacing: 10
@@ -37,7 +38,7 @@ fn main() {
 					is_focused: true
 				),
 			]),
-			ui.button(text: 'Change title', onclick: btn_change_title),
+			ui.button(text: 'Change title', onclick: btn_change_title, width: 150),
 		]),
 	])
 	ui.run(app.window)

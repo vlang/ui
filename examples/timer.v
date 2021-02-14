@@ -3,7 +3,7 @@ import time
 
 const (
 	win_width  = 287
-	win_height = 110
+	win_height = 130
 )
 
 struct App {
@@ -38,32 +38,29 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			stretch: true
-			margin: ui.Margin{5, 5, 5, 5}
-			alignment: .left
+			// stretch: true
+			widths: [ui.stretch,ui.stretch]
+			margin: 5
+			alignments: {
+				left: [0]
+				center: [1]
+			}
+			spacing: 10
+		}, [ui.row({
+			spacing: 10
+			widths: [.3, .7]
+		}, [ui.column({
+			spacing: 10
 		}, [
-			ui.row({
-				alignment: .top
-				spacing: 10
-			}, [
-				ui.column({
-					alignment: .left
-					spacing: 10
-				}, [
-					ui.label(text: 'Elapsed Time:'),
-					ui.label(text: 'Duration:'),
-					ui.button(text: 'Reset', onclick: on_reset),
-				]),
-				ui.column({
-					alignment: .left
-					spacing: 10
-				}, [
-					app.lbl_elapsed_value,
-					app.slider,
-				]),
-			]),
-			app.progress_bar,
-		]),
+			ui.label(text: 'Elapsed Time:'),
+			ui.label(text: 'Duration:'),
+			ui.button(text: 'Reset', onclick: on_reset),
+		]), ui.column({
+			spacing: 10
+		}, [
+			app.lbl_elapsed_value,
+			app.slider,
+		])]), app.progress_bar]),
 	])
 	app.window = window
 	go app.timer()

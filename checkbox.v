@@ -19,7 +19,7 @@ enum CheckBoxState {
 */
 type CheckChangedFn = fn (voidptr, bool)
 
-[ref_only]
+[heap]
 pub struct CheckBox {
 pub mut:
 	// state      CheckBoxState

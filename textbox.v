@@ -29,13 +29,15 @@ const (
 
 type KeyDownFn = fn (voidptr, voidptr, u32)
 
-type KeyUpFn = fn (voidptr, voidptr, u32)
+type CharFn = fn (voidptr, voidptr, u32)
+
+// type KeyUpFn = fn (voidptr, voidptr, u32)
 
 type TextBoxChangeFn = fn (string, voidptr)
 
 type TextBoxEnterFn = fn (string, voidptr)
 
-[ref_only]
+[heap]
 pub struct TextBox {
 pub mut:
 	height     int
@@ -47,21 +49,22 @@ pub mut:
 	// gg &gg.GG
 	ui &UI
 	// text               string
-	text               &string = voidptr(0)
-	max_len            int
-	is_multi           bool
-	placeholder        string
-	placeholder_bind   &string = voidptr(0)
-	cursor_pos         int
-	is_numeric         bool
-	is_password        bool
-	sel_start          int
-	sel_end            int
-	last_x             int
-	read_only          bool
-	borderless         bool
-	on_key_down        KeyDownFn = KeyDownFn(0)
-	on_key_up          KeyUpFn   = KeyUpFn(0)
+	text             &string = voidptr(0)
+	max_len          int
+	is_multi         bool
+	placeholder      string
+	placeholder_bind &string = voidptr(0)
+	cursor_pos       int
+	is_numeric       bool
+	is_password      bool
+	sel_start        int
+	sel_end          int
+	last_x           int
+	read_only        bool
+	borderless       bool
+	on_key_down      KeyDownFn = KeyDownFn(0)
+	on_char          CharFn    = CharFn(0)
+	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
@@ -97,9 +100,10 @@ pub struct TextBoxConfig {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	borderless         bool
-	on_key_down        KeyDownFn
-	on_key_up          KeyUpFn
+	borderless  bool
+	on_key_down KeyDownFn
+	on_char     CharFn
+	// on_key_up          KeyUpFn
 	on_change          voidptr
 	on_enter           voidptr
 	border_accentuated bool
@@ -113,7 +117,8 @@ fn (mut tb TextBox) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, tb_click, tb)
 	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
-	subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
+	subscriber.subscribe_method(events.on_char, tb_char, tb)
+	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 }
 
@@ -131,7 +136,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		read_only: c.read_only
 		borderless: c.borderless
 		on_key_down: c.on_key_down
-		on_key_up: c.on_key_up
+		on_char: c.on_char
+		// on_key_up: c.on_key_up
 		on_change: c.on_change
 		on_enter: c.on_enter
 		border_accentuated: c.border_accentuated
@@ -253,12 +259,23 @@ fn (mut tb TextBox) draw() {
 	}
 }
 
-fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
+// fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
+// 	println("hvhvh")
+// 	if !tb.is_focused {
+// 		return
+// 	}
+// 	if tb.on_key_up != voidptr(0) {
+// 		tb.on_key_up(window.state, tb, e.codepoint)
+// 	}
+// }
+
+fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
+	//  println("tb_char")
 	if !tb.is_focused {
 		return
 	}
-	if tb.on_key_up != voidptr(0) {
-		tb.on_key_up(window.state, tb, e.codepoint)
+	if tb.on_char != voidptr(0) {
+		tb.on_char(window.state, tb, e.codepoint)
 	}
 }
 

@@ -15,6 +15,29 @@ fn (s &Stack) draw_bb() {
 }
 
 // Debug function
+fn (s &Stack) debug_show_cache(depth int, txt string) {
+	if depth == 0 {
+		println('Show cache =>')
+	}
+	tab := '  '.repeat(depth)
+	println('$tab ($depth) Stack $s.name() with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
+	free_width, free_height := s.free_size()
+	println('$tab   free size: ($free_width, $free_height)')
+	widths, heights := s.children_sizes()
+	println(txt)
+	for i, child in s.children {
+		if child is Stack {
+			mut tmp := '$tab      ($depth-$i) $child.name() : (${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) and (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
+			tmp += '\n$tab      weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
+			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
+			child.debug_show_cache(depth + 1, tmp)
+		} else {
+			w, h := child.size()
+			println('$tab      ($depth-$i) Widget $child.name() size ($w, $h) (${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) and (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})')
+		}
+	}
+}
+
 fn (s &Stack) debug_show_size(t string) {
 	print('${t}size of Stack $s.name()')
 	C.printf(' %p: ', s)
@@ -28,13 +51,17 @@ fn (s &Stack) debug_show_sizes(t string) {
 	C.printf(' %p', s)
 	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacing')
 	if parent is Stack {
-		println('	parent: $parent.name() => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
+		print('	parent: $parent.name() ')
+		C.printf(' %p', parent)
+		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
 	} else if parent is Window {
 		println('	parent: Window => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) ')
 	}
 	for i, child in s.children {
 		w, h := child.size()
-		println('		$i) $child.name() size => $w, $h')
+		print('		$i) $child.name()')
+		C.printf(' %p', child)
+		println(' size => $w, $h')
 	}
 }
 

@@ -14,6 +14,7 @@ pub struct VerticalAlignments {
 
 // Anticipating replacement of VerticalAlignments
 pub struct Alignments {
+	center       []int
 	left_top     []int
 	top          []int
 	right_top    []int

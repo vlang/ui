@@ -12,7 +12,7 @@ const (
 	progress_bar_background_border_color = gx.rgb(191, 191, 191)
 )
 
-[ref_only]
+[heap]
 pub struct ProgressBar {
 pub mut:
 	height     int

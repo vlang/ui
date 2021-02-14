@@ -1,5 +1,10 @@
 module ui
 
+pub const (
+	stretch = -100.
+	compact = 0. // from parent
+)
+
 pub type Size = []f64 | f64
 
 fn (size Size) as_f32_array(len int) []f32 {
@@ -55,4 +60,23 @@ fn (i Spacing) as_int_array(len int) []int {
 	} else {
 		[]int{}
 	}
+}
+
+fn is_children_have_widget(children []Widget) bool {
+	tmp := children.filter(!(it is Stack || it is Group))
+	return tmp.len > 0
+}
+
+struct CachedSizes {
+mut:
+	fixed_widths   []int
+	fixed_heights  []int
+	fixed_width    int
+	fixed_height   int
+	min_width      int
+	min_height     int
+	weight_widths  []f64
+	width_mass     f64
+	weight_heights []f64
+	height_mass    f64
 }

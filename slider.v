@@ -16,7 +16,7 @@ pub enum Orientation {
 	horizontal = 1
 }
 
-[ref_only]
+[heap]
 pub struct Slider {
 pub mut:
 	track_height         int
@@ -79,13 +79,15 @@ pub fn slider(c SliderConfig) &Slider {
 		track_line_displayed: c.track_line_displayed
 		ui: 0
 	}
-	if !c.thumb_in_track {
-		s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
-	} else {
-		s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
-	}
+	s.set_thumb_size()
+	// if !c.thumb_in_track {
+	// 	s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
+	// } else {
+	// 	s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
+	// }
+
 	if s.min > s.max {
 		tmp := s.max
 		s.max = s.min
@@ -126,6 +128,16 @@ fn (mut s Slider) set_pos(x int, y int) {
 	s.y = y
 }
 
+fn (mut s Slider) set_thumb_size() {
+	if !s.thumb_in_track {
+		s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
+	} else {
+		s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
+	}
+}
+
 fn (mut s Slider) size() (int, int) {
 	if s.orientation == .horizontal {
 		return s.track_width, s.thumb_height
@@ -135,19 +147,17 @@ fn (mut s Slider) size() (int, int) {
 }
 
 fn (mut s Slider) propose_size(w int, h int) (int, int) {
-	/*
-	s.track_width = w
-	s.track_height = h
-	if s.track_height > 20 {s.track_height = 20} //TODO constrain
-	s.thumb_height = if s.orientation == .horizontal {s.track_height + 10} else {10}
-	s.thumb_width = if s.orientation == .horizontal { 10 } else {s.track_width + 10}
-	return w, s.thumb_height
-	*/
-	if s.orientation == .horizontal {
-		return s.track_width, s.thumb_height
-	} else {
-		return s.thumb_width, s.track_height
+	// TODO: fix
+	$if debug_slider ? {
+		println('slider propose_size: ($s.track_width,$s.track_height) -> ($w, $h) ')
 	}
+	if s.orientation == .horizontal {
+		s.track_width = w
+	} else {
+		s.track_height = h
+	}
+	s.set_thumb_size()
+	return s.size()
 }
 
 fn (s &Slider) draw() {
@@ -213,7 +223,6 @@ fn (s &Slider) point_inside(x f64, y f64) bool {
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	if !s.point_inside_thumb(e.x, e.y) && (!s.point_inside(e.x, e.y) || s.focus_on_thumb_only) {
-		s.dragging = false
 		s.is_focused = false
 		return
 	}
@@ -221,11 +230,17 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 		s.change_value(e.x, e.y)
 	}
 	s.is_focused = true
-	// s.dragging = e.action == .down
 }
 
 fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
-	if int(e.mouse_button) > 0 && s.point_inside(e.x, e.y) {
+	if int(e.mouse_button) > 0 {
+		if s.point_inside_thumb(e.x, e.y) {
+			s.dragging = true
+		}
+	} else {
+		s.dragging = false
+	}
+	if s.dragging {
 		s.change_value(int(e.x), int(e.y))
 	}
 }

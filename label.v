@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-[ref_only]
+[heap]
 pub struct Label {
 mut:
 	text   string

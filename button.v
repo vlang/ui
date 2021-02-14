@@ -33,7 +33,7 @@ pub struct ButtonConfig {
 	width     int
 }
 
-[ref_only]
+[heap]
 pub struct Button {
 mut:
 	text_width  int

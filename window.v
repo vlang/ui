@@ -23,7 +23,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
-[ref_only]
+[heap]
 pub struct Window {
 pub mut:
 	// pub:
@@ -74,6 +74,7 @@ pub:
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
 	on_key_down           KeyFn
+	on_char               KeyFn
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
@@ -189,6 +190,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
+		char_fn: cfg.on_char
 		scroll_fn: cfg.on_scroll
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
@@ -490,6 +492,11 @@ fn window_char(event sapp.Event, ui &UI) {
 		window.key_down_fn(e, window.state)
 	}
 	window.eventbus.publish(events.on_key_down, window, e)
+	if window.char_fn != voidptr(0) {
+		window.char_fn(e, window.state)
+	}
+	// window.eventbus.publish(events.on_char, window, e)
+	window.eventbus.publish(events.on_char, window, e)
 	/*
 	for child in window.children {
 		is_focused := child.is_focused()
