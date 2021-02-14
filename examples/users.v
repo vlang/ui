@@ -119,6 +119,7 @@ fn main() {
 			app.country,
 			ui.row({
 				spacing: 65
+				widths: [110.,30.]
 			}, [
 				ui.button(
 					text: 'Add user'

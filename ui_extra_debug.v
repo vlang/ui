@@ -15,7 +15,7 @@ fn (s &Stack) draw_bb() {
 }
 
 // Debug function
-fn (s &Stack) debug_show_cache(depth int, txt string) {
+fn (mut s Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
 		println('Show cache =>')
 	}
@@ -25,7 +25,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	println('$tab   free size: ($free_width, $free_height)')
 	widths, heights := s.children_sizes()
 	println(txt)
-	for i, child in s.children {
+	for i, mut child in s.children {
 		if child is Stack {
 			mut tmp := '$tab      ($depth-$i) $child.name() : (${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) and (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'

@@ -174,7 +174,6 @@ fn (mut s Stack) set_children_sizes() {
 		if child is Stack || child is Group {
 			w, h = widths[i], heights[i]
 		} else {
-			// For widget, only when proposed mode accepted 
 			if s.widths[i] == ui.stretch || c.weight_widths[i] <= 0 {
 				w = widths[i]
 			}
@@ -197,36 +196,57 @@ fn (mut s Stack) set_children_sizes() {
 // default values for s.widths and s.heights
 fn (mut s Stack) default_sizes() {
 	st, comp := f32(ui.stretch), f32(ui.compact)
+	p_equi := f32(1) / f32(s.children.len)
 	if s.direction == .row {
-		if s.heights.len == 0 {
-			for _, child in s.children {
+		mut nb := s.heights.len
+		if nb < s.children.len {
+			for i, child in s.children {
+				// println("i=$i nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
+				if i < nb { continue }
 				s.heights << if child is Stack || child is Group { st } else { comp }
 			}
 		}
-		if s.widths.len == 0 {
-			p := if is_children_have_widget(s.children) {
-				ui.compact
-			} else {
-				// equispaced
-				f32(1) / f32(s.children.len)
+		// println("1) nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
+		nb = s.widths.len
+		if nb < s.children.len {
+			for i, _ in s.children {
+				// println("i=$i nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
+				if i < nb { continue }
+				p := if is_children_have_widget(s.children) {
+					ui.compact
+				} else {
+					// equispaced
+					p_equi
+				}
+				s.widths << p
 			}
-			s.widths = [p].repeat(s.children.len)
 		}
+		// println("2) nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
 	} else {
-		if s.widths.len == 0 {
-			for _, child in s.children {
+		mut nb := s.widths.len
+		if nb < s.children.len {
+			for i, child in s.children {
+				// println("i=$i nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
+				if i < nb { continue }
 				s.widths << if child is Stack || child is Group { st } else { comp }
 			}
 		}
-		if s.heights.len == 0 {
-			p := if is_children_have_widget(s.children) {
-				ui.compact
-			} else {
-				// equispaced
-				f32(1) / f32(s.children.len)
+		// println("3) nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
+		nb = s.heights.len
+		if nb < s.children.len {
+			for i, _ in s.children {
+				// println("i=$i nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
+				if i < nb { continue }
+				p := if is_children_have_widget(s.children) {
+					ui.compact
+				} else {
+					// equispaced
+					p_equi
+				}
+				s.heights << p
 			}
-			s.heights = [p].repeat(s.children.len)
 		}
+		// println("4) nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
 	}
 }
 
@@ -463,12 +483,18 @@ fn (mut s Stack) set_cache_sizes() {
 	}
 }
 
-fn (s &Stack) children_sizes() ([]int, []int) {
+fn (mut s Stack) children_sizes() ([]int, []int) {
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 	// free size without margin and spacing
 	free_width, free_height := s.free_size()
 	c := &s.cache
-	for i, _ in s.children {
+	for i, child in s.children {
+		child_w, child_h := child.size()
+		if child_w == 0 && s.widths[i] != ui.stretch {
+			println("WARNINNGS Bad width for ${child.name()}")
+			// Transform it to a ui.stretch (TODO or something else to get a size)
+			s.widths[i] = ui.stretch
+		}
 		if s.widths[i] == ui.stretch {
 			mcw[i] = free_width
 		} else if c.weight_widths[i] > 0 {
@@ -478,6 +504,10 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			mcw[i] = c.fixed_widths[i]
 		}
 
+		if child_h == 0 && s.heights[i] != ui.stretch {
+			println("WARNINNGS Bad width for ${child.name()}")
+			s.heights[i] = ui.stretch
+		}
 		if s.heights[i] == ui.stretch {
 			mch[i] = free_height
 		} else if c.weight_heights[i] > 0 {
