@@ -1,7 +1,8 @@
 module ui
 
 pub const (
-	compact = -1. // from parent
+	stretch = -100
+	compact = 0. // from parent
 )
 
 pub type Size = []f64 | f64
@@ -70,8 +71,12 @@ struct CachedSizes {
 mut:
 	fixed_widths   []int
 	fixed_heights  []int
+	fixed_width    int
+	fixed_height   int
+	min_width      int
+	min_height     int
 	weight_widths  []f64
+	width_mass     f64
 	weight_heights []f64
-	alloc_width    int
-	alloc_height   int
+	height_mass    f64
 }
