@@ -39,6 +39,7 @@ fn main() {
 	}, [
 		ui.column({
 			// stretch: true
+			widths: [ui.stretch,ui.stretch]
 			margin: 5
 			alignments: {
 				left: [0]

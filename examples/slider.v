@@ -39,7 +39,6 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			stretch: true
 			alignment: .center
 			margin: 5
 			spacing: 10
