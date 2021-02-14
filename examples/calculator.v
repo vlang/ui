@@ -53,8 +53,7 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			stretch: true
-			margin: ui.Margin{5, 5, 5, 5}
+			margin: 5
 			spacing: 5
 		}, children),
 	])

@@ -76,25 +76,22 @@ fn main() {
 	}, [
 		ui.column({
 			widths: 1.
-			heights: [.1,.9]
+			heights: [.1, .9]
+			// spacing: 30
+		}, [ui.row({
+			// align: {
+			// 	center: [0, 1]
+			// }
+			// margin: ui.Margin{50, 115, 30, 30}
+			// spacing: 100
+		}, [app.hor_textbox, app.vert_textbox]), ui.row({
+			// align: {
+			// 	center: [0]
+			// 	top: [1]
+			// }
+			margin: ui.Margin{100, 30, 30, 30}
 			spacing: 30
-		}, [
-			ui.row({
-				align: {
-					center: [0, 1]
-				}
-				// margin: ui.Margin{50, 115, 30, 30}
-				// spacing: 100
-			}, [app.hor_textbox, app.vert_textbox]),
-			ui.row({
-				align: {
-					center: [0]
-					top: [1]
-				}
-				margin: ui.Margin{100, 30, 30, 30}
-				spacing: 30
-			}, [app.hor_slider, app.vert_slider]),
-		])
+		}, [app.hor_slider, app.vert_slider])]),
 	])
 	ui.run(app.window)
 }

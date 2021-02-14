@@ -21,10 +21,8 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			alignment: .top
 			spacing: 5
-			stretch: true
-			margin: ui.Margin{5, 5, 5, 5}
+			margin: 5
 		}, [
 			ui.textbox(
 				max_len: 20

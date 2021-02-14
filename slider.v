@@ -87,7 +87,7 @@ pub fn slider(c SliderConfig) &Slider {
 	// 	s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
 	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
 	// }
-	
+
 	if s.min > s.max {
 		tmp := s.max
 		s.max = s.min
@@ -148,7 +148,9 @@ fn (mut s Slider) size() (int, int) {
 
 fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	// TODO: fix
-	println("slider propose_size: (${s.track_width},${s.track_height}) -> ($w, $h) ")
+	$if debug_slider ? {
+		println('slider propose_size: ($s.track_width,$s.track_height) -> ($w, $h) ')
+	}
 	if s.orientation == .horizontal {
 		s.track_width = w
 	} else {
@@ -156,7 +158,6 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	}
 	s.set_thumb_size()
 	return s.size()
-
 }
 
 fn (s &Slider) draw() {

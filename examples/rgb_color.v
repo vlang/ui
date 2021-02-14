@@ -120,7 +120,7 @@ fn main() {
 				// right: 20
 				// bottom: 20
 			}
-			heights: [.3,.1,.5,.1]
+			heights: [.3, .1, .5, .1]
 			alignments: {
 				center: [0, 1, 2, 3]
 			}
