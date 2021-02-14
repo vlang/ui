@@ -132,12 +132,10 @@ fn (mut s Stack) init(parent Layout) {
 	}
 
 	// Set all children's positions recursively
-	s.set_children_pos()
-	for mut child in s.children {
-		if child is Stack {
-			child.set_children_pos()
-		}
+	if parent is Window {
+		s.set_children_pos()
 	}
+
 }
 
 fn (mut s Stack) init_size() {
@@ -790,8 +788,11 @@ fn (mut s Stack) resize(width int, height int) {
 	window.width = width
 	window.height = height
 	// s.set_cache_sizes()
-	s.init_size()
-	s.set_children_sizes()
+	$if resize ? {
+		s.init_size()
+		s.set_children_sizes()
+		s.set_children_pos()
+	}
 
 
 }
