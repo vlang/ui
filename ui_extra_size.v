@@ -67,8 +67,19 @@ fn is_children_have_widget(children []Widget) bool {
 	return tmp.len > 0
 }
 
+pub enum ChildSize {
+	fixed
+	weighted
+	weighted_minsize
+	stretch
+	compact
+	propose
+}
+
 struct CachedSizes {
 mut:
+	width_type     []ChildSize
+	height_type    []ChildSize
 	fixed_widths   []int
 	fixed_heights  []int
 	fixed_width    int

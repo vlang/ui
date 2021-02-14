@@ -32,7 +32,7 @@ fn main() {
 		ui.row({
 			alignment: .center
 			spacing: 5
-			margin: ui.Margin{5, 5, 5, 5}
+			margin: 5
 		}, [
 			rect,
 			/*

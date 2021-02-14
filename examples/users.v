@@ -70,13 +70,15 @@ fn main() {
 		height: win_height
 		state: app
 		title: 'V UI Demo'
+		resizable: true
 	}, [
 		ui.row({
 			margin: 10
-			widths: [.25, .75]
-			spacing: 10
+			widths: [.25, .5]
+			// spacing: 10
 		}, [ui.column({
 			spacing: 13
+			widths: [ui.compact]
 		}, [
 			ui.textbox(
 				max_len: 20
