@@ -109,7 +109,7 @@ pub struct TextBoxConfig {
 	border_accentuated bool
 }
 
-fn (mut tb TextBox) init(parent Layout) {
+pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
@@ -182,7 +182,7 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	return tb.width, tb.height
 }
 
-fn (mut tb TextBox) draw() {
+pub fn (mut tb TextBox) draw() {
 	text := *(tb.text)
 	mut placeholder := tb.placeholder
 	if tb.placeholder_bind != 0 {
