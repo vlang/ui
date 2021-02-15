@@ -59,7 +59,8 @@ pub mut:
 	char_fn       KeyFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable bool
+	resizable  bool
+	fullscreen bool
 	// adjusted size generally depending on children
 	adj_width  int
 	adj_height int
