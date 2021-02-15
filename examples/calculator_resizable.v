@@ -43,9 +43,7 @@ fn main() {
 	for op in ops {
 		children << ui.row({
 			spacing: 5
-			// height: 30
 			widths: ui.stretch
-			heights: ui.stretch
 		}, get_row(op))
 	}
 	app.window = ui.window({
@@ -58,7 +56,6 @@ fn main() {
 		ui.column({
 			margin: 5
 			spacing: 5
-			widths: ui.stretch
 			heights: ui.stretch // [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])

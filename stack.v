@@ -214,7 +214,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 	free_width -= c.fixed_width
 	free_height -= c.fixed_height
 	$if cs ? {
-		println(' children_size: ${s.name()} s.widths:  $s.widths s.heights:  $s.heights ')
+		println(' children_size: $s.name() s.widths:  $s.widths s.heights:  $s.heights ')
 		println('    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
 		println('    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
 		println('    type w: $c.width_type h: $c.height_type')
@@ -225,7 +225,6 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 		$if cs ? {
 			println('$i) $child.name()')
 		}
-
 		// if child_w == 0 && c.width_type[i] == .compact {
 		// 	println('WARNINNGS Bad width for $child.name()')
 		// 	// Transform it to a ui.stretch (TODO or something else to get a size)
@@ -235,14 +234,15 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 		match c.width_type[i] {
 			.stretch {
 				if s.direction == .row {
-					weight := c.weight_widths[i] / c.width_mass
-					mcw[i] = int(weight * free_width)
 					$if cs2 ? {
 						println('$i) .stretch width row: weight = ${c.weight_widths[i]} / $c.width_mass')
 					}
-					"Buf with \$if" // 
+					weight := c.weight_widths[i] / c.width_mass
+					mcw[i] = int(weight * free_width)
 				} else {
-					$if cs2 ? {println('$i) .stretch width col:  free_w=$free_width')}
+					$if cs2 ? {
+						println('$i) .stretch width col:  free_w=$free_width')
+					}
 					mcw[i] = free_width
 				}
 			}
@@ -263,16 +263,20 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 		match c.height_type[i] {
 			.stretch {
 				if s.direction == .column {
+					$if cs2 ? {
+						println('$i) .stretch height col: weight = ${c.weight_heights[i]} / $c.height_mass')
+					}
 					weight := c.weight_heights[i] / c.height_mass
-					$if cs2 ? {println('$i) .stretch height col: weight = ${c.weight_heights[i]} / $c.height_mass')}
 					mch[i] = int(weight * free_height)
-					// $if cs ? {println(".Stretch height:  $i) ${child.name()} ${mch[i]}")}
-					"Buf with \$if" // Here only to make $if working
 				} else {
-					$if cs2 ? {println('$i) .stretch height row : $free_width')}
+					$if cs2 ? {
+						println('$i) .stretch height row : $free_width')
+					}
 					mch[i] = free_height
 				}
-				$if cs2 ? {println(".Stretch height:  $i) ${child.name()} ${mch[i]}")}
+				$if cs2 ? {
+					println('.Stretch height:  $i) $child.name() ${mch[i]}')
+				}
 			}
 			.weighted, .weighted_minsize, .propose {
 				weight := c.weight_heights[i] / c.height_mass
@@ -315,27 +319,27 @@ fn (mut s Stack) set_cache_sizes() {
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
 	for i, mut child in s.children {
-		
 		mut cw := s.widths[i] or { 0. }
 		mut ch := s.heights[i] or { 0. }
-		if child is Stack {child.adjustable_size()} 
+		if child is Stack {
+			child.adjustable_size()
+		}
 		// adjusted (natural size) child size
 		adj_child_width, adj_child_height := child.size()
 		// if ! (child is Stack) {
-			if adj_child_width == 0 && cw == 0 {
-				println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
-				s.widths[i] = ui.stretch
-				cw =  ui.stretch
-			}
-			if adj_child_height == 0 && ch == 0 {
-				println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
-				s.heights[i] = ui.stretch
-				ch =  ui.stretch
-			}
+		if adj_child_width == 0 && cw == 0 {
+			// println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
+			s.widths[i] = ui.stretch
+			cw = ui.stretch
+		}
+		if adj_child_height == 0 && ch == 0 {
+			// println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
+			s.heights[i] = ui.stretch
+			ch = ui.stretch
+		}
 		// }
 		// adj_child_width, adj_child_height := child.size()
 		// TODO: here test if widget is zero sized????
-
 		// cw as child width with type f64
 		if cw > 1 {
 			// fixed size ?
@@ -428,7 +432,6 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		}
-
 		// ch as child height with type f64 
 		if ch > 1 {
 			// fixed size ?
@@ -530,17 +533,18 @@ fn (mut s Stack) set_cache_sizes() {
 
 // default values for s.widths and s.heights
 fn (mut s Stack) default_sizes() {
-	st, comp := f32(ui.stretch), f32(ui.compact)
+	st := f32(ui.stretch)
+	// comp := f32(ui.compact)
 	p_equi := f32(1) / f32(s.children.len)
 	if s.direction == .row {
 		mut nb := s.heights.len
 		if nb < s.children.len {
-			for i, child in s.children {
+			for i, _ in s.children {
 				// println("i=$i nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
 				if i < nb {
 					continue
 				}
-				s.heights << if child is Stack || child is Group { st } else { comp }
+				s.heights << st // if child is Stack || child is Group { st } else { comp }
 			}
 		}
 		// println("1) nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
@@ -564,12 +568,12 @@ fn (mut s Stack) default_sizes() {
 	} else {
 		mut nb := s.widths.len
 		if nb < s.children.len {
-			for i, child in s.children {
+			for i, _ in s.children {
 				// println("i=$i nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
 				if i < nb {
 					continue
 				}
-				s.widths << if child is Stack || child is Group { st } else { comp }
+				s.widths << st // if child is Stack || child is Group { st } else { comp }
 			}
 		}
 		// println("3) nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")

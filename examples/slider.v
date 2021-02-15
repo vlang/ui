@@ -1,7 +1,7 @@
 import ui
 
 const (
-	win_width  = 250
+	win_width  = 300
 	win_height = 250
 )
 
@@ -40,7 +40,7 @@ fn main() {
 	}, [
 		ui.row({
 			alignment: .center
-			margin: 5
+			margin: 25
 			spacing: 10
 		}, [
 			app.vert_slider,

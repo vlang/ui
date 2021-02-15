@@ -5,14 +5,14 @@ module ui
 
 import gg
 
-pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) //x_offset int, y_offset int)
+pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int, y_offset int)
 
 pub struct Canvas {
 pub mut:
-	width   int
-	height  int
-	x       int
-	y       int
+	width  int
+	height int
+	x      int
+	y      int
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)

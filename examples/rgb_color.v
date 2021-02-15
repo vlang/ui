@@ -116,14 +116,15 @@ fn main() {
 			spacing: 0
 			margin: ui.Margin{
 				top: 40
-				// left: 20
-				// right: 20
+				left: 20
+				right: 20
 				// bottom: 20
 			}
 			heights: [.3, .1, .5, .1]
-			// alignments: {
-			// 	center: [0, 1, 2, 3]
-			// }
+			widths: ui.stretch
+			alignments: {
+				center: [0, 1, 2, 3]
+			}
 		}, [app.rgb_rectangle, ui.row({
 			margin: 30
 			spacing: 23

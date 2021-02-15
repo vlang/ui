@@ -1,7 +1,7 @@
 import ui
 
 const (
-	win_width  = 380
+	win_width  = 400
 	win_height = 41
 )
 
@@ -39,12 +39,11 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			margin: 5
+			margin: 10
 			spacing: 10
-		}, [
-			ui.label(text: 'Celsius'),
-			app.txt_box_celsius,
-			ui.label(text: 'Fahrenheit'),
+			widths: [.2, .3, .2, .3]
+			heights: 20.
+		}, [ui.label(text: 'Celsius'), app.txt_box_celsius, ui.label(text: 'Fahrenheit'),
 			app.txt_box_fahrenheit,
 		]),
 	])

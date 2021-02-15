@@ -21,15 +21,15 @@ fn (mut s Stack) debug_show_cache(depth int, txt string) {
 	}
 	$if bbd ? {
 		w, h := s.size()
-		println("BB ${s.name()}: ")
-		println("  (s.x:$s.x - s.margin.left:$s.margin.left, s.y:$s.y - s.margin.top:$s.margin.top, w:$w, h:$h)")
-		println("  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:$s.margin.left - s.margin.right:$s.margin.right, h:$h - s.margin.top:$s.margin.top - s.margin.ttom:$s.margin.bottom)")
+		println('BB $s.name(): ')
+		println('  (s.x:$s.x - s.margin.left:$s.margin.left, s.y:$s.y - s.margin.top:$s.margin.top, w:$w, h:$h)')
+		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:$s.margin.left - s.margin.right:$s.margin.right, h:$h - s.margin.top:$s.margin.top - s.margin.ttom:$s.margin.bottom)')
 	}
 	tab := '  '.repeat(depth)
 	println('$tab ($depth) Stack $s.name() with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
 	free_width, free_height := s.free_size()
 	println('$tab   free size: ($free_width, $free_height)')
-	println('$tab   types: (${s.cache.width_type},${s.cache.height_type})')
+	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
 	widths, heights := s.children_sizes()
 	println(txt)
 	for i, mut child in s.children {
