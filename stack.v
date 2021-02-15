@@ -175,7 +175,7 @@ fn (mut s Stack) set_children_sizes() {
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
 		$if scs ? {
-			// Mutable child: println('before propose_size $i) ${child.type_name()} ($w,$h) ')
+			println('before propose_size $i) ${child.type_name()} ($w,$h) ')
 		}
 		if child is Stack || child is Group {
 			w, h = widths[i], heights[i]
@@ -195,7 +195,7 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			// println('propose_size $i) ${child.type_name()} ($w,$h)')
+			println('propose_size $i) ${child.type_name()} ($w,$h)')
 		}
 		child.propose_size(w, h)
 
@@ -320,12 +320,12 @@ fn (mut s Stack) set_cache_sizes() {
 		adj_child_width, adj_child_height := child.size()
 		// if ! (child is Stack) {
 		if adj_child_width == 0 && cw == 0 {
-			//$if ui_stack_c0  ? {println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths')}
+			$if ui_stack_c0  ? {println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths')}
 			s.widths[i] = ui.stretch
 			cw = ui.stretch
 		}
 		if adj_child_height == 0 && ch == 0 {
-			//$if ui_stack_c0  ? { println('WARNINNGS222: Bad compact widths for ${child.type_name()} $s.widths')}
+			$if ui_stack_c0  ? { println('WARNINNGS222: Bad compact widths for ${child.type_name()} $s.widths')}
 			s.heights[i] = ui.stretch
 			ch = ui.stretch
 		}
