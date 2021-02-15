@@ -77,7 +77,7 @@ fn main() {
 			// spacing: 10
 		}, [ui.column({
 			spacing: 13
-			widths: ui.compact
+			widths: ui.stretch
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -112,7 +112,7 @@ fn main() {
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
 			spacing: 65
-			widths: [110., 30.]
+			widths: [ui.compact,30.]
 		}, [ui.button(
 			text: 'Add user'
 			onclick: btn_add_click
@@ -184,10 +184,12 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
+
 fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { //x_offset int, y_offset int) {
 	x_offset, y_offset := c.x, c.y
+	w, h := c.width, c.height 
 	x := x_offset
-	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
+	gg.draw_rect(x - 20, 0, w + 100, h + 100, gx.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
 		// Outer border

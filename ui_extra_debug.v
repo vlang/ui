@@ -19,21 +19,28 @@ fn (mut s Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
 		println('Show cache =>')
 	}
+	$if bbd ? {
+		w, h := s.size()
+		println("BB ${s.name()}: ")
+		println("  (s.x:$s.x - s.margin.left:$s.margin.left, s.y:$s.y - s.margin.top:$s.margin.top, w:$w, h:$h)")
+		println("  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:$s.margin.left - s.margin.right:$s.margin.right, h:$h - s.margin.top:$s.margin.top - s.margin.ttom:$s.margin.bottom)")
+	}
 	tab := '  '.repeat(depth)
 	println('$tab ($depth) Stack $s.name() with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
 	free_width, free_height := s.free_size()
 	println('$tab   free size: ($free_width, $free_height)')
+	println('$tab   types: (${s.cache.width_type},${s.cache.height_type})')
 	widths, heights := s.children_sizes()
 	println(txt)
 	for i, mut child in s.children {
 		if child is Stack {
-			mut tmp := '$tab      ($depth-$i) $child.name() : (${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) and (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
-			tmp += '\n$tab      weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
+			mut tmp := '$tab      ($depth-$i) $child.name() :'
+			tmp += '\n$tab      fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
 			child.debug_show_cache(depth + 1, tmp)
 		} else {
 			w, h := child.size()
-			println('$tab      ($depth-$i) Widget $child.name() size ($w, $h) (${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) and (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})')
+			println('$tab      ($depth-$i) Widget $child.name() size($w, $h) fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight(${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})')
 		}
 	}
 }
