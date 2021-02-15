@@ -140,39 +140,3 @@ pub fn (w &CheckBox) name() string {
 pub fn (w &Slider) name() string {
 	return 'Slider'
 }
-
-// pub fn (w &Widget) get_width() int {
-// 	return if w is Stack {
-// 		w.width
-// 	} else if w is Group {
-// 		w.width
-// 	} else {
-// 		0
-// 	}
-// }
-
-// pub fn (w &Widget) get_height() int {
-// 	return if w is Stack {
-// 		w.height
-// 	} else if w is Group {
-// 		w.height
-// 	} else {
-// 		0
-// 	}
-// }
-
-pub fn set_width(mut w Widget, width int) {
-	if w is Stack {
-		w.width = width
-	} else if w is Group {
-		w.width = width
-	}
-}
-
-pub fn set_height(mut w Widget, height int) {
-	if w is Stack {
-		w.height = height
-	} else if w is Group {
-		w.height = height
-	}
-}

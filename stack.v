@@ -135,6 +135,9 @@ fn (mut s Stack) init(parent Layout) {
 	// Set all children's positions recursively
 	if parent is Window {
 		s.set_children_pos()
+		if parent.fullscreen {
+			s.resize(parent.adj_width, parent.adj_height)
+		}
 	}
 }
 
@@ -184,11 +187,9 @@ fn (mut s Stack) set_children_sizes() {
 				// println("tmp=$tmp tmp2=$tmp2 tmp3=$tmp3 tmp4=$tmp4")
 			}
 			if c.width_type[i] in [.stretch, .weighted] {
-				// println("ICICICCI Width $i) ${child.name()} ${widths[i]}")
 				w = widths[i]
 			}
 			if c.height_type[i] == .stretch || c.weight_heights[i] <= 0 {
-				// println("ICICICCI2 Height $i) ${child.name()} ${heights[i]}")
 				h = heights[i]
 			}
 		}
@@ -225,11 +226,6 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 		$if cs ? {
 			println('$i) $child.name()')
 		}
-		// if child_w == 0 && c.width_type[i] == .compact {
-		// 	println('WARNINNGS Bad width for $child.name()')
-		// 	// Transform it to a ui.stretch (TODO or something else to get a size)
-		// 	c.width_type[i] = .stretch
-		// }
 
 		match c.width_type[i] {
 			.stretch {
@@ -254,11 +250,6 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 				mcw[i] = c.fixed_widths[i]
 			}
 		}
-
-		// if child_h == 0 &&  c.height_type[i] == .compact {
-		// 	println('WARNINNGS Bad heights for $child.name() $s.heights')
-		// 	c.height_type[i] = .stretch
-		// }
 
 		match c.height_type[i] {
 			.stretch {
@@ -328,12 +319,12 @@ fn (mut s Stack) set_cache_sizes() {
 		adj_child_width, adj_child_height := child.size()
 		// if ! (child is Stack) {
 		if adj_child_width == 0 && cw == 0 {
-			// println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
+			$if ui_stack_c0  ? {println('WARNINNGS222: Bad compact widths for ${s.name()} $s.widths')}
 			s.widths[i] = ui.stretch
 			cw = ui.stretch
 		}
 		if adj_child_height == 0 && ch == 0 {
-			// println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')
+			$if ui_stack_c0  ? { println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')}
 			s.heights[i] = ui.stretch
 			ch = ui.stretch
 		}

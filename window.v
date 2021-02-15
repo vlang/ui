@@ -53,11 +53,12 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable bool // currently only for events.on_resized not modify children
+	resizable     bool // currently only for events.on_resized not modify children
+	fullscreen    bool 
 	// adjusted size generally depending on children
 	adj_width  int
 	adj_height int
-	spacing    int // ununsed for Window but required for Layout (Stack precisely)
+	// spacing    int // ununsed for Window but required for Layout (Stack precisely)
 }
 
 pub struct WindowConfig {
@@ -65,6 +66,7 @@ pub:
 	width                 int
 	height                int
 	resizable             bool
+	fullscreen            bool
 	title                 string
 	always_on_top         bool
 	state                 voidptr
@@ -196,11 +198,19 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
 		resizable: cfg.resizable
+		fullscreen: cfg.fullscreen
 		resize_fn: cfg.on_resize
 	}
+
+	if cfg.fullscreen {
+		sc_size := gg.screen_size()
+		window.adj_width, window.adj_height = sc_size.width, sc_size.height
+	}
+
 	gcontext := gg.new_context(
 		width: cfg.width
 		height: cfg.height
+		fullscreen: cfg.fullscreen
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
