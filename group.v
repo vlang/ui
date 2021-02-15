@@ -186,7 +186,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 		child_width, child_height = child.size()
 
 		$if ui_group ? {
-			println('$i $child.name() => child_width, child_height: $child_width, $child_height')
+			println('$i ${child.type_name()} => child_width, child_height: $child_width, $child_height')
 		}
 		// child_width, child_height := child.size()
 		// child_width, child_height := child.adj_width, child.adj_height

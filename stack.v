@@ -101,6 +101,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 	return s
 }
 
+
 fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
@@ -174,7 +175,7 @@ fn (mut s Stack) set_children_sizes() {
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
 		$if scs ? {
-			println('before propose_size $i) $child.name() ($w,$h) ')
+			// Mutable child: println('before propose_size $i) ${child.type_name()} ($w,$h) ')
 		}
 		if child is Stack || child is Group {
 			w, h = widths[i], heights[i]
@@ -194,7 +195,7 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			println('propose_size $i) $child.name() ($w,$h)')
+			// println('propose_size $i) ${child.type_name()} ($w,$h)')
 		}
 		child.propose_size(w, h)
 
@@ -207,7 +208,7 @@ fn (mut s Stack) set_children_sizes() {
 	}
 }
 
-fn (mut s Stack) children_sizes() ([]int, []int) {
+fn (s &Stack) children_sizes() ([]int, []int) {
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 	// free size without margin and spacing
 	mut free_width, mut free_height := s.free_size()
@@ -215,7 +216,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 	free_width -= c.fixed_width
 	free_height -= c.fixed_height
 	$if cs ? {
-		println(' children_size: $s.name() s.widths:  $s.widths s.heights:  $s.heights ')
+		println(' children_size: ${typeof(s).name} s.widths:  $s.widths s.heights:  $s.heights ')
 		println('    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
 		println('    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
 		println('    type w: $c.width_type h: $c.height_type')
@@ -224,7 +225,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 	for i, child in s.children {
 		// child_w, child_h := child.size()
 		$if cs ? {
-			println('$i) $child.name()')
+			println('$i) ${child.type_name()}')
 		}
 
 		match c.width_type[i] {
@@ -266,7 +267,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 					mch[i] = free_height
 				}
 				$if cs2 ? {
-					println('.Stretch height:  $i) $child.name() ${mch[i]}')
+					println('.Stretch height:  $i) ${child.type_name()} ${mch[i]}')
 				}
 			}
 			.weighted, .weighted_minsize, .propose {
@@ -319,12 +320,12 @@ fn (mut s Stack) set_cache_sizes() {
 		adj_child_width, adj_child_height := child.size()
 		// if ! (child is Stack) {
 		if adj_child_width == 0 && cw == 0 {
-			$if ui_stack_c0  ? {println('WARNINNGS222: Bad compact widths for ${s.name()} $s.widths')}
+			//$if ui_stack_c0  ? {println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths')}
 			s.widths[i] = ui.stretch
 			cw = ui.stretch
 		}
 		if adj_child_height == 0 && ch == 0 {
-			$if ui_stack_c0  ? { println('WARNINNGS222: Bad compact widths for $child.name() $s.widths')}
+			//$if ui_stack_c0  ? { println('WARNINNGS222: Bad compact widths for ${child.type_name()} $s.widths')}
 			s.heights[i] = ui.stretch
 			ch = ui.stretch
 		}
@@ -591,7 +592,7 @@ fn (mut s Stack) default_sizes() {
 fn (mut s Stack) adjustable_size() {
 	if s.height == 0 {
 		$if adj ? {
-			print('stack $s.name() ')
+			print('stack ${typeof(s).name} ')
 			C.printf(' %p', s)
 			println(' adjusted height $s.height <- $s.adj_height')
 		}
@@ -599,7 +600,7 @@ fn (mut s Stack) adjustable_size() {
 	}
 	if s.width == 0 {
 		$if adj ? {
-			print('stack $s.name() ')
+			print('stack ${typeof(s).name} ')
 			C.printf(' %p', s)
 			println(' adjusted width $s.width <- $s.adj_width')
 		}
@@ -720,7 +721,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	// TODO: alignment in the direct direction
 	// (for these different cases, container size in the direct direction is more complicated to compute)
 	$if scp ? {
-		println('set_children_pos: $i) $s.name()-$child.name()')
+		println('set_children_pos: $i) ${typeof(s).name}-${child.type_name()}')
 	}
 
 	child_width, child_height := child.size()
