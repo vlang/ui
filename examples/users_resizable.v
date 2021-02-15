@@ -70,14 +70,15 @@ fn main() {
 		height: win_height
 		state: app
 		title: 'V UI Demo'
+		resizable: true
 	}, [
 		ui.row({
 			margin: 10
-			widths: [.25, .75]
+			widths: [200., ui.stretch]
 			// spacing: 10
 		}, [ui.column({
 			spacing: 13
-			widths: ui.compact
+			widths: ui.stretch
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -126,6 +127,8 @@ fn main() {
 				center: [0]
 				right: [1]
 			}
+			widths: [ui.stretch, ui.compact]
+			heights: [ui.stretch, 100.]
 		}, [ui.canvas(
 			width: 400
 			height: 275
@@ -186,8 +189,9 @@ fn btn_add_click(mut app State, x voidptr) {
 
 fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { //x_offset int, y_offset int) {
 	x_offset, y_offset := c.x, c.y
+	w, h := c.width, c.height 
 	x := x_offset
-	gg.draw_rect(x - 20, 0, table_width + 100, 800, gx.white)
+	gg.draw_rect(x - 20, 0, w + 100, h + 100, gx.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
 		// Outer border

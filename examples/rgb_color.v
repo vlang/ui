@@ -121,21 +121,24 @@ fn main() {
 				// bottom: 20
 			}
 			heights: [.3, .1, .5, .1]
-			alignments: {
-				center: [0, 1, 2, 3]
-			}
+			// alignments: {
+			// 	center: [0, 1, 2, 3]
+			// }
 		}, [app.rgb_rectangle, ui.row({
 			margin: 30
 			spacing: 23
+			// widths: ui.stretch
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
 			spacing: 38
+			// widths: ui.compact
 			// alignments: {
 			// 	top: [0,1,2]
 			// }
 		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
 			margin: 30
 			spacing: 54
+			widths: ui.stretch
 		}, [app.r_label, app.g_label, app.b_label])]),
 	])
 	ui.run(app.window)

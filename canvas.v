@@ -5,14 +5,15 @@ module ui
 
 import gg
 
-pub type DrawFn = fn (ctx &gg.Context, state voidptr, x_offset int, y_offset int)
+pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) //x_offset int, y_offset int)
 
 pub struct Canvas {
-mut:
+pub mut:
 	width   int
 	height  int
 	x       int
 	y       int
+mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)
 	gg      &gg.Context = 0
@@ -49,14 +50,8 @@ fn (mut c Canvas) size() (int, int) {
 }
 
 fn (mut c Canvas) propose_size(w int, h int) (int, int) {
-	/*
 	c.width = w
 	c.height = h
-	return w, h
-	*/
-	if c.width == 0 {
-		c.width = w
-	}
 	return c.width, c.height
 }
 
@@ -64,7 +59,7 @@ fn (c &Canvas) draw() {
 	parent := c.parent
 	state := parent.get_state()
 	if c.draw_fn != voidptr(0) {
-		c.draw_fn(c.gg, state, c.x, c.y)
+		c.draw_fn(c.gg, state, c)
 	}
 }
 

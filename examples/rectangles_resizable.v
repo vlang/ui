@@ -34,25 +34,19 @@ fn main() {
 			alignment: .center
 			spacing: 5
 			margin: 5
-			widths: [ui.stretch].repeat(4)
-			heights: [ui.stretch].repeat(4)
-		}, [
-			rect,
-			/*
-			{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
+			widths: ui.stretch
+			heights: ui.stretch
+		}, [rect, /*
+		{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
 			{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
 			{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
-			*/
-			ui.rectangle(
-				color: gx.rgb(100, 255, 100)
-			),
-			ui.rectangle(
-				color: gx.rgb(100, 100, 255)
-			),
-			ui.rectangle(
-				color: gx.rgb(255, 100, 255)
-			),
-		]),
+		*/ ui.rectangle(
+			color: gx.rgb(100, 255, 100)
+		), ui.rectangle(
+			color: gx.rgb(100, 100, 255)
+		), ui.rectangle(
+			color: gx.rgb(255, 100, 255)
+		)]),
 	])
 	app.window = window
 	ui.run(window)

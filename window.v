@@ -337,7 +337,7 @@ fn window_resize(event sapp.Event, ui &UI) {
 		w := int(sapp.width() / scale)
 		h := int(sapp.height() / scale)
 		if child is Stack {
-			child.resize(w,h)
+			child.resize(w, h)
 		}
 	}
 }

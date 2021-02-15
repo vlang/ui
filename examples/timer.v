@@ -51,6 +51,7 @@ fn main() {
 			widths: [.3, .7]
 		}, [ui.column({
 			spacing: 10
+			widths: [ui.stretch].repeat(4)
 		}, [
 			ui.label(text: 'Elapsed Time:'),
 			ui.label(text: 'Duration:'),
