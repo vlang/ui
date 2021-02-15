@@ -20,8 +20,7 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			stretch: true
-			margin: ui.Margin{10, 10, 10, 10}
+			margin: 10
 		}, [
 			ui.button(text: 'Add user'),
 		]),

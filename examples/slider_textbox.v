@@ -1,7 +1,7 @@
 import ui
 
 const (
-	win_width       = 650
+	win_width       = 450
 	win_height      = 450
 	vert_slider_min = -100
 	vert_slider_max = -20
@@ -75,20 +75,12 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			widths: 1.
 			heights: [.1, .9]
-			// spacing: 30
 		}, [ui.row({
-			// align: {
-			// 	center: [0, 1]
-			// }
-			// margin: ui.Margin{50, 115, 30, 30}
-			// spacing: 100
+			margin: ui.Margin{50, 115, 30, 30}
+			spacing: 100
+			heights: 20.
 		}, [app.hor_textbox, app.vert_textbox]), ui.row({
-			// align: {
-			// 	center: [0]
-			// 	top: [1]
-			// }
 			margin: ui.Margin{100, 30, 30, 30}
 			spacing: 30
 		}, [app.hor_slider, app.vert_slider])]),

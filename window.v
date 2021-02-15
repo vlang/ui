@@ -329,6 +329,17 @@ fn window_resize(event sapp.Event, ui &UI) {
 		// app.ui.dpi_scale = s
 		window.resize_fn(w, h, window)
 	}
+	for mut child in window.children {
+		mut scale := sapp.dpi_scale()
+		if scale == 0.0 {
+			scale = 1.0
+		}
+		w := int(sapp.width() / scale)
+		h := int(sapp.height() / scale)
+		if child is Stack {
+			child.resize(w, h)
+		}
+	}
 }
 
 fn window_mouse_move(event sapp.Event, ui &UI) {
