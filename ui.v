@@ -68,7 +68,6 @@ pub interface Widget {
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	is_focused() bool
-	name() string
 }
 
 // pub fn iwidget(x Widget) Widget { return x }

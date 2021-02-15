@@ -38,5 +38,11 @@ pub fn new_window(cfg Config) &WebView {
 }
 
 pub fn (w &WebView) close() {
-	C.darwin_webview_close()
+	$if macos {
+		C.darwin_webview_close()
+	}
+	$if linux {
+		// Untested: not sure!
+		C.gtk_main_quit()
+	}
 }

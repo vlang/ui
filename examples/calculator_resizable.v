@@ -52,6 +52,7 @@ fn main() {
 		title: 'V Calc'
 		state: app
 		resizable: true
+		// fullscreen: true
 	}, [
 		ui.column({
 			margin: 5

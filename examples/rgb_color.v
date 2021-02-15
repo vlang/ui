@@ -128,7 +128,7 @@ fn main() {
 		}, [app.rgb_rectangle, ui.row({
 			margin: 30
 			spacing: 23
-			// widths: ui.stretch
+			heights: ui.compact
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
 			spacing: 38
