@@ -23,6 +23,10 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
+pub type IconifiedFn = fn (state voidptr, window &Window)
+
+pub type RestoredFn = fn (state voidptr, window &Window)
+
 [heap]
 pub struct Window {
 pub mut:
@@ -48,12 +52,14 @@ pub mut:
 	mouse_up_fn   ClickFn
 	scroll_fn     ScrollFn
 	resize_fn     ResizeFn
+	iconified_fn  IconifiedFn
+	restored_fn   RestoredFn
 	key_down_fn   KeyFn
 	char_fn       KeyFn
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable  bool // currently only for events.on_resized not modify children
+	resizable  bool
 	fullscreen bool
 	// adjusted size generally depending on children
 	adj_width  int
@@ -79,6 +85,8 @@ pub:
 	on_char               KeyFn
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
+	on_iconified          IconifiedFn
+	on_restored           RestoredFn
 	on_mouse_move         MouseMoveFn
 	children              []Widget
 	font_path             string
@@ -143,8 +151,14 @@ fn on_event(e &sapp.Event, mut window Window) {
 			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
-		.resized, .restored, .resumed {
+		.resized, .resumed {
 			window_resize(e, window.ui)
+		}
+		.iconified {
+			window_iconified(e, window.ui)
+		}
+		.restored {
+			window_restored(e, window.ui)
 		}
 		else {}
 	}
@@ -200,6 +214,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		resizable: cfg.resizable
 		fullscreen: cfg.fullscreen
 		resize_fn: cfg.on_resize
+		iconified_fn: cfg.on_iconified
+		restored_fn: cfg.on_restored
 	}
 
 	if cfg.fullscreen {
@@ -349,6 +365,20 @@ fn window_resize(event sapp.Event, ui &UI) {
 		if child is Stack {
 			child.resize(w, h)
 		}
+	}
+}
+
+fn window_iconified(event sapp.Event, ui &UI) {
+	window := ui.window
+	if window.iconified_fn != voidptr(0) {
+		window.iconified_fn(window.state, window)
+	}
+}
+
+fn window_restored(event sapp.Event, ui &UI) {
+	window := ui.window
+	if window.restored_fn != voidptr(0) {
+		window.restored_fn(window.state, window)
 	}
 }
 
