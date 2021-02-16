@@ -120,12 +120,22 @@ fn main() {
 				right: 20
 				// bottom: 20
 			}
-			heights: [.3, .1, .5, .1]
+			heights: [.1, .2, .1, .5, .1]
 			widths: ui.stretch
 			alignments: {
 				center: [0, 1, 2, 3]
 			}
-		}, [app.rgb_rectangle, ui.row({
+		}, [
+			ui.button(
+				text: 'Show rgb color'
+				width: 70
+				onclick: fn (app &App, b voidptr) {
+					txt:= 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+					ui.message_box(txt)
+				}
+			),
+			app.rgb_rectangle, 
+			ui.row({
 			margin: 30
 			spacing: 23
 			heights: ui.compact

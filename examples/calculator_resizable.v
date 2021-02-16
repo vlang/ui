@@ -1,5 +1,6 @@
 import ui
 import math
+import os
 
 const (
 	buttons_per_row = 4
@@ -52,7 +53,9 @@ fn main() {
 		title: 'V Calc'
 		state: app
 		resizable: true
-		// fullscreen: true
+		fullscreen: true
+		font_path: os.resource_abs_path(os.join_path('@FILE/../assets/fonts/', 'RobotoMono-Regular.ttf'))
+		
 	}, [
 		ui.column({
 			margin: 5

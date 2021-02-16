@@ -7,6 +7,8 @@ import gg
 import clipboard
 import eventbus
 import sokol.sapp
+import time
+import math
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -58,7 +60,7 @@ pub mut:
 	// adjusted size generally depending on children
 	adj_width  int
 	adj_height int
-	// spacing    int // ununsed for Window but required for Layout (Stack precisely)
+	touch      TouchInfo
 }
 
 pub struct WindowConfig {
@@ -120,13 +122,30 @@ fn on_event(e &sapp.Event, mut window Window) {
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
 	match e.typ {
+		.mouse_down {
+			window_mouse_down(e, window.ui)
+			// touch like
+			window.touch.start = {
+				pos: {
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+		}
 		.mouse_up {
 			// println('click')
 			window_mouse_up(e, window.ui)
 			window_click(e, window.ui)
-		}
-		.mouse_down {
-			window_mouse_down(e, window.ui)
+			// touch-like
+			window.touch.end = {
+				pos: {
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+			window_handle_touches(e, window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -145,6 +164,31 @@ fn on_event(e &sapp.Event, mut window Window) {
 		}
 		.resized, .restored, .resumed {
 			window_resize(e, window.ui)
+		}
+		.touches_began {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.start = {
+					pos: {
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+			}
+		}
+		.touches_ended {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.end = {
+					pos: {
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				window_handle_touches(e,window.ui)
+			}
 		}
 		else {}
 	}
@@ -181,14 +225,28 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		println('end of window()')
 	}
 	*/
+
+	sc_size := gg.screen_size()
+	mut width, mut height := sc_size.width, sc_size.height
+	if !cfg.fullscreen {width, height = cfg.width, cfg.height}
+
+	$if android {
+		mut s := sapp.dpi_scale()
+		if s == 0.0 {
+			s = 1.0
+		}
+		width = int(sapp.width() / s)
+		height= int(sapp.height() / s)
+	}
+
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
-		width: cfg.width
-		height: cfg.height
+		width: width
+		height: height
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
@@ -202,15 +260,14 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		resize_fn: cfg.on_resize
 	}
 
-	if cfg.fullscreen {
-		sc_size := gg.screen_size()
-		window.adj_width, window.adj_height = sc_size.width, sc_size.height
+	mut font_path := if cfg.font_path == '' { gg.system_font_path() } else {cfg.font_path}
+	$if android {
+		font_path = 'fonts/RobotoMono-Regular.ttf'
 	}
 
 	gcontext := gg.new_context(
-		width: cfg.width
-		height: cfg.height
-		fullscreen: cfg.fullscreen
+		width: width
+		height: height
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
@@ -219,7 +276,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
-		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
+		font_path: font_path
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
 		// keydown_fn: window_key_down
@@ -431,6 +488,20 @@ fn window_mouse_up(event sapp.Event, ui &UI) {
 		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
 	} else {
 		window.eventbus.publish(events.on_mouse_up, window, e)
+	}
+}
+
+fn window_handle_touches(event sapp.Event, ui &UI) {
+	window := ui.window
+	 
+	s, e := window.touch.start, window.touch.end
+	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
+	if math.max(adx, ady) < 10 {
+		 // handle_tap()
+
+	} else {
+		// handle_swipe
+
 	}
 }
 

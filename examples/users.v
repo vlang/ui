@@ -70,6 +70,7 @@ fn main() {
 		height: win_height
 		state: app
 		title: 'V UI Demo'
+		bg_color: gx.light_blue
 	}, [
 		ui.row({
 			margin: 10

@@ -15,10 +15,6 @@ enum SelectionDirection {
 }
 
 const (
-	placeholder_cfg               = gx.TextCfg{
-		color: gx.gray
-		align: gx.align_left
-	}
 	text_border_color             = gx.rgb(177, 177, 177)
 	text_inner_border_color       = gx.rgb(240, 240, 240)
 	text_border_accentuated_color = gx.rgb(255, 0, 0)
@@ -54,6 +50,7 @@ pub mut:
 	is_multi         bool
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
+	placeholder_cfg  gx.TextCfg
 	cursor_pos       int
 	is_numeric       bool
 	is_password      bool
@@ -113,6 +110,16 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
+	tb.placeholder_cfg = gx.TextCfg{
+		color: gx.gray
+		align: gx.align_left
+	}
+	$if android {
+		tb.placeholder_cfg = gx.TextCfg{
+			...tb.placeholder_cfg
+			size: 100
+		}
+	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, tb_click, tb)
@@ -198,7 +205,7 @@ fn (mut tb TextBox) draw() {
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
-		tb.ui.gg.draw_text(tb.x + textbox_padding, text_y, placeholder, placeholder_cfg)
+		tb.ui.gg.draw_text(tb.x + textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 	}
 	// Text
 	else {
