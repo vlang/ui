@@ -121,9 +121,11 @@ fn on_event(e &sapp.Event, mut window Window) {
 	}
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
+	// println("on_event: $e.typ")
 	match e.typ {
 		.mouse_down {
 			window_mouse_down(e, window.ui)
+			window_click(e, window.ui)
 			// touch like
 			window.touch.start = {
 				pos: {
@@ -134,9 +136,8 @@ fn on_event(e &sapp.Event, mut window Window) {
 			}
 		}
 		.mouse_up {
-			// println('click')
+			// println('mouseup')
 			window_mouse_up(e, window.ui)
-			window_click(e, window.ui)
 			// touch-like
 			window.touch.end = {
 				pos: {
@@ -201,19 +202,6 @@ fn on_event(e &sapp.Event, mut window Window) {
 
 fn gg_init(window &Window) {
 	for _, child in window.children {
-		// if child is Stack {
-		// }
-		/*
-		match child {
-			Stack {
-				println('column')
-			}
-			TextBox {
-				println('textbox')
-			}
-			else{}
-		}
-		*/
 		child.init(window)
 	}
 }
@@ -497,16 +485,39 @@ fn window_handle_touches(event sapp.Event, ui &UI) {
 	s, e := window.touch.start, window.touch.end
 	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
 	if math.max(adx, ady) < 10 {
-		 // handle_tap()
-
+		window_handle_tap(event,ui)
 	} else {
-		// handle_swipe
-
+		window_handle_swipe(event,ui)
 	}
+}
+
+fn window_handle_tap(event sapp.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
+		window.click_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_click, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_click, window, e)
+	}
+}
+
+fn window_handle_swipe(event sapp.Event, ui &UI) {
+	// window := ui.window
 }
 
 fn window_click(event sapp.Event, ui &UI) {
 	window := ui.window
+	// println("typ $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
