@@ -55,7 +55,6 @@ fn main() {
 		resizable: true
 		fullscreen: true
 		font_path: os.resource_abs_path(os.join_path('@FILE/../assets/fonts/', 'RobotoMono-Regular.ttf'))
-		
 	}, [
 		ui.column({
 			margin: 5

@@ -39,19 +39,19 @@ mut:
 	text_width  int
 	text_height int
 pub mut:
-	state      ButtonState
-	height     int
-	width      int
-	x          int
-	y          int
-	parent     Layout
-	is_focused bool
-	ui         &UI
-	onclick    ButtonClickFn
-	text       string
-	icon_path  string
-	image      gg.Image
-	use_icon   bool
+	state        ButtonState
+	height       int
+	width        int
+	x            int
+	y            int
+	parent       Layout
+	is_focused   bool
+	ui           &UI
+	onclick      ButtonClickFn
+	text         string
+	icon_path    string
+	image        gg.Image
+	use_icon     bool
 	btn_text_cfg gx.TextCfg
 }
 
