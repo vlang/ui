@@ -328,15 +328,15 @@ fn (mut s Stack) set_cache_sizes() {
 			$if ui_stack_c0 ? {
 				println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths')
 			}
-			s.widths[i] = ui.stretch
-			cw = ui.stretch
+			s.widths[i] = stretch
+			cw = stretch
 		}
 		if adj_child_height == 0 && ch == 0 {
 			$if ui_stack_c0 ? {
 				println('WARNINNGS222: Bad compact widths for $child.type_name() $s.widths')
 			}
-			s.heights[i] = ui.stretch
-			ch = ui.stretch
+			s.heights[i] = stretch
+			ch = stretch
 		}
 		// }
 		// adj_child_width, adj_child_height := child.size()
@@ -420,7 +420,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else if cw == ui.stretch {
+		} else if cw == stretch {
 			c.width_type[i] = .stretch
 			c.weight_widths[i] = 1.0
 			c.fixed_widths[i] = adj_child_width
@@ -512,7 +512,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else if ch == ui.stretch {
+		} else if ch == stretch {
 			c.height_type[i] = .stretch
 			c.weight_heights[i] = 1.
 			c.fixed_heights[i] = adj_child_height
@@ -534,7 +534,7 @@ fn (mut s Stack) set_cache_sizes() {
 
 // default values for s.widths and s.heights
 fn (mut s Stack) default_sizes() {
-	st := f32(ui.stretch)
+	st := f32(stretch)
 	// comp := f32(ui.compact)
 	p_equi := f32(1) / f32(s.children.len)
 	if s.direction == .row {
@@ -557,7 +557,7 @@ fn (mut s Stack) default_sizes() {
 					continue
 				}
 				p := if is_children_have_widget(s.children) {
-					ui.compact
+					compact
 				} else {
 					// equispaced
 					p_equi
@@ -586,7 +586,7 @@ fn (mut s Stack) default_sizes() {
 					continue
 				}
 				p := if is_children_have_widget(s.children) {
-					ui.compact
+					compact
 				} else {
 					// equispaced
 					p_equi

@@ -130,25 +130,25 @@ pub enum Cursor {
 	ibeam
 }
 
-fn (mut ui UI) idle_loop() {
+fn (mut gui UI) idle_loop() {
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
 	// the cursor will blink at a rate of 1Hz, even if
 	// there are no other user events.
 	for {
-		if time.ticks() - ui.last_type_time < cursor_show_delay {
+		if time.ticks() - gui.last_type_time < ui.cursor_show_delay {
 			// Always show the cursor if the user is typing right now
-			ui.show_cursor = true
+			gui.show_cursor = true
 		} else {
-			ui.show_cursor = !ui.show_cursor
+			gui.show_cursor = !gui.show_cursor
 		}
-		ui.needs_refresh = true
+		gui.needs_refresh = true
 		$if macos {
-			if ui.gg.native_rendering {
+			if gui.gg.native_rendering {
 				C.darwin_window_refresh()
 			}
 		}
-		ui.ticks = 0
+		gui.ticks = 0
 		// glfw.post_empty_event()
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
@@ -159,7 +159,7 @@ fn (mut ui UI) idle_loop() {
 		// closing event.
 		for i := 0; i < 50; i++ {
 			time.sleep_ms(10)
-			if ui.closed {
+			if gui.closed {
 				return
 			}
 		}
@@ -167,10 +167,10 @@ fn (mut ui UI) idle_loop() {
 }
 
 pub fn run(window &Window) {
-	mut ui := window.ui
-	ui.window = window
-	go ui.idle_loop()
-	ui.gg.run()
+	mut gui := window.ui
+	gui.window = window
+	go gui.idle_loop()
+	gui.gg.run()
 	/*
 	for !window.glfw_obj.should_close() {
 		if window.child_window != 0 {
@@ -195,30 +195,30 @@ pub fn run(window &Window) {
 		}
 		// Triggers a re-render in case any function requests it.
 		// Transitions & animations, for example.
-		if ui.redraw_requested {
-			ui.redraw_requested = false
+		if gui.redraw_requested {
+			gui.redraw_requested = false
 			//glfw.post_empty_event()
 		}
-		ui.gg.render()
+		gui.gg.render()
 	}
-	ui.window.glfw_obj.destroy()
+	gui.window.glfw_obj.destroy()
 	*/
-	ui.closed = true
-	// the ui.idle_loop thread checks every 10 ms if ui.closed is true;
-	// waiting 2x this time should be enough to ensure the ui.loop
+	gui.closed = true
+	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
+	// waiting 2x this time should be enough to ensure the gui.loop
 	// thread will exit before us, without using a waitgroup here too
 	time.sleep_ms(20)
 }
 
-fn (mut ui UI) load_icos() {
-	ui.cb_image = ui.gg.create_image_from_memory(bytes_check_png, bytes_check_png_len)
+fn (mut gui UI) load_icos() {
+	gui.cb_image = gui.gg.create_image_from_memory(bytes_check_png, bytes_check_png_len)
 	$if macos {
-		ui.circle_image = ui.gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
+		gui.circle_image = gui.gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
 	} $else {
-		ui.circle_image = ui.gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
+		gui.circle_image = gui.gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
 	}
-	ui.down_arrow = ui.gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
-	ui.selected_radio_image = ui.gg.create_image_from_memory(bytes_selected_radio_png,
+	gui.down_arrow = gui.gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
+	gui.selected_radio_image = gui.gg.create_image_from_memory(bytes_selected_radio_png,
 		bytes_selected_radio_png_len)
 }
 
