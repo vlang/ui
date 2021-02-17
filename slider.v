@@ -116,10 +116,10 @@ fn (s &Slider) draw_thumb() {
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
 		s.ui.gg.draw_rect(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			thumb_color)
+			ui.thumb_color)
 	} else {
 		s.ui.gg.draw_rect(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			thumb_color)
+			ui.thumb_color)
 	}
 }
 
@@ -149,7 +149,7 @@ fn (mut s Slider) size() (int, int) {
 fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	// TODO: fix
 	$if debug_slider ? {
-		println('slider propose_size: ($s.track_width,$s.track_height) -> ($w, $h) ')
+		println('slider propose_size: ($s.track_width,$s.track_height) -> ($w, $h) | s.orientation: $s.orientation')
 	}
 	if s.orientation == .horizontal {
 		s.track_width = w
@@ -162,7 +162,7 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 
 fn (s &Slider) draw() {
 	// Draw the track
-	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, slider_background_color)
+	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			s.ui.gg.draw_line(s.x + 2, s.y + s.track_height / 2, s.x + s.track_width - 4,
@@ -173,9 +173,9 @@ fn (s &Slider) draw() {
 		}
 	}
 	if !s.is_focused {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_border_color)
 	} else {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, slider_focused_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_focused_background_border_color)
 	}
 	// Draw the thumb
 	s.draw_thumb()
@@ -233,7 +233,8 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 }
 
 fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
-	if int(e.mouse_button) > 0 {
+	if int(e.mouse_button) == 0 {
+		// left: 0, right: 1, middle: 2
 		if s.point_inside_thumb(e.x, e.y) {
 			s.dragging = true
 		}
