@@ -1,6 +1,5 @@
 import ui
 import math
-import os
 
 const (
 	buttons_per_row = 4
@@ -52,7 +51,7 @@ fn main() {
 		height: 210
 		title: 'V Calc'
 		state: app
-		// resizable: true
+		resizable: true
 		mode: .max_size
 		// font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
@@ -62,6 +61,7 @@ fn main() {
 			heights: ui.stretch // [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])
+	// app.text = "size= ${app.window.width} ${app.window.height}"
 	ui.run(app.window)
 }
 

@@ -69,7 +69,7 @@ fn (mut b Button) init(parent Layout) {
 	$if android {
 		b.btn_text_cfg = gx.TextCfg{
 			...btn_text_cfg
-			size: 100
+			size: 500
 		}
 	}
 	mut subscriber := parent.get_subscriber()

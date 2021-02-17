@@ -236,8 +236,26 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
  
 
 	$if android {
-		ws := gg.window_size()
-		width, height = ws.width, ws.height
+		// sc := gg.dpi_scale()
+		// width = int(sapp.width() / sc)
+		// height = int(sapp.height() / sc)
+		// mut s := sapp.dpi_scale()
+		// if s == 0.0 {
+		// 	s = 1.0
+		// }
+		// width = int(sapp.width() / s)
+		// height= int(sapp.height() / s)
+		mut s := gg.dpi_scale()
+		if s == 0.0 {
+			s = 1.0
+		}
+		window_size := gg.window_size()
+		width = int(window_size.width / s)
+		height = int(window_size.height / s)
+
+		// Too large:  
+		// ws := gg.window_size()
+		// width, height = ws.width, ws.height
 	}
 
 	C.printf('window() state =%p \n', cfg.state)

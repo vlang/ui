@@ -140,7 +140,7 @@ fn (mut s Stack) init(parent Layout) {
 		} $else {
 			// println('$parent.width, $parent.height $parent.fullscreen')
 			if parent.mode in [.fullscreen,.max_size] {
-				// println('fullscreen')
+				println('mode: ${parent.mode}')
 				s.resize(parent.width, parent.height)
 			}
 		}
