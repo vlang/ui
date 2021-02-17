@@ -95,7 +95,7 @@ pub fn window2(cfg WindowConfig) &Window {
 */
 fn C.sapp_mouse_locked() bool
 
-fn on_event(e &sapp.Event, mut window Window) {
+fn on_event(e &gg.Event, mut window Window) {
 	/*
 	if false && e.typ != .mouse_move {
 		print('window.on_event() $e.typ ') // code=$e.char_code')
@@ -320,7 +320,7 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 }
 */
 // fn window_resize(glfw_wnd voidptr, width int, height int) {
-fn window_resize(event sapp.Event, ui &UI) {
+fn window_resize(event gg.Event, ui &UI) {
 	mut window := ui.window
 	if !window.resizable {
 		return
@@ -352,7 +352,7 @@ fn window_resize(event sapp.Event, ui &UI) {
 	}
 }
 
-fn window_mouse_move(event sapp.Event, ui &UI) {
+fn window_mouse_move(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
@@ -365,7 +365,7 @@ fn window_mouse_move(event sapp.Event, ui &UI) {
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
-fn window_scroll(event sapp.Event, ui &UI) {
+fn window_scroll(event gg.Event, ui &UI) {
 	window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
@@ -378,7 +378,7 @@ fn window_scroll(event sapp.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_mouse_down(event sapp.Event, ui &UI) {
+fn window_mouse_down(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: .down
@@ -406,7 +406,7 @@ fn window_mouse_down(event sapp.Event, ui &UI) {
 	}
 }
 
-fn window_mouse_up(event sapp.Event, ui &UI) {
+fn window_mouse_up(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: .up
@@ -434,7 +434,7 @@ fn window_mouse_up(event sapp.Event, ui &UI) {
 	}
 }
 
-fn window_click(event sapp.Event, ui &UI) {
+fn window_click(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
@@ -462,7 +462,7 @@ fn window_click(event sapp.Event, ui &UI) {
 	}
 }
 
-fn window_key_down(event sapp.Event, ui &UI) {
+fn window_key_down(event gg.Event, ui &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := ui.window
 	// C.printf('g child=%p\n', child)
@@ -502,7 +502,7 @@ fn window_key_down(event sapp.Event, ui &UI) {
 }
 
 // fn window_char(glfw_wnd voidptr, codepoint u32) {
-fn window_char(event sapp.Event, ui &UI) {
+fn window_char(event gg.Event, ui &UI) {
 	// println('keychar char=$event.char_code')
 	window := ui.window
 	e := KeyEvent{
