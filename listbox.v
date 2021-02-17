@@ -22,11 +22,11 @@ mut:
 	height        int
 	callback      SelectionChangedFn = SelectionChangedFn(0)
 	draw_lines    bool     // Draw a rectangle around every item?
-	col_border    gx.Color = _col_border // Item and list border color
-	col_bkgrnd    gx.Color = _col_list_bkgrnd // ListBox background color
-	col_selected  gx.Color = _col_item_select // Selected item background color
-	item_height   int      = _item_height
-	text_offset_y int      = _text_offset_y
+	col_border    gx.Color = ui._col_border // Item and list border color
+	col_bkgrnd    gx.Color = ui._col_list_bkgrnd // ListBox background color
+	col_selected  gx.Color = ui._col_item_select // Selected item background color
+	item_height   int      = ui._item_height
+	text_offset_y int      = ui._text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 }
 
@@ -72,11 +72,11 @@ pub mut:
 	clbk          SelectionChangedFn = SelectionChangedFn(0)
 	focused       bool
 	draw_lines    bool
-	col_bkgrnd    gx.Color = _col_list_bkgrnd
-	col_selected  gx.Color = _col_item_select
-	col_border    gx.Color = _col_border
-	item_height   int      = _item_height
-	text_offset_y int      = _text_offset_y
+	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
+	col_selected  gx.Color = ui._col_item_select
+	col_border    gx.Color = ui._col_border
+	item_height   int      = ui._item_height
+	text_offset_y int      = ui._text_offset_y
 	id            string
 }
 
@@ -92,7 +92,7 @@ mut:
 
 fn (mut lb ListBox) get_draw_to(text string) int {
 	width := lb.ui.gg.text_width(text)
-	real_w := lb.width - _text_offset_x * 2
+	real_w := lb.width - ui._text_offset_x * 2
 	mut draw_to := text.len
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
@@ -174,7 +174,7 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
 	lb.ui.gg.draw_rect(li.x, li.y, lb.width, lb.item_height, col)
-	lb.ui.gg.draw_text_def(li.x + _text_offset_x, li.y + lb.text_offset_y, li.draw_text)
+	lb.ui.gg.draw_text_def(li.x + ui._text_offset_x, li.y + lb.text_offset_y, li.draw_text)
 	if lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(li.x, li.y, lb.width, lb.item_height, lb.col_border)
 	}
