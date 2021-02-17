@@ -15,20 +15,16 @@ const (
 [heap]
 pub struct ProgressBar {
 pub mut:
-	height     				int
-	width      				int
-	x          				int
-	y          				int
-	parent     				Layout
-	ui         				&UI
-	val        				int
-	min        				int
-	max        				int
-	is_focused 				bool
-	bar_color  				gx.Color
-	bar_border_color 		gx.Color
-	background_color  		gx.Color
-	background_border_color	gx.Color
+	height     int
+	width      int
+	x          int
+	y          int
+	parent     Layout
+	ui         &UI
+	val        int
+	min        int
+	max        int
+	is_focused bool
 }
 
 pub struct ProgressBarConfig {
@@ -37,10 +33,6 @@ pub struct ProgressBarConfig {
 	min    int
 	max    int
 	val    int
-	bar_color  gx.Color = progress_bar_color
-	bar_border_color  gx.Color = progress_bar_border_color
-	background_color  gx.Color = progress_bar_background_color
-	background_border_color  gx.Color = progress_bar_background_border_color
 }
 
 fn (mut pb ProgressBar) init(parent Layout) {
@@ -57,16 +49,6 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		max: c.max
 		val: c.val
 		ui: 0
-		bar_color: c.bar_color
-		bar_border_color:  c.bar_border_color
-		background_color:  c.background_color
-		background_border_color: c.background_border_color
-	}
-	if pb.bar_color != progress_bar_color && pb.bar_border_color == progress_bar_border_color {
-		pb.bar_border_color = pb.bar_color
-	}
-	if pb.background_color != progress_bar_background_color && pb.background_border_color == progress_bar_background_border_color {
-		pb.background_border_color = pb.background_color
 	}
 	return pb
 }
@@ -93,13 +75,13 @@ fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 }
 
 fn (pb &ProgressBar) draw() {
-	// Draw the background
-	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, pb.background_color)
-	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, pb.background_border_color)
+	// Draw the gray background
+	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, progress_bar_background_color)
+	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, progress_bar_background_border_color)
 	// Draw the value
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
-	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, pb.bar_border_color) // gx.Black)
-	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, pb.bar_color) // gx.Black)
+	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, progress_bar_border_color) // gx.Black)
+	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, progress_bar_color) // gx.Black)
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
