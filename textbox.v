@@ -205,7 +205,7 @@ fn (mut tb TextBox) draw() {
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
-		tb.ui.gg.draw_text(tb.x + textb	tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, ui.placeholder_cfg)
+		tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 	}
 	// Text
 	else {
