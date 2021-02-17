@@ -245,13 +245,13 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// }
 		// width = int(sapp.width() / s)
 		// height= int(sapp.height() / s)
-		mut s := gg.dpi_scale()
-		if s == 0.0 {
-			s = 1.0
-		}
+		// mut s := gg.dpi_scale()
+		// if s == 0.0 {
+		// 	s = 1.0
+		// }
 		window_size := gg.window_size()
-		width = int(window_size.width / s)
-		height = int(window_size.height / s)
+		width = window_size.width
+		height = window_size.height
 
 		// Too large:  
 		// ws := gg.window_size()

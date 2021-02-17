@@ -135,14 +135,12 @@ fn (mut s Stack) init(parent Layout) {
 	// Set all children's positions recursively
 	if parent is Window {
 		s.set_children_pos()
+		if parent.mode in [.fullscreen,.max_size] {
+			println('mode: ${parent.mode}')
+			s.resize(parent.width, parent.height)
+		}
 		$if android {
 			s.resize(parent.width, parent.height)
-		} $else {
-			// println('$parent.width, $parent.height $parent.fullscreen')
-			if parent.mode in [.fullscreen,.max_size] {
-				println('mode: ${parent.mode}')
-				s.resize(parent.width, parent.height)
-			}
 		}
 	}
 }
