@@ -56,7 +56,7 @@ pub mut:
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable  bool // currently only for events.on_resized not modify children
-	fullscreen bool
+	mode       WindowSizeType
 	// adjusted size generally depending on children
 	adj_width  int
 	adj_height int
@@ -67,8 +67,7 @@ pub struct WindowConfig {
 pub:
 	width                 int
 	height                int
-	resizable             bool
-	fullscreen            bool
+	font_path             string
 	title                 string
 	always_on_top         bool
 	state                 voidptr
@@ -83,11 +82,10 @@ pub:
 	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
 	children              []Widget
-	font_path             string
 	custom_bold_font_path string
 	native_rendering      bool
-	// pub mut:
-	// parent_window &Window
+	resizable             bool
+	mode                  WindowSizeType
 }
 
 /*
@@ -215,18 +213,31 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	*/
 
 	sc_size := gg.screen_size()
-	mut width, mut height := sc_size.width, sc_size.height
-	if !cfg.fullscreen {
-		width, height = cfg.width, cfg.height
+	mut width, mut height := cfg.width, cfg.height
+	mut resizable := cfg.resizable
+	match cfg.mode {
+		.max_size {
+			if sc_size.width > 0 {
+				width, height = sc_size.width, sc_size.height
+				resizable = true
+			} 
+		}
+		.fullscreen {
+			if sc_size.width > 0 {
+				width, height = sc_size.width, sc_size.height
+			} 
+		}
+		.resizable {
+			resizable = true
+		} else {
+
+		}
 	}
+ 
 
 	$if android {
-		mut s := sapp.dpi_scale()
-		if s == 0.0 {
-			s = 1.0
-		}
-		width = int(sapp.width() / s)
-		height = int(sapp.height() / s)
+		ws := gg.window_size()
+		width, height = ws.width, ws.height
 	}
 
 	C.printf('window() state =%p \n', cfg.state)
@@ -245,8 +256,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
-		resizable: cfg.resizable
-		fullscreen: cfg.fullscreen
+		resizable: resizable
+		mode: cfg.mode
 		resize_fn: cfg.on_resize
 	}
 
@@ -261,7 +272,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
-		resizable: cfg.resizable
+		resizable: resizable
+		fullscreen: cfg.mode == .fullscreen
 		frame_fn: if cfg.native_rendering { native_frame } else { frame }
 		// native_frame_fn: native_frame
 		event_fn: on_event

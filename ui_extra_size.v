@@ -5,12 +5,12 @@ pub const (
 	compact = 0. // from parent
 )
 
-// enum WindowSizeType {
-// 	normal
-// 	resizable
-// 	maxsize
-// 	fullscreen
-// }
+enum WindowSizeType {
+	normal_size
+	resizable
+	max_size
+	fullscreen
+}
 
 pub type Size = []f64 | f64
 

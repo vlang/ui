@@ -138,9 +138,9 @@ fn (mut s Stack) init(parent Layout) {
 		$if android {
 			s.resize(parent.width, parent.height)
 		} $else {
-			println('$parent.width, $parent.height $parent.fullscreen')
-			if parent.fullscreen {
-				println('fullscreen')
+			// println('$parent.width, $parent.height $parent.fullscreen')
+			if parent.mode in [.fullscreen,.max_size] {
+				// println('fullscreen')
 				s.resize(parent.width, parent.height)
 			}
 		}
