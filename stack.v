@@ -60,7 +60,6 @@ mut:
 	width                int
 	height               int
 	parent               Layout
-	root                 &Window = voidptr(0)
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
@@ -109,7 +108,6 @@ fn (mut s Stack) init(parent Layout) {
 	s.init_size()
 
 	if parent is Window {
-		s.root = parent
 		ui.window = parent
 		// Only once for all children recursively
 		// 1) find all the adjusted sizes
@@ -121,8 +119,6 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		s.set_children_sizes()
-	} else if parent is Stack {
-		s.root = parent.root
 	}
 	// All sizes have to be set before positionning widgets
 	// Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
@@ -852,14 +848,13 @@ fn (s &Stack) is_focused() bool {
 fn (mut s Stack) resize(width int, height int) {
 	// 
 	println("Stack resize $width, $height")
-	mut window := s.root
 	mut sc := gg.dpi_scale()
 	if sc == 0.0 {
 		sc = 1.0
 	}
 	// 
 	println("scale: $sc")
-
+	mut window := s.ui.window
 	window.width = width
 	window.height = height
 

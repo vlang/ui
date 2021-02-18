@@ -27,7 +27,6 @@ pub mut:
 	parent     Layout
 	is_focused bool
 	is_checked bool
-	root       &Window = voidptr(0)
 	ui         &UI
 	text_cfg   gx.TextCfg
 	// selected_value string

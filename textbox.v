@@ -117,7 +117,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	$if android {
 		tb.placeholder_cfg = gx.TextCfg{
 			...tb.placeholder_cfg
-			size: 200
+			size: 100
 		}
 	}
 	// return widget

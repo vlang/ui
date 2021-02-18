@@ -42,7 +42,6 @@ pub mut:
 	y            int
 	parent       Layout
 	is_focused   bool
-	root         &Window = voidptr(0)
 	ui           &UI
 	onclick      ButtonClickFn
 	text         string

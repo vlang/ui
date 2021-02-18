@@ -30,7 +30,6 @@ pub mut:
 	parent           Layout
 	is_focused       bool
 	checked          bool
-	root             &Window = voidptr(0)
 	ui               &UI
 	on_check_changed CheckChangedFn
 	text             string

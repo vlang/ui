@@ -12,7 +12,6 @@ mut:
 	parent Layout
 	x      int
 	y      int
-	root   &Window = voidptr(0)
 	ui     &UI
 	text_cfg gx.TextCfg
 }
