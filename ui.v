@@ -213,7 +213,8 @@ pub fn run(window &Window) {
 fn (mut gui UI) load_icos() {
 	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
 	$if macos {
-		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0], bytes_darwin_circle_png.len)
+		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
+			bytes_darwin_circle_png.len)
 	} $else {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
 	}
