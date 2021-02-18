@@ -10,10 +10,6 @@ import os
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
 	button_border_color       = gx.rgb(200, 200, 200)
-	btn_text_cfg              = gx.TextCfg{ // color: gx.white, {
-		color: gx.rgb(38, 38, 38)
-		align: gx.align_left
-	}
 	button_horizontal_padding = 26
 	button_vertical_padding   = 8
 )
@@ -46,13 +42,14 @@ pub mut:
 	y            int
 	parent       Layout
 	is_focused   bool
+	root         &Window = voidptr(0)
 	ui           &UI
 	onclick      ButtonClickFn
 	text         string
 	icon_path    string
 	image        gg.Image
 	use_icon     bool
-	btn_text_cfg gx.TextCfg
+	text_cfg     gx.TextCfg
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -62,16 +59,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	b.btn_text_cfg = gx.TextCfg{
-		color: gx.rgb(38, 38, 38)
-		align: gx.align_left
-	}
-	$if android {
-		b.btn_text_cfg = gx.TextCfg{
-			...btn_text_cfg
-			size: 500
-		}
-	}
+	b.text_cfg = ui.window.text_cfg
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -162,7 +150,7 @@ fn (mut b Button) draw() {
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
-		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, ui.btn_text_cfg)
+		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }

@@ -27,7 +27,9 @@ pub mut:
 	parent     Layout
 	is_focused bool
 	is_checked bool
+	root       &Window = voidptr(0)
 	ui         &UI
+	text_cfg   gx.TextCfg
 	// selected_value string
 	// onclick    RadioClickFn
 }
@@ -55,6 +57,7 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
+	r.text_cfg = ui.window.text_cfg
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -99,7 +102,7 @@ fn (mut r Radio) draw() {
 	// Title
 	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 		10, default_window_color)
-	r.ui.gg.draw_text_def(r.x + check_mark_size + 3, r.y - 7, r.title)
+	r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -110,7 +113,7 @@ fn (mut r Radio) draw() {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, btn_text_cfg)
+		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg)
 	}
 }
 

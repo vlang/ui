@@ -30,10 +30,12 @@ pub mut:
 	parent           Layout
 	is_focused       bool
 	checked          bool
+	root             &Window = voidptr(0)
 	ui               &UI
 	on_check_changed CheckChangedFn
 	text             string
 	disabled         bool
+	text_cfg         gx.TextCfg
 }
 
 pub struct CheckBoxConfig {
@@ -48,9 +50,9 @@ pub struct CheckBoxConfig {
 
 fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
-	pui := parent.get_ui()
-	cb.ui = pui
+	cb.ui = parent.get_ui()
 	cb.width = cb.ui.gg.text_width(cb.text) + 5 + ui.check_mark_size
+	cb.text_cfg = cb.ui.window.text_cfg
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -113,7 +115,7 @@ fn (mut cb CheckBox) draw() {
 		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
+	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {

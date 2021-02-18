@@ -61,6 +61,7 @@ pub mut:
 	adj_width  int
 	adj_height int
 	touch      TouchInfo
+	text_cfg   gx.TextCfg
 }
 
 pub struct WindowConfig {
@@ -212,9 +213,10 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	}
 	*/
 
-	sc_size := gg.screen_size()
 	mut width, mut height := cfg.width, cfg.height
 	mut resizable := cfg.resizable
+	 
+	sc_size := gg.screen_size()
 	match cfg.mode {
 		.max_size {
 			if sc_size.width > 0 {
@@ -233,31 +235,19 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 
 		}
 	}
- 
 
-	$if android {
-		// sc := gg.dpi_scale()
-		// width = int(sapp.width() / sc)
-		// height = int(sapp.height() / sc)
-		// mut s := sapp.dpi_scale()
-		// if s == 0.0 {
-		// 	s = 1.0
-		// }
-		// width = int(sapp.width() / s)
-		// height= int(sapp.height() / s)
-		// mut s := gg.dpi_scale()
-		// if s == 0.0 {
-		// 	s = 1.0
-		// }
-		window_size := gg.window_size()
-		width = window_size.width
-		height = window_size.height
-
-		// Too large:  
-		// ws := gg.window_size()
-		// width, height = ws.width, ws.height
+	// default text_cfg
+	mut text_cfg := gx.TextCfg{
+		color: gx.rgb(38, 38, 38)
+		align: gx.align_left
 	}
-
+	$if android {
+		text_cfg = gx.TextCfg{
+			...text_cfg
+			size: 100
+		}
+	}
+ 
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
@@ -277,11 +267,14 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		resizable: resizable
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
+		text_cfg: text_cfg
 	}
 
-	mut font_path := if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
+	mut font_path := ''
 	$if android {
 		font_path = 'fonts/RobotoMono-Regular.ttf'
+	} $else  {
+		font_path = if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 	}
 
 	gcontext := gg.new_context(

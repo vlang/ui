@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-import sokol.sapp
+import gg
 
 enum Direction {
 	row
@@ -110,6 +110,7 @@ fn (mut s Stack) init(parent Layout) {
 
 	if parent is Window {
 		s.root = parent
+		ui.window = parent
 		// Only once for all children recursively
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
@@ -136,11 +137,14 @@ fn (mut s Stack) init(parent Layout) {
 	if parent is Window {
 		s.set_children_pos()
 		if parent.mode in [.fullscreen,.max_size] {
-			println('mode: ${parent.mode}')
+			// println('mode: ${parent.mode}')
 			s.resize(parent.width, parent.height)
 		}
 		$if android {
-			s.resize(parent.width, parent.height)
+			window_size := gg.window_size()
+			w := window_size.width
+			h := window_size.height
+			s.resize(w, h)
 		}
 	}
 }
@@ -846,13 +850,15 @@ fn (s &Stack) is_focused() bool {
 }
 
 fn (mut s Stack) resize(width int, height int) {
-	// println("Stack resize $width, $height")
+	// 
+	println("Stack resize $width, $height")
 	mut window := s.root
-	mut sc := sapp.dpi_scale()
+	mut sc := gg.dpi_scale()
 	if sc == 0.0 {
 		sc = 1.0
 	}
-	// println("scale: $sc")
+	// 
+	println("scale: $sc")
 
 	window.width = width
 	window.height = height

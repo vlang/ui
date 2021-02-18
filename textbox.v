@@ -230,7 +230,7 @@ fn (mut tb TextBox) draw() {
 					break
 				}
 			}
-			tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 		} else {
 			if tb.is_password {
 				/*
@@ -239,10 +239,10 @@ fn (mut tb TextBox) draw() {
 					//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
 				}
 				*/
-				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
-					text.len))
+				tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
+					text.len), tb.placeholder_cfg)
 			} else {
-				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text)
+				tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 			}
 		}
 	}
