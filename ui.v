@@ -211,15 +211,15 @@ pub fn run(window &Window) {
 }
 
 fn (mut gui UI) load_icos() {
-	gui.cb_image = gui.gg.create_image_from_memory(bytes_check_png, bytes_check_png_len)
+	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
 	$if macos {
-		gui.circle_image = gui.gg.create_image_from_memory(bytes_darwin_circle_png, bytes_darwin_circle_png_len)
+		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0], bytes_darwin_circle_png.len)
 	} $else {
-		gui.circle_image = gui.gg.create_image_from_memory(bytes_circle_png, bytes_circle_png_len)
+		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
 	}
-	gui.down_arrow = gui.gg.create_image_from_memory(bytes_arrow_png, bytes_arrow_png_len)
-	gui.selected_radio_image = gui.gg.create_image_from_memory(bytes_selected_radio_png,
-		bytes_selected_radio_png_len)
+	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
+	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
+		bytes_selected_radio_png.len)
 }
 
 pub fn open_url(url string) {
