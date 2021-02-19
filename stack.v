@@ -119,10 +119,12 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		s.set_children_sizes()
+		
+		// All sizes have to be set before positionning widgets
+		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
+		s.set_pos(s.x, s.y)
 	}
-	// All sizes have to be set before positionning widgets
-	// Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
-	s.set_pos(s.x, s.y)
+	
 
 	// Init all children recursively
 	for mut child in s.children {
@@ -132,15 +134,16 @@ fn (mut s Stack) init(parent Layout) {
 	// Set all children's positions recursively
 	if parent is Window {
 		s.set_children_pos()
-		if parent.mode in [.fullscreen,.max_size] {
-			// println('mode: ${parent.mode}')
-			s.resize(parent.width, parent.height)
-		}
 		$if android {
 			window_size := gg.window_size()
 			w := window_size.width
 			h := window_size.height
 			s.resize(w, h)
+		} $else {
+			if parent.mode in [.fullscreen,.max_size] {
+			// println('mode: ${parent.mode}')
+			s.resize(parent.width, parent.height)
+		}
 		}
 	}
 }
@@ -846,18 +849,7 @@ fn (s &Stack) is_focused() bool {
 }
 
 fn (mut s Stack) resize(width int, height int) {
-	// 
-	println("Stack resize $width, $height")
-	mut sc := gg.dpi_scale()
-	if sc == 0.0 {
-		sc = 1.0
-	}
-	// 
-	println("scale: $sc")
-	mut window := s.ui.window
-	window.width = width
-	window.height = height
-
+	// println("Stack resize $width, $height")
 	s.init_size()
 	s.set_children_sizes()
 	s.set_children_pos()

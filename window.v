@@ -6,7 +6,6 @@ import gx
 import gg
 import clipboard
 import eventbus
-import sokol.sapp
 import time
 import math
 
@@ -215,7 +214,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 
 	mut width, mut height := cfg.width, cfg.height
 	mut resizable := cfg.resizable
-	 
+	mut fullscreen := false
+
 	sc_size := gg.screen_size()
 	match cfg.mode {
 		.max_size {
@@ -225,9 +225,10 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 			} 
 		}
 		.fullscreen {
-			if sc_size.width > 0 {
+			if sc_size.width > 10 {
 				width, height = sc_size.width, sc_size.height
 			} 
+			fullscreen = true
 		}
 		.resizable {
 			resizable = true
@@ -246,6 +247,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 			...text_cfg
 			size: 100
 		}
+		fullscreen = true
 	}
  
 	C.printf('window() state =%p \n', cfg.state)
@@ -284,7 +286,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		create_window: true
 		window_title: cfg.title
 		resizable: resizable
-		fullscreen: cfg.mode == .fullscreen
+		fullscreen: fullscreen
 		frame_fn: if cfg.native_rendering { native_frame } else { frame }
 		// native_frame_fn: native_frame
 		event_fn: on_event
@@ -398,24 +400,13 @@ fn window_resize(event gg.Event, ui &UI) {
 	// println('window resize h=$event.window_height')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
+	win_size := gg.window_size()
+	w := win_size.width
+	h := win_size.height
 	if window.resize_fn != voidptr(0) {
-		mut scale := sapp.dpi_scale()
-		if scale == 0.0 {
-			scale = 1.0
-		}
-		w := int(sapp.width() / scale)
-		h := int(sapp.height() / scale)
-		// m := f32(min(w, h))
-		// app.ui.dpi_scale = s
 		window.resize_fn(w, h, window)
 	}
 	for mut child in window.children {
-		mut scale := sapp.dpi_scale()
-		if scale == 0.0 {
-			scale = 1.0
-		}
-		w := int(sapp.width() / scale)
-		h := int(sapp.height() / scale)
 		if child is Stack {
 			child.resize(w, h)
 		}
@@ -865,15 +856,7 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 }
 
 fn (w &Window) size() (int, int) {
-	mut width := w.width
-	mut height := w.height
-	// if w.width < w.adj_width {
-	// 	width = w.adj_width
-	// }
-	// if w.height < w.adj_height {
-	// 	height = w.adj_height
-	// }
-	return width, height
+	return w.width, w.height
 }
 
 fn (mut window Window) resize(width int, height int) {

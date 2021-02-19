@@ -25,7 +25,7 @@ fn main() {
 		height: win_height
 		title: 'V UI: Rectangles'
 		state: app
-		mode: .max_size
+		mode: .fullscreen
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
 		//}

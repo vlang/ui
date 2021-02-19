@@ -111,6 +111,7 @@ fn main() {
 		height: win_height
 		title: 'RGB color displayed in rectangle'
 		state: app
+		mode: .resizable
 	}, [
 		ui.column({
 			spacing: 0
