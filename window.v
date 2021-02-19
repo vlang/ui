@@ -61,6 +61,7 @@ pub mut:
 	adj_height int
 	touch      TouchInfo
 	text_cfg   gx.TextCfg
+	text_scale f32
 }
 
 pub struct WindowConfig {

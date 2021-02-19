@@ -3,27 +3,28 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
-
 [heap]
 pub struct Label {
 mut:
-	text   string
-	parent Layout
-	x      int
-	y      int
-	ui     &UI
-	text_cfg gx.TextCfg
+	text     string
+	parent   Layout
+	x        int
+	y        int
+	ui       &UI
+	text_cfg TextCfg
 }
 
 pub struct LabelConfig {
-	text string
+	text     string
+	text_cfg TextCfg
 }
 
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
-	l.text_cfg = ui.window.text_cfg
+	if l.text_cfg.is_empty() {
+		l.text_cfg = ui.window.text_cfg
+	}
 }
 
 pub fn label(c LabelConfig) &Label {
@@ -65,7 +66,7 @@ fn (mut l Label) draw() {
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		// Draw the text at l.x and l.y + line height * current line
-		l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg)
+		l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
 	}
 }
 

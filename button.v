@@ -27,6 +27,7 @@ pub struct ButtonConfig {
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
+	text_cfg  TextCfg
 }
 
 [heap]
@@ -48,7 +49,7 @@ pub mut:
 	icon_path    string
 	image        gg.Image
 	use_icon     bool
-	text_cfg     gx.TextCfg
+	text_cfg     TextCfg
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -58,7 +59,9 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	b.text_cfg = ui.window.text_cfg
+	if b.text_cfg.is_empty() {
+		b.text_cfg = ui.window.text_cfg
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -72,6 +75,7 @@ pub fn button(c ButtonConfig) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		onclick: c.onclick
+		text_cfg: c.text_cfg
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -149,7 +153,7 @@ fn (mut b Button) draw() {
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
-		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg)
+		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }

@@ -28,17 +28,18 @@ pub mut:
 	is_focused bool
 	is_checked bool
 	ui         &UI
-	text_cfg   gx.TextCfg
+	text_cfg   TextCfg
 	// selected_value string
 	// onclick    RadioClickFn
 }
 
 pub struct RadioConfig {
 	// onclick    RadioClickFn
-	values []string
-	title  string
-	width  int
-	ref    &Radio = voidptr(0)
+	values   []string
+	title    string
+	width    int
+	ref      &Radio = voidptr(0)
+	text_cfg TextCfg
 }
 
 fn (mut r Radio) init(parent Layout) {
@@ -56,7 +57,9 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
-	r.text_cfg = ui.window.text_cfg
+	if r.text_cfg.is_empty() {
+		r.text_cfg = ui.window.text_cfg
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -67,6 +70,7 @@ pub fn radio(c RadioConfig) &Radio {
 		values: c.values
 		title: c.title
 		width: c.width
+		text_cfg: c.text_cfg
 		ui: 0
 		// onclick: c.onclick
 	}
@@ -101,7 +105,7 @@ fn (mut r Radio) draw() {
 	// Title
 	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 		10, default_window_color)
-	r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg)
+	r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -112,7 +116,8 @@ fn (mut r Radio) draw() {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg)
+		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg()
+		)
 	}
 }
 
