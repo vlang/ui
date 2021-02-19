@@ -259,8 +259,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		bg_color: cfg.bg_color
 		width: width
 		height: height
-		orig_width: width
-		orig_height: height
+		orig_width: 800
+		orig_height: 600
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
@@ -404,24 +404,18 @@ fn window_resize(event gg.Event, ui &UI) {
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 	
-	win_size := gg.window_size()
-	w := win_size.width
-	h := win_size.height
+	// println("")
+	// win_size := gg.window_size()
+	// w := win_size.width
+	// h := win_size.height
 	
+	// window.update_text_scale(w, h)
 
-	window.text_scale = f64(w) / f64(window.orig_width)
-	if window.text_scale <= 0 {
-		window.text_scale = 1
-	}
 	if window.resize_fn != voidptr(0) {
-		window.resize_fn(w, h, window)
-	}
-	for mut child in window.children {
-		if child is Stack {
-			child.resize(w, h)
-		}
+		window.resize_fn(event.window_width, event.window_height, window)
 	}
 }
+
 
 fn window_mouse_move(event gg.Event, ui &UI) {
 	window := ui.window
@@ -635,6 +629,15 @@ fn window_char(event gg.Event, ui &UI) {
 		child.key_down()
 	}
 	*/
+}
+
+fn (mut w Window) update_text_scale() {
+	w.text_scale = f64(w.width) / f64(w.orig_width)
+	print("update: width=$w.width orig_width=$w.orig_width")
+	if w.text_scale <= 0 {
+		w.text_scale = 1
+	}
+	println("w.text_scale=$w.text_scale")
 }
 
 fn (mut w Window) focus_next() {
@@ -873,6 +876,11 @@ fn (mut window Window) resize(width int, height int) {
 	window.width = width
 	window.height = height
 	window.ui.gg.resize(width, height)
+	for mut child in window.children {
+		if child is Stack {
+			child.resize(width, height)
+		}
+	}
 }
 
 fn (window &Window) unfocus_all() {
