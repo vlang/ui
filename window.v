@@ -57,11 +57,11 @@ pub mut:
 	resizable  bool // currently only for events.on_resized not modify children
 	mode       WindowSizeType
 	// adjusted size generally depending on children
-	adj_width  int
-	adj_height int
+	orig_width  int
+	orig_height int
 	touch      TouchInfo
 	text_cfg   gx.TextCfg
-	text_scale f32
+	text_scale f64 = 1.0
 }
 
 pub struct WindowConfig {
@@ -259,6 +259,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		bg_color: cfg.bg_color
 		width: width
 		height: height
+		orig_width: width
+		orig_height: height
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
@@ -401,9 +403,16 @@ fn window_resize(event gg.Event, ui &UI) {
 	// println('window resize h=$event.window_height')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
+	
 	win_size := gg.window_size()
 	w := win_size.width
 	h := win_size.height
+	
+
+	window.text_scale = f64(w) / f64(window.orig_width)
+	if window.text_scale <= 0 {
+		window.text_scale = 1
+	}
 	if window.resize_fn != voidptr(0) {
 		window.resize_fn(w, h, window)
 	}

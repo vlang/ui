@@ -50,6 +50,7 @@ pub mut:
 	image        gg.Image
 	use_icon     bool
 	text_cfg     TextCfg
+	fixed_text   bool
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -153,7 +154,8 @@ fn (mut b Button) draw() {
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
-		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
+		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
+		b.draw_text(bcenter_x - w2, y, b.text)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }
@@ -166,8 +168,8 @@ fn (mut b Button) set_text_size() {
 	// if b.text_width == 0 || b.text_height == 0 {
 	else if b.ui != 0 {
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		b.text_width = int(f32(b.text_width) * b.ui.gg.scale) // * b.ui.gg.scale)
-		b.text_height = int(f32(b.text_height) * b.ui.gg.scale) // * b.ui.gg.scale)
+		b.text_width = int(f32(b.text_width) * b.ui.gg.scale * b.ui.gg.scale)
+		b.text_height = int(f32(b.text_height) * b.ui.gg.scale * b.ui.gg.scale)
 		if b.width == 0 {
 			b.width = b.text_width + ui.button_horizontal_padding
 		}

@@ -63,7 +63,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 		C.printf(' %p', parent)
 		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
 	} else if parent is Window {
-		println('	parent: Window => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) ')
+		println('	parent: Window => size ($parent.width, $parent.height)  orig: ($parent.orig_width, $parent.orig_height) ')
 	}
 	for i, child in s.children {
 		w, h := child.size()

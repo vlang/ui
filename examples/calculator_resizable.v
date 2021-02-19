@@ -1,5 +1,6 @@
 import ui
 import math
+import gx
 
 const (
 	buttons_per_row = 4
@@ -205,7 +206,7 @@ fn get_row(ops []string) []ui.Widget {
 			onclick: btn_click
 			width: bwidth
 			height: bheight
-			text_cfg: 30
+			text_cfg: gx.TextCfg{size: 16}
 		)
 	}
 	return children

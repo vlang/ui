@@ -530,6 +530,10 @@ fn (mut s Stack) set_cache_sizes() {
 		if child is Stack {
 			child.set_cache_sizes()
 		}
+		if child is Button {
+			child.fixed_text = (c.width_type[i] in [.fixed, .compact]) || (c.height_type[i] in [.fixed, .compact])
+			println("Button fixed_text: $child.fixed_text ${int(c.width_type[i])} ${int(c.height_type[i])}" )
+		}
 	}
 }
 
