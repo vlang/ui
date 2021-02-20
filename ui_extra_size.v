@@ -16,12 +16,15 @@ pub type Size = []f64 | f64
 
 fn (size Size) as_f32_array(len int) []f32 {
 	mut res := []f32{}
-	if size is []f64 {
-		for _, v in size {
-			res << f32(v)
+	match size { 
+		[]f64 {
+			for _, v in size {
+				res << f32(v)
+			}
 		}
-	} else if size is f64 {
-		res = [f32(size)].repeat(len)
+		f64 {
+			res = [f32(size)].repeat(len)
+		}
 	}
 	return res
 }
@@ -60,12 +63,13 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 pub type Spacing = []int | int
 
 fn (i Spacing) as_int_array(len int) []int {
-	return if i is []int {
-		i.clone()
-	} else if i is int {
-		[i].repeat(len)
-	} else {
-		[]int{}
+	return match i { 
+		[]int {
+			i.clone()
+		}
+		int {
+			[i].repeat(len)
+		}
 	}
 }
 
