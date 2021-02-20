@@ -59,7 +59,7 @@ fn main() {
 		ui.column({
 			margin: 5
 			spacing: 5
-			heights: ui.stretch // [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			heights: ui.stretch // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])
 	// app.text = "size= ${app.window.width} ${app.window.height}"

@@ -50,7 +50,8 @@ pub mut:
 	is_multi         bool
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
-	placeholder_cfg  gx.TextCfg
+	placeholder_cfg  TextCfg
+	fixed_placeholder bool
 	cursor_pos       int
 	is_numeric       bool
 	is_password      bool
@@ -88,6 +89,7 @@ pub struct TextBoxConfig {
 	val              int
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
+	placeholder_cfg  TextCfg
 	max_len          int
 	is_numeric       bool
 	is_password      bool
@@ -110,15 +112,8 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	tb.placeholder_cfg = gx.TextCfg{
-		color: gx.gray
-		align: gx.align_left
-	}
-	$if android {
-		tb.placeholder_cfg = gx.TextCfg{
-			...tb.placeholder_cfg
-			size: 100
-		}
+	if tb.placeholder_cfg.is_empty() {
+		tb.placeholder_cfg = ui.window.text_cfg
 	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
@@ -136,6 +131,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		// sel_start: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
+		placeholder_cfg: c.placeholder_cfg
 		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
 		is_numeric: c.is_numeric
 		is_password: c.is_password
@@ -205,7 +201,8 @@ fn (mut tb TextBox) draw() {
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
-		tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
+		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
+		tb.draw_placeholder(tb.x + ui.textbox_padding, text_y, placeholder)
 	}
 	// Text
 	else {
@@ -230,7 +227,8 @@ fn (mut tb TextBox) draw() {
 					break
 				}
 			}
-			tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
+			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
+			tb.draw_placeholder(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -239,10 +237,13 @@ fn (mut tb TextBox) draw() {
 					//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
 				}
 				*/
-				tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
-					text.len), tb.placeholder_cfg)
+				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
+				// 	text.len), tb.placeholder_cfg)
+				tb.draw_placeholder(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
+					text.len))
 			} else {
-				tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
+				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
+				tb.draw_placeholder(tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}

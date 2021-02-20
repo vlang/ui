@@ -6,12 +6,13 @@ module ui
 [heap]
 pub struct Label {
 mut:
-	text     string
-	parent   Layout
-	x        int
-	y        int
-	ui       &UI
-	text_cfg TextCfg
+	text       string
+	parent     Layout
+	x          int
+	y          int
+	ui         &UI
+	text_cfg   TextCfg
+	fixed_text bool
 }
 
 pub struct LabelConfig {
@@ -66,7 +67,8 @@ fn (mut l Label) draw() {
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		// Draw the text at l.x and l.y + line height * current line
-		l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
+		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
+		l.draw_text(l.x, l.y + (height * i), split)
 	}
 }
 

@@ -527,11 +527,8 @@ fn (mut s Stack) set_cache_sizes() {
 		// recursively do the same for Stack children
 		if child is Stack {
 			child.set_cache_sizes()
-		}
-		if child is Button {
-			child.fixed_text = (c.width_type[i] in [.fixed, .compact])
-				|| (c.height_type[i] in [.fixed, .compact])
-			// println("Button fixed_text: $child.fixed_text ${int(c.width_type[i])} ${int(c.height_type[i])}" )
+		} else {
+			set_text_fixed(mut child, c.width_type[i], c.height_type[i])
 		}
 	}
 }
@@ -854,7 +851,12 @@ fn (s &Stack) is_focused() bool {
 fn (mut s Stack) resize(width int, height int) {
 	// println("Stack resize $width, $height")
 	mut window := s.ui.window
+	$if android {
+		window.width, window.height = width, height
+		println("Android: ($width, $height)")
+	}
 	window.update_text_scale()
+	// 
 	println('resize scale $window.text_scale')
 	s.init_size()
 	s.set_children_sizes()

@@ -29,6 +29,7 @@ pub mut:
 	is_checked bool
 	ui         &UI
 	text_cfg   TextCfg
+	fixed_text bool
 	// selected_value string
 	// onclick    RadioClickFn
 }
@@ -105,7 +106,8 @@ fn (mut r Radio) draw() {
 	// Title
 	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 		10, default_window_color)
-	r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
+	// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
+	r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -116,7 +118,8 @@ fn (mut r Radio) draw() {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
+		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
+		r.draw_text(r.x + check_mark_size + 10, y, val)
 	}
 }
 
