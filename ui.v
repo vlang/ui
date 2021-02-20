@@ -226,6 +226,9 @@ pub fn open_url(url string) {
 	if !url.starts_with('https://') && !url.starts_with('http://') {
 		return
 	}
+	$if windows {
+		os.exec('start "$url"') or { return }
+	}
 	$if macos {
 		os.exec('open "$url"') or { return }
 	}
