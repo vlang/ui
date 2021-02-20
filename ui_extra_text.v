@@ -5,25 +5,25 @@ import gx
 pub type TextCfg = gx.TextCfg | int
 
 fn (t TextCfg) is_empty() bool {
-	return match t {
+	match t {
 		int {
-			t == 0
+			return t == 0
 		}
 		gx.TextCfg {
-			false
+			return false
 		}
 	}
 }
 
 fn (t TextCfg) as_text_cfg() gx.TextCfg {
-	return match t {
+	match t {
 		int {
-			gx.TextCfg{
+			return gx.TextCfg{
 				size: t
 			}
 		}
 		gx.TextCfg {
-			t
+			return t
 		}
 	}
 }

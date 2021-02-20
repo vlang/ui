@@ -12,8 +12,8 @@ pub:
 	stretch   bool
 	margin    MarginConfig
 	// children related
-	widths     Sizes //[]f64 // children sizes
-	heights    Sizes //[]f64
+	widths     Size //[]f64 // children sizes
+	heights    Size //[]f64
 	align      Alignments
 	alignments VerticalAlignments
 }
