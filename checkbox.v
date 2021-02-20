@@ -48,9 +48,9 @@ pub struct CheckBoxConfig {
 
 fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
-	ui := parent.get_ui()
-	cb.ui = ui
-	cb.width = cb.ui.gg.text_width(cb.text) + 5 + check_mark_size
+	pui := parent.get_ui()
+	cb.ui = pui
+	cb.width = cb.ui.gg.text_width(cb.text) + 5 + ui.check_mark_size
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -89,13 +89,14 @@ fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 	// cb.width = w
 	// cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
-	return cb.width, check_mark_size
+	return cb.width, ui.check_mark_size
 }
 
 fn (mut cb CheckBox) draw() {
-	cb.ui.gg.draw_rect(cb.x, cb.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
+	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
-	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, check_mark_size, check_mark_size, false)
+	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
+		false)
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
 		cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
@@ -112,7 +113,7 @@ fn (mut cb CheckBox) draw() {
 		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	cb.ui.gg.draw_text(cb.x + check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
+	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {

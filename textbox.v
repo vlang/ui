@@ -155,14 +155,14 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 // fn (tb &TextBox) draw_inner_border() {
 fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {
-		color := if is_error { gx.rgb(255, 0, 0) } else { text_border_color }
+		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
 		gg.draw_empty_rect(x, y, width, height, color)
 		// gg.draw_empty_rect(tb.x, tb.y, tb.width, tb.height, color) //text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, text_inner_border_color) // inner lighter border
+		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
 	} else {
-		gg.draw_empty_rect(x, y, width, height, text_border_accentuated_color)
-		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, text_border_accentuated_color) // inner lighter border
+		gg.draw_empty_rect(x, y, width, height, ui.text_border_accentuated_color)
+		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
 	}
 }
 
@@ -198,7 +198,7 @@ fn (mut tb TextBox) draw() {
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
-		tb.ui.gg.draw_text(tb.x + textbox_padding, text_y, placeholder, placeholder_cfg)
+		tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, ui.placeholder_cfg)
 	}
 	// Text
 	else {
@@ -209,8 +209,8 @@ fn (mut tb TextBox) draw() {
 			left := ustr.left(tb.sel_start)
 			right := ustr.right(tb.sel_end)
 			sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
-			x := tb.ui.gg.text_width(left) + tb.x + textbox_padding
-			tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.height - 6, selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
+			x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding
+			tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.height - 6, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
 		}
 		// The text doesn'tb fit, find the largest substring we can draw
 		if width > tb.width {
@@ -223,7 +223,7 @@ fn (mut tb TextBox) draw() {
 					break
 				}
 			}
-			tb.ui.gg.draw_text_def(tb.x + textbox_padding, text_y, text[skip_idx..])
+			tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -232,17 +232,17 @@ fn (mut tb TextBox) draw() {
 					//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
 				}
 				*/
-				tb.ui.gg.draw_text_def(tb.x + textbox_padding, text_y, strings.repeat(`*`,
+				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
 					text.len))
 			} else {
-				tb.ui.gg.draw_text_def(tb.x + textbox_padding, text_y, text)
+				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}
 	// Draw the cursor
 	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && tb.sel_start == 0 && tb.sel_end == 0 {
 		// no cursor in sel mode
-		mut cursor_x := tb.x + textbox_padding
+		mut cursor_x := tb.x + ui.textbox_padding
 		if tb.is_password {
 			cursor_x += tb.ui.gg.text_width(strings.repeat(`*`, tb.cursor_pos))
 		} else if skip_idx > 0 {
@@ -253,7 +253,7 @@ fn (mut tb TextBox) draw() {
 			cursor_x += tb.ui.gg.text_width(left)
 		}
 		if text.len == 0 {
-			cursor_x = tb.x + textbox_padding
+			cursor_x = tb.x + ui.textbox_padding
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 		tb.ui.gg.draw_rect(cursor_x, tb.y + 3, 1, tb.height - 6, gx.black) // , gx.Black)
@@ -446,15 +446,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				return
 			}
 			*/
-			// println('TAB $tb.id')
-			/*
 			if e.mods == .shift {
 				tb.parent.focus_previous()
 			}
 			else {
 				tb.parent.focus_next()
 			}
-			*/
 		}
 		else {}
 	}
@@ -539,7 +536,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if tb.dragging {
-		x := e.x - tb.x - textbox_padding
+		x := e.x - tb.x - ui.textbox_padding
 		reverse := x - tb.last_x < 0
 		if tb.sel_start <= 0 {
 			tb.sel_start = tb.cursor_pos
@@ -588,7 +585,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	// Calculate cursor position from x
-	x := e.x - tb.x - textbox_padding
+	x := e.x - tb.x - ui.textbox_padding
 	if x <= 0 {
 		tb.cursor_pos = 0
 		return

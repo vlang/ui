@@ -87,6 +87,14 @@ fn (mut g Group) set_pos(x int, y int) {
 	g.calculate_child_positions()
 }
 
+fn (g Group) focus_next() {
+	println('text')
+}
+
+fn (g Group) focus_previous() {
+	println('text')
+}
+
 fn (mut g Group) calculate_child_positions() {
 	mut widgets := g.children
 	mut start_x := g.x + g.margin_left
