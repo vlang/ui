@@ -12,22 +12,54 @@ enum WindowSizeType {
 	fullscreen
 }
 
-pub type Sizes = []f64 | f64
+pub type Size = f64 | int
 
-fn (size Sizes) as_f32_array(len int) []f32 {
+fn (size Size) as_f32() f32 {
+	return match size {
+		f64 {f32(size)}
+		int {f32(size)}
+	}
+}
+
+pub type Sizes = Size | []Size
+
+fn (sizes Sizes) as_f32_array(len int) []f32 {
 	mut res := []f32{}
-	match size {
-		[]f64 {
-			for _, v in size {
-				res << f32(v)
+	match sizes {
+		[]Size { 
+		for _, size in size {
+			match size {
+				int {
+					res << f32(v)
+				}
+				f64 {
+					res << f32(v)
+				}
 			}
 		}
-		f64 {
-			res = [f32(size)].repeat(len)
+		Size {
+			[size.as_f32()].repeat(len)
 		}
 	}
 	return res
 }
+
+// pub type Sizes = []f64 | f64
+
+// fn (size Sizes) as_f32_array(len int) []f32 {
+// 	mut res := []f32{}
+// 	match size {
+// 		[]f64 {
+// 			for _, v in size {
+// 				res << f32(v)
+// 			}
+// 		}
+// 		f64 {
+// 			res = [f32(size)].repeat(len)
+// 		}
+// 	}
+// 	return res
+// }
 
 // Tool to convert width and height from f32 to int
 pub fn size_f32_to_int(size f32) int {
