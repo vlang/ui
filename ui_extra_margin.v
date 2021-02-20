@@ -9,13 +9,14 @@ pub struct Margin {
 
 pub type MarginConfig = Margin | int
 
+// BUG: don't put the return outside the match here
 fn (m MarginConfig) as_margin() Margin {
-	return match m {
+	match m {
 		Margin {
-			m
+			return m
 		}
 		int {
-			Margin{m, m, m, m}
+			return Margin{m, m, m, m}
 		}
 	}
 }
