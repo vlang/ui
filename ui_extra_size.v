@@ -12,9 +12,9 @@ enum WindowSizeType {
 	fullscreen
 }
 
-pub type Size = []f64 | f64
+pub type Sizes = []f64 | f64
 
-fn (size Size) as_f32_array(len int) []f32 {
+fn (size Sizes) as_f32_array(len int) []f32 {
 	mut res := []f32{}
 	match size {
 		[]f64 {
