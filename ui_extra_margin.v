@@ -10,7 +10,7 @@ pub struct Margin {
 pub type MarginConfig = Margin | int
 
 fn (m MarginConfig) as_margin() Margin {
-	return match m { 
+	return match m {
 		Margin {
 			m
 		}

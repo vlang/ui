@@ -4,13 +4,13 @@ import sokol.sapp
 struct App {
 mut:
 	window &ui.Window
-	text string
+	text   string
 }
 
 fn main() {
 	mut app := &App{
 		window: 0
-		text: "size= ${sapp.dpi_scale()} ${sapp.width()} ${sapp.height()}"
+		text: 'size= $sapp.dpi_scale() $sapp.width() $sapp.height()'
 	}
 	window := ui.window({
 		title: 'V Android Test'
@@ -23,14 +23,14 @@ fn main() {
 			widths: ui.stretch
 		}, [
 			ui.textbox(
-			text: &app.text
-			placeholder: '0'
-			// width: 135
-			read_only: true
-		),
+				text: &app.text
+				placeholder: '0'
+				// width: 135
+				read_only: true
+			),
 		]),
 	])
 	app.window = window
-	app.text = "size= (${window.width},${window.height}) ${sapp.dpi_scale()} ${sapp.width()} ${sapp.height()}"
+	app.text = 'size= ($window.width,$window.height) $sapp.dpi_scale() $sapp.width() $sapp.height()'
 	ui.run(window)
 }

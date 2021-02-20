@@ -119,13 +119,11 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		s.set_children_sizes()
-		
+
 		// All sizes have to be set before positionning widgets
 		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 		s.set_pos(s.x, s.y)
 	}
-	
-
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -140,7 +138,7 @@ fn (mut s Stack) init(parent Layout) {
 			h := window_size.height
 			s.resize(w, h)
 		} $else {
-			if parent.mode in [.fullscreen,.max_size] {
+			if parent.mode in [.fullscreen, .max_size] {
 				// println('mode: ${parent.mode}')
 				s.resize(parent.width, parent.height)
 			}
@@ -531,7 +529,8 @@ fn (mut s Stack) set_cache_sizes() {
 			child.set_cache_sizes()
 		}
 		if child is Button {
-			child.fixed_text = (c.width_type[i] in [.fixed, .compact]) || (c.height_type[i] in [.fixed, .compact])
+			child.fixed_text = (c.width_type[i] in [.fixed, .compact])
+				|| (c.height_type[i] in [.fixed, .compact])
 			// println("Button fixed_text: $child.fixed_text ${int(c.width_type[i])} ${int(c.height_type[i])}" )
 		}
 	}
@@ -856,7 +855,7 @@ fn (mut s Stack) resize(width int, height int) {
 	// println("Stack resize $width, $height")
 	mut window := s.ui.window
 	window.update_text_scale()
-	println("resize scale $window.text_scale")
+	println('resize scale $window.text_scale')
 	s.init_size()
 	s.set_children_sizes()
 	s.set_children_pos()

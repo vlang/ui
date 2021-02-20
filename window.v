@@ -54,14 +54,14 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable  bool // currently only for events.on_resized not modify children
-	mode       WindowSizeType
+	resizable bool // currently only for events.on_resized not modify children
+	mode      WindowSizeType
 	// adjusted size generally depending on children
 	orig_width  int
 	orig_height int
-	touch      TouchInfo
-	text_cfg   gx.TextCfg
-	text_scale f64 = 1.0
+	touch       TouchInfo
+	text_cfg    gx.TextCfg
+	text_scale  f64 = 1.0
 }
 
 pub struct WindowConfig {
@@ -223,19 +223,18 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 			if sc_size.width > 0 {
 				width, height = sc_size.width, sc_size.height
 				resizable = true
-			} 
+			}
 		}
 		.fullscreen {
 			if sc_size.width > 10 {
 				width, height = sc_size.width, sc_size.height
-			} 
+			}
 			fullscreen = true
 		}
 		.resizable {
 			resizable = true
-		} else {
-
 		}
+		else {}
 	}
 
 	// default text_cfg
@@ -250,7 +249,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		}
 		fullscreen = true
 	}
- 
+
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
@@ -278,7 +277,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	mut font_path := ''
 	$if android {
 		font_path = 'fonts/RobotoMono-Regular.ttf'
-	} $else  {
+	} $else {
 		font_path = if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 	}
 
@@ -403,19 +402,18 @@ fn window_resize(event gg.Event, ui &UI) {
 	// println('window resize h=$event.window_height')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
-	
+
 	// println("")
 	// win_size := gg.window_size()
 	// w := win_size.width
 	// h := win_size.height
-	
+
 	// window.update_text_scale(w, h)
 
 	if window.resize_fn != voidptr(0) {
 		window.resize_fn(event.window_width, event.window_height, window)
 	}
 }
-
 
 fn window_mouse_move(event gg.Event, ui &UI) {
 	window := ui.window

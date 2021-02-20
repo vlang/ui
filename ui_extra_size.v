@@ -16,7 +16,7 @@ pub type Size = []f64 | f64
 
 fn (size Size) as_f32_array(len int) []f32 {
 	mut res := []f32{}
-	match size { 
+	match size {
 		[]f64 {
 			for _, v in size {
 				res << f32(v)
@@ -63,7 +63,7 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 pub type Spacing = []int | int
 
 fn (i Spacing) as_int_array(len int) []int {
-	return match i { 
+	return match i {
 		[]int {
 			i.clone()
 		}
