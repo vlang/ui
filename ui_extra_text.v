@@ -4,7 +4,7 @@ import gx
 
 // pub type TextCfg = gx.TextCfg
 
-const(
+const (
 	empty_text_cfg = gx.TextCfg{}
 )
 
@@ -28,14 +28,11 @@ fn is_empty_text_cfg(t gx.TextCfg) bool {
 // Declare Textable widget to be resizable or not
 pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
 	if child is Button {
-		child.fixed_text = (width_type in [.fixed, .compact])
-			|| (height_type in [.fixed, .compact])
+		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is Label {
-		child.fixed_text = (width_type in [.fixed, .compact])
-			|| (height_type in [.fixed, .compact])
+		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is Radio {
-		child.fixed_text = (width_type in [.fixed, .compact])
-			|| (height_type in [.fixed, .compact])
+		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is TextBox {
 		child.fixed_placeholder = (width_type in [.fixed, .compact])
 			|| (height_type in [.fixed, .compact])

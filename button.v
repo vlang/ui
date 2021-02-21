@@ -61,7 +61,7 @@ fn (mut b Button) init(parent Layout) {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
 	if is_empty_text_cfg(b.text_cfg) {
-		b.text_cfg = ui.window.text_cfg
+		b.text_cfg = b.ui.window.text_cfg
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)

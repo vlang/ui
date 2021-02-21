@@ -26,7 +26,7 @@ fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
 	if is_empty_text_cfg(l.text_cfg) {
-		l.text_cfg = ui.window.text_cfg
+		l.text_cfg = l.ui.window.text_cfg
 	}
 }
 

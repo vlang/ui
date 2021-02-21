@@ -54,15 +54,15 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable     bool // currently only for events.on_resized not modify children
-	mode          WindowSizeType
+	resizable bool // currently only for events.on_resized not modify children
+	mode      WindowSizeType
 	// adjusted size generally depending on children
-	orig_width    int
-	orig_height   int
-	touch         TouchInfo
+	orig_width  int
+	orig_height int
+	touch       TouchInfo
 	// Text Config
-	text_cfg      gx.TextCfg
-	text_scale    f64 = 1.0
+	text_cfg   gx.TextCfg
+	text_scale f64 = 1.0
 }
 
 pub struct WindowConfig {
@@ -89,7 +89,7 @@ pub:
 	resizable             bool
 	mode                  WindowSizeType
 	// Text Config
-	lines                 int = 10
+	lines int = 10
 }
 
 /*
@@ -242,7 +242,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 
 	// default text_cfg
 	// m := f32(math.min(width, height))
-	
+
 	mut text_cfg := gx.TextCfg{
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
