@@ -2,8 +2,6 @@ module ui
 
 import gx
 
-// pub type TextCfg = gx.TextCfg
-
 const (
 	empty_text_cfg = gx.TextCfg{}
 )
@@ -11,19 +9,6 @@ const (
 fn is_empty_text_cfg(t gx.TextCfg) bool {
 	return t.str() == empty_text_cfg.str()
 }
-
-// fn (t TextCfg) as_text_cfg() gx.TextCfg {
-// 	match t {
-// 		int {
-// 			return gx.TextCfg{
-// 				size: t
-// 			}
-// 		}
-// 		gx.TextCfg {
-// 			return t
-// 		}
-// 	}
-// }
 
 // Declare Textable widget to be resizable or not
 pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
