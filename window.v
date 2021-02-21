@@ -54,14 +54,15 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable bool // currently only for events.on_resized not modify children
-	mode      WindowSizeType
+	resizable     bool // currently only for events.on_resized not modify children
+	mode          WindowSizeType
 	// adjusted size generally depending on children
-	orig_width  int
-	orig_height int
-	touch       TouchInfo
-	text_cfg    gx.TextCfg
-	text_scale  f64 = 1.0
+	orig_width    int
+	orig_height   int
+	touch         TouchInfo
+	// Text Config
+	text_cfg      gx.TextCfg
+	text_scale    f64 = 1.0
 }
 
 pub struct WindowConfig {
@@ -87,6 +88,8 @@ pub:
 	native_rendering      bool
 	resizable             bool
 	mode                  WindowSizeType
+	// Text Config
+	lines                 int = 10
 }
 
 /*
@@ -238,17 +241,20 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	}
 
 	// default text_cfg
+	// m := f32(math.min(width, height))
+	
 	mut text_cfg := gx.TextCfg{
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
+		// size: int(m / cfg.lines)
 	}
-	$if android {
-		text_cfg = gx.TextCfg{
-			...text_cfg
-			size: 100
-		}
-		fullscreen = true
-	}
+	// $if android {
+	// 	text_cfg = gx.TextCfg{
+	// 		...text_cfg
+	// 		size: 100
+	// 	}
+	// 	// fullscreen = true
+	// }
 
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
@@ -258,8 +264,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		bg_color: cfg.bg_color
 		width: width
 		height: height
-		orig_width: 800
-		orig_height: 600
+		orig_width: width // 800
+		orig_height: height // 600
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down

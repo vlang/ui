@@ -50,7 +50,7 @@ pub mut:
 	is_multi         bool
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
-	placeholder_cfg  TextCfg
+	placeholder_cfg  gx.TextCfg
 	fixed_placeholder bool
 	cursor_pos       int
 	is_numeric       bool
@@ -89,7 +89,7 @@ pub struct TextBoxConfig {
 	val              int
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
-	placeholder_cfg  TextCfg
+	placeholder_cfg  gx.TextCfg
 	max_len          int
 	is_numeric       bool
 	is_password      bool
@@ -112,7 +112,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	if tb.placeholder_cfg.is_empty() {
+	if is_empty_text_cfg(tb.placeholder_cfg) {
 		tb.placeholder_cfg = ui.window.text_cfg
 	}
 	// return widget

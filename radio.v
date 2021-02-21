@@ -28,7 +28,7 @@ pub mut:
 	is_focused bool
 	is_checked bool
 	ui         &UI
-	text_cfg   TextCfg
+	text_cfg   gx.TextCfg
 	fixed_text bool
 	// selected_value string
 	// onclick    RadioClickFn
@@ -40,7 +40,7 @@ pub struct RadioConfig {
 	title    string
 	width    int
 	ref      &Radio = voidptr(0)
-	text_cfg TextCfg
+	text_cfg gx.TextCfg
 }
 
 fn (mut r Radio) init(parent Layout) {
@@ -58,7 +58,7 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
-	if r.text_cfg.is_empty() {
+	if is_empty_text_cfg(r.text_cfg) {
 		r.text_cfg = ui.window.text_cfg
 	}
 	mut subscriber := parent.get_subscriber()

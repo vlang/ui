@@ -39,7 +39,7 @@ fn C.webkit_web_view_load_uri(webview voidptr, uri string)
 
 fn create_linux_web_view(url string, title string) {
 	C.gtk_init(0, voidptr(0))
-	win := C.gtk_window_new(0)
+	win := C.gtk_window_new()
 	C.gtk_window_set_default_size(win, 1000, 600)
 	C.gtk_window_set_title(win, charptr(title.str))
 	webview := C.webkit_web_view_new()

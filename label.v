@@ -3,6 +3,8 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gx
+
 [heap]
 pub struct Label {
 mut:
@@ -11,19 +13,19 @@ mut:
 	x          int
 	y          int
 	ui         &UI
-	text_cfg   TextCfg
+	text_cfg   gx.TextCfg
 	fixed_text bool
 }
 
 pub struct LabelConfig {
 	text     string
-	text_cfg TextCfg
+	text_cfg gx.TextCfg
 }
 
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
-	if l.text_cfg.is_empty() {
+	if is_empty_text_cfg(l.text_cfg) {
 		l.text_cfg = ui.window.text_cfg
 	}
 }

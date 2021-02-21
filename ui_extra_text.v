@@ -2,31 +2,28 @@ module ui
 
 import gx
 
-pub type TextCfg = gx.TextCfg | int
+// pub type TextCfg = gx.TextCfg
 
-fn (t TextCfg) is_empty() bool {
-	match t {
-		int {
-			return t == 0
-		}
-		gx.TextCfg {
-			return false
-		}
-	}
+const(
+	empty_text_cfg = gx.TextCfg{}
+)
+
+fn is_empty_text_cfg(t gx.TextCfg) bool {
+	return t.str() == empty_text_cfg.str()
 }
 
-fn (t TextCfg) as_text_cfg() gx.TextCfg {
-	match t {
-		int {
-			return gx.TextCfg{
-				size: t
-			}
-		}
-		gx.TextCfg {
-			return t
-		}
-	}
-}
+// fn (t TextCfg) as_text_cfg() gx.TextCfg {
+// 	match t {
+// 		int {
+// 			return gx.TextCfg{
+// 				size: t
+// 			}
+// 		}
+// 		gx.TextCfg {
+// 			return t
+// 		}
+// 	}
+// }
 
 // Declare Textable widget to be resizable or not
 pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
@@ -49,7 +46,7 @@ pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildS
 //  Later if adopted, put it in the associated v files.
 fn (w &Button) draw_text(x int, y int, text_ string) {
 	window := w.ui.window
-	tc := w.text_cfg.as_text_cfg()
+	tc := w.text_cfg
 	if w.fixed_text {
 		w.ui.gg.draw_text(x, y, text_, tc)
 	} else {
@@ -63,7 +60,7 @@ fn (w &Button) draw_text(x int, y int, text_ string) {
 
 fn (w &Label) draw_text(x int, y int, text_ string) {
 	window := w.ui.window
-	tc := w.text_cfg.as_text_cfg()
+	tc := w.text_cfg
 	if w.fixed_text {
 		w.ui.gg.draw_text(x, y, text_, tc)
 	} else {
@@ -77,7 +74,7 @@ fn (w &Label) draw_text(x int, y int, text_ string) {
 
 fn (w &Radio) draw_text(x int, y int, text_ string) {
 	window := w.ui.window
-	tc := w.text_cfg.as_text_cfg()
+	tc := w.text_cfg
 	if w.fixed_text {
 		w.ui.gg.draw_text(x, y, text_, tc)
 	} else {
@@ -91,7 +88,7 @@ fn (w &Radio) draw_text(x int, y int, text_ string) {
 
 fn (t &TextBox) draw_placeholder(x int, y int, text_ string) {
 	window := t.ui.window
-	tc := t.placeholder_cfg.as_text_cfg()
+	tc := t.placeholder_cfg
 	if t.fixed_placeholder {
 		t.ui.gg.draw_text(x, y, text_, tc)
 	} else {

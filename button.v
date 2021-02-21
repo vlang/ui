@@ -27,7 +27,7 @@ pub struct ButtonConfig {
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
-	text_cfg  TextCfg
+	text_cfg  gx.TextCfg
 }
 
 [heap]
@@ -49,7 +49,7 @@ pub mut:
 	icon_path  string
 	image      gg.Image
 	use_icon   bool
-	text_cfg   TextCfg
+	text_cfg   gx.TextCfg
 	fixed_text bool
 }
 
@@ -60,7 +60,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	if b.text_cfg.is_empty() {
+	if is_empty_text_cfg(b.text_cfg) {
 		b.text_cfg = ui.window.text_cfg
 	}
 	mut subscriber := parent.get_subscriber()

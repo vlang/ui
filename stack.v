@@ -136,6 +136,8 @@ fn (mut s Stack) init(parent Layout) {
 			window_size := gg.window_size()
 			w := window_size.width
 			h := window_size.height
+			mut window := ui.window
+			window.width, window.height = w, h
 			s.resize(w, h)
 		} $else {
 			if parent.mode in [.fullscreen, .max_size] {
@@ -851,13 +853,8 @@ fn (s &Stack) is_focused() bool {
 fn (mut s Stack) resize(width int, height int) {
 	// println("Stack resize $width, $height")
 	mut window := s.ui.window
-	$if android {
-		window.width, window.height = width, height
-		println("Android: ($width, $height)")
-	}
 	window.update_text_scale()
-	// 
-	println('resize scale $window.text_scale')
+	// println('resize scale $window.text_scale')
 	s.init_size()
 	s.set_children_sizes()
 	s.set_children_pos()
