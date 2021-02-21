@@ -158,7 +158,7 @@ fn (mut gui UI) idle_loop() {
 		// This guarantees that the thread will exit at most 10ms after the
 		// closing event.
 		for i := 0; i < 50; i++ {
-			time.sleep_ms(10)
+			time.wait(10)
 			if gui.closed {
 				return
 			}
@@ -207,7 +207,7 @@ pub fn run(window &Window) {
 	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
 	// waiting 2x this time should be enough to ensure the gui.loop
 	// thread will exit before us, without using a waitgroup here too
-	time.sleep_ms(20)
+	time.wait(20)
 }
 
 fn (mut gui UI) load_icos() {
