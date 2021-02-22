@@ -231,7 +231,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	$if macos {
 		sc_size = gg.screen_size()
 	}
-	
+
 	match cfg.mode {
 		.max_size {
 			if sc_size.width > 0 {

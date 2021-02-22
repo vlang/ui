@@ -11,13 +11,12 @@ fn text_size_as_int(size f64, win_height int) int {
 	return if size > 0 && size < 1 {
 		// println("tsai: ${int(size * win_height)} = $size * $win_height")
 		int(size * win_height)
-	}  else if size == int(size) {
+	} else if size == int(size) {
 		int(size)
 	} else {
 		0
 	}
 }
-
 
 const (
 	empty_text_cfg = gx.TextCfg{}
@@ -29,7 +28,7 @@ fn is_empty_text_cfg(t gx.TextCfg) bool {
 
 // Declare Textable widget to be resizable or not
 fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
-	println("${child.type_name()}: $width_type $height_type")
+	println('$child.type_name(): $width_type $height_type')
 	if child is Button {
 		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is Label {
@@ -37,8 +36,7 @@ fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize)
 	} else if child is Radio {
 		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is TextBox {
-		child.fixed_text = (width_type in [.fixed, .compact])
-			|| (height_type in [.fixed, .compact])
+		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	}
 }
 

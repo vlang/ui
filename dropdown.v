@@ -102,8 +102,7 @@ fn (mut dd Dropdown) draw() {
 		y := dd.y + dropdown_height
 		for i, item in dd.items {
 			color := if i == dd.hover_index { border_color } else { drawer_color }
-			gg.draw_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height,
-				color)
+			gg.draw_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height, color)
 			gg.draw_empty_rect(dd.x, y + i * dropdown_height, dd.width, dropdown_height,
 				border_color)
 			gg.draw_text_def(dd.x + 5, y + i * dropdown_height + 5, item.text)
@@ -202,8 +201,8 @@ fn (mut dd Dropdown) unfocus() {
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
-	return y >= dd.y && y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height
-		&& x >= dd.x && x <= dd.x + dd.width
+	return y >= dd.y && y <= dd.y + (dd.items.len * dropdown_height) + dropdown_height && x >= dd.x
+		&& x <= dd.x + dd.width
 }
 
 // Returns the currently selected DropdownItem

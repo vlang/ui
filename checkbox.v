@@ -96,8 +96,7 @@ fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 fn (mut cb CheckBox) draw() {
 	cb.ui.gg.draw_rect(cb.x, cb.y, check_mark_size, check_mark_size, gx.white) // progress_bar_color)
 	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
-	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, check_mark_size, check_mark_size,
-		false)
+	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, check_mark_size, check_mark_size, false)
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
 		cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)

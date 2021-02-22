@@ -45,21 +45,21 @@ pub mut:
 	// gg &gg.GG
 	ui &UI
 	// text               string
-	text              &string = voidptr(0)
-	max_len           int
-	is_multi          bool
-	placeholder       string
-	placeholder_bind  &string = voidptr(0)
-	cursor_pos        int
-	is_numeric        bool
-	is_password       bool
-	sel_start         int
-	sel_end           int
-	last_x            int
-	read_only         bool
-	borderless        bool
-	on_key_down       KeyDownFn = KeyDownFn(0)
-	on_char           CharFn    = CharFn(0)
+	text             &string = voidptr(0)
+	max_len          int
+	is_multi         bool
+	placeholder      string
+	placeholder_bind &string = voidptr(0)
+	cursor_pos       int
+	is_numeric       bool
+	is_password      bool
+	sel_start        int
+	sel_end          int
+	last_x           int
+	read_only        bool
+	borderless       bool
+	on_key_down      KeyDownFn = KeyDownFn(0)
+	on_char          CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	dragging           bool
 	sel_direction      SelectionDirection
@@ -68,10 +68,9 @@ pub mut:
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
 	// related to text drawing
-	text_cfg           gx.TextCfg
-	text_size          f64
-	fixed_text         bool
-	
+	text_cfg   gx.TextCfg
+	text_size  f64
+	fixed_text bool
 mut:
 	is_typing bool
 }
@@ -251,8 +250,7 @@ fn (mut tb TextBox) draw() {
 				*/
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
 				// 	text.len), tb.placeholder_cfg)
-				tb.draw_text(tb.x + textbox_padding, text_y, strings.repeat(`*`,
-					text.len))
+				tb.draw_text(tb.x + textbox_padding, text_y, strings.repeat(`*`, text.len))
 			} else {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 				tb.draw_text(tb.x + textbox_padding, text_y, text)

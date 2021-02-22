@@ -37,8 +37,8 @@ pub mut:
 
 pub struct RadioConfig {
 	// onclick    RadioClickFn
-	values   []string
-	title      string
+	values    []string
+	title     string
 	width     int
 	ref       &Radio = voidptr(0)
 	text_cfg  gx.TextCfg

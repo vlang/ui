@@ -74,8 +74,7 @@ fn (mut s Switch) draw() {
 			sw_dot_size, gx.white)
 	} else {
 		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, sw_close_bg_color)
-		s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size,
-			gx.white)
+		s.ui.gg.draw_rect(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
 	}
 }
 
