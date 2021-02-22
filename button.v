@@ -131,7 +131,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 		b.height = h
 	}
 	// b.height = h
-	// b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
+	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
 	return b.width, b.height
 }
@@ -143,10 +143,10 @@ fn (mut b Button) draw() {
 	} else if b.text_width == 0 || b.text_height == 0 {
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
 		if b.width == 0 {
-			b.width = b.text_width + button_horizontal_padding
+			b.width = b.text_width + ui.button_horizontal_padding
 		}
 		if b.height == 0 {
-			b.height = b.text_height + button_vertical_padding
+			b.height = b.text_height + ui.button_vertical_padding
 		}
 	}
 	w2 := b.text_width / 2
@@ -155,7 +155,7 @@ fn (mut b Button) draw() {
 	bcenter_y := b.y + b.height / 2
 	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
+	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
 	mut y := bcenter_y - h2 - 1
 	// if b.ui.gg.scale == 2 {
 	// $if macos { // TODO
@@ -171,7 +171,7 @@ fn (mut b Button) draw() {
 		draw_bb(b, b.ui)
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
-	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
+	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
 }
 
 fn (mut b Button) set_text_size() {
@@ -185,10 +185,10 @@ fn (mut b Button) set_text_size() {
 		b.text_width = int(f32(b.text_width) * b.ui.gg.scale * b.ui.gg.scale)
 		b.text_height = int(f32(b.text_height) * b.ui.gg.scale * b.ui.gg.scale)
 		if b.width == 0 {
-			b.width = b.text_width + button_horizontal_padding
+			b.width = b.text_width + ui.button_horizontal_padding
 		}
 		if b.height == 0 {
-			b.height = b.text_height + button_vertical_padding
+			b.height = b.text_height + ui.button_vertical_padding
 		}
 	}
 	//}

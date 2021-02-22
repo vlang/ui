@@ -23,7 +23,7 @@ const (
 )
 
 fn is_empty_text_cfg(t gx.TextCfg) bool {
-	return t.str() == empty_text_cfg.str()
+	return t.str() == ui.empty_text_cfg.str()
 }
 
 // Declare Textable widget to be resizable or not
