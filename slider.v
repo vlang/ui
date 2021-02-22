@@ -181,7 +181,7 @@ fn (s &Slider) draw() {
 	s.draw_thumb()
 	$if bb ? {
 		draw_bb(s, s.ui)
-	} 
+	}
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {

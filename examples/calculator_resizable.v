@@ -55,7 +55,7 @@ fn main() {
 		state: app
 		// resizable: true
 		mode: .max_size
-		font_path: os.resource_abs_path(os.join_path('../assets/fonts/', 'RobotoMono-Regular.ttf'))
+		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
 		ui.column({
 			margin: 5
