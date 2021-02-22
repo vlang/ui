@@ -131,6 +131,9 @@ fn (mut r Radio) draw() {
 		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
 		r.draw_text(r.x + check_mark_size + 10, y, val)
 	}
+	$if bb ? {
+		draw_bb(r, r.ui)
+	}
 }
 
 fn (r &Radio) point_inside(x f64, y f64) bool {

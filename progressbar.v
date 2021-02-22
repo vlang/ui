@@ -82,6 +82,9 @@ fn (pb &ProgressBar) draw() {
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
 	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
 	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
+	$if bb ? {
+		draw_bb(pb, pb.ui)
+	}
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {

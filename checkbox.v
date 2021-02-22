@@ -115,6 +115,9 @@ fn (mut cb CheckBox) draw() {
 	}
 	// Text
 	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
+	$if bb ? {
+		draw_bb(cb, cb.ui)
+	}
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {
