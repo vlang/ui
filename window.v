@@ -207,7 +207,7 @@ fn gg_init(mut window Window) {
 	w := window_size.width
 	h := window_size.height
 	window.width, window.height = w, h
-	println("gg_init: $w, $h")
+	println('gg_init: $w, $h')
 	for _, child in window.children {
 		child.init(window)
 	}
