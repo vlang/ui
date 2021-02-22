@@ -207,7 +207,7 @@ fn gg_init(mut window Window) {
 	w := window_size.width
 	h := window_size.height
 	window.width, window.height = w, h
-
+	println("gg_init: $w, $h")
 	for _, child in window.children {
 		child.init(window)
 	}
@@ -884,6 +884,7 @@ fn (mut window Window) resize(width int, height int) {
 	window.width = width
 	window.height = height
 	window.ui.gg.resize(width, height)
+	window.update_text_scale()
 	for mut child in window.children {
 		if child is Stack {
 			child.resize(width, height)

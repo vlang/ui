@@ -2,6 +2,8 @@ module ui
 
 import time
 
+// Inspiration from 2048 game
+
 struct Pos {
 	x int = -1
 	y int = -1

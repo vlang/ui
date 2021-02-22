@@ -49,8 +49,8 @@ fn main() {
 		}, get_row(op))
 	}
 	app.window = ui.window({
-		width: 145
-		height: 210
+		width: 1024
+		height: 800
 		title: 'V Calc'
 		state: app
 		// resizable: true
