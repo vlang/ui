@@ -259,13 +259,6 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		align: gx.align_left
 		// size: int(m / cfg.lines)
 	}
-	// $if android {
-	// 	text_cfg = gx.TextCfg{
-	// 		...text_cfg
-	// 		size: 100
-	// 	}
-	// 	// fullscreen = true
-	// }
 
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{

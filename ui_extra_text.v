@@ -28,7 +28,7 @@ fn is_empty_text_cfg(t gx.TextCfg) bool {
 
 // Declare Textable widget to be resizable or not
 fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
-	println('$child.type_name(): $width_type $height_type')
+	// println('set_text_fixed: $child.type_name(): $width_type $height_type')
 	if child is Button {
 		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is Label {

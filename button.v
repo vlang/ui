@@ -158,14 +158,18 @@ fn (mut b Button) draw() {
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, button_border_color)
 	mut y := bcenter_y - h2 - 1
 	// if b.ui.gg.scale == 2 {
-	$if macos { // TODO
-		y -= 2
-	}
+	// $if macos { // TODO
+	// 	y -= 2
+	// }
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
 		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
 		b.draw_text(bcenter_x - w2, y, b.text)
+	}
+	$if bb ? {
+		draw_bb(b, b.ui)
+		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
 }

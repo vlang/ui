@@ -53,7 +53,7 @@ fn main() {
 		height: 210
 		title: 'V Calc'
 		state: app
-		resizable: true
+		// resizable: true
 		mode: .max_size
 		font_path: os.resource_abs_path(os.join_path('../assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [

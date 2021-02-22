@@ -675,6 +675,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 				child.set_ui(ui)
 			}
 			child_width, child_height = child.size()
+			$if adj_size ? {
+				println('adj size child $child.type_name(): ($child_width, $child_height) ')
+			}
 		}
 		if s.direction == .column {
 			h += child_height // height of vertical stack means adding children's height
@@ -795,12 +798,12 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 }
 
 fn (mut s Stack) draw() {
-	for child in s.children {
-		child.draw()
-	}
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
+	}
+	for child in s.children {
+		child.draw()
 	}
 }
 
@@ -856,6 +859,7 @@ fn (mut s Stack) resize(width int, height int) {
 	window.update_text_scale()
 	// println('resize scale $window.text_scale')
 	s.init_size()
+	// s.set_adjusted_size(0, true, s.ui)
 	s.set_children_sizes()
 	s.set_children_pos()
 }

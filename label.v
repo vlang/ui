@@ -57,13 +57,14 @@ fn (mut l Label) size() (int, int) {
 	mut w, mut h := l.ui.gg.text_size(l.text)
 	// RCqls: Not Sure at all, just a guess visiting fontstash
 	// TODO: Change it if text_size is updated
-	$if macos {
-		h = int(f32(h) * l.ui.gg.scale * l.ui.gg.scale)
-		// println("label size: $w $h2")
+	// $if macos {
+	// 	h = int(f32(h) * l.ui.gg.scale * l.ui.gg.scale)
+	// 	// println("label size: $w $h2")
 
-		// First return the width, then the height multiplied by line count.
-		w = int(f32(w) * l.ui.gg.scale * l.ui.gg.scale)
-	}
+	// 	// First return the width, then the height multiplied by line count.
+	// 	w = int(f32(w) * l.ui.gg.scale * l.ui.gg.scale)
+	// }
+	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
 
@@ -80,6 +81,9 @@ fn (mut l Label) draw() {
 		// Draw the text at l.x and l.y + line height * current line
 		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
 		l.draw_text(l.x, l.y + (height * i), split)
+	}
+	$if bb ? {
+		draw_bb(l, l.ui)
 	}
 }
 

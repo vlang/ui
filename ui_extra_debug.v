@@ -14,6 +14,17 @@ fn (s &Stack) draw_bb() {
 		col)
 }
 
+fn draw_bb(wi &Widget, ui &UI) {
+	col := gx.black
+	w, h := wi.size()
+	ui.gg.draw_empty_rect(wi.x, wi.y, w, h, col)
+}
+
+fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
+	col := gx.gray
+	ui.gg.draw_empty_rect(x, y, w, h, col)
+}
+
 // Debug function
 fn (s &Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
