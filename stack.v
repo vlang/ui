@@ -196,7 +196,7 @@ fn (mut s Stack) set_children_sizes() {
 			if c.width_type[i] in [.stretch, .weighted] {
 				w = widths[i]
 			}
-			if c.height_type[i] == .stretch || c.weight_heights[i] <= 0 {
+			if c.height_type[i] in [.stretch, .weighted] {
 				h = heights[i]
 			}
 		}
