@@ -276,7 +276,7 @@ fn (mut tb TextBox) draw() {
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 		tb.ui.gg.draw_rect(cursor_x, tb.y + 3, 1, tb.height - 6, gx.black) // , gx.Black)
 	}
-	$if bb {
+	$if bb ? {
 		draw_bb(tb, tb.ui)
 	}
 }
