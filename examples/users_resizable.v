@@ -149,7 +149,9 @@ fn menu_click() {
 }
 
 fn btn_help_click(a voidptr, b voidptr) {
-	ui.message_box('Built with V UI')
+	$if ! android {
+		ui.message_box('Built with V UI')
+	}
 }
 
 /*

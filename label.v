@@ -14,12 +14,14 @@ mut:
 	y          int
 	ui         &UI
 	text_cfg   gx.TextCfg
+	text_size  f64
 	fixed_text bool
 }
 
 pub struct LabelConfig {
-	text     string
-	text_cfg gx.TextCfg
+	text      string
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 fn (mut l Label) init(parent Layout) {
@@ -27,6 +29,13 @@ fn (mut l Label) init(parent Layout) {
 	l.ui = ui
 	if is_empty_text_cfg(l.text_cfg) {
 		l.text_cfg = l.ui.window.text_cfg
+	}
+	if l.text_size > 0 {
+		_, win_height := l.ui.window.size()
+		l.text_cfg = gx.TextCfg{
+			...l.text_cfg
+			size: text_size_as_int(l.text_size, win_height)
+		}
 	}
 }
 

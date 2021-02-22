@@ -29,6 +29,7 @@ pub mut:
 	is_checked bool
 	ui         &UI
 	text_cfg   gx.TextCfg
+	text_size  f64
 	fixed_text bool
 	// selected_value string
 	// onclick    RadioClickFn
@@ -37,10 +38,11 @@ pub mut:
 pub struct RadioConfig {
 	// onclick    RadioClickFn
 	values   []string
-	title    string
-	width    int
-	ref      &Radio = voidptr(0)
-	text_cfg gx.TextCfg
+	title      string
+	width     int
+	ref       &Radio = voidptr(0)
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 fn (mut r Radio) init(parent Layout) {
@@ -61,6 +63,13 @@ fn (mut r Radio) init(parent Layout) {
 	if is_empty_text_cfg(r.text_cfg) {
 		r.text_cfg = r.ui.window.text_cfg
 	}
+	if r.text_size > 0 {
+		_, win_height := r.ui.window.size()
+		r.text_cfg = gx.TextCfg{
+			...r.text_cfg
+			size: text_size_as_int(r.text_size, win_height)
+		}
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -72,6 +81,7 @@ pub fn radio(c RadioConfig) &Radio {
 		title: c.title
 		width: c.width
 		text_cfg: c.text_cfg
+		text_size: c.text_size
 		ui: 0
 		// onclick: c.onclick
 	}

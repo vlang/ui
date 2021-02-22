@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-import gg
+// import gg
 
 enum Direction {
 	row
@@ -133,12 +133,12 @@ fn (mut s Stack) init(parent Layout) {
 	if parent is Window {
 		s.set_children_pos()
 		$if android {
-			window_size := gg.window_size()
-			w := window_size.width
-			h := window_size.height
-			mut window := ui.window
-			window.width, window.height = w, h
-			s.resize(w, h)
+			// window_size := gg.window_size()
+			// w := window_size.width
+			// h := window_size.height
+			// mut window := ui.window
+			// window.width, window.height = w, h
+			s.resize(parent.width, parent.height)
 		} $else {
 			if parent.mode in [.fullscreen, .max_size] {
 				// println('mode: ${parent.mode}')

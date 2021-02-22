@@ -50,8 +50,6 @@ pub mut:
 	is_multi          bool
 	placeholder       string
 	placeholder_bind  &string = voidptr(0)
-	placeholder_cfg   gx.TextCfg
-	fixed_placeholder bool
 	cursor_pos        int
 	is_numeric        bool
 	is_password       bool
@@ -69,6 +67,11 @@ pub mut:
 	is_error           &bool = voidptr(0)
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
+	// related to text drawing
+	text_cfg           gx.TextCfg
+	text_size          f64
+	fixed_text         bool
+	
 mut:
 	is_typing bool
 }
@@ -89,7 +92,6 @@ pub struct TextBoxConfig {
 	val              int
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
-	placeholder_cfg  gx.TextCfg
 	max_len          int
 	is_numeric       bool
 	is_password      bool
@@ -106,14 +108,23 @@ pub struct TextBoxConfig {
 	on_change          voidptr
 	on_enter           voidptr
 	border_accentuated bool
+	text_cfg           gx.TextCfg
+	text_size          f64
 }
 
 fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	if is_empty_text_cfg(tb.placeholder_cfg) {
-		tb.placeholder_cfg = tb.ui.window.text_cfg
+	if is_empty_text_cfg(tb.text_cfg) {
+		tb.text_cfg = tb.ui.window.text_cfg
+	}
+	if tb.text_size > 0 {
+		_, win_height := tb.ui.window.size()
+		tb.text_cfg = gx.TextCfg{
+			...tb.text_cfg
+			size: text_size_as_int(tb.text_size, win_height)
+		}
 	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
@@ -131,7 +142,6 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		// sel_start: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
-		placeholder_cfg: c.placeholder_cfg
 		// TODO is_focused: !c.parent.has_textbox // focus on the first textbox in the window by default
 		is_numeric: c.is_numeric
 		is_password: c.is_password
@@ -148,6 +158,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text: c.text
 		is_focused: c.is_focused
 		is_error: c.is_error
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 	}
 	if c.text == 0 {
 		panic('textbox.text binding is not set')
@@ -202,7 +214,7 @@ fn (mut tb TextBox) draw() {
 	// Placeholder
 	if text == '' && placeholder != '' {
 		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
-		tb.draw_placeholder(tb.x + textbox_padding, text_y, placeholder)
+		tb.draw_text(tb.x + textbox_padding, text_y, placeholder)
 	}
 	// Text
 	else {
@@ -228,7 +240,7 @@ fn (mut tb TextBox) draw() {
 				}
 			}
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
-			tb.draw_placeholder(tb.x + textbox_padding, text_y, text[skip_idx..])
+			tb.draw_text(tb.x + textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -239,11 +251,11 @@ fn (mut tb TextBox) draw() {
 				*/
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
 				// 	text.len), tb.placeholder_cfg)
-				tb.draw_placeholder(tb.x + textbox_padding, text_y, strings.repeat(`*`,
+				tb.draw_text(tb.x + textbox_padding, text_y, strings.repeat(`*`,
 					text.len))
 			} else {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
-				tb.draw_placeholder(tb.x + textbox_padding, text_y, text)
+				tb.draw_text(tb.x + textbox_padding, text_y, text)
 			}
 		}
 	}

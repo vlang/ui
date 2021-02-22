@@ -202,7 +202,12 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 }
 
-fn gg_init(window &Window) {
+fn gg_init(mut window Window) {
+	window_size := gg.window_size()
+	w := window_size.width
+	h := window_size.height
+	window.width, window.height = w, h
+
 	for _, child in window.children {
 		child.init(window)
 	}
@@ -220,7 +225,13 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	mut resizable := cfg.resizable
 	mut fullscreen := false
 
-	sc_size := gg.screen_size()
+	mut sc_size := gg.Size{width, height}
+
+	// before fixing gg_screen_size() for other OS: Linux, Windows
+	$if macos {
+		sc_size = gg.screen_size()
+	}
+	
 	match cfg.mode {
 		.max_size {
 			if sc_size.width > 0 {
@@ -636,7 +647,7 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn (mut w Window) update_text_scale() {
-	w.text_scale = f64(w.width) / f64(w.orig_width)
+	w.text_scale = f64(w.height) / f64(w.orig_height)
 	// print("update: width=$w.width orig_width=$w.orig_width")
 	if w.text_scale <= 0 {
 		w.text_scale = 1

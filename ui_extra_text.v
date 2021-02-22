@@ -2,6 +2,23 @@ module ui
 
 import gx
 
+// text_size: f64
+//   0  (default)  => system
+//   16 (or 16.)   => fixed font size
+//   .5 (in ]0,1]) => proprtion of height window
+
+fn text_size_as_int(size f64, win_height int) int {
+	return if size > 0 && size < 1 {
+		// println("tsai: ${int(size * win_height)} = $size * $win_height")
+		int(size * win_height)
+	}  else if size == int(size) {
+		int(size)
+	} else {
+		0
+	}
+}
+
+
 const (
 	empty_text_cfg = gx.TextCfg{}
 )
@@ -11,7 +28,8 @@ fn is_empty_text_cfg(t gx.TextCfg) bool {
 }
 
 // Declare Textable widget to be resizable or not
-pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
+fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize) {
+	println("${child.type_name()}: $width_type $height_type")
 	if child is Button {
 		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is Label {
@@ -19,7 +37,7 @@ pub fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildS
 	} else if child is Radio {
 		child.fixed_text = (width_type in [.fixed, .compact]) || (height_type in [.fixed, .compact])
 	} else if child is TextBox {
-		child.fixed_placeholder = (width_type in [.fixed, .compact])
+		child.fixed_text = (width_type in [.fixed, .compact])
 			|| (height_type in [.fixed, .compact])
 	}
 }
@@ -32,11 +50,13 @@ fn (w &Button) draw_text(x int, y int, text_ string) {
 	if w.fixed_text {
 		w.ui.gg.draw_text(x, y, text_, tc)
 	} else {
-		// println("draw_text: ${int(tc.size * window.text_scale)} ${tc.size} ${window.text_scale}")
-		w.ui.gg.draw_text(x, y, text_, gx.TextCfg{
+		text_size := int(f64(tc.size) * window.text_scale)
+		tc2 := gx.TextCfg{
 			...tc
-			size: int(tc.size * window.text_scale)
-		})
+			size: text_size
+		}
+		// println("draw_text: ($x, $y) ${text_size} ${tc.size} ${window.text_scale}")
+		w.ui.gg.draw_text(x, y, text_, tc2)
 	}
 }
 
@@ -68,10 +88,12 @@ fn (w &Radio) draw_text(x int, y int, text_ string) {
 	}
 }
 
-fn (t &TextBox) draw_placeholder(x int, y int, text_ string) {
+// more than one function could be introduced if the widget 
+// contains several text to draw with different styles.
+fn (t &TextBox) draw_text(x int, y int, text_ string) {
 	window := t.ui.window
-	tc := t.placeholder_cfg
-	if t.fixed_placeholder {
+	tc := t.text_cfg
+	if t.fixed_text {
 		t.ui.gg.draw_text(x, y, text_, tc)
 	} else {
 		// println("draw_text: ${int(tc.size * window.text_scale)} ${tc.size} ${window.text_scale}")

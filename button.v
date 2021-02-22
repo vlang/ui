@@ -28,6 +28,7 @@ pub struct ButtonConfig {
 	height    int = 20
 	width     int
 	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 [heap]
@@ -50,6 +51,7 @@ pub mut:
 	image      gg.Image
 	use_icon   bool
 	text_cfg   gx.TextCfg
+	text_size  f64
 	fixed_text bool
 }
 
@@ -62,6 +64,13 @@ fn (mut b Button) init(parent Layout) {
 	}
 	if is_empty_text_cfg(b.text_cfg) {
 		b.text_cfg = b.ui.window.text_cfg
+	}
+	if b.text_size > 0 {
+		_, win_height := b.ui.window.size()
+		b.text_cfg = gx.TextCfg{
+			...b.text_cfg
+			size: text_size_as_int(b.text_size, win_height)
+		}
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
@@ -77,6 +86,7 @@ pub fn button(c ButtonConfig) &Button {
 		use_icon: c.icon_path != ''
 		onclick: c.onclick
 		text_cfg: c.text_cfg
+		text_size: c.text_size
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
