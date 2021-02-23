@@ -135,7 +135,7 @@ fn main() {
 		), ui.picture(
 			width: 100
 			height: 100
-			path: os.resource_abs_path('logo.png')
+			path: os.resource_abs_path(os.join_path('assets', 'logo.png')) // os.resource_abs_path('logo.png')
 		)])]),
 		ui.menu(
 			items: [ui.MenuItem{'Delete all users', menu_click},

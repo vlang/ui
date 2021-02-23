@@ -36,6 +36,10 @@ mut:
 }
 
 fn main() {
+	mut logo := os.resource_abs_path(os.join_path('assets/', 'logo.png'))
+	$if android {
+		logo = 'img/logo.png'
+	}
 	mut app := &State{
 		users: [
 			User{
@@ -76,7 +80,8 @@ fn main() {
 			margin: 10
 			widths: [.3, .7]
 		}, [ui.column({
-			spacing: 13
+			spacing: 10
+			// heights: ui.stretch
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -134,7 +139,7 @@ fn main() {
 		), ui.picture(
 			width: 100
 			height: 100
-			path: os.resource_abs_path('logo.png')
+			path: logo // os.resource_abs_path('logo.png')
 		)])]),
 		ui.menu(
 			items: [ui.MenuItem{'Delete all users', menu_click},
