@@ -7,6 +7,7 @@ import gx
 import gg
 import strings
 import time
+import sokol.sapp
 
 enum SelectionDirection {
 	nil = 0
@@ -637,6 +638,9 @@ pub fn (mut tb TextBox) focus() {
 	mut wnd := parent.get_ui().window
 	wnd.unfocus_all()
 	tb.is_focused = true
+	$if android {
+		sapp.show_keyboard(true)
+	}
 }
 
 fn (tb &TextBox) is_focused() bool {
@@ -648,6 +652,9 @@ fn (mut t TextBox) unfocus() {
 	t.is_focused = false
 	t.sel_start = 0
 	t.sel_end = 0
+	$if android {
+		sapp.show_keyboard(false)
+	}
 }
 
 fn (mut tb TextBox) update() {

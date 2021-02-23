@@ -410,7 +410,8 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	// println('window resize h=$event.window_height')
+	// 
+	println('window resize ($event.window_width ,$event.window_height)')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
@@ -643,7 +644,7 @@ fn window_char(event gg.Event, ui &UI) {
 fn (mut w Window) update_text_scale() {
 	w.text_scale = f64(w.height) / f64(w.orig_height)
 	// 
-	print('update_text_scale: $w.text_scale = width=$w.width / orig_width=$w.orig_width')
+	println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
 	if w.text_scale <= 0 {
 		w.text_scale = 1
 	}
@@ -883,9 +884,12 @@ fn (w &Window) size() (int, int) {
 	return w.width, w.height
 }
 
-fn (mut window Window) resize(width int, height int) {
-	window.width = width
-	window.height = height
+fn (mut window Window) resize(w int, h int) {
+	// Do not use the w and h that come from event resizing, except maybe if divided by dpi_scale
+	window_size := gg.window_size()
+	width := window_size.width
+	height := window_size.height
+	window.width, window.height = width, height
 	window.ui.gg.resize(width, height)
 	window.update_text_scale()
 	for mut child in window.children {
