@@ -49,12 +49,11 @@ fn main() {
 		}, get_row(op))
 	}
 	app.window = ui.window({
-		width: 1024
-		height: 800
+		width: 300
+		height: 400
 		title: 'V Calc'
 		state: app
-		// resizable: true
-		mode: .max_size
+		mode: .max_size // .resizable
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
 		ui.column({

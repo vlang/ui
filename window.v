@@ -207,6 +207,7 @@ fn gg_init(mut window Window) {
 	w := window_size.width
 	h := window_size.height
 	window.width, window.height = w, h
+	window.orig_width, window.orig_height = w, h
 	println('gg_init: $w, $h')
 	for _, child in window.children {
 		child.init(window)
@@ -268,8 +269,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		bg_color: cfg.bg_color
 		width: width
 		height: height
-		orig_width: width // 800
-		orig_height: height // 600
+		// orig_width: width // 800
+		// orig_height: height // 600
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
@@ -641,11 +642,13 @@ fn window_char(event gg.Event, ui &UI) {
 
 fn (mut w Window) update_text_scale() {
 	w.text_scale = f64(w.height) / f64(w.orig_height)
-	// print("update: width=$w.width orig_width=$w.orig_width")
+	// 
+	print('update_text_scale: $w.text_scale = width=$w.width / orig_width=$w.orig_width')
 	if w.text_scale <= 0 {
 		w.text_scale = 1
 	}
-	// println("w.text_scale=$w.text_scale")
+	// 
+	println('w.text_scale=$w.text_scale')
 }
 
 fn (mut w Window) focus_next() {
