@@ -36,7 +36,7 @@ mut:
 }
 
 fn main() {
-	mut logo := os.resource_abs_path(os.join_path('assets/', 'logo.png'))
+	mut logo := os.resource_abs_path(os.join_path('assets/img', 'logo.png'))
 	$if android {
 		logo = 'img/logo.png'
 	}
