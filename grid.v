@@ -4,25 +4,25 @@ import gx
 
 pub struct Grid {
 pub mut:
-	header	   	[]string
-	body	   	[][]string
-	x          	int
-	y          	int
-	height	   	int
-	width	   	int
-	cell_height	f32
-	cell_width	f32 = 40
-	parent     	Layout
-	is_focused 	bool
-	ui         	&UI
+	header      []string
+	body        [][]string
+	x           int
+	y           int
+	height      int
+	width       int
+	cell_height f32
+	cell_width  f32 = 40
+	parent      Layout
+	is_focused  bool
+	ui          &UI
 }
 
 pub struct GridConfig {
-	header	   	[]string
-	body	   	[][]string
-	height	   	int = 200
-	width	   	int = 400
-	cell_height	f32 = 25
+	header      []string
+	body        [][]string
+	height      int = 200
+	width       int = 400
+	cell_height f32 = 25
 }
 
 fn (mut gv Grid) init(parent Layout) {
@@ -45,7 +45,7 @@ pub fn grid(c GridConfig) &Grid {
 
 fn (mut gv Grid) draw() {
 	cell_height := gv.cell_height
-	cell_width  := gv.cell_width
+	cell_width := gv.cell_width
 	body := gv.body
 	header := gv.header
 	check_cells(gv)
@@ -59,25 +59,30 @@ fn (mut gv Grid) draw() {
 	for i, c in header {
 		// Vertical separators
 		if i != 0 {
-			gv.ui.gg.draw_line(x + cell_width * i,y, x + cell_width * i, y + cell_height, gx.gray)
+			gv.ui.gg.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height,
+				gx.gray)
 		}
 		// Text values
 		text_width = gv.ui.gg.text_width(c)
 		text_height = gv.ui.gg.text_height(c)
-		gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i, y + int(cell_height) / 2 - text_height / 2, c)
+		gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
+			y + int(cell_height) / 2 - text_height / 2, c)
 	}
 	y += int(cell_height) * if gv.header.len == 0 { 0 } else { 1 }
 	for ir, b_c in body {
-		gv.ui.gg.draw_empty_rect(x, y + (cell_height * ir) , cell_width * gv.body[0].len, cell_height, gx.gray)
+		gv.ui.gg.draw_empty_rect(x, y + (cell_height * ir), cell_width * gv.body[0].len,
+			cell_height, gx.gray)
 		for i, c in b_c {
 			// Vertical separators
 			if i != 0 {
-				gv.ui.gg.draw_line(x + cell_width * i,y , x + cell_width * i, y + cell_height * body.len, gx.gray)
+				gv.ui.gg.draw_line(x + cell_width * i, y, x + cell_width * i, y +
+					cell_height * body.len, gx.gray)
 			}
 			// Text values
 			text_width = gv.ui.gg.text_width(c)
 			text_height = gv.ui.gg.text_height(c)
-			gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i, y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
+			gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
+				y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
 		}
 	}
 }
@@ -99,15 +104,14 @@ fn min_text_width(gv Grid) int {
 	return min
 }
 
-fn check_cells (gv Grid) int {
+fn check_cells(gv Grid) int {
 	mut len := 0
 	for i, c in gv.body {
 		if c.len > 0 {
 			if i == 0 {
 				len = c.len
 				continue
-			}
-			else if len != c.len {
+			} else if len != c.len {
 				panic('The number of rows cells must be equal')
 			}
 		}
@@ -117,7 +121,6 @@ fn check_cells (gv Grid) int {
 	}
 	return len
 }
-
 
 fn (mut gv Grid) focus() {
 	gv.is_focused = true

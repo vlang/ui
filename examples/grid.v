@@ -7,16 +7,16 @@ const (
 
 struct App {
 mut:
-	grid 	 &ui.Grid
-	window   &ui.Window
+	grid   &ui.Grid
+	window &ui.Window
 }
 
 fn main() {
 	h := ['One', 'Two', 'Three']
-	b := [['body one', 'body two', 'body three'],['V', 'UI is', 'Beautiful']]
+	b := [['body one', 'body two', 'body three'], ['V', 'UI is', 'Beautiful']]
 	mut app := &App{
 		window: 0
-		grid: ui.grid({header: h, body: b, width: win_width - 10, height: win_height  })
+		grid: ui.grid(header: h, body: b, width: win_width - 10, height: win_height)
 	}
 	app.window = ui.window({
 		width: win_width
