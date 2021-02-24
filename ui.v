@@ -22,9 +22,9 @@ const (
 
 pub struct UI {
 pub mut:
-	gg &gg.Context = voidptr(0)
+	gg     &gg.Context = voidptr(0)
+	window &Window     = voidptr(0)
 mut:
-	window      &Window = voidptr(0)
 	show_cursor bool
 	// just_typed           bool
 	last_type_time       i64

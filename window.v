@@ -56,7 +56,7 @@ pub mut:
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable bool // currently only for events.on_resized not modify children
 	mode      WindowSizeType
-	// adjusted size generally depending on children
+	// saved origin sizes
 	orig_width  int
 	orig_height int
 	touch       TouchInfo
@@ -140,15 +140,16 @@ fn on_event(e &gg.Event, mut window Window) {
 		.mouse_up {
 			// println('mouseup')
 			window_mouse_up(e, window.ui)
+			// NOT THERE since already done
 			// touch-like
-			window.touch.end = {
-				pos: {
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
-				}
-				time: time.now()
-			}
-			window_handle_touches(e, window.ui)
+			// window.touch.end = {
+			// 	pos: {
+			// 		x: int(e.mouse_x / window.ui.gg.scale)
+			// 		y: int(e.mouse_y / window.ui.gg.scale)
+			// 	}
+			// 	time: time.now()
+			// }
+			// window_handle_touches(e, window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -880,7 +881,7 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 	return w.eventbus.subscriber
 }
 
-fn (w &Window) size() (int, int) {
+pub fn (w &Window) size() (int, int) {
 	return w.width, w.height
 }
 

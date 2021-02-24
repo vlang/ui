@@ -7,7 +7,7 @@ import gx
 //   16 (or 16.)   => fixed font size
 //   .5 (in ]0,1]) => proprtion of height window
 
-fn text_size_as_int(size f64, win_height int) int {
+pub fn text_size_as_int(size f64, win_height int) int {
 	return if size > 0 && size < 1 {
 		// println("tsai: ${int(size * win_height)} = $size * $win_height")
 		int(size * win_height)
