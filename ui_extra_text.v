@@ -22,7 +22,7 @@ const (
 	empty_text_cfg = gx.TextCfg{}
 )
 
-fn is_empty_text_cfg(t gx.TextCfg) bool {
+pub fn is_empty_text_cfg(t gx.TextCfg) bool {
 	return t.str() == ui.empty_text_cfg.str()
 }
 

@@ -97,7 +97,8 @@ pub fn button(c ButtonConfig) &Button {
 }
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
-	// println('btn_click for window=$window.title')
+	// 
+	println('btn_click for window=$window.title')
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed

@@ -126,8 +126,10 @@ fn on_event(e &gg.Event, mut window Window) {
 	// println("on_event: $e.typ")
 	match e.typ {
 		.mouse_down {
+			// println("mouse down")
 			window_mouse_down(e, window.ui)
-			window_click(e, window.ui)
+			// IMPORTANT: No more need since inside window_handle_tap:
+			//  window_click(e, window.ui)
 			// touch like
 			window.touch.start = {
 				pos: {
@@ -142,14 +144,14 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_mouse_up(e, window.ui)
 			// NOT THERE since already done
 			// touch-like
-			// window.touch.end = {
-			// 	pos: {
-			// 		x: int(e.mouse_x / window.ui.gg.scale)
-			// 		y: int(e.mouse_y / window.ui.gg.scale)
-			// 	}
-			// 	time: time.now()
-			// }
-			// window_handle_touches(e, window.ui)
+			window.touch.end = {
+				pos: {
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+			window_handle_touches(e, window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -900,7 +902,7 @@ fn (mut window Window) resize(w int, h int) {
 	}
 }
 
-fn (window &Window) unfocus_all() {
+pub fn (window &Window) unfocus_all() {
 	println('window.unfocus_all()')
 	for child in window.children {
 		child.unfocus()
