@@ -446,12 +446,15 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				return
 			}
 			*/
+			// println('TAB $tb.id')
+			/*
 			if e.mods == .shift {
 				tb.parent.focus_previous()
 			}
 			else {
 				tb.parent.focus_next()
 			}
+			*/
 		}
 		else {}
 	}

@@ -79,8 +79,6 @@ pub interface Layout {
 	get_subscriber() &eventbus.Subscriber
 	// on_click(ClickFn)
 	unfocus_all()
-	focus_next()
-	focus_previous()
 	// on_mousemove(MouseMoveFn)
 	draw()
 	resize(w int, h int)
