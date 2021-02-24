@@ -28,7 +28,6 @@ Column & Row are identical except everything is reversed:
 * free_size() returns free_size_direct and free_size_opposite (in the proper order) where:
 	* free_size_direct = container_size - total_spacing()
 	* free_size_opposite = container_size
-
 N.B.:
 	* direct size is the size in the main direction of the stack: height for .column and width  for .row
 	* opposite size is the converse
@@ -829,36 +828,6 @@ fn (s &Stack) point_inside(x f64, y f64) bool {
 fn (mut s Stack) focus() {
 	// s.is_focused = true
 	// println('')
-}
-
-fn (s Stack) focus_next() {
-	mut focused := 0
-	for i, c in s.get_children() {
-		if c.is_focused() {
-			focused = i
-			break
-		}
-		else {
-			continue
-		}
-	}
-	println(focused)
-	s.get_children()[focused + 1].focus()
-}
-
-fn (s Stack) focus_previous() {
-	mut focused := 0
-	for i, c in s.get_children() {
-		if c.is_focused() {
-			focused = i
-			break
-		}
-		else {
-			continue
-		}
-	}
-	println(focused)
-	s.get_children()[focused - 1].focus()
 }
 
 fn (mut s Stack) unfocus() {
