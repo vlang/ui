@@ -903,7 +903,7 @@ fn (mut window Window) resize(w int, h int) {
 }
 
 pub fn (window &Window) unfocus_all() {
-	println('window.unfocus_all()')
+	// println('window.unfocus_all()')
 	for child in window.children {
 		child.unfocus()
 	}

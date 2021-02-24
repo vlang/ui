@@ -158,7 +158,7 @@ fn (mut gui UI) idle_loop() {
 		// This guarantees that the thread will exit at most 10ms after the
 		// closing event.
 		for i := 0; i < 50; i++ {
-			time.wait(10)
+			time.wait(10 * time.microsecond)
 			if gui.closed {
 				return
 			}
