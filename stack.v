@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-import sokol.sapp
+// import gg
 
 enum Direction {
 	row
@@ -59,8 +59,8 @@ mut:
 	y                    int
 	width                int
 	height               int
+	z_index              int
 	parent               Layout
-	root                 &Window = voidptr(0)
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
@@ -72,6 +72,7 @@ mut:
 	adj_height           int
 	// children related
 	children              []Widget
+	drawing_children      []Widget
 	widths                []f32 // children sizes
 	heights               []f32
 	vertical_alignments   VerticalAlignments // Flexible alignments by index overriding alignment.
@@ -109,7 +110,7 @@ fn (mut s Stack) init(parent Layout) {
 	s.init_size()
 
 	if parent is Window {
-		s.root = parent
+		ui.window = parent
 		// Only once for all children recursively
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
@@ -120,13 +121,14 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		s.set_children_sizes()
-	} else if parent is Stack {
-		s.root = parent.root
-	}
-	// All sizes have to be set before positionning widgets
-	// Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
-	s.set_pos(s.x, s.y)
 
+		// All sizes have to be set before positionning widgets
+		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
+		s.set_pos(s.x, s.y)
+
+		// 5) children z_index
+		s.set_drawing_children()
+	}
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -135,8 +137,18 @@ fn (mut s Stack) init(parent Layout) {
 	// Set all children's positions recursively
 	if parent is Window {
 		s.set_children_pos()
-		if parent.fullscreen {
-			s.resize(parent.adj_width, parent.adj_height)
+		$if android {
+			// window_size := gg.window_size()
+			// w := window_size.width
+			// h := window_size.height
+			// mut window := ui.window
+			// window.width, window.height = w, h
+			s.resize(parent.width, parent.height)
+		} $else {
+			if parent.mode in [.fullscreen, .max_size] {
+				// println('mode: ${parent.mode}')
+				s.resize(parent.width, parent.height)
+			}
 		}
 	}
 }
@@ -189,7 +201,7 @@ fn (mut s Stack) set_children_sizes() {
 			if c.width_type[i] in [.stretch, .weighted] {
 				w = widths[i]
 			}
-			if c.height_type[i] == .stretch || c.weight_heights[i] <= 0 {
+			if c.height_type[i] in [.stretch, .weighted] {
 				h = heights[i]
 			}
 		}
@@ -522,6 +534,8 @@ fn (mut s Stack) set_cache_sizes() {
 		// recursively do the same for Stack children
 		if child is Stack {
 			child.set_cache_sizes()
+		} else {
+			set_text_fixed(mut child, c.width_type[i], c.height_type[i])
 		}
 	}
 }
@@ -666,6 +680,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 				child.set_ui(ui)
 			}
 			child_width, child_height = child.size()
+			$if adj_size ? {
+				println('adj size child $child.type_name(): ($child_width, $child_height) ')
+			}
 		}
 		if s.direction == .column {
 			h += child_height // height of vertical stack means adding children's height
@@ -785,13 +802,29 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (mut s Stack) draw() {
-	for child in s.children {
-		child.draw()
+fn (mut s Stack) set_drawing_children() {
+	for mut child in s.children {
+		if child is Stack {
+			child.set_drawing_children()
+		}
+		// println("z_index: ${child.type_name()} $child.z_index")
+		if child.z_index > s.z_index {
+			s.z_index = child.z_index
+		}
 	}
+	// println("Stack: z_index $s.z_index ")
+	s.drawing_children = s.children.clone()
+	s.drawing_children.sort(a.z_index < b.z_index)
+}
+
+fn (mut s Stack) draw() {
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
+	}
+	for child in s.drawing_children {
+		// println("$child.type_name()")
+		child.draw()
 	}
 }
 
@@ -843,17 +876,11 @@ fn (s &Stack) is_focused() bool {
 
 fn (mut s Stack) resize(width int, height int) {
 	// println("Stack resize $width, $height")
-	mut window := s.root
-	mut sc := sapp.dpi_scale()
-	if sc == 0.0 {
-		sc = 1.0
-	}
-	// println("scale: $sc")
-
-	window.width = width
-	window.height = height
-
+	mut window := s.ui.window
+	window.update_text_scale()
+	// println('resize scale $window.text_scale')
 	s.init_size()
+	// s.set_adjusted_size(0, true, s.ui)
 	s.set_children_sizes()
 	s.set_children_pos()
 }

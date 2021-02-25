@@ -30,8 +30,8 @@ mut:
 fn main() {
 	mut app := &App{
 		rgb_rectangle: ui.rectangle(
-			width: 200
-			height: 100
+			// width: 200
+			// height: 100
 			border: true
 			color: gx.Color{
 				r: slider_val
@@ -40,8 +40,8 @@ fn main() {
 			}
 		)
 		r_textbox: ui.textbox(
-			width: 40
-			height: 20
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
@@ -68,7 +68,7 @@ fn main() {
 		)
 		r_slider: ui.slider(
 			width: 16
-			height: 200
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -79,7 +79,7 @@ fn main() {
 		)
 		g_slider: ui.slider(
 			width: 16
-			height: 200
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -90,7 +90,7 @@ fn main() {
 		)
 		b_slider: ui.slider(
 			width: 16
-			height: 200
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -111,6 +111,7 @@ fn main() {
 		height: win_height
 		title: 'RGB color displayed in rectangle'
 		state: app
+		mode: .resizable
 	}, [
 		ui.column({
 			spacing: 0
@@ -120,12 +121,19 @@ fn main() {
 				right: 20
 				// bottom: 20
 			}
-			heights: [.3, .1, .5, .1]
+			heights: [.1, .2, .1, .5, .1]
 			widths: ui.stretch
 			alignments: {
 				center: [0, 1, 2, 3]
 			}
-		}, [app.rgb_rectangle, ui.row({
+		}, [ui.button(
+			text: 'Show rgb color'
+			// width: 70
+			onclick: fn (app &App, b voidptr) {
+				txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+				ui.message_box(txt)
+			}
+		), app.rgb_rectangle, ui.row({
 			margin: 30
 			spacing: 23
 			heights: ui.compact

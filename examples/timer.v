@@ -48,13 +48,13 @@ fn main() {
 			spacing: 10
 			widths: [.3, .7]
 		}, [ui.column({
-			spacing: 10
+			spacing: 20
 		}, [
 			ui.label(text: 'Elapsed Time:'),
 			ui.label(text: 'Duration:'),
 			ui.button(text: 'Reset', onclick: on_reset),
 		]), ui.column({
-			spacing: 10
+			spacing: 20
 		}, [
 			app.lbl_elapsed_value,
 			app.slider,

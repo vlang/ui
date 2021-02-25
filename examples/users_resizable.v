@@ -36,6 +36,10 @@ mut:
 }
 
 fn main() {
+	mut logo := os.resource_abs_path(os.join_path('assets/img', 'logo.png'))
+	$if android {
+		logo = 'img/logo.png'
+	}
 	mut app := &State{
 		users: [
 			User{
@@ -74,9 +78,10 @@ fn main() {
 	}, [
 		ui.row({
 			margin: 10
-			widths: [200., ui.stretch]
+			widths: [.3, .7]
 		}, [ui.column({
-			spacing: 13
+			spacing: 10
+			// heights: ui.stretch
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -111,7 +116,7 @@ fn main() {
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
 			spacing: 65
-			widths: [ui.compact, 30.]
+			widths: [ui.compact, 30]
 		}, [ui.button(
 			text: 'Add user'
 			onclick: btn_add_click
@@ -134,7 +139,7 @@ fn main() {
 		), ui.picture(
 			width: 100
 			height: 100
-			path: os.resource_abs_path('logo.png')
+			path: logo // os.resource_abs_path('logo.png')
 		)])]),
 		ui.menu(
 			items: [ui.MenuItem{'Delete all users', menu_click},
@@ -149,7 +154,9 @@ fn menu_click() {
 }
 
 fn btn_help_click(a voidptr, b voidptr) {
-	ui.message_box('Built with V UI')
+	$if !android {
+		ui.message_box('Built with V UI')
+	}
 }
 
 /*

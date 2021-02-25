@@ -7,6 +7,7 @@ import gx
 import gg
 import strings
 import time
+// import sokol.sapp
 
 enum SelectionDirection {
 	nil = 0
@@ -15,10 +16,6 @@ enum SelectionDirection {
 }
 
 const (
-	placeholder_cfg               = gx.TextCfg{
-		color: gx.gray
-		align: gx.align_left
-	}
 	text_border_color             = gx.rgb(177, 177, 177)
 	text_inner_border_color       = gx.rgb(240, 240, 240)
 	text_border_accentuated_color = gx.rgb(255, 0, 0)
@@ -44,6 +41,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	is_focused bool
 	// gg &gg.GG
@@ -71,6 +69,10 @@ pub mut:
 	is_error           &bool = voidptr(0)
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
+	// related to text drawing
+	text_cfg   gx.TextCfg
+	text_size  f64
+	fixed_text bool
 mut:
 	is_typing bool
 }
@@ -86,6 +88,7 @@ struct Rect {
 pub struct TextBoxConfig {
 	width            int
 	height           int = 22
+	z_index          int
 	min              int
 	max              int
 	val              int
@@ -107,12 +110,24 @@ pub struct TextBoxConfig {
 	on_change          voidptr
 	on_enter           voidptr
 	border_accentuated bool
+	text_cfg           gx.TextCfg
+	text_size          f64
 }
 
 fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
+	if is_empty_text_cfg(tb.text_cfg) {
+		tb.text_cfg = tb.ui.window.text_cfg
+	}
+	if tb.text_size > 0 {
+		_, win_height := tb.ui.window.size()
+		tb.text_cfg = gx.TextCfg{
+			...tb.text_cfg
+			size: text_size_as_int(tb.text_size, win_height)
+		}
+	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, tb_click, tb)
@@ -126,6 +141,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
+		z_index: c.z_index
 		// sel_start: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
@@ -145,6 +161,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text: c.text
 		is_focused: c.is_focused
 		is_error: c.is_error
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 	}
 	if c.text == 0 {
 		panic('textbox.text binding is not set')
@@ -157,7 +175,7 @@ fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, widt
 	if !border_accentuated {
 		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
 		gg.draw_empty_rect(x, y, width, height, color)
-		// gg.draw_empty_rect(tb.x, tb.y, tb.width, tb.height, color) //text_border_color)
+		// gg.draw_empty_rect(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
 		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
 	} else {
@@ -198,7 +216,8 @@ fn (mut tb TextBox) draw() {
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
-		tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, ui.placeholder_cfg)
+		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
+		tb.draw_text(tb.x + ui.textbox_padding, text_y, placeholder)
 	}
 	// Text
 	else {
@@ -223,7 +242,8 @@ fn (mut tb TextBox) draw() {
 					break
 				}
 			}
-			tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
+			tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -232,10 +252,12 @@ fn (mut tb TextBox) draw() {
 					//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
 				}
 				*/
-				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
-					text.len))
+				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
+				// 	text.len), tb.placeholder_cfg)
+				tb.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`, text.len))
 			} else {
-				tb.ui.gg.draw_text_def(tb.x + ui.textbox_padding, text_y, text)
+				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
+				tb.draw_text(tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}
@@ -257,6 +279,9 @@ fn (mut tb TextBox) draw() {
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 		tb.ui.gg.draw_rect(cursor_x, tb.y + 3, 1, tb.height - 6, gx.black) // , gx.Black)
+	}
+	$if bb ? {
+		draw_bb(tb, tb.ui)
 	}
 }
 

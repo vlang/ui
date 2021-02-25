@@ -25,7 +25,7 @@ fn main() {
 		height: win_height
 		title: 'V UI: Rectangles'
 		state: app
-		fullscreen: true
+		mode: .max_size
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
 		//}
@@ -35,11 +35,7 @@ fn main() {
 			spacing: 5
 			margin: 5
 			widths: ui.stretch
-		}, [rect, /*
-		{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
-			{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
-			{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
-		*/ ui.rectangle(
+		}, [rect, ui.rectangle(
 			color: gx.rgb(100, 255, 100)
 		), ui.rectangle(
 			color: gx.rgb(100, 100, 255)

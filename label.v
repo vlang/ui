@@ -3,29 +3,49 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gx
+
 [heap]
 pub struct Label {
 mut:
-	text   string
-	parent Layout
-	x      int
-	y      int
-	ui     &UI
+	text       string
+	parent     Layout
+	x          int
+	y          int
+	z_index    int
+	ui         &UI
+	text_cfg   gx.TextCfg
+	text_size  f64
+	fixed_text bool
 }
 
 pub struct LabelConfig {
-	text string
+	z_index   int
+	text      string
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
+	if is_empty_text_cfg(l.text_cfg) {
+		l.text_cfg = l.ui.window.text_cfg
+	}
+	if l.text_size > 0 {
+		_, win_height := l.ui.window.size()
+		l.text_cfg = gx.TextCfg{
+			...l.text_cfg
+			size: text_size_as_int(l.text_size, win_height)
+		}
+	}
 }
 
 pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
 		text: c.text
 		ui: 0
+		z_index: c.z_index
 	}
 	return lbl
 }
@@ -40,13 +60,14 @@ fn (mut l Label) size() (int, int) {
 	mut w, mut h := l.ui.gg.text_size(l.text)
 	// RCqls: Not Sure at all, just a guess visiting fontstash
 	// TODO: Change it if text_size is updated
-	$if macos {
-		h = int(f32(h) * l.ui.gg.scale * l.ui.gg.scale)
-		// println("label size: $w $h2")
+	// $if macos {
+	// 	h = int(f32(h) * l.ui.gg.scale * l.ui.gg.scale)
+	// 	// println("label size: $w $h2")
 
-		// First return the width, then the height multiplied by line count.
-		w = int(f32(w) * l.ui.gg.scale * l.ui.gg.scale)
-	}
+	// 	// First return the width, then the height multiplied by line count.
+	// 	w = int(f32(w) * l.ui.gg.scale * l.ui.gg.scale)
+	// }
+	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
 
@@ -61,7 +82,11 @@ fn (mut l Label) draw() {
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		// Draw the text at l.x and l.y + line height * current line
-		l.ui.gg.draw_text(l.x, l.y + (height * i), split, btn_text_cfg)
+		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
+		l.draw_text(l.x, l.y + (height * i), split)
+	}
+	$if bb ? {
+		draw_bb(l, l.ui)
 	}
 }
 

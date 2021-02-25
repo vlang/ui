@@ -27,6 +27,7 @@ pub mut:
 	width            int
 	x                int
 	y                int
+	z_index          int
 	parent           Layout
 	is_focused       bool
 	checked          bool
@@ -34,11 +35,13 @@ pub mut:
 	on_check_changed CheckChangedFn
 	text             string
 	disabled         bool
+	text_cfg         gx.TextCfg
 }
 
 pub struct CheckBoxConfig {
 	x                int
 	y                int
+	z_index          int
 	parent           Layout
 	text             string
 	on_check_changed CheckChangedFn
@@ -48,9 +51,9 @@ pub struct CheckBoxConfig {
 
 fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
-	pui := parent.get_ui()
-	cb.ui = pui
+	cb.ui = parent.get_ui()
 	cb.width = cb.ui.gg.text_width(cb.text) + 5 + ui.check_mark_size
+	cb.text_cfg = cb.ui.window.text_cfg
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -58,6 +61,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
 		height: 20 // TODO
+		z_index: c.z_index
 		ui: 0
 		text: c.text
 		on_check_changed: c.on_check_changed
@@ -70,6 +74,7 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
+		// println("checked: $cb.checked")
 		if cb.on_check_changed != voidptr(0) {
 			cb.on_check_changed(window.state, cb.checked)
 		}
@@ -113,7 +118,10 @@ fn (mut cb CheckBox) draw() {
 		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, btn_text_cfg)
+	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
+	$if bb ? {
+		draw_bb(cb, cb.ui)
+	}
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {

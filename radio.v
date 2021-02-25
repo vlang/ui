@@ -24,20 +24,27 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	is_focused bool
 	is_checked bool
 	ui         &UI
+	text_cfg   gx.TextCfg
+	text_size  f64
+	fixed_text bool
 	// selected_value string
 	// onclick    RadioClickFn
 }
 
 pub struct RadioConfig {
 	// onclick    RadioClickFn
-	values []string
-	title  string
-	width  int
-	ref    &Radio = voidptr(0)
+	values    []string
+	title     string
+	width     int
+	z_index   int
+	ref       &Radio = voidptr(0)
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 fn (mut r Radio) init(parent Layout) {
@@ -55,6 +62,16 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
+	if is_empty_text_cfg(r.text_cfg) {
+		r.text_cfg = r.ui.window.text_cfg
+	}
+	if r.text_size > 0 {
+		_, win_height := r.ui.window.size()
+		r.text_cfg = gx.TextCfg{
+			...r.text_cfg
+			size: text_size_as_int(r.text_size, win_height)
+		}
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -62,9 +79,12 @@ fn (mut r Radio) init(parent Layout) {
 pub fn radio(c RadioConfig) &Radio {
 	mut r := &Radio{
 		height: 20
+		z_index: c.z_index
 		values: c.values
 		title: c.title
 		width: c.width
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 		ui: 0
 		// onclick: c.onclick
 	}
@@ -99,7 +119,8 @@ fn (mut r Radio) draw() {
 	// Title
 	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 		10, default_window_color)
-	r.ui.gg.draw_text_def(r.x + check_mark_size + 3, r.y - 7, r.title)
+	// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
+	r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -110,7 +131,11 @@ fn (mut r Radio) draw() {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, btn_text_cfg)
+		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
+		r.draw_text(r.x + check_mark_size + 10, y, val)
+	}
+	$if bb ? {
+		draw_bb(r, r.ui)
 	}
 }
 

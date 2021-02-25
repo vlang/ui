@@ -10,10 +10,6 @@ import os
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
 	button_border_color       = gx.rgb(200, 200, 200)
-	btn_text_cfg              = gx.TextCfg{ // color: gx.white, {
-		color: gx.rgb(38, 38, 38)
-		align: gx.align_left
-	}
 	button_horizontal_padding = 26
 	button_vertical_padding   = 8
 )
@@ -31,6 +27,9 @@ pub struct ButtonConfig {
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
+	z_index   int
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 [heap]
@@ -42,6 +41,7 @@ pub mut:
 	state      ButtonState
 	height     int
 	width      int
+	z_index    int
 	x          int
 	y          int
 	parent     Layout
@@ -52,6 +52,9 @@ pub mut:
 	icon_path  string
 	image      gg.Image
 	use_icon   bool
+	text_cfg   gx.TextCfg
+	text_size  f64
+	fixed_text bool
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -60,6 +63,16 @@ fn (mut b Button) init(parent Layout) {
 	b.ui = ui
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
+	}
+	if is_empty_text_cfg(b.text_cfg) {
+		b.text_cfg = b.ui.window.text_cfg
+	}
+	if b.text_size > 0 {
+		_, win_height := b.ui.window.size()
+		b.text_cfg = gx.TextCfg{
+			...b.text_cfg
+			size: text_size_as_int(b.text_size, win_height)
+		}
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
@@ -70,10 +83,13 @@ pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		onclick: c.onclick
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -103,7 +119,7 @@ fn (mut b Button) set_pos(x int, y int) {
 }
 
 fn (mut b Button) size() (int, int) {
-	if b.width == 0 && b.height == 0 {
+	if b.width == 0 || b.height == 0 {
 		b.set_text_size()
 	}
 	return b.width, b.height
@@ -118,7 +134,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 		b.height = h
 	}
 	// b.height = h
-	// b.width = b.ui.ft.text_width(b.text) + button_horizontal_padding
+	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
 	return b.width, b.height
 }
@@ -145,15 +161,20 @@ fn (mut b Button) draw() {
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
 	mut y := bcenter_y - h2 - 1
 	// if b.ui.gg.scale == 2 {
-	$if macos { // TODO
-		y -= 2
-	}
+	// $if macos { // TODO
+	// 	y -= 2
+	// }
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
-		b.ui.gg.draw_text(bcenter_x - w2, y, b.text, ui.btn_text_cfg)
+		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
+		b.draw_text(bcenter_x - w2, y, b.text)
 	}
-	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, button_border_color)
+	$if bb ? {
+		draw_bb(b, b.ui)
+		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
+	}
+	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
 }
 
 fn (mut b Button) set_text_size() {
@@ -164,8 +185,8 @@ fn (mut b Button) set_text_size() {
 	// if b.text_width == 0 || b.text_height == 0 {
 	else if b.ui != 0 {
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		b.text_width = int(f32(b.text_width) * b.ui.gg.scale) // * b.ui.gg.scale)
-		b.text_height = int(f32(b.text_height) * b.ui.gg.scale) // * b.ui.gg.scale)
+		b.text_width = int(f32(b.text_width) * b.ui.gg.scale * b.ui.gg.scale)
+		b.text_height = int(f32(b.text_height) * b.ui.gg.scale * b.ui.gg.scale)
 		if b.width == 0 {
 			b.width = b.text_width + ui.button_horizontal_padding
 		}

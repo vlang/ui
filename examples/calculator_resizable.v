@@ -1,10 +1,11 @@
 import ui
 import math
+import os
 
 const (
 	buttons_per_row = 4
-	bwidth          = 30
-	bheight         = 30
+	// bwidth          = 30
+	// bheight         = 30
 	bpadding        = 5
 )
 
@@ -37,6 +38,7 @@ fn main() {
 			text: &app.text
 			placeholder: '0'
 			// width: 135
+			text_size: 1. / 20
 			read_only: true
 		),
 	]
@@ -47,19 +49,20 @@ fn main() {
 		}, get_row(op))
 	}
 	app.window = ui.window({
-		width: 145
-		height: 210
+		width: 300
+		height: 400
 		title: 'V Calc'
 		state: app
-		resizable: true
-		// fullscreen: true
+		mode: .max_size // .resizable
+		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
 		ui.column({
 			margin: 5
 			spacing: 5
-			heights: ui.stretch // [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			heights: ui.stretch // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])
+	// app.text = "size= ${app.window.width} ${app.window.height}"
 	ui.run(app.window)
 }
 
@@ -201,8 +204,7 @@ fn get_row(ops []string) []ui.Widget {
 		children << ui.button(
 			text: op
 			onclick: btn_click
-			width: bwidth
-			height: bheight
+			text_size: 1. / 20
 		)
 	}
 	return children

@@ -22,18 +22,18 @@ const (
 
 pub struct UI {
 pub mut:
-	gg &gg.Context = voidptr(0)
+	gg             &gg.Context = voidptr(0)
+	window         &Window     = voidptr(0)
+	show_cursor    bool
+	last_type_time i64
+	clipboard      &clipboard.Clipboard
 mut:
-	window      &Window = voidptr(0)
-	show_cursor bool
 	// just_typed           bool
-	last_type_time       i64
 	cb_image             gg.Image
 	circle_image         gg.Image
 	radio_image          gg.Image
 	selected_radio_image gg.Image
 	down_arrow           gg.Image
-	clipboard            &clipboard.Clipboard
 	redraw_requested     bool
 	resource_cache       map[string]gg.Image
 	closed               bool
@@ -56,6 +56,7 @@ pub enum HorizontalAlignment {
 pub interface Widget {
 	x int
 	y int
+	z_index int
 	init(Layout)
 	// key_down(KeyEvent)
 	draw()

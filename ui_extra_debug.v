@@ -14,6 +14,17 @@ fn (s &Stack) draw_bb() {
 		col)
 }
 
+fn draw_bb(wi &Widget, ui &UI) {
+	col := gx.black
+	w, h := wi.size()
+	ui.gg.draw_empty_rect(wi.x, wi.y, w, h, col)
+}
+
+fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
+	col := gx.gray
+	ui.gg.draw_empty_rect(x, y, w, h, col)
+}
+
 // Debug function
 fn (s &Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
@@ -63,7 +74,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 		C.printf(' %p', parent)
 		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
 	} else if parent is Window {
-		println('	parent: Window => size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) ')
+		println('	parent: Window => size ($parent.width, $parent.height)  orig: ($parent.orig_width, $parent.orig_height) ')
 	}
 	for i, child in s.children {
 		w, h := child.size()

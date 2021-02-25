@@ -6,7 +6,8 @@ import gx
 import gg
 import clipboard
 import eventbus
-import sokol.sapp
+import time
+import math
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -53,20 +54,22 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable  bool // currently only for events.on_resized not modify children
-	fullscreen bool
-	// adjusted size generally depending on children
-	adj_width  int
-	adj_height int
-	// spacing    int // ununsed for Window but required for Layout (Stack precisely)
+	resizable bool // currently only for events.on_resized not modify children
+	mode      WindowSizeType
+	// saved origin sizes
+	orig_width  int
+	orig_height int
+	touch       TouchInfo
+	// Text Config
+	text_cfg   gx.TextCfg
+	text_scale f64 = 1.0
 }
 
 pub struct WindowConfig {
 pub:
 	width                 int
 	height                int
-	resizable             bool
-	fullscreen            bool
+	font_path             string
 	title                 string
 	always_on_top         bool
 	state                 voidptr
@@ -81,11 +84,12 @@ pub:
 	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
 	children              []Widget
-	font_path             string
 	custom_bold_font_path string
 	native_rendering      bool
-	// pub mut:
-	// parent_window &Window
+	resizable             bool
+	mode                  WindowSizeType
+	// Text Config
+	lines int = 10
 }
 
 /*
@@ -119,14 +123,35 @@ fn on_event(e &gg.Event, mut window Window) {
 	}
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
+	// println("on_event: $e.typ")
 	match e.typ {
-		.mouse_up {
-			// println('click')
-			window_mouse_up(e, window.ui)
-			window_click(e, window.ui)
-		}
 		.mouse_down {
+			// println("mouse down")
 			window_mouse_down(e, window.ui)
+			// IMPORTANT: No more need since inside window_handle_tap:
+			//  window_click(e, window.ui)
+			// touch like
+			window.touch.start = {
+				pos: {
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+		}
+		.mouse_up {
+			// println('mouseup')
+			window_mouse_up(e, window.ui)
+			// NOT THERE since already done
+			// touch-like
+			window.touch.end = {
+				pos: {
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+			window_handle_touches(e, window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -146,6 +171,31 @@ fn on_event(e &gg.Event, mut window Window) {
 		.resized, .restored, .resumed {
 			window_resize(e, window.ui)
 		}
+		.touches_began {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.start = {
+					pos: {
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+			}
+		}
+		.touches_ended {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.end = {
+					pos: {
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				window_handle_touches(e, window.ui)
+			}
+		}
 		else {}
 	}
 	/*
@@ -155,21 +205,15 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 }
 
-fn gg_init(window &Window) {
+fn gg_init(mut window Window) {
+	window_size := gg.window_size()
+	w := window_size.width
+	h := window_size.height
+	window.width, window.height = w, h
+	window.orig_width, window.orig_height = w, h
+	println('gg_init: $w, $h')
 	for _, child in window.children {
-		// if child is Stack {
-		// }
-		/*
-		match child {
-			Stack {
-				println('column')
-			}
-			TextBox {
-				println('textbox')
-			}
-			else{}
-		}
-		*/
+		println('init $child.type_name()')
 		child.init(window)
 	}
 }
@@ -181,14 +225,56 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		println('end of window()')
 	}
 	*/
+
+	mut width, mut height := cfg.width, cfg.height
+	mut resizable := cfg.resizable
+	mut fullscreen := false
+
+	mut sc_size := gg.Size{width, height}
+
+	// before fixing gg_screen_size() for other OS: Linux, Windows
+	$if macos {
+		sc_size = gg.screen_size()
+	}
+
+	match cfg.mode {
+		.max_size {
+			if sc_size.width > 0 {
+				width, height = sc_size.width, sc_size.height
+				resizable = true
+			}
+		}
+		.fullscreen {
+			if sc_size.width > 10 {
+				width, height = sc_size.width, sc_size.height
+			}
+			fullscreen = true
+		}
+		.resizable {
+			resizable = true
+		}
+		else {}
+	}
+
+	// default text_cfg
+	// m := f32(math.min(width, height))
+
+	mut text_cfg := gx.TextCfg{
+		color: gx.rgb(38, 38, 38)
+		align: gx.align_left
+		// size: int(m / cfg.lines)
+	}
+
 	C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
 		draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
-		width: cfg.width
-		height: cfg.height
+		width: width
+		height: height
+		// orig_width: width // 800
+		// orig_height: height // 600
 		children: children
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
@@ -197,29 +283,32 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
-		resizable: cfg.resizable
-		fullscreen: cfg.fullscreen
+		resizable: resizable
+		mode: cfg.mode
 		resize_fn: cfg.on_resize
+		text_cfg: text_cfg
 	}
 
-	if cfg.fullscreen {
-		sc_size := gg.screen_size()
-		window.adj_width, window.adj_height = sc_size.width, sc_size.height
+	mut font_path := ''
+	$if android {
+		font_path = 'fonts/RobotoMono-Regular.ttf'
+	} $else {
+		font_path = if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 	}
 
 	gcontext := gg.new_context(
-		width: cfg.width
-		height: cfg.height
-		fullscreen: cfg.fullscreen
+		width: width
+		height: height
 		use_ortho: true // This is needed for 2D drawing
 		create_window: true
 		window_title: cfg.title
-		resizable: cfg.resizable
+		resizable: resizable
+		fullscreen: fullscreen
 		frame_fn: if cfg.native_rendering { native_frame } else { frame }
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
-		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
+		font_path: font_path
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
 		// keydown_fn: window_key_down
@@ -325,30 +414,20 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	// println('window resize h=$event.window_height')
+	// 
+	println('window resize ($event.window_width ,$event.window_height)')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
+
+	// println("")
+	// win_size := gg.window_size()
+	// w := win_size.width
+	// h := win_size.height
+
+	// window.update_text_scale(w, h)
+
 	if window.resize_fn != voidptr(0) {
-		mut scale := sapp.dpi_scale()
-		if scale == 0.0 {
-			scale = 1.0
-		}
-		w := int(sapp.width() / scale)
-		h := int(sapp.height() / scale)
-		// m := f32(min(w, h))
-		// app.ui.dpi_scale = s
-		window.resize_fn(w, h, window)
-	}
-	for mut child in window.children {
-		mut scale := sapp.dpi_scale()
-		if scale == 0.0 {
-			scale = 1.0
-		}
-		w := int(sapp.width() / scale)
-		h := int(sapp.height() / scale)
-		if child is Stack {
-			child.resize(w, h)
-		}
+		window.resize_fn(event.window_width, event.window_height, window)
 	}
 }
 
@@ -434,8 +513,45 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 	}
 }
 
+fn window_handle_touches(event gg.Event, ui &UI) {
+	window := ui.window
+
+	s, e := window.touch.start, window.touch.end
+	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
+	if math.max(adx, ady) < 10 {
+		window_handle_tap(event, ui)
+	} else {
+		window_handle_swipe(event, ui)
+	}
+}
+
+fn window_handle_tap(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
+		window.click_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_click, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_click, window, e)
+	}
+}
+
+fn window_handle_swipe(event gg.Event, ui &UI) {
+	// window := ui.window
+}
+
 fn window_click(event gg.Event, ui &UI) {
 	window := ui.window
+	// println("typ $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
@@ -527,6 +643,17 @@ fn window_char(event gg.Event, ui &UI) {
 		child.key_down()
 	}
 	*/
+}
+
+fn (mut w Window) update_text_scale() {
+	w.text_scale = f64(w.height) / f64(w.orig_height)
+	// 
+	println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
+	if w.text_scale <= 0 {
+		w.text_scale = 1
+	}
+	// 
+	println('w.text_scale=$w.text_scale')
 }
 
 fn (mut w Window) focus_next() {
@@ -760,26 +887,27 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 	return w.eventbus.subscriber
 }
 
-fn (w &Window) size() (int, int) {
-	mut width := w.width
-	mut height := w.height
-	// if w.width < w.adj_width {
-	// 	width = w.adj_width
-	// }
-	// if w.height < w.adj_height {
-	// 	height = w.adj_height
-	// }
-	return width, height
+pub fn (w &Window) size() (int, int) {
+	return w.width, w.height
 }
 
-fn (mut window Window) resize(width int, height int) {
-	window.width = width
-	window.height = height
+fn (mut window Window) resize(w int, h int) {
+	// Do not use the w and h that come from event resizing, except maybe if divided by dpi_scale
+	window_size := gg.window_size()
+	width := window_size.width
+	height := window_size.height
+	window.width, window.height = width, height
 	window.ui.gg.resize(width, height)
+	window.update_text_scale()
+	for mut child in window.children {
+		if child is Stack {
+			child.resize(width, height)
+		}
+	}
 }
 
-fn (window &Window) unfocus_all() {
-	println('window.unfocus_all()')
+pub fn (window &Window) unfocus_all() {
+	// println('window.unfocus_all()')
 	for child in window.children {
 		child.unfocus()
 	}

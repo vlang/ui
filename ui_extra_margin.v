@@ -10,11 +10,12 @@ pub struct Margin {
 pub type MarginConfig = Margin | int
 
 fn (m MarginConfig) as_margin() Margin {
-	if m is Margin {
-		return m
-	} else if m is int {
-		return Margin{m, m, m, m}
-	} else {
-		return Margin{}
+	match m {
+		Margin {
+			return m
+		}
+		int {
+			return Margin{m, m, m, m}
+		}
 	}
 }

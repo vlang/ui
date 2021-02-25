@@ -20,6 +20,7 @@ mut:
 	y             int
 	width         int
 	height        int
+	z_index       int
 	callback      SelectionChangedFn = SelectionChangedFn(0)
 	draw_lines    bool     // Draw a rectangle around every item?
 	col_border    gx.Color = ui._col_border // Item and list border color
@@ -37,6 +38,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		y: if c.draw_lines { c.y } else { c.y - 1 }
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		selection: -1
 		clbk: c.callback
 		draw_lines: c.draw_lines
@@ -64,6 +66,7 @@ pub mut:
 	width         int
 	x             int
 	y             int
+	z_index       int
 	parent        Layout
 	ui            &UI
 	items         []ListItem
