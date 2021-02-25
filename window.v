@@ -783,6 +783,9 @@ fn bar() {
 	foo(&Group{
 		ui: 0
 	})
+	foo(&Grid{
+		ui: 0
+	})
 }
 
 fn (w &Window) draw() {
