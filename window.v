@@ -213,6 +213,7 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	println('gg_init: $w, $h')
 	for _, child in window.children {
+		println('init $child.type_name()')
 		child.init(window)
 	}
 }
@@ -804,6 +805,11 @@ fn frame(mut w Window) {
 		// Render all widgets, including Canvas
 		for child in w.children {
 			child.draw()
+		}
+		for mut child in w.children {
+			if child is Dropdown {
+				child.draw_open()
+			}
 		}
 	}
 	// w.showfps()

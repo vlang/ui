@@ -805,6 +805,11 @@ fn (mut s Stack) draw() {
 	for child in s.children {
 		child.draw()
 	}
+	for child in s.children {
+		if child is Dropdown {
+			child.draw_open()
+		}
+	}
 }
 
 fn (s &Stack) total_spacing() int {
