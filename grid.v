@@ -10,6 +10,7 @@ pub mut:
 	y           int
 	height      int
 	width       int
+	z_index     int
 	cell_height f32
 	cell_width  f32 = 40
 	parent      Layout
@@ -22,6 +23,7 @@ pub struct GridConfig {
 	body        [][]string
 	height      int = 200
 	width       int = 400
+	z_index     int
 	cell_height f32 = 25
 }
 
@@ -35,6 +37,7 @@ pub fn grid(c GridConfig) &Grid {
 	mut gv := &Grid{
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		cell_height: c.cell_height
 		header: c.header
 		body: c.body
