@@ -806,11 +806,6 @@ fn frame(mut w Window) {
 		for child in w.children {
 			child.draw()
 		}
-		for mut child in w.children {
-			if child is Dropdown {
-				child.draw_open()
-			}
-		}
 	}
 	// w.showfps()
 	else if w.child_window != 0 {
