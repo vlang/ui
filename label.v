@@ -20,7 +20,7 @@ mut:
 }
 
 pub struct LabelConfig {
-	z_index    int
+	z_index   int
 	text      string
 	text_cfg  gx.TextCfg
 	text_size f64

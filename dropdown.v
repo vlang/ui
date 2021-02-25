@@ -96,15 +96,12 @@ fn (dd &Dropdown) draw() {
 	} else {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
-	// 
-	$if z_index ? {
-		dd.draw_last()
-	}
+	dd.draw_open()
 	// draw the arrow
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 }
 
-fn (dd &Dropdown) draw_last() {
+fn (dd &Dropdown) draw_open() {
 	// draw the drawer
 	if dd.open {
 		gg := dd.ui.gg

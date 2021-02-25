@@ -24,9 +24,9 @@ mut:
 }
 
 pub struct MenuConfig {
-	z_index   int
-	text  string
-	items []MenuItem
+	z_index int
+	text    string
+	items   []MenuItem
 }
 
 pub type MenuFn = fn ()
