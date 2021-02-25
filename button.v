@@ -27,6 +27,7 @@ pub struct ButtonConfig {
 	onclick   ButtonClickFn
 	height    int = 20
 	width     int
+	z_index   int
 	text_cfg  gx.TextCfg
 	text_size f64
 }
@@ -40,6 +41,7 @@ pub mut:
 	state      ButtonState
 	height     int
 	width      int
+	z_index    int
 	x          int
 	y          int
 	parent     Layout
@@ -81,6 +83,7 @@ pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''

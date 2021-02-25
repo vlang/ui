@@ -27,6 +27,7 @@ pub mut:
 	width            int
 	x                int
 	y                int
+	z_index          int
 	parent           Layout
 	is_focused       bool
 	checked          bool
@@ -40,6 +41,7 @@ pub mut:
 pub struct CheckBoxConfig {
 	x                int
 	y                int
+	z_index          int
 	parent           Layout
 	text             string
 	on_check_changed CheckChangedFn
@@ -59,6 +61,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
 		height: 20 // TODO
+		z_index: c.z_index
 		ui: 0
 		text: c.text
 		on_check_changed: c.on_check_changed

@@ -17,6 +17,7 @@ mut:
 	parent    Layout
 	x         int
 	y         int
+	z_index   int
 	width     int
 	height    int
 	path      string
@@ -30,6 +31,7 @@ pub struct PictureConfig {
 	path      string
 	width     int
 	height    int
+	z_index   int
 	on_click  PictureClickFn
 	use_cache bool     = true
 	ref       &Picture = voidptr(0)
@@ -75,6 +77,7 @@ pub fn picture(c PictureConfig) &Picture {
 	mut pic := &Picture{
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		path: c.path
 		use_cache: c.use_cache
 		on_click: c.on_click

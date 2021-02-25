@@ -26,6 +26,7 @@ pub mut:
 	orientation          Orientation = Orientation.horizontal
 	x                    int
 	y                    int
+	z_index              int
 	parent               Layout
 	ui                   &UI
 	val                  f32
@@ -43,6 +44,7 @@ pub mut:
 pub struct SliderConfig {
 	width                int
 	height               int
+	z_index              int
 	min                  int
 	max                  int
 	val                  f32
@@ -78,6 +80,7 @@ pub fn slider(c SliderConfig) &Slider {
 		thumb_in_track: c.thumb_in_track
 		track_line_displayed: c.track_line_displayed
 		ui: 0
+		z_index: c.z_index
 	}
 	s.set_thumb_size()
 	// if !c.thumb_in_track {

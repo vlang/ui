@@ -14,6 +14,7 @@ pub mut:
 	width         int
 	x             int
 	y             int
+	z_index       int
 	parent        Layout
 	ui            &UI
 	children      []Widget

@@ -9,10 +9,11 @@ pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int
 
 pub struct Canvas {
 pub mut:
-	width  int
-	height int
-	x      int
-	y      int
+	width   int
+	height  int
+	x       int
+	y       int
+	z_index int
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)
@@ -22,6 +23,7 @@ mut:
 pub struct CanvasConfig {
 	width   int
 	height  int
+	z_index int
 	text    string
 	draw_fn DrawFn = voidptr(0)
 }
@@ -35,6 +37,7 @@ pub fn canvas(c CanvasConfig) &Canvas {
 	mut canvas := &Canvas{
 		width: c.width
 		height: c.height
+		z_index: c.z_index
 		draw_fn: c.draw_fn
 	}
 	return canvas

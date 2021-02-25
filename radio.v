@@ -24,6 +24,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	is_focused bool
 	is_checked bool
@@ -40,6 +41,7 @@ pub struct RadioConfig {
 	values    []string
 	title     string
 	width     int
+	z_index   int
 	ref       &Radio = voidptr(0)
 	text_cfg  gx.TextCfg
 	text_size f64
@@ -77,6 +79,7 @@ fn (mut r Radio) init(parent Layout) {
 pub fn radio(c RadioConfig) &Radio {
 	mut r := &Radio{
 		height: 20
+		z_index: c.z_index
 		values: c.values
 		title: c.title
 		width: c.width

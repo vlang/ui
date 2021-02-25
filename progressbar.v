@@ -19,6 +19,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	ui         &UI
 	val        int
@@ -28,11 +29,12 @@ pub mut:
 }
 
 pub struct ProgressBarConfig {
-	width  int
-	height int = 16
-	min    int
-	max    int
-	val    int
+	width   int
+	height  int = 16
+	z_index int
+	min     int
+	max     int
+	val     int
 }
 
 fn (mut pb ProgressBar) init(parent Layout) {
@@ -45,6 +47,7 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 	mut pb := &ProgressBar{
 		height: c.height
 		width: c.width
+		z_index: c.z_index
 		min: c.min
 		max: c.max
 		val: c.val

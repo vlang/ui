@@ -14,6 +14,7 @@ mut:
 	parent       Layout
 	x            int
 	y            int
+	z_index      int
 	height       int
 	width        int
 	radius       int
@@ -26,6 +27,7 @@ pub struct RectangleConfig {
 	text         string
 	height       int
 	width        int
+	z_index      int
 	color        gx.Color
 	radius       int
 	border       bool
@@ -48,6 +50,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		text: c.text
 		height: c.height
 		width: c.width
+		z_index: c.z_index
 		radius: c.radius
 		color: c.color
 		border: c.border

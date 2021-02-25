@@ -53,12 +53,13 @@ struct StackConfig {
 }
 
 struct Stack {
-	cache CachedSizes
+	cache                CachedSizes
 mut:
 	x                    int
 	y                    int
 	width                int
 	height               int
+	z_index              int
 	parent               Layout
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
@@ -71,6 +72,7 @@ mut:
 	adj_height           int
 	// children related
 	children              []Widget
+	drawing_children      []Widget
 	widths                []f32 // children sizes
 	heights               []f32
 	vertical_alignments   VerticalAlignments // Flexible alignments by index overriding alignment.
@@ -123,6 +125,10 @@ fn (mut s Stack) init(parent Layout) {
 		// All sizes have to be set before positionning widgets
 		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 		s.set_pos(s.x, s.y)
+		// children z_index
+		$if z_index ? {
+			s.set_drawing_children()
+		}
 	}
 	// Init all children recursively
 	for mut child in s.children {
@@ -797,17 +803,53 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
+fn (mut s Stack) set_drawing_children() {
+	for mut child in s.children {
+		if child is Stack {
+			child.set_drawing_children()
+		}
+		println("z_index: ${child.type_name()} $child.z_index")
+		if child.z_index > s.z_index {
+			s.z_index = child.z_index
+		} 
+	}
+	println("Stack: z_index $s.z_index ")
+	s.drawing_children = s.children.clone()
+	s.drawing_children.sort(a.z_index > b.z_index)
+}
+
+// fn (mut s Stack) draw() {
+// 	// DEBUG MODE: Uncomment to display the bounding boxes
+// 	$if bb ? {
+// 		s.draw_bb()
+// 	}
+// 	for child in s.children {
+// 		child.draw()
+// 	}
+// 	for child in s.children {
+// 		if child is Dropdown {
+// 			child.draw_last()
+// 		}
+// 	}
+// }
+
 fn (mut s Stack) draw() {
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
 	}
-	for child in s.children {
-		child.draw()
-	}
-	for child in s.children {
-		if child is Dropdown {
-			child.draw_open()
+	$if z_index ? {
+		for child in s.drawing_children {
+			child.draw()
+		}
+	} $else {
+		for child in s.children {
+			child.draw()
+		}
+		for child in s.children {
+			if child is Dropdown {
+				child.draw_last()
+			}
 		}
 	}
 }

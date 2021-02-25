@@ -17,12 +17,14 @@ mut:
 	parent  Layout
 	x       int
 	y       int
+	z_index int
 	ui      &UI
 	items   []MenuItem
 	visible bool
 }
 
 pub struct MenuConfig {
+	z_index   int
 	text  string
 	items []MenuItem
 }
@@ -44,6 +46,7 @@ pub fn menu(c MenuConfig) &Menu {
 		text: c.text
 		items: c.items
 		ui: 0
+		z_index: c.z_index
 	}
 }
 

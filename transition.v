@@ -10,6 +10,7 @@ mut:
 	// pub:
 	x                int
 	y                int
+	z_index          int
 	last_draw_time   i64
 	started_time     i64
 	duration         i64
@@ -25,6 +26,7 @@ pub mut:
 }
 
 pub struct TransitionConfig {
+	z_index        int
 	duration       int
 	animated_value &int = 0
 	easing         EasingFunction
@@ -37,15 +39,16 @@ fn (mut t Transition) init(parent Layout) {
 	t.ui = ui
 }
 
-pub fn transition(config TransitionConfig) &Transition {
+pub fn transition(c TransitionConfig) &Transition {
 	mut transition := &Transition{
 		last_draw_time: time.ticks()
 		started_time: 0
-		duration: config.duration
+		duration: c.duration
 		animating: false
-		easing: config.easing
+		easing: c.easing
 		ui: 0
 		animated_value: 0
+		z_index: c.z_index
 	}
 	return transition
 }

@@ -22,6 +22,7 @@ mut:
 	parent               Layout
 	x                    int
 	y                    int
+	z_index              int
 	ui                   &UI
 	items                []DropdownItem
 	open                 bool
@@ -36,6 +37,7 @@ pub struct DropdownConfig {
 	x                    int
 	y                    int
 	width                int
+	z_index              int = 10
 	parent               Layout
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
@@ -59,6 +61,7 @@ fn (mut dd Dropdown) init(parent Layout) {
 pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
 		width: c.width
+		z_index: c.z_index
 		items: items
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
@@ -93,12 +96,15 @@ fn (dd &Dropdown) draw() {
 	} else {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
-	// dd.draw_open()
+	// 
+	$if z_index ? {
+		dd.draw_last()
+	}
 	// draw the arrow
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 }
 
-fn (dd &Dropdown) draw_open() {
+fn (dd &Dropdown) draw_last() {
 	// draw the drawer
 	if dd.open {
 		gg := dd.ui.gg

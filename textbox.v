@@ -41,6 +41,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	is_focused bool
 	// gg &gg.GG
@@ -87,6 +88,7 @@ struct Rect {
 pub struct TextBoxConfig {
 	width            int
 	height           int = 22
+	z_index          int
 	min              int
 	max              int
 	val              int
@@ -139,6 +141,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
+		z_index: c.z_index
 		// sel_start: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind

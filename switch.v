@@ -22,6 +22,7 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	z_index    int
 	parent     Layout
 	is_focused bool
 	open       bool
@@ -30,6 +31,7 @@ pub mut:
 }
 
 pub struct SwitchConfig {
+	z_index int
 	onclick SwitchClickFn
 	open    bool
 }
@@ -46,6 +48,7 @@ pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
 		height: ui.sw_height
 		width: ui.sw_width
+		z_index: c.z_index
 		open: c.open
 		onclick: c.onclick
 		ui: 0

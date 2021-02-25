@@ -12,6 +12,7 @@ mut:
 	parent     Layout
 	x          int
 	y          int
+	z_index    int
 	ui         &UI
 	text_cfg   gx.TextCfg
 	text_size  f64
@@ -19,6 +20,7 @@ mut:
 }
 
 pub struct LabelConfig {
+	z_index    int
 	text      string
 	text_cfg  gx.TextCfg
 	text_size f64
@@ -43,6 +45,7 @@ pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
 		text: c.text
 		ui: 0
+		z_index: c.z_index
 	}
 	return lbl
 }

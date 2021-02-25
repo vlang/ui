@@ -54,8 +54,9 @@ pub enum HorizontalAlignment {
 }
 
 pub interface Widget {
-	x int
-	y int
+	x       int
+	y       int
+	z_index int
 	init(Layout)
 	// key_down(KeyEvent)
 	draw()
