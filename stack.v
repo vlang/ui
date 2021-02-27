@@ -129,6 +129,7 @@ fn (mut s Stack) init(parent Layout) {
 		// 5) children z_index
 		s.set_drawing_children()
 	}
+
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -137,6 +138,7 @@ fn (mut s Stack) init(parent Layout) {
 	// Set all children's positions recursively
 	if parent is Window {
 		s.set_children_pos()
+
 		$if android {
 			// window_size := gg.window_size()
 			// w := window_size.width
@@ -145,7 +147,7 @@ fn (mut s Stack) init(parent Layout) {
 			// window.width, window.height = w, h
 			s.resize(parent.width, parent.height)
 		} $else {
-			if parent.mode in [.fullscreen, .max_size] {
+			if parent.mode in [.fullscreen, .max_size, .resizable] {
 				// println('mode: ${parent.mode}')
 				s.resize(parent.width, parent.height)
 			}
@@ -716,13 +718,22 @@ fn (mut s Stack) set_pos(x int, y int) {
 fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
+	$if scp ? {
+		println('Stack  pos: ($s.x, $s.y)')
+	}
 	for i, mut child in s.children {
 		child_width, child_height := child.size()
 		s.set_child_pos(child, i, x, y)
 		if s.direction == .row {
+			$if scp ? {
+				println('$.row $i): child_width=$child_width x => $x')
+			}
 			x += child_width
 			if i < s.children.len - 1 {
 				x += s.spacing[i]
+				$if scp ? {
+					println('spacing[$i]: ${s.spacing[i]} x => $x')
+				}
 			}
 		} else {
 			y += child_height
@@ -741,7 +752,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	// TODO: alignment in the direct direction
 	// (for these different cases, container size in the direct direction is more complicated to compute)
 	$if scp ? {
-		println('set_children_pos: $i) ${typeof(s).name}-$child.type_name()')
+		println('set_child_pos: $i) ${typeof(s).name}-$child.type_name()')
 	}
 
 	child_width, child_height := child.size()

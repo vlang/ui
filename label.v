@@ -39,6 +39,7 @@ fn (mut l Label) init(parent Layout) {
 			size: text_size_as_int(l.text_size, win_height)
 		}
 	}
+	l.ui.gg.set_cfg(l.text_cfg)
 }
 
 pub fn label(c LabelConfig) &Label {
@@ -58,15 +59,6 @@ fn (mut l Label) set_pos(x int, y int) {
 fn (mut l Label) size() (int, int) {
 	// println("size $l.text")
 	mut w, mut h := l.ui.gg.text_size(l.text)
-	// RCqls: Not Sure at all, just a guess visiting fontstash
-	// TODO: Change it if text_size is updated
-	// $if macos {
-	// 	h = int(f32(h) * l.ui.gg.scale * l.ui.gg.scale)
-	// 	// println("label size: $w $h2")
-
-	// 	// First return the width, then the height multiplied by line count.
-	// 	w = int(f32(w) * l.ui.gg.scale * l.ui.gg.scale)
-	// }
 	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
@@ -83,7 +75,8 @@ fn (mut l Label) draw() {
 	for i, split in splits {
 		// Draw the text at l.x and l.y + line height * current line
 		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
-		l.draw_text(l.x, l.y + (height * i), split)
+		// l.draw_text(l.x, l.y + (height * i), split)
+		draw_text<Label>(l, l.x, l.y + (height * i), split)
 	}
 	$if bb ? {
 		draw_bb(l, l.ui)

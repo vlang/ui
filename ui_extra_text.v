@@ -40,6 +40,23 @@ fn set_text_fixed(mut child Widget, width_type ChildSize, height_type ChildSize)
 	}
 }
 
+fn draw_text<T>(w &T, x int, y int, text_ string) {
+	window := w.ui.window
+	tc := w.text_cfg
+	if w.fixed_text {
+		w.ui.gg.draw_text(x, y, text_, tc)
+	} else {
+		text_size := int(f64(tc.size) * window.text_scale)
+		tc2 := gx.TextCfg{
+			...tc
+			size: text_size
+		}
+		// println("draw_text: ($x, $y) ${text_size} ${tc.size} ${window.text_scale}")
+		w.ui.gg.draw_text(x, y, text_, tc2)
+	}
+}
+
+/**** replaced with Generic (above) *****
 // From now since experimental, put the draw_text methods here!
 //  Later if adopted, put it in the associated v files.
 fn (w &Button) draw_text(x int, y int, text_ string) {
@@ -101,3 +118,5 @@ fn (t &TextBox) draw_text(x int, y int, text_ string) {
 		})
 	}
 }
+
+*****************************/
