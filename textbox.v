@@ -201,6 +201,10 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	return tb.width, tb.height
 }
 
+fn (tb &TextBox) is_animating() bool {
+	return false
+}
+
 fn (mut tb TextBox) draw() {
 	text := *(tb.text)
 	mut placeholder := tb.placeholder

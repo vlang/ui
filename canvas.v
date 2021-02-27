@@ -58,6 +58,10 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 	return c.width, c.height
 }
 
+fn (c &Canvas) is_animating() bool {
+	return false
+}
+
 fn (c &Canvas) draw() {
 	parent := c.parent
 	state := parent.get_state()

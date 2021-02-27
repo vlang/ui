@@ -154,6 +154,10 @@ fn (mut gv Grid) propose_size(w int, h int) (int, int) {
 	return gv.width, gv.height
 }
 
+fn (gv &Grid) is_animating() bool {
+	return false
+}
+
 fn (gv &Grid) point_inside(x f64, y f64) bool {
 	return x >= gv.x && x <= gv.x + gv.width && y >= gv.y && y <= gv.y + gv.height
 }

@@ -67,6 +67,10 @@ fn (t &Transition) propose_size(w int, h int) (int, int) {
 	return 0, 0
 }
 
+fn (t &Transition) is_animating() bool {
+	return t.animating
+}
+
 fn (mut t Transition) size() (int, int) {
 	return 0, 0
 }

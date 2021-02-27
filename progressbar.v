@@ -77,6 +77,10 @@ fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	return pb.width, pb.height
 }
 
+fn (pb &ProgressBar) is_animating() bool {
+	return false
+}
+
 fn (pb &ProgressBar) draw() {
 	// Draw the gray background
 	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)

@@ -324,3 +324,7 @@ fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
 	lb.resize(w, h)
 	return lb.width, lb.height
 }
+
+fn (lb &ListBox) is_animating() bool {
+	return false
+}

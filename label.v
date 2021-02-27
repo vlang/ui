@@ -69,6 +69,10 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 	return ww, hh * l.text.split('\n').len
 }
 
+fn (l &Label) is_animating() bool {
+	return false
+}
+
 fn (mut l Label) draw() {
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	height := l.ui.gg.text_height('W') // Get the height of the current font.

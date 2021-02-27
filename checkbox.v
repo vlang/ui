@@ -113,6 +113,10 @@ fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 	return cb.width, ui.check_mark_size
 }
 
+fn (c &CheckBox) is_animating() bool {
+	return false
+}
+
 fn (mut cb CheckBox) draw() {
 	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)

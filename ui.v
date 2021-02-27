@@ -69,6 +69,7 @@ pub interface Widget {
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	is_focused() bool
+	is_animating() bool
 }
 
 // pub fn iwidget(x Widget) Widget { return x }

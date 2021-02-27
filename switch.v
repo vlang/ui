@@ -69,6 +69,10 @@ fn (mut s Switch) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
+fn (s &Switch) is_animating() bool {
+	return false
+}
+
 fn (mut s Switch) draw() {
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {

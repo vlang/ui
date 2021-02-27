@@ -76,6 +76,10 @@ fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 	return r.width, r.height
 }
 
+fn (r &Rectangle) is_animating() bool {
+	return false
+}
+
 fn (mut r Rectangle) draw() {
 	if r.radius > 0 {
 		r.ui.gg.draw_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.color)

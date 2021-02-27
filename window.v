@@ -414,7 +414,7 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	// 
+	//
 	println('window resize ($event.window_width ,$event.window_height)')
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
@@ -647,7 +647,7 @@ fn window_char(event gg.Event, ui &UI) {
 
 fn (mut w Window) update_text_scale() {
 	w.text_scale = f64(w.height) / f64(w.orig_height)
-	// 
+	//
 	println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
 	if w.text_scale <= 0 {
 		w.text_scale = 1
@@ -804,20 +804,14 @@ fn frame(mut w Window) {
 	// game.ft.flush()
 	w.ui.gg.begin()
 	// draw_scene()
-	if w.child_window == 0 {
-		// Render all widgets, including Canvas
-		for child in w.children {
-			child.draw()
-		}
-	}
-	// w.showfps()
-	else if w.child_window != 0 {
-		for child in w.child_window.children {
-			child.draw()
-		}
+	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut is_animating := false
+	for child in children {
+		child.draw()
+		is_animating = is_animating || child.is_animating()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = false
+	w.ui.needs_refresh = is_animating
 }
 
 fn native_frame(mut w Window) {
@@ -829,19 +823,13 @@ fn native_frame(mut w Window) {
 			return
 		}
 	}
-	if w.child_window == 0 {
-		// Render all widgets, including Canvas
-		for child in w.children {
-			child.draw()
-		}
+	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut is_animating := false
+	for child in children {
+		child.draw()
+		is_animating = is_animating || child.is_animating()
 	}
-	// w.showfps()
-	else if w.child_window != 0 {
-		for child in w.child_window.children {
-			child.draw()
-		}
-	}
-	w.ui.needs_refresh = false
+	w.ui.needs_refresh = is_animating
 }
 
 // fn C.sapp_macos_get_window() voidptr

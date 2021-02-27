@@ -111,6 +111,10 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 	return g.width, g.height
 }
 
+fn (g &Group) is_animating() bool {
+	return false
+}
+
 fn (mut g Group) draw() {
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)

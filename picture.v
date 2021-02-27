@@ -112,6 +112,10 @@ fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 	return pic.width, pic.height
 }
 
+fn (pic &Picture) is_animating() bool {
+	return false
+}
+
 fn (mut pic Picture) draw() {
 	pic.ui.gg.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height,
 		pic.image)

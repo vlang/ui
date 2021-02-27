@@ -65,6 +65,10 @@ fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	return 0, 0
 }
 
+fn (m &Menu) is_animating() bool {
+	return false
+}
+
 fn (mut m Menu) draw() {
 	if !m.visible {
 		return

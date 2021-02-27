@@ -114,6 +114,10 @@ fn (mut r Radio) propose_size(w int, h int) (int, int) {
 	return r.width, r.values.len * (r.height + 5)
 }
 
+fn (r &Radio) is_animating() bool {
+	return false
+}
+
 fn (mut r Radio) draw() {
 	// Border
 	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)

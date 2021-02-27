@@ -163,6 +163,10 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	return s.size()
 }
 
+fn (s &Slider) is_animating() bool {
+	return false
+}
+
 fn (s &Slider) draw() {
 	// Draw the track
 	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)

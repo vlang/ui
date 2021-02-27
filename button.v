@@ -140,6 +140,10 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 	return b.width, b.height
 }
 
+fn (b &Button) is_animating() bool {
+	return false
+}
+
 fn (mut b Button) draw() {
 	if b.use_icon {
 		b.width = b.image.width

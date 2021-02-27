@@ -86,6 +86,10 @@ fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	return w, ui.dropdown_height
 }
 
+fn (d &Dropdown) is_animating() bool {
+	return false
+}
+
 fn (dd &Dropdown) draw() {
 	gg := dd.ui.gg
 	// draw the main dropdown
