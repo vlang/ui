@@ -37,9 +37,9 @@ fn main() {
 		title: 'V UI Demo'
 		state: app
 	}, [ui.column({
-		stretch: true
-		margin: ui.Margin{5, 5, 5, 5}
-	}, [app.button, app.picture, app.x_transition, app.y_transition])])
+		widths: ui.stretch
+		margin: 5
+	}, [app.button, app.picture]), app.x_transition, app.y_transition])
 	ui.run(app.window)
 }
 

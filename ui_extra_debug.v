@@ -17,6 +17,7 @@ fn (s &Stack) draw_bb() {
 fn draw_bb(wi &Widget, ui &UI) {
 	col := gx.black
 	w, h := wi.size()
+	println('bb: $wi.type_name() ($wi.x, $wi.y ,$w, $h)')
 	ui.gg.draw_empty_rect(wi.x, wi.y, w, h, col)
 }
 

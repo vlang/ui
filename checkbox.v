@@ -36,6 +36,8 @@ pub mut:
 	text             string
 	disabled         bool
 	text_cfg         gx.TextCfg
+	text_size        f64
+	fixed_text       bool
 }
 
 pub struct CheckBoxConfig {
@@ -47,13 +49,25 @@ pub struct CheckBoxConfig {
 	on_check_changed CheckChangedFn
 	checked          bool
 	disabled         bool
+	text_cfg         gx.TextCfg
+	text_size        f64
 }
 
 fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	cb.width = cb.ui.gg.text_width(cb.text) + 5 + ui.check_mark_size
-	cb.text_cfg = cb.ui.window.text_cfg
+	if is_empty_text_cfg(cb.text_cfg) {
+		cb.text_cfg = cb.ui.window.text_cfg
+	}
+	if cb.text_size > 0 {
+		_, win_height := cb.ui.window.size()
+		cb.text_cfg = gx.TextCfg{
+			...cb.text_cfg
+			size: text_size_as_int(cb.text_size, win_height)
+		}
+	}
+	cb.ui.gg.set_cfg(cb.text_cfg)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -67,6 +81,8 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 	}
 	return cb
 }

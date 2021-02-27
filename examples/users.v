@@ -70,7 +70,7 @@ fn main() {
 		height: win_height
 		state: app
 		title: 'V UI Demo'
-		bg_color: gx.light_blue
+		// bg_color: gx.light_blue
 	}, [
 		ui.row({
 			margin: 10
@@ -112,7 +112,7 @@ fn main() {
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
 			spacing: 65
-			widths: [ui.compact, 30.]
+			widths: ui.compact
 		}, [ui.button(
 			text: 'Add user'
 			onclick: btn_add_click
@@ -135,7 +135,7 @@ fn main() {
 		), ui.picture(
 			width: 100
 			height: 100
-			path: os.resource_abs_path(os.join_path('assets', 'logo.png')) // os.resource_abs_path('logo.png')
+			path: os.resource_abs_path(os.join_path('assets', 'img/logo.png')) // os.resource_abs_path('logo.png')
 		)])]),
 		ui.menu(
 			items: [ui.MenuItem{'Delete all users', menu_click},

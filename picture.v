@@ -98,8 +98,8 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 }
 
 fn (mut pic Picture) set_pos(x int, y int) {
-	pic.x = x + pic.offset_x
-	pic.y = y + pic.offset_y
+	pic.x = x
+	pic.y = y
 }
 
 fn (mut pic Picture) size() (int, int) {
@@ -113,7 +113,8 @@ fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.ui.gg.draw_image(pic.x, pic.y, pic.width, pic.height, pic.image)
+	pic.ui.gg.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height,
+		pic.image)
 }
 
 fn (pic &Picture) focus() {

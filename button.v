@@ -74,6 +74,7 @@ fn (mut b Button) init(parent Layout) {
 			size: text_size_as_int(b.text_size, win_height)
 		}
 	}
+	b.ui.gg.set_cfg(b.text_cfg)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -168,7 +169,8 @@ fn (mut b Button) draw() {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
 		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
-		b.draw_text(bcenter_x - w2, y, b.text)
+		// b.draw_text(bcenter_x - w2, y, b.text)
+		draw_text<Button>(b, bcenter_x - w2, y, b.text)
 	}
 	$if bb ? {
 		draw_bb(b, b.ui)

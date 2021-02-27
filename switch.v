@@ -80,6 +80,9 @@ fn (mut s Switch) draw() {
 		s.ui.gg.draw_rect(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
 			gx.white)
 	}
+	$if bb ? {
+		draw_bb(s, s.ui)
+	}
 }
 
 fn (s &Switch) point_inside(x f64, y f64) bool {
