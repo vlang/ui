@@ -90,6 +90,9 @@ On some Linux distros you also need a few development dependencies:
 - Debian/Ubuntu: `sudo apt install libxi-dev libxcursor-dev mesa-common-dev`
 - Fedora: `sudo dnf install libXi-devel libXcursor-devel mesa-libGL-devel`
 
+On ChromeOS Linux/Crostini, install the Debian dependencies listed above followed by this:
+- `sudo apt install freeglut3-dev` ([see details](https://github.com/vlang/ui/issues/316))
+
 ### License
 
 V UI is licensed under GPL3. A commercial license will be available.
