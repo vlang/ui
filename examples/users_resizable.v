@@ -116,7 +116,8 @@ fn main() {
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
 			spacing: 65
-			widths: ui.compact
+			widths: [.3, .1]
+			heights: ui.compact
 		}, [ui.button(
 			text: 'Add user'
 			onclick: btn_add_click
@@ -125,6 +126,8 @@ fn main() {
 			onclick: btn_help_click
 		)]), ui.row({
 			spacing: 5
+			widths: [.9, .1]
+			heights: ui.compact
 		}, [app.pbar, app.label])]), ui.column({
 			alignments: {
 				center: [0]

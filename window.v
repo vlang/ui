@@ -63,6 +63,7 @@ pub mut:
 	// Text Config
 	text_cfg   gx.TextCfg
 	text_scale f64 = 1.0
+	animating  bool
 }
 
 pub struct WindowConfig {
@@ -804,20 +805,14 @@ fn frame(mut w Window) {
 	// game.ft.flush()
 	w.ui.gg.begin()
 	// draw_scene()
-	if w.child_window == 0 {
-		// Render all widgets, including Canvas
-		for child in w.children {
-			child.draw()
-		}
-	}
-	// w.showfps()
-	else if w.child_window != 0 {
-		for child in w.child_window.children {
-			child.draw()
-		}
+
+	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	w.animating = false
+	for child in children {
+		child.draw()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = false
+	w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {
@@ -829,15 +824,10 @@ fn native_frame(mut w Window) {
 			return
 		}
 	}
+	children := if w.child_window == 0 { w.children } else { w.child_window.children }
 	if w.child_window == 0 {
 		// Render all widgets, including Canvas
-		for child in w.children {
-			child.draw()
-		}
-	}
-	// w.showfps()
-	else if w.child_window != 0 {
-		for child in w.child_window.children {
+		for child in children {
 			child.draw()
 		}
 	}
@@ -916,3 +906,13 @@ pub fn (window &Window) unfocus_all() {
 fn (w &Window) get_children() []Widget {
 	return w.children
 }
+
+// pub fn (mut w Window) set_animated_widget(child Widget) {
+// 	w.animated_widgets << child.type_name()
+// }
+
+// fn (w &Window) is_animated(child Widget) bool {
+// 	res := child.type_name() in w.animated_widgets
+// 	println("${child.type_name()} $res")
+// 	return res
+// }
