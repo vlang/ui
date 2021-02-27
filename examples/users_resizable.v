@@ -116,7 +116,7 @@ fn main() {
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
 			spacing: 65
-			widths: [.3,.1]
+			widths: [.3, .1]
 			heights: ui.compact
 		}, [ui.button(
 			text: 'Add user'
