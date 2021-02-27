@@ -106,6 +106,7 @@ fn (mut t Transition) draw() {
 		// Update last draw time to calculate frame delta
 		t.last_draw_time = time.ticks()
 	}
+	t.ui.window.animating = t.ui.window.animating || t.animating
 }
 
 fn (t &Transition) focus() {
