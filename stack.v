@@ -671,7 +671,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, force, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin.left + child.margin.right,
+			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
 				child.adj_height + child.margin.top + child.margin.bottom
 		} else if child is Group {
 			if force || child.adj_width == 0 {
