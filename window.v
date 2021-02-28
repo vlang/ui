@@ -63,7 +63,7 @@ pub mut:
 	// Text Config
 	text_cfg   gx.TextCfg
 	text_scale f64 = 1.0
-	animating  bool
+	// FIRST VERSION ANIMATE: animating  bool
 }
 
 pub struct WindowConfig {
@@ -648,7 +648,7 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn (mut w Window) update_text_scale() {
-	w.text_scale = f64(w.height) / f64(w.orig_height)
+	w.text_scale = f64(math.min(w.width, w.height)) / f64(math.min(w.orig_width, w.orig_height))
 	$if uts ? {
 		println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
 	}
@@ -810,12 +810,14 @@ fn frame(mut w Window) {
 	// draw_scene()
 
 	children := if w.child_window == 0 { w.children } else { w.child_window.children }
-	w.animating = false
+
+	animate_stop() // FIRST VERSION ANIMATE: w.animating = false
+
 	for child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = w.animating
+	w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {

@@ -51,7 +51,11 @@ fn draw_text<T>(w &T, x int, y int, text_ string) {
 			...tc
 			size: text_size
 		}
-		// println("draw_text: ($x, $y) ${text_size} ${tc.size} ${window.text_scale}")
+		$if uts ? {
+			w.ui.gg.text_size(text_)
+			println('draw_text: ($x, $y) $text_size $tc.size $window.text_scale')
+			println('text: $text_')
+		}
 		w.ui.gg.draw_text(x, y, text_, tc2)
 	}
 }
