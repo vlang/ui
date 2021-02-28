@@ -77,7 +77,7 @@ fn main() {
 		resizable: true
 	}, [
 		ui.row({
-			margin: 10
+			margin: .1
 			widths: [.3, .7]
 		}, [ui.column({
 			spacing: 10

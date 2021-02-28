@@ -115,10 +115,10 @@ fn main() {
 	}, [
 		ui.column({
 			margins: ui.Margins{
-				top: 40
-				left: 20
-				right: 20
-				bottom: 40
+				top: .1
+				left: .1
+				right: .1
+				bottom: .1
 			}
 			heights: [.1, .2, .1, .5, .1]
 			widths: ui.stretch

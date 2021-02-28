@@ -865,6 +865,9 @@ fn (s &Stack) margin(side MarginSide) int {
 		}
 		isize = int(size * f32(psize))
 	}
+	$if margin ? {
+		println('margin($side) = $isize')
+	}
 	return isize
 }
 
