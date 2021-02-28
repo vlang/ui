@@ -547,8 +547,6 @@ fn (mut s Stack) set_cache_sizes() {
 		// recursively do the same for Stack children
 		if child is Stack {
 			child.set_cache_sizes()
-		} else {
-			set_text_fixed(mut child, c.width_type[i], c.height_type[i])
 		}
 	}
 }
@@ -925,12 +923,7 @@ fn (s &Stack) is_focused() bool {
 }
 
 fn (mut s Stack) resize(width int, height int) {
-	// println("Stack resize $width, $height")
-	mut window := s.ui.window
-	window.update_text_scale()
-	// println('resize scale $window.text_scale')
 	s.init_size()
-	// s.set_adjusted_size(0, true, s.ui)
 	s.set_children_sizes()
 	s.set_children_pos()
 }

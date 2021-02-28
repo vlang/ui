@@ -37,7 +37,6 @@ pub mut:
 	disabled         bool
 	text_cfg         gx.TextCfg
 	text_size        f64
-	fixed_text       bool
 }
 
 pub struct CheckBoxConfig {

@@ -27,7 +27,7 @@ fn main() {
 			val: 25.0
 			on_value_changed: on_value_changed
 		)
-		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 16)
+		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1. / 20)
 		progress_bar: ui.progressbar(height: 20, val: 0, max: 100)
 		window: 0
 	}
@@ -54,12 +54,15 @@ fn main() {
 			spacing: .1
 			margin: .05
 			heights: [1., 1., .5]
-		}, [ui.label(text: 'Elapsed Time:'), ui.label(text: 'Duration:')]),
-			ui.column({
-				spacing: .1
-				heights: [1., 1.]
-			}, [app.lbl_elapsed_value, app.slider]),
-		]), ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
+		}, [ui.label(text: 'Elapsed Time:', text_size: 1. / 20),
+			ui.label(text: 'Duration:', text_size: 1. / 20),
+		]), ui.column({
+			spacing: .1
+			heights: [1., 1.]
+			widths: ui.stretch
+		}, [app.lbl_elapsed_value, app.slider])]), ui.button(text: 'Reset', onclick: on_reset),
+			app.progress_bar,
+		]),
 	])
 	app.window = window
 	go app.timer()

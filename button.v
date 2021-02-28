@@ -54,7 +54,6 @@ pub mut:
 	use_icon   bool
 	text_cfg   gx.TextCfg
 	text_size  f64
-	fixed_text bool
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -172,9 +171,11 @@ fn (mut b Button) draw() {
 		// b.draw_text(bcenter_x - w2, y, b.text)
 		draw_text<Button>(b, bcenter_x - w2, y, b.text)
 	}
+	$if tbb ? {
+		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
+	}
 	$if bb ? {
 		draw_bb(b, b.ui)
-		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
 }

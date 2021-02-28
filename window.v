@@ -61,8 +61,7 @@ pub mut:
 	orig_height int
 	touch       TouchInfo
 	// Text Config
-	text_cfg   gx.TextCfg
-	text_scale f64 = 1.0
+	text_cfg gx.TextCfg
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -421,13 +420,6 @@ fn window_resize(event gg.Event, ui &UI) {
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
-	// println("")
-	// win_size := gg.window_size()
-	// w := win_size.width
-	// h := win_size.height
-
-	// window.update_text_scale(w, h)
-
 	if window.resize_fn != voidptr(0) {
 		window.resize_fn(event.window_width, event.window_height, window)
 	}
@@ -645,19 +637,6 @@ fn window_char(event gg.Event, ui &UI) {
 		child.key_down()
 	}
 	*/
-}
-
-fn (mut w Window) update_text_scale() {
-	w.text_scale = f64(math.min(w.width, w.height)) / f64(math.min(w.orig_width, w.orig_height))
-	$if uts ? {
-		println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
-	}
-	if w.text_scale <= 0 {
-		w.text_scale = 1
-	}
-	$if uts ? {
-		println('w.text_scale=$w.text_scale')
-	}
 }
 
 fn (mut w Window) focus_next() {
@@ -893,7 +872,6 @@ fn (mut window Window) resize(w int, h int) {
 	height := window_size.height
 	window.width, window.height = width, height
 	window.ui.gg.resize(width, height)
-	window.update_text_scale()
 	for mut child in window.children {
 		if child is Stack {
 			child.resize(width, height)
