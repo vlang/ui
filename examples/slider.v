@@ -41,7 +41,7 @@ fn main() {
 		ui.row({
 			alignment: .center
 			margin: 25
-			spacing: 10.
+			spacing: 10
 		}, [
 			app.vert_slider,
 			app.hor_slider,

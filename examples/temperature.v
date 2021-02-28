@@ -40,7 +40,7 @@ fn main() {
 	}, [
 		ui.row({
 			margin: 10
-			spacing: 10.
+			spacing: 10
 			widths: [.2, .3, .2, .3]
 			heights: 20.
 		}, [ui.label(text: 'Celsius'), app.txt_box_celsius, ui.label(text: 'Fahrenheit'),

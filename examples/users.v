@@ -77,7 +77,7 @@ fn main() {
 			widths: [200., ui.stretch]
 			// spacing: 10
 		}, [ui.column({
-			spacing: 13.
+			spacing: 13
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -111,7 +111,7 @@ fn main() {
 		), ui.checkbox(
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
-			spacing: 65.
+			spacing: 65
 			widths: ui.compact
 		}, [ui.button(
 			text: 'Add user'
@@ -120,7 +120,7 @@ fn main() {
 			text: '?'
 			onclick: btn_help_click
 		)]), ui.row({
-			spacing: 5.
+			spacing: 5
 		}, [app.pbar, app.label])]), ui.column({
 			alignments: {
 				center: [0]

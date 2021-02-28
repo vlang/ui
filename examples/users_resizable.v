@@ -80,7 +80,7 @@ fn main() {
 			margin: 10
 			widths: [.3, .7]
 		}, [ui.column({
-			spacing: 10.
+			spacing: 10
 			// heights: ui.stretch
 		}, [ui.textbox(
 			max_len: 20
@@ -115,7 +115,7 @@ fn main() {
 		), ui.checkbox(
 			text: 'Subscribe to the newsletter'
 		), app.country, ui.row({
-			spacing: 65.
+			spacing: 65
 			widths: [.3, .1]
 			heights: ui.compact
 		}, [ui.button(
@@ -125,7 +125,7 @@ fn main() {
 			text: '?'
 			onclick: btn_help_click
 		)]), ui.row({
-			spacing: 5.
+			spacing: 5
 			widths: [.9, .1]
 			heights: ui.compact
 		}, [app.pbar, app.label])]), ui.column({

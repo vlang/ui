@@ -32,7 +32,7 @@ fn main() {
 	}, [
 		ui.row({
 			alignment: .center
-			spacing: 5.
+			spacing: 5
 			margin: 5
 			widths: ui.stretch
 		}, [rect, ui.rectangle(

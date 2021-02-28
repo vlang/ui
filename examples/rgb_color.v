@@ -139,7 +139,7 @@ fn main() {
 			widths: 30.
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
-			spacing: .3
+			spacings: .3
 			widths: 30.
 			// widths: ui.compact
 			// alignments: {
