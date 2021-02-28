@@ -23,9 +23,10 @@ fn main() {
 		height: win_height
 		title: 'Grid'
 		state: app
+		mode: .resizable
 	}, [
 		ui.row({
-			margin: ui.Margin{5, 5, 5, 5}
+			margin: 5
 		}, [
 			app.grid,
 		]),

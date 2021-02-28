@@ -114,11 +114,11 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({
-			margin: ui.Margin{
+			margins: ui.Margins{
 				top: 40
 				left: 20
 				right: 20
-				// bottom: 20
+				bottom: 40
 			}
 			heights: [.1, .2, .1, .5, .1]
 			widths: ui.stretch
@@ -139,7 +139,7 @@ fn main() {
 			widths: 30.
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
-			spacings: .3
+			spacing: .3
 			widths: 30.
 			// widths: ui.compact
 			// alignments: {

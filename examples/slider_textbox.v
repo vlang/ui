@@ -77,11 +77,11 @@ fn main() {
 		ui.column({
 			heights: [.1, .9]
 		}, [ui.row({
-			margin: ui.Margin{50, 115, 30, 30}
+			margins: ui.Margins{50, 115, 30, 30}
 			spacing: 100
 			heights: 20.
 		}, [app.hor_textbox, app.vert_textbox]), ui.row({
-			margin: ui.Margin{100, 30, 30, 30}
+			margins: ui.Margins{100, 30, 30, 30}
 			spacing: 30
 		}, [app.hor_slider, app.vert_slider])]),
 	])

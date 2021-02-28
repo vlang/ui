@@ -9,8 +9,9 @@ pub struct ColumnConfig {
 	alignment HorizontalAlignment
 	spacing   f64 // Size = Size(0.) // Spacing = Spacing(0) // int
 	spacings  []f64 = []f64{}
-	stretch   bool
-	margin    MarginConfig
+	stretch   bool // to remove ui.stretch doing the job from parent
+	margin    f64
+	margins   Margins
 	// children related
 	widths     Size //[]f64 // children sizes
 	heights    Size //[]f64
@@ -19,18 +20,14 @@ pub struct ColumnConfig {
 }
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {
-	mut spacing := [f32(c.spacing)].repeat(children.len - 1)
-	if c.spacings.len == children.len - 1 {
-		spacing = c.spacings.map(f32(it))
-	}
 	return stack({
 		height: c.height
 		width: c.width
 		horizontal_alignment: c.alignment
-		spacing: spacing // c.spacing.as_f32_array(children.len - 1) // c.spacing.as_int_array(children.len - 1)
+		spacings: spacings(c.spacing, c.spacings, children.len - 1)
 		stretch: c.stretch
 		direction: .column
-		margin: c.margin.as_margin()
+		margins: margins(c.margin, c.margins)
 		heights: c.heights.as_f32_array(children.len) //.map(f32(it))
 		widths: c.widths.as_f32_array(children.len) //.map(f32(it))
 		horizontal_alignments: c.alignments

@@ -40,10 +40,11 @@ struct StackConfig {
 	height               int // To remove soon
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacing              []f32 // Spacing = Spacing(0) // int
+	spacings             []f32 // Spacing = Spacing(0) // int
+	spacing              f32
 	stretch              bool
 	direction            Direction
-	margin               MarginConfig
+	margins              Margin
 	// children related
 	widths                []f32 // children sizes
 	heights               []f32
@@ -64,10 +65,10 @@ mut:
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacing              []f32 // []int // int
+	spacings             []f32 // []int // int
 	stretch              bool
 	direction            Direction
-	margin               Margin
+	margins              Margin
 	real_width           int
 	real_height          int
 	adj_width            int
@@ -89,10 +90,10 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		width: c.width // become real_width
 		vertical_alignment: c.vertical_alignment
 		horizontal_alignment: c.horizontal_alignment
-		spacing: c.spacing // .as_int_array(children.len - 1)
+		spacings: c.spacings
 		stretch: c.stretch
 		direction: c.direction
-		margin: c.margin.as_margin()
+		margins: c.margins
 		children: children
 		widths: c.widths
 		heights: c.heights
@@ -177,8 +178,8 @@ fn (mut s Stack) init_size() {
 		s.real_width = s.width
 		s.real_height = s.height
 	}
-	s.height = s.real_height - s.margin.top - s.margin.right
-	s.width = s.real_width - s.margin.left - s.margin.right
+	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
+	s.width = s.real_width - s.margin(.left) - s.margin(.right)
 }
 
 fn (mut s Stack) set_children_sizes() {
@@ -638,7 +639,7 @@ fn (mut s Stack) adjustable_size() {
 
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
-	s.width, s.height = w - s.margin.left - s.margin.right, h - s.margin.top - s.margin.bottom
+	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 	return s.width, s.height
 }
 
@@ -652,8 +653,8 @@ fn (s &Stack) size() (int, int) {
 	// if s.height < s.adj_height {
 	// 	h = s.adj_height
 	// }
-	w += s.margin.left + s.margin.right
-	h += s.margin.top + s.margin.bottom
+	w += s.margin(.left) + s.margin(.right)
+	h += s.margin(.top) + s.margin(.bottom)
 	return w, h
 }
 
@@ -677,8 +678,8 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, force, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin.left + child.margin.right, 
-				child.adj_height + child.margin.top + child.margin.bottom
+			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right), 
+				child.adj_height + child.margin(.top) + child.margin(.bottom)
 		} else if child is Group {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
@@ -721,8 +722,8 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 fn (mut s Stack) set_pos(x int, y int) {
 	// could depend on anchor in the future 
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-	s.x = x + s.margin.left
-	s.y = y + s.margin.top
+	s.x = x + s.margin(.left)
+	s.y = y + s.margin(.top)
 }
 
 fn (mut s Stack) set_children_pos() {
@@ -849,8 +850,26 @@ fn (mut s Stack) draw() {
 	}
 }
 
+fn (s &Stack) margin(side MarginSide) int {
+	size := match side {
+		.top { s.margins.top }
+		.right { s.margins.right }
+		.bottom { s.margins.bottom }
+		.left { s.margins.left }
+	}
+	mut isize := int(size)
+	if 0. < size && size < 1. {
+		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
+		$if margin ? {
+			println('margin($side) = $size * $psize')
+		}
+		isize = int(size * f32(psize))
+	}
+	return isize
+}
+
 fn (s &Stack) spacing(i int) int {
-	size := s.spacing[i]
+	size := s.spacings[i]
 	mut isize := int(size)
 	if 0. < size && size < 1. {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
@@ -867,8 +886,8 @@ fn (s &Stack) spacing(i int) int {
 
 fn (s &Stack) total_spacing() int {
 	mut total_spacing := 0
-	// println('len $s.children.len $s.spacing')
-	if s.spacing.len > 0 && s.children.len > 1 {
+	// println('len $s.children.len $s.spacings')
+	if s.spacings.len > 0 && s.children.len > 1 {
 		for i in 0 .. (s.children.len - 1) {
 			total_spacing += s.spacing(i)
 		}
