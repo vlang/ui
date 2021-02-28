@@ -9,7 +9,9 @@ fn (s &Stack) draw_bb() {
 		col = gx.green
 	}
 	w, h := s.size()
+	println('bb: [$s.direction] ($s.x - ${s.margin(.left)}, $s.y - ${s.margin(.top)}, $w, $h)')
 	s.ui.gg.draw_empty_rect(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
+	println('bb: ($s.x, $s.y, $w - ${s.margin(.left)} - ${s.margin(.right)}, $h - ${s.margin(.top)} - ${s.margin(.bottom)}')
 	s.ui.gg.draw_empty_rect(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom),
 		col)
 }

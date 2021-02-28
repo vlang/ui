@@ -166,18 +166,19 @@ fn (mut s Stack) init_size() {
 		// Default: like stretch = strue
 		s.real_height = parent_height
 		s.real_width = parent_width
-	} else if s.stretch {
-		if s.direction == .row {
-			s.real_height = parent_height
-			s.real_width = s.width
-		} else {
-			s.real_width = parent_width
-			s.real_height = s.height
-		}
-	} else {
-		s.real_width = s.width
-		s.real_height = s.height
 	}
+	// else if s.stretch {
+	// 	if s.direction == .row {
+	// 		s.real_height = parent_height
+	// 		s.real_width = s.width
+	// 	} else {
+	// 		s.real_width = parent_width
+	// 		s.real_height = s.height
+	// 	}
+	// } else {
+	// 	s.real_width = s.width
+	// 	s.real_height = s.height
+	// }
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
 	s.width = s.real_width - s.margin(.left) - s.margin(.right)
 }
@@ -336,22 +337,22 @@ fn (mut s Stack) set_cache_sizes() {
 	for i, mut child in s.children {
 		mut cw := s.widths[i] or { 0. }
 		mut ch := s.heights[i] or { 0. }
-		if child is Stack {
-			child.adjustable_size()
-		}
 		// adjusted (natural size) child size
-		adj_child_width, adj_child_height := child.size()
+		mut adj_child_width, mut adj_child_height := child.size()
 		// if ! (child is Stack) {
+		if child is Stack {
+			adj_child_width, adj_child_height = child.adjustable_size()
+		}
 		if adj_child_width == 0 && cw == 0 {
 			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths')
+				println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths[$i]')
 			}
 			s.widths[i] = stretch
 			cw = stretch
 		}
 		if adj_child_height == 0 && ch == 0 {
 			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact widths for $child.type_name() $s.widths')
+				println('WARNINNGS222: Bad compact heights for $child.type_name() $s.heights[$i]')
 			}
 			s.heights[i] = stretch
 			ch = stretch
@@ -618,14 +619,15 @@ fn (mut s Stack) default_sizes() {
 	}
 }
 
-fn (mut s Stack) adjustable_size() {
+fn (mut s Stack) adjustable_size() (int, int) {
+	mut w, mut h := s.width, s.height
 	if s.height == 0 {
 		$if adj ? {
 			print('stack ${typeof(s).name} ')
 			C.printf(' %p', s)
 			println(' adjusted height $s.height <- $s.adj_height')
 		}
-		s.height = s.adj_height
+		h = s.adj_height
 	}
 	if s.width == 0 {
 		$if adj ? {
@@ -633,8 +635,9 @@ fn (mut s Stack) adjustable_size() {
 			C.printf(' %p', s)
 			println(' adjusted width $s.width <- $s.adj_width')
 		}
-		s.width = s.adj_width
+		w = s.adj_width
 	}
+	return w, h
 }
 
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
@@ -644,23 +647,11 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 }
 
 fn (s &Stack) size() (int, int) {
-	mut w := s.width
-	mut h := s.height
-	// TODO: this has to disappear (not depending on adjusted_size)
-	// if s.width < s.adj_width {
-	// 	w = s.adj_width
-	// }
-	// if s.height < s.adj_height {
-	// 	h = s.adj_height
-	// }
-	w += s.margin(.left) + s.margin(.right)
-	h += s.margin(.top) + s.margin(.bottom)
-	return w, h
+	return s.real_width, s.real_height
 }
 
 fn (s &Stack) free_size() (int, int) {
-	mut w := s.width
-	mut h := s.height
+	mut w, mut h := s.real_width - s.margin(.left) - s.margin(.right), s.real_height - s.margin(.top) - s.margin(.bottom)
 	if s.direction == .row {
 		w -= s.total_spacing()
 	} else {
