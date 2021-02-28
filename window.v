@@ -415,8 +415,9 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	// 
-	println('window resize ($event.window_width ,$event.window_height)')
+	$if resize ? {
+		println('window resize ($event.window_width ,$event.window_height)')
+	}
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
