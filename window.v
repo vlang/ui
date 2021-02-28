@@ -648,13 +648,15 @@ fn window_char(event gg.Event, ui &UI) {
 
 fn (mut w Window) update_text_scale() {
 	w.text_scale = f64(w.height) / f64(w.orig_height)
-	// 
-	println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
+	$if uts ? {
+		println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
+	}
 	if w.text_scale <= 0 {
 		w.text_scale = 1
 	}
-	// 
-	println('w.text_scale=$w.text_scale')
+	$if uts ? {
+		println('w.text_scale=$w.text_scale')
+	}
 }
 
 fn (mut w Window) focus_next() {

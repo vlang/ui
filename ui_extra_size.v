@@ -29,21 +29,22 @@ fn (size Size) as_f32_array(len int) []f32 {
 	return res
 }
 
-// Tool to convert width and height from f32 to int
-pub fn size_f32_to_int(size f32) int {
-	// Convert c.width and c.height from f32 to int used as a trick to deal with relative size with respect to parent 
-	mut s := int(size)
-	// println("f32_int: start $size  -> $s")
-	if 0 < size && size <= 1 {
-		s = -int(size * 100) // to be converted in percentage of parent size inside init call
-		// println("f32_int: size $size $w ${typeof(size).name} ${typeof(s).name}")
-	}
-	return s
-}
+// Unused: to remove
+// // Tool to convert width and height from f32 to int
+// pub fn size_f32_to_int(size f32) int {
+// 	// Convert c.width and c.height from f32 to int used as a trick to deal with relative size with respect to parent 
+// 	mut s := int(size)
+// 	// println("f32_int: start $size  -> $s")
+// 	if 0 < size && size <= 1 {
+// 		s = -int(size * 100) // to be converted in percentage of parent size inside init call
+// 		// println("f32_int: size $size $w ${typeof(size).name} ${typeof(s).name}")
+// 	}
+// 	return s
+// }
 
-pub fn sizes_f32_to_int(width f32, height f32) (int, int) {
-	return size_f32_to_int(width), size_f32_to_int(height)
-}
+// pub fn sizes_f32_to_int(width f32, height f32) (int, int) {
+// 	return size_f32_to_int(width), size_f32_to_int(height)
+// }
 
 // if size is negative, it is relative in percentage of the parent 
 pub fn relative_size_from_parent(size int, parent_free_size int) int {
@@ -56,20 +57,6 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 		new_size
 	} else {
 		size
-	}
-}
-
-// Spacing
-pub type Spacing = []int | int
-
-fn (i Spacing) as_int_array(len int) []int {
-	return match i {
-		[]int {
-			i.clone()
-		}
-		int {
-			[i].repeat(len)
-		}
 	}
 }
 

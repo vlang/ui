@@ -49,8 +49,8 @@ fn main() {
 			text: -1
 		)
 		g_textbox: ui.textbox(
-			width: 40
-			height: 20
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
@@ -58,8 +58,8 @@ fn main() {
 			text: -1
 		)
 		b_textbox: ui.textbox(
-			width: 40
-			height: 20
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
@@ -114,7 +114,6 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({
-			spacing: 0
 			margin: ui.Margin{
 				top: 40
 				left: 20
@@ -135,19 +134,21 @@ fn main() {
 			}
 		), app.rgb_rectangle, ui.row({
 			margin: 30
-			spacing: 23
+			spacing: .3
 			heights: ui.compact
+			widths: 30.
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
 			margin: 30
-			spacing: 38
+			spacing: .3
+			widths: 30.
 			// widths: ui.compact
 			// alignments: {
 			// 	top: [0,1,2]
 			// }
 		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
 			margin: 30
-			spacing: 54
-			widths: ui.stretch
+			spacing: .3
+			widths: 30.
 		}, [app.r_label, app.g_label, app.b_label])]),
 	])
 	ui.run(app.window)

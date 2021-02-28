@@ -7,11 +7,11 @@ pub struct ColumnConfig {
 	width     int // To remove soon
 	height    int // To remove soon
 	alignment HorizontalAlignment
-	spacing   Spacing = Spacing(0) // int
+	spacing   Size = Size(0.) // Spacing = Spacing(0) // int
 	stretch   bool
 	margin    MarginConfig
 	// children related
-	widths     Size    //[]f64 // children sizes
+	widths     Size //[]f64 // children sizes
 	heights    Size //[]f64
 	alignments HorizontalAlignments
 	align      Alignments
@@ -22,7 +22,7 @@ pub fn column(c ColumnConfig, children []Widget) &Stack {
 		height: c.height
 		width: c.width
 		horizontal_alignment: c.alignment
-		spacing: c.spacing.as_int_array(children.len - 1)
+		spacing: c.spacing.as_f32_array(children.len - 1) // c.spacing.as_int_array(children.len - 1)
 		stretch: c.stretch
 		direction: .column
 		margin: c.margin.as_margin()
