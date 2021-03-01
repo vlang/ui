@@ -77,7 +77,7 @@ fn main() {
 		ui.column({
 			heights: [.1, .9]
 		}, [ui.row({
-			margins: ui.Margins{50, 115, 30, 30}
+			margin: ui.Margin{50, 115, 30, 30}
 			spacing: 100
 			heights: 20.
 		}, [app.hor_textbox, app.vert_textbox]), ui.row({
