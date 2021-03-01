@@ -61,9 +61,8 @@ pub mut:
 	orig_height int
 	touch       TouchInfo
 	// Text Config
-	text_cfg   gx.TextCfg
-	text_scale f64 = 1.0
-	animating  bool
+	text_cfg gx.TextCfg
+	// FIRST VERSION ANIMATE: animating  bool
 }
 
 pub struct WindowConfig {
@@ -415,17 +414,11 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	// 
-	println('window resize ($event.window_width ,$event.window_height)')
+	$if resize ? {
+		println('window resize ($event.window_width ,$event.window_height)')
+	}
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
-
-	// println("")
-	// win_size := gg.window_size()
-	// w := win_size.width
-	// h := win_size.height
-
-	// window.update_text_scale(w, h)
 
 	if window.resize_fn != voidptr(0) {
 		window.resize_fn(event.window_width, event.window_height, window)
@@ -646,17 +639,6 @@ fn window_char(event gg.Event, ui &UI) {
 	*/
 }
 
-fn (mut w Window) update_text_scale() {
-	w.text_scale = f64(w.height) / f64(w.orig_height)
-	// 
-	println('update_text_scale: $w.text_scale = height=$w.height / orig_height=$w.orig_height')
-	if w.text_scale <= 0 {
-		w.text_scale = 1
-	}
-	// 
-	println('w.text_scale=$w.text_scale')
-}
-
 fn (mut w Window) focus_next() {
 	mut doit := false
 	for child in w.children {
@@ -807,12 +789,14 @@ fn frame(mut w Window) {
 	// draw_scene()
 
 	children := if w.child_window == 0 { w.children } else { w.child_window.children }
-	w.animating = false
+
+	animate_stop() // FIRST VERSION ANIMATE: w.animating = false
+
 	for child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = w.animating
+	w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {
@@ -888,7 +872,6 @@ fn (mut window Window) resize(w int, h int) {
 	height := window_size.height
 	window.width, window.height = width, height
 	window.ui.gg.resize(width, height)
-	window.update_text_scale()
 	for mut child in window.children {
 		if child is Stack {
 			child.resize(width, height)

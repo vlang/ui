@@ -31,7 +31,6 @@ pub mut:
 	ui         &UI
 	text_cfg   gx.TextCfg
 	text_size  f64
-	fixed_text bool
 	// selected_value string
 	// onclick    RadioClickFn
 }

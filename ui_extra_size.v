@@ -29,22 +29,6 @@ fn (size Size) as_f32_array(len int) []f32 {
 	return res
 }
 
-// Tool to convert width and height from f32 to int
-pub fn size_f32_to_int(size f32) int {
-	// Convert c.width and c.height from f32 to int used as a trick to deal with relative size with respect to parent 
-	mut s := int(size)
-	// println("f32_int: start $size  -> $s")
-	if 0 < size && size <= 1 {
-		s = -int(size * 100) // to be converted in percentage of parent size inside init call
-		// println("f32_int: size $size $w ${typeof(size).name} ${typeof(s).name}")
-	}
-	return s
-}
-
-pub fn sizes_f32_to_int(width f32, height f32) (int, int) {
-	return size_f32_to_int(width), size_f32_to_int(height)
-}
-
 // if size is negative, it is relative in percentage of the parent 
 pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	return if size == -100 {
@@ -59,24 +43,12 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	}
 }
 
-// Spacing
-pub type Spacing = []int | int
-
-fn (i Spacing) as_int_array(len int) []int {
-	return match i {
-		[]int {
-			i.clone()
-		}
-		int {
-			[i].repeat(len)
-		}
-	}
-}
-
 fn is_children_have_widget(children []Widget) bool {
 	tmp := children.filter(!(it is Stack || it is Group))
 	return tmp.len > 0
 }
+
+//***********  cache **********
 
 pub enum ChildSize {
 	fixed
@@ -101,4 +73,47 @@ mut:
 	width_mass     f64
 	weight_heights []f64
 	height_mass    f64
+}
+
+//********** Margin *********
+
+enum MarginSide {
+	top
+	left
+	right
+	bottom
+}
+
+// for Stacks
+pub struct Margins {
+	top    f32
+	right  f32
+	bottom f32
+	left   f32
+}
+
+// for Config 
+pub struct Margin {
+	top    f64
+	right  f64
+	bottom f64
+	left   f64
+}
+
+fn margins(m f64, ms Margin) Margins {
+	mut margin := Margins{f32(m), f32(m), f32(m), f32(m)}
+	if ms.left != 0 || ms.right != 0 || ms.top != 0 || ms.bottom != 0 {
+		margin = Margins{f32(ms.top), f32(ms.right), f32(ms.bottom), f32(ms.left)}
+	}
+	return margin
+}
+
+//******** spacings ***********
+
+fn spacings(sp f64, sps []f64, len int) []f32 {
+	mut spacing := [f32(sp)].repeat(len)
+	if sps.len == len {
+		spacing = sps.map(f32(it))
+	}
+	return spacing
 }

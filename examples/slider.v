@@ -40,7 +40,7 @@ fn main() {
 	}, [
 		ui.row({
 			alignment: .center
-			margin: 25
+			margin: ui.Margin{25, 25, 25, 25}
 			spacing: 10
 		}, [
 			app.vert_slider,

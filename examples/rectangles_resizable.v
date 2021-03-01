@@ -33,7 +33,7 @@ fn main() {
 		ui.row({
 			alignment: .center
 			spacing: 5
-			margin: 5
+			margin: ui.Margin{5, 5, 5, 5}
 			widths: ui.stretch
 		}, [rect, ui.rectangle(
 			color: gx.rgb(100, 255, 100)

@@ -70,9 +70,8 @@ pub mut:
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
 	// related to text drawing
-	text_cfg   gx.TextCfg
-	text_size  f64
-	fixed_text bool
+	text_cfg  gx.TextCfg
+	text_size f64
 mut:
 	is_typing bool
 }
@@ -234,6 +233,13 @@ fn (mut tb TextBox) draw() {
 			tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.height - 6, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
 		}
 		// The text doesn'tb fit, find the largest substring we can draw
+		$if tb_trunc ? {
+			println('textbox trunc: ($text, $tb.text_cfg.size) $width > $tb.width')
+			C.printf(' %p: \n', tb)
+			if width > tb.width {
+				println('TRUNCCCCC')
+			}
+		}
 		if width > tb.width {
 			for i := text.len - 1; i >= 0; i-- {
 				if i >= text.len {

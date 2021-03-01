@@ -21,7 +21,7 @@ fn main() {
 	}, [
 		ui.column({
 			spacing: 20
-			margin: 30
+			margin: ui.Margin{30, 30, 30, 30}
 			// uncomment if you don't set the width of the button
 			// widths: [ui.stretch,150] 
 		}, [

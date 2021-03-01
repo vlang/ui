@@ -3,7 +3,7 @@ import time
 
 const (
 	win_width  = 287
-	win_height = 130
+	win_height = 150
 )
 
 struct App {
@@ -27,7 +27,7 @@ fn main() {
 			val: 25.0
 			on_value_changed: on_value_changed
 		)
-		lbl_elapsed_value: ui.label(text: '00.0s')
+		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1. / 20)
 		progress_bar: ui.progressbar(height: 20, val: 0, max: 100)
 		window: 0
 	}
@@ -36,29 +36,33 @@ fn main() {
 		height: win_height
 		title: 'Timer'
 		state: app
+		mode: .resizable
 	}, [
 		ui.column({
-			margin: 5
-			alignments: {
-				left: [0]
-				center: [1]
-			}
-			spacing: 10
+			margin_: .01
+			// alignments: {
+			// 	left: [0]
+			// 	center: [1]
+			// }
+			spacing: .1
+			heights: [.8, .2]
 		}, [ui.row({
-			spacing: 10
-			widths: [.3, .7]
+			margin_: .05
+			spacing: .05
+			widths: [.4, .6]
 		}, [ui.column({
-			spacing: 20
-		}, [
-			ui.label(text: 'Elapsed Time:'),
-			ui.label(text: 'Duration:'),
-			ui.button(text: 'Reset', onclick: on_reset),
+			spacing: .1
+			margin_: .05
+			heights: [1., 1., .5]
+		}, [ui.label(text: 'Elapsed Time:', text_size: 1. / 20),
+			ui.label(text: 'Duration:', text_size: 1. / 20),
 		]), ui.column({
-			spacing: 20
-		}, [
-			app.lbl_elapsed_value,
-			app.slider,
-		])]), app.progress_bar]),
+			spacing: .1
+			heights: [1., 1.]
+			widths: ui.stretch
+		}, [app.lbl_elapsed_value, app.slider])]), ui.button(text: 'Reset', onclick: on_reset),
+			app.progress_bar,
+		]),
 	])
 	app.window = window
 	go app.timer()

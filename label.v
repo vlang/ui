@@ -8,15 +8,14 @@ import gx
 [heap]
 pub struct Label {
 mut:
-	text       string
-	parent     Layout
-	x          int
-	y          int
-	z_index    int
-	ui         &UI
-	text_cfg   gx.TextCfg
-	text_size  f64
-	fixed_text bool
+	text      string
+	parent    Layout
+	x         int
+	y         int
+	z_index   int
+	ui        &UI
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 pub struct LabelConfig {
@@ -58,12 +57,14 @@ fn (mut l Label) set_pos(x int, y int) {
 
 fn (mut l Label) size() (int, int) {
 	// println("size $l.text")
+	l.ui.gg.set_cfg(l.text_cfg)
 	mut w, mut h := l.ui.gg.text_size(l.text)
 	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
 
 fn (mut l Label) propose_size(w int, h int) (int, int) {
+	l.ui.gg.set_cfg(l.text_cfg)
 	ww, hh := l.ui.gg.text_size(l.text)
 	// First return the width, then the height multiplied by line count.
 	return ww, hh * l.text.split('\n').len
@@ -77,6 +78,10 @@ fn (mut l Label) draw() {
 		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
 		// l.draw_text(l.x, l.y + (height * i), split)
 		draw_text<Label>(l, l.x, l.y + (height * i), split)
+		$if tbb ? {
+			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
+			draw_text_bb(l.x, l.y + (height * i), w, h, l.ui)
+		}
 	}
 	$if bb ? {
 		draw_bb(l, l.ui)

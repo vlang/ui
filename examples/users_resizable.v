@@ -77,11 +77,12 @@ fn main() {
 		resizable: true
 	}, [
 		ui.row({
-			margin: 10
+			margin_: .02
+			spacing: .02
 			widths: [.3, .7]
 		}, [ui.column({
 			spacing: 10
-			// heights: ui.stretch
+			heights: ui.compact
 		}, [ui.textbox(
 			max_len: 20
 			width: 200
@@ -117,7 +118,7 @@ fn main() {
 		), app.country, ui.row({
 			spacing: 65
 			widths: [.3, .1]
-			heights: ui.compact
+			heights: 30.
 		}, [ui.button(
 			text: 'Add user'
 			onclick: btn_add_click

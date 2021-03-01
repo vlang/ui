@@ -14,12 +14,7 @@ fn main() {
 	}, [
 		ui.row({
 			// stretch: true
-			margin: ui.Margin{
-				top: 10
-				left: 10
-				right: 10
-				bottom: 10
-			}
+			margin: ui.Margin{10, 10, 10, 10}
 		}, [
 			ui.button(
 				text: 'Open'

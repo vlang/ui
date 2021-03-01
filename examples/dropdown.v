@@ -23,7 +23,7 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			margin: 5
+			margin: ui.Margin{5, 5, 5, 5}
 		}, [
 			ui.dropdown({
 				width: 140

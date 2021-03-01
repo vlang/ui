@@ -8,9 +8,11 @@ pub:
 	width     int
 	height    int
 	alignment VerticalAlignment
-	spacing   Spacing = Spacing(0) // int
+	spacing   f64
+	spacings  []f64 = []f64{} // Size = Size(0.) // Spacing = Spacing(0) // int
 	stretch   bool
-	margin    MarginConfig
+	margin_   f64
+	margin    Margin
 	// children related
 	widths     Size //[]f64 // children sizes
 	heights    Size //[]f64
@@ -23,10 +25,10 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		height: c.height
 		width: c.width
 		vertical_alignment: c.alignment
-		spacing: c.spacing.as_int_array(children.len - 1)
+		spacings: spacings(c.spacing, c.spacings, children.len - 1)
 		stretch: c.stretch
 		direction: .row
-		margin: c.margin.as_margin()
+		margins: margins(c.margin_, c.margin)
 		widths: c.widths.as_f32_array(children.len) //.map(f32(it))
 		heights: c.heights.as_f32_array(children.len) //.map(f32(it))
 		vertical_alignments: c.alignments

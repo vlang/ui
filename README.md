@@ -17,7 +17,7 @@ ui.window({
     title: 'V UI Demo'
 }, [
     ui.row({
-        margin: ui.Margin{
+        margin: {
             top: 10
             left: 10
             right: 10

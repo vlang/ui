@@ -22,7 +22,7 @@ fn main() {
 		state: app
 	}, [
 		ui.column({
-			margin: 10
+			margin: ui.Margin{10, 10, 10, 10}
 		}, [
 			ui.row({
 				spacing: 20

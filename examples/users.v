@@ -73,7 +73,7 @@ fn main() {
 		// bg_color: gx.light_blue
 	}, [
 		ui.row({
-			margin: 10
+			margin: ui.Margin{10, 10, 10, 10}
 			widths: [200., ui.stretch]
 			// spacing: 10
 		}, [ui.column({

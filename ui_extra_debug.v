@@ -9,8 +9,10 @@ fn (s &Stack) draw_bb() {
 		col = gx.green
 	}
 	w, h := s.size()
-	s.ui.gg.draw_empty_rect(s.x - s.margin.left, s.y - s.margin.top, w, h, col)
-	s.ui.gg.draw_empty_rect(s.x, s.y, w - s.margin.left - s.margin.right, h - s.margin.top - s.margin.bottom,
+	println('bb: [$s.direction] ($s.x - ${s.margin(.left)}, $s.y - ${s.margin(.top)}, $w, $h)')
+	s.ui.gg.draw_empty_rect(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
+	println('bb: ($s.x, $s.y, $w - ${s.margin(.left)} - ${s.margin(.right)}, $h - ${s.margin(.top)} - ${s.margin(.bottom)}')
+	s.ui.gg.draw_empty_rect(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom),
 		col)
 }
 
@@ -34,8 +36,8 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	$if bbd ? {
 		w, h := s.size()
 		println('BB ${typeof(s).name}: ')
-		println('  (s.x:$s.x - s.margin.left:$s.margin.left, s.y:$s.y - s.margin.top:$s.margin.top, w:$w, h:$h)')
-		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:$s.margin.left - s.margin.right:$s.margin.right, h:$h - s.margin.top:$s.margin.top - s.margin.ttom:$s.margin.bottom)')
+		println('  (s.x:$s.x - s.margin.left:${s.margin(.left)}, s.y:$s.y - s.margin.top:${s.margin(.top)}, w:$w, h:$h)')
+		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:${s.margin(.left)} - s.margin.right:${s.margin(.right)}, h:$h - s.margin.top:${s.margin(.top)} - s.margin.ttom:${s.margin(.bottom)})')
 	}
 	tab := '  '.repeat(depth)
 	println('$tab ($depth) Stack ${typeof(s).name} with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
@@ -69,11 +71,11 @@ fn (s &Stack) debug_show_sizes(t string) {
 	sw, sh := s.size()
 	print('${t}Stack ${typeof(s).name}')
 	C.printf(' %p', s)
-	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacing')
+	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacings')
 	if parent is Stack {
 		// print('	parent: $${typeof(parent).name} ')
 		C.printf(' %p', parent)
-		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacing')
+		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacings')
 	} else if parent is Window {
 		println('	parent: Window => size ($parent.width, $parent.height)  orig: ($parent.orig_width, $parent.orig_height) ')
 	}
