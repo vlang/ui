@@ -39,7 +39,7 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			margin: 10
+			margin: ui.Margin{10, 10, 10, 10}
 			spacing: 10
 			widths: [.2, .3, .2, .3]
 			heights: 20.

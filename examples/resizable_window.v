@@ -20,7 +20,7 @@ fn main() {
 		state: app
 	}, [
 		ui.row({
-			margin: 10
+			margin: ui.Margin{10, 10, 10, 10}
 		}, [
 			ui.button(text: 'Add user'),
 		]),

@@ -22,7 +22,7 @@ fn main() {
 	}, [
 		ui.row({
 			spacing: 5
-			margin: 5
+			margin: ui.Margin{5, 5, 5, 5}
 		}, [
 			ui.textbox(
 				max_len: 20

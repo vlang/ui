@@ -114,7 +114,7 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({
-			margins: {
+			margin: {
 				right: .1
 				left: .1
 			}
@@ -130,7 +130,7 @@ fn main() {
 				ui.message_box(txt)
 			}
 		), app.rgb_rectangle, ui.row({
-			margins: {
+			margin: {
 				right: 30
 				left: 30
 				top: 5
@@ -140,7 +140,7 @@ fn main() {
 			heights: ui.compact
 			widths: 30.
 		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
-			margins: {
+			margin: {
 				right: 30
 				left: 30
 				top: 5
@@ -149,7 +149,7 @@ fn main() {
 			spacing: .3
 			widths: 30.
 		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
-			margins: {
+			margin: {
 				right: 30
 				left: 30
 				top: 5

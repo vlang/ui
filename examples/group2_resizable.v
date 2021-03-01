@@ -23,7 +23,7 @@ fn main() {
 		resizable: true
 	}, [
 		ui.column({
-			margin: 10
+			margin_: 10
 		}, [
 			ui.row({
 				spacing: 20

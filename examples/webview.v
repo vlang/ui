@@ -14,7 +14,7 @@ fn main() {
 	}, [
 		ui.row({
 			// stretch: true
-			margin: 10
+			margin: ui.Margin{10, 10, 10, 10}
 		}, [
 			ui.button(
 				text: 'Open'

@@ -39,7 +39,7 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({
-			margin: .01
+			margin_: .01
 			// alignments: {
 			// 	left: [0]
 			// 	center: [1]
@@ -47,12 +47,12 @@ fn main() {
 			spacing: .1
 			heights: [.8, .2]
 		}, [ui.row({
-			margin: .05
+			margin_: .05
 			spacing: .05
 			widths: [.4, .6]
 		}, [ui.column({
 			spacing: .1
-			margin: .05
+			margin_: .05
 			heights: [1., 1., .5]
 		}, [ui.label(text: 'Elapsed Time:', text_size: 1. / 20),
 			ui.label(text: 'Duration:', text_size: 1. / 20),

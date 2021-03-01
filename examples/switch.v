@@ -28,7 +28,7 @@ fn main() {
 		ui.row({
 			alignment: .top
 			spacing: 5
-			margin: 5
+			margin: ui.Margin{5, 5, 5, 5}
 			widths: ui.stretch
 		}, [
 			app.label,

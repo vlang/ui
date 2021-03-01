@@ -44,7 +44,7 @@ struct StackConfig {
 	spacing              f32
 	stretch              bool
 	direction            Direction
-	margins              Margin
+	margins              Margins
 	// children related
 	widths                []f32 // children sizes
 	heights               []f32
@@ -68,7 +68,7 @@ mut:
 	spacings             []f32 // []int // int
 	stretch              bool
 	direction            Direction
-	margins              Margin
+	margins              Margins
 	real_width           int
 	real_height          int
 	adj_width            int

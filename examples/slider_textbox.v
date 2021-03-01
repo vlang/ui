@@ -81,7 +81,7 @@ fn main() {
 			spacing: 100
 			heights: 20.
 		}, [app.hor_textbox, app.vert_textbox]), ui.row({
-			margins: ui.Margins{100, 30, 30, 30}
+			margin: ui.Margin{100, 30, 30, 30}
 			spacing: 30
 		}, [app.hor_slider, app.vert_slider])]),
 	])

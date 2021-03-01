@@ -26,7 +26,7 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			margin: 5
+			margin: ui.Margin{5, 5, 5, 5}
 		}, [
 			app.grid,
 		]),

@@ -85,7 +85,7 @@ enum MarginSide {
 }
 
 // for Stacks
-pub struct Margin {
+pub struct Margins {
 	top    f32
 	right  f32
 	bottom f32
@@ -93,17 +93,17 @@ pub struct Margin {
 }
 
 // for Config 
-pub struct Margins {
+pub struct Margin {
 	top    f64
 	right  f64
 	bottom f64
 	left   f64
 }
 
-fn margins(m f64, ms Margins) Margin {
-	mut margin := Margin{f32(m), f32(m), f32(m), f32(m)}
+fn margins(m f64, ms Margin) Margins {
+	mut margin := Margins{f32(m), f32(m), f32(m), f32(m)}
 	if ms.left != 0 || ms.right != 0 || ms.top != 0 || ms.bottom != 0 {
-		margin = Margin{f32(ms.top), f32(ms.right), f32(ms.bottom), f32(ms.left)}
+		margin = Margins{f32(ms.top), f32(ms.right), f32(ms.bottom), f32(ms.left)}
 	}
 	return margin
 }
