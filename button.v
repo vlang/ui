@@ -144,6 +144,7 @@ fn (mut b Button) draw() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else if b.text_width == 0 || b.text_height == 0 {
+		println('hereyyyyyy')
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
 		if b.width == 0 {
 			b.width = b.text_width + ui.button_horizontal_padding
@@ -172,6 +173,12 @@ fn (mut b Button) draw() {
 		draw_text<Button>(b, bcenter_x - w2, y, b.text)
 	}
 	$if tbb ? {
+		println('button: w2($w2) = b.text_width ($b.text_width) / 2')
+		println('    h2($h2) = b.text_height($b.text_height) / 2')
+		println('    bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
+		println('    bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
+		println('draw_text<Button>(b, bcenter_x($bcenter_x) - w2($w2), y($y), b.text($b.text))')
+		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
@@ -186,16 +193,17 @@ fn (mut b Button) set_text_size() {
 		b.height = b.image.height
 	}
 	// if b.text_width == 0 || b.text_height == 0 {
-	else if b.ui != 0 {
+	else {
+		b.ui.gg.set_cfg(b.text_cfg)
 		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		b.text_width = int(f32(b.text_width) * b.ui.gg.scale * b.ui.gg.scale)
-		b.text_height = int(f32(b.text_height) * b.ui.gg.scale * b.ui.gg.scale)
-		if b.width == 0 {
-			b.width = b.text_width + ui.button_horizontal_padding
-		}
-		if b.height == 0 {
-			b.height = b.text_height + ui.button_vertical_padding
-		}
+		b.text_width = int(f32(b.text_width))
+		b.text_height = int(f32(b.text_height))
+		// if b.width == 0 {
+		b.width = b.text_width + ui.button_horizontal_padding
+		// }
+		// if b.height == 0 {
+		b.height = b.text_height + ui.button_vertical_padding
+		// }
 	}
 	//}
 }

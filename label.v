@@ -72,6 +72,7 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 
 fn (mut l Label) draw() {
 	splits := l.text.split('\n') // Split the text into an array of lines.
+	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		// Draw the text at l.x and l.y + line height * current line
@@ -80,6 +81,8 @@ fn (mut l Label) draw() {
 		draw_text<Label>(l, l.x, l.y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
+			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')
+			println('draw_text_bb(l.x($l.x), l.y($l.y) + (height($height) * i($i)), w($w), h($h), l.ui)')
 			draw_text_bb(l.x, l.y + (height * i), w, h, l.ui)
 		}
 	}
