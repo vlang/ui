@@ -10,6 +10,23 @@ pub fn is_empty_text_cfg(t gx.TextCfg) bool {
 	return t.str() == ui.empty_text_cfg.str()
 }
 
+// T is Widget with text_cfg field
+fn text_size<T>(w &T, text string) (int, int) {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_size(text)
+}
+
+fn text_width<T>(w &T, text string) int {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_width(text)
+}
+
+fn text_height<T>(w &T, text string) int {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_height(text)
+}
+
+// T is Widget with text_cfg field
 fn draw_text<T>(w &T, x int, y int, text_ string) {
 	window := w.ui.window
 	if w.text_size > 0 {
@@ -36,5 +53,20 @@ pub fn text_size_as_int(size f64, win_height int) int {
 		int(size)
 	} else {
 		0
+	}
+}
+
+// Allow to preset ui before init since used inside set_adjusted_size
+fn preset_ui(l Layout, ui &UI) {
+	mut children := l.get_children()
+	// println("pre_init $l.type_name() $children.len children")
+	for mut child in children {
+		// println("child $child.type_name()")
+		child.ui = ui
+		if child is Stack {
+			preset_ui(child, ui)
+		} else if child is Group {
+			preset_ui(child, ui)
+		}
 	}
 }

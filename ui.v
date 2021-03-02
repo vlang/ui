@@ -57,6 +57,7 @@ pub interface Widget {
 	x int
 	y int
 	z_index int
+	ui &UI
 	init(Layout)
 	// key_down(KeyEvent)
 	draw()
@@ -73,7 +74,6 @@ pub interface Widget {
 
 // pub fn iwidget(x Widget) Widget { return x }
 pub interface Layout {
-	// spacing int
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)

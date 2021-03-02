@@ -38,7 +38,6 @@ fn (mut l Label) init(parent Layout) {
 			size: text_size_as_int(l.text_size, win_height)
 		}
 	}
-	l.ui.gg.set_cfg(l.text_cfg)
 }
 
 pub fn label(c LabelConfig) &Label {
@@ -57,15 +56,13 @@ fn (mut l Label) set_pos(x int, y int) {
 
 fn (mut l Label) size() (int, int) {
 	// println("size $l.text")
-	l.ui.gg.set_cfg(l.text_cfg)
-	mut w, mut h := l.ui.gg.text_size(l.text)
+	mut w, mut h := text_size<Label>(l, l.text)
 	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
 
 fn (mut l Label) propose_size(w int, h int) (int, int) {
-	l.ui.gg.set_cfg(l.text_cfg)
-	ww, hh := l.ui.gg.text_size(l.text)
+	ww, hh := text_size<Label>(l, l.text)
 	// First return the width, then the height multiplied by line count.
 	return ww, hh * l.text.split('\n').len
 }
@@ -107,8 +104,4 @@ fn (l &Label) point_inside(x f64, y f64) bool {
 
 pub fn (mut l Label) set_text(s string) {
 	l.text = s
-}
-
-pub fn (mut l Label) set_ui(ui &UI) {
-	l.ui = ui
 }

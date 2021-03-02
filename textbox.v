@@ -127,7 +127,6 @@ fn (mut tb TextBox) init(parent Layout) {
 			size: text_size_as_int(tb.text_size, win_height)
 		}
 	}
-	tb.ui.gg.set_cfg(tb.text_cfg)
 	// return widget
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, tb_click, tb)
@@ -211,7 +210,7 @@ fn (mut tb TextBox) draw() {
 		draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 			tb.is_error != 0 && *tb.is_error)
 	}
-	width := if text.len == 0 { 0 } else { tb.ui.gg.text_width(text) }
+	width := if text.len == 0 { 0 } else { text_width<TextBox>(tb, text) }
 	text_y := tb.y + 2 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
@@ -228,19 +227,14 @@ fn (mut tb TextBox) draw() {
 		if tb.sel_start < tb.sel_end && tb.sel_start < ustr.len {
 			left := ustr.left(tb.sel_start)
 			right := ustr.right(tb.sel_end)
+			tb.ui.gg.set_cfg(tb.text_cfg)
 			sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
 			x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding
 			tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.height - 6, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
 		}
 		// The text doesn'tb fit, find the largest substring we can draw
-		$if tb_trunc ? {
-			println('textbox trunc: ($text, $tb.text_cfg.size) $width > $tb.width')
-			C.printf(' %p: \n', tb)
-			if width > tb.width {
-				println('TRUNCCCCC')
-			}
-		}
 		if width > tb.width {
+			tb.ui.gg.set_cfg(tb.text_cfg)
 			for i := text.len - 1; i >= 0; i-- {
 				if i >= text.len {
 					continue
@@ -278,13 +272,13 @@ fn (mut tb TextBox) draw() {
 		// no cursor in sel mode
 		mut cursor_x := tb.x + ui.textbox_padding
 		if tb.is_password {
-			cursor_x += tb.ui.gg.text_width(strings.repeat(`*`, tb.cursor_pos))
+			cursor_x += text_width<TextBox>(tb, strings.repeat(`*`, tb.cursor_pos))
 		} else if skip_idx > 0 {
-			cursor_x += tb.ui.gg.text_width(text[skip_idx..])
+			cursor_x += text_width<TextBox>(tb, text[skip_idx..])
 		} else if text.len > 0 {
 			// left := tb.text[..tb.cursor_pos]
 			left := text.ustring().left(tb.cursor_pos)
-			cursor_x += tb.ui.gg.text_width(left)
+			cursor_x += text_width<TextBox>(tb, left)
 		}
 		if text.len == 0 {
 			cursor_x = tb.x + ui.textbox_padding
@@ -585,7 +579,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		mut prev_width := 0
 		ustr := tb.text.ustring()
 		for i in 1 .. ustr.len {
-			width := tb.ui.gg.text_width(ustr.left(i))
+			width := text_width<TextBox>(tb, ustr.left(i))
 			if prev_width <= x && x <= width {
 				if i < tb.sel_start && tb.sel_end < tb.sel_start {
 					tb.sel_end = tb.sel_start
@@ -634,7 +628,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	ustr := tb.text.ustring()
 	for i in 1 .. ustr.len {
 		// width := tb.ui.gg.text_width(tb.text[..i])
-		width := tb.ui.gg.text_width(ustr.left(i))
+		width := text_width<TextBox>(tb, ustr.left(i))
 		if prev_width <= x && x <= width {
 			tb.cursor_pos = i
 			return

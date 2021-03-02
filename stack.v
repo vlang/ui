@@ -115,6 +115,7 @@ fn (mut s Stack) init(parent Layout) {
 	if parent is Window {
 		ui.window = parent
 		// Only once for all children recursively
+		preset_ui(s, s.ui)
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
 		// 2) set cache sizes
@@ -676,11 +677,6 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
 				child.adj_height + child.margin_top + child.margin_bottom
 		} else {
-			if child is Label {
-				child.set_ui(ui)
-			} else if child is Button {
-				child.set_ui(ui)
-			}
 			child_width, child_height = child.size()
 			$if adj_size ? {
 				println('adj size child $child.type_name(): ($child_width, $child_height) ')
