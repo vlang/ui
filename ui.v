@@ -57,7 +57,6 @@ pub interface Widget {
 	x int
 	y int
 	z_index int
-	ui &UI
 	init(Layout)
 	// key_down(KeyEvent)
 	draw()

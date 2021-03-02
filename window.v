@@ -211,9 +211,9 @@ fn gg_init(mut window Window) {
 	h := window_size.height
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
-	println('gg_init: $w, $h')
+	// println('gg_init: $w, $h')
 	for _, child in window.children {
-		println('init $child.type_name()')
+		// println('init $child.type_name()')
 		child.init(window)
 	}
 }
@@ -265,7 +265,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// size: int(m / cfg.lines)
 	}
 
-	C.printf('window() state =%p \n', cfg.state)
+	// C.printf('window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
 		draw_fn: cfg.draw_fn

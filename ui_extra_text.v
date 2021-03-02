@@ -55,18 +55,3 @@ pub fn text_size_as_int(size f64, win_height int) int {
 		0
 	}
 }
-
-// Allow to preset ui before init since used inside set_adjusted_size
-fn preset_ui(l Layout, ui &UI) {
-	mut children := l.get_children()
-	// println("pre_init $l.type_name() $children.len children")
-	for mut child in children {
-		// println("child $child.type_name()")
-		child.ui = ui
-		if child is Stack {
-			preset_ui(child, ui)
-		} else if child is Group {
-			preset_ui(child, ui)
-		}
-	}
-}
