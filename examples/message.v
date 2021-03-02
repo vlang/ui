@@ -1,5 +1,5 @@
 import ui
 
 fn main() {
-	ui.message_box2('Hello World')
+	ui.message_box('Hello World')
 }

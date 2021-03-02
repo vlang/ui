@@ -139,19 +139,6 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	// if b.use_icon {
-	// 	b.width = b.image.width
-	// 	b.height = b.image.height
-	// } else if b.text_width == 0 || b.text_height == 0 {
-	// 	println('hereyyyyyy')
-	// 	b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-	// 	if b.width == 0 {
-	// 		b.width = b.text_width + ui.button_horizontal_padding
-	// 	}
-	// 	if b.height == 0 {
-	// 		b.height = b.text_height + ui.button_vertical_padding
-	// 	}
-	// }
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
@@ -190,23 +177,17 @@ fn (mut b Button) set_text_size() {
 	if b.use_icon {
 		b.width = b.image.width
 		b.height = b.image.height
-	}
-	// if b.text_width == 0 || b.text_height == 0 {
-	else {
+	} else {
 		b.text_width, b.text_height = text_size<Button>(b, b.text)
 		b.text_width = int(f32(b.text_width))
 		b.text_height = int(f32(b.text_height))
-		// if b.width == 0 {
 		b.width = b.text_width + ui.button_horizontal_padding
-		// }
-		// if b.height == 0 {
 		b.height = b.text_height + ui.button_vertical_padding
-		// }
 	}
-	//}
 }
 
 // fn (b &Button) key_down(e KeyEvent) {}
+
 fn (b &Button) point_inside(x f64, y f64) bool {
 	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
 }
