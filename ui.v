@@ -57,7 +57,6 @@ pub interface Widget {
 	x int
 	y int
 	z_index int
-	ui &UI
 	init(Layout)
 	// key_down(KeyEvent)
 	draw()
@@ -70,6 +69,8 @@ pub interface Widget {
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	is_focused() bool
+mut:
+	ui &UI
 }
 
 // pub fn iwidget(x Widget) Widget { return x }
