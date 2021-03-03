@@ -45,7 +45,6 @@ fn (mut g Group) init(parent Layout) {
 	for child in g.children {
 		child.init(g)
 	}
-	g.set_adjusted_size(0, ui)
 	g.calculate_child_positions()
 }
 
@@ -179,18 +178,10 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in g.children {
-		mut child_width, mut child_height := 0, 0
-
-		if child is Label {
-			child.set_ui(ui)
-		}
-		child_width, child_height = child.size()
-
+		child_width, child_height := child.size()
 		$if ui_group ? {
 			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
 		}
-		// child_width, child_height := child.size()
-		// child_width, child_height := child.adj_width, child.adj_height
 
 		h += child_height // height of vertical stack means adding children's height
 		if child_width > w { // width of vertical stack means greatest children's width

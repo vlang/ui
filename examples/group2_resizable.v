@@ -20,7 +20,7 @@ fn main() {
 		height: win_height
 		title: 'Group 2 Demo'
 		state: app
-		resizable: true
+		mode: .resizable
 	}, [
 		ui.column({
 			margin_: 10

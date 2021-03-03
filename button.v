@@ -73,7 +73,6 @@ fn (mut b Button) init(parent Layout) {
 			size: text_size_as_int(b.text_size, win_height)
 		}
 	}
-	b.ui.gg.set_cfg(b.text_cfg)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -140,18 +139,6 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	if b.use_icon {
-		b.width = b.image.width
-		b.height = b.image.height
-	} else if b.text_width == 0 || b.text_height == 0 {
-		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		if b.width == 0 {
-			b.width = b.text_width + ui.button_horizontal_padding
-		}
-		if b.height == 0 {
-			b.height = b.text_height + ui.button_vertical_padding
-		}
-	}
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
@@ -172,6 +159,12 @@ fn (mut b Button) draw() {
 		draw_text<Button>(b, bcenter_x - w2, y, b.text)
 	}
 	$if tbb ? {
+		println('button: w2($w2) = b.text_width ($b.text_width) / 2')
+		println('    h2($h2) = b.text_height($b.text_height) / 2')
+		println('    bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
+		println('    bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
+		println('draw_text<Button>(b, bcenter_x($bcenter_x) - w2($w2), y($y), b.text($b.text))')
+		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
@@ -184,23 +177,17 @@ fn (mut b Button) set_text_size() {
 	if b.use_icon {
 		b.width = b.image.width
 		b.height = b.image.height
+	} else {
+		b.text_width, b.text_height = text_size<Button>(b, b.text)
+		b.text_width = int(f32(b.text_width))
+		b.text_height = int(f32(b.text_height))
+		b.width = b.text_width + ui.button_horizontal_padding
+		b.height = b.text_height + ui.button_vertical_padding
 	}
-	// if b.text_width == 0 || b.text_height == 0 {
-	else if b.ui != 0 {
-		b.text_width, b.text_height = b.ui.gg.text_size(b.text)
-		b.text_width = int(f32(b.text_width) * b.ui.gg.scale * b.ui.gg.scale)
-		b.text_height = int(f32(b.text_height) * b.ui.gg.scale * b.ui.gg.scale)
-		if b.width == 0 {
-			b.width = b.text_width + ui.button_horizontal_padding
-		}
-		if b.height == 0 {
-			b.height = b.text_height + ui.button_vertical_padding
-		}
-	}
-	//}
 }
 
 // fn (b &Button) key_down(e KeyEvent) {}
+
 fn (b &Button) point_inside(x f64, y f64) bool {
 	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
 }
@@ -217,8 +204,4 @@ fn (mut b Button) unfocus() {
 
 fn (b &Button) is_focused() bool {
 	return b.is_focused
-}
-
-pub fn (mut b Button) set_ui(ui &UI) {
-	b.ui = ui
 }

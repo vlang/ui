@@ -112,11 +112,17 @@ fn (mut s Stack) init(parent Layout) {
 
 	s.init_size()
 
+	// Init all children recursively
+	for mut child in s.children {
+		child.init(s)
+	}
+
 	if parent is Window {
 		ui.window = parent
 		// Only once for all children recursively
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
+
 		// 2) set cache sizes
 		s.set_cache_sizes()
 		$if cache ? {
@@ -131,27 +137,14 @@ fn (mut s Stack) init(parent Layout) {
 
 		// 5) children z_index
 		s.set_drawing_children()
-	}
 
-	// Init all children recursively
-	for mut child in s.children {
-		child.init(s)
-	}
-
-	// Set all children's positions recursively
-	if parent is Window {
+		// 6) set position for chilfren
 		s.set_children_pos()
 
 		$if android {
-			// window_size := gg.window_size()
-			// w := window_size.width
-			// h := window_size.height
-			// mut window := ui.window
-			// window.width, window.height = w, h
 			s.resize(parent.width, parent.height)
 		} $else {
 			if parent.mode in [.fullscreen, .max_size, .resizable] {
-				// println('mode: ${parent.mode}')
 				s.resize(parent.width, parent.height)
 			}
 		}
@@ -676,11 +669,6 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
 				child.adj_height + child.margin_top + child.margin_bottom
 		} else {
-			if child is Label {
-				child.set_ui(ui)
-			} else if child is Button {
-				child.set_ui(ui)
-			}
 			child_width, child_height = child.size()
 			$if adj_size ? {
 				println('adj size child $child.type_name(): ($child_width, $child_height) ')

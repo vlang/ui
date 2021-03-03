@@ -2,7 +2,7 @@ import ui
 import gx
 
 const (
-	win_width  = 286
+	win_width  = 350
 	win_height = 565
 	slider_min = 0
 	slider_max = 255

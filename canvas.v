@@ -14,6 +14,7 @@ pub mut:
 	x       int
 	y       int
 	z_index int
+	ui      &UI = 0
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)

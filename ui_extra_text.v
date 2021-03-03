@@ -10,6 +10,23 @@ pub fn is_empty_text_cfg(t gx.TextCfg) bool {
 	return t.str() == ui.empty_text_cfg.str()
 }
 
+// T is Widget with text_cfg field
+fn text_size<T>(w &T, text string) (int, int) {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_size(text)
+}
+
+fn text_width<T>(w &T, text string) int {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_width(text)
+}
+
+fn text_height<T>(w &T, text string) int {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_height(text)
+}
+
+// T is Widget with text_cfg field
 fn draw_text<T>(w &T, x int, y int, text_ string) {
 	window := w.ui.window
 	if w.text_size > 0 {

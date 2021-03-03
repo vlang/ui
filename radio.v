@@ -54,7 +54,7 @@ fn (mut r Radio) init(parent Layout) {
 	if r.width == 0 {
 		mut max := 0
 		for value in r.values {
-			width := r.ui.gg.text_width(value)
+			width := text_width<Radio>(r, value)
 			if width > max {
 				max = width
 			}
@@ -71,7 +71,6 @@ fn (mut r Radio) init(parent Layout) {
 			size: text_size_as_int(r.text_size, win_height)
 		}
 	}
-	r.ui.gg.set_cfg(r.text_cfg)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
