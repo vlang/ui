@@ -131,7 +131,7 @@ enum Animating {
 }
 
 [unsafe]
-pub fn animating_(mode Animating, state bool) bool {
+fn animating_(mode Animating, state bool) bool {
 	mut static animating := false
 	match mode {
 		._set {
@@ -146,14 +146,18 @@ pub fn animating_(mode Animating, state bool) bool {
 	return animating
 }
 
-fn animate_stop() {
+pub fn animate_stop() {
 	unsafe { animating_(._set, false) }
 }
 
-fn set_animating(state bool) {
+pub fn animate_start() {
+	unsafe { animating_(._set, true) }
+}
+
+pub fn set_animating(state bool) {
 	unsafe { animating_(._or, state) }
 }
 
-fn animating() bool {
+pub fn animating() bool {
 	return unsafe { animating_(._get, true) }
 }
