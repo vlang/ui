@@ -24,10 +24,14 @@ fn main() {
 			ui.button(
 				text: 'Config?'
 				onclick: fn (a voidptr, b voidptr) {
-					println('orientation: ${ui.android_config(.orientation)}')
-					println('touchscreen: ${ui.android_config(.touchscreen)}')
-					println('screensize: ${ui.android_config(.screensize)}')
-					println('SDK version: ${ui.android_config(.sdkversion)}')
+					$if android {
+						println('orientation: ${ui.android_config(.orientation)}')
+						println('touchscreen: ${ui.android_config(.touchscreen)}')
+						println('screensize: ${ui.android_config(.screensize)}')
+						println('SDK version: ${ui.android_config(.sdkversion)}')
+					} $else {
+						ui.message_box('Only for Android')
+					}
 				}
 			),
 		]),
