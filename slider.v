@@ -65,7 +65,6 @@ fn (mut s Slider) init(parent Layout) {
 	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
 	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, slider_touch_down, s)
 		subscriber.subscribe_method(events.on_touch_up, slider_touch_up, s)
 		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
 	}
@@ -243,21 +242,17 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
-fn slider_touch_down(mut s Slider, e &MouseEvent, zzz voidptr) {
-	println("slider touch down")
-	if s.point_inside_thumb(e.x, e.y) {
-		println("slider touch DRAGGING")
-		s.dragging = true
-	}
-}
-
 fn slider_touch_up(mut s Slider, e &MouseEvent, zzz voidptr) {
-	println("slider touchup  NO MORE DRAGGING")
+	println('slider touchup  NO MORE DRAGGING')
 	s.dragging = false
 }
 
 fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
+	if s.point_inside_thumb(e.x, e.y) {
+		println('slider touch move DRAGGING')
+		s.dragging = true
+	}
 	if s.dragging {
 		s.change_value(int(e.x), int(e.y))
 	}
@@ -343,7 +338,8 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		} else {
 			t_x := middle - tol
 			t_y := pos - f32(s.thumb_height) / 2 - tol
-			println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
+			println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
+				t_y + f32(s.thumb_height)}')
 			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
 				&& y <= t_y + f32(s.thumb_height) + tol * 2
 		}

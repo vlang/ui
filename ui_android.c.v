@@ -9,6 +9,7 @@ enum AndroidConfig {
 	orientation
 	touchscreen
 	screensize
+	sdkversion
 }
 
 fn C.AConfiguration_new() voidptr
@@ -17,8 +18,10 @@ fn C.AConfiguration_delete(voidptr)
 fn C.AConfiguration_getOrientation(voidptr) u32
 fn C.AConfiguration_getTouchscreen(voidptr) u32
 fn C.AConfiguration_getScreenSize(voidptr) u32
+fn C.AConfiguration_getSdkVersion(voidptr) u32
 
 struct C.AAssetManager {}
+
 struct C.ANativeActivity {
 	assetManager voidptr
 }
@@ -37,6 +40,9 @@ pub fn android_config(mode AndroidConfig) u32 {
 		}
 		.screensize {
 			cfg = C.AConfiguration_getScreenSize(config)
+		}
+		.sdkversion {
+			cfg = C.AConfiguration_getSdkVersion(config)
 		}
 	}
 	C.AConfiguration_delete(config)
