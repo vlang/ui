@@ -80,7 +80,6 @@ fn on_reset(mut app App, button &ui.Button) {
 
 fn (mut app App) timer() {
 	for {
-		println('timer: $app.elapsed_time $app.duration $ui.animating()')
 		if app.elapsed_time == app.duration {
 			continue
 		}

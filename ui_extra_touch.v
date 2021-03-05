@@ -12,7 +12,9 @@ struct Pos {
 struct TouchInfo {
 mut:
 	start Touch
+	move  Touch
 	end   Touch
+	button int
 }
 
 struct Touch {

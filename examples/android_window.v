@@ -1,5 +1,4 @@
 import ui
-import sokol.sapp
 
 struct App {
 mut:
@@ -10,7 +9,6 @@ mut:
 fn main() {
 	mut app := &App{
 		window: 0
-		text: 'size= $sapp.dpi_scale() $sapp.width() $sapp.height()'
 	}
 	window := ui.window({
 		title: 'V Android Test'
@@ -20,17 +18,19 @@ fn main() {
 		mode: .max_size
 	}, [
 		ui.column({
+			margin_: .2
 			widths: ui.stretch
 		}, [
-			ui.textbox(
-				text: &app.text
-				placeholder: '0'
-				// width: 135
-				read_only: true
+			ui.button(
+				text: "Config?" 
+				onclick: fn(a voidptr, b voidptr) {
+					println("orientation: ${ui.android_config(.orientation)}")
+					println("touchscreen: ${ui.android_config(.touchscreen)}")
+					println("screensize: ${ui.android_config(.screensize)}")
+				}
 			),
 		]),
 	])
 	app.window = window
-	app.text = 'size= ($window.width,$window.height) $sapp.dpi_scale() $sapp.width() $sapp.height()'
 	ui.run(window)
 }
