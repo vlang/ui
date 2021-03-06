@@ -4,6 +4,7 @@ import time
 const (
 	win_width  = 287
 	win_height = 150
+	duration   = 10 // ms
 )
 
 struct App {
@@ -85,7 +86,7 @@ fn (mut app App) timer() {
 		if app.elapsed_time > app.duration {
 			app.elapsed_time = app.duration
 		} else {
-			app.elapsed_time += 0.1
+			app.elapsed_time += 0.1 * duration
 		}
 		app.lbl_elapsed_value.set_text('$app.elapsed_time s')
 		if app.duration == 0 {
@@ -93,6 +94,6 @@ fn (mut app App) timer() {
 		} else {
 			app.progress_bar.val = int(app.elapsed_time * 100.0 / app.duration)
 		}
-		time.sleep(100000 * time.microsecond)
+		time.sleep(100000 * duration * time.microsecond)
 	}
 }

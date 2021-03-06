@@ -74,7 +74,7 @@ fn main() {
 		height: win_height
 		state: app
 		title: 'V UI Demo'
-		resizable: true
+		mode: .resizable
 	}, [
 		ui.row({
 			margin_: .02

@@ -151,7 +151,7 @@ fn on_event(e &gg.Event, mut window Window) {
 				}
 				time: time.now()
 			}
-			window_handle_touches(e, window.ui)
+			window_touch_tap_and_swipe(e, window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -181,6 +181,9 @@ fn on_event(e &gg.Event, mut window Window) {
 					}
 					time: time.now()
 				}
+				window.touch.button = 0
+				window_touch_down(e, window.ui)
+				// println("touch BEGIN: ${window.touch.start} $e")
 			}
 		}
 		.touches_ended {
@@ -193,7 +196,24 @@ fn on_event(e &gg.Event, mut window Window) {
 					}
 					time: time.now()
 				}
-				window_handle_touches(e, window.ui)
+				window.touch.button = -1
+				// println("touch END: ${window.touch.end} $window.touch.button")
+				window_touch_up(e, window.ui)
+				window_touch_tap_and_swipe(e, window.ui)
+			}
+		}
+		.touches_moved {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.move = {
+					pos: {
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				// println("touch move: ${window.touch.move} $window.touch.button")
+				window_touch_move(e, window.ui)
 			}
 		}
 		else {}
@@ -507,19 +527,18 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_handle_touches(event gg.Event, ui &UI) {
+fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
 	window := ui.window
-
 	s, e := window.touch.start, window.touch.end
 	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
 	if math.max(adx, ady) < 10 {
-		window_handle_tap(event, ui)
+		window_touch_tap(event, ui)
 	} else {
-		window_handle_swipe(event, ui)
+		window_touch_swipe(event, ui)
 	}
 }
 
-fn window_handle_tap(event gg.Event, ui &UI) {
+fn window_touch_tap(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
@@ -539,8 +558,45 @@ fn window_handle_tap(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_handle_swipe(event gg.Event, ui &UI) {
+fn window_touch_swipe(event gg.Event, ui &UI) {
 	// window := ui.window
+}
+
+fn window_touch_down(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		x: window.touch.start.pos.x
+		y: window.touch.start.pos.y
+	}
+	if window.mouse_down_fn != voidptr(0) {
+		window.mouse_down_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_down, window, e)
+}
+
+fn window_touch_up(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+	}
+	if window.mouse_up_fn != voidptr(0) {
+		window.mouse_up_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_up, window, e)
+}
+
+fn window_touch_move(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseMoveEvent{
+		x: f64(window.touch.move.pos.x)
+		y: f64(window.touch.move.pos.y)
+		mouse_button: window.touch.button
+	}
+	if window.mouse_move_fn != voidptr(0) {
+		window.mouse_move_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_move, window, e)
 }
 
 fn window_click(event gg.Event, ui &UI) {
@@ -775,13 +831,15 @@ fn (w &Window) draw() {
 }
 
 fn frame(mut w Window) {
-	if !w.ui.needs_refresh {
-		// Draw 3 more frames after the "stop refresh" command
-		w.ui.ticks++
-		if w.ui.ticks > 3 {
-			return
-		}
-	}
+	// Commented to make timer.v fluid and working on android at the same time 
+	// if !w.ui.needs_refresh {
+	// 	// Draw 3 more frames after the "stop refresh" command
+	// 	w.ui.ticks++
+	// 	if w.ui.ticks > 3 {
+	// 		return
+	// 	}
+	// }
+
 	// println('frame() needs_refresh=$w.ui.needs_refresh $w.ui.ticks nr children=$w.children.len')
 	// game.frame_sw.restart()
 	// game.ft.flush()

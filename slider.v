@@ -39,6 +39,7 @@ pub mut:
 	rev_min_max_pos      bool
 	thumb_in_track       bool
 	track_line_displayed bool
+	entering             bool
 }
 
 pub struct SliderConfig {
@@ -54,6 +55,7 @@ pub struct SliderConfig {
 	rev_min_max_pos      bool
 	thumb_in_track       bool
 	track_line_displayed bool = true
+	entering             bool
 }
 
 fn (mut s Slider) init(parent Layout) {
@@ -63,7 +65,14 @@ fn (mut s Slider) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
 	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
 	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
+		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
+		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
+	}
 }
 
 pub fn slider(c SliderConfig) &Slider {
@@ -81,6 +90,7 @@ pub fn slider(c SliderConfig) &Slider {
 		track_line_displayed: c.track_line_displayed
 		ui: 0
 		z_index: c.z_index
+		entering: c.entering
 	}
 	s.set_thumb_size()
 	// if !c.thumb_in_track {
@@ -238,10 +248,35 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
+fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+	if s.entering && s.point_inside_thumb(e.x, e.y) {
+		// println('slider touch move DRAGGING')
+		s.dragging = true
+	}
+	if s.dragging {
+		s.change_value(int(e.x), int(e.y))
+	}
+}
+
+fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
+	// println('slider touchup  NO MORE DRAGGING')
+	if s.point_inside_thumb(e.x, e.y) {
+		// println('slider touch move DRAGGING')
+		s.dragging = true
+	}
+}
+
+fn slider_mouse_up(mut s Slider, e &MouseEvent, zzz voidptr) {
+	// println('slider touchup  NO MORE DRAGGING')
+	s.dragging = false
+}
+
 fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
 	if int(e.mouse_button) == 0 {
 		// left: 0, right: 1, middle: 2
-		if s.point_inside_thumb(e.x, e.y) {
+		if s.entering && s.point_inside_thumb(e.x, e.y) {
+			// println("slider DRAGGING")
 			s.dragging = true
 		}
 	} else {
@@ -306,15 +341,33 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		pos = f32(axis)
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
-	if s.orientation == .horizontal {
-		t_x := pos - f32(s.thumb_width) / 2
-		t_y := middle
-		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
-			&& y <= t_y + f32(s.thumb_height)
-	} else {
-		t_x := middle
-		t_y := pos - f32(s.thumb_height) / 2
-		return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
-			&& y <= t_y + f32(s.thumb_height)
+	$if android {
+		tol := 20.
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2 - tol
+			t_y := middle - tol
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		} else {
+			t_x := middle - tol
+			t_y := pos - f32(s.thumb_height) / 2 - tol
+			// println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
+			// 	t_y + f32(s.thumb_height)}')
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		}
+	} $else {
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2
+			t_y := middle
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		} else {
+			t_x := middle
+			t_y := pos - f32(s.thumb_height) / 2
+			// println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		}
 	}
 }
