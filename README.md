@@ -91,7 +91,7 @@ On some Linux distros you also need a few development dependencies:
 - Fedora: `sudo dnf install libXi-devel libXcursor-devel mesa-libGL-devel`
 
 On ChromeOS Linux/Crostini, install the Debian dependencies listed above followed by this:
-- `sudo apt install freeglut3-dev` ([see details](https://github.com/vlang/ui/issues/316))
+- `sudo apt install libssl-dev freeglut3-dev` ([see details](https://github.com/vlang/ui/issues/316))
 
 ### License
 
