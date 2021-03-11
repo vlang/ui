@@ -907,11 +907,11 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 // Layout Interface Methods
-fn (w &Window) get_ui() &UI {
+pub fn (w &Window) get_ui() &UI {
 	return w.ui
 }
 
-fn (w &Window) get_state() voidptr {
+pub fn (w &Window) get_state() voidptr {
 	return w.state
 }
 

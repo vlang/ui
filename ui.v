@@ -228,13 +228,13 @@ pub fn open_url(url string) {
 		return
 	}
 	$if windows {
-		os.exec('start "$url"') or { return }
+		os.execute('start "$url"')
 	}
 	$if macos {
-		os.exec('open "$url"') or { return }
+		os.execute('open "$url"')
 	}
 	$if linux {
-		os.exec('xdg-open "$url"') or { return }
+		os.execute('xdg-open "$url"')
 	}
 }
 
