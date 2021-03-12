@@ -121,45 +121,37 @@ fn (mut s Stack) init(parent Layout) {
 		ui.window = parent
 		mut window := parent
 		window.root_layout = s
-		window.update() // i.e s.update_all_children_recursively(parent)
+		window.update_layout() // i.e s.update_all_children_recursively(parent)
 	}
 }
 
 // used inside window.update()
 pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	// Only once for all children recursively
-		// 1) find all the adjusted sizes
-		s.set_adjusted_size(0, true, s.ui)
-		// 2) set cache sizes
-		s.set_cache_sizes()
-		$if cache ? {
-			s.debug_show_cache(0, '')
-		}
-		// 3) set all the sizes (could be updated possibly for resizing)
-		s.set_children_sizes()
-		// All sizes have to be set before positionning widgets
-		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
-		s.set_pos(s.x, s.y)
+	// 1) find all the adjusted sizes
+	s.set_adjusted_size(0, true, s.ui)
+	// 2) set cache sizes
+	s.set_cache_sizes()
+	$if cache ? {
+		s.debug_show_cache(0, '')
+	}
+	// 3) set all the sizes (could be updated possibly for resizing)
+	s.set_children_sizes()
+	// All sizes have to be set before positionning widgets
+	// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
+	s.set_pos(s.x, s.y)
 
-		// 5) children z_index
-		s.set_drawing_children()
-		// 6) set position for chilfren
-		s.set_children_pos()
-		$if android {
+	// 5) children z_index
+	s.set_drawing_children()
+	// 6) set position for chilfren
+	s.set_children_pos()
+	$if android {
+		s.resize(parent.width, parent.height)
+	} $else {
+		if parent.mode in [.fullscreen, .max_size, .resizable] {
 			s.resize(parent.width, parent.height)
-		} $else {
-			if parent.mode in [.fullscreen, .max_size, .resizable] {
-				s.resize(parent.width, parent.height)
-			}
 		}
-}
-
-pub fn (mut s Stack) add_child(w Widget, sizes StackSizesConfig) {
-	s.children << w
-	w.init(s)
-	s.update_sizes(sizes)
-	window := s.ui.window
-	window.update()
+	}
 }
 
 fn (mut s Stack) init_size() {
@@ -1033,4 +1025,76 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 	}
 
 	return hor_align, ver_align
+}
+
+//**** StackChildren *****
+pub struct ChildrenConfig {
+mut:
+	child    Widget
+	children []Widget
+	at       int   = -1
+	widths   Size  = Size(-1.)
+	heights  Size  = Size(-1.)
+	spacing  f64   = -1.
+	spacings []f64 = []f64{}
+}
+
+pub fn (mut s Stack) add(cfg ChildrenConfig) {
+	pos := if cfg.at == -1 { s.children.len } else { cfg.at }
+	if 0 <= pos && pos <= s.children.len {
+		begin, end := s.children[..pos], s.children[pos..]
+		s.children = begin
+		if cfg.children.len > 0 {
+			s.children << cfg.children
+			for w in cfg.children {
+				w.init(s)
+			}
+		} else {
+			s.children << cfg.child
+			cfg.child.init(s)
+		}
+		s.children << end
+		s.update_sizes(cfg)
+		window := s.ui.window
+		window.update_layout()
+	}
+}
+
+pub fn (mut s Stack) remove(cfg ChildrenConfig) {
+	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
+	if 0 <= pos && pos < s.children.len {
+		begin, end := s.children[..pos], s.children[(pos + 1)..]
+		// TODO free s.children[pos]
+		s.children = begin
+		s.children << end
+		s.update_sizes(cfg)
+		window := s.ui.window
+		window.update_layout()
+	}
+}
+
+pub fn (mut s Stack) update_sizes(cfg ChildrenConfig) {
+	if cfg.widths is f64 {
+		if cfg.widths == -1. {
+			// TODO: guess how to update
+		} else {
+			s.widths = [f32(cfg.widths)].repeat(s.children.len)
+		}
+	} else {
+		s.widths = cfg.widths.as_f32_array(s.children.len)
+	}
+	if cfg.heights is f64 {
+		if cfg.heights == -1. {
+			// TODO: guess how to update automatically
+		} else {
+			s.heights = [f32(cfg.heights)].repeat(s.children.len)
+		}
+	} else {
+		s.heights = cfg.heights.as_f32_array(s.children.len)
+	}
+	if cfg.spacing != -1. || cfg.spacings.len != 0 {
+		s.spacings = spacings(cfg.spacing, cfg.spacings, s.children.len - 1)
+	} else {
+		// TODO: guess how to update automatically
+	}
 }

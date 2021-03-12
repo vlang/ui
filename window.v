@@ -54,15 +54,15 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable     bool // currently only for events.on_resized not modify children
-	mode          WindowSizeType
-	root_layout   Layout
+	resizable   bool // currently only for events.on_resized not modify children
+	mode        WindowSizeType
+	root_layout Layout
 	// saved origin sizes
-	orig_width    int
-	orig_height   int
-	touch         TouchInfo
+	orig_width  int
+	orig_height int
+	touch       TouchInfo
 	// Text Config
-	text_cfg      gx.TextCfg
+	text_cfg gx.TextCfg
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -945,11 +945,16 @@ pub fn (window &Window) unfocus_all() {
 	}
 }
 
-fn (w &Window) get_children() []Widget {
+pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-fn (w &Window) update() {
+pub fn (w &Window) get_child(from []int) Widget {
+	// from[0]
+	return w.children[0]
+}
+
+pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
 	if s is Stack {
