@@ -931,7 +931,7 @@ fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = width, height
 	window.ui.gg.resize(width, height)
 	for mut child in window.children {
-		if child is Stack {
+		if mut child is Stack {
 			child.resize(width, height)
 		}
 	}

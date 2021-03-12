@@ -216,7 +216,7 @@ fn (mut s Stack) set_children_sizes() {
 		}
 		child.propose_size(w, h)
 
-		if child is Stack {
+		if mut child is Stack {
 			child.set_children_sizes()
 		}
 	}
@@ -333,7 +333,7 @@ fn (mut s Stack) set_cache_sizes() {
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
 		// if ! (child is Stack) {
-		if child is Stack {
+		if mut child is Stack {
 			adj_child_width, adj_child_height = child.adjustable_size()
 		}
 		if adj_child_width == 0 && cw == 0 {
@@ -538,7 +538,7 @@ fn (mut s Stack) set_cache_sizes() {
 			}
 		}
 		// recursively do the same for Stack children
-		if child is Stack {
+		if mut child is Stack {
 			child.set_cache_sizes()
 		}
 	}
@@ -656,13 +656,13 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	mut w := 0
 	for mut child in s.children {
 		mut child_width, mut child_height := 0, 0
-		if child is Stack {
+		if mut child is Stack {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, force, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right), 
+			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
 				child.adj_height + child.margin(.top) + child.margin(.bottom)
-		} else if child is Group {
+		} else if mut child is Group {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
 			}
@@ -729,7 +729,7 @@ fn (mut s Stack) set_children_pos() {
 				y += s.spacing(i)
 			}
 		}
-		if child is Stack {
+		if mut child is Stack {
 			child.set_children_pos()
 		}
 	}
@@ -803,7 +803,7 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 
 fn (mut s Stack) set_drawing_children() {
 	for mut child in s.children {
-		if child is Stack {
+		if mut child is Stack {
 			child.set_drawing_children()
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
