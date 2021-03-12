@@ -119,10 +119,16 @@ fn (mut s Stack) init(parent Layout) {
 
 	if parent is Window {
 		ui.window = parent
-		// Only once for all children recursively
+		mut p := parent
+		p.first_layout = s
+		s.init_first(parent) // or parent.init_first_layout() 
+	}
+}
+
+pub fn (mut s Stack) init_first(parent Window) {
+	// Only once for all children recursively
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
-
 		// 2) set cache sizes
 		s.set_cache_sizes()
 		$if cache ? {
@@ -130,17 +136,14 @@ fn (mut s Stack) init(parent Layout) {
 		}
 		// 3) set all the sizes (could be updated possibly for resizing)
 		s.set_children_sizes()
-
 		// All sizes have to be set before positionning widgets
 		// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 		s.set_pos(s.x, s.y)
 
 		// 5) children z_index
 		s.set_drawing_children()
-
 		// 6) set position for chilfren
 		s.set_children_pos()
-
 		$if android {
 			s.resize(parent.width, parent.height)
 		} $else {
@@ -148,7 +151,16 @@ fn (mut s Stack) init(parent Layout) {
 				s.resize(parent.width, parent.height)
 			}
 		}
-	}
+}
+
+pub fn (mut s Stack) add_child(w Widget, widths Size, heights Size) {
+	s.children << w
+	w.init(s)
+	s.widths = widths.as_f32_array(s.children.len)
+	s.heights = heights.as_f32_array(s.children.len)
+	s.spacings = [f32(5.)].repeat(s.children.len - 1)
+	window := s.ui.window
+	window.init_first_layout()
 }
 
 fn (mut s Stack) init_size() {
