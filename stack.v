@@ -1100,3 +1100,34 @@ pub fn (mut s Stack) update_sizes(cfg ChildrenConfig) {
 		// TODO: guess how to update automatically
 	}
 }
+
+pub fn (s &Stack) get_child(from ...int) ?Widget {
+	mut children := s.children
+	for i, ind in from {
+		if i < from.len - 1 {
+			if ind >= 0 && ind < children.len {
+				widget := children[ind]
+				if widget is Stack {
+					children = widget.children
+				} else {
+					return error('$from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+				}
+			} else if i == -1 {
+				widget := children[children.len - 1]
+				if widget is Stack {
+					children = widget.children
+				}
+			} else {
+				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+			}
+		} else {
+			if ind >= 0 && ind < children.len {
+				return children[ind]
+			} else if ind == -1 {
+				return children[children.len - 1]
+			} else {
+				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+			}
+		}
+	}
+}
