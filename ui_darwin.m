@@ -39,9 +39,7 @@ string vui_bundle_path() {
 	return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
-// @import CoreServices;
-// @import ImageIO;
-
+/*
 void vui_take_screenshot(string s) {//void* w, string s) {
 	// NSWindow* win=(__bridge NSWindow*)w;
 	NSString* path = nsstring(s);
@@ -51,7 +49,7 @@ void vui_take_screenshot(string s) {//void* w, string s) {
 
 	NSArray<NSRunningApplication*> *apps = 
     [NSRunningApplication runningApplicationsWithBundleIdentifier:
-        /* Bundle ID of the application, e.g.: */ @"com.apple.Safari"];
+        // Bundle ID of the application, e.g.:  @"com.apple.Safari"];
 	if (apps.count == 0) {
 		// Application is not currently running
 		puts("The application is not running");
@@ -114,6 +112,6 @@ void vui_screenshot(void* w, string s) {
 	// NSData *imageData = [image TIFFRepresentation];
 	// [imageData writeToFile:fName atomically:NO];
 	vui_saveImage(image, path);
-}
+} */
 
 
