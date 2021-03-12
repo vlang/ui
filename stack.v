@@ -125,7 +125,7 @@ fn (mut s Stack) init(parent Layout) {
 	}
 }
 
-// used inside window.update()
+// used inside window.update_layout()
 pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	// Only once for all children recursively
 	// 1) find all the adjusted sizes
@@ -1093,7 +1093,9 @@ pub fn (mut s Stack) update_sizes(cfg ChildrenConfig) {
 		s.heights = cfg.heights.as_f32_array(s.children.len)
 	}
 	if cfg.spacing != -1. || cfg.spacings.len != 0 {
-		s.spacings = spacings(cfg.spacing, cfg.spacings, s.children.len - 1)
+		if s.children.len > 0 {
+			s.spacings = spacings(cfg.spacing, cfg.spacings, s.children.len - 1)
+		}
 	} else {
 		// TODO: guess how to update automatically
 	}
