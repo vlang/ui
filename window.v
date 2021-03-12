@@ -949,7 +949,7 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-pub fn (w &Window) get_child(from []int) ?Widget {
+pub fn (w &Window) get_child(from ...int) ?Widget {
 	mut children := w.root_layout.get_children()
 	for i, ind in from {
 		if i < from.len - 1 {
@@ -960,12 +960,19 @@ pub fn (w &Window) get_child(from []int) ?Widget {
 				} else {
 					return error('$from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 				}
+			} else if i == -1 {
+				widget := children[children.len - 1]
+				if widget is Stack {
+					children = widget.children
+				}
 			} else {
 				return error('$from uncorrect: $from[$i]=$ind out of bounds')
 			}
 		} else {
 			if ind >= 0 && ind < children.len {
 				return children[ind]
+			} else if ind == -1 {
+				return children[children.len - 1]
 			} else {
 				return error('$from uncorrect: $from[$i]=$ind out of bounds')
 			}
