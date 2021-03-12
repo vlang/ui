@@ -119,13 +119,14 @@ fn (mut s Stack) init(parent Layout) {
 
 	if parent is Window {
 		ui.window = parent
-		mut p := parent
-		p.first_layout = s
-		s.init_first(parent) // or parent.init_first_layout() 
+		mut window := parent
+		window.root_layout = s
+		window.update() // i.e s.update_all_children_recursively(parent)
 	}
 }
 
-pub fn (mut s Stack) init_first(parent Window) {
+// used inside window.update()
+pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	// Only once for all children recursively
 		// 1) find all the adjusted sizes
 		s.set_adjusted_size(0, true, s.ui)
@@ -153,14 +154,12 @@ pub fn (mut s Stack) init_first(parent Window) {
 		}
 }
 
-pub fn (mut s Stack) add_child(w Widget, widths Size, heights Size) {
+pub fn (mut s Stack) add_child(w Widget, sizes StackSizesConfig) {
 	s.children << w
 	w.init(s)
-	s.widths = widths.as_f32_array(s.children.len)
-	s.heights = heights.as_f32_array(s.children.len)
-	s.spacings = [f32(5.)].repeat(s.children.len - 1)
+	s.update_sizes(sizes)
 	window := s.ui.window
-	window.init_first_layout()
+	window.update()
 }
 
 fn (mut s Stack) init_size() {

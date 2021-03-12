@@ -117,3 +117,39 @@ fn spacings(sp f64, sps []f64, len int) []f32 {
 	}
 	return spacing
 }
+
+/***** Stack sizes ******/
+
+pub struct StackSizesConfig {
+mut:
+	widths    Size = Size(-1.)
+	heights   Size = Size(-1.)
+	spacing   f64 = -1.
+	spacings  []f64 = []f64{} 
+}
+
+pub fn (mut s Stack) update_sizes(cfg StackSizesConfig) {
+	if cfg.widths is f64 {
+		if cfg.widths == -1. {
+			// TODO: guess how to update
+		} else {
+			s.widths = [f32(cfg.widths)].repeat(s.children.len)
+		}
+	} else {
+		s.widths = cfg.widths.as_f32_array(s.children.len)
+	}
+	if cfg.heights is f64 {
+		if cfg.heights == -1. {
+			// TODO: guess how to update automatically
+		} else {
+			s.heights = [f32(cfg.heights)].repeat(s.children.len)
+		}
+	} else {
+		s.heights = cfg.heights.as_f32_array(s.children.len)
+	}
+	if cfg.spacing != -1. || cfg.spacings.len != 0 {
+		s.spacings = spacings(cfg.spacing, cfg.spacings, s.children.len - 1)
+	} else {
+		// TODO: guess how to update automatically
+	}
+} 

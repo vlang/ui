@@ -56,7 +56,7 @@ pub mut:
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable     bool // currently only for events.on_resized not modify children
 	mode          WindowSizeType
-	first_layout  Layout
+	root_layout   Layout
 	// saved origin sizes
 	orig_width    int
 	orig_height   int
@@ -949,10 +949,11 @@ fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-fn (w &Window) init_first_layout() {
-	mut s := w.first_layout
+fn (w &Window) update() {
+	// update root_layout
+	mut s := w.root_layout
 	if s is Stack {
-		s.init_first(w)
+		s.update_all_children_recursively(w)
 	}
 }
 
