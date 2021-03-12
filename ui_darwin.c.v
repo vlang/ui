@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-import sokol.sapp
+// import sokol.sapp
 
 #include "@VROOT/ui_darwin.m"
 
@@ -41,8 +41,8 @@ pub fn wait_events() {
 	C.vui_wait_events()
 }
 
-pub fn take_snapshot(s string) {
-	win := sapp.macos_get_window()
-	// C.vui_take_screenshot( s)
-	C.vui_screenshot(win, s)
-}
+// pub fn take_snapshot(s string) {
+// 	win := sapp.macos_get_window()
+// 	// C.vui_take_screenshot( s)
+// 	C.vui_screenshot(win, s)
+// }
