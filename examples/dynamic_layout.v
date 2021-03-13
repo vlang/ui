@@ -32,6 +32,7 @@ fn main() {
 			ui.button(text: 'add two', onclick: btn_add_two_click),
 			ui.button(text: 'remove last', onclick: btn_remove_click),
 			ui.button(text: 'remove second', onclick: btn_remove_second_click),
+			ui.button(text: 'move', onclick: btn_move_click),
 			ui.button(text: 'text last', onclick: btn_last_text_click),
 			ui.button(text: 'text third', onclick: btn_third_text_click),
 			ui.button(text: 'text above', onclick: btn_text_above_click),
@@ -79,11 +80,7 @@ fn btn_remove_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.get_child(1) or { panic('bad index') }
 	if s is ui.Stack {
-		s.remove(
-			widths: ui.stretch
-			heights: ui.compact
-			spacing: 10
-		)
+		s.remove(at: -1)
 	}
 }
 
@@ -92,15 +89,21 @@ fn btn_remove_second_click(mut app State, btn &ui.Button) {
 	mut s := window.get_child(1) or { panic('bad index') }
 	if s is ui.Stack {
 		if s.get_children().len > 1 {
-			s.remove(
-				at: 1
-				widths: ui.stretch
-				heights: ui.compact
-				spacing: 10
-			)
+			s.remove(at: 1)
 		} else {
 			ui.message_box('Second button not found')
 		}
+	}
+}
+
+fn btn_move_click(mut app State, btn &ui.Button) {
+	window := btn.ui.window
+	mut s := window.get_child(1) or { panic('bad index') }
+	if s is ui.Stack {
+		s.move(
+			from: 0
+			to: -1
+		)
 	}
 }
 
@@ -126,6 +129,7 @@ fn btn_third_text_click(mut app State, btn &ui.Button) {
 fn btn_text_above_click(mut app State, btn &ui.Button) {
 	s := btn.parent
 	if s is ui.Stack {
+		// An example of extracting child from stack
 		mut w := s.get_child(s.get_children().len - 2) or { panic('bad index') }
 		if w is ui.Button {
 			ui.message_box('Text above button: $w.text')
