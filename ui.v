@@ -230,19 +230,13 @@ pub fn open_url(url string) {
 		return
 	}
 	$if windows {
-		if os.execute('start "$url"').exit_code != 0 {
-			return
-		}
+		os.execute('start "$url"')
 	}
 	$if macos {
-		if os.execute('open "$url"').exit_code != 0 {
-			return
-		}
+		os.execute('open "$url"')
 	}
 	$if linux {
-		if os.execute('xdg-open "$url"').exit_code != 0 {
-			return
-		}
+		os.execute('xdg-open "$url"')
 	}
 }
 
