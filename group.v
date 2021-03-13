@@ -25,6 +25,7 @@ pub mut:
 	spacing       int = 5
 	adj_height    int
 	adj_width     int
+	hidden        bool
 }
 
 pub struct GroupConfig {
@@ -131,6 +132,10 @@ fn (mut g Group) draw() {
 
 fn (g &Group) point_inside(x f64, y f64) bool {
 	return x >= g.x && x <= g.x + g.width && y >= g.y && y <= g.y + g.height
+}
+
+fn (mut g Group) set_visible(state bool) {
+	g.hidden = state
 }
 
 fn (mut g Group) focus() {

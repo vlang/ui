@@ -81,6 +81,7 @@ mut:
 	vertical_alignments   VerticalAlignments // Flexible alignments by index overriding alignment.
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
+	hidden                bool
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -140,7 +141,6 @@ pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	// All sizes have to be set before positionning widgets
 	// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 	s.set_pos(s.x, s.y)
-
 	// 5) children z_index
 	s.set_drawing_children()
 	// 6) set position for chilfren
@@ -804,6 +804,15 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
+pub fn (mut s Stack) set_children_visible(state bool, children ...int) {
+	for i, child in s.children {
+		if i in children {
+			child.set_visible(state)
+		}
+	}
+	s.set_drawing_children()
+}
+
 fn (mut s Stack) set_drawing_children() {
 	for mut child in s.children {
 		if child is Stack {
@@ -815,7 +824,8 @@ fn (mut s Stack) set_drawing_children() {
 		}
 	}
 	// println("Stack: z_index $s.z_index ")
-	s.drawing_children = s.children.clone()
+	// s.drawing_children = s.children.clone()
+	s.drawing_children = s.children.filter(!it.hidden)
 	s.drawing_children.sort(a.z_index < b.z_index)
 }
 
@@ -896,6 +906,10 @@ fn (s &Stack) get_state() voidptr {
 
 fn (s &Stack) point_inside(x f64, y f64) bool {
 	return false // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+}
+
+fn (mut s Stack) set_visible(state bool) {
+	s.hidden = state
 }
 
 fn (mut s Stack) focus() {
@@ -1067,10 +1081,13 @@ pub fn (mut s Stack) add(cfg ChildrenConfig) {
 pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
 	if 0 <= pos && pos < s.children.len {
-		end := s.children[(pos + 1)..]
-		// TODO free s.children[pos]
-		s.children = s.children[..pos]
-		s.children << end
+		mut children := []Widget{}
+		for i, child in s.children {
+			if i != pos {
+				children << child
+			}
+		}
+		s.children = children
 		s.update_widths(cfg, .remove)
 		s.update_heights(cfg, .remove)
 		s.update_spacings(cfg, .remove)
@@ -1087,11 +1104,14 @@ pub fn (mut s Stack) move(cfg ChildrenConfig) {
 			to_pos--
 		}
 		child := s.children[from_pos]
-		// child_width := s.widths[from_pos]
 		// remove
-		from_end := s.children[(from_pos + 1)..]
-		s.children = s.children[..from_pos]
-		s.children << from_end
+		mut children := []Widget{}
+		for i, ch in s.children {
+			if i != from_pos {
+				children << ch
+			}
+		}
+		s.children = children
 		// add the new one
 		s.children.insert(to_pos, child)
 		window := s.ui.window

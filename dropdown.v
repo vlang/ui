@@ -30,6 +30,7 @@ mut:
 	hover_index          int
 	is_focused           bool
 	on_selection_changed SelectionChangedFn
+	hidden               bool
 }
 
 pub struct DropdownConfig {
@@ -186,6 +187,10 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.hover_index = index
 	}
+}
+
+fn (mut dd Dropdown) set_visible(state bool) {
+	dd.hidden = state
 }
 
 fn (mut dd Dropdown) focus() {

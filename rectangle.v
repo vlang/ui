@@ -21,6 +21,7 @@ mut:
 	border       bool
 	border_color gx.Color
 	ui           &UI
+	hidden       bool
 }
 
 pub struct RectangleConfig {
@@ -106,6 +107,10 @@ fn (mut r Rectangle) draw() {
 		}
 		r.ui.gg.draw_text(r.x + dx, r.y + dy, r.text, text_cfg)
 	}
+}
+
+fn (mut r Rectangle) set_visible(state bool) {
+	r.hidden = state
 }
 
 fn (r &Rectangle) focus() {

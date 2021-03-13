@@ -26,6 +26,7 @@ pub mut:
 	min        int
 	max        int
 	is_focused bool
+	hidden     bool
 }
 
 pub struct ProgressBarConfig {
@@ -90,6 +91,10 @@ fn (pb &ProgressBar) draw() {
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
 	return false // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
+}
+
+fn (mut pb ProgressBar) set_visible(state bool) {
+	pb.hidden = state
 }
 
 fn (pb &ProgressBar) focus() {

@@ -81,6 +81,7 @@ pub mut:
 	item_height   int      = ui._item_height
 	text_offset_y int      = ui._text_offset_y
 	id            string
+	hidden        bool
 }
 
 struct ListItem {
@@ -278,6 +279,10 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 fn (mut lb ListBox) set_pos(x int, y int) {
 	lb.x = x
 	lb.y = y
+}
+
+fn (mut lb ListBox) set_visible(state bool) {
+	lb.hidden = state
 }
 
 fn (mut lb ListBox) focus() {

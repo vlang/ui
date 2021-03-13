@@ -32,10 +32,12 @@ fn main() {
 			ui.button(text: 'add two', onclick: btn_add_two_click),
 			ui.button(text: 'remove last', onclick: btn_remove_click),
 			ui.button(text: 'remove second', onclick: btn_remove_second_click),
+			ui.button(text: 'hide', onclick: btn_show_hide_click),
 			ui.button(text: 'move', onclick: btn_move_click),
 			ui.button(text: 'text last', onclick: btn_last_text_click),
 			ui.button(text: 'text third', onclick: btn_third_text_click),
 			ui.button(text: 'text above', onclick: btn_text_above_click),
+			ui.button(text: 'switch', onclick: btn_switch_click),
 		]), ui.column({
 			spacing: 10
 			margin_: 10
@@ -44,6 +46,14 @@ fn main() {
 		])]),
 	])
 	ui.run(window)
+}
+
+fn btn_switch_click(mut app State, btn &ui.Button) {
+	window := btn.ui.window
+	mut s := window.root_layout
+	if s is ui.Stack {
+		s.move(from: 0, to: -1)
+	}
 }
 
 fn btn_add_click(mut app State, btn &ui.Button) {
@@ -81,6 +91,17 @@ fn btn_remove_click(mut app State, btn &ui.Button) {
 	mut s := window.get_child(1) or { panic('bad index') }
 	if s is ui.Stack {
 		s.remove(at: -1)
+	}
+}
+
+fn btn_show_hide_click(mut app State, btn &ui.Button) {
+	window := btn.ui.window
+	mut s := window.get_child(1) or { panic('bad index') }
+	if s is ui.Stack {
+		state := btn.text == 'hide'
+		s.set_children_visible(state, 0)
+		mut b := btn
+		b.text = if state { 'show' } else { 'hide' }
 	}
 }
 
