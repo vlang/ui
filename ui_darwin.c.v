@@ -3,6 +3,8 @@
 // that can be found in the LICENSE file.
 module ui
 
+// import sokol.sapp
+
 #include "@VROOT/ui_darwin.m"
 
 fn C.vui_message_box(s string)
@@ -12,6 +14,10 @@ fn C.vui_notify(title string, msg string)
 fn C.vui_wait_events()
 
 fn C.vui_bundle_path() string
+
+fn C.vui_take_screenshot(string)
+
+fn C.vui_screenshot(voidptr, string)
 
 // fn C.darwin_draw_string(s string)
 pub fn message_box(s string) {
@@ -34,3 +40,9 @@ pub fn bundle_path() string {
 pub fn wait_events() {
 	C.vui_wait_events()
 }
+
+// pub fn take_snapshot(s string) {
+// 	win := sapp.macos_get_window()
+// 	// C.vui_take_screenshot( s)
+// 	C.vui_screenshot(win, s)
+// }

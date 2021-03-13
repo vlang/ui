@@ -54,8 +54,9 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable bool // currently only for events.on_resized not modify children
-	mode      WindowSizeType
+	resizable   bool // currently only for events.on_resized not modify children
+	mode        WindowSizeType
+	root_layout Layout
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -907,11 +908,11 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 // Layout Interface Methods
-fn (w &Window) get_ui() &UI {
+pub fn (w &Window) get_ui() &UI {
 	return w.ui
 }
 
-fn (w &Window) get_state() voidptr {
+pub fn (w &Window) get_state() voidptr {
 	return w.state
 }
 
@@ -944,8 +945,47 @@ pub fn (window &Window) unfocus_all() {
 	}
 }
 
-fn (w &Window) get_children() []Widget {
+pub fn (w &Window) get_children() []Widget {
 	return w.children
+}
+
+pub fn (w &Window) get_child(from ...int) ?Widget {
+	mut children := w.root_layout.get_children()
+	for i, ind in from {
+		if i < from.len - 1 {
+			if ind >= 0 && ind < children.len {
+				widget := children[ind]
+				if widget is Stack {
+					children = widget.children
+				} else {
+					return error('$from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+				}
+			} else if i == -1 {
+				widget := children[children.len - 1]
+				if widget is Stack {
+					children = widget.children
+				}
+			} else {
+				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+			}
+		} else {
+			if ind >= 0 && ind < children.len {
+				return children[ind]
+			} else if ind == -1 {
+				return children[children.len - 1]
+			} else {
+				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+			}
+		}
+	}
+}
+
+pub fn (w &Window) update_layout() {
+	// update root_layout
+	mut s := w.root_layout
+	if s is Stack {
+		s.update_all_children_recursively(w)
+	}
 }
 
 // pub fn (mut w Window) set_animated_widget(child Widget) {

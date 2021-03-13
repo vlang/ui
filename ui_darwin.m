@@ -39,4 +39,79 @@ string vui_bundle_path() {
 	return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
+/*
+void vui_take_screenshot(string s) {//void* w, string s) {
+	// NSWindow* win=(__bridge NSWindow*)w;
+	NSString* path = nsstring(s);
+
+	NSArray<NSDictionary*> *windowInfoList = (__bridge_transfer id)
+    CGWindowListCopyWindowInfo(kCGWindowListOptionAll, kCGNullWindowID);
+
+	NSArray<NSRunningApplication*> *apps = 
+    [NSRunningApplication runningApplicationsWithBundleIdentifier:
+        // Bundle ID of the application, e.g.:  @"com.apple.Safari"];
+	if (apps.count == 0) {
+		// Application is not currently running
+		puts("The application is not running");
+		return; // Or whatever
+	}
+	pid_t appPID = apps[0].processIdentifier;
+
+	NSMutableArray<NSDictionary*> *appWindowsInfoList = [NSMutableArray new];
+	for (NSDictionary *info in windowInfoList) {
+		if ([info[(__bridge NSString *)kCGWindowOwnerPID] integerValue] == appPID) {
+			[appWindowsInfoList addObject:info];
+		}
+	}
+
+	NSDictionary *appWindowInfo = appWindowsInfoList[0];
+	CGWindowID windowID = [appWindowInfo[(__bridge NSString *)kCGWindowNumber] unsignedIntValue];
+	NSLog(@"window ID  <%@>", windowID);
+	CGImageRef image =
+    CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow,
+                            windowID, kCGWindowImageBoundsIgnoreFraming|
+                            kCGWindowImageNominalResolution);
+
+	CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:path];
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
+    if (!destination) {
+        NSLog(@"Failed to create CGImageDestination for %@", path);
+		return;
+    }
+
+    CGImageDestinationAddImage(destination, image, nil);
+
+    if (!CGImageDestinationFinalize(destination)) {
+        NSLog(@"Failed to write image to %@", path);
+        CFRelease(destination);
+        return;
+    }
+
+    CFRelease(destination);
+}
+
+void vui_saveImage(NSImage *image, NSString *path) {
+
+   CGImageRef cgRef = [image CGImageForProposedRect:NULL
+                                            context:nil
+                                              hints:nil];
+   NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+   [newRep setSize:[image size]];   // if you want the same resolution
+   NSData *pngData = [newRep representationUsingType:NSPNGFileType properties:nil];
+   [pngData writeToFile:path atomically:YES];
+//    [newRep autorelease];
+}
+
+void vui_screenshot(void* w, string s) {
+	NSWindow* win=(__bridge NSWindow*)w;
+	NSString* path = nsstring(s);
+	NSView *view = [win contentView];
+	NSImage *image = [[NSImage alloc] initWithData:[[win contentView] dataWithPDFInsideRect:[[win contentView] bounds]]];
+	// NSBitmapImageRep *imgRep = [[image representations] objectAtIndex: 0];
+	// NSData *imageData = [imgRep representationUsingType: NSPNGFileType properties: nil]; 
+	// NSData *imageData = [image TIFFRepresentation];
+	// [imageData writeToFile:fName atomically:NO];
+	vui_saveImage(image, path);
+} */
+
 
