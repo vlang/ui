@@ -1044,18 +1044,24 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 //**** ChildrenConfig *****
 pub struct ChildrenConfig {
 mut:
-	// add or remove
+	// add or remove or migrate
 	at      int  = -1
 	widths  Size = Size(-1.)
 	heights Size = Size(-1.)
-	// add
+	// add or move or migrate
 	spacing  f64   = -1.
 	spacings []f64 = []f64{}
 	child    Widget
 	children []Widget
-	// move
+	// move or migrate
 	from int = -1
 	to   int = -1
+	// migrate
+	target          &Stack = 0
+	target_widths   Size   = Size(-1.)
+	target_heights  Size   = Size(-1.)
+	target_spacing  f64    = -1.
+	target_spacings []f64  = []f64{}
 }
 
 pub fn (mut s Stack) add(cfg ChildrenConfig) {
@@ -1098,40 +1104,44 @@ pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 }
 
 pub fn (mut s Stack) move(cfg ChildrenConfig) {
-	from_pos := if cfg.from == -1 { s.children.len - 1 } else { cfg.from }
-	mut to_pos := if cfg.to == -1 { s.children.len } else { cfg.to }
-	if 0 <= from_pos && from_pos < s.children.len && 0 <= to_pos && to_pos <= s.children.len {
-		if from_pos < to_pos {
-			to_pos--
+	if cfg.target == 0 {
+		// move (inside same stack s)
+		from_pos := if cfg.from == -1 { s.children.len - 1 } else { cfg.from }
+		mut to_pos := if cfg.to == -1 { s.children.len } else { cfg.to }
+		if 0 <= from_pos && from_pos < s.children.len && 0 <= to_pos && to_pos <= s.children.len {
+			if from_pos < to_pos {
+				to_pos--
+			}
+			child := s.children[from_pos]
+			// remove
+			s.children.delete(from_pos)
+			// add the new one
+			s.children.insert(to_pos, child)
+			window := s.ui.window
+			window.update_layout()
 		}
-		child := s.children[from_pos]
-		// remove
-		s.children.delete(from_pos)
-		// add the new one
-		s.children.insert(to_pos, child)
-		window := s.ui.window
-		window.update_layout()
-	}
-}
-
-pub fn (mut s Stack) migrate(cfg ChildrenConfig, mut target_s Stack, target_cfg ChildrenConfig) {
-	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
-
-	target_pos := if target_cfg.at == -1 { target_s.children.len } else { target_cfg.at }
-	if 0 <= pos && pos < s.children.len && 0 <= target_pos && target_pos <= target_s.children.len {
-		child := s.children[pos]
-		// remove
-		s.children.delete(pos)
-		s.update_widths(cfg, .remove)
-		s.update_heights(cfg, .remove)
-		s.update_spacings(cfg, .remove)
-		// add the new one
-		target_s.children.insert(target_pos, child)
-		target_s.update_widths(target_cfg, .add)
-		target_s.update_heights(target_cfg, .add)
-		target_s.update_spacings(target_cfg, .add)
-		window := s.ui.window
-		window.update_layout()
+	} else {
+		// migration from stack s to other stack cfg.target
+		mut target_s := cfg.target
+		from_pos := if cfg.from == -1 { s.children.len - 1 } else { cfg.from }
+		target_pos := if cfg.to == -1 { target_s.children.len } else { cfg.to }
+		if 0 <= from_pos && from_pos < s.children.len && 0 <= target_pos
+			&& target_pos <= target_s.children.len {
+			println('migrate from $from_pos to $target_pos')
+			child := s.children[from_pos]
+			// remove
+			s.children.delete(from_pos)
+			s.update_widths(cfg, .remove)
+			s.update_heights(cfg, .remove)
+			s.update_spacings(cfg, .remove)
+			// add the new one
+			target_s.children.insert(target_pos, child)
+			target_s.update_widths(cfg, .migrate)
+			target_s.update_heights(cfg, .migrate)
+			target_s.update_spacings(cfg, .migrate)
+			window := s.ui.window
+			window.update_layout()
+		}
 	}
 }
 
@@ -1139,13 +1149,15 @@ enum ChildUpdateType {
 	add
 	remove
 	move
+	migrate
 }
 
 pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
-	if cfg.widths is f64 {
-		if cfg.widths == -1. {
+	cfg_widths := if mode == .migrate { cfg.target_widths } else { cfg.widths }
+	if cfg_widths is f64 {
+		if cfg_widths == -1. {
 			match mode {
-				.add {
+				.add, .migrate {
 					widths := if s.direction == .row { compact } else { stretch }
 					s.widths = Size(widths).as_f32_array(s.children.len)
 				}
@@ -1160,18 +1172,19 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 				.move {}
 			}
 		} else {
-			s.widths = [f32(cfg.widths)].repeat(s.children.len)
+			s.widths = [f32(cfg_widths)].repeat(s.children.len)
 		}
 	} else {
-		s.widths = cfg.widths.as_f32_array(s.children.len)
+		s.widths = cfg_widths.as_f32_array(s.children.len)
 	}
 }
 
 pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
-	if cfg.heights is f64 {
-		if cfg.heights == -1. {
+	cfg_heights := if mode == .migrate { cfg.target_heights } else { cfg.heights }
+	if cfg_heights is f64 {
+		if cfg_heights == -1. {
 			match mode {
-				.add {
+				.add, .migrate {
 					heights := if s.direction == .row { stretch } else { compact }
 					s.heights = Size(heights).as_f32_array(s.children.len)
 				}
@@ -1186,23 +1199,30 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 				.move {}
 			}
 		} else {
-			s.heights = [f32(cfg.heights)].repeat(s.children.len)
+			s.heights = [f32(cfg_heights)].repeat(s.children.len)
 		}
 	} else {
-		s.heights = cfg.heights.as_f32_array(s.children.len)
+		s.heights = cfg_heights.as_f32_array(s.children.len)
 	}
 }
 
 pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
-	if cfg.spacing != -1. || cfg.spacings.len != 0 {
+	cfg_spacing := if mode == .migrate { cfg.target_spacing } else { cfg.spacing }
+	cfg_spacings := if mode == .migrate { cfg.target_spacings } else { cfg.spacings }
+	if cfg_spacing != -1. || cfg_spacings.len != 0 {
 		if s.children.len > 0 {
-			s.spacings = spacings(cfg.spacing, cfg.spacings, s.children.len - 1)
+			s.spacings = spacings(cfg_spacing, cfg_spacings, s.children.len - 1)
 		}
 	} else {
 		match mode {
-			.add {
+			.add, .migrate {
 				// TODO: to improve
-				s.spacings = spacings(s.spacings[0], cfg.spacings, s.children.len - 1)
+				if s.children.len <= 1 {
+					s.spacings = []f32{}
+				} else {
+					spacing := if s.spacings.len == 0 { f32(5.) } else { s.spacings[0] }
+					s.spacings = spacings(spacing, cfg_spacings, s.children.len - 1)
+				}
 			}
 			.remove {
 				// update spacings

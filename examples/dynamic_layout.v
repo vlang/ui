@@ -63,9 +63,11 @@ fn btn_migrate_click(mut app State, btn &ui.Button) {
 	mut t := window.child(1)
 	if s is ui.Stack {
 		if t is ui.Stack {
-			s.migrate(from: 0, mut t, {
+			s.move(
+				from: 0
+				target: t
 				to: -1
-			})
+			)
 		}
 	}
 }
