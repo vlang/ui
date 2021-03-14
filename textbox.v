@@ -72,6 +72,7 @@ pub mut:
 	// related to text drawing
 	text_cfg  gx.TextCfg
 	text_size f64
+	hidden    bool
 mut:
 	is_typing bool
 }
@@ -636,6 +637,10 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		prev_width = width
 	}
 	tb.cursor_pos = tb.text.len
+}
+
+fn (mut tb TextBox) set_visible(state bool) {
+	tb.hidden = state
 }
 
 pub fn (mut tb TextBox) focus() {

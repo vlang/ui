@@ -31,6 +31,7 @@ pub mut:
 	ui         &UI
 	text_cfg   gx.TextCfg
 	text_size  f64
+	hidden     bool
 	// selected_value string
 	// onclick    RadioClickFn
 }
@@ -155,6 +156,10 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 		r.selected_index = r.values.len - 1
 	}
 	// println(r.selected_index)
+}
+
+fn (mut r Radio) set_visible(state bool) {
+	r.hidden = state
 }
 
 fn (mut r Radio) focus() {

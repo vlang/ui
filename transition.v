@@ -20,6 +20,7 @@ mut:
 	start_value      int
 	last_draw_target int
 	ui               &UI
+	hidden           bool
 pub mut:
 	target_value   int
 	animated_value &int
@@ -107,6 +108,9 @@ fn (mut t Transition) draw() {
 		t.last_draw_time = time.ticks()
 	}
 	set_animating(t.animating) // FIRST VERSION ANIMATE: t.ui.window.animating = t.ui.window.animating || t.animating
+}
+
+fn (t &Transition) set_visible(state bool) {
 }
 
 fn (t &Transition) focus() {

@@ -40,6 +40,7 @@ pub mut:
 	thumb_in_track       bool
 	track_line_displayed bool
 	entering             bool
+	hidden               bool
 }
 
 pub struct SliderConfig {
@@ -307,6 +308,10 @@ fn (mut s Slider) change_value(x int, y int) {
 		state := parent.get_state()
 		s.on_value_changed(state, s)
 	}
+}
+
+fn (mut s Slider) set_visible(state bool) {
+	s.hidden = state
 }
 
 fn (mut s Slider) focus() {

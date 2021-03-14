@@ -16,6 +16,7 @@ pub mut:
 	parent      Layout
 	is_focused  bool
 	ui          &UI
+	hidden      bool
 }
 
 pub struct GridConfig {
@@ -123,6 +124,10 @@ fn check_cells(gv Grid) int {
 		panic('The number of rows cells must be equal')
 	}
 	return len
+}
+
+fn (mut gv Grid) set_visible(state bool) {
+	gv.hidden = state
 }
 
 fn (mut gv Grid) focus() {

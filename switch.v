@@ -28,6 +28,7 @@ pub mut:
 	open       bool
 	ui         &UI
 	onclick    SwitchClickFn
+	hidden     bool
 }
 
 pub struct SwitchConfig {
@@ -100,6 +101,10 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 			s.onclick(w.state, s)
 		}
 	}
+}
+
+fn (mut s Switch) set_visible(state bool) {
+	s.hidden = state
 }
 
 fn (mut s Switch) focus() {

@@ -16,6 +16,7 @@ mut:
 	ui        &UI
 	text_cfg  gx.TextCfg
 	text_size f64
+	hidden    bool
 }
 
 pub struct LabelConfig {
@@ -86,6 +87,10 @@ fn (mut l Label) draw() {
 	$if bb ? {
 		draw_bb(l, l.ui)
 	}
+}
+
+fn (mut l Label) set_visible(state bool) {
+	l.hidden = state
 }
 
 fn (l &Label) focus() {

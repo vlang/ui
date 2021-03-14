@@ -37,6 +37,7 @@ pub mut:
 	disabled         bool
 	text_cfg         gx.TextCfg
 	text_size        f64
+	hidden           bool
 }
 
 pub struct CheckBoxConfig {
@@ -143,6 +144,10 @@ fn (cb &CheckBox) point_inside(x f64, y f64) bool {
 }
 
 fn (mut cb CheckBox) mouse_move(e MouseEvent) {
+}
+
+fn (mut cb CheckBox) set_visible(state bool) {
+	cb.hidden = state
 }
 
 fn (mut cb CheckBox) focus() {

@@ -54,6 +54,7 @@ pub mut:
 	use_icon   bool
 	text_cfg   gx.TextCfg
 	text_size  f64
+	hidden     bool
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -190,6 +191,10 @@ fn (mut b Button) set_text_size() {
 
 fn (b &Button) point_inside(x f64, y f64) bool {
 	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
+}
+
+fn (mut b Button) set_visible(state bool) {
+	b.hidden = state
 }
 
 // fn (mut b Button) mouse_move(e MouseEvent) {}

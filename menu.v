@@ -20,7 +20,7 @@ mut:
 	z_index int
 	ui      &UI
 	items   []MenuItem
-	visible bool
+	hidden  bool
 }
 
 pub struct MenuConfig {
@@ -66,7 +66,7 @@ fn (mut m Menu) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut m Menu) draw() {
-	if !m.visible {
+	if m.hidden {
 		return
 	}
 	gg := m.ui.gg
@@ -82,6 +82,10 @@ pub fn (mut m Menu) add_item(text string, action MenuFn) {
 		text: text
 		action: action
 	}
+}
+
+fn (mut m Menu) set_visible(state bool) {
+	m.hidden = state
 }
 
 fn (m &Menu) focus() {

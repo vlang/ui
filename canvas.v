@@ -15,6 +15,7 @@ pub mut:
 	y       int
 	z_index int
 	ui      &UI = 0
+	hidden  bool
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)
@@ -65,6 +66,10 @@ fn (c &Canvas) draw() {
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c.gg, state, c)
 	}
+}
+
+fn (mut c Canvas) set_visible(state bool) {
+	c.hidden = state
 }
 
 fn (c &Canvas) focus() {

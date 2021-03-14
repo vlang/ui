@@ -25,6 +25,7 @@ mut:
 	image     gg.Image
 	on_click  PictureClickFn
 	use_cache bool
+	hidden    bool
 }
 
 pub struct PictureConfig {
@@ -115,6 +116,10 @@ fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 fn (mut pic Picture) draw() {
 	pic.ui.gg.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height,
 		pic.image)
+}
+
+fn (mut pic Picture) set_visible(state bool) {
+	pic.hidden = state
 }
 
 fn (pic &Picture) focus() {
