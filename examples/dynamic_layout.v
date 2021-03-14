@@ -50,7 +50,7 @@ fn main() {
 
 fn btn_switch_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.root_layout
+	mut s := window.child()
 	if s is ui.Stack {
 		s.move(from: 0, to: -1)
 	}
@@ -58,7 +58,7 @@ fn btn_switch_click(mut app State, btn &ui.Button) {
 
 fn btn_add_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		app.cpt++
 		s.add(
@@ -72,7 +72,7 @@ fn btn_add_click(mut app State, btn &ui.Button) {
 
 fn btn_add_two_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		app.cpt++
 		s.add(
@@ -88,7 +88,7 @@ fn btn_add_two_click(mut app State, btn &ui.Button) {
 
 fn btn_remove_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		s.remove(at: -1)
 	}
@@ -96,7 +96,7 @@ fn btn_remove_click(mut app State, btn &ui.Button) {
 
 fn btn_show_hide_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		state := btn.text == 'hide'
 		s.set_children_visible(state, 0)
@@ -107,7 +107,7 @@ fn btn_show_hide_click(mut app State, btn &ui.Button) {
 
 fn btn_remove_second_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		if s.get_children().len > 1 {
 			s.remove(at: 1)
@@ -119,7 +119,7 @@ fn btn_remove_second_click(mut app State, btn &ui.Button) {
 
 fn btn_move_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.get_child(1) or { panic('bad index') }
+	mut s := window.child(1)
 	if s is ui.Stack {
 		s.move(
 			from: 0
@@ -130,20 +130,21 @@ fn btn_move_click(mut app State, btn &ui.Button) {
 
 fn btn_last_text_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut w := window.get_child(1, -1) or { panic('bad index') }
+	mut w := window.child(1, -1)
 	if w is ui.Button {
 		ui.message_box('Last text button: $w.text')
+	} else {
+		ui.message_box('Third text button not found')
 	}
 }
 
 fn btn_third_text_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut w := window.get_child(1, 2) or {
-		ui.message_box('Third text button not found')
-		return
-	}
+	mut w := window.child(1, 2)
 	if w is ui.Button {
 		ui.message_box('Third text button: $w.text')
+	} else {
+		ui.message_box('Third text button not found')
 	}
 }
 
@@ -151,7 +152,7 @@ fn btn_text_above_click(mut app State, btn &ui.Button) {
 	s := btn.parent
 	if s is ui.Stack {
 		// An example of extracting child from stack
-		mut w := s.get_child(s.get_children().len - 2) or { panic('bad index') }
+		mut w := s.child(s.get_children().len - 2)
 		if w is ui.Button {
 			ui.message_box('Text above button: $w.text')
 		}

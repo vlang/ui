@@ -949,34 +949,57 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-pub fn (w &Window) get_child(from ...int) ?Widget {
-	mut children := w.root_layout.get_children()
-	for i, ind in from {
-		if i < from.len - 1 {
-			if ind >= 0 && ind < children.len {
-				widget := children[ind]
-				if widget is Stack {
-					children = widget.children
+pub fn (w &Window) child(from ...int) Widget {
+	if from.len > 0 {
+		mut children := w.root_layout.get_children()
+		for i, ind in from {
+			if i < from.len - 1 {
+				if ind >= 0 && ind < children.len {
+					widget := children[ind]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					} else {
+						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+						root := w.root_layout
+						if root is Stack {
+							return root
+						}
+					}
+				} else if i == -1 {
+					widget := children[children.len - 1]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					}
 				} else {
-					return error('$from uncorrect: $from[$i]=$ind does not correspond to a Layout')
-				}
-			} else if i == -1 {
-				widget := children[children.len - 1]
-				if widget is Stack {
-					children = widget.children
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					root := w.root_layout
+					if root is Stack {
+						return root
+					}
 				}
 			} else {
-				return error('$from uncorrect: $from[$i]=$ind out of bounds')
-			}
-		} else {
-			if ind >= 0 && ind < children.len {
-				return children[ind]
-			} else if ind == -1 {
-				return children[children.len - 1]
-			} else {
-				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+				if ind >= 0 && ind < children.len {
+					return children[ind]
+				} else if ind == -1 {
+					return children[children.len - 1]
+				} else {
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+				}
 			}
 		}
+	}
+	// by default returns root_layout 
+	// expected when `from` is empty
+	root := w.root_layout
+	if root is Stack {
+		return root
+	} else {
+		// required but never goes here
+		return &Stack{ui: 0}
 	}
 }
 
