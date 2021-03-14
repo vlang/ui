@@ -38,6 +38,7 @@ fn main() {
 			ui.button(text: 'text third', onclick: btn_third_text_click),
 			ui.button(text: 'text above', onclick: btn_text_above_click),
 			ui.button(text: 'switch', onclick: btn_switch_click),
+			ui.button(text: 'migrate', onclick: btn_migrate_click),
 		]), ui.column({
 			spacing: 10
 			margin_: 10
@@ -53,6 +54,17 @@ fn btn_switch_click(mut app State, btn &ui.Button) {
 	mut s := window.child()
 	if s is ui.Stack {
 		s.move(from: 0, to: -1)
+	}
+}
+
+fn btn_migrate_click(mut app State, btn &ui.Button) {
+	window := btn.ui.window
+	mut s := window.child(0)
+	mut t := window.child(1)
+	if s is ui.Stack {
+		if t is ui.Stack {
+			s.migrate({from: 0}, mut t, {to: -1})
+		}
 	}
 }
 

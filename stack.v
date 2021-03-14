@@ -1114,30 +1114,26 @@ pub fn (mut s Stack) move(cfg ChildrenConfig) {
 	}
 }
 
-// pub fn (mut s Stack) move_to_stack(cfg ChildrenConfig, to_s Stack, to_cfg ChildrenConfig) {
-// 	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
+pub fn (mut s Stack) migrate(cfg ChildrenConfig, mut target_s Stack, target_cfg ChildrenConfig) {
+	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
 
-// 	to_pos := if to_cfg.at == -1 { to_s.children.len} } else { to_cfg.at }
-// 	if 0 <= pos && pos < s.children.len && 0 <= target_pos && target_pos <= to_s.children.len {
-// 			if from_pos < to_pos {to_pos--}
-// 			child := s.children[from_pos]
-// 			// remove
-// 			from_begin, from_end := s.children[..from_pos], s.children[(from_pos + 1)..]
-// 			s.children = from_begin
-// 			s.children << from_end
-// 			// add the new one
-// 			to_begin, target_end := s.children[..to_pos], s.children[to_pos..]
-// 			s.children = to_begin
-// 			s.children << child
-// 			s.children << to_end
-
-// 		} else {
-// 			child := s.children[from_pos]
-// 			from_begin, from_end := s.children[..pos], s.children[(pos + 1)..]
-// 			to_begin, target_end := to_s.children[..target_pos], s.children[target_pos..]
-// 		}
-// 	}
-// }
+	target_pos := if target_cfg.at == -1 { target_s.children.len } else { target_cfg.at }
+	if 0 <= pos && pos < s.children.len && 0 <= target_pos && target_pos <= target_s.children.len {
+		child := s.children[pos]
+		// remove
+		s.children.delete(pos)
+		s.update_widths(cfg, .remove)
+		s.update_heights(cfg, .remove)
+		s.update_spacings(cfg, .remove)
+		// add the new one
+		target_s.children.insert(target_pos, child)
+		target_s.update_widths(target_cfg, .add)
+		target_s.update_heights(target_cfg, .add)
+		target_s.update_spacings(target_cfg, .add)
+		window := s.ui.window
+		window.update_layout()
+	}
+}
 
 enum ChildUpdateType {
 	add
@@ -1150,7 +1146,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 		if cfg.widths == -1. {
 			match mode {
 				.add {
-					widths := if s.direction == .row { stretch } else { compact }
+					widths := if s.direction == .row { compact } else { stretch }
 					s.widths = Size(widths).as_f32_array(s.children.len)
 				}
 				.remove {
@@ -1176,7 +1172,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 		if cfg.heights == -1. {
 			match mode {
 				.add {
-					heights := if s.direction == .row { compact } else { stretch }
+					heights := if s.direction == .row { stretch } else { compact }
 					s.heights = Size(heights).as_f32_array(s.children.len)
 				}
 				.remove {
