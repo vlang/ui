@@ -1081,13 +1081,14 @@ pub fn (mut s Stack) add(cfg ChildrenConfig) {
 pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
 	if 0 <= pos && pos < s.children.len {
-		mut children := []Widget{}
-		for i, child in s.children {
-			if i != pos {
-				children << child
-			}
-		}
-		s.children = children
+		// mut children := []Widget{}
+		// for i, child in s.children {
+		// 	if i != pos {
+		// 		children << child
+		// 	}
+		// }
+		// s.children = children
+		s.children = remove_at<Widget>(s.children, pos)
 		s.update_widths(cfg, .remove)
 		s.update_heights(cfg, .remove)
 		s.update_spacings(cfg, .remove)
@@ -1105,13 +1106,7 @@ pub fn (mut s Stack) move(cfg ChildrenConfig) {
 		}
 		child := s.children[from_pos]
 		// remove
-		mut children := []Widget{}
-		for i, ch in s.children {
-			if i != from_pos {
-				children << ch
-			}
-		}
-		s.children = children
+		s.children = remove_at<Widget>(s.children, from_pos)
 		// add the new one
 		s.children.insert(to_pos, child)
 		window := s.ui.window
@@ -1163,9 +1158,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 						s.widths = []f32{}
 					} else {
 						pos := if cfg.at == -1 { s.children.len } else { cfg.at }
-						widths_end := s.widths[(pos + 1)..]
-						s.widths = s.widths[..pos]
-						s.widths << widths_end
+						s.widths = remove_at<f32>(s.widths, pos)
 					}
 				}
 				.move {}
@@ -1191,9 +1184,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 						s.heights = []f32{}
 					} else {
 						pos := if cfg.at == -1 { s.children.len } else { cfg.at }
-						heights_end := s.heights[(pos + 1)..]
-						s.heights = s.heights[..pos]
-						s.heights << heights_end
+						s.heights = remove_at<f32>(s.heights, pos)
 					}
 				}
 				.move {}

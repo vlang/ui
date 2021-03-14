@@ -1,5 +1,21 @@
 module ui
 
+// TODO: put inside vlib/arrays/arrays.v
+// RMK: define a as mut does not work with T as interface
+pub fn remove_at<T>(a []T, pos int) []T {
+	mut res := []T{}
+	for i, elt in a {
+		if i != pos {
+			res << elt
+		}
+	}
+	// OR
+	// end := a[(pos + 1)..].clone() // clone() required!
+	// mut res := a[..pos]
+	// res << end
+	return res
+}
+
 pub const (
 	stretch = -100.
 	compact = 0. // from parent
