@@ -999,7 +999,9 @@ pub fn (w &Window) child(from ...int) Widget {
 		return root
 	} else {
 		// required but never goes here
-		return &Stack{ui: 0}
+		return &Stack{
+			ui: 0
+		}
 	}
 }
 
