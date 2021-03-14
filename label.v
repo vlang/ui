@@ -12,6 +12,8 @@ mut:
 	parent    Layout
 	x         int
 	y         int
+	offset_x  int
+	offset_y  int
 	z_index   int
 	ui        &UI
 	text_cfg  gx.TextCfg
@@ -69,6 +71,7 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut l Label) draw() {
+	draw_start<Label>(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
@@ -87,6 +90,7 @@ fn (mut l Label) draw() {
 	$if bb ? {
 		draw_bb(l, l.ui)
 	}
+	draw_end<Label>(mut l)
 }
 
 fn (mut l Label) set_visible(state bool) {

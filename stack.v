@@ -55,6 +55,9 @@ struct StackConfig {
 
 struct Stack {
 	cache CachedSizes
+pub mut:
+	offset_x int
+	offset_y int
 mut:
 	x                    int
 	y                    int
@@ -830,6 +833,7 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
+	draw_start<Stack>(mut s)
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
@@ -838,6 +842,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
+	draw_end<Stack>(mut s)
 }
 
 fn (s &Stack) margin(side MarginSide) int {

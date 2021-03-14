@@ -145,10 +145,10 @@ fn main() {
 			height: 100
 			path: logo // os.resource_abs_path('logo.png')
 		)])]),
-		ui.menu(
-			items: [ui.MenuItem{'Delete all users', menu_click},
-				ui.MenuItem{'Export users', menu_click}, ui.MenuItem{'Exit', menu_click}]
-		),
+		// ui.menu(
+		// 	items: [ui.MenuItem{'Delete all users', menu_click},
+		// 		ui.MenuItem{'Export users', menu_click}, ui.MenuItem{'Exit', menu_click}]
+		// ),
 	])
 	app.window = window
 	ui.run(window)

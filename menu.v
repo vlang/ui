@@ -12,6 +12,9 @@ const (
 )
 
 pub struct Menu {
+pub mut:
+	offset_x int
+	offset_y int
 mut:
 	text    string
 	parent  Layout

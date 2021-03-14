@@ -26,6 +26,8 @@ pub mut:
 	orientation          Orientation = Orientation.horizontal
 	x                    int
 	y                    int
+	offset_x             int
+	offset_y             int
 	z_index              int
 	parent               Layout
 	ui                   &UI
@@ -174,7 +176,8 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	return s.size()
 }
 
-fn (s &Slider) draw() {
+fn (mut s Slider) draw() {
+	draw_start<Slider>(mut s)
 	// Draw the track
 	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)
 	if s.track_line_displayed {
@@ -196,6 +199,7 @@ fn (s &Slider) draw() {
 	$if bb ? {
 		draw_bb(s, s.ui)
 	}
+	draw_end<Slider>(mut s)
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {

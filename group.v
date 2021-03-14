@@ -14,6 +14,8 @@ pub mut:
 	width         int
 	x             int
 	y             int
+	offset_x      int
+	offset_y      int
 	z_index       int
 	parent        Layout
 	ui            &UI
@@ -112,6 +114,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut g Group) draw() {
+	draw_start<Group>(mut g)
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
@@ -128,6 +131,7 @@ fn (mut g Group) draw() {
 	for child in g.children {
 		child.draw()
 	}
+	draw_end<Group>(mut g)
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
