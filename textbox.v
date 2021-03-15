@@ -203,7 +203,7 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) draw() {
-	draw_start<TextBox>(mut tb)
+	draw_start(mut tb)
 	text := *(tb.text)
 	mut placeholder := tb.placeholder
 	if tb.placeholder_bind != 0 {
@@ -293,7 +293,7 @@ fn (mut tb TextBox) draw() {
 	$if bb ? {
 		draw_bb(tb, tb.ui)
 	}
-	draw_end<TextBox>(mut tb)
+	draw_end(mut tb)
 }
 
 // fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {

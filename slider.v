@@ -177,7 +177,7 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Slider) draw() {
-	draw_start<Slider>(mut s)
+	draw_start(mut s)
 	// Draw the track
 	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)
 	if s.track_line_displayed {
@@ -199,7 +199,7 @@ fn (mut s Slider) draw() {
 	$if bb ? {
 		draw_bb(s, s.ui)
 	}
-	draw_end<Slider>(mut s)
+	draw_end(mut s)
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {

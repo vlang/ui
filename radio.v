@@ -116,7 +116,7 @@ fn (mut r Radio) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut r Radio) draw() {
-	draw_start<Radio>(mut r)
+	draw_start(mut r)
 	// Border
 	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
 	// Title
@@ -142,7 +142,7 @@ fn (mut r Radio) draw() {
 	$if bb ? {
 		draw_bb(r, r.ui)
 	}
-	draw_end<Radio>(mut r)
+	draw_end(mut r)
 }
 
 fn (r &Radio) point_inside(x f64, y f64) bool {

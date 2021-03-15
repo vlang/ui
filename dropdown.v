@@ -90,7 +90,7 @@ fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut dd Dropdown) draw() {
-	draw_start<Dropdown>(mut dd)
+	draw_start(mut dd)
 	gg := dd.ui.gg
 	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, ui.dropdown_height, ui.dropdown_color)
@@ -103,7 +103,7 @@ fn (mut dd Dropdown) draw() {
 	dd.draw_open()
 	// draw the arrow
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
-	draw_end<Dropdown>(mut dd)
+	draw_end(mut dd)
 }
 
 fn (dd &Dropdown) draw_open() {

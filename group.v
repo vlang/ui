@@ -45,7 +45,7 @@ fn (mut g Group) init(parent Layout) {
 	ui := parent.get_ui()
 	g.ui = ui
 	g.decode_size(parent)
-	for child in g.children {
+	for mut child in g.children {
 		child.init(g)
 	}
 	g.calculate_child_positions()
@@ -94,7 +94,7 @@ fn (mut g Group) calculate_child_positions() {
 	mut widgets := g.children
 	mut start_x := g.x + g.margin_left
 	mut start_y := g.y + g.margin_top
-	for widget in widgets {
+	for mut widget in widgets {
 		mut wid_w, wid_h := widget.size()
 		widget.set_pos(start_x, start_y)
 		start_y = start_y + wid_h + g.spacing
@@ -114,7 +114,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut g Group) draw() {
-	draw_start<Group>(mut g)
+	draw_start(mut g)
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
@@ -128,10 +128,10 @@ fn (mut g Group) draw() {
 	// Title
 	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
 	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
-	for child in g.children {
+	for mut child in g.children {
 		child.draw()
 	}
-	draw_end<Group>(mut g)
+	draw_end(mut g)
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
@@ -157,7 +157,7 @@ fn (g &Group) get_ui() &UI {
 }
 
 fn (g &Group) unfocus_all() {
-	for child in g.children {
+	for mut child in g.children {
 		child.unfocus()
 	}
 }

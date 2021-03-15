@@ -11,6 +11,8 @@ mut:
 	x                int
 	y                int
 	z_index          int
+	offset_x         int
+	offset_y         int
 	last_draw_time   i64
 	started_time     i64
 	duration         i64

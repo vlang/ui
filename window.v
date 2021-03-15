@@ -233,7 +233,7 @@ fn gg_init(mut window Window) {
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
-	for _, child in window.children {
+	for _, mut child in window.children {
 		// println('init $child.type_name()')
 		child.init(window)
 	}
@@ -396,7 +396,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 		click_fn: cfg.on_click
 	}
 	parent_window.child_window = window
-	for _, child in window.children {
+	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
 		child.init(parent_window)
@@ -698,7 +698,7 @@ fn window_char(event gg.Event, ui &UI) {
 
 fn (mut w Window) focus_next() {
 	mut doit := false
-	for child in w.children {
+	for mut child in w.children {
 		// Focus on the next widget
 		if doit {
 			child.focus()
@@ -713,10 +713,10 @@ fn (mut w Window) focus_next() {
 }
 
 fn (w &Window) focus_previous() {
-	for i, child in w.children {
+	for i, mut child in w.children {
 		is_focused := child.is_focused()
 		if is_focused && i > 0 {
-			prev := w.children[i - 1]
+			mut prev := w.children[i - 1]
 			prev.focus()
 			// w.children[i - 1].focus()
 		}
@@ -847,11 +847,11 @@ fn frame(mut w Window) {
 	w.ui.gg.begin()
 	// draw_scene()
 
-	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
 	animate_stop() // FIRST VERSION ANIMATE: w.animating = false
 
-	for child in children {
+	for mut child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
@@ -867,10 +867,10 @@ fn native_frame(mut w Window) {
 			return
 		}
 	}
-	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 	if w.child_window == 0 {
 		// Render all widgets, including Canvas
-		for child in children {
+		for mut child in children {
 			child.draw()
 		}
 	}
@@ -940,7 +940,7 @@ fn (mut window Window) resize(w int, h int) {
 
 pub fn (window &Window) unfocus_all() {
 	// println('window.unfocus_all()')
-	for child in window.children {
+	for mut child in window.children {
 		child.unfocus()
 	}
 }
@@ -949,6 +949,7 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
+// extract child widget in the children tree by indexes 
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
 		mut children := w.root_layout.get_children()
@@ -1005,6 +1006,7 @@ pub fn (w &Window) child(from ...int) Widget {
 	}
 }
 
+// ask for an update to restrucure the whole children tree from root layout 
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
@@ -1012,13 +1014,3 @@ pub fn (w &Window) update_layout() {
 		s.update_all_children_recursively(w)
 	}
 }
-
-// pub fn (mut w Window) set_animated_widget(child Widget) {
-// 	w.animated_widgets << child.type_name()
-// }
-
-// fn (w &Window) is_animated(child Widget) bool {
-// 	res := child.type_name() in w.animated_widgets
-// 	println("${child.type_name()} $res")
-// 	return res
-// }

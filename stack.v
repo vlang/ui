@@ -808,7 +808,7 @@ fn (s &Stack) get_subscriber() &eventbus.Subscriber {
 }
 
 pub fn (mut s Stack) set_children_visible(state bool, children ...int) {
-	for i, child in s.children {
+	for i, mut child in s.children {
 		if i in children {
 			child.set_visible(state)
 		}
@@ -833,16 +833,16 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	draw_start<Stack>(mut s)
+	draw_start(mut s)
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
 	}
-	for child in s.drawing_children {
+	for mut child in s.drawing_children {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	draw_end<Stack>(mut s)
+	draw_end(mut s)
 }
 
 fn (s &Stack) margin(side MarginSide) int {
@@ -899,7 +899,7 @@ fn (s &Stack) get_ui() &UI {
 }
 
 fn (s &Stack) unfocus_all() {
-	for child in s.children {
+	for mut child in s.children {
 		child.unfocus()
 	}
 }
@@ -1069,12 +1069,13 @@ mut:
 	target_spacings []f64  = []f64{}
 }
 
-pub fn (mut s Stack) add(cfg ChildrenConfig) {
+pub fn (mut s Stack) add(cfg_ ChildrenConfig) {
+	mut cfg := cfg_
 	pos := if cfg.at == -1 { s.children.len } else { cfg.at }
 	if 0 <= pos && pos <= s.children.len {
 		if cfg.children.len > 0 {
 			s.children.insert(pos, cfg.children)
-			for w in cfg.children {
+			for mut w in cfg.children {
 				w.init(s)
 			}
 		} else {

@@ -115,7 +115,7 @@ fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut cb CheckBox) draw() {
-	draw_start<CheckBox>(mut cb)
+	draw_start(mut cb)
 	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
@@ -140,7 +140,7 @@ fn (mut cb CheckBox) draw() {
 	$if bb ? {
 		draw_bb(cb, cb.ui)
 	}
-	draw_end<CheckBox>(mut cb)
+	draw_end(mut cb)
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {

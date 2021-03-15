@@ -56,12 +56,12 @@ pub fn text_size_as_int(size f64, win_height int) int {
 	}
 }
 
-fn draw_start<T>(mut w T) {
+fn draw_start(mut w Widget) {
 	w.x += w.offset_x
 	w.y += w.offset_y
 }
 
-fn draw_end<T>(mut w T) {
+fn draw_end(mut w Widget) {
 	w.x -= w.offset_x
 	w.y -= w.offset_y
 }
