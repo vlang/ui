@@ -57,6 +57,7 @@ pub mut:
 	resizable   bool // currently only for events.on_resized not modify children
 	mode        WindowSizeType
 	root_layout Layout
+	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -230,9 +231,10 @@ fn on_event(e &gg.Event, mut window Window) {
 }
 
 fn gg_init(mut window Window) {
-	window_size := gg.window_size()
-	w := window_size.width
-	h := window_size.height
+	window.dpi_scale = gg.dpi_scale()
+	window_size := gg.window_size_real_pixels()
+	w := int(f32(window_size.width) / window.dpi_scale)
+	h := int(f32(window_size.height) / window.dpi_scale)
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
@@ -435,12 +437,13 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 // fn window_resize(glfw_wnd voidptr, width int, height int) {
 fn window_resize(event gg.Event, ui &UI) {
 	mut window := ui.window
-	if !window.resizable {
-		return
-	}
 	$if resize ? {
 		println('window resize ($event.window_width ,$event.window_height)')
 	}
+	if !window.resizable {
+		return
+	}
+	
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
@@ -929,11 +932,11 @@ pub fn (w &Window) size() (int, int) {
 
 fn (mut window Window) resize(w int, h int) {
 	// Do not use the w and h that come from event resizing, except maybe if divided by dpi_scale
-	window_size := gg.window_size()
-	width := window_size.width
-	height := window_size.height
+	window_size := gg.window_size_real_pixels()
+	width := int(f32(window_size.width) / window.dpi_scale)
+	height := int(f32(window_size.height) / window.dpi_scale)
 	window.width, window.height = width, height
-	window.ui.gg.resize(width, height)
+	window.ui.gg.resize(window_size.width, window_size.height)
 	for mut child in window.children {
 		if child is Stack {
 			child.resize(width, height)
