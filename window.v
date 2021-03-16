@@ -931,15 +931,11 @@ pub fn (w &Window) size() (int, int) {
 }
 
 fn (mut window Window) resize(w int, h int) {
-	// Do not use the w and h that come from event resizing, except maybe if divided by dpi_scale
-	window_size := gg.window_size_real_pixels()
-	width := int(f32(window_size.width) / window.dpi_scale)
-	height := int(f32(window_size.height) / window.dpi_scale)
-	window.width, window.height = width, height
-	window.ui.gg.resize(window_size.width, window_size.height)
+	window.width, window.height = w, h
+	window.ui.gg.resize(w, h)
 	for mut child in window.children {
 		if child is Stack {
-			child.resize(width, height)
+			child.resize(w, h)
 		}
 	}
 }
