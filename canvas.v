@@ -87,5 +87,5 @@ fn (c &Canvas) unfocus() {
 }
 
 fn (c &Canvas) point_inside(x f64, y f64) bool {
-	return false // x >= c.x && x <= c.x + c.width && y >= c.y && y <= c.y + c.height
+	return point_inside<Canvas>(c, x, y)
 }

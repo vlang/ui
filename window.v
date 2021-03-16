@@ -63,6 +63,9 @@ pub mut:
 	touch       TouchInfo
 	// Text Config
 	text_cfg gx.TextCfg
+	// drag
+	drag_activated  bool
+	drag_widget     Widget
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -776,12 +779,12 @@ fn foo2(l Layout) {
 }
 
 fn bar() {
-	foo(&TextBox{
-		ui: 0
-	})
-	foo(&Button{
-		ui: 0
-	})
+	// foo(&TextBox{
+	// 	ui: 0
+	// })
+	// foo(&Button{
+	// 	ui: 0
+	// })
 	foo(&ProgressBar{
 		ui: 0
 	})

@@ -219,8 +219,9 @@ fn (mut dd Dropdown) unfocus() {
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
-	return y >= dd.y && y <= dd.y + (dd.items.len * ui.dropdown_height) + ui.dropdown_height
-		&& x >= dd.x && x <= dd.x + dd.width
+	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
+	return y >= ddy && y <= ddy + (dd.items.len * ui.dropdown_height) + ui.dropdown_height
+		&& x >= ddx && x <= ddx + dd.width
 }
 
 // Returns the currently selected DropdownItem

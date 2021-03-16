@@ -47,7 +47,7 @@ pub mut:
 	parent     Layout
 	is_focused bool
 	// gg &gg.GG
-	ui &UI
+	ui &UI  = 0
 	// text               string
 	text             &string = voidptr(0)
 	max_len          int
@@ -567,7 +567,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
-	return x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
+	return point_inside<TextBox>(tb, x, y)// x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {

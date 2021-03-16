@@ -146,7 +146,8 @@ fn (mut r Radio) draw() {
 }
 
 fn (r &Radio) point_inside(x f64, y f64) bool {
-	return x >= r.x && x <= r.x + r.width && y >= r.y && y <= r.y + (r.height + 5) * r.values.len
+	rx, ry := r.x + r.offset_x, r.y + r.offset_y
+	return x >= rx && x <= rx + r.width && y >= ry && y <= ry + (r.height + 5) * r.values.len
 }
 
 fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {

@@ -218,11 +218,12 @@ fn (mut lb ListBox) draw() {
 }
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {
-	return x >= lb.x && x <= lb.x + lb.width && y >= lb.y && y <= lb.y + lb.height
+	return point_inside<ListBox>(lb, x, y)
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
-	return x >= li.x && x <= li.x + li.list.width && y >= li.y && y <= li.y + li.list.item_height
+	lix, liy := li.x + li.list.offset_x, li.y + li.list.offset_y
+	return x >= lix && x <= lix + li.list.width && y >= liy && y <= liy + li.list.item_height
 }
 
 fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {

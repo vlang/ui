@@ -144,7 +144,7 @@ fn (mut cb CheckBox) draw() {
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {
-	return x >= cb.x && x <= cb.x + cb.width && y >= cb.y && y <= cb.y + cb.height
+	return point_inside<CheckBox>(cb, x, y)
 }
 
 fn (mut cb CheckBox) mouse_move(e MouseEvent) {

@@ -48,7 +48,7 @@ pub mut:
 	offset_y   int
 	parent     Layout
 	is_focused bool
-	ui         &UI
+	ui         &UI = 0
 	onclick    ButtonClickFn
 	text       string
 	icon_path  string
@@ -194,7 +194,9 @@ fn (mut b Button) set_text_size() {
 // fn (b &Button) key_down(e KeyEvent) {}
 
 fn (b &Button) point_inside(x f64, y f64) bool {
-	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
+	// bx , by := b.x + b.offset_x, b.y + b.offset_y
+	// return x >= bx && x <= bx + b.width && y >= by && y <= by + b.height
+	return point_inside<Button>(b, x, y)
 }
 
 fn (mut b Button) set_visible(state bool) {

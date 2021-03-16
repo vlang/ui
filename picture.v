@@ -133,5 +133,5 @@ fn (pic &Picture) unfocus() {
 }
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {
-	return x >= pic.x && x <= pic.x + pic.width && y >= pic.y && y <= pic.y + pic.height
+	return point_inside<Picture>(pic, x, y)
 }

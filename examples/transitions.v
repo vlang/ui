@@ -42,7 +42,7 @@ fn main() {
 		state: app
 		mode: .resizable
 	}, [ui.column({
-		widths: ui.stretch // or ui.compact
+		widths: ui.compact // or ui.compact
 		margin: ui.Margin{25, 25, 25, 25}
 	}, [app.button, app.picture]), app.x_transition, app.y_transition])
 	ui.run(app.window)
@@ -54,8 +54,8 @@ fn example_pic_click(mut app App, pic &ui.Picture) {
 
 fn btn_toggle_click(mut app App, button &ui.Button) {
 	if app.x_transition.animated_value == 0 || app.y_transition.animated_value == 0 {
-		app.x_transition.set_value(&app.picture.offset_x)
-		app.y_transition.set_value(&app.picture.offset_y)
+		app.x_transition.set_value(&app.button.offset_x)
+		app.y_transition.set_value(&app.button.offset_y)
 	}
 	w, h := app.window.size()
 	match (app.state) {

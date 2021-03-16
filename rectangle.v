@@ -128,5 +128,5 @@ fn (r &Rectangle) unfocus() {
 }
 
 fn (r &Rectangle) point_inside(x f64, y f64) bool {
-	return false
+	return point_inside<Rectangle>(r, x, y)
 }

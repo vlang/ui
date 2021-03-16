@@ -910,7 +910,7 @@ fn (s &Stack) get_state() voidptr {
 }
 
 fn (s &Stack) point_inside(x f64, y f64) bool {
-	return false // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+	return point_inside<Stack>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
 fn (mut s Stack) set_visible(state bool) {
