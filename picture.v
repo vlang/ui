@@ -18,6 +18,7 @@ mut:
 	x         int
 	y         int
 	z_index   int
+	movable   bool
 	width     int
 	height    int
 	path      string
@@ -33,6 +34,7 @@ pub struct PictureConfig {
 	width     int
 	height    int
 	z_index   int
+	movable   bool
 	on_click  PictureClickFn
 	use_cache bool     = true
 	ref       &Picture = voidptr(0)
@@ -44,6 +46,7 @@ fn (mut pic Picture) init(parent Layout) {
 	pic.ui = ui
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, pic_click, pic)
+	subscriber.subscribe_method(events.on_mouse_down, pic_mouse_down, pic)
 	/*
 	if pic.image.width > 0 {
 		// .image was set by the user, skip path  TODO
@@ -79,6 +82,7 @@ pub fn picture(c PictureConfig) &Picture {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
+		movable: c.movable
 		path: c.path
 		use_cache: c.use_cache
 		on_click: c.on_click
@@ -94,6 +98,14 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 			if pic.on_click != voidptr(0) {
 				pic.on_click(window.state, pic)
 			}
+		}
+	}
+}
+
+fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
+	if pic.point_inside(e.x, e.y) {
+		if pic.movable {
+			drag_register(pic, pic.ui, e)
 		}
 	}
 }

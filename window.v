@@ -67,6 +67,8 @@ pub mut:
 	// drag
 	drag_activated bool
 	drag_widget    Widget
+	drag_start_x   f64
+	drag_start_y   f64
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -459,6 +461,12 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		y: event.mouse_y / ui.gg.scale
 		mouse_button: int(event.mouse_button)
 	}
+	if window.drag_activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+		}
+		drag_child(window, e.x, e.y)
+	}
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
@@ -507,7 +515,7 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_up(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .up
 		x: int(event.mouse_x / ui.gg.scale)
@@ -515,6 +523,15 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
+
+	if window.drag_activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+			drag_child(window, e.x, e.y)
+		}
+		drop_child(mut window)
+	}
+
 	if window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
 	}

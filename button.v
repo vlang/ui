@@ -79,7 +79,7 @@ fn (mut b Button) init(parent Layout) {
 		}
 	}
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
+	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
 }
 
@@ -109,12 +109,20 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
-			child_to_drag<Button>(b, e.mods)
 		} else if e.action == .up {
 			b.state = .normal
 			if b.onclick != voidptr(0) {
 				b.onclick(window.state, b)
 			}
+		}
+	}
+}
+
+fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	if b.point_inside(e.x, e.y) {
+		if b.movable {
+			drag_register(b, b.ui, e)
 		}
 	}
 }
