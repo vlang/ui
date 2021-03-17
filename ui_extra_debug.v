@@ -49,7 +49,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	println(txt)
 	for i, mut child in s.children {
 		name := child.type_name()
-		if child is Stack {
+		if mut child is Stack {
 			mut tmp := '$tab      ($depth-$i) $name :'
 			tmp += '\n$tab      fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
@@ -73,7 +73,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 	print('${t}Stack ${typeof(s).name}')
 	C.printf(' %p', s)
 	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacings')
-	if parent is Stack {
+	if mut parent is Stack {
 		// print('	parent: $${typeof(parent).name} ')
 		C.printf(' %p', parent)
 		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacings')
