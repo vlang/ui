@@ -11,7 +11,6 @@ import eventbus
 
 // import gx
 // import sokol.sapp
-
 const (
 	version = '0.0.4'
 )
@@ -123,7 +122,8 @@ pub struct MouseMoveEvent {
 pub:
 	x            f64
 	y            f64
-	mouse_button int // TODO enum
+	mouse_button int
+	// TODO enum
 }
 
 pub enum Cursor {
@@ -151,6 +151,7 @@ fn (mut gui UI) idle_loop() {
 			}
 		}
 		gui.ticks = 0
+
 		// glfw.post_empty_event()
 		// Sleeping for a monolithic block of 500ms means, that the thread
 		// in which this method is run, may react to the closing of a dialog
@@ -206,6 +207,7 @@ pub fn run(window &Window) {
 	gui.window.glfw_obj.destroy()
 	*/
 	gui.closed = true
+
 	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
 	// waiting 2x this time should be enough to ensure the gui.loop
 	// thread will exit before us, without using a waitgroup here too
