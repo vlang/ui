@@ -983,7 +983,7 @@ pub fn (w &Window) get_child(from ...int) ?Widget {
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
-	if s is Stack {
+	if mut s is Stack {
 		s.update_all_children_recursively(w)
 	}
 }
