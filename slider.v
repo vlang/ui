@@ -182,11 +182,11 @@ fn (mut s Slider) draw() {
 	s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4,
-				s.y + s.height / 2, gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4, s.y + s.height / 2,
+				gx.rgb(0, 0, 0))
 		} else {
-			s.ui.gg.draw_line(s.x + s.width / 2, s.y + 2, s.x + s.width / 2,
-				s.y + s.height - 4, gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(s.x + s.width / 2, s.y + 2, s.x + s.width / 2, s.y + s.height - 4,
+				gx.rgb(0, 0, 0))
 		}
 	}
 	if !s.is_focused {

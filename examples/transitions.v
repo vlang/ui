@@ -33,7 +33,7 @@ fn main() {
 			path: logo
 			on_click: example_pic_click
 		)
-		button: ui.button(text: 'Slide', onclick: btn_toggle_click)
+		button: ui.button(text: 'Slide', onclick: btn_toggle_click, movable: true)
 	}
 	app.window = ui.window({
 		width: win_width

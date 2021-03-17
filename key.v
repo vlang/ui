@@ -175,3 +175,33 @@ pub enum Key {
 	right_super = 347
 	menu = 348
 }
+
+fn shift_key(mods KeyMod) bool {
+	return int(mods) & 1 == 1
+}
+
+fn ctl_key(mods KeyMod) bool {
+	return int(mods) & 2 == 2
+}
+
+fn alt_key(mods KeyMod) bool {
+	return int(mods) & 4 == 4
+}
+
+fn super_key(mods KeyMod) bool {
+	return int(mods) & 8 == 8
+}
+
+fn ctl_shift_key(mods KeyMod) bool {
+	return int(mods) & 3 == 3
+}
+
+fn ctl_alt_key(mods KeyMod) bool {
+	return int(mods) & 6 == 6
+}
+
+fn super_alt_key(mods KeyMod) bool {
+	return int(mods) & 12 == 12
+}
+
+// NB: to complete if useful

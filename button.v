@@ -28,6 +28,7 @@ pub struct ButtonConfig {
 	height    int = 20
 	width     int
 	z_index   int
+	movable   bool
 	text_cfg  gx.TextCfg
 	text_size f64
 }
@@ -57,6 +58,7 @@ pub mut:
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
+	movable    bool // drag, transition or anything allowing offset yo be updated
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -86,6 +88,7 @@ pub fn button(c ButtonConfig) &Button {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
+		movable: c.movable
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
@@ -106,6 +109,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
+			child_to_drag<Button>(b, e.mods)
 		} else if e.action == .up {
 			b.state = .normal
 			if b.onclick != voidptr(0) {

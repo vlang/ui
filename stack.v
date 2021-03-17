@@ -160,7 +160,7 @@ pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
-	println("parent size: ($parent_width, $parent_height)")
+	println('parent size: ($parent_width, $parent_height)')
 	// s.debug_show_sizes("decode before -> ")
 	if parent is Window {
 		// Default: like stretch = strue

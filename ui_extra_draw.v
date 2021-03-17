@@ -67,7 +67,7 @@ pub fn text_size_as_int(size f64, win_height int) int {
 
 // This a a generic function. This could become a simple function as above
 fn point_inside<T>(w &T, x f64, y f64) bool {
-	wx, wy :=w.x + w.offset_x, w.y + w.offset_y
+	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
 }
 
@@ -86,9 +86,27 @@ fn set_offset(mut w Widget, ox int, oy int) {
 }
 
 // child_to_drag(w Widget) ??? Widget would needs method is_draggable
-fn child_to_drag<T>(w &T) {
-	mut window := w.ui.window
-	window.drag_activated = true
-	
+fn child_to_drag<T>(w &T, mods KeyMod) {
+	if w.movable && shift_key(mods) {
+		$if drag ? {
+			println('drag ${typeof(w).name}')
+		}
+		mut window := w.ui.window
+		if window.drag_activated {
+			if w.z_index > window.drag_widget.z_index {
+				window.drag_widget = w
+			}
+		} else {
+			window.drag_activated = true
+			window.drag_widget = w
+		}
+	}
 }
 
+fn child_to_drop<T>(w &T) {
+	$if drag ? {
+		println('drop ${typeof(w).name}')
+	}
+	mut window := w.ui.window
+	window.drag_activated = false
+}

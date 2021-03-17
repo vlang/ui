@@ -65,8 +65,8 @@ pub mut:
 	// Text Config
 	text_cfg gx.TextCfg
 	// drag
-	drag_activated  bool
-	drag_widget     Widget
+	drag_activated bool
+	drag_widget    Widget
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -443,7 +443,7 @@ fn window_resize(event gg.Event, ui &UI) {
 	if !window.resizable {
 		return
 	}
-	
+
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
