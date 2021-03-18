@@ -4,11 +4,13 @@
 module ui
 
 import gg
+import eventbus
 
 pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int, y_offset int)
 
 pub struct Canvas {
 pub mut:
+	children []Widget
 	width    int
 	height   int
 	x        int
@@ -25,16 +27,19 @@ mut:
 }
 
 pub struct CanvasConfig {
-	width   int
-	height  int
-	z_index int
-	text    string
-	draw_fn DrawFn = voidptr(0)
+	width    int
+	height   int
+	z_index  int
+	text     string
+	draw_fn  DrawFn   = voidptr(0)
+	children []Widget = []Widget{}
 }
 
 fn (mut c Canvas) init(parent Layout) {
 	c.parent = parent
-	c.gg = parent.get_ui().gg
+	ui := parent.get_ui()
+	c.ui = ui
+	c.gg = ui.gg
 }
 
 pub fn canvas(c CanvasConfig) &Canvas {
@@ -69,6 +74,9 @@ fn (mut c Canvas) draw() {
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c.gg, state, c)
 	}
+	for mut child in c.children {
+		child.draw()
+	}
 	draw_end(mut c)
 }
 
@@ -84,8 +92,36 @@ fn (c &Canvas) is_focused() bool {
 }
 
 fn (c &Canvas) unfocus() {
+	c.unfocus_all()
 }
 
 fn (c &Canvas) point_inside(x f64, y f64) bool {
 	return point_inside<Canvas>(c, x, y)
+}
+
+fn (c &Canvas) get_ui() &UI {
+	return c.ui
+}
+
+fn (c &Canvas) unfocus_all() {
+	for mut child in c.children {
+		child.unfocus()
+	}
+}
+
+fn (c &Canvas) resize(width int, height int) {
+}
+
+fn (c &Canvas) get_state() voidptr {
+	parent := c.parent
+	return parent.get_state()
+}
+
+fn (c &Canvas) get_subscriber() &eventbus.Subscriber {
+	parent := c.parent
+	return parent.get_subscriber()
+}
+
+fn (c &Canvas) get_children() []Widget {
+	return c.children
 }
