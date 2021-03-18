@@ -8,8 +8,10 @@ import gg
 
 pub struct Rectangle {
 pub mut:
-	color gx.Color
-	text  string
+	color    gx.Color
+	text     string
+	offset_x int
+	offset_y int
 mut:
 	parent       Layout
 	x            int
@@ -78,6 +80,7 @@ fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut r Rectangle) draw() {
+	draw_start(mut r)
 	if r.radius > 0 {
 		r.ui.gg.draw_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.color)
 		if r.border {
@@ -107,6 +110,7 @@ fn (mut r Rectangle) draw() {
 		}
 		r.ui.gg.draw_text(r.x + dx, r.y + dy, r.text, text_cfg)
 	}
+	draw_end(mut r)
 }
 
 fn (mut r Rectangle) set_visible(state bool) {
@@ -124,5 +128,5 @@ fn (r &Rectangle) unfocus() {
 }
 
 fn (r &Rectangle) point_inside(x f64, y f64) bool {
-	return false
+	return point_inside<Rectangle>(r, x, y)
 }

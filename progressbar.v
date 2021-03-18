@@ -19,6 +19,8 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	offset_x   int
+	offset_y   int
 	z_index    int
 	parent     Layout
 	ui         &UI
@@ -76,7 +78,8 @@ fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	return pb.width, pb.height
 }
 
-fn (pb &ProgressBar) draw() {
+fn (mut pb ProgressBar) draw() {
+	draw_start(mut pb)
 	// Draw the gray background
 	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)
 	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_border_color)
@@ -87,10 +90,11 @@ fn (pb &ProgressBar) draw() {
 	$if bb ? {
 		draw_bb(pb, pb.ui)
 	}
+	draw_end(mut pb)
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
-	return false // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
+	return point_inside<ProgressBar>(pb, x, y) // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
 }
 
 fn (mut pb ProgressBar) set_visible(state bool) {

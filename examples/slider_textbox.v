@@ -74,9 +74,7 @@ fn main() {
 		title: 'Slider & textbox Example'
 		state: app
 	}, [
-		ui.column({
-			heights: [.1, .9]
-		}, [ui.row({
+		ui.column({ heights: [.1, .9] }, [ui.row({
 			margin: ui.Margin{50, 115, 30, 30}
 			spacing: 100
 			heights: 20.

@@ -11,6 +11,8 @@ mut:
 	x                int
 	y                int
 	z_index          int
+	offset_x         int
+	offset_y         int
 	last_draw_time   i64
 	started_time     i64
 	duration         i64
@@ -107,7 +109,7 @@ fn (mut t Transition) draw() {
 		// Update last draw time to calculate frame delta
 		t.last_draw_time = time.ticks()
 	}
-	set_animating(t.animating) // FIRST VERSION ANIMATE: t.ui.window.animating = t.ui.window.animating || t.animating
+	// USELESS?: set_animating(t.animating) // FIRST VERSION ANIMATE: t.ui.window.animating = t.ui.window.animating || t.animating
 }
 
 fn (t &Transition) set_visible(state bool) {
@@ -127,7 +129,8 @@ fn (t &Transition) point_inside(x f64, y f64) bool {
 	return false
 }
 
-//***** Animation stuff ******
+/*
+USELESS? **** Animation stuff ******
 enum Animating {
 	_get
 	_set
@@ -165,3 +168,5 @@ pub fn set_animating(state bool) {
 pub fn animating() bool {
 	return unsafe { animating_(._get, true) }
 }
+
+**/

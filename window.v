@@ -57,12 +57,21 @@ pub mut:
 	resizable   bool // currently only for events.on_resized not modify children
 	mode        WindowSizeType
 	root_layout Layout
+	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
 	touch       TouchInfo
 	// Text Config
 	text_cfg gx.TextCfg
+	// drag
+	drag_activated bool
+	drag_widget    Widget
+	drag_start_x   f64
+	drag_start_y   f64
+	drag_pos_x     f64
+	drag_pos_y     f64
+	drag_time      time.Time
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -227,13 +236,14 @@ fn on_event(e &gg.Event, mut window Window) {
 }
 
 fn gg_init(mut window Window) {
-	window_size := gg.window_size()
-	w := window_size.width
-	h := window_size.height
+	window.dpi_scale = gg.dpi_scale()
+	window_size := gg.window_size_real_pixels()
+	w := int(f32(window_size.width) / window.dpi_scale)
+	h := int(f32(window_size.height) / window.dpi_scale)
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
-	for _, child in window.children {
+	for _, mut child in window.children {
 		// println('init $child.type_name()')
 		child.init(window)
 	}
@@ -396,7 +406,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 		click_fn: cfg.on_click
 	}
 	parent_window.child_window = window
-	for _, child in window.children {
+	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
 		child.init(parent_window)
@@ -432,12 +442,13 @@ fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
 // fn window_resize(glfw_wnd voidptr, width int, height int) {
 fn window_resize(event gg.Event, ui &UI) {
 	mut window := ui.window
-	if !window.resizable {
-		return
-	}
 	$if resize ? {
 		println('window resize ($event.window_width ,$event.window_height)')
 	}
+	if !window.resizable {
+		return
+	}
+
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
@@ -447,11 +458,17 @@ fn window_resize(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_move(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
 		y: event.mouse_y / ui.gg.scale
 		mouse_button: int(event.mouse_button)
+	}
+	if window.drag_activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+		}
+		drag_child(mut window, e.x, e.y)
 	}
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
@@ -501,7 +518,7 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_up(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .up
 		x: int(event.mouse_x / ui.gg.scale)
@@ -509,6 +526,15 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
+
+	if window.drag_activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+			drag_child(window, e.x, e.y)
+		}
+		drop_child(mut window)
+	}
+
 	if window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
 	}
@@ -698,7 +724,7 @@ fn window_char(event gg.Event, ui &UI) {
 
 fn (mut w Window) focus_next() {
 	mut doit := false
-	for child in w.children {
+	for mut child in w.children {
 		// Focus on the next widget
 		if doit {
 			child.focus()
@@ -713,10 +739,10 @@ fn (mut w Window) focus_next() {
 }
 
 fn (w &Window) focus_previous() {
-	for i, child in w.children {
+	for i, mut child in w.children {
 		is_focused := child.is_focused()
 		if is_focused && i > 0 {
-			prev := w.children[i - 1]
+			mut prev := w.children[i - 1]
 			prev.focus()
 			// w.children[i - 1].focus()
 		}
@@ -776,12 +802,12 @@ fn foo2(l Layout) {
 }
 
 fn bar() {
-	foo(&TextBox{
-		ui: 0
-	})
-	foo(&Button{
-		ui: 0
-	})
+	// foo(&TextBox{
+	// 	ui: 0
+	// })
+	// foo(&Button{
+	// 	ui: 0
+	// })
 	foo(&ProgressBar{
 		ui: 0
 	})
@@ -847,15 +873,15 @@ fn frame(mut w Window) {
 	w.ui.gg.begin()
 	// draw_scene()
 
-	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
-	animate_stop() // FIRST VERSION ANIMATE: w.animating = false
+	// USELESS? animate_stop() // FIRST VERSION ANIMATE: w.animating = false
 
-	for child in children {
+	for mut child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
+	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {
@@ -867,10 +893,10 @@ fn native_frame(mut w Window) {
 			return
 		}
 	}
-	children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 	if w.child_window == 0 {
 		// Render all widgets, including Canvas
-		for child in children {
+		for mut child in children {
 			child.draw()
 		}
 	}
@@ -925,22 +951,18 @@ pub fn (w &Window) size() (int, int) {
 }
 
 fn (mut window Window) resize(w int, h int) {
-	// Do not use the w and h that come from event resizing, except maybe if divided by dpi_scale
-	window_size := gg.window_size()
-	width := window_size.width
-	height := window_size.height
-	window.width, window.height = width, height
-	window.ui.gg.resize(width, height)
+	window.width, window.height = w, h
+	window.ui.gg.resize(w, h)
 	for mut child in window.children {
 		if mut child is Stack {
-			child.resize(width, height)
+			child.resize(w, h)
 		}
 	}
 }
 
 pub fn (window &Window) unfocus_all() {
 	// println('window.unfocus_all()')
-	for child in window.children {
+	for mut child in window.children {
 		child.unfocus()
 	}
 }
@@ -949,37 +971,64 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-pub fn (w &Window) get_child(from ...int) ?Widget {
-	mut children := w.root_layout.get_children()
-	for i, ind in from {
-		if i < from.len - 1 {
-			if ind >= 0 && ind < children.len {
-				widget := children[ind]
-				if widget is Stack {
-					children = widget.children
+// extract child widget in the children tree by indexes 
+pub fn (w &Window) child(from ...int) Widget {
+	if from.len > 0 {
+		mut children := w.root_layout.get_children()
+		for i, ind in from {
+			if i < from.len - 1 {
+				if ind >= 0 && ind < children.len {
+					widget := children[ind]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					} else {
+						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+						root := w.root_layout
+						if root is Stack {
+							return root
+						}
+					}
+				} else if i == -1 {
+					widget := children[children.len - 1]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					}
 				} else {
-					return error('$from uncorrect: $from[$i]=$ind does not correspond to a Layout')
-				}
-			} else if i == -1 {
-				widget := children[children.len - 1]
-				if widget is Stack {
-					children = widget.children
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					root := w.root_layout
+					if root is Stack {
+						return root
+					}
 				}
 			} else {
-				return error('$from uncorrect: $from[$i]=$ind out of bounds')
+				if ind >= 0 && ind < children.len {
+					return children[ind]
+				} else if ind == -1 {
+					return children[children.len - 1]
+				} else {
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+				}
 			}
-		} else {
-			if ind >= 0 && ind < children.len {
-				return children[ind]
-			} else if ind == -1 {
-				return children[children.len - 1]
-			} else {
-				return error('$from uncorrect: $from[$i]=$ind out of bounds')
-			}
+		}
+	}
+	// by default returns root_layout 
+	// expected when `from` is empty
+	root := w.root_layout
+	if root is Stack {
+		return root
+	} else {
+		// required but never goes here
+		return &Stack{
+			ui: 0
 		}
 	}
 }
 
+// ask for an update to restrucure the whole children tree from root layout 
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
@@ -987,13 +1036,3 @@ pub fn (w &Window) update_layout() {
 		s.update_all_children_recursively(w)
 	}
 }
-
-// pub fn (mut w Window) set_animated_widget(child Widget) {
-// 	w.animated_widgets << child.type_name()
-// }
-
-// fn (w &Window) is_animated(child Widget) bool {
-// 	res := child.type_name() in w.animated_widgets
-// 	println("${child.type_name()} $res")
-// 	return res
-// }

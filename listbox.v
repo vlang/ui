@@ -66,6 +66,8 @@ pub mut:
 	width         int
 	x             int
 	y             int
+	offset_x      int
+	offset_y      int
 	z_index       int
 	parent        Layout
 	ui            &UI
@@ -201,6 +203,7 @@ fn (mut lb ListBox) init(parent Layout) {
 }
 
 fn (mut lb ListBox) draw() {
+	draw_start(mut lb)
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	if !lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(lb.x, lb.y, lb.width + 1, lb.height + 1, lb.col_border)
@@ -211,14 +214,16 @@ fn (mut lb ListBox) draw() {
 		}
 		lb.draw_item(item, inx == lb.selection)
 	}
+	draw_end(mut lb)
 }
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {
-	return x >= lb.x && x <= lb.x + lb.width && y >= lb.y && y <= lb.y + lb.height
+	return point_inside<ListBox>(lb, x, y)
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
-	return x >= li.x && x <= li.x + li.list.width && y >= li.y && y <= li.y + li.list.item_height
+	lix, liy := li.x + li.list.offset_x, li.y + li.list.offset_y
+	return x >= lix && x <= lix + li.list.width && y >= liy && y <= liy + li.list.item_height
 }
 
 fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {

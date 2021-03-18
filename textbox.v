@@ -41,11 +41,13 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	offset_x   int
+	offset_y   int
 	z_index    int
 	parent     Layout
 	is_focused bool
 	// gg &gg.GG
-	ui &UI
+	ui &UI = 0
 	// text               string
 	text             &string = voidptr(0)
 	max_len          int
@@ -201,6 +203,7 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) draw() {
+	draw_start(mut tb)
 	text := *(tb.text)
 	mut placeholder := tb.placeholder
 	if tb.placeholder_bind != 0 {
@@ -290,6 +293,7 @@ fn (mut tb TextBox) draw() {
 	$if bb ? {
 		draw_bb(tb, tb.ui)
 	}
+	draw_end(mut tb)
 }
 
 // fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
@@ -563,7 +567,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
-	return x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
+	return point_inside<TextBox>(tb, x, y) // x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {

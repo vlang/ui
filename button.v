@@ -28,6 +28,7 @@ pub struct ButtonConfig {
 	height    int = 20
 	width     int
 	z_index   int
+	movable   bool
 	text_cfg  gx.TextCfg
 	text_size f64
 }
@@ -44,9 +45,11 @@ pub mut:
 	z_index    int
 	x          int
 	y          int
+	offset_x   int
+	offset_y   int
 	parent     Layout
 	is_focused bool
-	ui         &UI
+	ui         &UI = 0
 	onclick    ButtonClickFn
 	text       string
 	icon_path  string
@@ -55,6 +58,7 @@ pub mut:
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
+	movable    bool // drag, transition or anything allowing offset yo be updated
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -75,7 +79,7 @@ fn (mut b Button) init(parent Layout) {
 		}
 	}
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_mouse_down, btn_click, b)
+	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
 }
 
@@ -84,6 +88,7 @@ pub fn button(c ButtonConfig) &Button {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
+		movable: c.movable
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
@@ -109,6 +114,15 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			if b.onclick != voidptr(0) {
 				b.onclick(window.state, b)
 			}
+		}
+	}
+}
+
+fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	if b.point_inside(e.x, e.y) {
+		if b.movable {
+			drag_register(b, b.ui, e)
 		}
 	}
 }
@@ -140,6 +154,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
+	draw_start(mut b)
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
@@ -172,6 +187,7 @@ fn (mut b Button) draw() {
 		draw_bb(b, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
+	draw_end(mut b)
 }
 
 fn (mut b Button) set_text_size() {
@@ -190,7 +206,9 @@ fn (mut b Button) set_text_size() {
 // fn (b &Button) key_down(e KeyEvent) {}
 
 fn (b &Button) point_inside(x f64, y f64) bool {
-	return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height
+	// bx , by := b.x + b.offset_x, b.y + b.offset_y
+	// return x >= bx && x <= bx + b.width && y >= by && y <= by + b.height
+	return point_inside<Button>(b, x, y)
 }
 
 fn (mut b Button) set_visible(state bool) {

@@ -22,6 +22,8 @@ mut:
 	parent               Layout
 	x                    int
 	y                    int
+	offset_x             int
+	offset_y             int
 	z_index              int
 	ui                   &UI
 	items                []DropdownItem
@@ -87,7 +89,8 @@ fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	return w, ui.dropdown_height
 }
 
-fn (dd &Dropdown) draw() {
+fn (mut dd Dropdown) draw() {
+	draw_start(mut dd)
 	gg := dd.ui.gg
 	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, ui.dropdown_height, ui.dropdown_color)
@@ -100,6 +103,7 @@ fn (dd &Dropdown) draw() {
 	dd.draw_open()
 	// draw the arrow
 	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	draw_end(mut dd)
 }
 
 fn (dd &Dropdown) draw_open() {
@@ -215,8 +219,9 @@ fn (mut dd Dropdown) unfocus() {
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
-	return y >= dd.y && y <= dd.y + (dd.items.len * ui.dropdown_height) + ui.dropdown_height
-		&& x >= dd.x && x <= dd.x + dd.width
+	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
+	return y >= ddy && y <= ddy + (dd.items.len * ui.dropdown_height) + ui.dropdown_height
+		&& x >= ddx && x <= ddx + dd.width
 }
 
 // Returns the currently selected DropdownItem

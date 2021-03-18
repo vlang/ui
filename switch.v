@@ -22,6 +22,8 @@ pub mut:
 	width      int
 	x          int
 	y          int
+	offset_x   int
+	offset_y   int
 	z_index    int
 	parent     Layout
 	is_focused bool
@@ -71,6 +73,7 @@ fn (mut s Switch) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
+	draw_start(mut s)
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
 		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
@@ -84,10 +87,11 @@ fn (mut s Switch) draw() {
 	$if bb ? {
 		draw_bb(s, s.ui)
 	}
+	draw_end(mut s)
 }
 
 fn (s &Switch) point_inside(x f64, y f64) bool {
-	return x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+	return point_inside<Switch>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, w &Window) {

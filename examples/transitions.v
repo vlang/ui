@@ -31,9 +31,10 @@ fn main() {
 			width: picture_width_and_height
 			height: picture_width_and_height
 			path: logo
+			movable: true
 			on_click: example_pic_click
 		)
-		button: ui.button(text: 'Slide', onclick: btn_toggle_click)
+		button: ui.button(text: 'Slide', onclick: btn_toggle_click, movable: true)
 	}
 	app.window = ui.window({
 		width: win_width
@@ -42,7 +43,7 @@ fn main() {
 		state: app
 		mode: .resizable
 	}, [ui.column({
-		widths: ui.stretch // or ui.compact
+		widths: ui.compact // or ui.compact
 		margin: ui.Margin{25, 25, 25, 25}
 	}, [app.button, app.picture]), app.x_transition, app.y_transition])
 	ui.run(app.window)

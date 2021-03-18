@@ -19,13 +19,15 @@ pub enum Orientation {
 [heap]
 pub struct Slider {
 pub mut:
-	track_height         int
-	track_width          int
+	height               int // track width
+	width                int // track height
 	thumb_width          int
 	thumb_height         int
 	orientation          Orientation = Orientation.horizontal
 	x                    int
 	y                    int
+	offset_x             int
+	offset_y             int
 	z_index              int
 	parent               Layout
 	ui                   &UI
@@ -78,8 +80,8 @@ fn (mut s Slider) init(parent Layout) {
 
 pub fn slider(c SliderConfig) &Slider {
 	mut s := &Slider{
-		track_height: c.height
-		track_width: c.width
+		height: c.height
+		width: c.width
 		min: c.min
 		max: c.max
 		val: c.val
@@ -95,11 +97,11 @@ pub fn slider(c SliderConfig) &Slider {
 	}
 	s.set_thumb_size()
 	// if !c.thumb_in_track {
-	// 	s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
-	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
+	// 	s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
 	// } else {
-	// 	s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
-	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
+	// 	s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
 	// }
 
 	if s.min > s.max {
@@ -113,9 +115,9 @@ pub fn slider(c SliderConfig) &Slider {
 fn (s &Slider) draw_thumb() {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
-	rev_dim := if s.orientation == .horizontal { s.track_height } else { s.track_width }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
 	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
-	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
 	if s.rev_min_max_pos {
 		pos = -pos + f32(dim)
@@ -144,58 +146,60 @@ fn (mut s Slider) set_pos(x int, y int) {
 
 fn (mut s Slider) set_thumb_size() {
 	if !s.thumb_in_track {
-		s.thumb_height = if s.orientation == .horizontal { s.track_height + 10 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width + 10 }
+		s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
 	} else {
-		s.thumb_height = if s.orientation == .horizontal { s.track_height - 3 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.track_width - 3 }
+		s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
 	}
 }
 
 fn (mut s Slider) size() (int, int) {
 	if s.orientation == .horizontal {
-		return s.track_width, s.thumb_height
+		return s.width, s.thumb_height
 	} else {
-		return s.thumb_width, s.track_height
+		return s.thumb_width, s.height
 	}
 }
 
 fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	// TODO: fix
 	$if debug_slider ? {
-		println('slider propose_size: ($s.track_width,$s.track_height) -> ($w, $h) | s.orientation: $s.orientation')
+		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
 	}
 	if s.orientation == .horizontal {
-		s.track_width = w
+		s.width = w
 	} else {
-		s.track_height = h
+		s.height = h
 	}
 	s.set_thumb_size()
 	return s.size()
 }
 
-fn (s &Slider) draw() {
+fn (mut s Slider) draw() {
+	draw_start(mut s)
 	// Draw the track
-	s.ui.gg.draw_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_color)
+	s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			s.ui.gg.draw_line(s.x + 2, s.y + s.track_height / 2, s.x + s.track_width - 4,
-				s.y + s.track_height / 2, gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4, s.y + s.height / 2,
+				gx.rgb(0, 0, 0))
 		} else {
-			s.ui.gg.draw_line(s.x + s.track_width / 2, s.y + 2, s.x + s.track_width / 2,
-				s.y + s.track_height - 4, gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(s.x + s.width / 2, s.y + 2, s.x + s.width / 2, s.y + s.height - 4,
+				gx.rgb(0, 0, 0))
 		}
 	}
 	if !s.is_focused {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.slider_background_border_color)
 	} else {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.track_width, s.track_height, ui.slider_focused_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.slider_focused_background_border_color)
 	}
 	// Draw the thumb
 	s.draw_thumb()
 	$if bb ? {
 		draw_bb(s, s.ui)
 	}
+	draw_end(mut s)
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
@@ -235,7 +239,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 }
 
 fn (s &Slider) point_inside(x f64, y f64) bool {
-	return x >= s.x && x <= s.x + s.track_width && y >= s.y && y <= s.y + s.track_height
+	return point_inside<Slider>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
@@ -289,7 +293,7 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 }
 
 fn (mut s Slider) change_value(x int, y int) {
-	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	// TODO parser bug ` - axis`
 	mut pos := if s.orientation == .horizontal { x } else { y }
@@ -329,11 +333,12 @@ fn (mut s Slider) unfocus() {
 }
 
 fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
-	axis := if s.orientation == .horizontal { s.x } else { s.y }
-	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
-	rev_dim := if s.orientation == .horizontal { s.track_height } else { s.track_width }
+	sx, sy := s.x + s.offset_x, s.y + s.offset_y
+	axis := if s.orientation == .horizontal { sx } else { sy }
+	rev_axis := if s.orientation == .horizontal { sy } else { sx }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
 	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
-	dim := if s.orientation == .horizontal { s.track_width } else { s.track_height }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
 	if s.rev_min_max_pos {
 		pos = -pos + f32(dim)

@@ -19,9 +19,7 @@ fn main() {
 		resizable: true
 		state: app
 	}, [
-		ui.row({
-			margin: ui.Margin{10, 10, 10, 10}
-		}, [
+		ui.row({ margin: ui.Margin{10, 10, 10, 10} }, [
 			ui.button(text: 'Add user'),
 		]),
 	])

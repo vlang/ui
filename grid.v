@@ -8,6 +8,8 @@ pub mut:
 	body        [][]string
 	x           int
 	y           int
+	offset_x    int
+	offset_y    int
 	height      int
 	width       int
 	z_index     int
@@ -48,6 +50,7 @@ pub fn grid(c GridConfig) &Grid {
 }
 
 fn (mut gv Grid) draw() {
+	draw_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width
 	body := gv.body
@@ -89,6 +92,7 @@ fn (mut gv Grid) draw() {
 				y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
 		}
 	}
+	draw_end(mut gv)
 }
 
 fn min_text_width(gv Grid) int {
@@ -160,5 +164,5 @@ fn (mut gv Grid) propose_size(w int, h int) (int, int) {
 }
 
 fn (gv &Grid) point_inside(x f64, y f64) bool {
-	return x >= gv.x && x <= gv.x + gv.width && y >= gv.y && y <= gv.y + gv.height
+	return point_inside<Grid>(gv, x, y)
 }

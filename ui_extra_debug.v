@@ -17,7 +17,7 @@ fn (s &Stack) draw_bb() {
 		col)
 }
 
-fn draw_bb(wi &Widget, ui &UI) {
+fn draw_bb(mut wi Widget, ui &UI) {
 	col := gx.black
 	w, h := wi.size()
 	println('bb: $wi.type_name() ($wi.x, $wi.y ,$w, $h)')
@@ -47,7 +47,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
 	widths, heights := s.children_sizes()
 	println(txt)
-	for i, child in s.children {
+	for i, mut child in s.children {
 		name := child.type_name()
 		if mut child is Stack {
 			mut tmp := '$tab      ($depth-$i) $name :'
@@ -80,7 +80,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 	} else if parent is Window {
 		println('	parent: Window => size ($parent.width, $parent.height)  orig: ($parent.orig_width, $parent.orig_height) ')
 	}
-	for i, child in s.children {
+	for i, mut child in s.children {
 		w, h := child.size()
 		print('		$i) $child.type_name()')
 		C.printf(' %p', child)
