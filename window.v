@@ -69,6 +69,9 @@ pub mut:
 	drag_widget    Widget
 	drag_start_x   f64
 	drag_start_y   f64
+	drag_pos_x     f64
+	drag_pos_y     f64
+	drag_time      time.Time
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -455,7 +458,7 @@ fn window_resize(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_move(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
 		y: event.mouse_y / ui.gg.scale
@@ -465,7 +468,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
 		}
-		drag_child(window, e.x, e.y)
+		drag_child(mut window, e.x, e.y)
 	}
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
@@ -872,13 +875,13 @@ fn frame(mut w Window) {
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
-	animate_stop() // FIRST VERSION ANIMATE: w.animating = false
+	// animate_stop() // FIRST VERSION ANIMATE: w.animating = false
 
 	for mut child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
+	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {

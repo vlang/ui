@@ -22,9 +22,7 @@ fn main() {
 		title: 'Dropdown'
 		state: app
 	}, [
-		ui.column({
-			margin: ui.Margin{5, 5, 5, 5}
-		}, [
+		ui.column({ margin: ui.Margin{5, 5, 5, 5} }, [
 			ui.dropdown({
 				width: 140
 				def_text: 'Select an option'

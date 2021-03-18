@@ -65,9 +65,7 @@ fn main() {
 			max: 10
 			val: 2
 		)
-		label: ui.label(
-			text: '2/10'
-		)
+		label: ui.label(text: '2/10')
 	}
 	window := ui.window({
 		width: win_width
@@ -113,9 +111,7 @@ fn main() {
 		), ui.checkbox(
 			checked: true
 			text: 'Online registration'
-		), ui.checkbox(
-			text: 'Subscribe to the newsletter'
-		), app.country, ui.row({
+		), ui.checkbox(text: 'Subscribe to the newsletter'), app.country, ui.row({
 			spacing: 65
 			widths: [.3, .1]
 			heights: 30.

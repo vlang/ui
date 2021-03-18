@@ -65,9 +65,7 @@ fn main() {
 			max: 10
 			val: 2
 		)
-		label: ui.label(
-			text: '2/10'
-		)
+		label: ui.label(text: '2/10')
 	}
 	window := ui.window({
 		width: win_width
@@ -80,9 +78,7 @@ fn main() {
 			margin: ui.Margin{10, 10, 10, 10}
 			widths: [200., ui.stretch]
 			// spacing: 10
-		}, [ui.column({
-			spacing: 13
-		}, [ui.textbox(
+		}, [ui.column({ spacing: 13 }, [ui.textbox(
 			max_len: 20
 			width: 200
 			placeholder: 'First name'
@@ -112,9 +108,7 @@ fn main() {
 		), ui.checkbox(
 			checked: true
 			text: 'Online registration'
-		), ui.checkbox(
-			text: 'Subscribe to the newsletter'
-		), app.country, ui.row({
+		), ui.checkbox(text: 'Subscribe to the newsletter'), app.country, ui.row({
 			spacing: 65
 			widths: ui.compact
 		}, [ui.button(
@@ -123,24 +117,24 @@ fn main() {
 		), ui.button(
 			text: '?'
 			onclick: btn_help_click
-		)]), ui.row({
-			spacing: 5
-		}, [app.pbar, app.label])]), ui.column({
-			alignments: {
-				center: [0]
-				right: [1]
-			}
-			widths: [ui.stretch, ui.compact]
-			heights: [ui.stretch, 100.]
-		}, [ui.canvas(
-			width: 400
-			height: 275
-			draw_fn: canvas_draw
-		), ui.picture(
-			width: 100
-			height: 100
-			path: logo
-		)])]),
+		)]), ui.row({ spacing: 5 }, [app.pbar, app.label])]),
+			ui.column({
+				alignments: {
+					center: [0]
+					right: [1]
+				}
+				widths: [ui.stretch, ui.compact]
+				heights: [ui.stretch, 100.]
+			}, [ui.canvas(
+				width: 400
+				height: 275
+				draw_fn: canvas_draw
+			), ui.picture(
+				width: 100
+				height: 100
+				path: logo
+			)]),
+		]),
 		// ui.menu(
 		// 	items: [ui.MenuItem{'Delete all users', menu_click},
 		// 		ui.MenuItem{'Export users', menu_click}, ui.MenuItem{'Exit', menu_click}]

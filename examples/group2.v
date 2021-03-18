@@ -21,15 +21,9 @@ fn main() {
 		title: 'Group 2 Demo'
 		state: app
 	}, [
-		ui.column({
-			margin: ui.Margin{10, 10, 10, 10}
-		}, [
-			ui.row({
-				spacing: 20
-			}, [
-				ui.group({
-					title: 'First group'
-				}, [
+		ui.column({ margin: ui.Margin{10, 10, 10, 10} }, [
+			ui.row({ spacing: 20 }, [
+				ui.group({ title: 'First group' }, [
 					ui.textbox(
 						max_len: 20
 						width: 200
@@ -49,9 +43,7 @@ fn main() {
 						}
 					),
 				]),
-				ui.group({
-					title: 'Second group'
-				}, [
+				ui.group({ title: 'Second group' }, [
 					ui.textbox(
 						max_len: 20
 						width: 200
