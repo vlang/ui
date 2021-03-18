@@ -36,9 +36,8 @@ fn main() {
 			margin: ui.Margin{5, 5, 5, 5}
 			widths: ui.stretch
 		}, [rect, ui.rectangle(color: gx.rgb(100, 255, 100)),
-			ui.rectangle(color: gx.rgb(100, 100, 255)), ui.rectangle(
-				color: gx.rgb(255, 100, 255)
-			)]),
+			ui.rectangle(color: gx.rgb(100, 100, 255)), ui.rectangle(color: gx.rgb(255,
+				100, 255))]),
 	])
 	app.window = window
 	ui.run(window)
