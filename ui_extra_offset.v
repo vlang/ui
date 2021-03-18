@@ -33,11 +33,6 @@ fn drag_register(w Widget, ui &UI, e &MouseEvent) {
 	}
 }
 
-// fn drag_child(window Window, x f64, y f64) {
-// 	mut w := window.drag_widget
-
-// }
-
 fn drag_child(mut window Window, x f64, y f64) {
 	mut w := window.drag_widget
 	sapp.show_mouse(false)
@@ -70,3 +65,19 @@ fn drop_child(mut window Window) {
 	sapp.show_mouse(true)
 	window.drag_activated = false
 }
+
+// set offset_x and offset_y for Widget
+pub fn set_offset(mut w Widget, ox int, oy int) {
+	w.offset_x, w.offset_y = ox, oy
+	if w is Stack {
+		for mut child in w.children {
+			set_offset(mut child, ox, oy)
+		}
+	} else if w is Group {
+		for mut child in w.children {
+			set_offset(mut child, ox, oy)
+		}
+	}
+}
+
+

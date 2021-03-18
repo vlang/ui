@@ -80,7 +80,3 @@ fn draw_end(mut w Widget) {
 	w.x -= w.offset_x
 	w.y -= w.offset_y
 }
-
-fn set_offset(mut w Widget, ox int, oy int) {
-	w.offset_x, w.offset_y = ox, oy
-}
