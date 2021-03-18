@@ -3,6 +3,15 @@ module ui
 import time
 import sokol.sapp
 
+//** move mode ***
+
+enum CoordinateMode {
+	relative
+	drag // offset
+}
+
+//** Drag stuff ***
+
 // child_to_drag(w Widget) ??? Widget would needs method is_draggable
 fn drag_register(w Widget, ui &UI, e &MouseEvent) {
 	if shift_key(e.mods) {
@@ -66,6 +75,8 @@ fn drop_child(mut window Window) {
 	window.drag_activated = false
 }
 
+//**** offset ****
+
 // set offset_x and offset_y for Widget
 pub fn set_offset(mut w Widget, ox int, oy int) {
 	w.offset_x, w.offset_y = ox, oy
@@ -79,5 +90,3 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 		}
 	}
 }
-
-

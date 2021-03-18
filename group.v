@@ -146,6 +146,7 @@ fn (mut g Group) focus() {
 }
 
 fn (mut g Group) unfocus() {
+	g.unfocus_all()
 }
 
 fn (g &Group) is_focused() bool {
