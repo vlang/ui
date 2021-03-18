@@ -875,7 +875,7 @@ fn frame(mut w Window) {
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
-	// animate_stop() // FIRST VERSION ANIMATE: w.animating = false
+	// USELESS? animate_stop() // FIRST VERSION ANIMATE: w.animating = false
 
 	for mut child in children {
 		child.draw()
