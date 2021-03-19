@@ -132,10 +132,10 @@ fn main() {
 			}
 			widths: [ui.stretch, ui.compact]
 			heights: [ui.stretch, 100.]
-		}, [ui.canvas(
+		}, [ui.canvas_plus(
 			width: 400
 			height: 275
-			draw_fn: canvas_draw
+			draw_fn: draw
 		), ui.picture(
 			width: 100
 			height: 100
@@ -190,23 +190,23 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { // x_offset int, y_offset int) {
+fn draw(c &ui.CanvasPlus, app &State) { // x_offset int, y_offset int) {
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset
-	gg.draw_rect(x - 20, 0, w + 120, h + 120, gx.white)
+	c.gg.draw_rect(x - 20, 0, w + 120, h + 120, gx.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
 		// Outer border
-		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
+		c.gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
 		// Vertical separators
-		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
-		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
-		gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
+		c.gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
+		c.gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
+		c.gg.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
 		// Text values
-		gg.draw_text_def(x + 5, y + 5, user.first_name)
-		gg.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
-		gg.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
-		gg.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
+		c.gg.draw_text_def(x + 5, y + 5, user.first_name)
+		c.gg.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)
+		c.gg.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
+		c.gg.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
 	}
 }
