@@ -48,6 +48,7 @@ pub fn canvas(c CanvasConfig) &Canvas {
 		height: c.height
 		z_index: c.z_index
 		draw_fn: c.draw_fn
+		children: c.children
 	}
 	return canvas
 }
