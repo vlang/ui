@@ -4,7 +4,7 @@ import gx
 
 enum ColorType {
 	button_normal = 1
-	button_pressed = 2
+	button_pressed
 }
 
 struct Color {
