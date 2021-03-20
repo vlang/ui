@@ -15,8 +15,8 @@ const (
 )
 
 enum ButtonState {
-	normal
-	pressed
+	normal = 1 // synchronized with theme
+	pressed = 2
 }
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
@@ -31,6 +31,7 @@ pub struct ButtonConfig {
 	movable   bool
 	text_cfg  gx.TextCfg
 	text_size f64
+	theme     ColorThemeCfg = 'classic'
 }
 
 [heap]
@@ -42,7 +43,7 @@ mut:
 	text_width  int
 	text_height int
 pub mut:
-	state      ButtonState
+	state      ButtonState = ButtonState(1)
 	height     int
 	width      int
 	z_index    int
@@ -62,6 +63,9 @@ pub mut:
 	text_size  f64
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
+	// theme
+	theme_ ColorThemeCfg
+	theme  map[int]gx.Color = map[int]gx.Color{}
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -82,6 +86,7 @@ fn (mut b Button) init(parent Layout) {
 		}
 	}
 	b.set_text_size()
+	b.update_theme()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -96,6 +101,7 @@ pub fn button(c ButtonConfig) &Button {
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
+		theme_: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
 		text_size: c.text_size
@@ -128,6 +134,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 		if b.movable {
 			drag_register(b, b.ui, e)
 		}
+		b.state = .pressed
 	}
 }
 
@@ -163,7 +170,8 @@ fn (mut b Button) draw() {
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
-	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
+	bg_color := color(b.theme, ColorType(b.state))
+	// println(bg_color)
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
 	mut y := bcenter_y - h2 - 1
@@ -243,4 +251,20 @@ fn (mut b Button) unfocus() {
 
 fn (b &Button) is_focused() bool {
 	return b.is_focused
+}
+
+pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
+	b.theme_ = theme_cfg
+}
+
+pub fn (mut b Button) update_theme() {
+	mut theme := map[int]gx.Color{}
+	theme_ := b.theme_
+	if theme_ is string {
+		theme = b.ui.window.color_themes[theme_]
+	}
+	if theme_ is ColorTheme {
+		theme = theme_
+	}
+	update_colors_from(mut b.theme, theme, [.button_normal, .button_pressed])
 }

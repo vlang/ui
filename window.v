@@ -72,6 +72,8 @@ pub mut:
 	drag_pos_x     f64
 	drag_pos_y     f64
 	drag_time      time.Time
+	// themes
+	color_themes ColorThemes
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -320,6 +322,9 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		text_cfg: text_cfg
 	}
 
+	// register default color themes
+	window.register_default_color_themes()
+
 	mut font_path := ''
 	$if android {
 		font_path = 'fonts/RobotoMono-Regular.ttf'
@@ -366,6 +371,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	ui_ctx.gg.window.on_scroll(window_scroll)
 	*/
 	window.ui = ui_ctx
+
 	/*
 	mut window := &Window{
 		state: cfg.state
