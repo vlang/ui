@@ -165,7 +165,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	draw_start(mut b)
+	offset_start(mut b)
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
@@ -199,7 +199,7 @@ fn (mut b Button) draw() {
 		draw_bb(b, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
-	draw_end(mut b)
+	offset_end(mut b)
 }
 
 pub fn (mut b Button) set_text(text string) {

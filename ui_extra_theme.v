@@ -37,6 +37,7 @@ fn (mut w Window) register_default_color_themes() {
 		219, 219)})
 	w.color_themes['red'] = color_theme(Color{.button_normal, gx.light_red}, Color{.button_pressed, gx.rgb(219,
 		0, 0)})
+	w.color_themes['blue'] = color_theme(Color{.button_normal, gx.light_blue}, Color{.button_pressed, gx.blue})
 }
 
 pub fn color(theme map[int]gx.Color, id ColorType) gx.Color {

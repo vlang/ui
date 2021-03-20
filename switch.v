@@ -73,7 +73,7 @@ fn (mut s Switch) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
-	draw_start(mut s)
+	offset_start(mut s)
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
 		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
@@ -87,7 +87,7 @@ fn (mut s Switch) draw() {
 	$if bb ? {
 		draw_bb(s, s.ui)
 	}
-	draw_end(mut s)
+	offset_end(mut s)
 }
 
 fn (s &Switch) point_inside(x f64, y f64) bool {

@@ -137,7 +137,7 @@ fn main() {
 			draw_fn: draw
 			children: [{
 				x: 10
-				y: 0
+				y: 2
 				widget: ui.button(
 					text: 'Theme'
 					width: 100
@@ -146,6 +146,25 @@ fn main() {
 						ui.message_box('Built with V UI')
 					}
 				)
+			}, {
+				x: 120
+				y: 2
+				widget: ui.dropdown({
+					width: 140
+					height: 20
+					def_text: 'Select a theme'
+					on_selection_changed: dd_change
+				}, [
+					{
+						text: 'classic'
+					},
+					{
+						text: 'blue'
+					},
+					ui.DropdownItem{
+						text: 'red'
+					},
+				])
 			}]
 		), ui.picture(
 			width: 100
@@ -159,6 +178,18 @@ fn main() {
 	])
 	app.window = window
 	ui.run(window)
+}
+
+fn dd_change(mut app State, dd &ui.Dropdown) {
+	println(dd.selected().text)
+	win := dd.ui.window
+	mut b := win.child(1, 0, 0)
+	if mut b is ui.Button {
+		b.set_theme(dd.selected().text)
+		b.update_theme()
+	} else {
+		println('$b.type_name()')
+	}
 }
 
 fn menu_click() {
