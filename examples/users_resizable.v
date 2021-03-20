@@ -139,8 +139,9 @@ fn main() {
 				x: 10
 				y: 0
 				widget: ui.button(
-					text: 'Add'
+					text: 'Theme'
 					width: 100
+					theme: 'red'
 					onclick: fn (a voidptr, b voidptr) {
 						ui.message_box('Built with V UI')
 					}
