@@ -98,7 +98,7 @@ fn (mut c CanvasPlus) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c CanvasPlus) draw() {
-	draw_start(mut c)
+	offset_start(mut c)
 	parent := c.parent
 	state := parent.get_state()
 	if c.draw_fn != voidptr(0) {
@@ -108,7 +108,7 @@ fn (mut c CanvasPlus) draw() {
 		set_offset(mut child, c.x + c.offset_x, c.y + c.offset_y)
 		child.draw()
 	}
-	draw_end(mut c)
+	offset_end(mut c)
 }
 
 fn (mut c CanvasPlus) set_visible(state bool) {

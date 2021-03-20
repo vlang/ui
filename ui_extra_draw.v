@@ -70,13 +70,3 @@ fn point_inside<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
 }
-
-fn draw_start(mut w Widget) {
-	w.x += w.offset_x
-	w.y += w.offset_y
-}
-
-fn draw_end(mut w Widget) {
-	w.x -= w.offset_x
-	w.y -= w.offset_y
-}

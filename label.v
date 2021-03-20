@@ -71,7 +71,7 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut l Label) draw() {
-	draw_start(mut l)
+	offset_start(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
@@ -90,7 +90,7 @@ fn (mut l Label) draw() {
 	$if bb ? {
 		draw_bb(l, l.ui)
 	}
-	draw_end(mut l)
+	offset_end(mut l)
 }
 
 fn (mut l Label) set_visible(state bool) {

@@ -834,7 +834,7 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	draw_start(mut s)
+	offset_start(mut s)
 	// DEBUG MODE: Uncomment to display the bounding boxes
 	$if bb ? {
 		s.draw_bb()
@@ -843,7 +843,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	draw_end(mut s)
+	offset_end(mut s)
 }
 
 fn (s &Stack) margin(side MarginSide) int {

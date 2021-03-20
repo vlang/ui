@@ -203,7 +203,7 @@ fn (mut lb ListBox) init(parent Layout) {
 }
 
 fn (mut lb ListBox) draw() {
-	draw_start(mut lb)
+	offset_start(mut lb)
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	if !lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(lb.x, lb.y, lb.width + 1, lb.height + 1, lb.col_border)
@@ -214,7 +214,7 @@ fn (mut lb ListBox) draw() {
 		}
 		lb.draw_item(item, inx == lb.selection)
 	}
-	draw_end(mut lb)
+	offset_end(mut lb)
 }
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {

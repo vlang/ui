@@ -10,6 +10,16 @@ enum CoordinateMode {
 	drag // offset
 }
 
+fn offset_start(mut w Widget) {
+	w.x += w.offset_x
+	w.y += w.offset_y
+}
+
+fn offset_end(mut w Widget) {
+	w.x -= w.offset_x
+	w.y -= w.offset_y
+}
+
 //** Drag stuff ***
 
 // child_to_drag(w Widget) ??? Widget would needs method is_draggable

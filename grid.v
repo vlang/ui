@@ -50,7 +50,7 @@ pub fn grid(c GridConfig) &Grid {
 }
 
 fn (mut gv Grid) draw() {
-	draw_start(mut gv)
+	offset_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width
 	body := gv.body
@@ -92,7 +92,7 @@ fn (mut gv Grid) draw() {
 				y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
 		}
 	}
-	draw_end(mut gv)
+	offset_end(mut gv)
 }
 
 fn min_text_width(gv Grid) int {
