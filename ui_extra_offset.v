@@ -90,3 +90,9 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 		}
 	}
 }
+
+pub struct WidgetAt {
+	x      int
+	y      int
+	widget Widget
+}
