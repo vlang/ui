@@ -15,8 +15,8 @@ const (
 )
 
 enum ButtonState {
-	normal = 1 // synchronized with theme
-	pressed = 2
+	normal = 1 // synchronized with .button_normal
+	pressed
 }
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
