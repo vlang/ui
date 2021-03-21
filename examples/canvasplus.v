@@ -76,6 +76,16 @@ fn main() {
 						},
 					])
 				},
+				ui.WidgetAt{
+					x: 10
+					y: 100
+					widget: ui.listbox({
+						width: 100
+						height: 120
+						draw_lines: true
+					},
+					{'res': "Res", 'toto': "Toto", 'titi': 'Titit'})
+				}
 			]
 		), ui.picture(
 			width: 100
