@@ -42,10 +42,10 @@ pub struct MenuConfig {
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
 
 pub struct MenuItem {
-pub mut:
-	text string
 mut:
 	action MenuItemFn = MenuItemFn(0)
+pub mut:
+	text string
 }
 
 fn (mut m Menu) init(parent Layout) {
@@ -73,9 +73,7 @@ pub fn menu(c MenuConfig) &Menu {
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	if m.point_inside(e.x, e.y) {
 		i := int((e.y - m.y - m.offset_y) / menu_height)
-		// println("click menu $i")
 		item := m.items[i]
-		// println("item.text: $item.text $item.action")
 		if item.action != MenuItemFn(0) {
 			parent := m.parent
 			state := parent.get_state()
