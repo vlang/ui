@@ -34,7 +34,7 @@ pub struct CanvasPlusConfig {
 	z_index  int
 	text     string
 	draw_fn  CanvasPlusDrawFn = voidptr(0)
-	children []WidgetAt       = []WidgetAt{}
+	children []At = []At{}
 }
 
 fn (mut c CanvasPlus) init(parent Layout) {

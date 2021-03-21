@@ -64,16 +64,7 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
-	if is_empty_text_cfg(r.text_cfg) {
-		r.text_cfg = r.ui.window.text_cfg
-	}
-	if r.text_size > 0 {
-		_, win_height := r.ui.window.size()
-		r.text_cfg = gx.TextCfg{
-			...r.text_cfg
-			size: text_size_as_int(r.text_size, win_height)
-		}
-	}
+	init_text_cfg<Radio>(mut r)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
