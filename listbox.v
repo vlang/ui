@@ -30,8 +30,8 @@ mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// related to text drawing
-	text_cfg      gx.TextCfg
-	text_size     f64
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -90,9 +90,9 @@ pub mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string
 	// related to text drawing
-	text_cfg      gx.TextCfg
-	text_size     f64
-	hidden        bool
+	text_cfg  gx.TextCfg
+	text_size f64
+	hidden    bool
 }
 
 struct ListItem {
@@ -106,7 +106,7 @@ mut:
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {
-	width := text_width<ListBox>(lb,text)
+	width := text_width<ListBox>(lb, text)
 	real_w := lb.width - ui._text_offset_x * 2
 	mut draw_to := text.len
 	// println("width $width >= real_w $real_w draw_to: $draw_to")
@@ -190,10 +190,13 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-	lb.ui.gg.draw_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height, col)
-	lb.ui.gg.draw_text_def(li.x + lb.offset_x + ui._text_offset_x, li.y + lb.offset_y + lb.text_offset_y, li.draw_text)
+	lb.ui.gg.draw_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height,
+		col)
+	lb.ui.gg.draw_text_def(li.x + lb.offset_x + ui._text_offset_x, li.y + lb.offset_y +
+		lb.text_offset_y, li.draw_text)
 	if lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height, lb.col_border)
+		lb.ui.gg.draw_empty_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height,
+			lb.col_border)
 	}
 }
 
