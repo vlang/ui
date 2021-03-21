@@ -83,9 +83,12 @@ fn main() {
 						width: 100
 						height: 120
 						draw_lines: true
-					},
-					{'res': "Res", 'toto': "Toto", 'titi': 'Titit'})
-				}
+					}, map{
+						'res':  'Res'
+						'toto': 'Toto'
+						'titi': 'Titit'
+					})
+				},
 			]
 		), ui.picture(
 			width: 100
