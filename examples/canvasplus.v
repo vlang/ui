@@ -44,7 +44,7 @@ fn main() {
 			height: 275
 			draw_fn: draw
 			children: [
-				{
+				ui.At{
 					x: 10
 					y: 2
 					widget: ui.button(
@@ -56,7 +56,7 @@ fn main() {
 						}
 					)
 				},
-				{
+				ui.At{
 					x: 120
 					y: 2
 					widget: ui.dropdown({
@@ -76,7 +76,7 @@ fn main() {
 						},
 					])
 				},
-				ui.WidgetAt{
+				ui.At{
 					x: 10
 					y: 100
 					widget: ui.listbox({
@@ -89,6 +89,29 @@ fn main() {
 						'titi': 'Titit'
 					})
 				},
+				ui.At{
+					x: 150
+					y: 100
+					widget: ui.menu(
+						text: 'Menu'
+						// width: 100
+						// theme: 'red'
+						items: [
+							ui.MenuItem{
+								text: 'Delete all users'
+								action: menu_click
+							},
+							ui.MenuItem{
+								text: 'Export users'
+								action: menu_click
+							},
+							ui.MenuItem{
+								text: 'Exit'
+								action: menu_click
+							},
+						]
+					)
+				},
 			]
 		), ui.picture(
 			width: 100
@@ -97,6 +120,10 @@ fn main() {
 		)]),
 	])
 	ui.run(window)
+}
+
+fn menu_click(m &ui.Menu, item &ui.MenuItem, app voidptr) {
+	println('menu here $item.text')
 }
 
 fn dd_change(app voidptr, dd &ui.Dropdown) {

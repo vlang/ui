@@ -215,16 +215,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.ui = parent.get_ui()
 	lb.draw_count = lb.height / lb.item_height
 	lb.text_offset_y = (lb.item_height - text_height<ListBox>(lb, 'W')) / 2
-	if is_empty_text_cfg(lb.text_cfg) {
-		lb.text_cfg = lb.ui.window.text_cfg
-	}
-	if lb.text_size > 0 {
-		_, win_height := lb.ui.window.size()
-		lb.text_cfg = gx.TextCfg{
-			...lb.text_cfg
-			size: text_size_as_int(lb.text_size, win_height)
-		}
-	}
+	init_text_cfg<ListBox>(mut lb)
 	if lb.text_offset_y < 0 {
 		lb.text_offset_y = 0
 	}

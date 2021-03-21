@@ -75,16 +75,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	if is_empty_text_cfg(b.text_cfg) {
-		b.text_cfg = b.ui.window.text_cfg
-	}
-	if b.text_size > 0 {
-		_, win_height := b.ui.window.size()
-		b.text_cfg = gx.TextCfg{
-			...b.text_cfg
-			size: text_size_as_int(b.text_size, win_height)
-		}
-	}
+	init_text_cfg<Button>(mut b)
 	b.set_text_size()
 	b.update_theme()
 	mut subscriber := parent.get_subscriber()

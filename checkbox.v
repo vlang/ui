@@ -59,16 +59,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	cb.width = text_width<CheckBox>(cb, cb.text) + 5 + ui.check_mark_size
-	if is_empty_text_cfg(cb.text_cfg) {
-		cb.text_cfg = cb.ui.window.text_cfg
-	}
-	if cb.text_size > 0 {
-		_, win_height := cb.ui.window.size()
-		cb.text_cfg = gx.TextCfg{
-			...cb.text_cfg
-			size: text_size_as_int(cb.text_size, win_height)
-		}
-	}
+	init_text_cfg<CheckBox>(mut cb)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
