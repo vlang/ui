@@ -29,6 +29,9 @@ mut:
 	item_height   int      = ui._item_height
 	text_offset_y int      = ui._text_offset_y
 	id            string // To use one callback for multiple ListBoxes
+	// related to text drawing
+	text_cfg      gx.TextCfg
+	text_size     f64
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -47,10 +50,13 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		col_border: c.col_border
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 		id: c.id
 		ui: 0
 	}
 	for id, text in items {
+		// println(" append $id -> $text ")
 		list.append_item(id, text, 0)
 	}
 	return list
@@ -83,26 +89,30 @@ pub mut:
 	item_height   int      = ui._item_height
 	text_offset_y int      = ui._text_offset_y
 	id            string
+	// related to text drawing
+	text_cfg      gx.TextCfg
+	text_size     f64
 	hidden        bool
 }
 
 struct ListItem {
-	x    int
 	id   string
 	list &ListBox
 mut:
+	x         int
 	y         int
 	text      string
 	draw_text string
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {
-	width := lb.ui.gg.text_width(text)
+	width := text_width<ListBox>(lb,text)
 	real_w := lb.width - ui._text_offset_x * 2
 	mut draw_to := text.len
+	// println("width $width >= real_w $real_w draw_to: $draw_to")
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
-		for draw_to > 1 && lb.ui.gg.text_width(text[0..draw_to]) > real_w {
+		for draw_to > 1 && text_width<ListBox>(lb, text[0..draw_to]) > real_w {
 			draw_to--
 		}
 	}
@@ -178,11 +188,22 @@ pub fn (mut lb ListBox) clear() {
 }
 
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
+	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-	lb.ui.gg.draw_rect(li.x, li.y, lb.width, lb.item_height, col)
-	lb.ui.gg.draw_text_def(li.x + ui._text_offset_x, li.y + lb.text_offset_y, li.draw_text)
+	lb.ui.gg.draw_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height, col)
+	lb.ui.gg.draw_text_def(li.x + lb.offset_x + ui._text_offset_x, li.y + lb.offset_y + lb.text_offset_y, li.draw_text)
 	if lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(li.x, li.y, lb.width, lb.item_height, lb.col_border)
+		lb.ui.gg.draw_empty_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height, lb.col_border)
+	}
+}
+
+fn (mut lb ListBox) init_items() {
+	for i, mut item in lb.items {
+		// println("$i $item.text get ot draw-> ${lb.get_draw_to(item.text)}")
+		item.draw_text = item.text[0..lb.get_draw_to(item.text)]
+		item.x = lb.x
+		item.y = lb.y + lb.item_height * i
+		// println("item init $i, $item.text, $item.x $item.y")
 	}
 }
 
@@ -190,13 +211,21 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.parent = parent
 	lb.ui = parent.get_ui()
 	lb.draw_count = lb.height / lb.item_height
-	lb.text_offset_y = (lb.item_height - lb.ui.gg.text_height('W')) / 2
+	lb.text_offset_y = (lb.item_height - text_height<ListBox>(lb, 'W')) / 2
+	if is_empty_text_cfg(lb.text_cfg) {
+		lb.text_cfg = lb.ui.window.text_cfg
+	}
+	if lb.text_size > 0 {
+		_, win_height := lb.ui.window.size()
+		lb.text_cfg = gx.TextCfg{
+			...lb.text_cfg
+			size: text_size_as_int(lb.text_size, win_height)
+		}
+	}
 	if lb.text_offset_y < 0 {
 		lb.text_offset_y = 0
 	}
-	for i, item in lb.items {
-		lb.items[i].draw_text = item.text[0..lb.get_draw_to(item.text)]
-	}
+	lb.init_items()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_click, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
@@ -204,11 +233,14 @@ fn (mut lb ListBox) init(parent Layout) {
 
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
+	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
+	// println("draw rect")
 	if !lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(lb.x, lb.y, lb.width + 1, lb.height + 1, lb.col_border)
 	}
 	for inx, item in lb.items {
+		// println("$inx >= $lb.draw_count")
 		if inx >= lb.draw_count {
 			break
 		}
@@ -218,6 +250,7 @@ fn (mut lb ListBox) draw() {
 }
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {
+	// println("inside lb $x $y (${lb.x + lb.offset_x}, ${lb.y + lb.offset_y}, $lb.width, $lb.height)")
 	return point_inside<ListBox>(lb, x, y)
 }
 
@@ -227,7 +260,8 @@ fn (li &ListItem) point_inside(x f64, y f64) bool {
 }
 
 fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
-	if int(e.action) != 1 {
+	// println("onclick $e.action ${int(e.action)}")
+	if e.action != .up {
 		return
 	}
 	if !lb.point_inside(e.x, e.y) {
