@@ -81,14 +81,14 @@ fn main() {
 		}, [
 			ui.column({ spacing: 13 }, [
 			ui.textbox(
-			max_len: 20
-			width: 200
-			placeholder: 'First name'
-			text: &app.first_name
-			// is_focused: &app.started
-			is_error: &app.is_error
-			is_focused: true
-		),
+				max_len: 20
+				width: 200
+				placeholder: 'First name'
+				text: &app.first_name
+				// is_focused: &app.started
+				is_error: &app.is_error
+				is_focused: true
+			),
 			ui.textbox(
 				max_len: 50
 				width: 200
@@ -115,7 +115,8 @@ fn main() {
 				checked: true
 				text: 'Online registration'
 			),
-			ui.checkbox(text: 'Subscribe to the newsletter'), app.country,
+			ui.checkbox(text: 'Subscribe to the newsletter'),
+			app.country,
 			ui.row({
 				spacing: 65
 				widths: ui.compact
@@ -132,16 +133,27 @@ fn main() {
 		]),
 			ui.column({
 				alignments: {
-					center: [0]
-					right: [1]
+					center: [
+						0,
+					]
+					right: [
+						1,
+					]
 				}
-				widths: [ui.stretch, ui.compact]
-				heights: [ui.stretch, 100.]
-			}, [ui.canvas(
-				width: 400
-				height: 275
-				draw_fn: canvas_draw
-			),
+				widths: [
+					ui.stretch,
+					ui.compact,
+				]
+				heights: [
+					ui.stretch,
+					100.,
+				]
+			}, [
+				ui.canvas(
+					width: 400
+					height: 275
+					draw_fn: canvas_draw
+				),
 				ui.picture(
 					width: 100
 					height: 100
