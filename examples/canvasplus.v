@@ -41,80 +41,80 @@ fn main() {
 			spacing: .02
 		}, [
 			ui.canvas_plus(
-			width: 400
-			height: 275
-			draw_fn: draw
-			children: [
-				ui.At{
-					x: 10
-					y: 2
-					widget: ui.button(
-						text: 'Theme'
-						width: 100
-						theme: 'red'
-						onclick: fn (a voidptr, b voidptr) {
-							ui.message_box('Built with V UI')
-						}
-					)
-				},
-				ui.At{
-					x: 120
-					y: 2
-					widget: ui.dropdown({
-						width: 140
-						height: 20
-						def_text: 'Select a theme'
-						on_selection_changed: dd_change
-					}, [
-						{
-							text: 'classic'
-						},
-						{
-							text: 'blue'
-						},
-						ui.DropdownItem{
-							text: 'red'
-						},
-					])
-				},
-				ui.At{
-					x: 10
-					y: 100
-					widget: ui.listbox({
-						width: 100
-						height: 120
-						draw_lines: true
-					}, map{
-						'res':  'Res'
-						'toto': 'Toto'
-						'titi': 'Titit'
-					})
-				},
-				ui.At{
-					x: 150
-					y: 100
-					widget: ui.menu(
-						text: 'Menu'
-						// width: 100
-						// theme: 'red'
-						items: [
-							ui.MenuItem{
-								text: 'Delete all users'
-								action: menu_click
+				width: 400
+				height: 275
+				draw_fn: draw
+				children: [
+					ui.At{
+						x: 10
+						y: 2
+						widget: ui.button(
+							text: 'Theme'
+							width: 100
+							theme: 'red'
+							onclick: fn (a voidptr, b voidptr) {
+								ui.message_box('Built with V UI')
+							}
+						)
+					},
+					ui.At{
+						x: 120
+						y: 2
+						widget: ui.dropdown({
+							width: 140
+							height: 20
+							def_text: 'Select a theme'
+							on_selection_changed: dd_change
+						}, [
+							{
+								text: 'classic'
 							},
-							ui.MenuItem{
-								text: 'Export users'
-								action: menu_click
+							{
+								text: 'blue'
 							},
-							ui.MenuItem{
-								text: 'Exit'
-								action: menu_click
+							ui.DropdownItem{
+								text: 'red'
 							},
-						]
-					)
-				},
-			]
-		),
+						])
+					},
+					ui.At{
+						x: 10
+						y: 100
+						widget: ui.listbox({
+							width: 100
+							height: 120
+							draw_lines: true
+						}, map{
+							'res':  'Res'
+							'toto': 'Toto'
+							'titi': 'Titit'
+						})
+					},
+					ui.At{
+						x: 150
+						y: 100
+						widget: ui.menu(
+							text: 'Menu'
+							// width: 100
+							// theme: 'red'
+							items: [
+								ui.MenuItem{
+									text: 'Delete all users'
+									action: menu_click
+								},
+								ui.MenuItem{
+									text: 'Export users'
+									action: menu_click
+								},
+								ui.MenuItem{
+									text: 'Exit'
+									action: menu_click
+								},
+							]
+						)
+					},
+				]
+			),
 			ui.picture(
 				width: 100
 				height: 100
