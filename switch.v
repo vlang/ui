@@ -95,6 +95,9 @@ fn (s &Switch) point_inside(x f64, y f64) bool {
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
+	if s.hidden {
+		return
+	}
 	if !s.point_inside(e.x, e.y) {
 		return
 	}

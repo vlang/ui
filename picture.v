@@ -93,6 +93,9 @@ pub fn picture(c PictureConfig) &Picture {
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
+	if pic.hidden {
+		return
+	}
 	if pic.point_inside(e.x, e.y) {
 		if int(e.action) == 0 {
 			if pic.on_click != voidptr(0) {
@@ -103,6 +106,9 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 }
 
 fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
+	if pic.hidden {
+		return
+	}
 	if pic.point_inside(e.x, e.y) {
 		if pic.movable {
 			drag_register(pic, pic.ui, e)

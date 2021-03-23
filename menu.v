@@ -71,6 +71,9 @@ pub fn menu(c MenuConfig) &Menu {
 }
 
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
+	if m.hidden {
+		return
+	}
 	if m.point_inside(e.x, e.y) {
 		i := int((e.y - m.y - m.offset_y) / menu_height)
 		item := m.items[i]

@@ -255,6 +255,9 @@ fn (li &ListItem) point_inside(x f64, y f64) bool {
 
 fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
 	// println("onclick $e.action ${int(e.action)}")
+	if lb.hidden {
+		return
+	}
 	if e.action != .up {
 		return
 	}
@@ -281,6 +284,9 @@ fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
 
 // Up and Down keys work on the list when it's focused
 fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
+	if lb.hidden {
+		return
+	}
 	if !lb.focused {
 		return
 	}

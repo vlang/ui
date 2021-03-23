@@ -203,6 +203,9 @@ fn (mut s Slider) draw() {
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
 	if !s.is_focused {
 		return
 	}
@@ -243,6 +246,9 @@ fn (s &Slider) point_inside(x f64, y f64) bool {
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
 	if !s.point_inside_thumb(e.x, e.y) && (!s.point_inside(e.x, e.y) || s.focus_on_thumb_only) {
 		s.is_focused = false
 		return
@@ -254,6 +260,9 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 }
 
 fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
 	if s.entering && s.point_inside_thumb(e.x, e.y) {
 		// println('slider touch move DRAGGING')
 		s.dragging = true
@@ -264,6 +273,9 @@ fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 }
 
 fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
 	// println('slider touchup  NO MORE DRAGGING')
 	if s.point_inside_thumb(e.x, e.y) {
 		// println('slider touch move DRAGGING')

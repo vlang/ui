@@ -308,6 +308,9 @@ fn (mut tb TextBox) draw() {
 
 fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	//  println("tb_char")
+	if tb.hidden {
+		return
+	}
 	if !tb.is_focused {
 		return
 	}
@@ -318,6 +321,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e')
+	if tb.hidden {
+		return
+	}
 	text := *tb.text
 	if !tb.is_focused {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
@@ -571,6 +577,9 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+	if tb.hidden {
+		return
+	}
 	if !tb.point_inside(e.x, e.y) {
 		return
 	}
@@ -609,6 +618,9 @@ fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 }
 
 fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+	if tb.hidden {
+		return
+	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		return
