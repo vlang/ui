@@ -24,7 +24,8 @@ fn main() {
 			spacing: 10
 			widths: [.4, .6]
 			heights: ui.stretch
-		}, [ui.column({
+		}, [
+			ui.column({
 			spacing: 10
 			margin_: 10
 		}, [
@@ -39,12 +40,14 @@ fn main() {
 			ui.button(text: 'text above', onclick: btn_text_above_click),
 			ui.button(text: 'switch', onclick: btn_switch_click),
 			ui.button(text: 'migrate', onclick: btn_migrate_click),
-		]), ui.column({
-			spacing: 10
-			margin_: 10
-		}, [
-			ui.button(text: 'Button'),
-		])]),
+		]),
+			ui.column({
+				spacing: 10
+				margin_: 10
+			}, [
+				ui.button(text: 'Button'),
+			]),
+		]),
 	])
 	ui.run(window)
 }

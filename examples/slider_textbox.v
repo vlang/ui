@@ -74,14 +74,17 @@ fn main() {
 		title: 'Slider & textbox Example'
 		state: app
 	}, [
-		ui.column({ heights: [.1, .9] }, [ui.row({
+		ui.column({ heights: [.1, .9] }, [
+			ui.row({
 			margin: ui.Margin{50, 115, 30, 30}
 			spacing: 100
 			heights: 20.
-		}, [app.hor_textbox, app.vert_textbox]), ui.row({
-			margin: ui.Margin{100, 30, 30, 30}
-			spacing: 30
-		}, [app.hor_slider, app.vert_slider])]),
+		}, [app.hor_textbox, app.vert_textbox]),
+			ui.row({
+				margin: ui.Margin{100, 30, 30, 30}
+				spacing: 30
+			}, [app.hor_slider, app.vert_slider]),
+		]),
 	])
 	ui.run(app.window)
 }
