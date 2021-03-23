@@ -39,7 +39,8 @@ fn main() {
 		ui.row({
 			margin_: .02
 			spacing: .02
-		}, [ui.canvas_plus(
+		}, [
+			ui.canvas_plus(
 			width: 400
 			height: 275
 			draw_fn: draw
@@ -113,11 +114,13 @@ fn main() {
 					)
 				},
 			]
-		), ui.picture(
-			width: 100
-			height: 100
-			path: logo
-		)]),
+		),
+			ui.picture(
+				width: 100
+				height: 100
+				path: logo
+			),
+		]),
 	])
 	ui.run(window)
 }

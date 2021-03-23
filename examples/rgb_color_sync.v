@@ -125,42 +125,48 @@ fn main() {
 			alignments: {
 				center: [0, 1, 2, 3]
 			}
-		}, [ui.button(
+		}, [
+			ui.button(
 			text: 'Show rgb color'
 			// width: 70
 			onclick: fn (app &App, b voidptr) {
 				txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
 				ui.message_box(txt)
 			}
-		), app.rgb_rectangle, ui.row({
-			margin: {
-				right: 30
-				left: 30
-				top: 5
-				bottom: 5
-			}
-			spacing: .3
-			heights: ui.compact
-			widths: 30.
-		}, [app.r_textbox, app.g_textbox, app.b_textbox]), ui.row({
-			margin: {
-				right: 30
-				left: 30
-				top: 5
-				bottom: 5
-			}
-			spacing: .3
-			widths: 30.
-		}, [app.r_slider, app.g_slider, app.b_slider]), ui.row({
-			margin: {
-				right: 30
-				left: 30
-				top: 5
-				bottom: 5
-			}
-			spacing: .3
-			widths: 30.
-		}, [app.r_label, app.g_label, app.b_label])]),
+		),
+			app.rgb_rectangle,
+			ui.row({
+				margin: {
+					right: 30
+					left: 30
+					top: 5
+					bottom: 5
+				}
+				spacing: .3
+				heights: ui.compact
+				widths: 30.
+			}, [app.r_textbox, app.g_textbox, app.b_textbox]),
+			ui.row({
+				margin: {
+					right: 30
+					left: 30
+					top: 5
+					bottom: 5
+				}
+				spacing: .3
+				widths: 30.
+			}, [app.r_slider, app.g_slider, app.b_slider]),
+			ui.row({
+				margin: {
+					right: 30
+					left: 30
+					top: 5
+					bottom: 5
+				}
+				spacing: .3
+				widths: 30.
+			}, [app.r_label, app.g_label, app.b_label]),
+		]),
 	])
 	ui.run(app.window)
 }
