@@ -142,6 +142,9 @@ fn (r &Radio) point_inside(x f64, y f64) bool {
 }
 
 fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
+	if r.hidden {
+		return
+	}
 	if !r.point_inside(e.x, e.y) {
 		return
 	}

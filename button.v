@@ -107,6 +107,9 @@ pub fn button(c ButtonConfig) &Button {
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
@@ -121,6 +124,9 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
 	if b.point_inside(e.x, e.y) {
 		if b.movable {
 			drag_register(b, b.ui, e)

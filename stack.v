@@ -1101,6 +1101,11 @@ pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 		// 	}
 		// }
 		// s.children = children
+
+		// set child hidden
+		mut child := s.children[pos]
+		child.set_visible(false)
+		// delete child in the children tree
 		s.children.delete(pos)
 		s.update_widths(cfg, .remove)
 		s.update_heights(cfg, .remove)

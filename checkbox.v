@@ -80,6 +80,9 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
+	if cb.hidden {
+		return
+	}
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
