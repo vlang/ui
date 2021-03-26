@@ -83,7 +83,7 @@ fn main() {
 						widget: ui.listbox({
 							width: 100
 							height: 120
-							draw_lines: true
+							// draw_lines: true
 						}, map{
 							'res':  'Res'
 							'toto': 'Toto'

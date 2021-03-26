@@ -43,7 +43,7 @@ pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
 
 pub struct MenuItem {
 mut:
-	action MenuItemFn = MenuItemFn(0)
+	action MenuItemFn
 pub mut:
 	text string
 }
