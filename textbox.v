@@ -197,8 +197,13 @@ fn (mut tb TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
+const max_textbox_height = 25
+
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
+	if tb.height > max_textbox_height {
+		tb.height = max_textbox_height
+	}
 	return tb.width, tb.height
 }
 
@@ -378,6 +383,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		}
 		.backspace {
 			tb.ui.show_cursor = true
+			// println('backspace cursor_pos=$tb.cursor_pos len=${(*tb.text).len} ')
 			if text != '' {
 				if tb.cursor_pos == 0 {
 					return
