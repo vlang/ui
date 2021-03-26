@@ -42,10 +42,14 @@ fn main() {
 		title: 'V UI Demo'
 		state: app
 		mode: .resizable
-	}, [ui.column({
-		widths: ui.compact // or ui.compact
-		margin: ui.Margin{25, 25, 25, 25}
-	}, [app.button, app.picture]), app.x_transition, app.y_transition])
+	}, [
+		ui.column({
+			widths: ui.compact // or ui.compact
+			margin: ui.Margin{25, 25, 25, 25}
+		}, [app.button, app.picture]),
+		app.x_transition,
+		app.y_transition,
+	])
 	ui.run(app.window)
 }
 

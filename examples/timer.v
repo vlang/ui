@@ -47,23 +47,26 @@ fn main() {
 			// }
 			spacing: .1
 			heights: [.8, .2]
-		}, [ui.row({
+		}, [
+			ui.row({
 			margin_: .05
 			spacing: .05
 			widths: [.4, .6]
-		}, [ui.column({
+		}, [
+			ui.column({
 			spacing: .1
 			margin_: .05
 			heights: [1., 1., .5]
 		}, [ui.label(text: 'Elapsed Time:', text_size: 1. / 20),
 			ui.label(text: 'Duration:', text_size: 1. / 20),
-		]), ui.column({
-			spacing: .1
-			heights: [1., 1.]
-			widths: ui.stretch
-		}, [app.lbl_elapsed_value, app.slider])]), ui.button(text: 'Reset', onclick: on_reset),
-			app.progress_bar,
 		]),
+			ui.column({
+				spacing: .1
+				heights: [1., 1.]
+				widths: ui.stretch
+			}, [app.lbl_elapsed_value, app.slider]),
+		]),
+			ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
 	])
 	app.window = window
 	go app.timer()
