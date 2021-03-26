@@ -77,7 +77,7 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	if m.point_inside(e.x, e.y) {
 		i := int((e.y - m.y - m.offset_y) / menu_height)
 		item := m.items[i]
-		if item.action != MenuItemFn(0) {
+		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()
 			item.action(&m, &item, state)
