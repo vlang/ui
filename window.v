@@ -866,6 +866,7 @@ fn (w &Window) draw() {
 }
 
 fn frame(mut w Window) {
+<<<<<<< HEAD
 	// Commented to make timer.v fluid and working on android at the same time
 	// if !w.ui.needs_refresh {
 	// 	// Draw 3 more frames after the "stop refresh" command
@@ -874,6 +875,16 @@ fn frame(mut w Window) {
 	// 		return
 	// 	}
 	// }
+=======
+	// Commented to make timer.v fluid and working on android at the same time 
+	if !w.ui.needs_refresh {
+		// Draw 3 more frames after the "stop refresh" command
+		w.ui.ticks++
+		if w.ui.ticks > 3 {
+			return
+		}
+	}
+>>>>>>> 81c7befbe873e6ca6f9a0323cd0d596fc071afa8
 
 	// println('frame() needs_refresh=$w.ui.needs_refresh $w.ui.ticks nr children=$w.children.len')
 	// game.frame_sw.restart()
@@ -890,6 +901,7 @@ fn frame(mut w Window) {
 	}
 	w.ui.gg.end()
 	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
+	w.ui.needs_refresh = false
 }
 
 fn native_frame(mut w Window) {

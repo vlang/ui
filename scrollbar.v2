@@ -1,0 +1,400 @@
+module ui
+
+import gx
+
+/* 
+ScrollBar exists only when attached to Widget
+Is it considered as a Widget or not?
+A scrollable widget would have fields 
+hscroll and vscroll containing scrollbar
+drawing and event handling could then be delegated to
+widget
+*/
+
+const (
+	scroolbar_thumb_color                     = gx.rgb(87, 153, 245)
+	scrollbar_background_color                = gx.rgb(219, 219, 219)
+	scrollbar_background_border_color         = gx.rgb(191, 191, 191)
+	scrollbar_focused_background_border_color = gx.rgb(255, 0, 0)
+)
+
+type ScrollBarValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
+
+
+[heap]
+pub struct ScrollBar {
+pub mut:
+	widget               Widget
+	height               int // track width
+	width                int // track height
+	thumb_width          int
+	thumb_height         int
+	orientation          Orientation = Orientation.horizontal
+	// x                    int
+	// y                    int
+	// offset_x             int
+	// offset_y             int
+	// z_index              int
+	// ui                   &UI
+	val                  f32
+	min                  int
+	max                  int = 100
+	// is_focused           bool
+	// dragging             bool
+	on_value_changed     ScrollBarValueChangedFn
+	focus_on_thumb_only  bool
+	rev_min_max_pos      bool
+	thumb_in_track       bool
+	track_line_displayed bool
+	entering             bool
+	// hidden               bool
+}
+
+pub struct ScrollBarConfig {
+	width                int
+	height               int
+	z_index              int
+	min                  int
+	max                  int
+	val                  f32
+	orientation          Orientation
+	on_value_changed     ScrollBarValueChangedFn
+	focus_on_thumb_only  bool = true
+	rev_min_max_pos      bool
+	thumb_in_track       bool
+	track_line_displayed bool = true
+	entering             bool
+}
+
+fn (mut s ScrollBar) init(parent Layout) {
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, scrollbar_click, s)
+	subscriber.subscribe_method(events.on_key_down, scrollbar_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_down, scrollbar_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_up, scrollbar_mouse_up, s)
+	subscriber.subscribe_method(events.on_mouse_move, scrollbar_mouse_move, s)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, scrollbar_mouse_down, s)
+		subscriber.subscribe_method(events.on_touch_up, scrollbar_mouse_up, s)
+		subscriber.subscribe_method(events.on_touch_move, scrollbar_touch_move, s)
+	}
+}
+
+pub fn scrollbar(c ScrollBarConfig) &ScrollBar {
+	mut s := &ScrollBar{
+		height: c.height
+		width: c.width
+		min: c.min
+		max: c.max
+		val: c.val
+		orientation: c.orientation
+		on_value_changed: c.on_value_changed
+		focus_on_thumb_only: c.focus_on_thumb_only
+		rev_min_max_pos: c.rev_min_max_pos
+		thumb_in_track: c.thumb_in_track
+		track_line_displayed: c.track_line_displayed
+		ui: 0
+		z_index: c.z_index
+		entering: c.entering
+	}
+	s.set_thumb_size()
+	// if !c.thumb_in_track {
+	// 	s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
+	// } else {
+	// 	s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
+	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
+	// }
+
+	if s.min > s.max {
+		tmp := s.max
+		s.max = s.min
+		s.min = tmp
+	}
+	return s
+}
+
+fn (s &ScrollBar) draw_thumb() {
+	axis := if s.orientation == .horizontal { s.x } else { s.y }
+	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
+	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
+	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
+	if s.rev_min_max_pos {
+		pos = -pos + f32(dim)
+	}
+	pos += f32(axis)
+	if pos > axis + dim {
+		pos = f32(dim) + f32(axis)
+	}
+	if pos < axis {
+		pos = f32(axis)
+	}
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
+	if s.orientation == .horizontal {
+		s.ui.gg.draw_rect(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
+			ui.thumb_color)
+	} else {
+		s.ui.gg.draw_rect(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
+			ui.thumb_color)
+	}
+}
+
+fn (mut s ScrollBar) set_pos(x int, y int) {
+	s.x = x
+	s.y = y
+}
+
+fn (mut s ScrollBar) set_thumb_size() {
+	if !s.thumb_in_track {
+		s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
+	} else {
+		s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
+	}
+}
+
+fn (mut s ScrollBar) size() (int, int) {
+	if s.orientation == .horizontal {
+		return s.width, s.thumb_height
+	} else {
+		return s.thumb_width, s.height
+	}
+}
+
+fn (mut s ScrollBar) propose_size(w int, h int) (int, int) {
+	// TODO: fix
+	$if debug_scrollbar ? {
+		println('scrollbar propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
+	}
+	if s.orientation == .horizontal {
+		s.width = w
+	} else {
+		s.height = h
+	}
+	s.set_thumb_size()
+	return s.size()
+}
+
+fn (mut s ScrollBar) draw() {
+	offset_start(mut s)
+	// Draw the track
+	s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.scrollbar_background_color)
+	if s.track_line_displayed {
+		if s.orientation == .horizontal {
+			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4, s.y + s.height / 2,
+				gx.rgb(0, 0, 0))
+		} else {
+			s.ui.gg.draw_line(s.x + s.width / 2, s.y + 2, s.x + s.width / 2, s.y + s.height - 4,
+				gx.rgb(0, 0, 0))
+		}
+	}
+	if !s.is_focused {
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.scrollbar_background_border_color)
+	} else {
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.scrollbar_focused_background_border_color)
+	}
+	// Draw the thumb
+	s.draw_thumb()
+	$if bb ? {
+		draw_bb(s, s.ui)
+	}
+	offset_end(mut s)
+}
+
+fn scrollbar_key_down(mut s ScrollBar, e &KeyEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	if !s.is_focused {
+		return
+	}
+	match e.key {
+		.up, .left {
+			if !s.rev_min_max_pos {
+				if int(s.val) > s.min {
+					s.val--
+				}
+			} else {
+				if int(s.val) < s.max {
+					s.val++
+				}
+			}
+		}
+		.down, .right {
+			if !s.rev_min_max_pos {
+				if int(s.val) < s.max {
+					s.val++
+				}
+			} else {
+				if int(s.val) > s.min {
+					s.val--
+				}
+			}
+		}
+		else {}
+	}
+	if s.on_value_changed != voidptr(0) {
+		parent := s.parent
+		state := parent.get_state()
+		s.on_value_changed(state, s)
+	}
+}
+
+fn (s &ScrollBar) point_inside(x f64, y f64) bool {
+	return point_inside<ScrollBar>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+}
+
+fn scrollbar_click(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	if !s.point_inside_thumb(e.x, e.y) && (!s.point_inside(e.x, e.y) || s.focus_on_thumb_only) {
+		s.is_focused = false
+		return
+	}
+	if !s.focus_on_thumb_only {
+		s.change_value(e.x, e.y)
+	}
+	s.is_focused = true
+}
+
+fn scrollbar_touch_move(mut s ScrollBar, e &MouseMoveEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	if s.entering && s.point_inside_thumb(e.x, e.y) {
+		// println('scrollbar touch move DRAGGING')
+		s.dragging = true
+	}
+	if s.dragging {
+		s.change_value(int(e.x), int(e.y))
+	}
+}
+
+fn scrollbar_mouse_down(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	// println('scrollbar touchup  NO MORE DRAGGING')
+	if s.point_inside_thumb(e.x, e.y) {
+		// println('scrollbar touch move DRAGGING')
+		s.dragging = true
+	}
+}
+
+fn scrollbar_mouse_up(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
+	// println('scrollbar touchup  NO MORE DRAGGING')
+	s.dragging = false
+}
+
+fn scrollbar_mouse_move(mut s ScrollBar, e &MouseMoveEvent, zzz voidptr) {
+	// println("scrollbar: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
+	if int(e.mouse_button) == 0 {
+		// left: 0, right: 1, middle: 2
+		if s.entering && s.point_inside_thumb(e.x, e.y) {
+			// println("scrollbar DRAGGING")
+			s.dragging = true
+		}
+	} else {
+		s.dragging = false
+	}
+	if s.dragging {
+		s.change_value(int(e.x), int(e.y))
+	}
+}
+
+fn (mut s ScrollBar) change_value(x int, y int) {
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
+	axis := if s.orientation == .horizontal { s.x } else { s.y }
+	// TODO parser bug ` - axis`
+	mut pos := if s.orientation == .horizontal { x } else { y }
+	pos -= axis
+	if s.rev_min_max_pos {
+		pos = -pos + dim
+	}
+	s.val = f32(s.min) + (f32(pos) * f32(s.max - s.min)) / f32(dim)
+	if int(s.val) < s.min {
+		s.val = f32(s.min)
+	} else if int(s.val) > s.max {
+		s.val = f32(s.max)
+	}
+	if s.on_value_changed != voidptr(0) {
+		parent := s.parent
+		state := parent.get_state()
+		s.on_value_changed(state, s)
+	}
+}
+
+fn (mut s ScrollBar) set_visible(state bool) {
+	s.hidden = state
+}
+
+fn (mut s ScrollBar) focus() {
+	parent := s.parent
+	parent.unfocus_all()
+	s.is_focused = true
+}
+
+fn (s &ScrollBar) is_focused() bool {
+	return s.is_focused
+}
+
+fn (mut s ScrollBar) unfocus() {
+	s.is_focused = false
+}
+
+fn (s &ScrollBar) point_inside_thumb(x f64, y f64) bool {
+	sx, sy := s.x + s.offset_x, s.y + s.offset_y
+	axis := if s.orientation == .horizontal { sx } else { sy }
+	rev_axis := if s.orientation == .horizontal { sy } else { sx }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
+	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
+	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
+	if s.rev_min_max_pos {
+		pos = -pos + f32(dim)
+	}
+	pos += f32(axis)
+	if pos > axis + dim {
+		pos = f32(dim) + f32(axis)
+	}
+	if pos < axis {
+		pos = f32(axis)
+	}
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
+	$if android {
+		tol := 20.
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2 - tol
+			t_y := middle - tol
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		} else {
+			t_x := middle - tol
+			t_y := pos - f32(s.thumb_height) / 2 - tol
+			// println('scrollbar inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
+			// 	t_y + f32(s.thumb_height)}')
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		}
+	} $else {
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2
+			t_y := middle
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		} else {
+			t_x := middle
+			t_y := pos - f32(s.thumb_height) / 2
+			// println("scrollbar inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		}
+	}
+}
