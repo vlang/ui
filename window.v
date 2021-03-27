@@ -890,7 +890,6 @@ fn frame(mut w Window) {
 	}
 	w.ui.gg.end()
 	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
-	w.ui.needs_refresh = false
 }
 
 fn native_frame(mut w Window) {
