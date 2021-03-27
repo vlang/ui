@@ -69,7 +69,7 @@ fn main() {
 			ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
 	])
 	app.window = window
-	go app.timer()
+	// go app.timer()
 	ui.run(window)
 }
 
@@ -79,12 +79,13 @@ fn on_value_changed(mut app App, slider &ui.Slider) {
 
 fn on_reset(mut app App, button &ui.Button) {
 	app.elapsed_time = 0.0
+	go app.timer()
 }
 
 fn (mut app App) timer() {
 	for {
 		if app.elapsed_time == app.duration {
-			continue
+			break
 		}
 		if app.elapsed_time > app.duration {
 			app.elapsed_time = app.duration
