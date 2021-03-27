@@ -36,7 +36,6 @@ mut:
 	redraw_requested     bool
 	resource_cache       map[string]gg.Image
 	closed               bool
-	needs_refresh        bool = true
 	ticks                int
 }
 
@@ -147,7 +146,7 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-		gui.needs_refresh = true
+		gui.gg.refresh_ui()
 		$if macos {
 			if gui.gg.native_rendering {
 				C.darwin_window_refresh()
@@ -163,6 +162,8 @@ fn (mut gui UI) idle_loop() {
 		// in between the sleeps, whether the dialog window had been closed.
 		// This guarantees that the thread will exit at most 10ms after the
 		// closing event.
+		// kek_sleep()
+		// time.sleep(1 * time.second)
 		for i := 0; i < 50; i++ {
 			time.sleep(10 * time.millisecond)
 			if gui.closed {

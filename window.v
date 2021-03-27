@@ -120,7 +120,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		}
 	}
 	*/
-	window.ui.needs_refresh = true
+	// window.ui.needs_refresh = true
 	// window.refresh()
 	$if macos {
 		if window.ui.gg.native_rendering {
@@ -347,6 +347,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
+		ui_mode: true
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -759,7 +760,8 @@ pub fn (w &Window) close() {
 
 pub fn (mut w Window) refresh() {
 	// println('ui: window.refres()')
-	w.ui.needs_refresh = true
+	// w.ui.needs_refresh = true
+	w.ui.gg.refresh_ui()
 	$if macos {
 		C.darwin_window_refresh()
 	}
@@ -858,7 +860,7 @@ fn (w &Window) draw() {
 }
 
 fn frame(mut w Window) {
-	// Commented to make timer.v fluid and working on android at the same time 
+	// Commented to make timer.v fluid and working on android at the same time
 	// if !w.ui.needs_refresh {
 	// 	// Draw 3 more frames after the "stop refresh" command
 	// 	w.ui.ticks++
@@ -886,6 +888,7 @@ fn frame(mut w Window) {
 
 fn native_frame(mut w Window) {
 	// println('naative_frame()')
+	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
 		w.ui.ticks++
@@ -893,6 +896,7 @@ fn native_frame(mut w Window) {
 			return
 		}
 	}
+	*/
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 	if w.child_window == 0 {
 		// Render all widgets, including Canvas
@@ -900,7 +904,7 @@ fn native_frame(mut w Window) {
 			child.draw()
 		}
 	}
-	w.ui.needs_refresh = false
+	// w.ui.needs_refresh = false
 }
 
 // fn C.sapp_macos_get_window() voidptr
@@ -971,7 +975,7 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-// extract child widget in the children tree by indexes 
+// extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
 		mut children := w.root_layout.get_children()
@@ -1015,7 +1019,7 @@ pub fn (w &Window) child(from ...int) Widget {
 			}
 		}
 	}
-	// by default returns root_layout 
+	// by default returns root_layout
 	// expected when `from` is empty
 	root := w.root_layout
 	if root is Stack {
@@ -1028,7 +1032,7 @@ pub fn (w &Window) child(from ...int) Widget {
 	}
 }
 
-// ask for an update to restrucure the whole children tree from root layout 
+// ask for an update to restrucure the whole children tree from root layout
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
