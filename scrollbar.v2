@@ -2,50 +2,55 @@ module ui
 
 import gx
 
+/* 
+ScrollBar exists only when attached to Widget
+Is it considered as a Widget or not?
+A scrollable widget would have fields 
+hscroll and vscroll containing scrollbar
+drawing and event handling could then be delegated to
+widget
+*/
+
 const (
-	thumb_color                            = gx.rgb(87, 153, 245)
-	slider_background_color                = gx.rgb(219, 219, 219)
-	slider_background_border_color         = gx.rgb(191, 191, 191)
-	slider_focused_background_border_color = gx.rgb(255, 0, 0)
+	scroolbar_thumb_color                     = gx.rgb(87, 153, 245)
+	scrollbar_background_color                = gx.rgb(219, 219, 219)
+	scrollbar_background_border_color         = gx.rgb(191, 191, 191)
+	scrollbar_focused_background_border_color = gx.rgb(255, 0, 0)
 )
 
-type SliderValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
+type ScrollBarValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
-pub enum Orientation {
-	vertical = 0
-	horizontal = 1
-}
 
 [heap]
-pub struct Slider {
+pub struct ScrollBar {
 pub mut:
+	widget               Widget
 	height               int // track width
 	width                int // track height
 	thumb_width          int
 	thumb_height         int
 	orientation          Orientation = Orientation.horizontal
-	x                    int
-	y                    int
-	offset_x             int
-	offset_y             int
-	z_index              int
-	parent               Layout
-	ui                   &UI
+	// x                    int
+	// y                    int
+	// offset_x             int
+	// offset_y             int
+	// z_index              int
+	// ui                   &UI
 	val                  f32
 	min                  int
 	max                  int = 100
-	is_focused           bool
-	dragging             bool
-	on_value_changed     SliderValueChangedFn
+	// is_focused           bool
+	// dragging             bool
+	on_value_changed     ScrollBarValueChangedFn
 	focus_on_thumb_only  bool
 	rev_min_max_pos      bool
 	thumb_in_track       bool
 	track_line_displayed bool
 	entering             bool
-	hidden               bool
+	// hidden               bool
 }
 
-pub struct SliderConfig {
+pub struct ScrollBarConfig {
 	width                int
 	height               int
 	z_index              int
@@ -53,7 +58,7 @@ pub struct SliderConfig {
 	max                  int
 	val                  f32
 	orientation          Orientation
-	on_value_changed     SliderValueChangedFn
+	on_value_changed     ScrollBarValueChangedFn
 	focus_on_thumb_only  bool = true
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -61,25 +66,25 @@ pub struct SliderConfig {
 	entering             bool
 }
 
-fn (mut s Slider) init(parent Layout) {
+fn (mut s ScrollBar) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, slider_click, s)
-	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
-	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
-	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
-	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	subscriber.subscribe_method(events.on_click, scrollbar_click, s)
+	subscriber.subscribe_method(events.on_key_down, scrollbar_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_down, scrollbar_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_up, scrollbar_mouse_up, s)
+	subscriber.subscribe_method(events.on_mouse_move, scrollbar_mouse_move, s)
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
-		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
-		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
+		subscriber.subscribe_method(events.on_touch_down, scrollbar_mouse_down, s)
+		subscriber.subscribe_method(events.on_touch_up, scrollbar_mouse_up, s)
+		subscriber.subscribe_method(events.on_touch_move, scrollbar_touch_move, s)
 	}
 }
 
-pub fn slider(c SliderConfig) &Slider {
-	mut s := &Slider{
+pub fn scrollbar(c ScrollBarConfig) &ScrollBar {
+	mut s := &ScrollBar{
 		height: c.height
 		width: c.width
 		min: c.min
@@ -112,7 +117,7 @@ pub fn slider(c SliderConfig) &Slider {
 	return s
 }
 
-fn (s &Slider) draw_thumb() {
+fn (s &ScrollBar) draw_thumb() {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
 	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
@@ -139,12 +144,12 @@ fn (s &Slider) draw_thumb() {
 	}
 }
 
-fn (mut s Slider) set_pos(x int, y int) {
+fn (mut s ScrollBar) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
 
-fn (mut s Slider) set_thumb_size() {
+fn (mut s ScrollBar) set_thumb_size() {
 	if !s.thumb_in_track {
 		s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
 		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
@@ -154,7 +159,7 @@ fn (mut s Slider) set_thumb_size() {
 	}
 }
 
-fn (mut s Slider) size() (int, int) {
+fn (mut s ScrollBar) size() (int, int) {
 	if s.orientation == .horizontal {
 		return s.width, s.thumb_height
 	} else {
@@ -162,10 +167,10 @@ fn (mut s Slider) size() (int, int) {
 	}
 }
 
-fn (mut s Slider) propose_size(w int, h int) (int, int) {
+fn (mut s ScrollBar) propose_size(w int, h int) (int, int) {
 	// TODO: fix
-	$if debug_slider ? {
-		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
+	$if debug_scrollbar ? {
+		println('scrollbar propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
 	}
 	if s.orientation == .horizontal {
 		s.width = w
@@ -176,10 +181,10 @@ fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	return s.size()
 }
 
-fn (mut s Slider) draw() {
+fn (mut s ScrollBar) draw() {
 	offset_start(mut s)
 	// Draw the track
-	s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.slider_background_color)
+	s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.scrollbar_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4, s.y + s.height / 2,
@@ -190,19 +195,19 @@ fn (mut s Slider) draw() {
 		}
 	}
 	if !s.is_focused {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.slider_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.scrollbar_background_border_color)
 	} else {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.slider_focused_background_border_color)
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.scrollbar_focused_background_border_color)
 	}
 	// Draw the thumb
 	s.draw_thumb()
 	$if bb ? {
-		draw_bb(mut s, s.ui)
+		draw_bb(s, s.ui)
 	}
 	offset_end(mut s)
 }
 
-fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
+fn scrollbar_key_down(mut s ScrollBar, e &KeyEvent, zzz voidptr) {
 	if s.hidden {
 		return
 	}
@@ -241,11 +246,11 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-fn (s &Slider) point_inside(x f64, y f64) bool {
-	return point_inside<Slider>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+fn (s &ScrollBar) point_inside(x f64, y f64) bool {
+	return point_inside<ScrollBar>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
 }
 
-fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn scrollbar_click(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
 	if s.hidden {
 		return
 	}
@@ -259,12 +264,12 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
-fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+fn scrollbar_touch_move(mut s ScrollBar, e &MouseMoveEvent, zzz voidptr) {
 	if s.hidden {
 		return
 	}
 	if s.entering && s.point_inside_thumb(e.x, e.y) {
-		// println('slider touch move DRAGGING')
+		// println('scrollbar touch move DRAGGING')
 		s.dragging = true
 	}
 	if s.dragging {
@@ -272,28 +277,28 @@ fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn scrollbar_mouse_down(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
 	if s.hidden {
 		return
 	}
-	// println('slider touchup  NO MORE DRAGGING')
+	// println('scrollbar touchup  NO MORE DRAGGING')
 	if s.point_inside_thumb(e.x, e.y) {
-		// println('slider touch move DRAGGING')
+		// println('scrollbar touch move DRAGGING')
 		s.dragging = true
 	}
 }
 
-fn slider_mouse_up(mut s Slider, e &MouseEvent, zzz voidptr) {
-	// println('slider touchup  NO MORE DRAGGING')
+fn scrollbar_mouse_up(mut s ScrollBar, e &MouseEvent, zzz voidptr) {
+	// println('scrollbar touchup  NO MORE DRAGGING')
 	s.dragging = false
 }
 
-fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
-	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
+fn scrollbar_mouse_move(mut s ScrollBar, e &MouseMoveEvent, zzz voidptr) {
+	// println("scrollbar: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
 	if int(e.mouse_button) == 0 {
 		// left: 0, right: 1, middle: 2
 		if s.entering && s.point_inside_thumb(e.x, e.y) {
-			// println("slider DRAGGING")
+			// println("scrollbar DRAGGING")
 			s.dragging = true
 		}
 	} else {
@@ -304,7 +309,7 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-fn (mut s Slider) change_value(x int, y int) {
+fn (mut s ScrollBar) change_value(x int, y int) {
 	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	// TODO parser bug ` - axis`
@@ -326,25 +331,25 @@ fn (mut s Slider) change_value(x int, y int) {
 	}
 }
 
-fn (mut s Slider) set_visible(state bool) {
+fn (mut s ScrollBar) set_visible(state bool) {
 	s.hidden = state
 }
 
-fn (mut s Slider) focus() {
+fn (mut s ScrollBar) focus() {
 	parent := s.parent
 	parent.unfocus_all()
 	s.is_focused = true
 }
 
-fn (s &Slider) is_focused() bool {
+fn (s &ScrollBar) is_focused() bool {
 	return s.is_focused
 }
 
-fn (mut s Slider) unfocus() {
+fn (mut s ScrollBar) unfocus() {
 	s.is_focused = false
 }
 
-fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
+fn (s &ScrollBar) point_inside_thumb(x f64, y f64) bool {
 	sx, sy := s.x + s.offset_x, s.y + s.offset_y
 	axis := if s.orientation == .horizontal { sx } else { sy }
 	rev_axis := if s.orientation == .horizontal { sy } else { sx }
@@ -373,7 +378,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		} else {
 			t_x := middle - tol
 			t_y := pos - f32(s.thumb_height) / 2 - tol
-			// println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
+			// println('scrollbar inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
 			// 	t_y + f32(s.thumb_height)}')
 			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
 				&& y <= t_y + f32(s.thumb_height) + tol * 2
@@ -387,7 +392,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		} else {
 			t_x := middle
 			t_y := pos - f32(s.thumb_height) / 2
-			// println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
+			// println("scrollbar inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
 			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
 				&& y <= t_y + f32(s.thumb_height)
 		}
