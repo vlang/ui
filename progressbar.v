@@ -88,7 +88,7 @@ fn (mut pb ProgressBar) draw() {
 	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
 	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
 	$if bb ? {
-		draw_bb(pb, pb.ui)
+		draw_bb(mut pb, pb.ui)
 	}
 	offset_end(mut pb)
 }

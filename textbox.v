@@ -296,7 +296,7 @@ fn (mut tb TextBox) draw() {
 		tb.ui.gg.draw_rect(cursor_x, tb.y + 3, 1, tb.height - 6, gx.black) // , gx.Black)
 	}
 	$if bb ? {
-		draw_bb(tb, tb.ui)
+		draw_bb(mut tb, tb.ui)
 	}
 	offset_end(mut tb)
 }

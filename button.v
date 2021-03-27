@@ -193,7 +193,7 @@ fn (mut b Button) draw() {
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
-		draw_bb(b, b.ui)
+		draw_bb(mut b, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
 	offset_end(mut b)

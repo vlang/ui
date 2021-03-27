@@ -131,7 +131,7 @@ fn (mut r Radio) draw() {
 		draw_text<Radio>(r, r.x + check_mark_size + 10, y, val)
 	}
 	$if bb ? {
-		draw_bb(r, r.ui)
+		draw_bb(mut r, r.ui)
 	}
 	offset_end(mut r)
 }

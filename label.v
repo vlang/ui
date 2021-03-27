@@ -88,7 +88,7 @@ fn (mut l Label) draw() {
 		}
 	}
 	$if bb ? {
-		draw_bb(l, l.ui)
+		draw_bb(mut l, l.ui)
 	}
 	offset_end(mut l)
 }

@@ -85,7 +85,7 @@ fn (mut s Switch) draw() {
 			gx.white)
 	}
 	$if bb ? {
-		draw_bb(s, s.ui)
+		draw_bb(mut s, s.ui)
 	}
 	offset_end(mut s)
 }
