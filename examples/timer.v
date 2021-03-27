@@ -98,5 +98,6 @@ fn (mut app App) timer() {
 			app.progress_bar.val = int(app.elapsed_time * 100.0 / app.duration)
 		}
 		time.sleep(100000 * duration * time.microsecond)
+		app.window.refresh()
 	}
 }
