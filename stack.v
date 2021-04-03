@@ -23,7 +23,7 @@ Column & Row are identical except everything is reversed:
 /********** different size's definitions ************
 * container_size is simply: (width, height)
 * adjusted_size is (adj_width, adj_height) corresponding of the compact/fitted size inherited from children sizes
-* size() returns full_size, i.e. container_size + margin_size 
+* size() returns full_size, i.e. container_size + margin_size
 * total_spacing() returns spacing
 * free_size() returns free_size_direct and free_size_opposite (in the proper order) where:
 	* free_size_direct = container_size - total_spacing()
@@ -318,7 +318,7 @@ in ]0,1] then weighted size with two different cases: 1) fixed < 0 (updatable wi
 ***********************/
 
 fn (mut s Stack) set_cache_sizes() {
-	// 
+	//
 	s.default_sizes()
 	//
 	len := s.children.len
@@ -452,7 +452,7 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		}
-		// ch as child height with type f64 
+		// ch as child height with type f64
 		if ch > 1 {
 			// fixed size ?
 			if ch == int(ch) {
@@ -667,13 +667,13 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, force, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right), 
+			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
 				child.adj_height + child.margin(.top) + child.margin(.bottom)
 		} else if mut child is Group {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
+			child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 				child.adj_height + child.margin_top + child.margin_bottom
 		} else {
 			child_width, child_height = child.size()
@@ -704,7 +704,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 }
 
 fn (mut s Stack) set_pos(x int, y int) {
-	// could depend on anchor in the future 
+	// could depend on anchor in the future
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
 	s.x = x + s.margin(.left)
 	s.y = y + s.margin(.top)
@@ -1251,14 +1251,14 @@ pub fn (s &Stack) child(from ...int) Widget {
 			if i < from.len - 1 {
 				if ind >= 0 && ind < children.len {
 					widget := children[ind]
-					if widget is Stack {
+					if mut widget is Stack {
 						children = widget.children
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 					}
 				} else if i == -1 {
 					widget := children[children.len - 1]
-					if widget is Stack {
+					if mut widget is Stack {
 						children = widget.children
 					}
 				} else {
