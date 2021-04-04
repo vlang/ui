@@ -201,8 +201,8 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > .max_textbox_height {
-		tb.height = .max_textbox_height
+	if tb.height > ui.max_textbox_height {
+		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height
 }
