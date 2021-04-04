@@ -4,7 +4,7 @@ import time
 const (
 	win_width  = 287
 	win_height = 150
-	duration   = 10 // ms
+	duration   = 1 // ms
 )
 
 struct App {
