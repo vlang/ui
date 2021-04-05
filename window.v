@@ -914,7 +914,7 @@ fn native_frame(mut w Window) {
 }
 
 // fn C.sapp_macos_get_window() voidptr
-fn C.sapp_set_window_title(charptr)
+fn C.sapp_set_window_title(&char)
 
 // #define cls objc_getClass
 // #define sel sel_getUid
