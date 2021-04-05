@@ -38,7 +38,7 @@ fn main() {
 			text: &app.text
 			placeholder: '0'
 			// width: 135
-			text_size: 1. / 20
+			// text_size: 1. / 20
 			read_only: true
 		),
 	]
