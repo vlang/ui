@@ -20,9 +20,13 @@ fn offset_end(mut w Widget) {
 	w.y -= w.offset_y
 }
 
-//** Drag stuff ***
+//** Drag stuff ***//
 
-// child_to_drag(w Widget) ??? Widget would needs method is_draggable
+/*
+NB: would like external mechanism only depending on point_inside methods of Widgets 
+shift key (or other) to activate possible dragging
+*/
+
 fn drag_register(w Widget, ui &UI, e &MouseEvent) {
 	if shift_key(e.mods) {
 		$if drag ? {
@@ -95,6 +99,10 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 			set_offset(mut child, ox, oy)
 		}
 	} else if w is Group {
+		for mut child in w.children {
+			set_offset(mut child, ox, oy)
+		}
+	} else if w is CanvasLayout {
 		for mut child in w.children {
 			set_offset(mut child, ox, oy)
 		}

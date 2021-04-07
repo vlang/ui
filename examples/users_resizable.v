@@ -217,7 +217,7 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn draw(c &ui.CanvasPlus, app &State) {
+fn draw(c &ui.CanvasLayout, app &State) {
 	w, h := c.width, c.height
 	c.draw_rect(-20, 0, w + 120, h + 120, gx.white)
 	for i, user in app.users {

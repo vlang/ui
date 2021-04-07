@@ -201,7 +201,7 @@ fn (mut s Stack) set_children_sizes() {
 		$if scs ? {
 			println('before propose_size $i) $child.type_name() ($w,$h) ')
 		}
-		if child is Stack || child is Group || child is CanvasPlus {
+		if child is Stack || child is Group || child is CanvasLayout {
 			w, h = widths[i], heights[i]
 		} else {
 			$if scs ? {

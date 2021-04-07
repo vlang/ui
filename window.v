@@ -992,7 +992,7 @@ pub fn (w &Window) child(from ...int) Widget {
 						children = widget.children
 					} else if widget is Group {
 						children = widget.children
-					} else if widget is CanvasPlus {
+					} else if widget is CanvasLayout {
 						children = widget.children
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
