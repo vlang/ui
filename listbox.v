@@ -21,7 +21,7 @@ mut:
 	width         int
 	height        int
 	z_index       int
-	on_change      SelectionChangedFn = SelectionChangedFn(0)
+	on_change     SelectionChangedFn = SelectionChangedFn(0)
 	draw_lines    bool     // Draw a rectangle around every item?
 	col_border    gx.Color = ui._col_border // Item and list border color
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd // ListBox background color
@@ -121,8 +121,8 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 
 fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 	lb.items << ListItem{
-		x: /*lb.x*/ 0
-		y: /*lb.y +*/ lb.item_height * lb.items.len
+		x: 0
+		y: lb.item_height * lb.items.len
 		id: id
 		text: text
 		list: lb
@@ -190,13 +190,13 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-	lb.ui.gg.draw_rect(li.x + lb.x + lb.offset_x, li.y + lb.y + lb.offset_y, lb.width, lb.item_height,
-		col)
-	lb.ui.gg.draw_text_def(li.x + lb.x + lb.offset_x + ui._text_offset_x, li.y + lb.y + lb.offset_y +
-		lb.text_offset_y, li.draw_text)
+	lb.ui.gg.draw_rect(li.x + lb.x + lb.offset_x, li.y + lb.y + lb.offset_y, lb.width,
+		lb.item_height, col)
+	lb.ui.gg.draw_text_def(li.x + lb.x + lb.offset_x + ui._text_offset_x, li.y + lb.y +
+		lb.offset_y + lb.text_offset_y, li.draw_text)
 	if lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(li.x + lb.x + lb.offset_x, li.y + lb.x + lb.offset_y, lb.width, lb.item_height,
-			lb.col_border)
+		lb.ui.gg.draw_empty_rect(li.x + lb.x + lb.offset_x, li.y + lb.x + lb.offset_y,
+			lb.width, lb.item_height, lb.col_border)
 	}
 }
 
