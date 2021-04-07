@@ -23,7 +23,7 @@ fn offset_end(mut w Widget) {
 //** Drag stuff ***//
 
 /*
-NB: would like external mechanism only depending on point_inside methods of Widgets 
+NB: would like external mechanism only depending on point_inside methods of Widgets
 shift key (or other) to activate possible dragging
 */
 

@@ -29,7 +29,7 @@ fn (size Size) as_f32_array(len int) []f32 {
 	return res
 }
 
-// if size is negative, it is relative in percentage of the parent 
+// if size is negative, it is relative in percentage of the parent
 pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	return if size == -100 {
 		parent_free_size
@@ -92,7 +92,7 @@ pub struct Margins {
 	left   f32
 }
 
-// for Config 
+// for Config
 pub struct Margin {
 	top    f64
 	right  f64
