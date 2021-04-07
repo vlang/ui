@@ -21,7 +21,7 @@ mut:
 	width         int
 	height        int
 	z_index       int
-	callback      SelectionChangedFn = SelectionChangedFn(0)
+	on_change      SelectionChangedFn = SelectionChangedFn(0)
 	draw_lines    bool     // Draw a rectangle around every item?
 	col_border    gx.Color = ui._col_border // Item and list border color
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd // ListBox background color
@@ -43,7 +43,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		height: c.height
 		z_index: c.z_index
 		selection: -1
-		clbk: c.callback
+		on_change: c.on_change
 		draw_lines: c.draw_lines
 		col_bkgrnd: c.col_bkgrnd
 		col_selected: c.col_selected
@@ -80,7 +80,7 @@ pub mut:
 	items         []ListItem
 	selection     int = -1
 	draw_count    int
-	clbk          SelectionChangedFn = SelectionChangedFn(0)
+	on_change     SelectionChangedFn = SelectionChangedFn(0)
 	focused       bool
 	draw_lines    bool
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
@@ -121,8 +121,8 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 
 fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 	lb.items << ListItem{
-		x: lb.x
-		y: lb.y + lb.item_height * lb.items.len
+		x: /*lb.x*/ 0
+		y: /*lb.y +*/ lb.item_height * lb.items.len
 		id: id
 		text: text
 		list: lb
@@ -190,12 +190,12 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-	lb.ui.gg.draw_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height,
+	lb.ui.gg.draw_rect(li.x + lb.x + lb.offset_x, li.y + lb.y + lb.offset_y, lb.width, lb.item_height,
 		col)
-	lb.ui.gg.draw_text_def(li.x + lb.offset_x + ui._text_offset_x, li.y + lb.offset_y +
+	lb.ui.gg.draw_text_def(li.x + lb.x + lb.offset_x + ui._text_offset_x, li.y + lb.y + lb.offset_y +
 		lb.text_offset_y, li.draw_text)
 	if lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(li.x + lb.offset_x, li.y + lb.offset_y, lb.width, lb.item_height,
+		lb.ui.gg.draw_empty_rect(li.x + lb.x + lb.offset_x, li.y + lb.x + lb.offset_y, lb.width, lb.item_height,
 			lb.col_border)
 	}
 }
@@ -204,8 +204,8 @@ fn (mut lb ListBox) init_items() {
 	for i, mut item in lb.items {
 		// println("$i $item.text get ot draw-> ${lb.get_draw_to(item.text)}")
 		item.draw_text = item.text[0..lb.get_draw_to(item.text)]
-		item.x = lb.x
-		item.y = lb.y + lb.item_height * i
+		item.x = 0
+		item.y = lb.item_height * i
 		// println("item init $i, $item.text, $item.x $item.y")
 	}
 }
@@ -221,7 +221,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	}
 	lb.init_items()
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, on_click, lb)
+	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
 }
 
@@ -249,11 +249,11 @@ fn (lb &ListBox) point_inside(x f64, y f64) bool {
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
-	lix, liy := li.x + li.list.offset_x, li.y + li.list.offset_y
+	lix, liy := li.x + li.list.x + li.list.offset_x, li.y + li.list.y + li.list.offset_y
 	return x >= lix && x <= lix + li.list.width && y >= liy && y <= liy + li.list.item_height
 }
 
-fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
+fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	// println("onclick $e.action ${int(e.action)}")
 	if lb.hidden {
 		return
@@ -273,8 +273,8 @@ fn on_click(mut lb ListBox, e &MouseEvent, window &Window) {
 		if item.point_inside(e.x, e.y) {
 			if lb.selection != inx {
 				lb.selection = inx
-				if lb.clbk != voidptr(0) {
-					lb.clbk(window.state, lb)
+				if lb.on_change != voidptr(0) {
+					lb.on_change(window.state, lb)
 				}
 			}
 			break
@@ -310,8 +310,8 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 			return
 		}
 	}
-	if lb.clbk != voidptr(0) {
-		lb.clbk(window.state, lb)
+	if lb.on_change != voidptr(0) {
+		lb.on_change(window.state, lb)
 	}
 }
 

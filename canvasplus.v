@@ -9,6 +9,12 @@ import eventbus
 
 pub type CanvasPlusDrawFn = fn (c &CanvasPlus, state voidptr) // x_offset int, y_offset int)
 
+pub type CanvasPlusScrollFn = fn (e ScrollEvent, c &CanvasPlus)
+
+pub type CanvasPlusMouseMoveFn = fn (e MouseMoveEvent, c &CanvasPlus)
+
+pub type CanvasPlusMouseFn = fn (e MouseEvent, c &CanvasPlus)
+
 pub struct CanvasPlus {
 pub mut:
 	children   []Widget
@@ -24,16 +30,27 @@ pub mut:
 	adj_width  int
 	adj_height int
 mut:
-	parent  Layout
-	draw_fn CanvasPlusDrawFn = voidptr(0)
+	parent        Layout
+	draw_fn       CanvasPlusDrawFn      = voidptr(0)
+	mouse_down_fn CanvasPlusMouseFn     = voidptr(0)
+	mouse_up_fn   CanvasPlusMouseFn     = voidptr(0)
+	scroll_fn     CanvasPlusScrollFn    = voidptr(0)
+	mouse_move_fn CanvasPlusMouseMoveFn = voidptr(0)
 }
 
 pub struct CanvasPlusConfig {
-	width    int
-	height   int
-	z_index  int
-	text     string
-	draw_fn  CanvasPlusDrawFn = voidptr(0)
+	width         int
+	height        int
+	z_index       int
+	text          string
+	draw_fn       CanvasPlusDrawFn      = voidptr(0)
+	mouse_down_fn CanvasPlusMouseFn     = voidptr(0)
+	mouse_up_fn   CanvasPlusMouseFn     = voidptr(0)
+	scroll_fn     CanvasPlusScrollFn    = voidptr(0)
+	mouse_move_fn CanvasPlusMouseMoveFn = voidptr(0)
+	// resize_fn     ResizeFn
+	// key_down_fn   KeyFn
+	// char_fn       KeyFn
 	children []At = []At{}
 }
 
@@ -45,6 +62,12 @@ fn (mut c CanvasPlus) init(parent Layout) {
 		child.init(c)
 	}
 	c.set_adjusted_size(ui)
+	c.set_children_pos()
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_mouse_down, canvas_plus_mouse_down, c)
+	subscriber.subscribe_method(events.on_mouse_up, canvas_plus_mouse_up, c)
+	subscriber.subscribe_method(events.on_mouse_move, canvas_plus_mouse_move, c)
+	subscriber.subscribe_method(events.on_scroll, canvas_plus_scroll, c)
 }
 
 pub fn canvas_plus(c CanvasPlusConfig) &CanvasPlus {
@@ -60,9 +83,33 @@ pub fn canvas_plus(c CanvasPlusConfig) &CanvasPlus {
 		height: c.height
 		z_index: c.z_index
 		draw_fn: c.draw_fn
+		mouse_move_fn: c.mouse_move_fn
+		mouse_down_fn: c.mouse_down_fn
+		mouse_up_fn: c.mouse_up_fn
 		children: children
 	}
 	return canvas
+}
+
+fn canvas_plus_mouse_down(mut c CanvasPlus, e &MouseEvent, window &Window) {
+	if c.point_inside(e.x, e.y) && c.mouse_down_fn != voidptr(0) {
+		c.mouse_down_fn(*e, c)
+	}
+}
+
+fn canvas_plus_mouse_up(mut c CanvasPlus, e &MouseEvent, window &Window) {
+	if c.point_inside(e.x, e.y) && c.mouse_up_fn != voidptr(0) {
+		c.mouse_up_fn(*e, c)
+	}
+}
+
+fn canvas_plus_mouse_move(mut c CanvasPlus, e &MouseMoveEvent, window &Window) {
+	if c.point_inside(e.x, e.y) && c.mouse_move_fn != voidptr(0) {
+		c.mouse_move_fn(*e, c)
+	}
+}
+
+fn canvas_plus_scroll(mut c CanvasPlus, e &ScrollEvent, window &Window) {
 }
 
 fn (mut c CanvasPlus) set_adjusted_size(ui &UI) {
@@ -82,6 +129,12 @@ fn (mut c CanvasPlus) set_adjusted_size(ui &UI) {
 	c.adj_height = h
 }
 
+fn (c &CanvasPlus) set_children_pos() {
+	for mut child in c.children {
+		child.set_pos(child.x + c.x + c.offset_x, child.y + c.y + c.offset_y)
+	}
+}
+
 fn (mut c CanvasPlus) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
@@ -94,6 +147,7 @@ fn (mut c CanvasPlus) size() (int, int) {
 fn (mut c CanvasPlus) propose_size(w int, h int) (int, int) {
 	c.width = w
 	c.height = h
+	println('cvp propose $c.width $c.height')
 	return c.width, c.height
 }
 
@@ -105,8 +159,10 @@ fn (mut c CanvasPlus) draw() {
 		c.draw_fn(c, state)
 	}
 	for mut child in c.children {
-		set_offset(mut child, c.x + c.offset_x, c.y + c.offset_y)
+		// x, y := child.x, child.y
+		// child.set_pos(child.x + c.x + c.offset_x, child.y + c.y + c.offset_y)
 		child.draw()
+		// child.set_pos(x, y)
 	}
 	offset_end(mut c)
 }
@@ -153,7 +209,7 @@ fn (c &CanvasPlus) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (c &CanvasPlus) get_children() []Widget {
+pub fn (c &CanvasPlus) get_children() []Widget {
 	return c.children
 }
 

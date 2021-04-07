@@ -39,85 +39,98 @@ fn main() {
 		ui.row({
 			margin_: .02
 			spacing: .02
+			widths: [300., ui.compact]
+			heights: [300., ui.compact]
 		}, [
 			ui.canvas_plus(
-				width: 400
-				height: 275
-				draw_fn: draw
-				children: [
-					ui.At{
-						x: 10
-						y: 2
-						widget: ui.button(
-							text: 'Theme'
-							width: 100
-							theme: 'red'
-							onclick: fn (a voidptr, b voidptr) {
-								ui.message_box('Built with V UI')
-							}
-						)
-					},
-					ui.At{
-						x: 120
-						y: 2
-						widget: ui.dropdown({
-							width: 140
-							height: 20
-							def_text: 'Select a theme'
-							on_selection_changed: dd_change
-						}, [
-							{
-								text: 'classic'
+			// width: 400
+			// height: 275
+			draw_fn: draw
+			mouse_move_fn: mouse_move
+			children: [
+				ui.At{
+					x: 10
+					y: 10
+					widget: ui.button(
+						text: 'Theme'
+						width: 100
+						theme: 'red'
+						movable: true
+						onclick: fn (a voidptr, b voidptr) {
+							ui.message_box('Built with V UI')
+						}
+					)
+				},
+				ui.At{
+					x: 20
+					y: 280
+					widget: ui.label(
+						text: '(0, 0)     '
+					)
+				},
+				ui.At{
+					x: 120
+					y: 10
+					widget: ui.dropdown({
+						width: 140
+						height: 20
+						def_text: 'Select a theme'
+						on_selection_changed: dd_change
+					}, [
+						{
+							text: 'classic'
+						},
+						{
+							text: 'blue'
+						},
+						ui.DropdownItem{
+							text: 'red'
+						},
+					])
+				},
+				ui.At{
+					x: 10
+					y: 100
+					widget: ui.listbox({
+						width: 100
+						height: 120
+						on_change: lb_change
+						// draw_lines: true
+					}, map{
+						'classic': 'Classic'
+						'blue':    'Blue'
+						'red':     'Red'
+					})
+				},
+				ui.At{
+					x: 150
+					y: 100
+					widget: ui.menu(
+						text: 'Menu'
+						// width: 100
+						// theme: 'red'
+						items: [
+							ui.MenuItem{
+								text: 'Delete all users'
+								action: menu_click
 							},
-							{
-								text: 'blue'
+							ui.MenuItem{
+								text: 'Export users'
+								action: menu_click
 							},
-							ui.DropdownItem{
-								text: 'red'
+							ui.MenuItem{
+								text: 'Exit'
+								action: menu_click
 							},
-						])
-					},
-					ui.At{
-						x: 10
-						y: 100
-						widget: ui.listbox({
-							width: 100
-							height: 120
-							// draw_lines: true
-						}, map{
-							'res':  'Res'
-							'toto': 'Toto'
-							'titi': 'Titit'
-						})
-					},
-					ui.At{
-						x: 150
-						y: 100
-						widget: ui.menu(
-							text: 'Menu'
-							// width: 100
-							// theme: 'red'
-							items: [
-								ui.MenuItem{
-									text: 'Delete all users'
-									action: menu_click
-								},
-								ui.MenuItem{
-									text: 'Export users'
-									action: menu_click
-								},
-								ui.MenuItem{
-									text: 'Exit'
-									action: menu_click
-								},
-							]
-						)
-					},
-				]
-			),
+						]
+					)
+				},
+			]
+		),
 			ui.picture(
 				width: 100
 				height: 100
+				movable: true
 				path: logo
 			),
 		]),
@@ -141,7 +154,27 @@ fn dd_change(app voidptr, dd &ui.Dropdown) {
 	}
 }
 
+fn lb_change(app voidptr, lb &ui.ListBox) {
+	id, _ := lb.selected() or { 'classic', '' }
+
+	win := lb.ui.window
+	mut b := win.child(0, 0)
+	if mut b is ui.Button {
+		b.set_theme(id)
+		b.update_theme()
+	} else {
+		println('$b.type_name()')
+	}
+}
+
 fn draw(c &ui.CanvasPlus, app voidptr) {
 	w, h := c.width, c.height
-	c.draw_rect(-20, 0, w + 120, h + 120, gx.white)
+	c.draw_rect(0, 0, w, h, gx.white)
+}
+
+fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasPlus) {
+	mut l := c.get_children()[1]
+	if mut l is ui.Label {
+		l.set_text('($e.x,$e.y)')
+	}
 }

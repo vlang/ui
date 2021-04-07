@@ -537,7 +537,6 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 	if window.drag_activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
-			drag_child(window, e.x, e.y)
 		}
 		drop_child(mut window)
 	}
