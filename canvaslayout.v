@@ -64,13 +64,13 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_mouse_down, canvas_plus_mouse_down, c)
-	subscriber.subscribe_method(events.on_mouse_up, canvas_plus_mouse_up, c)
-	subscriber.subscribe_method(events.on_mouse_move, canvas_plus_mouse_move, c)
-	subscriber.subscribe_method(events.on_scroll, canvas_plus_scroll, c)
+	subscriber.subscribe_method(events.on_mouse_down, canvas_layout_mouse_down, c)
+	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
+	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
+	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
 }
 
-pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
+pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
 	mut children := []Widget{}
 	for child in c.children {
 		mut widget := child.widget
@@ -91,25 +91,25 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 	return canvas
 }
 
-fn canvas_plus_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
+fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_down_fn != voidptr(0) {
 		c.mouse_down_fn(*e, c)
 	}
 }
 
-fn canvas_plus_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
+fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_up_fn != voidptr(0) {
 		c.mouse_up_fn(*e, c)
 	}
 }
 
-fn canvas_plus_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Window) {
+fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_move_fn != voidptr(0) {
 		c.mouse_move_fn(*e, c)
 	}
 }
 
-fn canvas_plus_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
+fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {

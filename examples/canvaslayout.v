@@ -42,7 +42,7 @@ fn main() {
 			widths: [300., ui.compact]
 			heights: [300., ui.compact]
 		}, [
-			ui.canvas_plus(
+			ui.canvas_layout(
 			// width: 400
 			// height: 275
 			draw_fn: draw

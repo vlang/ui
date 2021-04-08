@@ -99,7 +99,7 @@ pub enum MouseAction {
 
 // MouseButton is same to sapp.MouseButton
 pub enum MouseButton {
-	invalid = -1
+	invalid = 256
 	left = 0
 	right = 1
 	middle = 2

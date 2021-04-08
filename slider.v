@@ -277,8 +277,8 @@ fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	// println('slider touchup  NO MORE DRAGGING')
-	if s.point_inside_thumb(e.x, e.y) {
-		// println('slider touch move DRAGGING')
+	if int(e.button) == 0 && s.point_inside_thumb(e.x, e.y) {
+		// println('slider touch move DRAGGING ${e.button}')
 		s.dragging = true
 	}
 }
