@@ -94,15 +94,15 @@ fn drop_child(mut window Window) {
 // set offset_x and offset_y for Widget
 pub fn set_offset(mut w Widget, ox int, oy int) {
 	w.offset_x, w.offset_y = ox, oy
-	if w is Stack {
+	if mut w is Stack {
 		for mut child in w.children {
 			set_offset(mut child, ox, oy)
 		}
-	} else if w is Group {
+	} else if mut w is Group {
 		for mut child in w.children {
 			set_offset(mut child, ox, oy)
 		}
-	} else if w is CanvasLayout {
+	} else if mut w is CanvasLayout {
 		for mut child in w.children {
 			set_offset(mut child, ox, oy)
 		}
