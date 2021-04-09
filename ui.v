@@ -26,6 +26,7 @@ pub mut:
 	show_cursor    bool
 	last_type_time i64
 	clipboard      &clipboard.Clipboard
+	btn_down       [3]bool
 mut:
 	// just_typed           bool
 	cb_image             gg.Image

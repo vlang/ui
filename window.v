@@ -139,7 +139,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	match e.typ {
 		.mouse_down {
 			// println("mouse down")
-			window_mouse_down(e, window.ui)
+			window_mouse_down(e, mut window.ui)
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
@@ -153,7 +153,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		}
 		.mouse_up {
 			// println('mouseup')
-			window_mouse_up(e, window.ui)
+			window_mouse_up(e, mut window.ui)
 			// NOT THERE since already done
 			// touch-like
 			window.touch.end = {
@@ -496,7 +496,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_mouse_down(event gg.Event, ui &UI) {
+fn window_mouse_down(event gg.Event, mut ui UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: .down
@@ -504,6 +504,9 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(e, window)
@@ -524,7 +527,7 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_mouse_up(event gg.Event, ui &UI) {
+fn window_mouse_up(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .up
@@ -532,6 +535,9 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = false
 	}
 
 	if window.drag_activated {

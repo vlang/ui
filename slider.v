@@ -290,7 +290,7 @@ fn slider_mouse_up(mut s Slider, e &MouseEvent, zzz voidptr) {
 
 fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
-	if int(e.mouse_button) == 0 {
+	if s.ui.btn_down[0] { // int(e.mouse_button) == 0 {
 		// left: 0, right: 1, middle: 2
 		if s.entering && s.point_inside_thumb(e.x, e.y) {
 			// println("slider DRAGGING")
