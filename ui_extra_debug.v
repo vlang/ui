@@ -87,3 +87,39 @@ fn (s &Stack) debug_show_sizes(t string) {
 		println(' size => $w, $h')
 	}
 }
+
+fn (s &Stack) debug_set_children_sizes(widths []int, heights []int) {
+	println('scs: pos: ($s.x, $s.y)')
+	mut total := 0
+	if s.direction == .row {
+		println('  left: ${s.margin(.left)}')
+		total += s.margin(.left)
+		for i, _ in s.children {
+			println('+ w[$i]: ${widths[i]}')
+			total += widths[i]
+			if i == s.children.len - 1 {
+				println('+ right: ${s.margin(.right)}')
+				total += s.margin(.right)
+			} else {
+				println('+ spacing[$i]: ${s.spacing(i)}')
+				total += s.spacing(i)
+			}
+		}
+		println('= $total == $s.real_width')
+	} else {
+		println('  top: ${s.margin(.top)}')
+		total += s.margin(.top)
+		for i, _ in s.children {
+			println('+ w[$i]: ${heights[i]}')
+			total += heights[i]
+			if i == s.children.len - 1 {
+				println('+ bottom: ${s.margin(.bottom)}')
+				total += s.margin(.bottom)
+			} else {
+				println('+ spacing[$i]: ${s.spacing(i)}')
+				total += s.spacing(i)
+			}
+		}
+		println('= $total == $s.real_height')
+	}
+}
