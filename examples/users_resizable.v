@@ -74,9 +74,9 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			margin_: .05
+			margin_: .02
 			spacing: .02
-			widths: [.3, .61]
+			widths: [.3, .64] // 1. == .64 + .3 + .02 + 2 * .02
 		}, [
 			ui.column({
 			spacing: 10
@@ -139,7 +139,6 @@ fn main() {
 			}, [app.pbar, app.label]),
 		]),
 			ui.column({
-				// margin_: 20
 				alignments: {
 					center: [
 						0,
