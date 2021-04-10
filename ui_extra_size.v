@@ -51,12 +51,12 @@ fn is_children_have_widget(children []Widget) bool {
 //***********  cache **********
 
 pub enum ChildSize {
+	compact
 	fixed
 	weighted
 	weighted_minsize
 	stretch
-	compact
-	propose
+	weighted_stretch
 }
 
 struct CachedSizes {

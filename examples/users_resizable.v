@@ -74,9 +74,9 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			margin_: .02
+			margin_: .05
 			spacing: .02
-			widths: [.3, .7]
+			widths: [.3, .61]
 		}, [
 			ui.column({
 			spacing: 10
@@ -120,9 +120,9 @@ fn main() {
 			ui.checkbox(text: 'Subscribe to the newsletter'),
 			app.country,
 			ui.row({
-				spacing: 65
-				widths: [.3, .1]
-				heights: 30.
+				widths: [.5, .2]
+				heights: 20.
+				spacing: .3
 			}, [ui.button(
 				text: 'Add user'
 				onclick: btn_add_click
@@ -133,12 +133,13 @@ fn main() {
 				),
 			]),
 			ui.row({
-				spacing: 5
-				widths: [.9, .1]
+				spacing: .05
+				widths: [.8, .15]
 				heights: ui.compact
 			}, [app.pbar, app.label]),
 		]),
 			ui.column({
+				// margin_: 20
 				alignments: {
 					center: [
 						0,
@@ -153,8 +154,9 @@ fn main() {
 				]
 				heights: [
 					ui.stretch,
-					100.,
+					ui.compact,
 				]
+				bg_color: gx.white
 			}, [
 				ui.canvas_layout(
 					width: 400
@@ -219,7 +221,7 @@ fn btn_add_click(mut app State, x voidptr) {
 
 fn draw(c &ui.CanvasLayout, app &State) {
 	w, h := c.width, c.height
-	c.draw_rect(-20, 0, w + 120, h + 120, gx.white)
+	c.draw_rect(0, 0, w, h, gx.white)
 	for i, user in app.users {
 		y := 20 + i * cell_height
 		// Outer border

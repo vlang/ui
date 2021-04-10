@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-// import gg
+import gx
 
 enum Direction {
 	row
@@ -51,6 +51,7 @@ struct StackConfig {
 	align                 Alignments
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
+	bg_color              gx.Color
 }
 
 struct Stack {
@@ -85,6 +86,7 @@ mut:
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
+	bg_color              gx.Color
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -104,6 +106,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
+		bg_color: c.bg_color
 		ui: 0
 	}
 	return s
@@ -199,7 +202,7 @@ fn (mut s Stack) set_children_sizes() {
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
 		$if scs ? {
-			println('before propose_size $i) $child.type_name() ($w,$h) ')
+			println('before propose_size $i) $child.type_name() ($w,$h) typ: (${int(c.width_type[i])}, ${int(c.height_type[i])})')
 		}
 		if child is Stack || child is Group || child is CanvasLayout {
 			w, h = widths[i], heights[i]
@@ -211,10 +214,10 @@ fn (mut s Stack) set_children_sizes() {
 				// tmp4 := (c.weight_heights[i] <= 0)
 				// println("tmp=$tmp tmp2=$tmp2 tmp3=$tmp3 tmp4=$tmp4")
 			}
-			if c.width_type[i] in [.stretch, .weighted] {
+			if c.width_type[i] in [.fixed, .stretch, .weighted] {
 				w = widths[i]
 			}
-			if c.height_type[i] in [.stretch, .weighted] {
+			if c.height_type[i] in [.fixed, .stretch, .weighted] {
 				h = heights[i]
 			}
 		}
@@ -268,10 +271,10 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 				}
 			}
 			.weighted, .weighted_minsize {
-				weight := c.weight_widths[i] / c.width_mass
-				mcw[i] = int(weight * free_width)
+				weight := c.weight_widths[i] // / c.width_mass
+				mcw[i] = int(weight * s.real_width)
 			}
-			.propose, .compact, .fixed {
+			.weighted_stretch, .compact, .fixed {
 				mcw[i] = c.fixed_widths[i]
 			}
 		}
@@ -294,9 +297,9 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 					println('.Stretch height:  $i) $child.type_name() ${mch[i]}')
 				}
 			}
-			.weighted, .weighted_minsize, .propose {
-				weight := c.weight_heights[i] / c.height_mass
-				mch[i] = int(weight * free_height)
+			.weighted, .weighted_minsize, .weighted_stretch {
+				weight := c.weight_heights[i] // / c.height_mass
+				mch[i] = int(weight * s.real_height) // free_height)
 			}
 			.compact, .fixed {
 				mch[i] = c.fixed_heights[i]
@@ -310,9 +313,9 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 }
 
 /*********************
-How to interpret weight ?
-if weight_<size>s[i] is :
-== 0 then fixed size
+How to interpret <size>s[i] (widths[i] or heights[i]) ?
+if <size>s[i] is :
+== ui.compact (=0) then fixed size
 in ]0,1] then weighted size with two different cases: 1) fixed < 0 (updatable widget with propose_size) and 2) fixed ==0 (static)
 == -2 then adjusted size
 ***********************/
@@ -327,7 +330,7 @@ fn (mut s Stack) set_cache_sizes() {
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
 	c.width_mass, c.height_mass = 0., 0.
-	// fixed_<size>s and weight_<size>s can be cached in the Stack struct as private fields
+	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
@@ -337,33 +340,27 @@ fn (mut s Stack) set_cache_sizes() {
 	for i, mut child in s.children {
 		mut cw := s.widths[i] or { 0. }
 		mut ch := s.heights[i] or { 0. }
+
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
-		// if ! (child is Stack) {
+
 		if mut child is Stack {
 			adj_child_width, adj_child_height = child.adjustable_size()
 		}
-		if adj_child_width == 0 && cw == 0 {
-			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths[$i]')
-			}
+
+		// fix compat when child has size 0
+		if adj_child_width == 0 && cw == compact {
 			s.widths[i] = stretch
 			cw = stretch
 		}
-		if adj_child_height == 0 && ch == 0 {
-			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact heights for $child.type_name() $s.heights[$i]')
-			}
+		if adj_child_height == 0 && ch == compact {
 			s.heights[i] = stretch
 			ch = stretch
 		}
-		// }
-		// adj_child_width, adj_child_height := child.size()
-		// TODO: here test if widget is zero sized????
+
 		// cw as child width with type f64
 		if cw > 1 {
-			// fixed size ?
-			if cw == int(cw) {
+			if cw == int(cw) { // fixed size ?
 				c.width_type[i] = .fixed
 				c.fixed_widths[i] = int(cw)
 				if s.direction == .row {
@@ -425,9 +422,9 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		} else if cw >= -1 {
-			// weight_widths is now  means that the children can have their size updated from the parent
+			// weight_widths means that the children can have their size updated from the parent
 			// even reducing their size!!!
-			c.width_type[i] = .propose
+			c.width_type[i] = .weighted_stretch
 			c.weight_widths[i] = -cw
 			// This is the initial size
 			c.fixed_widths[i] = adj_child_width
@@ -439,9 +436,9 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else if cw == stretch {
+		} else if cw <= stretch {
 			c.width_type[i] = .stretch
-			c.weight_widths[i] = 1.0
+			c.weight_widths[i] = cw / stretch
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row {
 				c.width_mass += c.weight_widths[i]
@@ -452,6 +449,7 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		}
+
 		// ch as child height with type f64
 		if ch > 1 {
 			// fixed size ?
@@ -519,7 +517,7 @@ fn (mut s Stack) set_cache_sizes() {
 		} else if ch >= -1 {
 			// weight_heights is now  means that the children can have their size updated from the parent
 			// even reducing their size!!!
-			c.height_type[i] = .propose
+			c.height_type[i] = .weighted_stretch
 			c.weight_heights[i] = -cw
 			// This is the initial size
 			c.fixed_heights[i] = adj_child_height
@@ -531,9 +529,9 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else if ch == stretch {
+		} else if ch <= stretch {
 			c.height_type[i] = .stretch
-			c.weight_heights[i] = 1.
+			c.weight_heights[i] = ch / stretch
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column {
 				c.height_mass += c.weight_heights[i]
@@ -835,7 +833,9 @@ fn (mut s Stack) set_drawing_children() {
 
 fn (mut s Stack) draw() {
 	offset_start(mut s)
-	// DEBUG MODE: Uncomment to display the bounding boxes
+	if s.bg_color != no_color {
+		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, s.bg_color)
+	}
 	$if bb ? {
 		s.draw_bb()
 	}

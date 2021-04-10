@@ -158,6 +158,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// b.height = h
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
+	// println("but prop size: $w, $h => $b.width, $b.height")
 	return b.width, b.height
 }
 
