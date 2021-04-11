@@ -14,6 +14,8 @@ mut:
 	y         int
 	offset_x  int
 	offset_y  int
+	width     int
+	height    int
 	z_index   int
 	ui        &UI
 	text_cfg  gx.TextCfg
@@ -58,16 +60,22 @@ fn (mut l Label) set_pos(x int, y int) {
 }
 
 fn (mut l Label) size() (int, int) {
-	// println("size $l.text")
-	mut w, mut h := text_size<Label>(l, l.text)
-	// println("label size: $w, $h ${l.text.split('\n').len}")
-	return w, h * l.text.split('\n').len
+	if l.width == 0 && l.height == 0 {
+		// println("size $l.text")
+		mut w, mut h := text_size<Label>(l, l.text)
+		// println("label size: $w, $h ${l.text.split('\n').len}")
+		return w, h * l.text.split('\n').len
+	} else {
+		return l.width, l.height
+	}
 }
 
 fn (mut l Label) propose_size(w int, h int) (int, int) {
-	ww, hh := text_size<Label>(l, l.text)
-	// First return the width, then the height multiplied by line count.
-	return ww, hh * l.text.split('\n').len
+	l.width, l.height = w, h
+	// ww, hh := text_size<Label>(l, l.text)
+	// // First return the width, then the height multiplied by line count.
+	// return ww, hh * l.text.split('\n').len
+	return l.size()
 }
 
 fn (mut l Label) draw() {

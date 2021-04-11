@@ -88,20 +88,20 @@ fn (s &Stack) debug_show_sizes(t string) {
 	}
 }
 
-fn (s &Stack) debug_set_children_sizes(widths []int, heights []int) {
-	println('scs: pos: ($s.x, $s.y)')
+fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSizes) {
+	println('scs: pos: ($s.x, $s.y) real: ($s.real_width, $s.real_height)')
 	mut total := 0
 	if s.direction == .row {
-		println('  left: ${s.margin(.left)}')
+		println('  left: ${s.margin(.left)} $s.margins.left')
 		total += s.margin(.left)
 		for i, _ in s.children {
-			println('+ w[$i]: ${widths[i]}')
+			println('+ w[$i]: ${widths[i]} ${c.weight_widths[i]}')
 			total += widths[i]
 			if i == s.children.len - 1 {
-				println('+ right: ${s.margin(.right)}')
+				println('+ right: ${s.margin(.right)} $s.margins.right')
 				total += s.margin(.right)
 			} else {
-				println('+ spacing[$i]: ${s.spacing(i)}')
+				println('+ spacing[$i]: ${s.spacing(i)} ${s.spacings[i]}')
 				total += s.spacing(i)
 			}
 		}

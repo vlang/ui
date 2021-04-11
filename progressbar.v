@@ -75,6 +75,7 @@ fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	return w, h
 	*/
 	pb.width = w
+	pb.height = h
 	return pb.width, pb.height
 }
 

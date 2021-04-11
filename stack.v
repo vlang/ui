@@ -205,7 +205,7 @@ fn (mut s Stack) set_children_sizes() {
 	}
 	// Only for debug stuff
 	$if scs ? {
-		s.debug_set_children_sizes(widths, heights)
+		s.debug_set_children_sizes(widths, heights, c)
 	}
 }
 

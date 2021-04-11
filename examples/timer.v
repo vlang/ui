@@ -3,7 +3,7 @@ import time
 
 const (
 	win_width  = 287
-	win_height = 150
+	win_height = 155
 	duration   = 1 // ms
 )
 
@@ -46,27 +46,32 @@ fn main() {
 			// 	center: [1]
 			// }
 			spacing: .1
-			heights: [.8, .2]
+			heights: [.5, .1, .1]
 		}, [
 			ui.row({
 			margin_: .05
 			spacing: .05
-			widths: [.4, .6]
+			widths: [.3, .55]
 		}, [
 			ui.column({
 			spacing: .1
 			margin_: .05
-			heights: [1., 1., .5]
+			heights: [.2, .1, .1]
 		}, [ui.label(text: 'Elapsed Time:', text_size: 1. / 20),
 			ui.label(text: 'Duration:', text_size: 1. / 20),
 		]),
 			ui.column({
 				spacing: .1
-				heights: [1., 1.]
+				heights: [.4, .4]
 				widths: ui.stretch
 			}, [app.lbl_elapsed_value, app.slider]),
 		]),
-			ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
+			ui.row({
+				margin_: .05
+				spacing: .05
+				widths: [.3, .55]
+			}, [ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
+		]),
 	])
 	app.window = window
 	// go app.timer()

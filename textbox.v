@@ -248,10 +248,11 @@ fn (mut tb TextBox) draw() {
 				if i >= text.len {
 					continue
 				}
-				if tb.ui.gg.text_width(text[i..]) > tb.width {
-					skip_idx = i + 3
-					break
-				}
+				// TODO: To fix since it fails when resizing to thin window
+				// if tb.ui.gg.text_width(text[i..]) > tb.width {
+				// 	skip_idx = i + 3
+				// 	break
+				// }
 			}
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
