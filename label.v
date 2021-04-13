@@ -8,6 +8,7 @@ import gx
 [heap]
 pub struct Label {
 mut:
+	id        string
 	text      string
 	parent    Layout
 	x         int
@@ -24,6 +25,7 @@ mut:
 }
 
 pub struct LabelConfig {
+	id        string
 	z_index   int
 	text      string
 	text_cfg  gx.TextCfg
@@ -47,6 +49,7 @@ fn (mut l Label) init(parent Layout) {
 
 pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
+		id: c.id
 		text: c.text
 		ui: 0
 		z_index: c.z_index

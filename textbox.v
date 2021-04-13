@@ -193,6 +193,14 @@ fn (mut t TextBox) set_pos(x int, y int) {
 	t.y = y
 }
 
+fn (tb &TextBox) text_size() (int, int) {
+	w, mut h := text_size<TextBox>(tb, tb.text)
+	if tb.is_multi {
+		h = h * tb.text.split('\n').len
+	}
+	return w, h
+}
+
 fn (mut tb TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
@@ -201,7 +209,7 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height {
+	if tb.height > ui.max_textbox_height && !tb.ui.window.resizable {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height

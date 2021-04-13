@@ -38,7 +38,7 @@ fn main() {
 			text: &app.text
 			placeholder: '0'
 			// width: 135
-			// text_size: 1. / 20
+			text_size: 1. / 20
 			read_only: true
 		),
 	]
@@ -59,7 +59,7 @@ fn main() {
 		ui.column({
 			margin_: 5
 			spacing: 5
-			heights: [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])
 	// app.text = "size= ${app.window.width} ${app.window.height}"

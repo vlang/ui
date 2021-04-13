@@ -24,6 +24,8 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
+pub type InitFn = fn (window &Window)
+
 [heap]
 pub struct Window {
 pub mut:
@@ -45,6 +47,7 @@ pub mut:
 	width         int
 	height        int
 	bg_color      gx.Color
+	init_fn       InitFn
 	click_fn      ClickFn
 	mouse_down_fn ClickFn
 	mouse_up_fn   ClickFn
@@ -88,6 +91,7 @@ pub:
 	state                 voidptr
 	draw_fn               DrawFn
 	bg_color              gx.Color = ui.default_window_color
+	on_init               InitFn
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -251,6 +255,9 @@ fn gg_init(mut window Window) {
 		println('init $child.type_name()')
 		child.init(window)
 		window.register_child(*child)
+	}
+	if window.init_fn != voidptr(0) {
+		window.init_fn(window)
 	}
 }
 
@@ -1004,6 +1011,10 @@ fn (mut w Window) register_child(child Widget) {
 	}
 	if child is ListBox {
 		// println("register ListBox")
+		w.widgets[child.id] = child
+	}
+	if child is Label {
+		// println("register Label")
 		w.widgets[child.id] = child
 	}
 }
