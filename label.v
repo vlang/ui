@@ -26,6 +26,8 @@ mut:
 
 pub struct LabelConfig {
 	id        string
+	width     int
+	height    int
 	z_index   int
 	text      string
 	text_cfg  gx.TextCfg
@@ -51,6 +53,8 @@ pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
 		id: c.id
 		text: c.text
+		width: c.width
+		height: c.height
 		ui: 0
 		z_index: c.z_index
 	}
