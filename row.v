@@ -7,6 +7,7 @@ import gx
 
 pub struct RowConfig {
 pub:
+	id        string
 	width     int
 	height    int
 	alignment VerticalAlignment
@@ -25,6 +26,7 @@ pub:
 
 pub fn row(c RowConfig, children []Widget) &Stack {
 	return stack({
+		id: c.id
 		height: c.height
 		width: c.width
 		vertical_alignment: c.alignment

@@ -63,6 +63,8 @@ struct CachedSizes {
 mut:
 	width_type     []ChildSize
 	height_type    []ChildSize
+	adj_widths     []int
+	adj_heights    []int
 	fixed_widths   []int
 	fixed_heights  []int
 	fixed_width    int

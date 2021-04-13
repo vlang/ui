@@ -36,6 +36,7 @@ N.B.:
 ***********************************/
 
 struct StackConfig {
+	id                   string
 	width                int // To remove soon
 	height               int // To remove soon
 	vertical_alignment   VerticalAlignment
@@ -57,9 +58,9 @@ struct StackConfig {
 struct Stack {
 	cache CachedSizes
 pub mut:
-	offset_x int
-	offset_y int
-mut:
+	id                   string
+	offset_x             int
+	offset_y             int
 	x                    int
 	y                    int
 	width                int
@@ -94,6 +95,7 @@ mut:
 fn stack(c StackConfig, children []Widget) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
+		id: c.id
 		height: c.height // become real_height
 		width: c.width // become real_width
 		vertical_alignment: c.vertical_alignment
@@ -187,10 +189,10 @@ fn (mut s Stack) set_children_sizes() {
 		if child is Stack || child is Group || child is CanvasLayout {
 			w, h = widths[i], heights[i]
 		} else {
-			if c.width_type[i] in [.compact, .fixed, .stretch, .weighted] {
+			if c.width_type[i] in [.fixed, .stretch, .weighted] {
 				w = widths[i]
 			}
-			if c.height_type[i] in [.compact, .fixed, .stretch, .weighted] {
+			if c.height_type[i] in [.fixed, .stretch, .weighted] {
 				h = heights[i]
 			}
 		}
@@ -292,6 +294,7 @@ fn (mut s Stack) set_cache_sizes() {
 	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
+	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
 	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)

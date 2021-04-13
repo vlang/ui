@@ -6,6 +6,7 @@ module ui
 import gx
 
 pub struct ColumnConfig {
+	id        string
 	width     int // To remove soon
 	height    int // To remove soon
 	alignment HorizontalAlignment
@@ -24,6 +25,7 @@ pub struct ColumnConfig {
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {
 	return stack({
+		id: c.id
 		height: c.height
 		width: c.width
 		horizontal_alignment: c.alignment

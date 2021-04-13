@@ -22,6 +22,7 @@ enum ButtonState {
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
+	id        string
 	text      string
 	icon_path string
 	onclick   ButtonClickFn
@@ -43,6 +44,7 @@ mut:
 	text_width  int
 	text_height int
 pub mut:
+	id         string
 	state      ButtonState = ButtonState(1)
 	height     int
 	width      int
@@ -85,6 +87,7 @@ fn (mut b Button) init(parent Layout) {
 
 pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
+		id: c.id
 		width_: c.width
 		height_: c.height
 		z_index: c.z_index

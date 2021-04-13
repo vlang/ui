@@ -150,7 +150,7 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 	}
 	// println('e.y=$e.y r.y=$r.y')
 	y := e.y - r.y
-	r.selected_index = (y) / (r.height + 5)
+	r.selected_index = y / (r.height + 5)
 	if r.selected_index == r.values.len {
 		r.selected_index = r.values.len - 1
 	}

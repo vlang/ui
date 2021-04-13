@@ -59,12 +59,16 @@ fn (mut l Label) set_pos(x int, y int) {
 	l.y = y
 }
 
+fn (l &Label) text_size() (int, int) {
+	// println("size $l.text")
+	w, h := text_size<Label>(l, l.text)
+	// println("label size: $w, $h ${l.text.split('\n').len}")
+	return w, h * l.text.split('\n').len
+}
+
 fn (mut l Label) size() (int, int) {
 	if l.width == 0 && l.height == 0 {
-		// println("size $l.text")
-		mut w, mut h := text_size<Label>(l, l.text)
-		// println("label size: $w, $h ${l.text.split('\n').len}")
-		return w, h * l.text.split('\n').len
+		return l.text_size()
 	} else {
 		return l.width, l.height
 	}

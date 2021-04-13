@@ -3,7 +3,7 @@ module ui
 import gx
 import eventbus
 
-type SelectionChangedFn = fn (voidptr, voidptr) // The second will be ListBox
+type SelectionChangedFn = fn (voidptr, voidptr) // The second arg is ListBox
 
 const (
 	_item_height     = 20
@@ -32,6 +32,7 @@ mut:
 	// related to text drawing
 	text_cfg  gx.TextCfg
 	text_size f64
+	selection int = -1
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -42,7 +43,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
-		selection: -1
+		selection: c.selection
 		on_change: c.on_change
 		draw_lines: c.draw_lines
 		col_bkgrnd: c.col_bkgrnd

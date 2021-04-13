@@ -33,6 +33,7 @@ pub mut:
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
+	widgets       map[string]Widget
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -246,8 +247,10 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
 	for _, mut child in window.children {
-		// println('init $child.type_name()')
+		//
+		println('init $child.type_name()')
 		child.init(window)
+		window.register_child(*child)
 	}
 }
 
@@ -984,6 +987,25 @@ pub fn (window &Window) unfocus_all() {
 
 pub fn (w &Window) get_children() []Widget {
 	return w.children
+}
+
+// Experimental: attempt to register child to get it by id from window
+fn (mut w Window) register_child(child Widget) {
+	if child is Stack {
+		// println("register Stack")
+		w.widgets[child.id] = child
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	}
+	if child is Button {
+		// println("register Button")
+		w.widgets[child.id] = child
+	}
+	if child is ListBox {
+		// println("register ListBox")
+		w.widgets[child.id] = child
+	}
 }
 
 // extract child widget in the children tree by indexes
