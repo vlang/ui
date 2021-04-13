@@ -319,6 +319,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// orig_width: width // 800
 		// orig_height: height // 600
 		children: children
+		init_fn: cfg.on_init
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
 		char_fn: cfg.on_char
