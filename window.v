@@ -250,6 +250,7 @@ fn gg_init(mut window Window) {
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
+	// println('ui.window($cfg.native_rendering)')
 	/*
 	println('window()')
 	defer {
@@ -887,7 +888,7 @@ fn frame(mut w Window) {
 }
 
 fn native_frame(mut w Window) {
-	// println('naative_frame()')
+	// println('ui.native_frame()')
 	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
@@ -908,7 +909,7 @@ fn native_frame(mut w Window) {
 }
 
 // fn C.sapp_macos_get_window() voidptr
-fn C.sapp_set_window_title(charptr)
+fn C.sapp_set_window_title(&char)
 
 // #define cls objc_getClass
 // #define sel sel_getUid
