@@ -2,8 +2,8 @@ import ui
 import os
 
 const (
-	win_width                = 400
-	win_height               = 400
+	win_width                = 500
+	win_height               = 500
 	picture_width_and_height = 100
 )
 

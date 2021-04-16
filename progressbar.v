@@ -75,11 +75,12 @@ fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	return w, h
 	*/
 	pb.width = w
+	pb.height = h
 	return pb.width, pb.height
 }
 
 fn (mut pb ProgressBar) draw() {
-	draw_start(mut pb)
+	offset_start(mut pb)
 	// Draw the gray background
 	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)
 	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_border_color)
@@ -88,9 +89,9 @@ fn (mut pb ProgressBar) draw() {
 	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
 	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
 	$if bb ? {
-		draw_bb(pb, pb.ui)
+		draw_bb(mut pb, pb.ui)
 	}
-	draw_end(mut pb)
+	offset_end(mut pb)
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {

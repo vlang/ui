@@ -8,12 +8,15 @@ import gx
 [heap]
 pub struct Label {
 mut:
+	id        string
 	text      string
 	parent    Layout
 	x         int
 	y         int
 	offset_x  int
 	offset_y  int
+	width     int
+	height    int
 	z_index   int
 	ui        &UI
 	text_cfg  gx.TextCfg
@@ -22,6 +25,9 @@ mut:
 }
 
 pub struct LabelConfig {
+	id        string
+	width     int
+	height    int
 	z_index   int
 	text      string
 	text_cfg  gx.TextCfg
@@ -45,7 +51,10 @@ fn (mut l Label) init(parent Layout) {
 
 pub fn label(c LabelConfig) &Label {
 	lbl := &Label{
+		id: c.id
 		text: c.text
+		width: c.width
+		height: c.height
 		ui: 0
 		z_index: c.z_index
 	}
@@ -57,21 +66,31 @@ fn (mut l Label) set_pos(x int, y int) {
 	l.y = y
 }
 
-fn (mut l Label) size() (int, int) {
+fn (l &Label) text_size() (int, int) {
 	// println("size $l.text")
-	mut w, mut h := text_size<Label>(l, l.text)
+	w, h := text_size<Label>(l, l.text)
 	// println("label size: $w, $h ${l.text.split('\n').len}")
 	return w, h * l.text.split('\n').len
 }
 
+fn (mut l Label) size() (int, int) {
+	if l.width == 0 && l.height == 0 {
+		return l.text_size()
+	} else {
+		return l.width, l.height
+	}
+}
+
 fn (mut l Label) propose_size(w int, h int) (int, int) {
-	ww, hh := text_size<Label>(l, l.text)
-	// First return the width, then the height multiplied by line count.
-	return ww, hh * l.text.split('\n').len
+	l.width, l.height = w, h
+	// ww, hh := text_size<Label>(l, l.text)
+	// // First return the width, then the height multiplied by line count.
+	// return ww, hh * l.text.split('\n').len
+	return l.size()
 }
 
 fn (mut l Label) draw() {
-	draw_start(mut l)
+	offset_start(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
@@ -88,9 +107,9 @@ fn (mut l Label) draw() {
 		}
 	}
 	$if bb ? {
-		draw_bb(l, l.ui)
+		draw_bb(mut l, l.ui)
 	}
-	draw_end(mut l)
+	offset_end(mut l)
 }
 
 fn (mut l Label) set_visible(state bool) {

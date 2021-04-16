@@ -26,6 +26,7 @@ pub mut:
 	show_cursor    bool
 	last_type_time i64
 	clipboard      &clipboard.Clipboard
+	btn_down       [3]bool
 mut:
 	// just_typed           bool
 	cb_image             gg.Image
@@ -99,7 +100,7 @@ pub enum MouseAction {
 
 // MouseButton is same to sapp.MouseButton
 pub enum MouseButton {
-	invalid = -1
+	invalid = 256
 	left = 0
 	right = 1
 	middle = 2

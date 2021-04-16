@@ -24,6 +24,8 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
+pub type InitFn = fn (window &Window)
+
 [heap]
 pub struct Window {
 pub mut:
@@ -33,6 +35,7 @@ pub mut:
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
+	widgets       map[string]Widget
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -44,6 +47,7 @@ pub mut:
 	width         int
 	height        int
 	bg_color      gx.Color
+	init_fn       InitFn
 	click_fn      ClickFn
 	mouse_down_fn ClickFn
 	mouse_up_fn   ClickFn
@@ -72,6 +76,8 @@ pub mut:
 	drag_pos_x     f64
 	drag_pos_y     f64
 	drag_time      time.Time
+	// themes
+	color_themes ColorThemes
 	// FIRST VERSION ANIMATE: animating  bool
 }
 
@@ -85,6 +91,7 @@ pub:
 	state                 voidptr
 	draw_fn               DrawFn
 	bg_color              gx.Color = ui.default_window_color
+	on_init               InitFn
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -137,7 +144,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	match e.typ {
 		.mouse_down {
 			// println("mouse down")
-			window_mouse_down(e, window.ui)
+			window_mouse_down(e, mut window.ui)
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
@@ -151,7 +158,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		}
 		.mouse_up {
 			// println('mouseup')
-			window_mouse_up(e, window.ui)
+			window_mouse_up(e, mut window.ui)
 			// NOT THERE since already done
 			// touch-like
 			window.touch.end = {
@@ -244,8 +251,13 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
 	for _, mut child in window.children {
-		// println('init $child.type_name()')
+		//
+		println('init $child.type_name()')
 		child.init(window)
+		window.register_child(*child)
+	}
+	if window.init_fn != voidptr(0) {
+		window.init_fn(window)
 	}
 }
 
@@ -308,6 +320,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// orig_width: width // 800
 		// orig_height: height // 600
 		children: children
+		init_fn: cfg.on_init
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
 		char_fn: cfg.on_char
@@ -320,6 +333,9 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		resize_fn: cfg.on_resize
 		text_cfg: text_cfg
 	}
+
+	// register default color themes
+	window.register_default_color_themes()
 
 	mut font_path := ''
 	$if android {
@@ -368,6 +384,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	ui_ctx.gg.window.on_scroll(window_scroll)
 	*/
 	window.ui = ui_ctx
+
 	/*
 	mut window := &Window{
 		state: cfg.state
@@ -491,7 +508,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_mouse_down(event gg.Event, ui &UI) {
+fn window_mouse_down(event gg.Event, mut ui UI) {
 	window := ui.window
 	e := MouseEvent{
 		action: .down
@@ -499,6 +516,9 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(e, window)
@@ -519,7 +539,7 @@ fn window_mouse_down(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_mouse_up(event gg.Event, ui &UI) {
+fn window_mouse_up(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .up
@@ -528,11 +548,13 @@ fn window_mouse_up(event gg.Event, ui &UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = false
+	}
 
 	if window.drag_activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
-			drag_child(window, e.x, e.y)
 		}
 		drop_child(mut window)
 	}
@@ -976,6 +998,29 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
+// Experimental: attempt to register child to get it by id from window
+fn (mut w Window) register_child(child Widget) {
+	if child is Stack {
+		// println("register Stack")
+		w.widgets[child.id] = child
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	}
+	if child is Button {
+		// println("register Button")
+		w.widgets[child.id] = child
+	}
+	if child is ListBox {
+		// println("register ListBox")
+		w.widgets[child.id] = child
+	}
+	if child is Label {
+		// println("register Label")
+		w.widgets[child.id] = child
+	}
+}
+
 // extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
@@ -987,6 +1032,8 @@ pub fn (w &Window) child(from ...int) Widget {
 					if widget is Stack {
 						children = widget.children
 					} else if widget is Group {
+						children = widget.children
+					} else if widget is CanvasLayout {
 						children = widget.children
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')

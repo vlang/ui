@@ -63,12 +63,12 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c Canvas) draw() {
-	draw_start(mut c)
+	offset_start(mut c)
 	state := c.parent.get_state()
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c.gg, state, c)
 	}
-	draw_end(mut c)
+	offset_end(mut c)
 }
 
 fn (mut c Canvas) set_visible(state bool) {

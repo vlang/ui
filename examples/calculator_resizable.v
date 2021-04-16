@@ -53,13 +53,13 @@ fn main() {
 		height: 400
 		title: 'V Calc'
 		state: app
-		mode: .resizable // .max_size // 
+		mode: .resizable // .max_size //
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
 		ui.column({
 			margin_: 5
 			spacing: 5
-			heights: ui.stretch // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),
 	])
 	// app.text = "size= ${app.window.width} ${app.window.height}"

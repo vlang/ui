@@ -64,16 +64,7 @@ fn (mut r Radio) init(parent Layout) {
 		}
 		r.width = max + check_mark_size + 10
 	}
-	if is_empty_text_cfg(r.text_cfg) {
-		r.text_cfg = r.ui.window.text_cfg
-	}
-	if r.text_size > 0 {
-		_, win_height := r.ui.window.size()
-		r.text_cfg = gx.TextCfg{
-			...r.text_cfg
-			size: text_size_as_int(r.text_size, win_height)
-		}
-	}
+	init_text_cfg<Radio>(mut r)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -116,7 +107,7 @@ fn (mut r Radio) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut r Radio) draw() {
-	draw_start(mut r)
+	offset_start(mut r)
 	// Border
 	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
 	// Title
@@ -140,9 +131,9 @@ fn (mut r Radio) draw() {
 		draw_text<Radio>(r, r.x + check_mark_size + 10, y, val)
 	}
 	$if bb ? {
-		draw_bb(r, r.ui)
+		draw_bb(mut r, r.ui)
 	}
-	draw_end(mut r)
+	offset_end(mut r)
 }
 
 fn (r &Radio) point_inside(x f64, y f64) bool {
@@ -151,12 +142,15 @@ fn (r &Radio) point_inside(x f64, y f64) bool {
 }
 
 fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
+	if r.hidden {
+		return
+	}
 	if !r.point_inside(e.x, e.y) {
 		return
 	}
 	// println('e.y=$e.y r.y=$r.y')
 	y := e.y - r.y
-	r.selected_index = (y) / (r.height + 5)
+	r.selected_index = y / (r.height + 5)
 	if r.selected_index == r.values.len {
 		r.selected_index = r.values.len - 1
 	}

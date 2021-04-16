@@ -56,6 +56,19 @@ pub fn text_size_as_int(size f64, win_height int) int {
 	}
 }
 
+fn init_text_cfg<T>(mut w T) {
+	if is_empty_text_cfg(w.text_cfg) {
+		w.text_cfg = w.ui.window.text_cfg
+	}
+	if w.text_size > 0 {
+		_, win_height := w.ui.window.size()
+		w.text_cfg = gx.TextCfg{
+			...w.text_cfg
+			size: text_size_as_int(w.text_size, win_height)
+		}
+	}
+}
+
 // NB: here as an alternative of generic function that I think is more efficient
 // So do we need performance for this task?
 // fn point_inside(wid Widget, x f64, y f64) bool {
@@ -69,18 +82,4 @@ pub fn text_size_as_int(size f64, win_height int) int {
 fn point_inside<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
-}
-
-fn draw_start(mut w Widget) {
-	w.x += w.offset_x
-	w.y += w.offset_y
-}
-
-fn draw_end(mut w Widget) {
-	w.x -= w.offset_x
-	w.y -= w.offset_y
-}
-
-fn set_offset(mut w Widget, ox int, oy int) {
-	w.offset_x, w.offset_y = ox, oy
 }

@@ -29,7 +29,7 @@ fn (size Size) as_f32_array(len int) []f32 {
 	return res
 }
 
-// if size is negative, it is relative in percentage of the parent 
+// if size is negative, it is relative in percentage of the parent
 pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	return if size == -100 {
 		parent_free_size
@@ -51,18 +51,20 @@ fn is_children_have_widget(children []Widget) bool {
 //***********  cache **********
 
 pub enum ChildSize {
+	compact
 	fixed
 	weighted
 	weighted_minsize
 	stretch
-	compact
-	propose
+	weighted_stretch
 }
 
 struct CachedSizes {
 mut:
 	width_type     []ChildSize
 	height_type    []ChildSize
+	adj_widths     []int
+	adj_heights    []int
 	fixed_widths   []int
 	fixed_heights  []int
 	fixed_width    int
@@ -92,7 +94,7 @@ pub struct Margins {
 	left   f32
 }
 
-// for Config 
+// for Config
 pub struct Margin {
 	top    f64
 	right  f64

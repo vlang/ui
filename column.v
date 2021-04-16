@@ -3,7 +3,10 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gx
+
 pub struct ColumnConfig {
+	id        string
 	width     int // To remove soon
 	height    int // To remove soon
 	alignment HorizontalAlignment
@@ -17,10 +20,12 @@ pub struct ColumnConfig {
 	heights    Size //[]f64
 	alignments HorizontalAlignments
 	align      Alignments
+	bg_color   gx.Color = no_color
 }
 
 pub fn column(c ColumnConfig, children []Widget) &Stack {
 	return stack({
+		id: c.id
 		height: c.height
 		width: c.width
 		horizontal_alignment: c.alignment
@@ -32,5 +37,6 @@ pub fn column(c ColumnConfig, children []Widget) &Stack {
 		widths: c.widths.as_f32_array(children.len) //.map(f32(it))
 		horizontal_alignments: c.alignments
 		align: c.align
+		bg_color: c.bg_color
 	}, children)
 }

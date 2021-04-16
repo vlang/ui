@@ -15,31 +15,37 @@ const (
 )
 
 enum ButtonState {
-	normal
+	normal = 1 // synchronized with .button_normal
 	pressed
 }
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 
 pub struct ButtonConfig {
+	id        string
 	text      string
 	icon_path string
 	onclick   ButtonClickFn
-	height    int = 20
+	height    int
 	width     int
 	z_index   int
 	movable   bool
 	text_cfg  gx.TextCfg
 	text_size f64
+	theme     ColorThemeCfg = 'classic'
 }
 
 [heap]
 pub struct Button {
+	// init size read-only
+	width_  int
+	height_ int
 mut:
 	text_width  int
 	text_height int
 pub mut:
-	state      ButtonState
+	id         string
+	state      ButtonState = ButtonState(1)
 	height     int
 	width      int
 	z_index    int
@@ -59,6 +65,9 @@ pub mut:
 	text_size  f64
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
+	// theme
+	theme_ ColorThemeCfg
+	theme  map[int]gx.Color = map[int]gx.Color{}
 }
 
 fn (mut b Button) init(parent Layout) {
@@ -68,16 +77,9 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	if is_empty_text_cfg(b.text_cfg) {
-		b.text_cfg = b.ui.window.text_cfg
-	}
-	if b.text_size > 0 {
-		_, win_height := b.ui.window.size()
-		b.text_cfg = gx.TextCfg{
-			...b.text_cfg
-			size: text_size_as_int(b.text_size, win_height)
-		}
-	}
+	init_text_cfg<Button>(mut b)
+	b.set_text_size()
+	b.update_theme()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -85,13 +87,15 @@ fn (mut b Button) init(parent Layout) {
 
 pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
-		width: c.width
-		height: c.height
+		id: c.id
+		width_: c.width
+		height_: c.height
 		z_index: c.z_index
 		movable: c.movable
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
+		theme_: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
 		text_size: c.text_size
@@ -106,6 +110,9 @@ pub fn button(c ButtonConfig) &Button {
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
@@ -120,10 +127,14 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
 	if b.point_inside(e.x, e.y) {
 		if b.movable {
 			drag_register(b, b.ui, e)
 		}
+		b.state = .pressed
 	}
 }
 
@@ -150,16 +161,18 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// b.height = h
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
+	// println("but prop size: $w, $h => $b.width, $b.height")
 	return b.width, b.height
 }
 
 fn (mut b Button) draw() {
-	draw_start(mut b)
+	offset_start(mut b)
 	w2 := b.text_width / 2
 	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
-	bg_color := if b.state == .normal { gx.white } else { progress_bar_background_color } // gx.gray }
+	bg_color := color(b.theme, ColorType(b.state))
+	// println(bg_color)
 	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
 	mut y := bcenter_y - h2 - 1
@@ -184,10 +197,15 @@ fn (mut b Button) draw() {
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
-		draw_bb(b, b.ui)
+		draw_bb(mut b, b.ui)
 	}
 	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
-	draw_end(mut b)
+	offset_end(mut b)
+}
+
+pub fn (mut b Button) set_text(text string) {
+	b.text = text
+	b.set_text_size()
 }
 
 fn (mut b Button) set_text_size() {
@@ -199,7 +217,13 @@ fn (mut b Button) set_text_size() {
 		b.text_width = int(f32(b.text_width))
 		b.text_height = int(f32(b.text_height))
 		b.width = b.text_width + ui.button_horizontal_padding
+		if b.width_ > b.width {
+			b.width = b.width_
+		}
 		b.height = b.text_height + ui.button_vertical_padding
+		if b.height_ > b.height {
+			b.height = b.height_
+		}
 	}
 }
 
@@ -208,6 +232,7 @@ fn (mut b Button) set_text_size() {
 fn (b &Button) point_inside(x f64, y f64) bool {
 	// bx , by := b.x + b.offset_x, b.y + b.offset_y
 	// return x >= bx && x <= bx + b.width && y >= by && y <= by + b.height
+	// println("point_inside button: ($b.x $b.offset_x, $b.y $b.offset_y) ($x, $y) ($b.width, $b.height)")
 	return point_inside<Button>(b, x, y)
 }
 
@@ -227,4 +252,20 @@ fn (mut b Button) unfocus() {
 
 fn (b &Button) is_focused() bool {
 	return b.is_focused
+}
+
+pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
+	b.theme_ = theme_cfg
+}
+
+pub fn (mut b Button) update_theme() {
+	mut theme := map[int]gx.Color{}
+	theme_ := b.theme_
+	if theme_ is string {
+		theme = b.ui.window.color_themes[theme_]
+	}
+	if theme_ is ColorTheme {
+		theme = theme_
+	}
+	update_colors_from(mut b.theme, theme, [.button_normal, .button_pressed])
 }

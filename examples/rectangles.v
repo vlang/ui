@@ -57,6 +57,5 @@ fn main() {
 			),
 		]),
 	])
-	app.window = window
 	ui.run(window)
 }

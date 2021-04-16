@@ -59,16 +59,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	cb.width = text_width<CheckBox>(cb, cb.text) + 5 + ui.check_mark_size
-	if is_empty_text_cfg(cb.text_cfg) {
-		cb.text_cfg = cb.ui.window.text_cfg
-	}
-	if cb.text_size > 0 {
-		_, win_height := cb.ui.window.size()
-		cb.text_cfg = gx.TextCfg{
-			...cb.text_cfg
-			size: text_size_as_int(cb.text_size, win_height)
-		}
-	}
+	init_text_cfg<CheckBox>(mut cb)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
@@ -89,6 +80,9 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
+	if cb.hidden {
+		return
+	}
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
@@ -115,7 +109,7 @@ fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut cb CheckBox) draw() {
-	draw_start(mut cb)
+	offset_start(mut cb)
 	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
@@ -138,9 +132,9 @@ fn (mut cb CheckBox) draw() {
 	// Text
 	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
 	$if bb ? {
-		draw_bb(cb, cb.ui)
+		draw_bb(mut cb, cb.ui)
 	}
-	draw_end(mut cb)
+	offset_end(mut cb)
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {

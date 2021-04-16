@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-// import gg
+import gx
 
 enum Direction {
 	row
@@ -23,7 +23,7 @@ Column & Row are identical except everything is reversed:
 /********** different size's definitions ************
 * container_size is simply: (width, height)
 * adjusted_size is (adj_width, adj_height) corresponding of the compact/fitted size inherited from children sizes
-* size() returns full_size, i.e. container_size + margin_size
+* size() returns (full) real_size, i.e. container_size + margin_size
 * total_spacing() returns spacing
 * free_size() returns free_size_direct and free_size_opposite (in the proper order) where:
 	* free_size_direct = container_size - total_spacing()
@@ -36,6 +36,7 @@ N.B.:
 ***********************************/
 
 struct StackConfig {
+	id                   string
 	width                int // To remove soon
 	height               int // To remove soon
 	vertical_alignment   VerticalAlignment
@@ -51,14 +52,15 @@ struct StackConfig {
 	align                 Alignments
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
+	bg_color              gx.Color
 }
 
 struct Stack {
 	cache CachedSizes
 pub mut:
-	offset_x int
-	offset_y int
-mut:
+	id                   string
+	offset_x             int
+	offset_y             int
 	x                    int
 	y                    int
 	width                int
@@ -72,6 +74,8 @@ mut:
 	stretch              bool
 	direction            Direction
 	margins              Margins
+	real_x               int
+	real_y               int
 	real_width           int
 	real_height          int
 	adj_width            int
@@ -85,11 +89,13 @@ mut:
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
+	bg_color              gx.Color
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
+		id: c.id
 		height: c.height // become real_height
 		width: c.width // become real_width
 		vertical_alignment: c.vertical_alignment
@@ -104,6 +110,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
+		bg_color: c.bg_color
 		ui: 0
 	}
 	return s
@@ -163,63 +170,34 @@ fn (mut s Stack) init_size() {
 	// println('parent size: ($parent_width, $parent_height)')
 	// s.debug_show_sizes("decode before -> ")
 	if parent is Window {
-		// Default: like stretch = strue
+		// Default: same as s.stretch == true
 		s.real_height = parent_height
 		s.real_width = parent_width
 	}
-	// else if s.stretch {
-	// 	if s.direction == .row {
-	// 		s.real_height = parent_height
-	// 		s.real_width = s.width
-	// 	} else {
-	// 		s.real_width = parent_width
-	// 		s.real_height = s.height
-	// 	}
-	// } else {
-	// 	s.real_width = s.width
-	// 	s.real_height = s.height
-	// }
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
 	s.width = s.real_width - s.margin(.left) - s.margin(.right)
 }
 
 fn (mut s Stack) set_children_sizes() {
-	$if scs ? {
-		s.debug_show_sizes('BEGIN set_children_size ')
-	}
-	//* size of children from *
+	// size of children from
 	c := &s.cache
 	widths, heights := s.children_sizes()
 
 	// set children sizes
-	$if scs ? {
-		println('s.widths: $s.widths s.heights: $s.heights widths: $widths heights: $heights')
-	}
-
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
-		$if scs ? {
-			println('before propose_size $i) $child.type_name() ($w,$h) ')
-		}
-		if child is Stack || child is Group {
+		if child is Stack || child is Group || child is CanvasLayout {
 			w, h = widths[i], heights[i]
 		} else {
-			$if scs ? {
-				// tmp := (s.widths[i] == ui.stretch)
-				// tmp2 := (c.weight_widths[i] <= 0)
-				// tmp3 := (s.heights[i] == ui.stretch)
-				// tmp4 := (c.weight_heights[i] <= 0)
-				// println("tmp=$tmp tmp2=$tmp2 tmp3=$tmp3 tmp4=$tmp4")
-			}
-			if c.width_type[i] in [.stretch, .weighted] {
+			if c.width_type[i] in [.fixed, .stretch, .weighted] {
 				w = widths[i]
 			}
-			if c.height_type[i] in [.stretch, .weighted] {
+			if c.height_type[i] in [.fixed, .stretch, .weighted] {
 				h = heights[i]
 			}
 		}
 		$if scs ? {
-			println('propose_size $i) $child.type_name() ($w,$h)')
+			println('scs: propose_size $i) $child.type_name() ($c.width_type[i].str(): $w, $c.height_type[i].str():$h)')
 		}
 		child.propose_size(w, h)
 
@@ -227,95 +205,81 @@ fn (mut s Stack) set_children_sizes() {
 			child.set_children_sizes()
 		}
 	}
+	// Only for debug stuff
 	$if scs ? {
-		s.debug_show_sizes('END set_children_size ')
+		s.debug_set_children_sizes(widths, heights, c)
 	}
 }
 
 fn (s &Stack) children_sizes() ([]int, []int) {
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
+
 	// free size without margin and spacing
 	mut free_width, mut free_height := s.free_size()
+
 	mut c := &s.cache
 	free_width -= c.fixed_width
 	free_height -= c.fixed_height
 	$if cs ? {
-		println(' children_size: ${typeof(s).name} s.widths:  $s.widths s.heights:  $s.heights ')
-		println('    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
-		println('    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
-		println('    type w: $c.width_type h: $c.height_type')
-		println('    free w: $free_width h: $free_height ')
+		println('----------------------------------------')
+		println('| children_size: ${typeof(s).name} s.widths:  $s.widths s.heights:  $s.heights ')
+		println('|    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
+		println('|    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
+		println('|    type (w: $c.width_type, h: $c.height_type)')
+		println('|    real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+		println('|---------------------------------------')
 	}
 	for i, child in s.children {
-		// child_w, child_h := child.size()
-		$if cs ? {
-			println('$i) $child.type_name()')
-		}
-
 		match c.width_type[i] {
 			.stretch {
 				if s.direction == .row {
-					$if cs2 ? {
-						println('$i) .stretch width row: weight = ${c.weight_widths[i]} / $c.width_mass')
-					}
 					weight := c.weight_widths[i] / c.width_mass
-					mcw[i] = int(weight * free_width)
+					mcw[i] = int(weight * f32(free_width))
 				} else {
-					$if cs2 ? {
-						println('$i) .stretch width col:  free_w=$free_width')
-					}
 					mcw[i] = free_width
 				}
 			}
 			.weighted, .weighted_minsize {
+				weight := c.weight_widths[i]
+				mcw[i] = int(weight * f32(s.real_width))
+			}
+			.compact, .fixed {
+				mcw[i] = c.fixed_widths[i]
+			}
+			.weighted_stretch {
 				weight := c.weight_widths[i] / c.width_mass
 				mcw[i] = int(weight * free_width)
-			}
-			.propose, .compact, .fixed {
-				mcw[i] = c.fixed_widths[i]
 			}
 		}
 
 		match c.height_type[i] {
 			.stretch {
 				if s.direction == .column {
-					$if cs2 ? {
-						println('$i) .stretch height col: weight = ${c.weight_heights[i]} / $c.height_mass')
-					}
 					weight := c.weight_heights[i] / c.height_mass
 					mch[i] = int(weight * free_height)
 				} else {
-					$if cs2 ? {
-						println('$i) .stretch height row : $free_width')
-					}
 					mch[i] = free_height
 				}
-				$if cs2 ? {
-					println('.Stretch height:  $i) $child.type_name() ${mch[i]}')
-				}
 			}
-			.weighted, .weighted_minsize, .propose {
-				weight := c.weight_heights[i] / c.height_mass
-				mch[i] = int(weight * free_height)
+			.weighted, .weighted_minsize {
+				weight := c.weight_heights[i]
+				mch[i] = int(weight * f32(s.real_height))
 			}
 			.compact, .fixed {
 				mch[i] = c.fixed_heights[i]
 			}
+			.weighted_stretch {
+				weight := c.weight_heights[i] / c.height_mass
+				mch[i] = int(weight * f32(free_height))
+			}
 		}
-	}
-	$if cs ? {
-		println('mcw: $mcw mch: $mch')
+		$if cs ? {
+			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($c.width_type[i].str(), $c.height_type[i].str())')
+			println('|----------------------------------------')
+		}
 	}
 	return mcw, mch
 }
-
-/*********************
-How to interpret weight ?
-if weight_<size>s[i] is :
-== 0 then fixed size
-in ]0,1] then weighted size with two different cases: 1) fixed < 0 (updatable widget with propose_size) and 2) fixed ==0 (static)
-== -2 then adjusted size
-***********************/
 
 fn (mut s Stack) set_cache_sizes() {
 	//
@@ -327,9 +291,10 @@ fn (mut s Stack) set_cache_sizes() {
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
 	c.width_mass, c.height_mass = 0., 0.
-	// fixed_<size>s and weight_<size>s can be cached in the Stack struct as private fields
+	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
+	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
 	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
@@ -337,33 +302,27 @@ fn (mut s Stack) set_cache_sizes() {
 	for i, mut child in s.children {
 		mut cw := s.widths[i] or { 0. }
 		mut ch := s.heights[i] or { 0. }
+
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
-		// if ! (child is Stack) {
+
 		if mut child is Stack {
 			adj_child_width, adj_child_height = child.adjustable_size()
 		}
-		if adj_child_width == 0 && cw == 0 {
-			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact widths for ${typeof(s).name} $s.widths[$i]')
-			}
+
+		// fix compat when child has size 0
+		if adj_child_width == 0 && cw == compact {
 			s.widths[i] = stretch
 			cw = stretch
 		}
-		if adj_child_height == 0 && ch == 0 {
-			$if ui_stack_c0 ? {
-				println('WARNINNGS222: Bad compact heights for $child.type_name() $s.heights[$i]')
-			}
+		if adj_child_height == 0 && ch == compact {
 			s.heights[i] = stretch
 			ch = stretch
 		}
-		// }
-		// adj_child_width, adj_child_height := child.size()
-		// TODO: here test if widget is zero sized????
+
 		// cw as child width with type f64
 		if cw > 1 {
-			// fixed size ?
-			if cw == int(cw) {
+			if cw == int(cw) { // fixed size ?
 				c.width_type[i] = .fixed
 				c.fixed_widths[i] = int(cw)
 				if s.direction == .row {
@@ -425,9 +384,9 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		} else if cw >= -1 {
-			// weight_widths is now  means that the children can have their size updated from the parent
+			// weight_widths means that the children can have their size updated from the parent
 			// even reducing their size!!!
-			c.width_type[i] = .propose
+			c.width_type[i] = .weighted_stretch
 			c.weight_widths[i] = -cw
 			// This is the initial size
 			c.fixed_widths[i] = adj_child_width
@@ -439,9 +398,9 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else if cw == stretch {
+		} else if cw <= stretch {
 			c.width_type[i] = .stretch
-			c.weight_widths[i] = 1.0
+			c.weight_widths[i] = cw / stretch
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row {
 				c.width_mass += c.weight_widths[i]
@@ -452,6 +411,7 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		}
+
 		// ch as child height with type f64
 		if ch > 1 {
 			// fixed size ?
@@ -519,7 +479,7 @@ fn (mut s Stack) set_cache_sizes() {
 		} else if ch >= -1 {
 			// weight_heights is now  means that the children can have their size updated from the parent
 			// even reducing their size!!!
-			c.height_type[i] = .propose
+			c.height_type[i] = .weighted_stretch
 			c.weight_heights[i] = -cw
 			// This is the initial size
 			c.fixed_heights[i] = adj_child_height
@@ -531,9 +491,9 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else if ch == stretch {
+		} else if ch <= stretch {
 			c.height_type[i] = .stretch
-			c.weight_heights[i] = 1.
+			c.weight_heights[i] = ch / stretch
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column {
 				c.height_mass += c.weight_heights[i]
@@ -667,13 +627,13 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, force, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right), 
+			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
 				child.adj_height + child.margin(.top) + child.margin(.bottom)
 		} else if mut child is Group {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
 			}
-			child_width, child_height = child.adj_width + child.margin_left + child.margin_right, 
+			child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 				child.adj_height + child.margin_top + child.margin_bottom
 		} else {
 			child_width, child_height = child.size()
@@ -703,11 +663,16 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	s.adj_height = h
 }
 
+fn (mut s Stack) update_pos() {
+	s.x = s.real_x + s.margin(.left)
+	s.y = s.real_y + s.margin(.top)
+}
+
 fn (mut s Stack) set_pos(x int, y int) {
 	// could depend on anchor in the future
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-	s.x = x + s.margin(.left)
-	s.y = y + s.margin(.top)
+	s.real_x, s.real_y = x, y
+	s.update_pos()
 }
 
 fn (mut s Stack) set_children_pos() {
@@ -834,8 +799,11 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	draw_start(mut s)
-	// DEBUG MODE: Uncomment to display the bounding boxes
+	offset_start(mut s)
+	if s.bg_color != no_color {
+		s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width, s.real_height,
+			s.bg_color)
+	}
 	$if bb ? {
 		s.draw_bb()
 	}
@@ -843,7 +811,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	draw_end(mut s)
+	offset_end(mut s)
 }
 
 fn (s &Stack) margin(side MarginSide) int {
@@ -935,6 +903,7 @@ fn (s &Stack) is_focused() bool {
 
 fn (mut s Stack) resize(width int, height int) {
 	s.init_size()
+	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
 }
@@ -1101,6 +1070,11 @@ pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 		// 	}
 		// }
 		// s.children = children
+
+		// set child hidden
+		mut child := s.children[pos]
+		child.set_visible(false)
+		// delete child in the children tree
 		s.children.delete(pos)
 		s.update_widths(cfg, .remove)
 		s.update_heights(cfg, .remove)

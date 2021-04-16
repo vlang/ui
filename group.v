@@ -58,7 +58,7 @@ fn (mut g Group) decode_size(parent Layout) {
 	// 	// Default: like stretch = strue
 	// 	s.height = parent_height - s.margin.top - s.margin.right
 	// 	s.width = parent_width - s.margin.left - s.margin.right
-	// } else 
+	// } else
 	// if g.stretch {
 	// 	g.height = parent_height - g.margin_top - g.margin_right
 	// 	g.width = parent_width - g.margin_left - g.margin_right
@@ -114,7 +114,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut g Group) draw() {
-	draw_start(mut g)
+	offset_start(mut g)
 	// Border
 	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
@@ -131,7 +131,7 @@ fn (mut g Group) draw() {
 	for mut child in g.children {
 		child.draw()
 	}
-	draw_end(mut g)
+	offset_end(mut g)
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
@@ -146,6 +146,7 @@ fn (mut g Group) focus() {
 }
 
 fn (mut g Group) unfocus() {
+	g.unfocus_all()
 }
 
 fn (g &Group) is_focused() bool {

@@ -193,6 +193,14 @@ fn (mut t TextBox) set_pos(x int, y int) {
 	t.y = y
 }
 
+fn (tb &TextBox) text_size() (int, int) {
+	w, mut h := text_size<TextBox>(tb, tb.text)
+	if tb.is_multi {
+		h = h * tb.text.split('\n').len
+	}
+	return w, h
+}
+
 fn (mut tb TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
@@ -201,14 +209,14 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height {
+	if tb.height > ui.max_textbox_height && !tb.ui.window.resizable {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height
 }
 
 fn (mut tb TextBox) draw() {
-	draw_start(mut tb)
+	offset_start(mut tb)
 	text := *(tb.text)
 	mut placeholder := tb.placeholder
 	if tb.placeholder_bind != 0 {
@@ -248,10 +256,11 @@ fn (mut tb TextBox) draw() {
 				if i >= text.len {
 					continue
 				}
-				if tb.ui.gg.text_width(text[i..]) > tb.width {
-					skip_idx = i + 3
-					break
-				}
+				// TODO: To fix since it fails when resizing to thin window
+				// if tb.ui.gg.text_width(text[i..]) > tb.width {
+				// 	skip_idx = i + 3
+				// 	break
+				// }
 			}
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
@@ -296,9 +305,9 @@ fn (mut tb TextBox) draw() {
 		tb.ui.gg.draw_rect(cursor_x, tb.y + 3, 1, tb.height - 6, gx.black) // , gx.Black)
 	}
 	$if bb ? {
-		draw_bb(tb, tb.ui)
+		draw_bb(mut tb, tb.ui)
 	}
-	draw_end(mut tb)
+	offset_end(mut tb)
 }
 
 // fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
@@ -313,6 +322,9 @@ fn (mut tb TextBox) draw() {
 
 fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	//  println("tb_char")
+	if tb.hidden {
+		return
+	}
 	if !tb.is_focused {
 		return
 	}
@@ -323,6 +335,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e')
+	if tb.hidden {
+		return
+	}
 	text := *tb.text
 	if !tb.is_focused {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
@@ -577,6 +592,9 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+	if tb.hidden {
+		return
+	}
 	if !tb.point_inside(e.x, e.y) {
 		return
 	}
@@ -615,6 +633,9 @@ fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 }
 
 fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+	if tb.hidden {
+		return
+	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		return

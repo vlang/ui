@@ -23,7 +23,7 @@ fn main() {
 			spacing: 20
 			margin: ui.Margin{30, 30, 30, 30}
 			// uncomment if you don't set the width of the button
-			// widths: [ui.stretch,150] 
+			// widths: [ui.stretch,150]
 		}, [
 			ui.row({
 				spacing: 10

@@ -3,8 +3,11 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gx
+
 pub struct RowConfig {
 pub:
+	id        string
 	width     int
 	height    int
 	alignment VerticalAlignment
@@ -18,10 +21,12 @@ pub:
 	heights    Size //[]f64
 	align      Alignments
 	alignments VerticalAlignments
+	bg_color   gx.Color = no_color
 }
 
 pub fn row(c RowConfig, children []Widget) &Stack {
 	return stack({
+		id: c.id
 		height: c.height
 		width: c.width
 		vertical_alignment: c.alignment
@@ -33,5 +38,6 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		heights: c.heights.as_f32_array(children.len) //.map(f32(it))
 		vertical_alignments: c.alignments
 		align: c.align
+		bg_color: c.bg_color
 	}, children)
 }

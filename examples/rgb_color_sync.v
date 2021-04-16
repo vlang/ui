@@ -67,7 +67,7 @@ fn main() {
 			text: -1
 		)
 		r_slider: ui.slider(
-			width: 16
+			width: 10
 			// height: 200
 			orientation: .vertical
 			min: slider_min
@@ -79,7 +79,7 @@ fn main() {
 			entering: true
 		)
 		g_slider: ui.slider(
-			width: 16
+			width: 10
 			// height: 200
 			orientation: .vertical
 			min: slider_min
@@ -91,7 +91,7 @@ fn main() {
 			entering: true
 		)
 		b_slider: ui.slider(
-			width: 16
+			width: 10
 			// height: 200
 			orientation: .vertical
 			min: slider_min
@@ -117,10 +117,10 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({
-			margin: {
-				right: .1
-				left: .1
-			}
+			// margin: {
+			// 	right: .1
+			// 	left: .1
+			// }
 			heights: [.1, .2, .1, .5, .1]
 			alignments: {
 				center: [0, 1, 2, 3]
@@ -137,34 +137,37 @@ fn main() {
 			app.rgb_rectangle,
 			ui.row({
 				margin: {
-					right: 30
-					left: 30
+					right: .05
+					left: .05
 					top: 5
 					bottom: 5
 				}
+				// alignments: {center: [0,1,2]}
 				spacing: .3
 				heights: ui.compact
-				widths: 30.
+				widths: .1
 			}, [app.r_textbox, app.g_textbox, app.b_textbox]),
 			ui.row({
 				margin: {
-					right: 30
-					left: 30
+					right: .05
+					left: .05
 					top: 5
 					bottom: 5
 				}
+				// alignments: {center: [0,1,2]}
 				spacing: .3
-				widths: 30.
+				widths: .1
 			}, [app.r_slider, app.g_slider, app.b_slider]),
 			ui.row({
 				margin: {
-					right: 30
-					left: 30
+					right: .05
+					left: .05
 					top: 5
 					bottom: 5
 				}
+				// alignments: {center: [0,1,2]}
 				spacing: .3
-				widths: 30.
+				widths: .1
 			}, [app.r_label, app.g_label, app.b_label]),
 		]),
 	])
