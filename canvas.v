@@ -64,8 +64,7 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 
 fn (mut c Canvas) draw() {
 	offset_start(mut c)
-	parent := c.parent
-	state := parent.get_state()
+	state := c.parent.get_state()
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c.gg, state, c)
 	}
