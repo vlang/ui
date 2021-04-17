@@ -92,6 +92,7 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 	println('scs: pos: ($s.x, $s.y) real: ($s.real_width, $s.real_height)')
 	mut total := 0
 	if s.direction == .row {
+		// sum rule for widths
 		println('  left: ${s.margin(.left)} $s.margins.left')
 		total += s.margin(.left)
 		for i, _ in s.children {
@@ -106,6 +107,7 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 			}
 		}
 		println('= $total == $s.real_width')
+		// max rule for heights
 	} else {
 		println('  top: ${s.margin(.top)}')
 		total += s.margin(.top)

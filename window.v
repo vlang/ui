@@ -35,7 +35,6 @@ pub mut:
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
-	widgets       map[string]Widget
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -79,6 +78,9 @@ pub mut:
 	// themes
 	color_themes ColorThemes
 	// FIRST VERSION ANIMATE: animating  bool
+	// widgets register
+	widgets       map[string]Widget
+	widgets_count int
 }
 
 pub struct WindowConfig {
@@ -262,7 +264,6 @@ fn gg_init(mut window Window) {
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
-	// println('ui.window($cfg.native_rendering)')
 	/*
 	println('window()')
 	defer {
@@ -910,7 +911,7 @@ fn frame(mut w Window) {
 }
 
 fn native_frame(mut w Window) {
-	// println('ui.native_frame()')
+	// println('naative_frame()')
 	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
@@ -1000,24 +1001,57 @@ pub fn (w &Window) get_children() []Widget {
 
 // Experimental: attempt to register child to get it by id from window
 fn (mut w Window) register_child(child Widget) {
-	if child is Stack {
-		// println("register Stack")
-		w.widgets[child.id] = child
-		for child2 in child.children {
-			w.register_child(child2)
-		}
-	}
 	if child is Button {
 		// println("register Button")
-		w.widgets[child.id] = child
+		if child.id != "" {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != "" {
+				println("registered ${child.id}")
+			}
+		} 
 	}
 	if child is ListBox {
 		// println("register ListBox")
-		w.widgets[child.id] = child
+		if child.id != "" {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != "" {
+				println("registered ${child.id}")
+			}
+		} 
 	}
 	if child is Label {
 		// println("register Label")
-		w.widgets[child.id] = child
+		if child.id != "" {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != "" {
+				println("registered ${child.id}")
+			}
+		} 
+	}
+	if child is Stack {
+		// println("register Stack")
+		if child.id == "" {
+			w.widgets_count += 1
+			mut child2 := child
+			child2.id = "ui.Stack_${child2.direction}_${w.widgets_count}" 
+			w.widgets[child2.id] = child2
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != "" {
+				println("registered ${child.id}")
+			}
+		} 
+		for child2 in child.children {
+			w.register_child(child2)
+		}
 	}
 }
 

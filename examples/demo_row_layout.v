@@ -7,6 +7,7 @@ const (
 	btn_width  = 200
 	btn_height = 30
 	port       = 1337
+	lb_height  = 0
 )
 
 struct App {
@@ -36,12 +37,14 @@ fn main() {
 		on_init: win_init
 	}, [
 		ui.column({
-			heights: [ui.compact, ui.stretch, ui.compact, ui.stretch]
+			heights: [ui.compact, ui.compact, ui.compact, ui.stretch]
+			spacing: .01
 		}, [
 			ui.row({
 			margin_: .05
 			spacings: [.01, .03, .01]
-			widths: ui.stretch
+			widths: ui.compact
+			heights: ui.compact
 		}, [ui.label(id: 'l1w', text: 'Button 1 width:'),
 			ui.label(
 			id: 'l1h'
@@ -54,14 +57,15 @@ fn main() {
 			),
 		]),
 			ui.row({
-				margin_: .05
+				margin: {right: .05, left: .05}
 				spacings: [.01, .03, .01]
-				widths: ui.stretch
+				widths: ui.compact
+				heights: ui.compact
 			}, [
 				ui.listbox({
 				id: 'lb1w'
-				width: 100
-				height: 120
+				// width: 100
+				height: lb_height
 				selection: 0
 				on_change: lb_change
 				// draw_lines: true
@@ -76,8 +80,8 @@ fn main() {
 			}),
 				ui.listbox({
 					id: 'lb1h'
-					width: 100
-					height: 120
+					// width: 100
+					height: lb_height
 					selection: 0
 					on_change: lb_change
 					// draw_lines: true
@@ -89,8 +93,8 @@ fn main() {
 				}),
 				ui.listbox({
 					id: 'lb2w'
-					width: 100
-					height: 120
+					// width: 100
+					height: lb_height
 					selection: 1
 					on_change: lb_change
 					// draw_lines: true
@@ -106,7 +110,7 @@ fn main() {
 				ui.listbox({
 					id: 'lb2h'
 					width: 100
-					height: 120
+					height: lb_height
 					selection: 1
 					on_change: lb_change
 					// draw_lines: true
@@ -117,7 +121,7 @@ fn main() {
 					'ui.compact': 'ui.compact'
 				}),
 			]),
-			ui.column({ margin_: .02, spacing: .01, widths: ui.stretch, bg_color: gx.white },
+			ui.column({ margin: {right: .05, left: .05}, spacing: .01, widths: ui.stretch, bg_color: gx.Color{255,255,255,128} },
 				[
 				ui.label(
 				id: 'l_btns_sizes'
@@ -134,7 +138,7 @@ fn main() {
 				id: 'row'
 				widths: [.3, 100]
 				heights: [.3, ui.compact]
-				margin_: .1
+				margin_: .1 
 				spacing: .1
 				bg_color: gx.Color{50, 100, 0, 50}
 			}, [
@@ -160,6 +164,9 @@ fn main() {
 
 fn lb_change(app &App, lb &ui.ListBox) {
 	id, _ := lb.selected() or { '100', '' }
+
+	sw, sh := lb.size()
+	println("lb_change: ($sw, $sh)")
 
 	win := lb.ui.window
 	mut iw, mut ih := -1, -1
@@ -251,4 +258,13 @@ fn win_resize(w int, h int, win &ui.Window) {
 fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
 	set_output_label(win)
+	mut lb := win.widgets["lb1w"]
+	sw, sh := lb.size()
+	mut  row1 := win.widgets["ui.Stack_row_2"]
+	mut  row2 := win.widgets["ui.Stack_row_3"]
+	if mut row1 is ui.Stack { if mut row2 is ui.Stack {
+		row1.widths = [f32(100.)].repeat(4) //row2.widths
+	}}
+	win.update_layout()
+	println("win init ($sw, $sh)")
 }

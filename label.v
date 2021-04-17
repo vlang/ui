@@ -8,20 +8,22 @@ import gx
 [heap]
 pub struct Label {
 mut:
-	id        string
-	text      string
-	parent    Layout
-	x         int
-	y         int
-	offset_x  int
-	offset_y  int
-	width     int
-	height    int
-	z_index   int
-	ui        &UI
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
+	id         string
+	text       string
+	parent     Layout
+	x          int
+	y          int
+	offset_x   int
+	offset_y   int
+	width      int
+	height     int
+	z_index    int
+	adj_width  int
+	adj_height int
+	ui         &UI
+	text_cfg   gx.TextCfg
+	text_size  f64
+	hidden     bool
 }
 
 pub struct LabelConfig {
@@ -47,6 +49,7 @@ fn (mut l Label) init(parent Layout) {
 			size: text_size_as_int(l.text_size, win_height)
 		}
 	}
+	l.init_size()
 }
 
 pub fn label(c LabelConfig) &Label {
@@ -66,26 +69,31 @@ fn (mut l Label) set_pos(x int, y int) {
 	l.y = y
 }
 
-fn (l &Label) text_size() (int, int) {
-	// println("size $l.text")
-	w, h := text_size<Label>(l, l.text)
-	// println("label size: $w, $h ${l.text.split('\n').len}")
-	return w, h * l.text.split('\n').len
+fn (mut l Label) adj_size() (int, int) {
+	if l.adj_width == 0 || l.adj_height == 0 {
+		// println("size $l.text")
+		w, h := text_size<Label>(l, l.text)
+		// println("label size: $w, $h ${l.text.split('\n').len}")
+		l.adj_width, l.adj_height = w, h * l.text.split('\n').len
+	}
+	return l.adj_width, l.adj_height
 }
 
-fn (mut l Label) size() (int, int) {
-	if l.width == 0 && l.height == 0 {
-		return l.text_size()
-	} else {
-		return l.width, l.height
+fn (mut l Label) init_size() {
+	if l.width == 0 {
+		l.width, _ = l.adj_size()
 	}
+	if l.height == 0 {
+		_, l.height = l.adj_size()
+	}
+}
+
+fn (l &Label) size() (int, int) {
+	return l.width, l.height
 }
 
 fn (mut l Label) propose_size(w int, h int) (int, int) {
 	l.width, l.height = w, h
-	// ww, hh := text_size<Label>(l, l.text)
-	// // First return the width, then the height multiplied by line count.
-	// return ww, hh * l.text.split('\n').len
 	return l.size()
 }
 

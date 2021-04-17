@@ -91,9 +91,12 @@ pub mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string
 	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
+	text_cfg  	  gx.TextCfg
+	text_size     f64
+	hidden        bool
+	// guess adjusted width
+	adj_width     int
+	adj_height    int
 }
 
 struct ListItem {
@@ -214,12 +217,17 @@ fn (mut lb ListBox) init_items() {
 fn (mut lb ListBox) init(parent Layout) {
 	lb.parent = parent
 	lb.ui = parent.get_ui()
-	lb.draw_count = lb.height / lb.item_height
-	lb.text_offset_y = (lb.item_height - text_height<ListBox>(lb, 'W')) / 2
+
 	init_text_cfg<ListBox>(mut lb)
 	if lb.text_offset_y < 0 {
 		lb.text_offset_y = 0
 	}
+	lb.draw_count = lb.height / lb.item_height
+	lb.text_offset_y = (lb.item_height - text_height<ListBox>(lb, 'W')) / 2
+	
+	// update lb.width and lb.height to adjusted sizes when initialized to 0 
+	lb.init_size()
+
 	lb.init_items()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
@@ -345,12 +353,6 @@ fn (mut lb ListBox) unfocus_all() {
 	lb.focused = false
 }
 
-fn (mut lb ListBox) resize(width int, height int) {
-	lb.width = width
-	lb.height = height
-	lb.draw_count = lb.height / lb.item_height
-}
-
 fn (lb &ListBox) get_state() voidptr {
 	parent := lb.parent
 	return parent.get_state()
@@ -361,11 +363,47 @@ fn (lb &ListBox) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (lb &ListBox) size() (int, int) {
+fn (mut lb ListBox) adj_size() (int, int) {
+	if lb.adj_width == 0 {
+		mut width := 0
+		for item in lb.items {
+			width = text_width<ListBox>(lb, item.text)
+			println("${item.text} -> $width")
+			if width > lb.adj_width {
+				lb.adj_width = width
+			}
+		}
+		println("adj_width: $lb.adj_width")
+	}
+	if lb.adj_height == 0 {
+		lb.adj_height = lb.items.len * lb.item_height
+	}
+	return lb.adj_width, lb.adj_height
+
+}
+
+fn (mut lb ListBox) init_size() {
+	if lb.width == 0 {
+		lb.width, _ = lb.adj_size()
+	}
+	if lb.height == 0 {
+		_, lb.height = lb.adj_size()
+	}
+}
+
+pub fn (lb &ListBox) size() (int, int) {
+	// println("lb size: $lb.width, $lb.height")
 	return lb.width, lb.height
 }
 
 fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
+	// println("lb propose: ($w, $h)")
 	lb.resize(w, h)
 	return lb.width, lb.height
+}
+
+fn (mut lb ListBox) resize(width int, height int) {
+	lb.width = width
+	lb.height = height
+	lb.draw_count = lb.height / lb.item_height
 }

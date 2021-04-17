@@ -197,7 +197,7 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			println('scs: propose_size $i) $child.type_name() ($c.width_type[i].str(): $w, $c.height_type[i].str():$h)')
+			println('scs: propose_size $i) $child.type_name() (${c.width_type[i].str()}: $w, ${c.height_type[i].str()}:$h)')
 		}
 		child.propose_size(w, h)
 
@@ -229,6 +229,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 		println('|    real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
 		println('|---------------------------------------')
 	}
+
 	for i, child in s.children {
 		match c.width_type[i] {
 			.stretch {
@@ -579,12 +580,15 @@ fn (mut s Stack) default_sizes() {
 
 fn (mut s Stack) adjustable_size() (int, int) {
 	mut w, mut h := s.width, s.height
+	// println("stack size: ($w, $h) adj: ($s.adj_width, $s.adj_height)")
 	if s.height == 0 {
 		$if adj ? {
 			print('stack ${typeof(s).name} ')
 			C.printf(' %p', s)
 			println(' adjusted height $s.height <- $s.adj_height')
 		}
+		h = s.adj_height
+	} else {
 		h = s.adj_height
 	}
 	if s.width == 0 {
@@ -593,6 +597,8 @@ fn (mut s Stack) adjustable_size() (int, int) {
 			C.printf(' %p', s)
 			println(' adjusted width $s.width <- $s.adj_width')
 		}
+		w = s.adj_width
+	} else {
 		w = s.adj_width
 	}
 	return w, h
@@ -661,6 +667,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	}
 	s.adj_width = w
 	s.adj_height = h
+	// println("adj $s.id = ($s.adj_width, $s.adj_height)")
 }
 
 fn (mut s Stack) update_pos() {
@@ -679,7 +686,7 @@ fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
 	$if scp ? {
-		println('Stack  pos: ($s.x, $s.y)')
+		println('Stack  pos: ($x, $y)')
 	}
 	for i, mut child in s.children {
 		child_width, child_height := child.size()
@@ -716,6 +723,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	}
 
 	child_width, child_height := child.size()
+
 	if s.direction == .column {
 		container_width := s.width
 		mut x_offset := 0
