@@ -69,7 +69,7 @@ fn (mut g Group) decode_size(parent Layout) {
 	g.width = relative_size_from_parent(g.width, parent_width)
 	g.height = relative_size_from_parent(g.height, parent_height)
 	// }
-	println("g size: ($g.width, $g.height) ($parent_width, $parent_height) ")
+	println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
 	// s.debug_show_size("decode after -> ")
 }
 
@@ -114,7 +114,7 @@ fn (mut g Group) calculate_child_positions() {
 fn (mut g Group) propose_size(w int, h int) (int, int) {
 	g.width = w
 	g.height = h
-	println("g prop size: ($w, $h)")
+	println('g prop size: ($w, $h)')
 	return g.width, g.height
 }
 
@@ -212,6 +212,6 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	g.adj_width = w
 	g.adj_height = h
 	$if adj_size ? {
-		println("group $g.id adj size: ($g.adj_width, $g.adj_height)")
+		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
 	}
 }

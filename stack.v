@@ -36,18 +36,18 @@ N.B.:
 ***********************************/
 
 struct StackConfig {
-	id                    string
-	width                 int // To remove soon
-	height                int // To remove soon
-	vertical_alignment    VerticalAlignment
-	horizontal_alignment  HorizontalAlignment
-	spacings              []f32 // Spacing = Spacing(0) // int
-	spacing               f32
-	stretch               bool
-	direction             Direction
-	margins               Margins
+	id                   string
+	width                int // To remove soon
+	height               int // To remove soon
+	vertical_alignment   VerticalAlignment
+	horizontal_alignment HorizontalAlignment
+	spacings             []f32 // Spacing = Spacing(0) // int
+	spacing              f32
+	stretch              bool
+	direction            Direction
+	margins              Margins
 	// children related
-	title    			  string
+	title                 string
 	widths                []f32 // children sizes
 	heights               []f32
 	align                 Alignments
@@ -81,7 +81,7 @@ pub mut:
 	real_height          int
 	adj_width            int
 	adj_height           int
-	title   			 string
+	title                string
 	// children related
 	children              []Widget
 	drawing_children      []Widget
@@ -200,7 +200,7 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			println('scs: propose_size $i) $child.type_name() (${c.width_type[i].str()}: $w, ${c.height_type[i].str()}:$h)')
+			println('scs: propose_size $i) $child.type_name() ($c.width_type[i].str(): $w, $c.height_type[i].str():$h)')
 		}
 		child.propose_size(w, h)
 
@@ -581,8 +581,8 @@ fn (mut s Stack) default_sizes() {
 	}
 }
 
-
-/* USELESS TO REMOVE
+/*
+USELESS TO REMOVE
 fn (mut s Stack) adjustable_size() (int, int) {
 	mut w, mut h := s.width, s.height
 	// println("stack size: ($w, $h) adj: ($s.adj_width, $s.adj_height)")
@@ -646,8 +646,8 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
 				child.adj_height + child.margin(.top) + child.margin(.bottom)
 			$if adj_size ? {
-				println("Stack child($child.id) child_width = $child_width (=${child.adj_width} + ${child.margin(.left)} + ${child.margin(.right)})")
-				println("Stack child($child.id) child_height = $child_height (=${child.adj_height} + ${child.margin(.top)} + ${child.margin(.bottom)})")
+				println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+				println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
 			}
 			12
 		} else if mut child is Group {
@@ -683,7 +683,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 	s.adj_width = w
 	s.adj_height = h
 	$if adj_size ? {
-		println("Stack($s.id) adj_size: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height) vs size: ($s.width, $s.height)")
+		println('Stack($s.id) adj_size: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height) vs size: ($s.width, $s.height)')
 	}
 }
 
@@ -836,10 +836,12 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	if s.title != "" {
+	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
-		s.ui.gg.draw_empty_rect(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height, s.real_height + text_height, gx.black)
-		s.ui.gg.draw_rect(s.x + 5 + 2 , s.y - text_height, text_width + 5, text_height, gx.white) //s.bg_color)
+		s.ui.gg.draw_empty_rect(s.x - text_height / 2, s.y - text_height / 2, s.real_width +
+			text_height, s.real_height + text_height, gx.black)
+		s.ui.gg.draw_rect(s.x + 5 + 2, s.y - text_height, text_width + 5, text_height,
+			gx.white) // s.bg_color)
 		s.ui.gg.draw_text_def(s.x + 5 + 2, s.y - text_height, s.title)
 	}
 	offset_end(mut s)

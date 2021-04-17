@@ -76,7 +76,7 @@ pub mut:
 	drag_pos_y     f64
 	drag_time      time.Time
 	// themes
-	color_themes   ColorThemes
+	color_themes ColorThemes
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
@@ -252,7 +252,7 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
 	for _, mut child in window.children {
-		//println('init $child.type_name()')
+		// println('init $child.type_name()')
 		child.init(window)
 		window.register_child(*child)
 	}
@@ -940,79 +940,79 @@ pub fn (w &Window) get_children() []Widget {
 fn (mut w Window) register_child(child Widget) {
 	if child is Button {
 		// println("register Button")
-		if child.id == "" {
-			mode := "button"
+		if child.id == '' {
+			mode := 'button'
 			w.widgets_counts[mode] += 1
 			mut child2 := child
-			child2.id = "ui_${mode}_${w.widgets_counts[mode]}" 
+			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child2.id] = child2
 		} else {
 			w.widgets[child.id] = child
 		}
 		$if register ? {
-			if child.id != "" {
-				println("registered ${child.id}")
+			if child.id != '' {
+				println('registered $child.id')
 			}
-		} 
+		}
 	}
 	if child is ListBox {
 		// println("register ListBox")
-		if child.id != "" {
+		if child.id != '' {
 			w.widgets[child.id] = child
 		}
 		$if register ? {
-			if child.id != "" {
-				println("registered ${child.id}")
+			if child.id != '' {
+				println('registered $child.id')
 			}
-		} 
+		}
 	}
 	if child is Label {
 		// println("register Label")
-		if child.id != "" {
+		if child.id != '' {
 			w.widgets[child.id] = child
 		}
 		$if register ? {
-			if child.id != "" {
-				println("registered ${child.id}")
+			if child.id != '' {
+				println('registered $child.id')
 			}
-		} 
+		}
 	}
 	if child is Stack {
 		// println("register Stack")
-		if child.id == "" {
-			mode := if child.direction == .row { "row"} else { "column" }
+		if child.id == '' {
+			mode := if child.direction == .row { 'row' } else { 'column' }
 			w.widgets_counts[mode] += 1
 			mut child2 := child
-			child2.id = "ui_${mode}_${w.widgets_counts[mode]}" 
+			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child2.id] = child2
 		} else {
 			w.widgets[child.id] = child
 		}
 		$if register ? {
-			if child.id != "" {
-				println("registered ${child.id}")
+			if child.id != '' {
+				println('registered $child.id')
 			}
-		} 
+		}
 		for child2 in child.children {
 			w.register_child(child2)
 		}
 	}
 	if child is Group {
 		// println("register Group")
-		if child.id == "" {
-			mode := "group"
+		if child.id == '' {
+			mode := 'group'
 			w.widgets_counts[mode] += 1
 			mut child2 := child
-			child2.id = "ui_${mode}_${w.widgets_counts[mode]}" 
+			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child2.id] = child2
 		} else {
 			w.widgets[child.id] = child
 		}
 		$if register ? {
-			if child.id != "" {
-				println("registered ${child.id}")
+			if child.id != '' {
+				println('registered $child.id')
 			}
-		} 
+		}
 		for child2 in child.children {
 			w.register_child(child2)
 		}
@@ -1021,7 +1021,7 @@ fn (mut w Window) register_child(child Widget) {
 
 // direct access of registered widget by id
 pub fn (w Window) button(id string) &Button {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Button {
 		return widget
 	} else {
@@ -1030,7 +1030,7 @@ pub fn (w Window) button(id string) &Button {
 }
 
 pub fn (w Window) label(id string) &Label {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Label {
 		return widget
 	} else {
@@ -1039,29 +1039,29 @@ pub fn (w Window) label(id string) &Label {
 }
 
 pub fn (w Window) listbox(id string) &ListBox {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is ListBox {
 		return widget
 	} else {
-		return listbox({},map{})
+		return listbox({}, map{})
 	}
 }
 
 pub fn (w Window) stack(id string) &Stack {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Stack {
 		return widget
 	} else {
-		return stack({},[])
+		return stack({}, [])
 	}
 }
 
 pub fn (w Window) group(id string) &Group {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Group {
 		return widget
 	} else {
-		return group({},[])
+		return group({}, [])
 	}
 }
 
@@ -1070,8 +1070,8 @@ pub fn widget<T>(w Window, id string) &T {
 	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
 	mut res := &T{}
 	if widget is T {
-		res = widget 
-	} 
+		res = widget
+	}
 	return res
 }
 */

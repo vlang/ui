@@ -91,12 +91,12 @@ pub mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string
 	// related to text drawing
-	text_cfg  	  gx.TextCfg
-	text_size     f64
-	hidden        bool
+	text_cfg  gx.TextCfg
+	text_size f64
+	hidden    bool
 	// guess adjusted width
-	adj_width     int
-	adj_height    int
+	adj_width  int
+	adj_height int
 }
 
 struct ListItem {
@@ -111,7 +111,7 @@ mut:
 
 fn (mut lb ListBox) get_draw_to(text string) int {
 	width := text_width<ListBox>(lb, text)
-	real_w := lb.width  + ui._text_offset_x * 2
+	real_w := lb.width + ui._text_offset_x * 2
 	mut draw_to := text.len
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
@@ -119,8 +119,8 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 			draw_to--
 		}
 	}
-	// 
-	println("width $width >= real_w $real_w draw_to: $draw_to, $text, ${text[0..draw_to]}")
+	//
+	println('width $width >= real_w $real_w draw_to: $draw_to, $text, ${text[0..draw_to]}')
 	return draw_to
 }
 
@@ -225,8 +225,8 @@ fn (mut lb ListBox) init(parent Layout) {
 	}
 	lb.draw_count = lb.height / lb.item_height
 	lb.text_offset_y = (lb.item_height - text_height<ListBox>(lb, 'W')) / 2
-	
-	// update lb.width and lb.height to adjusted sizes when initialized to 0 
+
+	// update lb.width and lb.height to adjusted sizes when initialized to 0
 	lb.init_size()
 
 	lb.init_items()
@@ -368,10 +368,10 @@ fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {
 		mut width := 0
 		for item in lb.items {
-			width = text_width<ListBox>(lb, item.text)  + ui._text_offset_x * 2
+			width = text_width<ListBox>(lb, item.text) + ui._text_offset_x * 2
 			// width = text_width<ListBox>(lb, "w") * item.text.len
 			// width, _ = text_size<ListBox>(lb, item.text)
-			println("${item.text} -> $width")
+			println('$item.text -> $width')
 			if width > lb.adj_width {
 				lb.adj_width = width
 			}
@@ -382,7 +382,6 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		lb.adj_height = lb.items.len * lb.item_height
 	}
 	return lb.adj_width, lb.adj_height
-
 }
 
 fn (mut lb ListBox) init_size() {

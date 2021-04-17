@@ -41,14 +41,14 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:${s.margin(.left)} - s.margin.right:${s.margin(.right)}, h:$h - s.margin.top:${s.margin(.top)} - s.margin.ttom:${s.margin(.bottom)})')
 	}
 	tab := '  '.repeat(depth)
-	println('$tab ($depth) Stack ${s.id} with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
+	println('$tab ($depth) Stack $s.id with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
 	free_width, free_height := s.free_size()
 	adj_width, adj_height := s.adj_size()
 	real_width, real_height := s.size()
 	println('$tab   free size: ($free_width, $free_height) adj_size: ($adj_width, $adj_height) real_size: ($real_width, $real_height)')
 	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
-	println("$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: ${s.total_spacing()}")
-	println("$tab   margin")
+	println('$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: $s.total_spacing()')
+	println('$tab   margin')
 	widths, heights := s.children_sizes()
 	println(txt)
 	for i, mut child in s.children {
