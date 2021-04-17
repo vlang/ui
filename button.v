@@ -143,7 +143,7 @@ fn (mut b Button) set_pos(x int, y int) {
 	b.y = y
 }
 
-fn (mut b Button) size() (int, int) {
+pub fn (mut b Button) size() (int, int) {
 	if b.width == 0 || b.height == 0 {
 		b.set_text_size()
 	}

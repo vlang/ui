@@ -9,6 +9,7 @@ import eventbus
 
 pub struct Group {
 pub mut:
+	id            string
 	title         string
 	height        int
 	width         int
@@ -32,6 +33,7 @@ pub mut:
 
 pub struct GroupConfig {
 pub mut:
+	id      string
 	title   string
 	x       int
 	y       int
@@ -72,6 +74,7 @@ fn (mut g Group) decode_size(parent Layout) {
 
 pub fn group(c GroupConfig, children []Widget) &Group {
 	mut g := &Group{
+		id: c.id
 		title: c.title
 		x: c.x
 		y: c.y
@@ -188,7 +191,14 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in g.children {
-		child_width, child_height := child.size()
+
+		if mut child is Stack {
+			child.set_adjusted_size(i + 1, true, ui)
+		} else if mut child is Group {
+			child.set_adjusted_size(i + 1, ui)
+		} 
+
+		mut child_width, mut child_height := child.size()
 		$if ui_group ? {
 			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
 		}
@@ -201,4 +211,5 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	h += g.spacing * (g.children.len - 1)
 	g.adj_width = w
 	g.adj_height = h
+	println("ffffiiiiinnnnn")
 }

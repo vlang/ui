@@ -368,12 +368,12 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		mut width := 0
 		for item in lb.items {
 			width = text_width<ListBox>(lb, item.text)
-			println("${item.text} -> $width")
+			// println("${item.text} -> $width")
 			if width > lb.adj_width {
 				lb.adj_width = width
 			}
 		}
-		println("adj_width: $lb.adj_width")
+		// println("adj_width: $lb.adj_width")
 	}
 	if lb.adj_height == 0 {
 		lb.adj_height = lb.items.len * lb.item_height
