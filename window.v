@@ -77,7 +77,6 @@ pub mut:
 	drag_time      time.Time
 	// themes
 	color_themes ColorThemes
-	// FIRST VERSION ANIMATE: animating  bool
 	// widgets register
 	widgets       map[string]Widget
 	widgets_count int
@@ -901,13 +900,10 @@ fn frame(mut w Window) {
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
-	// USELESS? animate_stop() // FIRST VERSION ANIMATE: w.animating = false
-
 	for mut child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {

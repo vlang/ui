@@ -110,7 +110,6 @@ fn (mut t Transition) draw() {
 		// Update last draw time to calculate frame delta
 		t.last_draw_time = time.ticks()
 	}
-	// USELESS?: set_animating(t.animating) // FIRST VERSION ANIMATE: t.ui.window.animating = t.ui.window.animating || t.animating
 }
 
 fn (t &Transition) set_visible(state bool) {
@@ -129,45 +128,3 @@ fn (t &Transition) unfocus() {
 fn (t &Transition) point_inside(x f64, y f64) bool {
 	return false
 }
-
-/*
-USELESS? **** Animation stuff ******
-enum Animating {
-	_get
-	_set
-	_or
-}
-
-[unsafe]
-fn animating_(mode Animating, state bool) bool {
-	mut static animating := false
-	match mode {
-		._set {
-			animating = state
-		}
-		._or {
-			animating = animating || state
-		}
-		._get {}
-	}
-	// println("mode: $mode $animating")
-	return animating
-}
-
-pub fn animate_stop() {
-	unsafe { animating_(._set, false) }
-}
-
-pub fn animate_start() {
-	unsafe { animating_(._set, true) }
-}
-
-pub fn set_animating(state bool) {
-	unsafe { animating_(._or, state) }
-}
-
-pub fn animating() bool {
-	return unsafe { animating_(._get, true) }
-}
-
-**/
