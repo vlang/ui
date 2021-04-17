@@ -46,8 +46,7 @@ pub mut:
 	z_index    int
 	parent     Layout
 	is_focused bool
-	// gg &gg.GG
-	ui &UI = 0
+	ui         &UI = 0
 	// text               string
 	text             &string = voidptr(0)
 	max_len          int
@@ -201,7 +200,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 	return w, h
 }
 
-fn (mut tb TextBox) size() (int, int) {
+fn (tb &TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
@@ -209,7 +208,7 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if !tb.is_multi && tb.height > ui.max_textbox_height && !tb.ui.window.resizable {
+	if tb.height > ui.max_textbox_height { // && !tb.ui.window.resizable {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height
