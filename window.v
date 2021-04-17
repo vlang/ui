@@ -1190,3 +1190,13 @@ pub fn (w &Window) update_layout() {
 		s.update_all_children_recursively(w)
 	}
 }
+
+fn foo(w Widget) {
+}
+
+fn bar() {
+	foo(&Transition{
+		ui: 0
+		animated_value: 0
+	})
+}

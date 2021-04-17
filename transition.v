@@ -7,7 +7,7 @@ import time
 
 pub struct Transition {
 mut:
-	// pub:
+// pub:
 	x                int
 	y                int
 	z_index          int
@@ -21,7 +21,7 @@ mut:
 	parent           Layout
 	start_value      int
 	last_draw_target int
-	ui               &UI
+	ui               &UI = voidptr(0)
 	hidden           bool
 pub mut:
 	target_value   int
