@@ -252,11 +252,12 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
 	for _, mut child in window.children {
-		//
-		println('init $child.type_name()')
+		//println('init $child.type_name()')
 		child.init(window)
 		window.register_child(*child)
 	}
+	// refresh the layout
+	window.update_layout()
 	if window.init_fn != voidptr(0) {
 		window.init_fn(window)
 	}
@@ -1063,6 +1064,17 @@ pub fn (w Window) group(id string) &Group {
 		return group({},[])
 	}
 }
+
+/*
+pub fn widget<T>(w Window, id string) &T {
+	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
+	mut res := &T{}
+	if widget is T {
+		res = widget 
+	} 
+	return res
+}
+*/
 
 /*
 pub fn (w Window) button(id string) ?&Button {

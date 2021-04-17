@@ -69,6 +69,7 @@ fn (mut g Group) decode_size(parent Layout) {
 	g.width = relative_size_from_parent(g.width, parent_width)
 	g.height = relative_size_from_parent(g.height, parent_height)
 	// }
+	println("g size: ($g.width, $g.height) ($parent_width, $parent_height) ")
 	// s.debug_show_size("decode after -> ")
 }
 
@@ -113,6 +114,7 @@ fn (mut g Group) calculate_child_positions() {
 fn (mut g Group) propose_size(w int, h int) (int, int) {
 	g.width = w
 	g.height = h
+	println("g prop size: ($w, $h)")
 	return g.width, g.height
 }
 
@@ -179,6 +181,10 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
+fn (g &Group) adj_size() (int, int) {
+	return g.adj_width, g.adj_height
+}
+
 fn (g &Group) size() (int, int) {
 	return g.width, g.height
 }
@@ -191,14 +197,8 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in g.children {
-
-		if mut child is Stack {
-			child.set_adjusted_size(i + 1, true, ui)
-		} else if mut child is Group {
-			child.set_adjusted_size(i + 1, ui)
-		} 
-
 		mut child_width, mut child_height := child.size()
+
 		$if ui_group ? {
 			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
 		}
@@ -211,5 +211,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	h += g.spacing * (g.children.len - 1)
 	g.adj_width = w
 	g.adj_height = h
-	println("ffffiiiiinnnnn")
+	$if adj_size ? {
+		println("group $g.id adj size: ($g.adj_width, $g.adj_height)")
+	}
 }

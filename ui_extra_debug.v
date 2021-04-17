@@ -32,7 +32,7 @@ fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
 // Debug function
 fn (s &Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
-		println('Show cache =>')
+		println('Show cache $s.id =>')
 	}
 	$if bbd ? {
 		w, h := s.size()
@@ -41,16 +41,20 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:${s.margin(.left)} - s.margin.right:${s.margin(.right)}, h:$h - s.margin.top:${s.margin(.top)} - s.margin.ttom:${s.margin(.bottom)})')
 	}
 	tab := '  '.repeat(depth)
-	println('$tab ($depth) Stack ${typeof(s).name} with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
+	println('$tab ($depth) Stack ${s.id} with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
 	free_width, free_height := s.free_size()
-	println('$tab   free size: ($free_width, $free_height)')
+	adj_width, adj_height := s.adj_size()
+	real_width, real_height := s.size()
+	println('$tab   free size: ($free_width, $free_height) adj_size: ($adj_width, $adj_height) real_size: ($real_width, $real_height)')
 	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
+	println("$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: ${s.total_spacing()}")
+	println("$tab   margin")
 	widths, heights := s.children_sizes()
 	println(txt)
 	for i, mut child in s.children {
 		name := child.type_name()
 		if mut child is Stack {
-			mut tmp := '$tab      ($depth-$i) $name :'
+			mut tmp := '$tab      ($depth-$i) Stack $child.id :'
 			tmp += '\n$tab      fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
 			child.debug_show_cache(depth + 1, tmp)

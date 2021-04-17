@@ -111,15 +111,16 @@ mut:
 
 fn (mut lb ListBox) get_draw_to(text string) int {
 	width := text_width<ListBox>(lb, text)
-	real_w := lb.width - ui._text_offset_x * 2
+	real_w := lb.width  + ui._text_offset_x * 2
 	mut draw_to := text.len
-	// println("width $width >= real_w $real_w draw_to: $draw_to")
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
 		for draw_to > 1 && text_width<ListBox>(lb, text[0..draw_to]) > real_w {
 			draw_to--
 		}
 	}
+	// 
+	println("width $width >= real_w $real_w draw_to: $draw_to, $text, ${text[0..draw_to]}")
 	return draw_to
 }
 
@@ -367,8 +368,10 @@ fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {
 		mut width := 0
 		for item in lb.items {
-			width = text_width<ListBox>(lb, item.text)
-			// println("${item.text} -> $width")
+			width = text_width<ListBox>(lb, item.text)  + ui._text_offset_x * 2
+			// width = text_width<ListBox>(lb, "w") * item.text.len
+			// width, _ = text_size<ListBox>(lb, item.text)
+			println("${item.text} -> $width")
 			if width > lb.adj_width {
 				lb.adj_width = width
 			}
