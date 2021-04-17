@@ -72,13 +72,6 @@ fn main() {
 				widths: [.3, .55]
 			}, [ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
 		]),
-			ui.column({
-				spacing: .1
-				heights: [1., 1.]
-				widths: ui.stretch
-			}, [app.lbl_elapsed_value, app.slider]),
-		]),
-			ui.button(text: 'Reset', onclick: on_reset), app.progress_bar]),
 	])
 	app.window = window
 	// go app.timer()
