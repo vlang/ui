@@ -7,7 +7,7 @@ import time
 
 pub struct Transition {
 mut:
-// pub:
+	// pub:
 	x                int
 	y                int
 	z_index          int
