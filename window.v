@@ -816,7 +816,6 @@ pub fn (w &Window) focus() {
 }
 
 pub fn (w &Window) always_on_top(val bool) {
-	// w.glfw_obj.window_hint(
 }
 
 fn (w &Window) draw() {
@@ -861,12 +860,12 @@ fn native_frame(mut w Window) {
 	}
 	*/
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
-	if w.child_window == 0 {
-		// Render all widgets, including Canvas
-		for mut child in children {
-			child.draw()
-		}
+	// if w.child_window == 0 {
+	// Render all widgets, including Canvas
+	for mut child in children {
+		child.draw()
 	}
+	//}
 	// w.ui.needs_refresh = false
 }
 
