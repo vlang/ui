@@ -70,13 +70,6 @@ pub fn menu(c MenuConfig) &Menu {
 	}
 }
 
-pub fn menu_item(text string, action MenuItemFn) MenuItem {
-	return MenuItem{
-		text: text
-		action: action
-	}
-}
-
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	if m.hidden {
 		return
