@@ -818,6 +818,66 @@ pub fn (w &Window) focus() {
 pub fn (w &Window) always_on_top(val bool) {
 }
 
+// TODO remove this once interfaces are smarter
+fn foo(w Widget) {
+}
+
+fn foo2(l Layout) {
+}
+
+fn bar() {
+	// foo(&TextBox{
+	// 	ui: 0
+	// })
+	// foo(&Button{
+	// 	ui: 0
+	// })
+	foo(&ProgressBar{
+		ui: 0
+	})
+	foo(&Slider{
+		ui: 0
+	})
+	foo(&CheckBox{
+		ui: 0
+	})
+	foo(&Label{
+		ui: 0
+	})
+	foo(&Radio{
+		ui: 0
+	})
+	foo(&Picture{
+		ui: 0
+	})
+	foo(&Canvas{})
+	foo(&Menu{
+		ui: 0
+	})
+	foo(&Dropdown{
+		ui: 0
+	})
+	foo(&Transition{
+		ui: 0
+		animated_value: 0
+	})
+	foo(&Stack{
+		ui: 0
+	})
+	foo(&Switch{
+		ui: 0
+	})
+	foo(&Rectangle{
+		ui: 0
+	})
+	foo(&Group{
+		ui: 0
+	})
+	foo(&Grid{
+		ui: 0
+	})
+}
+
 fn (w &Window) draw() {
 }
 
