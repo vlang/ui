@@ -223,9 +223,10 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 	mut c := &s.cache
 	free_width -= c.fixed_width
 	free_height -= c.fixed_height
+
 	$if cs ? {
 		println('----------------------------------------')
-		println('| children_size: ${typeof(s).name} s.widths:  $s.widths s.heights:  $s.heights ')
+		println('| First pass: children_size: ${typeof(s).name} s.widths:  $s.widths s.heights:  $s.heights ')
 		println('|    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
 		println('|    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
 		println('|    type (w: $c.width_type, h: $c.height_type)')
@@ -233,6 +234,34 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 		println('|---------------------------------------')
 	}
 
+	// IMPORTANT: weighted sizes have to be substracted in free sizes.
+	// So one needs a preliminary pass for weighted.
+	for i, child in s.children {
+		match c.width_type[i] {
+			.weighted, .weighted_minsize {
+				weight := c.weight_widths[i]
+				mcw[i] = int(weight * f32(s.real_width))
+				free_width -= mcw[i]
+			}
+			else {}
+		}
+
+		match c.height_type[i] {
+			.weighted, .weighted_minsize {
+				weight := c.weight_heights[i]
+				mch[i] = int(weight * f32(s.real_height))
+				free_height -= mch[i]
+			}
+			else {}
+		}
+		$if cs ? {
+			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($c.width_type[i].str(), $c.height_type[i].str())')
+			println('|----------------------------------------')
+		}
+	}
+	$if cs ? {
+		println('| Second pass:   real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+	}
 	for i, child in s.children {
 		match c.width_type[i] {
 			.stretch {
@@ -243,10 +272,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 					mcw[i] = free_width
 				}
 			}
-			.weighted, .weighted_minsize {
-				weight := c.weight_widths[i]
-				mcw[i] = int(weight * f32(s.real_width))
-			}
+			.weighted, .weighted_minsize {}
 			.compact, .fixed {
 				mcw[i] = c.fixed_widths[i]
 			}
@@ -260,15 +286,16 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			.stretch {
 				if s.direction == .column {
 					weight := c.weight_heights[i] / c.height_mass
-					mch[i] = int(weight * free_height)
+					mch[i] = int(weight * f32(free_height))
+					$if cs ? {
+						println('stretch: $weight (=${c.weight_heights[i]} / $c.height_mass) * $free_height = ${mch[i]}')
+					} $else {
+					}
 				} else {
 					mch[i] = free_height
 				}
 			}
-			.weighted, .weighted_minsize {
-				weight := c.weight_heights[i]
-				mch[i] = int(weight * f32(s.real_height))
-			}
+			.weighted, .weighted_minsize {}
 			.compact, .fixed {
 				mch[i] = c.fixed_heights[i]
 			}
@@ -348,7 +375,7 @@ fn (mut s Stack) set_cache_sizes() {
 				if s.direction == .row { // sum rule
 					c.fixed_width += c.fixed_widths[i]
 					c.min_width += c.fixed_widths[i]
-					c.width_mass += c.weight_widths[i]
+					// c.width_mass += c.weight_widths[i]
 				} else { // max rule
 					if c.fixed_widths[i] > c.fixed_width {
 						c.fixed_width = c.fixed_widths[i]
@@ -365,7 +392,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// Internally, fixed_widths[i] is set to minimal fixed size
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row {
-				c.width_mass += cw
+				// c.width_mass += cw
 				c.min_width += c.fixed_widths[i]
 			} else {
 				if c.fixed_widths[i] > c.min_width {
@@ -441,7 +468,7 @@ fn (mut s Stack) set_cache_sizes() {
 				if s.direction == .column {
 					c.fixed_height += c.fixed_heights[i]
 					c.min_height += c.fixed_heights[i]
-					c.height_mass += c.weight_heights[i]
+					// c.height_mass += c.weight_heights[i]
 				} else {
 					if c.fixed_heights[i] > c.fixed_height {
 						c.fixed_height = c.fixed_heights[i]
@@ -458,7 +485,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// Internally, fixed_heights[i] is set to minimal fixed size
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column {
-				c.height_mass += ch
+				// c.height_mass += ch
 				c.min_height += c.fixed_heights[i]
 			} else {
 				if c.fixed_heights[i] > c.min_height {

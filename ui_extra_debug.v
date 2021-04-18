@@ -116,13 +116,13 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 		println('  top: ${s.margin(.top)}')
 		total += s.margin(.top)
 		for i, _ in s.children {
-			println('+ w[$i]: ${heights[i]}')
+			println('+ w[$i]: ${heights[i]} ${c.weight_heights[i]}')
 			total += heights[i]
 			if i == s.children.len - 1 {
-				println('+ bottom: ${s.margin(.bottom)}')
+				println('+ bottom: ${s.margin(.bottom)} $s.margins.bottom')
 				total += s.margin(.bottom)
 			} else {
-				println('+ spacing[$i]: ${s.spacing(i)}')
+				println('+ spacing[$i]: ${s.spacing(i)} ${s.spacings[i]}')
 				total += s.spacing(i)
 			}
 		}
