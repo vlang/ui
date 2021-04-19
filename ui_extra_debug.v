@@ -123,6 +123,7 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 		println(' bottom: ${s.margin(.bottom)} = $s.margins.bottom * $s.real_height')
 		println(' $s.real_height == ${s.margin(.top) + total + s.margin(.bottom)} = ${s.margin(.top)} + $total + ${s.margin(.bottom)} ')
 	} else {
+		// sum rule
 		println('SumRule($s.id)  top: ${s.margin(.top)}')
 		total += s.margin(.top)
 		for i, _ in s.children {
@@ -137,5 +138,16 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 			}
 		}
 		println('= $total == $s.real_height')
+		// max rule for heights
+		println('MaxRule($s.id)  top: ${s.margin(.left)} = $s.margins.left * $s.real_width')
+		total = 0 // s.margin(.left)
+		for i, _ in s.children {
+			if widths[i] > total {
+				total = widths[i]
+			}
+			println('max $total | current w[$i]: ${widths[i]} ${c.weight_widths[i]}')
+		}
+		println(' right: ${s.margin(.right)} = $s.margins.right * $s.real_width')
+		println(' $s.real_width == ${s.margin(.left) + total + s.margin(.right)} = ${s.margin(.left)} + $total + ${s.margin(.right)} ')
 	}
 }

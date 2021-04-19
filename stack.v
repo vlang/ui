@@ -153,7 +153,7 @@ pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	s.set_children_sizes()
 	// All sizes have to be set before positionning widgets
 	// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
-	s.set_pos(s.x, s.y)
+	s.update_pos()
 	// 5) children z_index
 	s.set_drawing_children()
 	// 6) set position for chilfren
@@ -735,6 +735,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 }
 
 fn (mut s Stack) update_pos() {
+	$if pos ? {println("update_pos($s.id):  $($s.real_x, $s.real_y) + (${s.margin(.left)}, ${s.margin(.top)})")}
 	s.x = s.real_x + s.margin(.left)
 	s.y = s.real_y + s.margin(.top)
 }
@@ -742,6 +743,7 @@ fn (mut s Stack) update_pos() {
 fn (mut s Stack) set_pos(x int, y int) {
 	// could depend on anchor in the future
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
+	$if pos ? {println("set_pos($s.id): $($x, $y)")}
 	s.real_x, s.real_y = x, y
 	s.update_pos()
 }
@@ -750,7 +752,7 @@ fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
 	$if scp ? {
-		println('Stack  pos: ($x, $y)')
+		println('Stack  $s.id pos: ($x, $y)')
 	}
 	for i, mut child in s.children {
 		child_width, child_height := child.size()
@@ -767,6 +769,9 @@ fn (mut s Stack) set_children_pos() {
 				}
 			}
 		} else {
+			$if scp ? {
+				println('$.column $i): child_height=$child_height y => $y')
+			}
 			y += child_height
 			if i < s.children.len - 1 {
 				y += s.spacing(i)
