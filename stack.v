@@ -200,7 +200,8 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			println('scs: propose_size $i) $child.type_name() ($c.width_type[i].str(): $w, $c.height_type[i].str():$h)')
+			wt, ht := c.width_type[i].str(), c.height_type[i].str()
+			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
 		child.propose_size(w, h)
 
@@ -272,7 +273,8 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			else {}
 		}
 		$if cs ? {
-			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($c.width_type[i].str(), $c.height_type[i].str())')
+			wt, ht := c.width_type[i].str(), c.height_type[i].str()
+			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
 			println('|----------------------------------------')
 		}
 	}
@@ -322,7 +324,8 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			}
 		}
 		$if cs ? {
-			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($c.width_type[i].str(), $c.height_type[i].str())')
+			wt, ht := c.width_type[i].str(), c.height_type[i].str()
+			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
 			println('|----------------------------------------')
 		}
 	}
