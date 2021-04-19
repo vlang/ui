@@ -209,7 +209,7 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height && !tb.ui.window.resizable {
+	if tb.height > ui.max_textbox_height && (!tb.ui.window.resizable || !tb.is_multi) {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height
@@ -234,7 +234,8 @@ fn (mut tb TextBox) draw() {
 	if text == '' && placeholder != '' {
 		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 		// tb.draw_text(tb.x + ui.textbox_padding, text_y, placeholder)
-		draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, placeholder)
+		draw_text_with_color<TextBox>(tb, tb.x + ui.textbox_padding, text_y, placeholder,
+			gx.gray)
 	}
 	// Text
 	else {

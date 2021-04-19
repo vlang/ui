@@ -41,6 +41,24 @@ fn draw_text<T>(w &T, x int, y int, text_ string) {
 	}
 }
 
+fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
+	if w.text_size > 0 {
+		_, win_height := w.ui.window.size()
+		tc := gx.TextCfg{
+			...w.text_cfg
+			size: text_size_as_int(w.text_size, win_height)
+			color: color
+		}
+		w.ui.gg.draw_text(x, y, text_, tc)
+	} else {
+		tc := gx.TextCfg{
+			...w.text_cfg
+			color: color
+		}
+		w.ui.gg.draw_text(x, y, text_, tc)
+	}
+}
+
 // text_size: f64
 //   0  (default)  => system
 //   16 (or 16.)   => fixed font size
