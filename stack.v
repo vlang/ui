@@ -735,7 +735,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 }
 
 fn (mut s Stack) update_pos() {
-	$if pos ? {println("update_pos($s.id):  $($s.real_x, $s.real_y) + (${s.margin(.left)}, ${s.margin(.top)})")}
+	$if pos ? {
+		println('update_pos($s.id):  $($s.real_x, $s.real_y) + (${s.margin(.left)}, ${s.margin(.top)})')
+	}
 	s.x = s.real_x + s.margin(.left)
 	s.y = s.real_y + s.margin(.top)
 }
@@ -743,7 +745,9 @@ fn (mut s Stack) update_pos() {
 fn (mut s Stack) set_pos(x int, y int) {
 	// could depend on anchor in the future
 	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-	$if pos ? {println("set_pos($s.id): $($x, $y)")}
+	$if pos ? {
+		println('set_pos($s.id): $($x, $y)')
+	}
 	s.real_x, s.real_y = x, y
 	s.update_pos()
 }

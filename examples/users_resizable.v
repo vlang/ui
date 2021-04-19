@@ -221,18 +221,19 @@ fn btn_add_click(mut app State, x voidptr) {
 fn draw(c &ui.CanvasLayout, app &State) {
 	w, h := c.width, c.height
 	c.draw_rect(0, 0, w, h, gx.white)
+	marginx, marginy := 20, 20
 	for i, user in app.users {
-		y := 20 + i * cell_height
+		y := marginy + i * cell_height
 		// Outer border
-		c.draw_empty_rect(0, y, table_width, cell_height, gx.gray)
+		c.draw_empty_rect(marginx, y, table_width, cell_height, gx.gray)
 		// Vertical separators
 		c.draw_line(cell_width, y, cell_width, y + cell_height, gx.gray)
 		c.draw_line(cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
 		c.draw_line(cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
 		// Text values
-		c.draw_text_def(5, y + 5, user.first_name)
-		c.draw_text_def(5 + cell_width, y + 5, user.last_name)
-		c.draw_text_def(5 + cell_width * 2, y + 5, user.age.str())
-		c.draw_text_def(5 + cell_width * 3, y + 5, user.country)
+		c.draw_text_def(marginx + 5, y + 5, user.first_name)
+		c.draw_text_def(marginx + 5 + cell_width, y + 5, user.last_name)
+		c.draw_text_def(marginx + 5 + cell_width * 2, y + 5, user.age.str())
+		c.draw_text_def(marginx + 5 + cell_width * 3, y + 5, user.country)
 	}
 }
