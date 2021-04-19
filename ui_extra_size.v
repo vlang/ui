@@ -5,7 +5,7 @@ pub const (
 	compact = 0. // from parent
 )
 
-enum WindowSizeType {
+pub enum WindowSizeType {
 	normal_size
 	resizable
 	max_size
