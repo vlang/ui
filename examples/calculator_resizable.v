@@ -37,6 +37,7 @@ fn main() {
 		ui.textbox(
 			text: &app.text
 			placeholder: '0'
+			is_multi: true
 			// width: 135
 			text_size: 1. / 20
 			read_only: true
