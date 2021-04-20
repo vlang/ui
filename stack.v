@@ -628,35 +628,6 @@ fn (mut s Stack) default_sizes() {
 	}
 }
 
-/*
-USELESS TO REMOVE
-fn (mut s Stack) adjustable_size() (int, int) {
-	mut w, mut h := s.width, s.height
-	// println("stack size: ($w, $h) adj: ($s.adj_width, $s.adj_height)")
-	if s.height == 0 {
-		$if adj ? {
-			print('stack ${typeof(s).name} ')
-			C.printf(' %p', s)
-			println(' adjusted height $s.height <- $s.adj_height')
-		}
-		h = s.adj_height
-	} else {
-		h = s.adj_height
-	}
-	if s.width == 0 {
-		$if adj ? {
-			print('stack ${typeof(s).name} ')
-			C.printf(' %p', s)
-			println(' adjusted width $s.width <- $s.adj_width')
-		}
-		w = s.adj_width
-	} else {
-		w = s.adj_width
-	}
-	return w, h
-}
-*/
-
 pub fn (s &Stack) adj_size() (int, int) {
 	return s.adj_width, s.adj_height
 }
@@ -664,6 +635,7 @@ pub fn (s &Stack) adj_size() (int, int) {
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
+	// println("prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)")
 	return s.real_width, s.real_height
 }
 
@@ -894,11 +866,15 @@ fn (mut s Stack) draw() {
 	}
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
+		// draw rectangle around stack
 		s.ui.gg.draw_empty_rect(s.x - text_height / 2, s.y - text_height / 2, s.real_width +
-			text_height, s.real_height + text_height, gx.black)
-		s.ui.gg.draw_rect(s.x + 5 + 2, s.y - text_height, text_width + 5, text_height,
-			gx.white) // s.bg_color)
-		s.ui.gg.draw_text_def(s.x + 5 + 2, s.y - text_height, s.title)
+			text_height, s.real_height + int(f32(text_height) * .75), gx.black)
+		// draw mini frame
+		tx := s.x + s.real_width / 2 - text_width / 2 - 3
+		ty := s.y - int(f32(text_height) * 1.25)
+		s.ui.gg.draw_rect(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
+		s.ui.gg.draw_empty_rect(tx, ty, text_width + 5, text_height, gx.black)
+		s.ui.gg.draw_text_def(tx, ty - 2, s.title)
 	}
 	offset_end(mut s)
 }
@@ -920,6 +896,14 @@ fn (s &Stack) margin(side MarginSide) int {
 	}
 	$if margin ? {
 		println('margin($side) = $isize')
+	}
+	if s.title != '' {
+		text_height := s.ui.gg.text_height(s.title)
+		match side {
+			.top { isize += int(f32(text_height) * 1.25) }
+			.bottom { isize += int(f32(text_height) * 0.75) }
+			else { isize += text_height / 2 }
+		}
 	}
 	return isize
 }
