@@ -114,6 +114,37 @@ fn main() {
 					'ui.compact': 'ui.compact'
 				}),
 			]),
+			ui.row({
+				id: 'row_space'
+				title: 'Margins and Spacing'
+				margin_: .05
+				spacing: .1
+				widths: ui.compact
+				heights: ui.compact
+			}, [
+				ui.listbox({
+					id: 'lbmargin'
+					height: lb_height
+					selection: 3
+					on_change: lb_change_sp
+				}, map{
+					'20':  'margin_: 20'
+					'50':  'margin_: 50'
+					'.05': 'margin_: .05'
+					'.1':  'margin_: .1'
+				}),
+				ui.listbox({
+					id: 'lbspace'
+					height: lb_height
+					selection: 3
+					on_change: lb_change_sp
+				}, map{
+					'20':  'spacing: 20'
+					'50':  'spacing: 50'
+					'.05': 'spacing: .05'
+					'.1':  'spacing: .1'
+				}),
+			]),
 		]),
 			ui.column({
 				margin: {
@@ -132,7 +163,7 @@ fn main() {
 				ui.label(
 					id: 'l_stack_sizes'
 					height: 25
-					text: 'Row (Stack) declaration:  ui.row({ widths: [.3, 100], heights: [.3, ui.compact]})'
+					text: 'Row (Stack) declaration:  ui.row({ margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact]})'
 				),
 			]),
 			ui.row({
@@ -223,6 +254,28 @@ fn lb_change(app &App, lb &ui.ListBox) {
 	// }
 }
 
+fn lb_change_sp(app &App, lb &ui.ListBox) {
+	key, _ := lb.selected() or { '10', '' }
+
+	win := lb.ui.window
+	mut s := win.stack('row')
+
+	match lb.id {
+		'lbspace' {
+			s.spacings[0] = key.f32()
+		}
+		'lbmargin' {
+			marg := key.f32()
+			s.margins.top, s.margins.bottom, s.margins.left, s.margins.right = marg, marg, marg, marg
+		}
+		else {}
+	}
+
+	set_output_label(win)
+	win.update_layout()
+	set_sizes_labels(win)
+}
+
 fn set_output_label(win &ui.Window) {
 	lb1w, lb1h, lb2w, lb2h := win.listbox('lb1w'), win.listbox('lb1h'), win.listbox('lb2w'), win.listbox('lb2h')
 	mut w1, mut w2, mut h1, mut h2 := '', '', '', ''
@@ -230,8 +283,12 @@ fn set_output_label(win &ui.Window) {
 	_, w2 = lb2w.selected() or { '100', '' }
 	_, h1 = lb1h.selected() or { '100', '' }
 	_, h2 = lb2h.selected() or { '100', '' }
+
+	lbm, lbs := win.listbox('lbmargin'), win.listbox('lbspace')
+	_, marg := lbm.selected() or { '100', '' }
+	_, sp := lbs.selected() or { '100', '' }
 	mut lss := win.label('l_stack_sizes')
-	lss.set_text('Row (Stack) declaration: ui.row({ margin_: .1, spacing: .1, widths: [$w1, $w2], heights: [$h1, $h2]})')
+	lss.set_text('Row (Stack) declaration: ui.row({ $marg, $sp, widths: [$w1, $w2], heights: [$h1, $h2]})')
 }
 
 fn set_sizes_labels(win &ui.Window) {
@@ -254,11 +311,7 @@ fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
 	mut lb := win.listbox('lb1w')
 	sw, sh := lb.size()
-	// mut  row1 := win.stack("ui_row_1")
-	// mut  row2 := win.stack("ui_row_2")
-	// if mut row1 is ui.Stack { if mut row2 is ui.Stack {
-	// row1.widths = [f32(100.)].repeat(4) //row2.widths
-	// }}
-	// win.update_layout()
 	println('win init ($sw, $sh)')
+	set_output_label(win)
+	win.update_layout()
 }
