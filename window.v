@@ -998,14 +998,13 @@ pub fn (w &Window) get_children() []Widget {
 
 // Experimental: attempt to register child to get it by id from window
 fn (mut w Window) register_child(child Widget) {
-	if child is Button {
+	if mut child is Button {
 		// println("register Button")
 		if child.id == '' {
 			mode := 'button'
 			w.widgets_counts[mode] += 1
-			mut child2 := child
-			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
-			w.widgets[child2.id] = child2
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
 		}
