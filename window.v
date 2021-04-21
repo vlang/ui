@@ -908,7 +908,7 @@ fn frame(mut w Window) {
 }
 
 fn native_frame(mut w Window) {
-	// println('naative_frame()')
+	// println('ui.native_frame()')
 	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
@@ -1013,20 +1013,14 @@ fn (mut w Window) register_child(child Widget) {
 			if child.id != '' {
 				println('registered $child.id')
 			}
+		} $else { // required to avoid confusion with next else
 		}
-	}
-	if child is ListBox {
+	} else if child is ListBox {
 		// println("register ListBox")
 		if child.id != '' {
 			w.widgets[child.id] = child
 		}
-		$if register ? {
-			if child.id != '' {
-				println('registered $child.id')
-			}
-		}
-	}
-	if child is Label {
+	} else if child is Label {
 		// println("register Label")
 		if child.id != '' {
 			w.widgets[child.id] = child
@@ -1035,9 +1029,9 @@ fn (mut w Window) register_child(child Widget) {
 			if child.id != '' {
 				println('registered $child.id')
 			}
+		} $else {
 		}
-	}
-	if child is Stack {
+	} else if child is Stack {
 		// println("register Stack")
 		if child.id == '' {
 			mode := if child.direction == .row { 'row' } else { 'column' }
@@ -1056,8 +1050,7 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
-	}
-	if child is Group {
+	} else if child is Group {
 		// println("register Group")
 		if child.id == '' {
 			mode := 'group'
@@ -1125,64 +1118,6 @@ pub fn (w Window) group(id string) &Group {
 	}
 }
 
-/*
-pub fn widget<T>(w Window, id string) &T {
-	widget := w.widgets[id] or {panic("widget with id  $id does not exist")}
-	mut res := &T{}
-	if widget is T {
-		res = widget
-	}
-	return res
-}
-*/
-
-/*
-pub fn (w Window) button(id string) ?&Button {
-	widget := w.widgets[id] or {return error("widget with id  $id does not exist")}
-	if widget is Button {
-		return widget
-	} else {
-		return error("widget with id  $id is not a Button")
-	}
-}
-
-pub fn (w Window) label(id string) ?&Label {
-	widget := w.widgets[id] or {return error("widget with id  $id does not exist")}
-	if widget is Label {
-		return widget
-	} else {
-		return error("widget with id  $id is not a Label")
-	}
-}
-
-pub fn (w Window) listbox(id string) ?&ListBox {
-	widget := w.widgets[id] or {return error("widget with id  $id does not exist")}
-	if widget is ListBox {
-		return widget
-	} else {
-		return error("widget with id  $id is not a ListBox")
-	}
-}
-
-pub fn (w Window) stack(id string) ?&Stack {
-	widget := w.widgets[id] or {return error("widget with id  $id does not exist")}
-	if widget is Stack {
-		return widget
-	} else {
-		return error("widget with id  $id is not a Stack")
-	}
-}
-
-pub fn (w Window) group(id string) ?&Group {
-	widget := w.widgets[id] or {return error("widget with id  $id does not exist")}
-	if widget is Group {
-		return widget
-	} else {
-		return error("widget with id  $id is not a Group")
-	}
-}
-*/
-
 // extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
@@ -1242,7 +1177,7 @@ pub fn (w &Window) child(from ...int) Widget {
 	}
 }
 
-// ask for an update to restrucure the whole children tree from root layout
+// ask for an update to restructure the whole children tree from root layout
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
