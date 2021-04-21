@@ -1031,14 +1031,13 @@ fn (mut w Window) register_child(child Widget) {
 			}
 		} $else {
 		}
-	} else if child is Stack {
+	} else if mut child is Stack {
 		// println("register Stack")
 		if child.id == '' {
 			mode := if child.direction == .row { 'row' } else { 'column' }
 			w.widgets_counts[mode] += 1
-			mut child2 := child
-			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
-			w.widgets[child2.id] = child2
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
 		}
@@ -1050,14 +1049,13 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
-	} else if child is Group {
+	} else if mut child is Group {
 		// println("register Group")
 		if child.id == '' {
 			mode := 'group'
 			w.widgets_counts[mode] += 1
-			mut child2 := child
-			child2.id = 'ui_${mode}_${w.widgets_counts[mode]}'
-			w.widgets[child2.id] = child2
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
 		}
