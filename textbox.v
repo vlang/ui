@@ -165,6 +165,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_error: c.is_error
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		is_multi: c.is_multi
 	}
 	if c.text == 0 {
 		panic('textbox.text binding is not set')
@@ -193,7 +194,7 @@ fn (mut t TextBox) set_pos(x int, y int) {
 	t.y = y
 }
 
-fn (tb &TextBox) text_size() (int, int) {
+fn (tb &TextBox) adj_size() (int, int) {
 	w, mut h := text_size<TextBox>(tb, tb.text)
 	if tb.is_multi {
 		h = h * tb.text.split('\n').len
@@ -209,7 +210,7 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height && (!tb.ui.window.resizable || !tb.is_multi) {
+	if tb.height > ui.max_textbox_height && !tb.is_multi {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height

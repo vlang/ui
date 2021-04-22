@@ -32,7 +32,7 @@ fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
 // Debug function
 fn (s &Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
-		println('Show cache =>')
+		println('Show cache $s.id =>')
 	}
 	$if bbd ? {
 		w, h := s.size()
@@ -41,16 +41,20 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 		println('  (s.x:$s.x, s.y:$s.y, w:$w - s.margin.left:${s.margin(.left)} - s.margin.right:${s.margin(.right)}, h:$h - s.margin.top:${s.margin(.top)} - s.margin.ttom:${s.margin(.bottom)})')
 	}
 	tab := '  '.repeat(depth)
-	println('$tab ($depth) Stack ${typeof(s).name} with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
+	println('$tab ($depth) Stack $s.id with $s.children.len children: ($s.cache.fixed_widths.len, $s.cache.fixed_heights.len)')
 	free_width, free_height := s.free_size()
-	println('$tab   free size: ($free_width, $free_height)')
+	adj_width, adj_height := s.adj_size()
+	real_width, real_height := s.size()
+	println('$tab   free size: ($free_width, $free_height) adj_size: ($adj_width, $adj_height) real_size: ($real_width, $real_height)')
 	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
+	println('$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: $s.total_spacing()')
+	println('$tab   margin')
 	widths, heights := s.children_sizes()
 	println(txt)
 	for i, mut child in s.children {
 		name := child.type_name()
 		if mut child is Stack {
-			mut tmp := '$tab      ($depth-$i) $name :'
+			mut tmp := '$tab      ($depth-$i) Stack $child.id :'
 			tmp += '\n$tab      fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
 			child.debug_show_cache(depth + 1, tmp)
@@ -92,13 +96,14 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 	println('scs: pos: ($s.x, $s.y) real: ($s.real_width, $s.real_height)')
 	mut total := 0
 	if s.direction == .row {
-		println('  left: ${s.margin(.left)} $s.margins.left')
+		// sum rule for widths
+		println('SumRule($s.id) left: ${s.margin(.left)} = $s.margins.left * $s.real_width')
 		total += s.margin(.left)
 		for i, _ in s.children {
 			println('+ w[$i]: ${widths[i]} ${c.weight_widths[i]}')
 			total += widths[i]
 			if i == s.children.len - 1 {
-				println('+ right: ${s.margin(.right)} $s.margins.right')
+				println('+ right: ${s.margin(.right)} = $s.margins.right * $s.real_width')
 				total += s.margin(.right)
 			} else {
 				println('+ spacing[$i]: ${s.spacing(i)} ${s.spacings[i]}')
@@ -106,20 +111,43 @@ fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSize
 			}
 		}
 		println('= $total == $s.real_width')
+		// max rule for heights
+		println('MaxRule($s.id)  top: ${s.margin(.top)} = $s.margins.top * $s.real_height')
+		total = 0 // s.margin(.left)
+		for i, _ in s.children {
+			if heights[i] > total {
+				total = heights[i]
+			}
+			println('max $total | current w[$i]: ${heights[i]} ${c.weight_heights[i]}')
+		}
+		println(' bottom: ${s.margin(.bottom)} = $s.margins.bottom * $s.real_height')
+		println(' $s.real_height == ${s.margin(.top) + total + s.margin(.bottom)} = ${s.margin(.top)} + $total + ${s.margin(.bottom)} ')
 	} else {
-		println('  top: ${s.margin(.top)}')
+		// sum rule
+		println('SumRule($s.id)  top: ${s.margin(.top)}')
 		total += s.margin(.top)
 		for i, _ in s.children {
-			println('+ w[$i]: ${heights[i]}')
+			println('+ w[$i]: ${heights[i]} ${c.weight_heights[i]}')
 			total += heights[i]
 			if i == s.children.len - 1 {
-				println('+ bottom: ${s.margin(.bottom)}')
+				println('+ bottom: ${s.margin(.bottom)} $s.margins.bottom')
 				total += s.margin(.bottom)
 			} else {
-				println('+ spacing[$i]: ${s.spacing(i)}')
+				println('+ spacing[$i]: ${s.spacing(i)} ${s.spacings[i]}')
 				total += s.spacing(i)
 			}
 		}
 		println('= $total == $s.real_height')
+		// max rule for heights
+		println('MaxRule($s.id)  top: ${s.margin(.left)} = $s.margins.left * $s.real_width')
+		total = 0 // s.margin(.left)
+		for i, _ in s.children {
+			if widths[i] > total {
+				total = widths[i]
+			}
+			println('max $total | current w[$i]: ${widths[i]} ${c.weight_widths[i]}')
+		}
+		println(' right: ${s.margin(.right)} = $s.margins.right * $s.real_width')
+		println(' $s.real_width == ${s.margin(.left) + total + s.margin(.right)} = ${s.margin(.left)} + $total + ${s.margin(.right)} ')
 	}
 }

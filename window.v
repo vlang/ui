@@ -35,7 +35,6 @@ pub mut:
 	children      []Widget
 	child_window  &Window = voidptr(0)
 	parent_window &Window = voidptr(0)
-	widgets       map[string]Widget
 	has_textbox   bool // for initial focus
 	tab_index     int
 	just_tabbed   bool
@@ -78,7 +77,9 @@ pub mut:
 	drag_time      time.Time
 	// themes
 	color_themes ColorThemes
-	// FIRST VERSION ANIMATE: animating  bool
+	// widgets register
+	widgets        map[string]Widget
+	widgets_counts map[string]int
 }
 
 pub struct WindowConfig {
@@ -251,18 +252,18 @@ fn gg_init(mut window Window) {
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
 	for _, mut child in window.children {
-		//
-		println('init $child.type_name()')
+		// println('init $child.type_name()')
 		child.init(window)
 		window.register_child(*child)
 	}
+	// refresh the layout
+	window.update_layout()
 	if window.init_fn != voidptr(0) {
 		window.init_fn(window)
 	}
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
-	// println('ui.window($cfg.native_rendering)')
 	/*
 	println('window()')
 	defer {
@@ -833,50 +834,50 @@ fn bar() {
 	// foo(&Button{
 	// 	ui: 0
 	// })
-	foo(&ProgressBar{
-		ui: 0
-	})
-	foo(&Slider{
-		ui: 0
-	})
-	foo(&CheckBox{
-		ui: 0
-	})
-	foo(&Label{
-		ui: 0
-	})
-	foo(&Radio{
-		ui: 0
-	})
-	foo(&Picture{
-		ui: 0
-	})
-	foo(&Canvas{})
-	foo(&Menu{
-		ui: 0
-	})
-	foo(&Dropdown{
-		ui: 0
-	})
+	// foo(&ProgressBar{
+	// 	ui: 0
+	// })
+	// foo(&Slider{
+	// 	ui: 0
+	// })
+	// foo(&CheckBox{
+	// 	ui: 0
+	// })
+	// foo(&Label{
+	// 	ui: 0
+	// })
+	// foo(&Radio{
+	// 	ui: 0
+	// })
+	// foo(&Picture{
+	// 	ui: 0
+	// })
+	// foo(&Canvas{})
+	// foo(&Menu{
+	// 	ui: 0
+	// })
+	// foo(&Dropdown{
+	// 	ui: 0
+	// })
 	foo(&Transition{
 		ui: 0
 		animated_value: 0
 	})
-	foo(&Stack{
-		ui: 0
-	})
-	foo(&Switch{
-		ui: 0
-	})
-	foo(&Rectangle{
-		ui: 0
-	})
-	foo(&Group{
-		ui: 0
-	})
-	foo(&Grid{
-		ui: 0
-	})
+	// foo(&Stack{
+	// 	ui: 0
+	// })
+	// foo(&Switch{
+	// 	ui: 0
+	// })
+	// foo(&Rectangle{
+	// 	ui: 0
+	// })
+	// foo(&Group{
+	// 	ui: 0
+	// })
+	// foo(&Grid{
+	// 	ui: 0
+	// })
 }
 
 fn (w &Window) draw() {
@@ -900,13 +901,10 @@ fn frame(mut w Window) {
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
-	// USELESS? animate_stop() // FIRST VERSION ANIMATE: w.animating = false
-
 	for mut child in children {
 		child.draw()
 	}
 	w.ui.gg.end()
-	// USELESS?: w.ui.needs_refresh = animating() // FIRST VERSION ANIMATE: w.ui.needs_refresh = w.animating
 }
 
 fn native_frame(mut w Window) {
@@ -1000,24 +998,120 @@ pub fn (w &Window) get_children() []Widget {
 
 // Experimental: attempt to register child to get it by id from window
 fn (mut w Window) register_child(child Widget) {
-	if child is Stack {
+	if mut child is Button {
+		// println("register Button")
+		if child.id == '' {
+			mode := 'button'
+			w.widgets_counts[mode] += 1
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		} $else { // required to avoid confusion with next else
+		}
+	} else if child is ListBox {
+		// println("register ListBox")
+		if child.id != '' {
+			w.widgets[child.id] = child
+		}
+	} else if child is Label {
+		// println("register Label")
+		if child.id != '' {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		} $else {
+		}
+	} else if mut child is Stack {
 		// println("register Stack")
-		w.widgets[child.id] = child
+		if child.id == '' {
+			mode := if child.direction == .row { 'row' } else { 'column' }
+			w.widgets_counts[mode] += 1
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	} else if mut child is Group {
+		// println("register Group")
+		if child.id == '' {
+			mode := 'group'
+			w.widgets_counts[mode] += 1
+			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
 		for child2 in child.children {
 			w.register_child(child2)
 		}
 	}
-	if child is Button {
-		// println("register Button")
-		w.widgets[child.id] = child
+}
+
+// direct access of registered widget by id
+pub fn (w Window) button(id string) &Button {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Button {
+		return widget
+	} else {
+		return button({})
 	}
-	if child is ListBox {
-		// println("register ListBox")
-		w.widgets[child.id] = child
+}
+
+pub fn (w Window) label(id string) &Label {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Label {
+		return widget
+	} else {
+		return label({})
 	}
-	if child is Label {
-		// println("register Label")
-		w.widgets[child.id] = child
+}
+
+pub fn (w Window) listbox(id string) &ListBox {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is ListBox {
+		return widget
+	} else {
+		return listbox({}, map{})
+	}
+}
+
+pub fn (w Window) stack(id string) &Stack {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Stack {
+		return widget
+	} else {
+		return stack({}, [])
+	}
+}
+
+pub fn (w Window) group(id string) &Group {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Group {
+		return widget
+	} else {
+		return group({}, [])
 	}
 }
 
@@ -1080,7 +1174,7 @@ pub fn (w &Window) child(from ...int) Widget {
 	}
 }
 
-// ask for an update to restrucure the whole children tree from root layout
+// ask for an update to restructure the whole children tree from root layout
 pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout

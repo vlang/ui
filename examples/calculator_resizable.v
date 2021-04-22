@@ -37,6 +37,7 @@ fn main() {
 		ui.textbox(
 			text: &app.text
 			placeholder: '0'
+			is_multi: true
 			// width: 135
 			text_size: 1. / 20
 			read_only: true
@@ -57,7 +58,7 @@ fn main() {
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
 	}, [
 		ui.column({
-			margin_: 5
+			margin_: 10
 			spacing: 5
 			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 		}, children),

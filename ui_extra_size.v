@@ -79,7 +79,7 @@ mut:
 
 //********** Margin *********
 
-enum MarginSide {
+pub enum MarginSide {
 	top
 	left
 	right
@@ -88,6 +88,7 @@ enum MarginSide {
 
 // for Stacks
 pub struct Margins {
+pub mut:
 	top    f32
 	right  f32
 	bottom f32
