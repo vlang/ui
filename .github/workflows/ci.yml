@@ -7,7 +7,7 @@ on:
     - cron:  '31 1,12 * * *'
 
 jobs:
-  code-formatting:
+  code-style:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout V
@@ -20,6 +20,8 @@ jobs:
         path: vlib/ui
     - name: Build V
       run: make
+    - name: v vet
+      run: ./v vet vlib/ui
     - name: v fmt -verify
       run: ./v fmt -verify vlib/ui
 

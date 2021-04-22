@@ -7,6 +7,7 @@ const (
 	btn_width  = 200
 	btn_height = 30
 	port       = 1337
+	lb_height  = 0
 )
 
 struct App {
@@ -36,64 +37,62 @@ fn main() {
 		on_init: win_init
 	}, [
 		ui.column({
-			heights: [ui.compact, ui.stretch, ui.compact, ui.stretch]
+			heights: [ui.compact, ui.compact, ui.stretch]
+			spacing: .01
 		}, [
 			ui.row({
-			margin_: .05
-			spacings: [.01, .03, .01]
-			widths: ui.stretch
-		}, [ui.label(id: 'l1w', text: 'Button 1 width:'),
-			ui.label(
-			id: 'l1h'
-			text: 'Button 1 height:'
-		),
-			ui.label(id: 'l2w', text: 'Button 2 width:'),
-			ui.label(
-				id: 'l2h'
-				text: 'Button 2 height:'
-			),
-		]),
+			widths: ui.compact
+			heights: ui.compact
+			margin_: 5
+			spacing: .03
+		}, [
 			ui.row({
+				id: 'row_btn1'
+				title: 'btn1'
 				margin_: .05
-				spacings: [.01, .03, .01]
-				widths: ui.stretch
+				spacing: .1
+				widths: ui.compact
+				heights: ui.compact
 			}, [
 				ui.listbox({
-				id: 'lb1w'
-				width: 100
-				height: 120
-				selection: 0
-				on_change: lb_change
-				// draw_lines: true
-			}, map{
-				'.3':             '.3'
-				'100':            '100'
-				'ui.stretch':     'ui.stretch'
-				'ui.compact':     'ui.compact'
-				'1.5*ui.stretch': '1.5 * ui.stretch'
-				'2*ui.stretch':   '2 * ui.stretch'
-				'3*ui.stretch':   '3 * ui.stretch'
-			}),
-				ui.listbox({
-					id: 'lb1h'
-					width: 100
-					height: 120
+					id: 'lb1w'
+					height: lb_height
 					selection: 0
 					on_change: lb_change
-					// draw_lines: true
+				}, map{
+					'.3':             '.3'
+					'100':            '100'
+					'ui.stretch':     'ui.stretch'
+					'ui.compact':     'ui.compact'
+					'1.5*ui.stretch': '1.5 * ui.stretch'
+					'2*ui.stretch':   '2 * ui.stretch'
+					'3*ui.stretch':   '3 * ui.stretch'
+				}),
+				ui.listbox({
+					id: 'lb1h'
+					height: lb_height
+					selection: 0
+					on_change: lb_change
 				}, map{
 					'.3':         '.3'
 					'20':         '20'
 					'ui.stretch': 'ui.stretch'
 					'ui.compact': 'ui.compact'
 				}),
+			]),
+			ui.row({
+				id: 'row_btn2'
+				title: 'btn2'
+				margin_: .05
+				spacing: .1
+				widths: ui.compact
+				heights: ui.compact
+			}, [
 				ui.listbox({
 					id: 'lb2w'
-					width: 100
-					height: 120
+					height: lb_height
 					selection: 1
 					on_change: lb_change
-					// draw_lines: true
 				}, map{
 					'.3':             '.3'
 					'100':            '100'
@@ -105,11 +104,9 @@ fn main() {
 				}),
 				ui.listbox({
 					id: 'lb2h'
-					width: 100
-					height: 120
+					height: lb_height
 					selection: 1
 					on_change: lb_change
-					// draw_lines: true
 				}, map{
 					'.3':         '.3'
 					'20':         '20'
@@ -117,40 +114,83 @@ fn main() {
 					'ui.compact': 'ui.compact'
 				}),
 			]),
-			ui.column({ margin_: .02, spacing: .01, widths: ui.stretch, bg_color: gx.white },
-				[
+			ui.row({
+				id: 'row_space'
+				title: 'Margins and Spacing'
+				margin_: .05
+				spacing: .1
+				widths: ui.compact
+				heights: ui.compact
+			}, [
+				ui.listbox({
+					id: 'lbmargin'
+					height: lb_height
+					selection: 3
+					on_change: lb_change_sp
+				}, map{
+					'20':  'margin_: 20'
+					'50':  'margin_: 50'
+					'.05': 'margin_: .05'
+					'.1':  'margin_: .1'
+				}),
+				ui.listbox({
+					id: 'lbspace'
+					height: lb_height
+					selection: 3
+					on_change: lb_change_sp
+				}, map{
+					'20':  'spacing: 20'
+					'50':  'spacing: 50'
+					'.05': 'spacing: .05'
+					'.1':  'spacing: .1'
+				}),
+			]),
+		]),
+			ui.column({
+				margin: {
+					right: .05
+					left: .05
+				}
+				spacing: .01
+				widths: ui.stretch
+				bg_color: gx.Color{255, 255, 255, 128}
+			}, [
 				ui.label(
-				id: 'l_btns_sizes'
-				height: 25
-				text: 'Button 1 & 2 declaration: ui.button({width: 200, height: 30, ...})'
-			),
+					id: 'l_btns_sizes'
+					height: 25
+					text: 'Button 1 & 2 declaration: ui.button({width: 200, height: 30, ...})'
+				),
 				ui.label(
 					id: 'l_stack_sizes'
 					height: 25
-					text: 'Row (Stack) declaration:  ui.row({ widths: [.3, 100], heights: [.3, ui.compact]})'
+					text: 'Row (Stack) declaration:  ui.row({ margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact]})'
 				),
 			]),
 			ui.row({
 				id: 'row'
-				widths: [.3, 100]
-				heights: [.3, ui.compact]
+				widths: [
+					.3,
+					100,
+				]
+				heights: [
+					.3,
+					ui.compact,
+				]
 				margin_: .1
 				spacing: .1
 				bg_color: gx.Color{50, 100, 0, 50}
 			}, [
 				ui.button(
-				id: 'btn1'
-				width: 200
-				height: 30
-				text: 'Button 1'
-				//   onclick: btn_connect
-			),
+					id: 'btn1'
+					width: 200
+					height: 30
+					text: 'Button 1'
+				),
 				ui.button(
 					id: 'btn2'
 					width: 200
 					height: 30
 					text: 'Button 2'
-					//   onclick: btn_connect
 				),
 			]),
 		]),
@@ -159,9 +199,20 @@ fn main() {
 }
 
 fn lb_change(app &App, lb &ui.ListBox) {
-	id, _ := lb.selected() or { '100', '' }
+	key, _ := lb.selected() or { '100', '' }
 
+	// mut sw, mut sh := lb.size()
+	// println('lb_change: ($sw, $sh)')
 	win := lb.ui.window
+
+	/*
+	row1 := win.stack("row_btn1")
+	sw, sh = row1.size()
+	print("row_btn1: ($sw, $sh) and ")
+	row2 := win.stack("row_btn2")
+	sw, sh = row2.size()
+	println("row_btn1: ($sw, $sh)")*/
+
 	mut iw, mut ih := -1, -1
 	match lb.id {
 		'lb1w' {
@@ -179,69 +230,77 @@ fn lb_change(app &App, lb &ui.ListBox) {
 		else {}
 	}
 
-	mut s := win.widgets['row']
-	if mut s is ui.Stack {
-		if iw >= 0 {
-			if id == 'ui.compact' {
-				s.widths[iw] = f32(btn_width)
-			} else {
-				s.widths[iw] = f32(app.sizes[id])
-			}
+	mut s := win.stack('row')
+	// if mut s is ui.Stack {
+	if iw >= 0 {
+		if key == 'ui.compact' {
+			s.widths[iw] = f32(btn_width)
+		} else {
+			s.widths[iw] = f32(app.sizes[key])
 		}
-		if ih >= 0 {
-			if id == 'ui.compact' {
-				s.heights[ih] = f32(btn_height)
-			} else {
-				s.heights[ih] = f32(app.sizes[id])
-			}
-		}
-		set_output_label(win)
-		win.update_layout()
-		set_sizes_labels(win)
-	} else {
-		println('$s.type_name()')
 	}
+	if ih >= 0 {
+		if key == 'ui.compact' {
+			s.heights[ih] = f32(btn_height)
+		} else {
+			s.heights[ih] = f32(app.sizes[key])
+		}
+	}
+	set_output_label(win)
+	win.update_layout()
+	set_sizes_labels(win)
+	// } else {
+	// 	println('$s.type_name()')
+	// }
+}
+
+fn lb_change_sp(app &App, lb &ui.ListBox) {
+	key, _ := lb.selected() or { '10', '' }
+
+	win := lb.ui.window
+	mut s := win.stack('row')
+
+	match lb.id {
+		'lbspace' {
+			s.spacings[0] = key.f32()
+		}
+		'lbmargin' {
+			marg := key.f32()
+			s.margins.top, s.margins.bottom, s.margins.left, s.margins.right = marg, marg, marg, marg
+		}
+		else {}
+	}
+
+	set_output_label(win)
+	win.update_layout()
+	set_sizes_labels(win)
 }
 
 fn set_output_label(win &ui.Window) {
-	lb1w, lb1h, lb2w, lb2h := win.widgets['lb1w'], win.widgets['lb1h'], win.widgets['lb2w'], win.widgets['lb2h']
+	lb1w, lb1h, lb2w, lb2h := win.listbox('lb1w'), win.listbox('lb1h'), win.listbox('lb2w'), win.listbox('lb2h')
 	mut w1, mut w2, mut h1, mut h2 := '', '', '', ''
-	if lb1w is ui.ListBox {
-		_, w1 = lb1w.selected() or { '100', '' }
-	}
-	if lb2w is ui.ListBox {
-		_, w2 = lb2w.selected() or { '100', '' }
-	}
-	if lb1h is ui.ListBox {
-		_, h1 = lb1h.selected() or { '100', '' }
-	}
-	if lb2h is ui.ListBox {
-		_, h2 = lb2h.selected() or { '100', '' }
-	}
-	mut lss := win.widgets['l_stack_sizes']
-	if mut lss is ui.Label {
-		lss.set_text('Row (Stack) declaration: ui.row({ margin_: .1, spacing: .1, widths: [$w1, $w2], heights: [$h1, $h2]})')
-	}
+	_, w1 = lb1w.selected() or { '100', '' }
+	_, w2 = lb2w.selected() or { '100', '' }
+	_, h1 = lb1h.selected() or { '100', '' }
+	_, h2 = lb2h.selected() or { '100', '' }
+
+	lbm, lbs := win.listbox('lbmargin'), win.listbox('lbspace')
+	_, marg := lbm.selected() or { '100', '' }
+	_, sp := lbs.selected() or { '100', '' }
+	mut lss := win.label('l_stack_sizes')
+	lss.set_text('Row (Stack) declaration: ui.row({ $marg, $sp, widths: [$w1, $w2], heights: [$h1, $h2]})')
 }
 
 fn set_sizes_labels(win &ui.Window) {
-	mut l1w, l1h, mut btn1 := win.widgets['l1w'], win.widgets['l1h'], win.widgets['btn1']
+	mut btn1 := win.button('btn1')
+	mut row_btn1 := win.stack('row_btn1')
 	mut w, mut h := btn1.size()
-	if mut l1w is ui.Label {
-		l1w.set_text('Button 1 width: $w')
-	}
-	if mut l1h is ui.Label {
-		l1h.set_text('Button 1 height: $h')
-	}
+	row_btn1.title = 'Btn1: ($w, $h)'
 
-	mut l2w, l2h, mut btn2 := win.widgets['l2w'], win.widgets['l2h'], win.widgets['btn2']
+	mut row_btn2 := win.stack('row_btn2')
+	mut btn2 := win.button('btn2')
 	w, h = btn2.size()
-	if mut l2w is ui.Label {
-		l2w.set_text('Button 2 width: $w')
-	}
-	if mut l2h is ui.Label {
-		l2h.set_text('Button 2 height: $h')
-	}
+	row_btn2.title = 'Btn2: ($w, $h)'
 }
 
 fn win_resize(w int, h int, win &ui.Window) {
@@ -250,5 +309,9 @@ fn win_resize(w int, h int, win &ui.Window) {
 
 fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
+	mut lb := win.listbox('lb1w')
+	sw, sh := lb.size()
+	println('win init ($sw, $sh)')
 	set_output_label(win)
+	win.update_layout()
 }

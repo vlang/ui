@@ -46,7 +46,8 @@ pub mut:
 	z_index    int
 	parent     Layout
 	is_focused bool
-	ui         &UI = 0
+	// gg &gg.GG
+	ui &UI = 0
 	// text               string
 	text             &string = voidptr(0)
 	max_len          int
@@ -164,6 +165,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_error: c.is_error
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		is_multi: c.is_multi
 	}
 	if c.text == 0 {
 		panic('textbox.text binding is not set')
@@ -192,7 +194,7 @@ fn (mut t TextBox) set_pos(x int, y int) {
 	t.y = y
 }
 
-fn (tb &TextBox) text_size() (int, int) {
+fn (tb &TextBox) adj_size() (int, int) {
 	w, mut h := text_size<TextBox>(tb, tb.text)
 	if tb.is_multi {
 		h = h * tb.text.split('\n').len
@@ -200,7 +202,7 @@ fn (tb &TextBox) text_size() (int, int) {
 	return w, h
 }
 
-fn (tb &TextBox) size() (int, int) {
+fn (mut tb TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
@@ -208,7 +210,7 @@ const max_textbox_height = 25
 
 fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height { // && !tb.ui.window.resizable {
+	if tb.height > ui.max_textbox_height && !tb.is_multi {
 		tb.height = ui.max_textbox_height
 	}
 	return tb.width, tb.height
@@ -233,7 +235,8 @@ fn (mut tb TextBox) draw() {
 	if text == '' && placeholder != '' {
 		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 		// tb.draw_text(tb.x + ui.textbox_padding, text_y, placeholder)
-		draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, placeholder)
+		draw_text_with_color<TextBox>(tb, tb.x + ui.textbox_padding, text_y, placeholder,
+			gx.gray)
 	}
 	// Text
 	else {
