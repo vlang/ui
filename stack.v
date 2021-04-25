@@ -183,7 +183,7 @@ fn (mut s Stack) init_size() {
 
 fn (mut s Stack) set_children_sizes() {
 	// size of children from
-	c := &s.cache
+	c := unsafe { &s.cache }
 	widths, heights := s.children_sizes()
 
 	// set children sizes
@@ -221,7 +221,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 	// free size without margin and spacing
 	mut free_width, mut free_height := s.free_size()
 
-	mut c := &s.cache
+	mut c := unsafe { &s.cache }
 
 	// free_width -= c.fixed_width
 	// free_height -= c.fixed_height
@@ -337,7 +337,7 @@ fn (mut s Stack) set_cache_sizes() {
 	s.default_sizes()
 	//
 	len := s.children.len
-	mut c := &s.cache
+	mut c := unsafe { &s.cache }
 	// size preallocated
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
