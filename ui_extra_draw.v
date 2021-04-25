@@ -26,7 +26,7 @@ fn text_height<T>(w &T, text string) int {
 	return w.ui.gg.text_height(text)
 }
 
-// T is Widget with text_cfg field
+// T is a widget Type with text_cfg field
 fn draw_text<T>(w &T, x int, y int, text_ string) {
 	window := w.ui.window
 	if w.text_size > 0 {
@@ -100,4 +100,64 @@ fn init_text_cfg<T>(mut w T) {
 fn point_inside<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
+}
+
+// DrawText interface
+
+interface DrawText {
+	ui &UI
+mut:
+	text_cfg gx.TextCfg
+	text_size f64
+}
+
+fn text_size_(w DrawText, text_ string) (int, int) {
+	w.ui.gg.set_cfg(w.text_cfg)
+	return w.ui.gg.text_size(text_)
+}
+
+fn set_text_color(mut w DrawText, color gx.Color) {
+	w.text_cfg = gx.TextCfg{
+		...w.text_cfg
+		color: color
+	}
+}
+
+fn set_text_size(mut w DrawText, size int) {
+	w.text_cfg = gx.TextCfg{
+		...w.text_cfg
+		size: size
+	}
+}
+
+pub fn draw_text_line(w DrawText, x int, y int, text_ string) {
+	w.ui.gg.draw_text(x, y, text_, w.text_cfg)
+}
+
+pub fn draw_text_line_with_color(w DrawText, x int, y int, text_ string, color gx.Color) {
+	tc := gx.TextCfg{
+		...w.text_cfg
+		color: color
+	}
+	w.ui.gg.draw_text(x, y, text_, tc)
+}
+
+pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
+	mut th := 0
+	for line in lines {
+		w.ui.gg.draw_text(x, y + th, line, w.text_cfg)
+		_, tmp := text_size_(w, line)
+		th += tmp
+	}
+}
+
+fn update_text_size(mut w DrawText) {
+	window := w.ui.window
+	_, win_height := window.size()
+	if w.text_size > 0 {
+		w.text_cfg = gx.TextCfg{
+			...w.text_cfg
+			size: text_size_as_int(w.text_size, win_height)
+		}
+	}
 }

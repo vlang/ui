@@ -30,6 +30,7 @@ pub struct ButtonConfig {
 	width     int
 	z_index   int
 	movable   bool
+	tooltip   string
 	text_cfg  gx.TextCfg
 	text_size f64
 	theme     ColorThemeCfg = 'classic'
@@ -65,6 +66,7 @@ pub mut:
 	text_size  f64
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
+	tooltip    string
 	// theme
 	theme_ ColorThemeCfg
 	theme  map[int]gx.Color = map[int]gx.Color{}
@@ -83,6 +85,7 @@ fn (mut b Button) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
+	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -95,6 +98,7 @@ pub fn button(c ButtonConfig) &Button {
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
+		tooltip: c.tooltip
 		theme_: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
@@ -138,6 +142,21 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
+fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
+	if b.tooltip != '' && e.mouse_button == 256 {
+		if b.point_inside(e.x, e.y) {
+			// println("tooltip: $b.tooltip ($e.x, $e.y, $e.mouse_button)")
+			start_tooltip(mut b, b.tooltip, b.ui)
+		} else {
+			stop_tooltip(b, b.ui)
+		}
+	}
+}
+
 fn (mut b Button) set_pos(x int, y int) {
 	b.x = x
 	b.y = y
@@ -162,6 +181,7 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
 	// println("but prop size: $w, $h => $b.width, $b.height")
+	update_text_size(mut b)
 	return b.width, b.height
 }
 
@@ -185,7 +205,8 @@ fn (mut b Button) draw() {
 	} else {
 		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
 		// b.draw_text(bcenter_x - w2, y, b.text)
-		draw_text<Button>(b, bcenter_x - w2, y, b.text)
+		// draw_text<Button>(b, bcenter_x - w2, y, b.text)
+		draw_text_line(b, bcenter_x - w2, y, b.text)
 	}
 	$if tbb ? {
 		println('button: w2($w2) = b.text_width ($b.text_width) / 2')

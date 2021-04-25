@@ -120,7 +120,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	if is_empty_text_cfg(tb.text_cfg) {
+	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
 		tb.text_cfg = tb.ui.window.text_cfg
 	}
 	if tb.text_size > 0 {
@@ -213,6 +213,7 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	if tb.height > ui.max_textbox_height && !tb.is_multi {
 		tb.height = ui.max_textbox_height
 	}
+	update_text_size(mut tb)
 	return tb.width, tb.height
 }
 
@@ -266,7 +267,8 @@ fn (mut tb TextBox) draw() {
 			}
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
-			draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			// draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			draw_text_line(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -283,7 +285,8 @@ fn (mut tb TextBox) draw() {
 			} else {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, text)
-				draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text)
+				// draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text)
+				draw_text_line(tb, tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}

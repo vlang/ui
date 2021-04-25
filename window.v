@@ -68,13 +68,16 @@ pub mut:
 	// Text Config
 	text_cfg gx.TextCfg
 	// drag
-	drag_activated bool
-	drag_widget    Widget
-	drag_start_x   f64
-	drag_start_y   f64
-	drag_pos_x     f64
-	drag_pos_y     f64
-	drag_time      time.Time
+	dragger Dragger = Dragger{}
+	// drag_activated bool
+	// drag_widget    Widget
+	// drag_start_x   f64
+	// drag_start_y   f64
+	// drag_pos_x     f64
+	// drag_pos_y     f64
+	// drag_time      time.Time
+	// tooltip
+	tooltip Tooltip = Tooltip{}
 	// themes
 	color_themes ColorThemes
 	// widgets register
@@ -484,12 +487,13 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		y: event.mouse_y / ui.gg.scale
 		mouse_button: int(event.mouse_button)
 	}
-	if window.drag_activated {
+	if window.dragger.activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
 		}
 		drag_child(mut window, e.x, e.y)
 	}
+
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
@@ -553,7 +557,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = false
 	}
 
-	if window.drag_activated {
+	if window.dragger.activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
 		}
@@ -904,6 +908,8 @@ fn frame(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
+	draw_tooltip(w)
+
 	w.ui.gg.end()
 }
 

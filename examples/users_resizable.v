@@ -123,8 +123,10 @@ fn main() {
 				widths: [.5, .2]
 				heights: 20.
 				spacing: .3
-			}, [ui.button(
+			}, [
+				ui.button(
 				text: 'Add user'
+				tooltip: 'add user button\nRequired:\n  * First name\n  * Last name\n  * Age'
 				onclick: btn_add_click
 			),
 				ui.button(

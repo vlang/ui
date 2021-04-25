@@ -79,7 +79,7 @@ mut:
 
 //********** Margin *********
 
-pub enum MarginSide {
+pub enum Side {
 	top
 	left
 	right
