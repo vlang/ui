@@ -51,7 +51,6 @@ pub struct CanvasLayoutConfig {
 	// resize_fn     ResizeFn
 	// key_down_fn   KeyFn
 	// char_fn       KeyFn
-	children []At = []At{}
 }
 
 fn (mut c CanvasLayout) init(parent Layout) {
@@ -70,14 +69,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
 }
 
-pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
-	mut children := []Widget{}
-	for child in c.children {
-		mut widget := child.widget
-		widget.x = child.x
-		widget.y = child.y
-		children << widget
-	}
+pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 	mut canvas := &CanvasLayout{
 		width: c.width
 		height: c.height

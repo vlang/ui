@@ -160,11 +160,11 @@ fn main() {
 				]
 				bg_color: gx.white
 			}, [
-				ui.canvas_layout(
+				ui.canvas_layout({
 					width: 400
 					height: 275
 					draw_fn: draw
-				),
+				}, []),
 				ui.picture(
 					width: 100
 					height: 100

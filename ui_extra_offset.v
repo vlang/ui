@@ -120,8 +120,9 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 	}
 }
 
-pub struct At {
-	x      int
-	y      int
-	widget Widget
+// allow to specify widgets with absolute coordinates (CanvasLayout and Window)
+pub fn at(x int, y int, w Widget) Widget {
+	mut w2 := w
+	w2.x, w2.y = x, y
+	return w2
 }

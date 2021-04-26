@@ -42,91 +42,70 @@ fn main() {
 			widths: [300., ui.compact]
 			heights: [300., ui.compact]
 		}, [
-			ui.canvas_layout(
+			ui.canvas_layout({
 			// width: 400
 			// height: 275
 			draw_fn: draw
 			mouse_move_fn: mouse_move
-			children: [
-				ui.At{
-					x: 10
-					y: 10
-					widget: ui.button(
-						text: 'Theme'
-						width: 100
-						theme: 'red'
-						movable: true
-						onclick: fn (a voidptr, b voidptr) {
-							ui.message_box('Built with V UI')
-						}
-					)
+		}, [
+			ui.at(10, 10, ui.button(
+				text: 'Theme'
+				width: 100
+				theme: 'red'
+				movable: true
+				onclick: fn (a voidptr, b voidptr) {
+					ui.message_box('Built with V UI')
+				}
+			)),
+			ui.at(20, 280, ui.label(
+				text: '(0, 0)     '
+			)),
+			ui.at(120, 10, ui.dropdown({
+				width: 140
+				height: 20
+				def_text: 'Select a theme'
+				on_selection_changed: dd_change
+			}, [
+				{
+					text: 'classic'
 				},
-				ui.At{
-					x: 20
-					y: 280
-					widget: ui.label(
-						text: '(0, 0)     '
-					)
+				{
+					text: 'blue'
 				},
-				ui.At{
-					x: 120
-					y: 10
-					widget: ui.dropdown({
-						width: 140
-						height: 20
-						def_text: 'Select a theme'
-						on_selection_changed: dd_change
-					}, [
-						{
-							text: 'classic'
-						},
-						{
-							text: 'blue'
-						},
-						ui.DropdownItem{
-							text: 'red'
-						},
-					])
+				ui.DropdownItem{
+					text: 'red'
 				},
-				ui.At{
-					x: 10
-					y: 100
-					widget: ui.listbox({
-						width: 100
-						height: 120
-						on_change: lb_change
-						// draw_lines: true
-					}, map{
-						'classic': 'Classic'
-						'blue':    'Blue'
-						'red':     'Red'
-					})
-				},
-				ui.At{
-					x: 150
-					y: 100
-					widget: ui.menu(
-						text: 'Menu'
-						// width: 100
-						// theme: 'red'
-						items: [
-							ui.MenuItem{
-								text: 'Delete all users'
-								action: menu_click
-							},
-							ui.MenuItem{
-								text: 'Export users'
-								action: menu_click
-							},
-							ui.MenuItem{
-								text: 'Exit'
-								action: menu_click
-							},
-						]
-					)
-				},
-			]
-		),
+			])),
+			ui.at(10, 100, ui.listbox({
+				width: 100
+				height: 120
+				on_change: lb_change
+				// draw_lines: true
+			}, map{
+				'classic': 'Classic'
+				'blue':    'Blue'
+				'red':     'Red'
+			})),
+			ui.at(150, 100, ui.menu(
+				text: 'Menu'
+				// width: 100
+				// theme: 'red'
+				items: [
+					ui.MenuItem{
+						text: 'Delete all users'
+						action: menu_click
+					},
+					ui.MenuItem{
+						text: 'Export users'
+						action: menu_click
+					},
+					ui.MenuItem{
+						text: 'Exit'
+						action: menu_click
+					},
+				]
+			)),
+		]),
 			ui.picture(
 				width: 100
 				height: 100
