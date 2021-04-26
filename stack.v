@@ -680,7 +680,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 				println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
 				println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
 			}
-			12
+			$else {} // because of a bug mixing $if and else
 		} else if mut child is Group {
 			if force || child.adj_width == 0 {
 				child.set_adjusted_size(i + 1, ui)
