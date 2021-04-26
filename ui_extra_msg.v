@@ -2,6 +2,8 @@ module ui
 
 import gx
 
+//=== Tooltip ===//
+
 // 1) From now, consider that widgets having tooltip are always on top and without intersecting other widgets.
 // As a first try, this makes sense for visible widgets.
 // Rmk: if we introduce hover event, this would be to consider.
@@ -13,51 +15,53 @@ const (
 	tooltip_margin = 5
 )
 
-struct Tooltip {
+struct Message {
 pub mut:
-	msg       string
 	lines     []string
-	active    bool
 	x         int
 	y         int
 	width     int
 	height    int
-	side      Side = .top
 	text_cfg  gx.TextCfg
 	text_size f64
 	ui        &UI = 0
 }
 
-pub fn start_tooltip(mut w Widget, msg string, wui &UI) {
-	mut win := wui.window
-	if !win.tooltip.active { // only once
-		win.tooltip.msg = msg
+struct Tooltip {
+	Message
+pub mut:
+	id     string
+	active bool
+	side   Side = .top
+}
 
+pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
+	mut win := wui.window
+	win.tooltip.id = id
+	if !win.tooltip.active { // only once
+		// println("start tooltip $win.tooltip.id: $msg")
 		if win.tooltip.ui == 0 {
 			win.tooltip.ui = wui
 		}
 
-		if win.tooltip.msg.contains('\n') {
-			win.tooltip.lines = win.tooltip.msg.split('\n')
-			mut tw, mut th := 0, 0
-			win.tooltip.width, win.tooltip.height = 0, 0
-			for line in win.tooltip.lines {
-				tw, th = wui.gg.text_size(line)
-				// println("tt line: $line -> ($tw, $th)")
-				if tw > win.tooltip.width {
-					win.tooltip.width = tw
-				}
-				win.tooltip.height += th
+		win.tooltip.lines = msg.split('\n')
+		mut tw, mut th := 0, 0
+		win.tooltip.width, win.tooltip.height = 0, 0
+		for line in win.tooltip.lines {
+			tw, th = wui.gg.text_size(line)
+			// println("tt line: $line -> ($tw, $th)")
+			if tw > win.tooltip.width {
+				win.tooltip.width = tw
 			}
-		} else {
-			win.tooltip.lines = []string{}
-			win.tooltip.width, win.tooltip.height = wui.gg.text_size(msg)
-			// println("tt msg: $msg -> ($win.tooltip.width, $win.tooltip.height)")
+			win.tooltip.height += th
 		}
+
 		win.tooltip.width += 2 * ui.tooltip_margin
 		win.tooltip.height += 2 * ui.tooltip_margin
 
 		set_text_color(mut win.tooltip, gx.red)
+		set_text_style(mut win.tooltip, true, true, false)
+
 		win.tooltip.active = true
 		width, _ := w.size()
 		win.tooltip.x = w.x + w.offset_x + width / 2 - win.tooltip.width / 2
@@ -65,9 +69,12 @@ pub fn start_tooltip(mut w Widget, msg string, wui &UI) {
 	}
 }
 
-fn stop_tooltip(w Widget, wui &UI) {
+fn stop_tooltip(w Widget, id string, wui &UI) {
 	mut win := wui.window
-	win.tooltip.active = false
+	if win.tooltip.active && win.tooltip.id == id {
+		// println("tooltip stop $win.tooltip.id")
+		win.tooltip.active = false
+	}
 }
 
 fn draw_tooltip(win Window) {
@@ -83,3 +90,5 @@ fn draw_tooltip(win Window) {
 			win.tooltip.lines)
 	}
 }
+
+//=== Basic Message Box ===/

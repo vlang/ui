@@ -130,6 +130,15 @@ fn set_text_size(mut w DrawText, size int) {
 	}
 }
 
+fn set_text_style(mut w DrawText, bold bool, italic bool, mono bool) {
+	w.text_cfg = gx.TextCfg{
+		...w.text_cfg
+		bold: bold
+		italic: italic
+		mono: mono
+	}
+}
+
 pub fn draw_text_line(w DrawText, x int, y int, text_ string) {
 	w.ui.gg.draw_text(x, y, text_, w.text_cfg)
 }

@@ -149,10 +149,10 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 	if b.tooltip != '' && e.mouse_button == 256 {
 		if b.point_inside(e.x, e.y) {
-			// println("tooltip: $b.tooltip ($e.x, $e.y, $e.mouse_button)")
-			start_tooltip(mut b, b.tooltip, b.ui)
+			// println("tooltip: $b.id $b.tooltip ($e.x, $e.y, $e.mouse_button)")
+			start_tooltip(mut b, b.id, b.tooltip, b.ui)
 		} else {
-			stop_tooltip(b, b.ui)
+			stop_tooltip(b, b.id, b.ui)
 		}
 	}
 }

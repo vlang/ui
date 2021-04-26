@@ -130,6 +130,7 @@ fn main() {
 				onclick: btn_add_click
 			),
 				ui.button(
+					tooltip: 'about'
 					text: '?'
 					onclick: btn_help_click
 				),
