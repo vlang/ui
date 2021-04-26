@@ -134,7 +134,11 @@ fn (mut s Stack) init(parent Layout) {
 	if parent is Window {
 		ui.window = parent
 		mut window := parent
-		window.root_layout = s
+		if !window.root_layout_once {
+			// root_layout of Window is the first Stack found in the children tree
+			window.root_layout = s
+			window.root_layout_once = true
+		}
 		window.update_layout() // i.e s.update_all_children_recursively(parent)
 	}
 }

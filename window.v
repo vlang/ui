@@ -60,6 +60,7 @@ pub mut:
 	resizable   bool // currently only for events.on_resized not modify children
 	mode        WindowSizeType
 	root_layout Layout
+	root_layout_once bool 
 	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
