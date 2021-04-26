@@ -25,7 +25,7 @@ fn word_wrap_to_lines(s string, max_line_length int) []string {
 	return text_lines
 }
 
-fn word_wrapped_text(s string, max_line_length int) []string {
+fn word_wrap_text_to_lines(s string, max_line_length int) []string {
 	lines := s.split('\n')
 	mut word_wrapped_lines := []string{}
 	for line in lines {
@@ -90,7 +90,7 @@ pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 			win.tooltip.ui = wui
 		}
 
-		win.tooltip.lines = word_wrapped_text(msg, 70)
+		win.tooltip.lines = word_wrap_text_to_lines(msg, 70)
 		win.tooltip.width, win.tooltip.height = text_lines_size(win.tooltip.lines, wui)
 
 		win.tooltip.width += 2 * ui.tooltip_margin
@@ -130,29 +130,47 @@ fn draw_tooltip(win Window) {
 	}
 }
 
+//=== Basic Message Dialog ===/
 
-//=== Basic Message Box ===/
-
-fn message_dialog_add(mut win Window) {
-	mut lay := column({
-		id: "_msg_dlg_col"
+fn (mut win Window) add_message_dialog() {
+	mut dlg := column({
+		id: '_msg_dlg_col'
 		alignment: .center
+		widths: compact
+		heights: compact
+		spacing: 10
 		margin: Margin{5, 5, 5, 5}
+		bg_color: gx.green
 	}, [
-		label(id: "_msg_dlg_lab",text: ' Hello World'),  
-		button(id: "_msg_dlg_btn", text: 'OK', onclick: message_dialog_click),
+		label(id: '_msg_dlg_lab', text: ' Hello World'),
+		button(id: '_msg_dlg_btn', text: 'OK', width: 100, onclick: message_dialog_click),
 	])
-	win.children << lay
-	lay.set_visible(false)
+	win.children << dlg
+	dlg.set_visible(false)
 }
 
 fn message_dialog_click(app voidptr, b &Button) {
-	mut win := b.ui.window
-	win.stack("_msg_dlg_col").set_visible(false)
+	mut dlg := b.ui.window.stack('_msg_dlg_col')
+	dlg.set_visible(false)
 }
 
-fn message_dialog_run(s string, mut win Window) {
-	win.stack("_msg_dlg_col").set_visible(true)
+pub fn (win &Window) message(s string) {
+	if win.native_message {
+		message_box(s)
+	} else {
+		mut dlg := win.stack('_msg_dlg_col')
+		mut msg := win.label('_msg_dlg_lab')
+		msg.set_text(s)
+		mut tw, mut th := text_lines_size(s.split('\n'), win.ui)
+		msg.propose_size(tw, th)
+		if tw < 200 {
+			tw = 200
+		}
+		th += 50
+		dlg.propose_size(tw, th)
+		ww, wh := win.size()
+		dlg.set_pos(ww / 2 - tw, wh / 2 - th)
+		dlg.update_all_children(win)
+		dlg.set_visible(true)
+	}
 }
-
-

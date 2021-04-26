@@ -72,6 +72,7 @@ fn main() {
 		state: app
 		title: 'V UI Demo'
 		mode: .resizable
+		native_message: false
 	}, [
 		ui.row({
 			margin_: .02
@@ -184,8 +185,9 @@ fn main() {
 fn menu_click() {
 }
 
-fn btn_help_click(a voidptr, b voidptr) {
-	ui.message_box('Built with V UI')
+fn btn_help_click(a voidptr, b &ui.Button) {
+	// ui.message_box('Built with V UI')
+	b.ui.window.message('Built with V UI\nThus \nAnd')
 }
 
 /*

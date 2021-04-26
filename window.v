@@ -57,11 +57,11 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable   bool // currently only for events.on_resized not modify children
-	mode        WindowSizeType
-	root_layout Layout
-	root_layout_once bool 
-	dpi_scale   f32
+	resizable        bool // currently only for events.on_resized not modify children
+	mode             WindowSizeType
+	root_layout      Layout
+	root_layout_once bool
+	dpi_scale        f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -84,6 +84,8 @@ pub mut:
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
+	// with message
+	native_message bool
 }
 
 pub struct WindowConfig {
@@ -112,6 +114,8 @@ pub:
 	mode                  WindowSizeType
 	// Text Config
 	lines int = 10
+	// message
+	native_message bool = true
 }
 
 /*
@@ -255,7 +259,11 @@ fn gg_init(mut window Window) {
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
-	message_dialog_add(mut window)
+
+	// This add experimental ui message system
+	if !window.native_message {
+		window.add_message_dialog()
+	}
 	for _, mut child in window.children {
 		// println('init $child.type_name()')
 		child.init(window)
@@ -338,6 +346,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
 		text_cfg: text_cfg
+		native_message: cfg.native_message
 	}
 
 	// register default color themes
@@ -1187,6 +1196,6 @@ pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
 	if mut s is Stack {
-		s.update_all_children_recursively(w)
+		s.update_all_children(w)
 	}
 }

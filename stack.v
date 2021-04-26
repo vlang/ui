@@ -92,6 +92,7 @@ pub mut:
 	alignments            Alignments
 	hidden                bool
 	bg_color              gx.Color
+	is_root_layout        bool
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -138,13 +139,17 @@ fn (mut s Stack) init(parent Layout) {
 			// root_layout of Window is the first Stack found in the children tree
 			window.root_layout = s
 			window.root_layout_once = true
+			s.is_root_layout = true
+			window.update_layout() // i.e s.update_all_children_recursively(parent)
+		} else {
+			// this is like window.update_layout() but for non root_layout stack layouts
+			s.update_all_children(window)
 		}
-		window.update_layout() // i.e s.update_all_children_recursively(parent)
 	}
 }
 
 // used inside window.update_layout()
-pub fn (mut s Stack) update_all_children_recursively(parent Window) {
+pub fn (mut s Stack) update_all_children(parent Window) {
 	// Only once for all children recursively
 	// 1) find all the adjusted sizes
 	s.set_adjusted_size(0, true, s.ui)
@@ -162,11 +167,14 @@ pub fn (mut s Stack) update_all_children_recursively(parent Window) {
 	s.set_drawing_children()
 	// 6) set position for chilfren
 	s.set_children_pos()
-	$if android {
-		s.resize(parent.width, parent.height)
-	} $else {
-		if parent.mode in [.fullscreen, .max_size, .resizable] {
+	// specific stuff only for window.root_layout
+	if s.is_root_layout {
+		$if android {
 			s.resize(parent.width, parent.height)
+		} $else {
+			if parent.mode in [.fullscreen, .max_size, .resizable] {
+				s.resize(parent.width, parent.height)
+			}
 		}
 	}
 }
@@ -856,7 +864,9 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	if s.hidden {return} 
+	if s.hidden {
+		return
+	}
 	offset_start(mut s)
 	if s.bg_color != no_color {
 		s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width, s.real_height,

@@ -21,13 +21,13 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			id: "row"
+			id: 'row'
 			spacing: 10
 			widths: [.4, .6]
 			heights: ui.stretch
 		}, [
 			ui.column({
-			id: "col1"
+			id: 'col1'
 			spacing: 10
 			margin_: 10
 		}, [
@@ -44,7 +44,7 @@ fn main() {
 			ui.button(text: 'migrate', onclick: btn_migrate_click),
 		]),
 			ui.column({
-				id: "col2"
+				id: 'col2'
 				spacing: 10
 				margin_: 10
 			}, [
@@ -62,7 +62,7 @@ fn btn_switch_click(mut app State, btn &ui.Button) {
 	// if mut s is ui.Stack {
 	// 	s.move(from: 0, to: -1)
 	// }
-	mut s := window.stack("row")
+	mut s := window.stack('row')
 	s.move(from: 0, to: -1)
 }
 
@@ -83,7 +83,7 @@ fn btn_migrate_click(mut app State, btn &ui.Button) {
 
 fn btn_add_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	app.cpt++
 	s.add(
 		child: ui.button(text: 'Button $app.cpt')
@@ -95,12 +95,10 @@ fn btn_add_click(mut app State, btn &ui.Button) {
 
 fn btn_add_two_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	app.cpt++
 	s.add(
-		children: [ui.button(text: 'Button ${app.cpt++}'),
-			ui.button(text: 'Button $app.cpt'),
-		]
+		children: [ui.button(text: 'Button ${app.cpt++}'), ui.button(text: 'Button $app.cpt')]
 		widths: ui.stretch
 		heights: ui.compact
 		spacing: 10
@@ -109,13 +107,13 @@ fn btn_add_two_click(mut app State, btn &ui.Button) {
 
 fn btn_remove_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	s.remove(at: -1)
 }
 
 fn btn_show_hide_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	state := btn.text == 'show'
 	s.set_children_visible(state, 0)
 	mut b := btn
@@ -124,7 +122,7 @@ fn btn_show_hide_click(mut app State, btn &ui.Button) {
 
 fn btn_remove_second_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	if s.get_children().len > 1 {
 		s.remove(at: 1)
 	} else {
@@ -134,7 +132,7 @@ fn btn_remove_second_click(mut app State, btn &ui.Button) {
 
 fn btn_move_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack("col2")
+	mut s := window.stack('col2')
 	s.move(
 		from: 0
 		to: -1
