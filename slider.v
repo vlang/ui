@@ -328,7 +328,7 @@ fn (mut s Slider) change_value(x int, y int) {
 }
 
 fn (mut s Slider) set_visible(state bool) {
-	s.hidden = state
+	s.hidden = !state
 }
 
 fn (mut s Slider) focus() {

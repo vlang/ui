@@ -254,6 +254,7 @@ fn gg_init(mut window Window) {
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
+	message_dialog_add(mut window)
 	for _, mut child in window.children {
 		// println('init $child.type_name()')
 		child.init(window)

@@ -72,7 +72,7 @@ fn (mut c Canvas) draw() {
 }
 
 fn (mut c Canvas) set_visible(state bool) {
-	c.hidden = state
+	c.hidden = !state
 }
 
 fn (c &Canvas) focus() {

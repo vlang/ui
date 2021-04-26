@@ -258,7 +258,7 @@ fn (b &Button) point_inside(x f64, y f64) bool {
 }
 
 fn (mut b Button) set_visible(state bool) {
-	b.hidden = state
+	b.hidden = !state
 }
 
 // fn (mut b Button) mouse_move(e MouseEvent) {}

@@ -330,7 +330,7 @@ fn (mut lb ListBox) set_pos(x int, y int) {
 }
 
 fn (mut lb ListBox) set_visible(state bool) {
-	lb.hidden = state
+	lb.hidden = !state
 }
 
 fn (mut lb ListBox) focus() {

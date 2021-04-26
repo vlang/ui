@@ -131,7 +131,7 @@ fn check_cells(gv Grid) int {
 }
 
 fn (mut gv Grid) set_visible(state bool) {
-	gv.hidden = state
+	gv.hidden = !state
 }
 
 fn (mut gv Grid) focus() {

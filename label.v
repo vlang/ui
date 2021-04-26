@@ -121,7 +121,7 @@ fn (mut l Label) draw() {
 }
 
 fn (mut l Label) set_visible(state bool) {
-	l.hidden = state
+	l.hidden = !state
 }
 
 fn (l &Label) focus() {

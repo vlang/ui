@@ -127,7 +127,7 @@ pub fn (mut m Menu) add_item(text string, action MenuItemFn) {
 }
 
 fn (mut m Menu) set_visible(state bool) {
-	m.hidden = state
+	m.hidden = !state
 }
 
 fn (m &Menu) focus() {

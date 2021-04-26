@@ -144,7 +144,7 @@ fn (g &Group) point_inside(x f64, y f64) bool {
 }
 
 fn (mut g Group) set_visible(state bool) {
-	g.hidden = state
+	g.hidden = !state
 }
 
 fn (mut g Group) focus() {

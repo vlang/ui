@@ -99,7 +99,7 @@ fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
 }
 
 fn (mut pb ProgressBar) set_visible(state bool) {
-	pb.hidden = state
+	pb.hidden = !state
 }
 
 fn (pb &ProgressBar) focus() {

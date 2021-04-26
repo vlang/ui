@@ -26,6 +26,7 @@ fn main() {
 			heights: ui.stretch
 		}, [
 			ui.column({
+			id: "col1"
 			spacing: 10
 			margin_: 10
 		}, [
@@ -42,6 +43,7 @@ fn main() {
 			ui.button(text: 'migrate', onclick: btn_migrate_click),
 		]),
 			ui.column({
+				id: "col2"
 				spacing: 10
 				margin_: 10
 			}, [
@@ -77,8 +79,8 @@ fn btn_migrate_click(mut app State, btn &ui.Button) {
 
 fn btn_add_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.child(1)
-	if mut s is ui.Stack {
+	mut s := window.stack("col2")
+	// if mut s is ui.Stack {
 		app.cpt++
 		s.add(
 			child: ui.button(text: 'Button $app.cpt')
@@ -86,14 +88,17 @@ fn btn_add_click(mut app State, btn &ui.Button) {
 			heights: ui.compact
 			spacing: 10
 		)
-	}
+	// }
 }
 
 fn btn_add_two_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.child(1)
-	if mut s is ui.Stack {
+	println("two...")
+	// mut s := window.child(0)
+	mut s := window.stack("col2")
+	// if mut s is ui.Stack {
 		app.cpt++
+		println("two... $app.cpt")
 		s.add(
 			children: [ui.button(text: 'Button ${app.cpt++}'),
 				ui.button(text: 'Button $app.cpt'),
@@ -102,7 +107,7 @@ fn btn_add_two_click(mut app State, btn &ui.Button) {
 			heights: ui.compact
 			spacing: 10
 		)
-	}
+	// }
 }
 
 fn btn_remove_click(mut app State, btn &ui.Button) {
@@ -117,10 +122,10 @@ fn btn_show_hide_click(mut app State, btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.child(1)
 	if mut s is ui.Stack {
-		state := btn.text == 'hide'
+		state := btn.text != 'hide'
 		s.set_children_visible(state, 0)
 		mut b := btn
-		b.text = if state { 'show' } else { 'hide' }
+		b.text = if state { 'hide' } else { 'show' }
 	}
 }
 

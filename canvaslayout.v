@@ -159,7 +159,7 @@ fn (mut c CanvasLayout) draw() {
 }
 
 fn (mut c CanvasLayout) set_visible(state bool) {
-	c.hidden = state
+	c.hidden = !state
 }
 
 fn (c &CanvasLayout) focus() {

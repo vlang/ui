@@ -114,7 +114,7 @@ fn (mut r Rectangle) draw() {
 }
 
 fn (mut r Rectangle) set_visible(state bool) {
-	r.hidden = state
+	r.hidden = !state
 }
 
 fn (r &Rectangle) focus() {

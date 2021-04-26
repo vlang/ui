@@ -676,7 +676,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut tb TextBox) set_visible(state bool) {
-	tb.hidden = state
+	tb.hidden = !state
 }
 
 pub fn (mut tb TextBox) focus() {

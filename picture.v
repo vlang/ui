@@ -137,7 +137,7 @@ fn (mut pic Picture) draw() {
 }
 
 fn (mut pic Picture) set_visible(state bool) {
-	pic.hidden = state
+	pic.hidden = !state
 }
 
 fn (pic &Picture) focus() {

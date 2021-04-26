@@ -145,7 +145,7 @@ fn (mut cb CheckBox) mouse_move(e MouseEvent) {
 }
 
 fn (mut cb CheckBox) set_visible(state bool) {
-	cb.hidden = state
+	cb.hidden = !state
 }
 
 fn (mut cb CheckBox) focus() {

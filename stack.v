@@ -852,6 +852,7 @@ fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
+	if s.hidden {return} 
 	offset_start(mut s)
 	if s.bg_color != no_color {
 		s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width, s.real_height,
@@ -956,7 +957,7 @@ fn (s &Stack) point_inside(x f64, y f64) bool {
 }
 
 fn (mut s Stack) set_visible(state bool) {
-	s.hidden = state
+	s.hidden = !state
 }
 
 fn (mut s Stack) focus() {

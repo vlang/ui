@@ -129,3 +129,30 @@ fn draw_tooltip(win Window) {
 			win.tooltip.lines)
 	}
 }
+
+
+//=== Basic Message Box ===/
+
+fn message_dialog_add(mut win Window) {
+	mut lay := column({
+		id: "_msg_dlg_col"
+		alignment: .center
+		margin: Margin{5, 5, 5, 5}
+	}, [
+		label(id: "_msg_dlg_lab",text: ' Hello World'),  
+		button(id: "_msg_dlg_btn", text: 'OK', onclick: message_dialog_click),
+	])
+	win.children << lay
+	lay.set_visible(false)
+}
+
+fn message_dialog_click(app voidptr, b &Button) {
+	mut win := b.ui.window
+	win.stack("_msg_dlg_col").set_visible(false)
+}
+
+fn message_dialog_run(s string, mut win Window) {
+	win.stack("_msg_dlg_col").set_visible(true)
+}
+
+

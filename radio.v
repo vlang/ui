@@ -158,7 +158,7 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut r Radio) set_visible(state bool) {
-	r.hidden = state
+	r.hidden = !state
 }
 
 fn (mut r Radio) focus() {

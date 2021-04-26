@@ -111,7 +111,7 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 }
 
 fn (mut s Switch) set_visible(state bool) {
-	s.hidden = state
+	s.hidden = !state
 }
 
 fn (mut s Switch) focus() {

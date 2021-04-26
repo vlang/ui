@@ -206,7 +206,7 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut dd Dropdown) set_visible(state bool) {
-	dd.hidden = state
+	dd.hidden = !state
 }
 
 fn (mut dd Dropdown) focus() {
