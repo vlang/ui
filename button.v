@@ -70,6 +70,8 @@ pub mut:
 	// theme
 	theme_ ColorThemeCfg
 	theme  map[int]gx.Color = map[int]gx.Color{}
+	// additional attached state usable for composable widget
+	state_ voidptr
 }
 
 fn (mut b Button) init(parent Layout) {

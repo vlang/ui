@@ -835,7 +835,8 @@ pub fn (w &Window) focus() {
 pub fn (w &Window) always_on_top(val bool) {
 }
 
-// TODO remove this once interfaces are smarter
+// IMPORTANT: to remove this once interfaces are smarter
+// But, from now, required for examples/transitions.v
 fn foo(w Widget) {
 }
 
