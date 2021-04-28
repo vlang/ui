@@ -20,8 +20,14 @@ fn main() {
 		title: 'V UI: Composable Widget'
 		state: app
 		mode: .resizable
+		native_message: false
 	}, [
-		ui.row({
+		ui.column({
+			margin_: .05
+			spacing: .05
+			heights: [8 * ui.stretch, ui.stretch, ui.stretch]
+		}, [
+			ui.row({
 			spacing: .1
 			margin_: 5
 			widths: ui.stretch
@@ -29,12 +35,20 @@ fn main() {
 			ui.doublelistbox(id: 'dlb1', title: 'dlb1', items: ['totto', 'titi']),
 			ui.doublelistbox(id: 'dlb2', title: 'dlb2', items: ['tottoooo', 'titi', 'tototta']),
 		]),
+			ui.button(id: 'btn1', text: 'get values for dlb1', onclick: btn_click),
+			ui.button(id: 'btn2', text: 'get values for dlb2', onclick: btn_click),
+		]),
 	])
 	app.window = window
 	ui.run(window)
 }
 
-fn test_click(a voidptr, b &ui.Button) {
-	s := b.ui.window.stack('dlb')
+fn btn_click(a voidptr, b &ui.Button) {
+	dlbname := if b.id == 'btn1' { 'dlb1' } else { 'dlb2' }
+	s := b.ui.window.stack(dlbname)
 	println('$s.component_type()')
+	dlb := ui.component_doublelistbox(s)
+	res := 'result(s) of $dlbname : $dlb.values()'
+	println(res)
+	b.ui.window.message(res)
 }

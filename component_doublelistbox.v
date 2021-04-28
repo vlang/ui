@@ -89,6 +89,10 @@ fn doublelistbox_move_right(a voidptr, btn &Button) {
 	}
 }
 
+pub fn (dlb &DoubleListBox) values() []string {
+	return dlb.lb_right.values()
+}
+
 // No need from now
 // fn doublelistbox_change(app voidptr, lb &ListBox) {
 // 	// println("selected: $lb.selection")

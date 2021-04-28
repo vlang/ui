@@ -169,7 +169,7 @@ pub fn (win &Window) message(s string) {
 		th += 50
 		dlg.propose_size(tw, th)
 		ww, wh := win.size()
-		dlg.set_pos(ww / 2 - tw, wh / 2 - th)
+		dlg.set_pos(ww / 2 - tw / 2, wh / 2 - th / 2)
 		dlg.update_all_children(win)
 		dlg.set_visible(true)
 	}
