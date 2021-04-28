@@ -98,7 +98,7 @@ pub mut:
 	adj_width  int
 	adj_height int
 	// additional attached state usable for composable widget
-	state_ voidptr
+	component voidptr
 }
 
 struct ListItem {
@@ -141,6 +141,30 @@ pub fn (lb &ListBox) is_selected() bool {
 		return false
 	}
 	return true
+}
+
+pub fn (lb &ListBox) ids() []string {
+	mut res := []string{}
+	for _, item in lb.items {
+		res << item.id
+	}
+	return res
+}
+
+pub fn (lb &ListBox) values() []string {
+	mut res := []string{}
+	for _, item in lb.items {
+		res << item.text
+	}
+	return res
+}
+
+pub fn (lb &ListBox) indices() []int {
+	mut res := []int{}
+	for inx, _ in lb.items {
+		res << inx
+	}
+	return res
 }
 
 // Returns the ID and the text of the selected item

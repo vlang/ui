@@ -22,13 +22,12 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			alignment: .center
-			spacing: 5
-			margin: ui.Margin{5, 5, 5, 5}
+			spacing: .1
+			margin_: 5
 			widths: ui.stretch
 		}, [
-			ui.doublelistbox(id: 'dbllb', items: ['otto', 'titi']),
-			ui.doublelistbox(id: 'dbllb2', items: ['ottoooo', 'titi', 'tototta']),
+			ui.doublelistbox(id: 'dbllb', items: ['totto', 'titi']),
+			ui.doublelistbox(id: 'dbllb2', items: ['tottoooo', 'titi', 'tototta']),
 		]),
 	])
 	app.window = window

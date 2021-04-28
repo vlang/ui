@@ -71,7 +71,7 @@ pub mut:
 	theme_ ColorThemeCfg
 	theme  map[int]gx.Color = map[int]gx.Color{}
 	// additional attached state usable for composable widget
-	state_ voidptr
+	component voidptr
 }
 
 fn (mut b Button) init(parent Layout) {

@@ -94,7 +94,7 @@ pub mut:
 	bg_color              gx.Color
 	is_root_layout        bool
 	// additional attached state usable for composable widget
-	state_ voidptr
+	component voidptr
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {

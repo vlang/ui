@@ -104,3 +104,8 @@ fn (mut w <<RowWidget>>) <<method>>(...) {
 
 4) callback can be already added to component widgets.
 */
+
+interface ComposableWidget {
+mut:
+	component voidptr
+}
