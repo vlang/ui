@@ -19,7 +19,7 @@ pub mut:
 }
 
 pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
-	// 
+	//
 	mut items := map[string]string{}
 	for item in c.items {
 		items[item] = item
@@ -48,7 +48,7 @@ pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
 		btn_right: btn_right
 		btn_clear: btn_clear
 	}
-	// attach to one component all the components 
+	// attach to one component all the components
 	lb_left.component = dbl_lb
 	lb_right.component = dbl_lb
 	btn_left.component = dbl_lb
