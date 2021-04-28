@@ -14,9 +14,12 @@ pub mut:
 	btn_left  &Button
 	btn_right &Button
 	btn_clear &Button
+	// To become a component of a parent component
+	component voidptr
 }
 
 pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
+	// 
 	mut items := map[string]string{}
 	for item in c.items {
 		items[item] = item
@@ -45,12 +48,15 @@ pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
 		btn_right: btn_right
 		btn_clear: btn_clear
 	}
+	// attach to one component all the components 
 	lb_left.component = dbl_lb
 	lb_right.component = dbl_lb
 	btn_left.component = dbl_lb
 	btn_right.component = dbl_lb
 	btn_clear.component = dbl_lb
+
 	layout.component = dbl_lb
+
 	layout.component_type = 'DoubleListBox'
 	// This needs to be added to the children tree
 	return layout
