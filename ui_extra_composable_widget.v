@@ -12,46 +12,6 @@ struct <<RowWidget>> {
 	label LabelConfig
 }
 
-Proposition 1
--------------
-
-pub struct <<RowWidget>>Config {
-  layout RowConfig
-  tb TextBoxConfig
-  l LabelConfig
-}
-
-pub fn <<row_widget>>(cfg <<RowWidget>>Config) {
-	cfg_tb := {
-		...cfg.tb		
-		// internal stuff here
-		// callbacks
-		// private setting
-	}
-	tb := textbox(cfg_tb)
-
-	cfg_l := {
-		...cfg.l
-		// internal stuff here
-		// callbacks
-		// private setting
-	}
-	l := label(cfg.l)
-	layout := row(cfg.layout, [tb, l])
-	composable_widget := &<<RowWidget>>{
-		layout: layout
-		tb: tb
-		label: label
-	}
-	layout.composable_widget = composable_widget
-	return layout
-}
-*/
-
-/*
-Proposition 2
--------------
-
 pub struct <<RowWidget>>Config {
 	// layout field
 	row_<<field1>>
@@ -108,4 +68,22 @@ fn (mut w <<RowWidget>>) <<method>>(...) {
 interface ComposableWidget {
 mut:
 	component voidptr
+}
+
+// Only layout can contain component type
+pub fn (s &Stack) component_type() string {
+	return s.component_type
+}
+
+pub fn (s &Group) component_type() string {
+	return s.component_type
+}
+
+pub fn (s &CanvasLayout) component_type() string {
+	return s.component_type
+}
+
+// All the component could be listed here to have an overall of all components
+pub fn component_doublelistbox(w ComposableWidget) &DoubleListBox {
+	return &DoubleListBox(w.component)
 }

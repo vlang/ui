@@ -2,13 +2,13 @@ module ui
 
 pub struct DoubleListBoxConfig {
 	id    string
+	title string
 	items []string
 }
 
 struct DoubleListBox {
 pub mut:
-	layout    &Stack
-	id        string
+	layout    &Stack // optional
 	lb_left   &ListBox
 	lb_right  &ListBox
 	btn_left  &Button
@@ -21,15 +21,16 @@ pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
 	for item in c.items {
 		items[item] = item
 	}
-	mut lb_left := listbox({}, items)
-	mut lb_right := listbox({}, map[string]string{})
+	mut lb_left := listbox({ width: 50 }, items)
+	mut lb_right := listbox({ width: 50 }, map[string]string{})
 	mut btn_right := button(text: '>>', onclick: doublelistbox_move_right)
 	mut btn_left := button(text: '<<', onclick: doublelistbox_move_left)
 	mut btn_clear := button(text: 'clear', onclick: doublelistbox_clear)
 	mut layout := row({
+		title: c.title
 		id: c.id
-		widths: [.4, .15, .4]
-		// heights: stretch
+		widths: [4 * stretch, 2 * stretch, 4 * stretch]
+		heights: stretch
 		spacing: .05
 	}, [
 		lb_left,
@@ -50,20 +51,14 @@ pub fn doublelistbox(c DoubleListBoxConfig) &Stack {
 	btn_right.component = dbl_lb
 	btn_clear.component = dbl_lb
 	layout.component = dbl_lb
+	layout.component_type = 'DoubleListBox'
+	// This needs to be added to the children tree
 	return layout
-}
-
-// fn doublelistbox_change(app voidptr, lb &ListBox) {
-// 	// println("selected: $lb.selection")
-// }
-
-pub fn doublelistbox_component(w ComposableWidget) &DoubleListBox {
-	return &DoubleListBox(w.component)
 }
 
 // callback
 fn doublelistbox_clear(a voidptr, btn &Button) {
-	mut dlb := doublelistbox_component(btn)
+	mut dlb := component_doublelistbox(btn)
 	for item in dlb.lb_right.values() {
 		dlb.lb_left.add_item(item, item)
 		dlb.lb_right.remove_item(item)
@@ -71,7 +66,7 @@ fn doublelistbox_clear(a voidptr, btn &Button) {
 }
 
 fn doublelistbox_move_left(a voidptr, btn &Button) {
-	mut dlb := doublelistbox_component(btn)
+	mut dlb := component_doublelistbox(btn)
 	if dlb.lb_right.is_selected() {
 		_, item := dlb.lb_right.selected() or { '', '' }
 		println('move << $item')
@@ -83,7 +78,7 @@ fn doublelistbox_move_left(a voidptr, btn &Button) {
 }
 
 fn doublelistbox_move_right(a voidptr, btn &Button) {
-	mut dlb := doublelistbox_component(btn)
+	mut dlb := component_doublelistbox(btn)
 	if dlb.lb_left.is_selected() {
 		_, item := dlb.lb_left.selected() or { '', '' }
 		// println("move >> $item")
@@ -93,3 +88,8 @@ fn doublelistbox_move_right(a voidptr, btn &Button) {
 		}
 	}
 }
+
+// No need from now
+// fn doublelistbox_change(app voidptr, lb &ListBox) {
+// 	// println("selected: $lb.selection")
+// }

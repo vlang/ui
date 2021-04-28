@@ -94,7 +94,8 @@ pub mut:
 	bg_color              gx.Color
 	is_root_layout        bool
 	// additional attached state usable for composable widget
-	component voidptr
+	component      voidptr
+	component_type string // to save the type of the component
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -463,7 +464,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else if cw <= stretch {
+		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
 			c.width_type[i] = .stretch
 			c.weight_widths[i] = cw / stretch
 			c.fixed_widths[i] = adj_child_width
@@ -556,7 +557,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else if ch <= stretch {
+		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
 			c.height_type[i] = .stretch
 			c.weight_heights[i] = ch / stretch
 			c.fixed_heights[i] = adj_child_height

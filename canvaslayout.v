@@ -29,6 +29,9 @@ pub mut:
 	hidden     bool
 	adj_width  int
 	adj_height int
+	// additional attached state usable for composable widget
+	component      voidptr
+	component_type string // to save the type of the component
 mut:
 	parent        Layout
 	draw_fn       CanvasLayoutDrawFn      = voidptr(0)

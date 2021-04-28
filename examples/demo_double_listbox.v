@@ -26,10 +26,15 @@ fn main() {
 			margin_: 5
 			widths: ui.stretch
 		}, [
-			ui.doublelistbox(id: 'dbllb', items: ['totto', 'titi']),
-			ui.doublelistbox(id: 'dbllb2', items: ['tottoooo', 'titi', 'tototta']),
+			ui.doublelistbox(id: 'dlb1', title: 'dlb1', items: ['totto', 'titi']),
+			ui.doublelistbox(id: 'dlb2', title: 'dlb2', items: ['tottoooo', 'titi', 'tototta']),
 		]),
 	])
 	app.window = window
 	ui.run(window)
+}
+
+fn test_click(a voidptr, b &ui.Button) {
+	s := b.ui.window.stack('dlb')
+	println('$s.component_type()')
 }

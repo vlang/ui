@@ -29,6 +29,9 @@ pub mut:
 	adj_height    int
 	adj_width     int
 	hidden        bool
+	// additional attached state usable for composable widget
+	component      voidptr
+	component_type string // to save the type of the component
 }
 
 pub struct GroupConfig {
