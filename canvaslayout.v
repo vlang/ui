@@ -88,23 +88,49 @@ pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 
 fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_down_fn != voidptr(0) {
-		c.mouse_down_fn(*e, c)
+		e2 := MouseEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			button: e.button
+			action: e.action
+			mods: e.mods
+		}
+		c.mouse_down_fn(e2, c)
 	}
 }
 
 fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_up_fn != voidptr(0) {
-		c.mouse_up_fn(*e, c)
+		e2 := MouseEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			button: e.button
+			action: e.action
+			mods: e.mods
+		}
+		c.mouse_up_fn(e2, c)
 	}
 }
 
 fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Window) {
 	if c.point_inside(e.x, e.y) && c.mouse_move_fn != voidptr(0) {
-		c.mouse_move_fn(*e, c)
+		e2 := MouseMoveEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			mouse_button: e.mouse_button
+		}
+		c.mouse_move_fn(e2, c)
 	}
 }
 
 fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
+	if c.scroll_fn != voidptr(0) {
+		e2 := ScrollEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+		}
+		c.scroll_fn(e2, c)
+	}
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
