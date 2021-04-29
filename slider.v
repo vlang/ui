@@ -43,6 +43,8 @@ pub mut:
 	track_line_displayed bool
 	entering             bool
 	hidden               bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct SliderConfig {

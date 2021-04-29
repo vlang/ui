@@ -24,6 +24,8 @@ mut:
 	border_color gx.Color
 	ui           &UI
 	hidden       bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct RectangleConfig {

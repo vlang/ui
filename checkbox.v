@@ -40,6 +40,8 @@ pub mut:
 	text_cfg         gx.TextCfg
 	text_size        f64
 	hidden           bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct CheckBoxConfig {

@@ -21,6 +21,7 @@ pub struct ColumnConfig {
 	alignments HorizontalAlignments
 	align      Alignments
 	bg_color   gx.Color = no_color
+	bg_radius  f64
 	title      string
 }
 
@@ -39,6 +40,7 @@ pub fn column(c ColumnConfig, children []Widget) &Stack {
 		horizontal_alignments: c.alignments
 		align: c.align
 		bg_color: c.bg_color
+		bg_radius: f32(c.bg_radius)
 		title: c.title
 	}, children)
 }

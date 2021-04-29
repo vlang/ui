@@ -97,7 +97,7 @@ pub mut:
 	// guess adjusted width
 	adj_width  int
 	adj_height int
-	// additional attached state usable for composable widget
+	// component state for composable widget
 	component voidptr
 }
 

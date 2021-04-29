@@ -54,6 +54,7 @@ struct StackConfig {
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
 	bg_color              gx.Color
+	bg_radius             f32
 }
 
 struct Stack {
@@ -92,8 +93,9 @@ pub mut:
 	alignments            Alignments
 	hidden                bool
 	bg_color              gx.Color
+	bg_radius             f32
 	is_root_layout        bool
-	// additional attached state usable for composable widget
+	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
 }
@@ -117,6 +119,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
 		bg_color: c.bg_color
+		bg_radius: c.bg_radius
 		title: c.title
 		ui: 0
 	}
@@ -872,8 +875,13 @@ fn (mut s Stack) draw() {
 	}
 	offset_start(mut s)
 	if s.bg_color != no_color {
-		s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width, s.real_height,
-			s.bg_color)
+		if s.bg_radius > 0 {
+			s.ui.gg.draw_rounded_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width,
+				s.real_height, s.bg_radius, s.bg_color)
+		} else {
+			s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width,
+				s.real_height, s.bg_color)
+		}
 	}
 	$if bb ? {
 		s.draw_bb()

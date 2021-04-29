@@ -18,6 +18,8 @@ pub mut:
 	z_index  int
 	ui       &UI = 0
 	hidden   bool
+	// component state for composable widget
+	component voidptr
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)

@@ -32,6 +32,8 @@ pub mut:
 	is_focused           bool
 	on_selection_changed SelectionChangedFn
 	hidden               bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct DropdownConfig {

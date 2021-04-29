@@ -27,6 +27,8 @@ mut:
 	on_click  PictureClickFn
 	use_cache bool
 	hidden    bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct PictureConfig {

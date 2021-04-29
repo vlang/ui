@@ -29,6 +29,8 @@ pub mut:
 	max        int
 	is_focused bool
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct ProgressBarConfig {

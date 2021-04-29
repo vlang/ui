@@ -75,10 +75,12 @@ mut:
 struct Tooltip {
 	TextLines
 mut:
-	id     string
-	active bool
-	side   Side = .top
-	ui     &UI  = 0
+	id       string
+	active   bool
+	color    gx.Color = gx.black
+	bg_color gx.Color = gx.Color{255, 220, 127, 220}
+	side     Side     = .top
+	ui       &UI      = 0
 }
 
 pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
@@ -96,7 +98,7 @@ pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 		win.tooltip.width += 2 * ui.tooltip_margin
 		win.tooltip.height += 2 * ui.tooltip_margin
 
-		set_text_color(mut win.tooltip, gx.red)
+		set_text_color(mut win.tooltip, win.tooltip.color)
 		set_text_style(mut win.tooltip, true, true, false)
 
 		win.tooltip.active = true
@@ -123,8 +125,10 @@ fn stop_tooltip(w Widget, id string, wui &UI) {
 fn draw_tooltip(win Window) {
 	if win.tooltip.active {
 		// TODO:  add triangle to connect the rectangle
-		win.ui.gg.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
-			gx.yellow)
+		// win.ui.gg.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
+		// gx.yellow)
+		win.ui.gg.draw_rounded_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
+			10., win.tooltip.bg_color)
 		draw_text_lines(win.tooltip, win.tooltip.x + ui.tooltip_margin, win.tooltip.y,
 			win.tooltip.lines)
 	}
@@ -140,7 +144,8 @@ fn (mut win Window) add_message_dialog() {
 		heights: compact
 		spacing: 10
 		margin: Margin{5, 5, 5, 5}
-		bg_color: gx.green
+		bg_color: gx.Color{220, 255, 220, 100}
+		bg_radius: 10
 	}, [
 		label(id: '_msg_dlg_lab', text: ' Hello World'),
 		button(id: '_msg_dlg_btn', text: 'OK', width: 100, onclick: message_dialog_click),

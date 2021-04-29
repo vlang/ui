@@ -34,6 +34,7 @@ pub struct ButtonConfig {
 	text_cfg  gx.TextCfg
 	text_size f64
 	theme     ColorThemeCfg = 'classic'
+	radius    f64
 }
 
 [heap]
@@ -62,6 +63,7 @@ pub mut:
 	icon_path  string
 	image      gg.Image
 	use_icon   bool
+	radius     f32
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
@@ -70,7 +72,7 @@ pub mut:
 	// theme
 	theme_ ColorThemeCfg
 	theme  map[int]gx.Color = map[int]gx.Color{}
-	// additional attached state usable for composable widget
+	// component state for composable widget
 	component voidptr
 }
 

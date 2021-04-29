@@ -31,6 +31,8 @@ pub mut:
 	ui         &UI
 	onclick    SwitchClickFn
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct SwitchConfig {
