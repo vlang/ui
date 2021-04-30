@@ -107,6 +107,7 @@ pub fn button(c ButtonConfig) &Button {
 		onclick: c.onclick
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		radius: f32(c.radius)
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -197,8 +198,13 @@ fn (mut b Button) draw() {
 	bcenter_y := b.y + b.height / 2
 	bg_color := color(b.theme, ColorType(b.state))
 	// println(bg_color)
-	b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
-	b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
+	if b.radius > 0 {
+		b.ui.gg.draw_rounded_rect(b.x, b.y, b.width, b.height, b.radius, bg_color) // gx.white)
+		b.ui.gg.draw_empty_rounded_rect(b.x, b.y, b.width, b.height, b.radius, ui.button_border_color)
+	} else {
+		b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
+		b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
+	}
 	mut y := bcenter_y - h2 - 1
 	// if b.ui.gg.scale == 2 {
 	// $if macos { // TODO
