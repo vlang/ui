@@ -1166,7 +1166,7 @@ fn (mut w Window) register_child(child Widget) {
 }
 
 // TODO: If id is added to Widget interface,
-// this could be simplified and extensible
+// this could be simplified and above all extensible with external widgets
 fn widget_id(child Widget) string {
 	if child is Button {
 		return child.id

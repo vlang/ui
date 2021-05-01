@@ -38,6 +38,7 @@ pub mut:
 }
 
 pub struct DropdownConfig {
+	id                   string
 	def_text             string
 	x                    int
 	y                    int
@@ -66,6 +67,7 @@ fn (mut dd Dropdown) init(parent Layout) {
 
 pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
+		id: c.id
 		width: c.width
 		dropdown_height: c.height
 		z_index: c.z_index

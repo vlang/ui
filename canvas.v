@@ -28,6 +28,7 @@ mut:
 }
 
 pub struct CanvasConfig {
+	id      string
 	width   int
 	height  int
 	z_index int
@@ -42,6 +43,7 @@ fn (mut c Canvas) init(parent Layout) {
 
 pub fn canvas(c CanvasConfig) &Canvas {
 	mut canvas := &Canvas{
+		id: c.id
 		width: c.width
 		height: c.height
 		z_index: c.z_index

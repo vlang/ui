@@ -32,6 +32,7 @@ mut:
 }
 
 pub struct MenuConfig {
+	id        string
 	width     int = 150
 	z_index   int
 	text_cfg  gx.TextCfg
@@ -61,6 +62,7 @@ fn (mut m Menu) init(parent Layout) {
 
 pub fn menu(c MenuConfig) &Menu {
 	return &Menu{
+		id: c.id
 		text: c.text
 		items: c.items
 		width: c.width

@@ -33,6 +33,7 @@ mut:
 }
 
 pub struct PictureConfig {
+	id        string
 	path      string
 	width     int
 	height    int
@@ -82,6 +83,7 @@ pub fn picture(c PictureConfig) &Picture {
 	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
 	// }
 	mut pic := &Picture{
+		id: c.id
 		width: c.width
 		height: c.height
 		z_index: c.z_index

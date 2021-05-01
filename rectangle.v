@@ -30,6 +30,7 @@ mut:
 }
 
 pub struct RectangleConfig {
+	id           string
 	text         string
 	height       int
 	width        int
@@ -53,6 +54,7 @@ fn (mut r Rectangle) init(parent Layout) {
 
 pub fn rectangle(c RectangleConfig) &Rectangle {
 	rect := &Rectangle{
+		id: c.id
 		text: c.text
 		height: c.height
 		width: c.width

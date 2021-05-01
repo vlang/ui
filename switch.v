@@ -37,6 +37,7 @@ pub mut:
 }
 
 pub struct SwitchConfig {
+	id      string
 	z_index int
 	onclick SwitchClickFn
 	open    bool
@@ -52,6 +53,7 @@ fn (mut s Switch) init(parent Layout) {
 
 pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
+		id: c.id
 		height: ui.sw_height
 		width: ui.sw_width
 		z_index: c.z_index

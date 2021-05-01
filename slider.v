@@ -49,6 +49,7 @@ pub mut:
 }
 
 pub struct SliderConfig {
+	id                   string
 	width                int
 	height               int
 	z_index              int
@@ -83,6 +84,7 @@ fn (mut s Slider) init(parent Layout) {
 
 pub fn slider(c SliderConfig) &Slider {
 	mut s := &Slider{
+		id: c.id
 		height: c.height
 		width: c.width
 		min: c.min

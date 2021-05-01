@@ -46,6 +46,7 @@ pub mut:
 }
 
 pub struct CheckBoxConfig {
+	id               string
 	x                int
 	y                int
 	z_index          int
@@ -69,6 +70,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
+		id: c.id
 		height: 20 // TODO
 		z_index: c.z_index
 		ui: 0

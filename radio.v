@@ -42,6 +42,7 @@ pub mut:
 }
 
 pub struct RadioConfig {
+	id string
 	// onclick    RadioClickFn
 	values    []string
 	title     string
@@ -74,6 +75,7 @@ fn (mut r Radio) init(parent Layout) {
 
 pub fn radio(c RadioConfig) &Radio {
 	mut r := &Radio{
+		id: c.id
 		height: 20
 		z_index: c.z_index
 		values: c.values
