@@ -173,15 +173,15 @@ pub fn (mut s Stack) update_layout() {
 	s.set_drawing_children()
 	// 6) set position for chilfren
 	s.set_children_pos()
-	// specific stuff only for window.root_layout
+	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
+		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
 		$if android {
+			to_resize = true
+		}
+		if to_resize {
 			s.resize(window.width, window.height)
-		} $else {
-			if window.mode in [.fullscreen, .max_size, .resizable] {
-				s.resize(window.width, window.height)
-			}
 		}
 	}
 }

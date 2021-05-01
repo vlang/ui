@@ -127,7 +127,7 @@ fn main() {
 			}, [
 				ui.button(
 				text: 'Add user'
-				tooltip: 'add user button\nRequired:\n  * First name\n  * Last name\n  * Age'
+				tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
 				onclick: btn_add_click
 				radius: 10
 			),
