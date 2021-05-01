@@ -957,9 +957,9 @@ fn (mut w Window) register_child(child Widget) {
 	if mut child is Button {
 		// println("register Button")
 		if child.id == '' {
-			mode := 'button'
+			mode := 'btn'
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -972,6 +972,11 @@ fn (mut w Window) register_child(child Widget) {
 		}
 	} else if child is ListBox {
 		// println("register ListBox")
+		if child.id != '' {
+			w.widgets[child.id] = child
+		}
+	} else if child is TextBox {
+		// println("register TextBox")
 		if child.id != '' {
 			w.widgets[child.id] = child
 		}
@@ -989,9 +994,9 @@ fn (mut w Window) register_child(child Widget) {
 	} else if mut child is Stack {
 		// println("register Stack")
 		if child.id == '' {
-			mode := if child.direction == .row { 'row' } else { 'column' }
+			mode := if child.direction == .row { 'row' } else { 'col' }
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -1007,9 +1012,27 @@ fn (mut w Window) register_child(child Widget) {
 	} else if mut child is Group {
 		// println("register Group")
 		if child.id == '' {
-			mode := 'group'
+			mode := 'gr'
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	} else if mut child is CanvasLayout {
+		// println("register CanvasLayout")
+		if child.id == '' {
+			mode := 'cl'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -1053,6 +1076,15 @@ pub fn (w Window) listbox(id string) &ListBox {
 	}
 }
 
+pub fn (w Window) textbox(id string) &TextBox {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is TextBox {
+		return widget
+	} else {
+		return textbox({})
+	}
+}
+
 pub fn (w Window) stack(id string) &Stack {
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Stack {
@@ -1068,6 +1100,15 @@ pub fn (w Window) group(id string) &Group {
 		return widget
 	} else {
 		return group({}, [])
+	}
+}
+
+pub fn (w Window) canvas_layout(id string) &CanvasLayout {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is CanvasLayout {
+		return widget
+	} else {
+		return canvas_layout({}, [])
 	}
 }
 

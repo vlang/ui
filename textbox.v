@@ -37,6 +37,7 @@ type TextBoxEnterFn = fn (string, voidptr)
 [heap]
 pub struct TextBox {
 pub mut:
+	id         string
 	height     int
 	width      int
 	x          int
@@ -90,6 +91,7 @@ struct Rect {
 }
 */
 pub struct TextBoxConfig {
+	id               string
 	width            int
 	height           int = 22
 	z_index          int
@@ -143,6 +145,7 @@ fn (mut tb TextBox) init(parent Layout) {
 
 pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
+		id: c.id
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		z_index: c.z_index

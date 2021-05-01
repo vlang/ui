@@ -17,6 +17,7 @@ pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
 
 pub struct CanvasLayout {
 pub mut:
+	id         string
 	children   []Widget
 	width      int
 	height     int
@@ -42,6 +43,7 @@ mut:
 }
 
 pub struct CanvasLayoutConfig {
+	id            string
 	width         int
 	height        int
 	z_index       int
@@ -74,6 +76,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 	mut canvas := &CanvasLayout{
+		id: c.id
 		width: c.width
 		height: c.height
 		z_index: c.z_index
