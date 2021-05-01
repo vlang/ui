@@ -1176,6 +1176,6 @@ pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
 	if mut s is Stack {
-		s.update_all_children(w)
+		s.update_layout()
 	}
 }

@@ -146,16 +146,16 @@ fn (mut s Stack) init(parent Layout) {
 			window.root_layout = s
 			window.root_layout_once = true
 			s.is_root_layout = true
-			window.update_layout() // i.e s.update_all_children_recursively(parent)
+			window.update_layout() // i.e s.update_layout()
 		} else {
 			// this is like window.update_layout() but for non root_layout stack layouts
-			s.update_all_children(window)
+			s.update_layout()
 		}
 	}
 }
 
 // used inside window.update_layout()
-pub fn (mut s Stack) update_all_children(parent Window) {
+pub fn (mut s Stack) update_layout() {
 	// Only once for all children recursively
 	// 1) find all the adjusted sizes
 	s.set_adjusted_size(0, true, s.ui)
@@ -175,11 +175,12 @@ pub fn (mut s Stack) update_all_children(parent Window) {
 	s.set_children_pos()
 	// specific stuff only for window.root_layout
 	if s.is_root_layout {
+		window := s.ui.window
 		$if android {
-			s.resize(parent.width, parent.height)
+			s.resize(window.width, window.height)
 		} $else {
-			if parent.mode in [.fullscreen, .max_size, .resizable] {
-				s.resize(parent.width, parent.height)
+			if window.mode in [.fullscreen, .max_size, .resizable] {
+				s.resize(window.width, window.height)
 			}
 		}
 	}
