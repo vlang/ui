@@ -22,6 +22,7 @@ type CheckChangedFn = fn (voidptr, bool)
 [heap]
 pub struct CheckBox {
 pub mut:
+	id string
 	// state      CheckBoxState
 	height           int
 	width            int

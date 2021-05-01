@@ -13,6 +13,7 @@ const (
 
 pub struct Menu {
 pub mut:
+	id       string
 	offset_x int
 	offset_y int
 mut:

@@ -13,6 +13,7 @@ pub mut:
 	offset_x int
 	offset_y int
 mut:
+	id           string
 	parent       Layout
 	x            int
 	y            int

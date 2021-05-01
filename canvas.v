@@ -9,6 +9,7 @@ pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int
 
 pub struct Canvas {
 pub mut:
+	id       string
 	width    int
 	height   int
 	x        int

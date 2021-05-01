@@ -10,6 +10,7 @@ type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 
 pub struct Picture {
 pub mut:
+	id       string
 	offset_x int
 	offset_y int
 mut:

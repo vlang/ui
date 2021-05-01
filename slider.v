@@ -19,6 +19,7 @@ pub enum Orientation {
 [heap]
 pub struct Slider {
 pub mut:
+	id                   string
 	height               int // track width
 	width                int // track height
 	thumb_width          int

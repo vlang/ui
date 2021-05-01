@@ -24,6 +24,7 @@ mut:
 	ui               &UI = voidptr(0)
 	hidden           bool
 pub mut:
+	id             string
 	target_value   int
 	animated_value &int
 }

@@ -17,6 +17,7 @@ type SwitchClickFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 pub struct Switch {
 pub mut:
+	id         string
 	idx        int
 	height     int
 	width      int

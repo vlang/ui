@@ -16,6 +16,7 @@ type RadioClickFn = fn ()
 [heap]
 pub struct Radio {
 pub mut:
+	id             string
 	selected_index int
 	values         []string
 	// state      RadioState

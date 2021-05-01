@@ -4,6 +4,7 @@ import gx
 
 pub struct Grid {
 pub mut:
+	id          string
 	header      []string
 	body        [][]string
 	x           int

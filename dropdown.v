@@ -15,6 +15,7 @@ pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 pub struct Dropdown {
 pub mut:
+	id                   string
 	def_text             string
 	width                int = 150
 	dropdown_height      int

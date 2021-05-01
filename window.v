@@ -953,6 +953,7 @@ pub fn (w &Window) get_children() []Widget {
 }
 
 // Experimental: attempt to register child to get it by id from window
+// RMK: If id is accepted by community, put `id` inside interface Widget
 fn (mut w Window) register_child(child Widget) {
 	if mut child is Button {
 		// println("register Button")
@@ -970,17 +971,43 @@ fn (mut w Window) register_child(child Widget) {
 			}
 		} $else { // required to avoid confusion with next else
 		}
-	} else if child is ListBox {
-		// println("register ListBox")
-		if child.id != '' {
+	} else if mut child is Canvas {
+		if child.id == '' {
+			mode := 'can'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
 			w.widgets[child.id] = child
 		}
-	} else if child is TextBox {
-		// println("register TextBox")
-		if child.id != '' {
+	} else if mut child is CheckBox {
+		if child.id == '' {
+			mode := 'cb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
 			w.widgets[child.id] = child
 		}
-	} else if child is Label {
+	} else if mut child is Dropdown {
+		if child.id == '' {
+			mode := 'dd'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Grid {
+		if child.id == '' {
+			mode := 'grid'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Label {
 		// println("register Label")
 		if child.id != '' {
 			w.widgets[child.id] = child
@@ -990,6 +1017,96 @@ fn (mut w Window) register_child(child Widget) {
 				println('registered $child.id')
 			}
 		} $else {
+		}
+	} else if mut child is ListBox {
+		if child.id == '' {
+			mode := 'lb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Menu {
+		if child.id == '' {
+			mode := 'menu'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Picture {
+		if child.id == '' {
+			mode := 'pic'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is ProgressBar {
+		if child.id == '' {
+			mode := 'pb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Radio {
+		if child.id == '' {
+			mode := 'rad'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Rectangle {
+		if child.id == '' {
+			mode := 'rec'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Slider {
+		if child.id == '' {
+			mode := 'sli'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Switch {
+		if child.id == '' {
+			mode := 'swi'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is TextBox {
+		if child.id == '' {
+			mode := 'tb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Transition {
+		if child.id == '' {
+			mode := 'tra'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
 		}
 	} else if mut child is Stack {
 		// println("register Stack")
@@ -1045,6 +1162,52 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
+	}
+}
+
+// TODO: If id is added to Widget interface,
+// this could be simplified and extensible
+fn widget_id(child Widget) string {
+	if child is Button {
+		return child.id
+	} else if child is Canvas {
+		return child.id
+	} else if child is CheckBox {
+		return child.id
+	} else if child is Dropdown {
+		return child.id
+	} else if child is Grid {
+		return child.id
+	} else if child is Label {
+		return child.id
+	} else if child is ListBox {
+		return child.id
+	} else if child is Menu {
+		return child.id
+	} else if child is Picture {
+		return child.id
+	} else if child is ProgressBar {
+		return child.id
+	} else if child is Radio {
+		return child.id
+	} else if child is Rectangle {
+		return child.id
+	} else if child is Slider {
+		return child.id
+	} else if child is Switch {
+		return child.id
+	} else if child is TextBox {
+		return child.id
+	} else if child is Transition {
+		return child.id
+	} else if child is Stack {
+		return child.id
+	} else if child is Group {
+		return child.id
+	} else if child is CanvasLayout {
+		return child.id
+	} else {
+		return '_unknown'
 	}
 }
 

@@ -15,6 +15,7 @@ const (
 [heap]
 pub struct ProgressBar {
 pub mut:
+	id         string
 	height     int
 	width      int
 	x          int

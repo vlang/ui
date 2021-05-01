@@ -135,6 +135,7 @@ fn draw_tooltip(win Window) {
 }
 
 //=== Basic Message Dialog ===/
+// Before sokol deals with multiple window (soon)
 
 fn (mut win Window) add_message_dialog() {
 	mut dlg := column({
