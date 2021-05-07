@@ -57,7 +57,7 @@ pub fn transition(c TransitionConfig) &Transition {
 }
 
 pub fn (mut t Transition) set_value(animated_value &int) {
-	t.animated_value = animated_value
+	t.animated_value = unsafe { animated_value }
 	t.start_value = *animated_value
 	t.target_value = *animated_value
 	t.last_draw_target = *animated_value

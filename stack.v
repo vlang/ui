@@ -132,8 +132,8 @@ fn (mut s Stack) init(parent Layout) {
 	}
 
 	if parent is Window {
-		ui.window = parent
-		mut window := parent
+		ui.window = unsafe { parent }
+		mut window := unsafe { parent }
 		window.root_layout = s
 		window.update_layout() // i.e s.update_all_children_recursively(parent)
 	}
