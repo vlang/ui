@@ -180,3 +180,53 @@ pub fn (win &Window) message(s string) {
 		dlg.set_visible(true)
 	}
 }
+
+// Playing with Styled Text
+
+struct TextChunk {
+	text  string
+	start int
+	stop  int
+	cfg   gx.TextCfg
+}
+
+pub struct TextContext {
+	chunks []TextChunk
+	colors map[string]gx.Color
+	styles map[string]gx.TextCfg
+}
+
+struct TextView {
+	x       int
+	y       int
+	width   int
+	height  int
+	context &TextContext
+}
+
+/*
+* default: {style: "", size: 10, color: black}
+
+* start:
+
+	- style: normal "", italic {i], bold {b], underline {u]
+	- size: uint8 (ex: {12])
+	- color: r,g,b,a or hexa (0x00000000) string lowercase (ex: {red])
+	- font-family: string capitalized
+
+- combined: {...|...|...]
+
+end:
+
+- idem with closing [...} or [...|...|...}
+- empty [} means last opened
+
+
+current:
+
+custom style: blurr
+
+stack of style operations:
+
+{b] {t] [b} [t}
+*/
