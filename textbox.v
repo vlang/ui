@@ -241,8 +241,7 @@ fn (mut tb TextBox) draw() {
 	if text == '' && placeholder != '' {
 		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 		// tb.draw_text(tb.x + ui.textbox_padding, text_y, placeholder)
-		draw_text_with_color(tb, tb.x + ui.textbox_padding, text_y, placeholder,
-			gx.gray)
+		draw_text_with_color(tb, tb.x + ui.textbox_padding, text_y, placeholder, gx.gray)
 	}
 	// Text
 	else {
@@ -285,8 +284,7 @@ fn (mut tb TextBox) draw() {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
 				// 	text.len), tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`, text.len))
-				draw_text(tb, tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
-					text.len))
+				draw_text(tb, tb.x + ui.textbox_padding, text_y, strings.repeat(`*`, text.len))
 			} else {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, text)
