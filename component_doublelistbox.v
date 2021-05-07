@@ -6,6 +6,7 @@ pub struct DoubleListBoxConfig {
 	items []string
 }
 
+[heap]
 struct DoubleListBox {
 pub mut:
 	layout    &Stack // optional

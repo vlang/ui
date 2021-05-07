@@ -7,6 +7,7 @@ import math
 import gx
 import eventbus
 
+[heap]
 pub struct Group {
 pub mut:
 	id            string

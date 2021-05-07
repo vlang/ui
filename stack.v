@@ -57,6 +57,7 @@ struct StackConfig {
 	bg_radius             f32
 }
 
+[heap]
 struct Stack {
 	cache CachedSizes
 pub mut:

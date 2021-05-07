@@ -15,6 +15,7 @@ pub type CanvasLayoutMouseMoveFn = fn (e MouseMoveEvent, c &CanvasLayout)
 
 pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
 
+[heap]
 pub struct CanvasLayout {
 pub mut:
 	id         string

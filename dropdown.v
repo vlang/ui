@@ -13,6 +13,7 @@ const (
 
 pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
+[heap]
 pub struct Dropdown {
 pub mut:
 	id                   string

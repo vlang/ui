@@ -2,6 +2,7 @@ module ui
 
 import gx
 
+[heap]
 pub struct Grid {
 pub mut:
 	id          string

@@ -6,6 +6,7 @@ module ui
 import gx
 import gg
 
+[heap]
 pub struct Rectangle {
 pub mut:
 	color    gx.Color

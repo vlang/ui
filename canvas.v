@@ -7,6 +7,7 @@ import gg
 
 pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int, y_offset int)
 
+[heap]
 pub struct Canvas {
 pub mut:
 	id       string

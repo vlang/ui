@@ -5,6 +5,7 @@ module ui
 
 import time
 
+[heap]
 pub struct Transition {
 mut:
 	// pub:

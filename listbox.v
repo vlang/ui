@@ -67,6 +67,7 @@ pub fn (mut list ListBox) add_item(id string, text string) {
 	list.append_item(id, text, list.get_draw_to(text))
 }
 
+[heap]
 pub struct ListBox {
 pub mut:
 	height        int
@@ -101,6 +102,7 @@ pub mut:
 	component voidptr
 }
 
+[heap]
 struct ListItem {
 	id   string
 	list &ListBox

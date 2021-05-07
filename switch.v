@@ -15,6 +15,7 @@ const (
 
 type SwitchClickFn = fn (arg_1 voidptr, arg_2 voidptr)
 
+[heap]
 pub struct Switch {
 pub mut:
 	id         string

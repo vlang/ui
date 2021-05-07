@@ -8,6 +8,7 @@ import gg
 
 type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 
+[heap]
 pub struct Picture {
 pub mut:
 	id       string

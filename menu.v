@@ -11,6 +11,7 @@ const (
 	menu_border_color = gx.rgb(223, 223, 223)
 )
 
+[heap]
 pub struct Menu {
 pub mut:
 	id       string
