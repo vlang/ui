@@ -280,7 +280,7 @@ fn (mut lb ListBox) draw() {
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {
 	// println("inside lb $x $y (${lb.x + lb.offset_x}, ${lb.y + lb.offset_y}, $lb.width, $lb.height)")
-	return point_inside<ListBox>(lb, x, y)
+	return point_inside(lb, x, y)
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {

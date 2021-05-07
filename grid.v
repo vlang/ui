@@ -165,5 +165,5 @@ fn (mut gv Grid) propose_size(w int, h int) (int, int) {
 }
 
 fn (gv &Grid) point_inside(x f64, y f64) bool {
-	return point_inside<Grid>(gv, x, y)
+	return point_inside(gv, x, y)
 }

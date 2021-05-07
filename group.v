@@ -143,7 +143,7 @@ fn (mut g Group) draw() {
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
-	return point_inside<Group>(g, x, y)
+	return point_inside(g, x, y)
 }
 
 fn (mut g Group) set_visible(state bool) {

@@ -206,7 +206,7 @@ fn (c &CanvasLayout) unfocus() {
 }
 
 fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
-	return point_inside<CanvasLayout>(c, x, y)
+	return point_inside(c, x, y)
 }
 
 fn (c &CanvasLayout) get_ui() &UI {

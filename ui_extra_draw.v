@@ -87,15 +87,6 @@ fn init_text_cfg<T>(mut w T) {
 	}
 }
 
-// NB: here as an alternative of generic function that I think is more efficient
-// So do we need performance for this task?
-// fn point_inside(wid Widget, x f64, y f64) bool {
-// 	mut w := wid // because of v fmt issue about interface, size() needs a receiver mutable
-// 	width, height := w.size()
-// 	wx, wy :=w.x + w.offset_x, w.y + w.offset_y
-// 	return x >= wx && x <= wx + width && y >= wy && y <= wy + height
-// }
-
 // This a a generic function. This could become a simple function as above
 fn point_inside<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y

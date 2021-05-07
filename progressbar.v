@@ -100,7 +100,7 @@ fn (mut pb ProgressBar) draw() {
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
-	return point_inside<ProgressBar>(pb, x, y) // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
+	return point_inside(pb, x, y)
 }
 
 fn (mut pb ProgressBar) set_visible(state bool) {

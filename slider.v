@@ -248,7 +248,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 }
 
 fn (s &Slider) point_inside(x f64, y f64) bool {
-	return point_inside<Slider>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+	return point_inside(s, x, y)
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {

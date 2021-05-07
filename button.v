@@ -261,10 +261,8 @@ fn (mut b Button) set_text_size() {
 // fn (b &Button) key_down(e KeyEvent) {}
 
 fn (b &Button) point_inside(x f64, y f64) bool {
-	// bx , by := b.x + b.offset_x, b.y + b.offset_y
-	// return x >= bx && x <= bx + b.width && y >= by && y <= by + b.height
 	// println("point_inside button: ($b.x $b.offset_x, $b.y $b.offset_y) ($x, $y) ($b.width, $b.height)")
-	return point_inside<Button>(b, x, y)
+	return point_inside(b, x, y)
 }
 
 fn (mut b Button) set_visible(state bool) {

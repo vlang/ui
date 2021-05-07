@@ -91,5 +91,5 @@ fn (c &Canvas) unfocus() {
 }
 
 fn (c &Canvas) point_inside(x f64, y f64) bool {
-	return point_inside<Canvas>(c, x, y)
+	return point_inside(c, x, y)
 }

@@ -144,7 +144,7 @@ fn (m &Menu) unfocus() {
 }
 
 fn (m &Menu) point_inside(x f64, y f64) bool {
-	return point_inside<Menu>(m, x, y)
+	return point_inside(m, x, y)
 }
 
 pub fn (mut m Menu) set_text(s string) {

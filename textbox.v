@@ -273,7 +273,7 @@ fn (mut tb TextBox) draw() {
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 			// draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
-			draw_text_line(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			draw_text(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -598,7 +598,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
-	return point_inside<TextBox>(tb, x, y) // x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
+	return point_inside(tb, x, y)
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
