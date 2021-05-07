@@ -129,7 +129,7 @@ fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 		y: lb.item_height * lb.items.len
 		id: id
 		text: text
-		list: lb
+		list: unsafe { lb }
 		draw_text: text[0..draw_to]
 	}
 }
