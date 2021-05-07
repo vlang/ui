@@ -55,7 +55,7 @@ fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
-	init_text_cfg<Menu>(mut m)
+	init_text_cfg(mut m)
 	m.update_height()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)

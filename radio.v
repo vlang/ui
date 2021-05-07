@@ -61,14 +61,14 @@ fn (mut r Radio) init(parent Layout) {
 	if r.width == 0 {
 		mut max := 0
 		for value in r.values {
-			width := text_width<Radio>(r, value)
+			width := text_width(r, value)
 			if width > max {
 				max = width
 			}
 		}
 		r.width = max + check_mark_size + 10
 	}
-	init_text_cfg<Radio>(mut r)
+	init_text_cfg(mut r)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
@@ -120,7 +120,7 @@ fn (mut r Radio) draw() {
 		10, default_window_color)
 	// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
 	// r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
-	draw_text<Radio>(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+	draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -133,7 +133,7 @@ fn (mut r Radio) draw() {
 		// Text
 		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
 		// r.draw_text(r.x + check_mark_size + 10, y, val)
-		draw_text<Radio>(r, r.x + check_mark_size + 10, y, val)
+		draw_text(r, r.x + check_mark_size + 10, y, val)
 	}
 	$if bb ? {
 		draw_bb(mut r, r.ui)

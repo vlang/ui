@@ -62,8 +62,8 @@ pub struct CheckBoxConfig {
 fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
-	cb.width = text_width<CheckBox>(cb, cb.text) + 5 + ui.check_mark_size
-	init_text_cfg<CheckBox>(mut cb)
+	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
+	init_text_cfg(mut cb)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }

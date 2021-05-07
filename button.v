@@ -83,7 +83,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	init_text_cfg<Button>(mut b)
+	init_text_cfg(mut b)
 	b.set_text_size()
 	b.update_theme()
 	mut subscriber := parent.get_subscriber()
@@ -215,7 +215,7 @@ fn (mut b Button) draw() {
 	} else {
 		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
 		// b.draw_text(bcenter_x - w2, y, b.text)
-		// draw_text<Button>(b, bcenter_x - w2, y, b.text)
+		// draw_text(b, bcenter_x - w2, y, b.text)
 		draw_text_line(b, bcenter_x - w2, y, b.text)
 	}
 	$if tbb ? {
@@ -223,7 +223,7 @@ fn (mut b Button) draw() {
 		println('    h2($h2) = b.text_height($b.text_height) / 2')
 		println('    bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
 		println('    bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
-		println('draw_text<Button>(b, bcenter_x($bcenter_x) - w2($w2), y($y), b.text($b.text))')
+		println('draw_text(b, bcenter_x($bcenter_x) - w2($w2), y($y), b.text($b.text))')
 		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
 		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
 	}
@@ -244,7 +244,7 @@ fn (mut b Button) set_text_size() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else {
-		b.text_width, b.text_height = text_size<Button>(b, b.text)
+		b.text_width, b.text_height = text_size(b, b.text)
 		b.text_width = int(f32(b.text_width))
 		b.text_height = int(f32(b.text_height))
 		b.width = b.text_width + ui.button_horizontal_padding
