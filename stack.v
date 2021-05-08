@@ -859,10 +859,26 @@ fn (mut s Stack) set_drawing_children() {
 	}
 	// println("Stack: z_index $s.z_index ")
 	// s.drawing_children = s.children.clone()
+	$if sdc ? {
+		println('(BEFORE) children[$s.id]: ')
+		for i, c in s.children {
+			id := widget_id(c)
+			print('($i)[$id] ')
+		}
+		println('\n')
+	}
 	s.drawing_children = s.children.filter(!it.hidden)
+	$if sdc ? {
+		println('(HIDDEN) drawing_children[$s.id]: ')
+		for i, c in s.drawing_children {
+			id := widget_id(c)
+			print('($i)[$id] ')
+		}
+		println('\n')
+	}
 	s.drawing_children.sort(a.z_index < b.z_index)
 	$if sdc ? {
-		println('drawing_children[$s.id]: ')
+		println('(Z_INDEX) drawing_children[$s.id]: ')
 		for i, c in s.drawing_children {
 			id := widget_id(c)
 			print('($i)[$id] ')

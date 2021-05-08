@@ -211,8 +211,8 @@ fn (mut b Button) draw() {
 		draw_text(b, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
-		println('    bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
-		println('    bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
+		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
+		println('bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
 		println('draw_text(b, bcenter_x($bcenter_x), bcenter_y($bcenter_y), b.text($b.text))')
 		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
 		draw_text_bb(bcenter_x, y, b.text_width, b.text_height, b.ui)
