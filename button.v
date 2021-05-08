@@ -48,14 +48,14 @@ pub mut:
 	image      gg.Image
 	use_icon   bool
 	radius     f32
-	text_cfg   gx.TextCfg
-	text_size  f64
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
 	tooltip    string
+	text_cfg   gx.TextCfg
+	text_size  f64
 	// theme
-	theme_ ColorThemeCfg
-	theme  map[int]gx.Color = map[int]gx.Color{}
+	theme_cfg ColorThemeCfg
+	theme     map[int]gx.Color = map[int]gx.Color{}
 	// component state for composable widget
 	component voidptr
 }
@@ -87,7 +87,7 @@ pub fn button(c ButtonConfig) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		tooltip: c.tooltip
-		theme_: c.theme
+		theme_cfg: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
 		text_size: c.text_size
@@ -109,6 +109,8 @@ fn (mut b Button) init(parent Layout) {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
 	init_text_cfg(mut b)
+	set_text_cfg_align(mut b, .center)
+	set_text_cfg_vertical_align(mut b, .middle)
 	b.set_text_size()
 	b.update_theme()
 	mut subscriber := parent.get_subscriber()
@@ -192,8 +194,6 @@ fn (mut b Button) propose_size(w int, h int) (int, int) {
 
 fn (mut b Button) draw() {
 	offset_start(mut b)
-	w2 := b.text_width / 2
-	h2 := b.text_height / 2
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
 	bg_color := color(b.theme, ColorType(b.state))
@@ -205,32 +205,21 @@ fn (mut b Button) draw() {
 		b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 		b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
 	}
-	mut y := bcenter_y - h2 - 1
-	// if b.ui.gg.scale == 2 {
-	// $if macos { // TODO
-	// 	y -= 2
-	// }
 	if b.use_icon {
 		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
 	} else {
-		// b.ui.gg.draw_text(bcenter_x - w2, y, b.text, b.text_cfg.as_text_cfg())
-		// b.draw_text(bcenter_x - w2, y, b.text)
-		// draw_text(b, bcenter_x - w2, y, b.text)
-		draw_text_line(b, bcenter_x - w2, y, b.text)
+		draw_text(b, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
-		println('button: w2($w2) = b.text_width ($b.text_width) / 2')
-		println('    h2($h2) = b.text_height($b.text_height) / 2')
 		println('    bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
 		println('    bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
-		println('draw_text(b, bcenter_x($bcenter_x) - w2($w2), y($y), b.text($b.text))')
+		println('draw_text(b, bcenter_x($bcenter_x), bcenter_y($bcenter_y), b.text($b.text))')
 		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
-		draw_text_bb(bcenter_x - w2, y, b.text_width, b.text_height, b.ui)
+		draw_text_bb(bcenter_x, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
 		draw_bb(mut b, b.ui)
 	}
-	// b.ui.gg.draw_empty_rect(bcenter_x-w2, bcenter_y-h2, text_width, text_height, ui.button_border_color)
 	offset_end(mut b)
 }
 
@@ -245,8 +234,8 @@ fn (mut b Button) set_text_size() {
 		b.height = b.image.height
 	} else {
 		b.text_width, b.text_height = text_size(b, b.text)
-		b.text_width = int(f32(b.text_width))
-		b.text_height = int(f32(b.text_height))
+		// b.text_width = int(f32(b.text_width))
+		// b.text_height = int(f32(b.text_height))
 		b.width = b.text_width + ui.button_horizontal_padding
 		if b.width_ > b.width {
 			b.width = b.width_
@@ -284,17 +273,9 @@ fn (b &Button) is_focused() bool {
 }
 
 pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
-	b.theme_ = theme_cfg
+	b.theme_cfg = theme_cfg
 }
 
 pub fn (mut b Button) update_theme() {
-	mut theme := map[int]gx.Color{}
-	theme_ := b.theme_
-	if theme_ is string {
-		theme = b.ui.window.color_themes[theme_]
-	}
-	if theme_ is ColorTheme {
-		theme = theme_
-	}
-	update_colors_from(mut b.theme, theme, [.button_normal, .button_pressed])
+	update_colors_from(mut b.theme, theme(b), [.button_normal, .button_pressed])
 }

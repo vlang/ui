@@ -410,6 +410,9 @@ fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut lb ListBox) resize(width int, height int) {
+	if width != lb.width {
+		lb.init_items()
+	}
 	lb.width = width
 	lb.height = height
 	lb.draw_count = lb.height / lb.item_height

@@ -17,8 +17,6 @@ struct Color {
 
 type ColorTheme = map[int]gx.Color
 
-type ColorThemes = map[string]ColorTheme
-
 type ColorThemeCfg = ColorTheme | string
 
 // create new color theme
@@ -55,4 +53,22 @@ pub fn update_colors_from(mut theme map[int]gx.Color, theme2 map[int]gx.Color, i
 	for id in ids {
 		theme[int(id)] = theme2[int(id)]
 	}
+}
+
+interface ColorThemeWidget {
+	ui &UI
+mut:
+	theme_cfg ColorThemeCfg
+	theme map[int]gx.Color
+}
+
+fn theme(w ColorThemeWidget) map[int]gx.Color {
+	mut theme := map[int]gx.Color{}
+	theme_cfg := w.theme_cfg
+	if theme_cfg is string {
+		theme = w.ui.window.color_themes[theme_cfg]
+	} else if theme_cfg is ColorTheme {
+		theme = theme_cfg
+	}
+	return theme
 }

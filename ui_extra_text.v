@@ -98,8 +98,8 @@ pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 		win.tooltip.width += 2 * ui.tooltip_margin
 		win.tooltip.height += 2 * ui.tooltip_margin
 
-		set_text_color(mut win.tooltip, win.tooltip.color)
-		set_text_style(mut win.tooltip, true, true, false)
+		set_text_cfg_color(mut win.tooltip, win.tooltip.color)
+		set_text_cfg_style(mut win.tooltip, true, true, false)
 
 		win.tooltip.active = true
 		width, _ := w.size()
@@ -181,6 +181,7 @@ pub fn (win &Window) message(s string) {
 	}
 }
 
+/*
 // Playing with Styled Text
 
 struct TextChunk {
@@ -204,7 +205,7 @@ struct TextView {
 	context &TextContext
 }
 
-/*
+
 * default: {style: "", size: 10, color: black}
 
 * start:

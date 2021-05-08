@@ -45,7 +45,6 @@ pub mut:
 	my            f64
 	width         int
 	height        int
-	bg_color      gx.Color
 	init_fn       InitFn
 	click_fn      ClickFn
 	mouse_down_fn ClickFn
@@ -66,24 +65,18 @@ pub mut:
 	orig_width  int
 	orig_height int
 	touch       TouchInfo
+	bg_color    gx.Color
 	// Text Config
 	text_cfg gx.TextCfg
-	// drag
-	dragger Dragger = Dragger{}
-	// drag_activated bool
-	// drag_widget    Widget
-	// drag_start_x   f64
-	// drag_start_y   f64
-	// drag_pos_x     f64
-	// drag_pos_y     f64
-	// drag_time      time.Time
-	// tooltip
-	tooltip Tooltip = Tooltip{}
 	// themes
-	color_themes ColorThemes
+	color_themes map[string]ColorTheme
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
+	// drag
+	dragger Dragger = Dragger{}
+	// tooltip
+	tooltip Tooltip = Tooltip{}
 	// with message
 	native_message bool
 }
@@ -320,6 +313,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	mut text_cfg := gx.TextCfg{
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
+		// vertical_align: gx.VerticalAlign.middle
 		// size: int(m / cfg.lines)
 	}
 

@@ -289,7 +289,7 @@ fn (mut tb TextBox) draw() {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, text)
 				// draw_text(tb, tb.x + ui.textbox_padding, text_y, text)
-				draw_text_line(tb, tb.x + ui.textbox_padding, text_y, text)
+				draw_text(tb, tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}
