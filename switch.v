@@ -44,14 +44,6 @@ pub struct SwitchConfig {
 	open    bool
 }
 
-fn (mut s Switch) init(parent Layout) {
-	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, sw_click, s)
-}
-
 pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
 		id: c.id
@@ -63,6 +55,14 @@ pub fn switcher(c SwitchConfig) &Switch {
 		ui: 0
 	}
 	return s
+}
+
+fn (mut s Switch) init(parent Layout) {
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, sw_click, s)
 }
 
 fn (mut s Switch) set_pos(x int, y int) {

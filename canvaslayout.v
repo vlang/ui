@@ -59,6 +59,21 @@ pub struct CanvasLayoutConfig {
 	// char_fn       KeyFn
 }
 
+pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
+	mut canvas := &CanvasLayout{
+		id: c.id
+		width: c.width
+		height: c.height
+		z_index: c.z_index
+		draw_fn: c.draw_fn
+		mouse_move_fn: c.mouse_move_fn
+		mouse_down_fn: c.mouse_down_fn
+		mouse_up_fn: c.mouse_up_fn
+		children: children
+	}
+	return canvas
+}
+
 fn (mut c CanvasLayout) init(parent Layout) {
 	c.parent = parent
 	ui := parent.get_ui()
@@ -73,21 +88,6 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
 	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
 	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
-}
-
-pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
-	mut canvas := &CanvasLayout{
-		id: c.id
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		draw_fn: c.draw_fn
-		mouse_move_fn: c.mouse_move_fn
-		mouse_down_fn: c.mouse_down_fn
-		mouse_up_fn: c.mouse_up_fn
-		children: children
-	}
-	return canvas
 }
 
 fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {

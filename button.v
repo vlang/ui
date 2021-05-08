@@ -21,22 +21,6 @@ enum ButtonState {
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
 
-pub struct ButtonConfig {
-	id        string
-	text      string
-	icon_path string
-	onclick   ButtonClickFn
-	height    int
-	width     int
-	z_index   int
-	movable   bool
-	tooltip   string
-	text_cfg  gx.TextCfg
-	text_size f64
-	theme     ColorThemeCfg = 'classic'
-	radius    f64
-}
-
 [heap]
 pub struct Button {
 	// init size read-only
@@ -76,20 +60,20 @@ pub mut:
 	component voidptr
 }
 
-fn (mut b Button) init(parent Layout) {
-	b.parent = parent
-	ui := parent.get_ui()
-	b.ui = ui
-	if b.use_icon {
-		b.image = b.ui.gg.create_image(b.icon_path)
-	}
-	init_text_cfg(mut b)
-	b.set_text_size()
-	b.update_theme()
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
-	subscriber.subscribe_method(events.on_click, btn_click, b)
-	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
+pub struct ButtonConfig {
+	id        string
+	text      string
+	icon_path string
+	onclick   ButtonClickFn
+	height    int
+	width     int
+	z_index   int
+	movable   bool
+	tooltip   string
+	text_cfg  gx.TextCfg
+	text_size f64
+	theme     ColorThemeCfg = 'classic'
+	radius    f64
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -115,6 +99,22 @@ pub fn button(c ButtonConfig) &Button {
 		b.use_icon = false
 	}
 	return b
+}
+
+fn (mut b Button) init(parent Layout) {
+	b.parent = parent
+	ui := parent.get_ui()
+	b.ui = ui
+	if b.use_icon {
+		b.image = b.ui.gg.create_image(b.icon_path)
+	}
+	init_text_cfg(mut b)
+	b.set_text_size()
+	b.update_theme()
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
+	subscriber.subscribe_method(events.on_click, btn_click, b)
+	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 }
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {

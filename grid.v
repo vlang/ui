@@ -32,12 +32,6 @@ pub struct GridConfig {
 	cell_height f32 = 25
 }
 
-fn (mut gv Grid) init(parent Layout) {
-	gv.parent = parent
-	ui := parent.get_ui()
-	gv.ui = ui
-}
-
 pub fn grid(c GridConfig) &Grid {
 	mut gv := &Grid{
 		width: c.width
@@ -49,6 +43,12 @@ pub fn grid(c GridConfig) &Grid {
 		ui: 0
 	}
 	return gv
+}
+
+fn (mut gv Grid) init(parent Layout) {
+	gv.parent = parent
+	ui := parent.get_ui()
+	gv.ui = ui
 }
 
 fn (mut gv Grid) draw() {

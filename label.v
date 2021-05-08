@@ -38,6 +38,18 @@ pub struct LabelConfig {
 	text_size f64
 }
 
+pub fn label(c LabelConfig) &Label {
+	lbl := &Label{
+		id: c.id
+		text: c.text
+		width: c.width
+		height: c.height
+		ui: 0
+		z_index: c.z_index
+	}
+	return lbl
+}
+
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
@@ -52,18 +64,6 @@ fn (mut l Label) init(parent Layout) {
 		}
 	}
 	l.init_size()
-}
-
-pub fn label(c LabelConfig) &Label {
-	lbl := &Label{
-		id: c.id
-		text: c.text
-		width: c.width
-		height: c.height
-		ui: 0
-		z_index: c.z_index
-	}
-	return lbl
 }
 
 fn (mut l Label) set_pos(x int, y int) {

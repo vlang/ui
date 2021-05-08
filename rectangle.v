@@ -48,11 +48,6 @@ pub struct RectangleConfig {
 	y int
 }
 
-fn (mut r Rectangle) init(parent Layout) {
-	ui := parent.get_ui()
-	r.ui = ui
-}
-
 pub fn rectangle(c RectangleConfig) &Rectangle {
 	rect := &Rectangle{
 		id: c.id
@@ -69,6 +64,11 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		y: c.y
 	}
 	return rect
+}
+
+fn (mut r Rectangle) init(parent Layout) {
+	ui := parent.get_ui()
+	r.ui = ui
 }
 
 fn (mut r Rectangle) set_pos(x int, y int) {

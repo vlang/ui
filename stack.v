@@ -35,28 +35,6 @@ N.B.:
 	* no needs of functions: container_size() and adjusted_size()
 ***********************************/
 
-struct StackConfig {
-	id                   string
-	width                int // To remove soon
-	height               int // To remove soon
-	vertical_alignment   VerticalAlignment
-	horizontal_alignment HorizontalAlignment
-	spacings             []f32 // Spacing = Spacing(0) // int
-	spacing              f32
-	stretch              bool
-	direction            Direction
-	margins              Margins
-	// children related
-	title                 string
-	widths                []f32 // children sizes
-	heights               []f32
-	align                 Alignments
-	vertical_alignments   VerticalAlignments
-	horizontal_alignments HorizontalAlignments
-	bg_color              gx.Color
-	bg_radius             f32
-}
-
 [heap]
 struct Stack {
 	cache CachedSizes
@@ -99,6 +77,28 @@ pub mut:
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
+}
+
+struct StackConfig {
+	id                   string
+	width                int // To remove soon
+	height               int // To remove soon
+	vertical_alignment   VerticalAlignment
+	horizontal_alignment HorizontalAlignment
+	spacings             []f32 // Spacing = Spacing(0) // int
+	spacing              f32
+	stretch              bool
+	direction            Direction
+	margins              Margins
+	// children related
+	title                 string
+	widths                []f32 // children sizes
+	heights               []f32
+	align                 Alignments
+	vertical_alignments   VerticalAlignments
+	horizontal_alignments HorizontalAlignments
+	bg_color              gx.Color
+	bg_radius             f32
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {

@@ -120,29 +120,6 @@ pub struct TextBoxConfig {
 	text_size          f64
 }
 
-fn (mut tb TextBox) init(parent Layout) {
-	tb.parent = parent
-	ui := parent.get_ui()
-	tb.ui = ui
-	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
-		tb.text_cfg = tb.ui.window.text_cfg
-	}
-	if tb.text_size > 0 {
-		_, win_height := tb.ui.window.size()
-		tb.text_cfg = gx.TextCfg{
-			...tb.text_cfg
-			size: text_size_as_int(tb.text_size, win_height)
-		}
-	}
-	// return widget
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, tb_click, tb)
-	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
-	subscriber.subscribe_method(events.on_char, tb_char, tb)
-	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
-	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
-}
-
 pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
 		id: c.id
@@ -176,6 +153,29 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		panic('textbox.text binding is not set')
 	}
 	return tb
+}
+
+fn (mut tb TextBox) init(parent Layout) {
+	tb.parent = parent
+	ui := parent.get_ui()
+	tb.ui = ui
+	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
+		tb.text_cfg = tb.ui.window.text_cfg
+	}
+	if tb.text_size > 0 {
+		_, win_height := tb.ui.window.size()
+		tb.text_cfg = gx.TextCfg{
+			...tb.text_cfg
+			size: text_size_as_int(tb.text_size, win_height)
+		}
+	}
+	// return widget
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, tb_click, tb)
+	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
+	subscriber.subscribe_method(events.on_char, tb_char, tb)
+	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
+	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 }
 
 // fn (tb &TextBox) draw_inner_border() {

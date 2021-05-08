@@ -56,16 +56,6 @@ pub:
 	text string
 }
 
-fn (mut dd Dropdown) init(parent Layout) {
-	dd.parent = parent
-	ui := parent.get_ui()
-	dd.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, dd_click, dd)
-	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
-	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
-}
-
 pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
 		id: c.id
@@ -79,6 +69,16 @@ pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 		ui: 0
 	}
 	return dd
+}
+
+fn (mut dd Dropdown) init(parent Layout) {
+	dd.parent = parent
+	ui := parent.get_ui()
+	dd.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, dd_click, dd)
+	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
+	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
 }
 
 fn (mut dd Dropdown) set_pos(x int, y int) {

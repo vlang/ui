@@ -53,26 +53,6 @@ pub struct RadioConfig {
 	text_size f64
 }
 
-fn (mut r Radio) init(parent Layout) {
-	r.parent = parent
-	ui := parent.get_ui()
-	r.ui = ui
-	// Get max value text width
-	if r.width == 0 {
-		mut max := 0
-		for value in r.values {
-			width := text_width(r, value)
-			if width > max {
-				max = width
-			}
-		}
-		r.width = max + check_mark_size + 10
-	}
-	init_text_cfg(mut r)
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, radio_click, r)
-}
-
 pub fn radio(c RadioConfig) &Radio {
 	mut r := &Radio{
 		id: c.id
@@ -94,6 +74,26 @@ pub fn radio(c RadioConfig) &Radio {
 	}
 	*/
 	return r
+}
+
+fn (mut r Radio) init(parent Layout) {
+	r.parent = parent
+	ui := parent.get_ui()
+	r.ui = ui
+	// Get max value text width
+	if r.width == 0 {
+		mut max := 0
+		for value in r.values {
+			width := text_width(r, value)
+			if width > max {
+				max = width
+			}
+		}
+		r.width = max + check_mark_size + 10
+	}
+	init_text_cfg(mut r)
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
 fn (mut r Radio) set_pos(x int, y int) {

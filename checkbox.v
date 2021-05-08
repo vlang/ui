@@ -59,15 +59,6 @@ pub struct CheckBoxConfig {
 	text_size        f64
 }
 
-fn (mut cb CheckBox) init(parent Layout) {
-	cb.parent = parent
-	cb.ui = parent.get_ui()
-	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
-	init_text_cfg(mut cb)
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, cb_click, cb)
-}
-
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
 		id: c.id
@@ -82,6 +73,15 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		text_size: c.text_size
 	}
 	return cb
+}
+
+fn (mut cb CheckBox) init(parent Layout) {
+	cb.parent = parent
+	cb.ui = parent.get_ui()
+	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
+	init_text_cfg(mut cb)
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {

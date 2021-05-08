@@ -65,23 +65,6 @@ pub struct SliderConfig {
 	entering             bool
 }
 
-fn (mut s Slider) init(parent Layout) {
-	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, slider_click, s)
-	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
-	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
-	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
-	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
-	$if android {
-		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
-		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
-		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
-	}
-}
-
 pub fn slider(c SliderConfig) &Slider {
 	mut s := &Slider{
 		id: c.id
@@ -115,6 +98,23 @@ pub fn slider(c SliderConfig) &Slider {
 		s.min = tmp
 	}
 	return s
+}
+
+fn (mut s Slider) init(parent Layout) {
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, slider_click, s)
+	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
+	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
+		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
+		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
+	}
 }
 
 fn (s &Slider) draw_thumb() {

@@ -37,11 +37,6 @@ pub struct CanvasConfig {
 	draw_fn DrawFn = voidptr(0)
 }
 
-fn (mut c Canvas) init(parent Layout) {
-	c.parent = parent
-	c.gg = parent.get_ui().gg
-}
-
 pub fn canvas(c CanvasConfig) &Canvas {
 	mut canvas := &Canvas{
 		id: c.id
@@ -51,6 +46,11 @@ pub fn canvas(c CanvasConfig) &Canvas {
 		draw_fn: c.draw_fn
 	}
 	return canvas
+}
+
+fn (mut c Canvas) init(parent Layout) {
+	c.parent = parent
+	c.gg = parent.get_ui().gg
 }
 
 fn (mut c Canvas) set_pos(x int, y int) {

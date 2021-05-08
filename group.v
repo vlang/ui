@@ -46,6 +46,21 @@ pub mut:
 	spacing int = 5
 }
 
+pub fn group(c GroupConfig, children []Widget) &Group {
+	mut g := &Group{
+		id: c.id
+		title: c.title
+		x: c.x
+		y: c.y
+		width: c.width
+		height: c.height
+		children: children
+		spacing: c.spacing
+		ui: 0
+	}
+	return g
+}
+
 fn (mut g Group) init(parent Layout) {
 	g.parent = parent
 	ui := parent.get_ui()
@@ -75,21 +90,6 @@ fn (mut g Group) decode_size(parent Layout) {
 	// }
 	println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
 	// s.debug_show_size("decode after -> ")
-}
-
-pub fn group(c GroupConfig, children []Widget) &Group {
-	mut g := &Group{
-		id: c.id
-		title: c.title
-		x: c.x
-		y: c.y
-		width: c.width
-		height: c.height
-		children: children
-		spacing: c.spacing
-		ui: 0
-	}
-	return g
 }
 
 fn (mut g Group) set_pos(x int, y int) {

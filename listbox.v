@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import eventbus
 
 type SelectionChangedFn = fn (voidptr, voidptr) // The second arg is ListBox
 
@@ -13,6 +12,51 @@ const (
 	_text_offset_y   = 3
 	_text_offset_x   = 5
 )
+
+[heap]
+pub struct ListBox {
+pub mut:
+	height        int
+	width         int
+	x             int
+	y             int
+	offset_x      int
+	offset_y      int
+	z_index       int
+	ui            &UI
+	items         []ListItem
+	selection     int = -1
+	draw_count    int
+	on_change     SelectionChangedFn = SelectionChangedFn(0)
+	focused       bool
+	draw_lines    bool
+	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
+	col_selected  gx.Color = ui._col_item_select
+	col_border    gx.Color = ui._col_border
+	item_height   int      = ui._item_height
+	text_offset_y int      = ui._text_offset_y
+	id            string
+	// related to text drawing
+	text_cfg  gx.TextCfg
+	text_size f64
+	hidden    bool
+	// guess adjusted width
+	adj_width  int
+	adj_height int
+	// component state for composable widget
+	component voidptr
+}
+
+[heap]
+struct ListItem {
+	id   string
+	list &ListBox
+mut:
+	x         int
+	y         int
+	text      string
+	draw_text string
+}
 
 pub struct ListBoxConfig {
 mut:
@@ -63,54 +107,38 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 	return list
 }
 
+fn (mut lb ListBox) init(parent Layout) {
+	ui := parent.get_ui()
+	lb.ui = ui
+
+	init_text_cfg(mut lb)
+	if lb.text_offset_y < 0 {
+		lb.text_offset_y = 0
+	}
+	lb.draw_count = lb.height / lb.item_height
+	lb.text_offset_y = (lb.item_height - text_height(lb, 'W')) / 2
+
+	// update lb.width and lb.height to adjusted sizes when initialized to 0
+	lb.init_size()
+
+	lb.init_items()
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, on_change, lb)
+	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
+}
+
+fn (mut lb ListBox) init_items() {
+	for i, mut item in lb.items {
+		// println("$i $item.text get ot draw-> ${lb.get_draw_to(item.text)}")
+		item.draw_text = item.text[0..lb.get_draw_to(item.text)]
+		item.x = 0
+		item.y = lb.item_height * i
+		// println("item init $i, $item.text, $item.x $item.y")
+	}
+}
+
 pub fn (mut list ListBox) add_item(id string, text string) {
 	list.append_item(id, text, list.get_draw_to(text))
-}
-
-[heap]
-pub struct ListBox {
-pub mut:
-	height        int
-	width         int
-	x             int
-	y             int
-	offset_x      int
-	offset_y      int
-	z_index       int
-	parent        Layout
-	ui            &UI
-	items         []ListItem
-	selection     int = -1
-	draw_count    int
-	on_change     SelectionChangedFn = SelectionChangedFn(0)
-	focused       bool
-	draw_lines    bool
-	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
-	col_selected  gx.Color = ui._col_item_select
-	col_border    gx.Color = ui._col_border
-	item_height   int      = ui._item_height
-	text_offset_y int      = ui._text_offset_y
-	id            string
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
-	// guess adjusted width
-	adj_width  int
-	adj_height int
-	// component state for composable widget
-	component voidptr
-}
-
-[heap]
-struct ListItem {
-	id   string
-	list &ListBox
-mut:
-	x         int
-	y         int
-	text      string
-	draw_text string
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {
@@ -232,36 +260,6 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	}
 }
 
-fn (mut lb ListBox) init_items() {
-	for i, mut item in lb.items {
-		// println("$i $item.text get ot draw-> ${lb.get_draw_to(item.text)}")
-		item.draw_text = item.text[0..lb.get_draw_to(item.text)]
-		item.x = 0
-		item.y = lb.item_height * i
-		// println("item init $i, $item.text, $item.x $item.y")
-	}
-}
-
-fn (mut lb ListBox) init(parent Layout) {
-	lb.parent = parent
-	lb.ui = parent.get_ui()
-
-	init_text_cfg(mut lb)
-	if lb.text_offset_y < 0 {
-		lb.text_offset_y = 0
-	}
-	lb.draw_count = lb.height / lb.item_height
-	lb.text_offset_y = (lb.item_height - text_height(lb, 'W')) / 2
-
-	// update lb.width and lb.height to adjusted sizes when initialized to 0
-	lb.init_size()
-
-	lb.init_items()
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, on_change, lb)
-	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
-}
-
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
@@ -371,24 +369,6 @@ fn (mut lb ListBox) unfocus() {
 
 fn (lb &ListBox) is_focused() bool {
 	return lb.focused
-}
-
-fn (lb &ListBox) get_ui() &UI {
-	return lb.ui
-}
-
-fn (mut lb ListBox) unfocus_all() {
-	lb.focused = false
-}
-
-fn (lb &ListBox) get_state() voidptr {
-	parent := lb.parent
-	return parent.get_state()
-}
-
-fn (lb &ListBox) get_subscriber() &eventbus.Subscriber {
-	parent := lb.parent
-	return parent.get_subscriber()
 }
 
 fn (mut lb ListBox) adj_size() (int, int) {

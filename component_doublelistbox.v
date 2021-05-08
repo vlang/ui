@@ -1,11 +1,5 @@
 module ui
 
-pub struct DoubleListBoxConfig {
-	id    string
-	title string
-	items []string
-}
-
 [heap]
 struct DoubleListBox {
 pub mut:
@@ -17,6 +11,12 @@ pub mut:
 	btn_clear &Button
 	// To become a component of a parent component
 	component voidptr
+}
+
+pub struct DoubleListBoxConfig {
+	id    string
+	title string
+	items []string
 }
 
 pub fn doublelistbox(c DoubleListBoxConfig) &Stack {

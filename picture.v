@@ -46,6 +46,28 @@ pub struct PictureConfig {
 	image     gg.Image
 }
 
+pub fn picture(c PictureConfig) &Picture {
+	if !os.exists(c.path) {
+		eprintln('V UI: picture file "$c.path" not found')
+	}
+	// if c.width == 0 || c.height == 0 {
+	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
+	// }
+	mut pic := &Picture{
+		id: c.id
+		width: c.width
+		height: c.height
+		z_index: c.z_index
+		movable: c.movable
+		path: c.path
+		use_cache: c.use_cache
+		on_click: c.on_click
+		image: c.image
+		ui: 0
+	}
+	return pic
+}
+
 fn (mut pic Picture) init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
@@ -74,28 +96,6 @@ fn (mut pic Picture) init(parent Layout) {
 		pic.width = pic.image.width
 		pic.height = pic.image.height
 	}
-}
-
-pub fn picture(c PictureConfig) &Picture {
-	if !os.exists(c.path) {
-		eprintln('V UI: picture file "$c.path" not found')
-	}
-	// if c.width == 0 || c.height == 0 {
-	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
-	// }
-	mut pic := &Picture{
-		id: c.id
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		movable: c.movable
-		path: c.path
-		use_cache: c.use_cache
-		on_click: c.on_click
-		image: c.image
-		ui: 0
-	}
-	return pic
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {

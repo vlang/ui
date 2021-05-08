@@ -38,12 +38,6 @@ pub struct TransitionConfig {
 	ref            &Transition = voidptr(0)
 }
 
-fn (mut t Transition) init(parent Layout) {
-	t.parent = parent
-	ui := parent.get_ui()
-	t.ui = ui
-}
-
 pub fn transition(c TransitionConfig) &Transition {
 	mut transition := &Transition{
 		last_draw_time: time.ticks()
@@ -56,6 +50,12 @@ pub fn transition(c TransitionConfig) &Transition {
 		z_index: c.z_index
 	}
 	return transition
+}
+
+fn (mut t Transition) init(parent Layout) {
+	t.parent = parent
+	ui := parent.get_ui()
+	t.ui = ui
 }
 
 pub fn (mut t Transition) set_value(animated_value &int) {

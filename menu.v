@@ -32,16 +32,6 @@ mut:
 	hidden    bool
 }
 
-pub struct MenuConfig {
-	id        string
-	width     int = 150
-	z_index   int
-	text_cfg  gx.TextCfg
-	text_size f64
-	text      string
-	items     []MenuItem
-}
-
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
 
 pub struct MenuItem {
@@ -51,14 +41,14 @@ pub mut:
 	text string
 }
 
-fn (mut m Menu) init(parent Layout) {
-	m.parent = parent
-	ui := parent.get_ui()
-	m.ui = ui
-	init_text_cfg(mut m)
-	m.update_height()
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, menu_click, m)
+pub struct MenuConfig {
+	id        string
+	width     int = 150
+	z_index   int
+	text_cfg  gx.TextCfg
+	text_size f64
+	text      string
+	items     []MenuItem
 }
 
 pub fn menu(c MenuConfig) &Menu {
@@ -72,6 +62,16 @@ pub fn menu(c MenuConfig) &Menu {
 		text_cfg: c.text_cfg
 		text_size: c.text_size
 	}
+}
+
+fn (mut m Menu) init(parent Layout) {
+	m.parent = parent
+	ui := parent.get_ui()
+	m.ui = ui
+	init_text_cfg(mut m)
+	m.update_height()
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
 
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
