@@ -835,18 +835,6 @@ pub fn (w &Window) focus() {
 pub fn (w &Window) always_on_top(val bool) {
 }
 
-// IMPORTANT: to remove this once interfaces are smarter
-// But, from now, required for examples/transitions.v
-fn foo(w Widget) {
-}
-
-fn bar() {
-	foo(&Transition{
-		ui: 0
-		animated_value: 0
-	})
-}
-
 fn (w &Window) draw() {
 }
 
