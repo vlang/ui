@@ -876,7 +876,9 @@ fn (mut s Stack) set_drawing_children() {
 		}
 		println('\n')
 	}
-	s.drawing_children.sort(a.z_index < b.z_index)
+
+	// s.drawing_children.sort(a.z_index < b.z_index)
+	s.sorted_drawing_children()
 	$if sdc ? {
 		println('(Z_INDEX) drawing_children[$s.id]: ')
 		for i, c in s.drawing_children {
