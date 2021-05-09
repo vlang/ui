@@ -23,9 +23,9 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
-	ui            &UI = 0
+	ui            &UI        = 0
 	items         []ListItem = []ListItem{}
-	selection     int = -1
+	selection     int        = -1
 	draw_count    int
 	on_change     SelectionChangedFn = SelectionChangedFn(0)
 	focused       bool
