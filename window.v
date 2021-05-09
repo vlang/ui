@@ -627,6 +627,7 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 fn window_touch_down(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
+		action: .down
 		x: window.touch.start.pos.x
 		y: window.touch.start.pos.y
 	}
@@ -639,6 +640,7 @@ fn window_touch_down(event gg.Event, ui &UI) {
 fn window_touch_up(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseEvent{
+		action: .up
 		x: window.touch.end.pos.x
 		y: window.touch.end.pos.y
 	}
