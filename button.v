@@ -116,6 +116,7 @@ fn (mut b Button) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
+	subscriber.subscribe_method(events.on_touch_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 }
 
