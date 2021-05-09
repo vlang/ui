@@ -36,7 +36,7 @@ pub struct RectangleConfig {
 	height       int
 	width        int
 	z_index      int
-	color        gx.Color
+	color        gx.Color = gx.Color{0, 0, 0, 0}
 	radius       int
 	border       bool
 	border_color gx.Color = gx.Color{
@@ -62,6 +62,15 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		ui: 0
 		x: c.x
 		y: c.y
+	}
+	return rect
+}
+
+// Workaround to have a stretched spacing
+pub fn spacing(c RectangleConfig) &Rectangle {
+	rect := &Rectangle{
+		color: c.color
+		ui: 0
 	}
 	return rect
 }

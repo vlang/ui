@@ -32,3 +32,7 @@ pub fn (s &CanvasLayout) component_type() string {
 pub fn component_doublelistbox(w Component) &DoubleListBox {
 	return &DoubleListBox(w.component)
 }
+
+pub fn component_toolbar(w Component) &ToolBar {
+	return &ToolBar(w.component)
+}
