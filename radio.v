@@ -48,7 +48,7 @@ pub struct RadioConfig {
 	title     string
 	width     int
 	z_index   int
-	ref       &Radio = voidptr(0)
+	// ref       &Radio = voidptr(0)
 	text_cfg  gx.TextCfg
 	text_size f64
 }
