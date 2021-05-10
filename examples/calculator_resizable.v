@@ -206,6 +206,7 @@ fn get_row(ops []string) []ui.Widget {
 			text: op
 			onclick: btn_click
 			text_size: 1. / 20
+			radius: .25
 		)
 	}
 	return children

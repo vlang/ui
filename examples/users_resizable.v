@@ -129,13 +129,13 @@ fn main() {
 				text: 'Add user'
 				tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
 				onclick: btn_add_click
-				radius: 10
+				radius: .3
 			),
 				ui.button(
 					tooltip: 'about'
 					text: '?'
 					onclick: btn_help_click
-					radius: 10
+					radius: .3
 				),
 			]),
 			ui.row({

@@ -1,5 +1,7 @@
 module ui
 
+import math
+
 pub const (
 	stretch = -10000.
 	compact = 0. // from parent
@@ -118,4 +120,8 @@ fn spacings(sp f64, sps []f64, len int) []f32 {
 		spacing = sps.map(f32(it))
 	}
 	return spacing
+}
+
+fn relative_radius(radius f32, w int, h int) f32 {
+	return if radius < 1 { radius * f32(math.min(w, h)) } else { radius }
 }

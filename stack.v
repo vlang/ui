@@ -858,8 +858,9 @@ fn (mut s Stack) draw() {
 	offset_start(mut s)
 	if s.bg_color != no_color {
 		if s.bg_radius > 0 {
+			radius := relative_radius(s.bg_radius, s.real_width, s.real_height)
 			s.ui.gg.draw_rounded_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width,
-				s.real_height, s.bg_radius, s.bg_color)
+				s.real_height, radius, s.bg_color)
 		} else {
 			s.ui.gg.draw_rect(s.x - s.margin(.left), s.y - s.margin(.top), s.real_width,
 				s.real_height, s.bg_color)

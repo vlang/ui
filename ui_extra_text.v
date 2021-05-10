@@ -128,7 +128,7 @@ fn draw_tooltip(win Window) {
 		// win.ui.gg.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
 		// gx.yellow)
 		win.ui.gg.draw_rounded_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
-			10., win.tooltip.bg_color)
+			.3, win.tooltip.bg_color)
 		draw_text_lines(win.tooltip, win.tooltip.x + ui.tooltip_margin, win.tooltip.y,
 			win.tooltip.lines)
 	}
@@ -146,10 +146,10 @@ fn (mut win Window) add_message_dialog() {
 		spacing: 10
 		margin: Margin{5, 5, 5, 5}
 		bg_color: gx.Color{220, 255, 220, 100}
-		bg_radius: 10
+		bg_radius: .3
 	}, [
 		label(id: '_msg_dlg_lab', text: ' Hello World'),
-		button(id: '_msg_dlg_btn', text: 'OK', width: 100, onclick: message_dialog_click),
+		button(id: '_msg_dlg_btn', text: 'OK', width: 100, radius: .3, onclick: message_dialog_click),
 	])
 	win.children << dlg
 	dlg.set_visible(false)

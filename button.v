@@ -200,8 +200,9 @@ fn (mut b Button) draw() {
 	bg_color := color(b.theme, ColorType(b.state))
 	// println(bg_color)
 	if b.radius > 0 {
-		b.ui.gg.draw_rounded_rect(b.x, b.y, b.width, b.height, b.radius, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rounded_rect(b.x, b.y, b.width, b.height, b.radius, ui.button_border_color)
+		radius := relative_radius(b.radius, b.width, b.height)
+		b.ui.gg.draw_rounded_rect(b.x, b.y, b.width, b.height, radius, bg_color) // gx.white)
+		b.ui.gg.draw_empty_rounded_rect(b.x, b.y, b.width, b.height, radius, ui.button_border_color)
 	} else {
 		b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
 		b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
