@@ -252,7 +252,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 	// So one needs a preliminary pass for weighted.
 	for i, child in s.children {
 		match c.width_type[i] {
-			.weighted, .weighted_minsize {
+			.weighted {
 				weight := c.weight_widths[i]
 				mcw[i] = int(weight * f32(s.real_width))
 				if s.direction == .row {
@@ -269,7 +269,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 		}
 
 		match c.height_type[i] {
-			.weighted, .weighted_minsize {
+			.weighted {
 				weight := c.weight_heights[i]
 				mch[i] = int(weight * f32(s.real_height))
 				if s.direction == .column {
@@ -303,7 +303,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 					mcw[i] = free_width
 				}
 			}
-			.weighted, .weighted_minsize {}
+			.weighted {}
 			.compact, .fixed {
 				// mcw[i] = c.fixed_widths[i]
 			}
@@ -326,7 +326,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 					mch[i] = free_height
 				}
 			}
-			.weighted, .weighted_minsize {}
+			.weighted {}
 			.compact, .fixed {
 				// mch[i] = c.fixed_heights[i]
 			}
@@ -385,36 +385,17 @@ fn (mut s Stack) set_cache_sizes() {
 
 		// cw as child width with type f64
 		if cw > 1 {
-			if cw == int(cw) { // fixed size ?
-				c.width_type[i] = .fixed
-				c.fixed_widths[i] = int(cw)
-				if s.direction == .row { // sum rule
-					c.fixed_width += c.fixed_widths[i]
-					c.min_width += c.fixed_widths[i]
-				} else { // max rule
-					if c.fixed_widths[i] > c.fixed_width {
-						c.fixed_width = c.fixed_widths[i]
-					}
-					if c.fixed_widths[i] > c.min_width {
-						c.min_width = c.fixed_widths[i]
-					}
+			c.width_type[i] = .fixed
+			c.fixed_widths[i] = int(cw)
+			if s.direction == .row { // sum rule
+				c.fixed_width += c.fixed_widths[i]
+				c.min_width += c.fixed_widths[i]
+			} else { // max rule
+				if c.fixed_widths[i] > c.fixed_width {
+					c.fixed_width = c.fixed_widths[i]
 				}
-			} else {
-				// Possibly useful for Stack children: 200.6 as 200 as minimal size and .6 as weight
-				c.width_type[i] = .weighted_minsize
-				c.fixed_widths[i] = int(cw)
-				c.weight_widths[i] = cw - int(cw)
-				if s.direction == .row { // sum rule
-					c.fixed_width += c.fixed_widths[i]
-					c.min_width += c.fixed_widths[i]
-					// c.width_mass += c.weight_widths[i]
-				} else { // max rule
-					if c.fixed_widths[i] > c.fixed_width {
-						c.fixed_width = c.fixed_widths[i]
-					}
-					if c.fixed_widths[i] > c.min_width {
-						c.min_width = c.fixed_widths[i]
-					}
+				if c.fixed_widths[i] > c.min_width {
+					c.min_width = c.fixed_widths[i]
 				}
 			}
 		} else if cw > 0 {
@@ -478,36 +459,17 @@ fn (mut s Stack) set_cache_sizes() {
 		// ch as child height with type f64
 		if ch > 1 {
 			// fixed size ?
-			if ch == int(ch) {
-				c.height_type[i] = .fixed
-				c.fixed_heights[i] = int(ch)
-				if s.direction == .column { // sum rule
-					c.fixed_height += c.fixed_heights[i]
-					c.min_height += c.fixed_heights[i]
-				} else { // max rule
-					if c.fixed_heights[i] > c.fixed_height {
-						c.fixed_height = c.fixed_heights[i]
-					}
-					if c.fixed_heights[i] > c.min_height {
-						c.min_height = c.fixed_heights[i]
-					}
+			c.height_type[i] = .fixed
+			c.fixed_heights[i] = int(ch)
+			if s.direction == .column { // sum rule
+				c.fixed_height += c.fixed_heights[i]
+				c.min_height += c.fixed_heights[i]
+			} else { // max rule
+				if c.fixed_heights[i] > c.fixed_height {
+					c.fixed_height = c.fixed_heights[i]
 				}
-			} else {
-				// Possibly useful for Stack children: 200.6 as 200 as minimal size and .6 as weight
-				c.height_type[i] = .weighted_minsize
-				c.fixed_heights[i] = int(ch)
-				c.weight_heights[i] = ch - int(ch)
-				if s.direction == .column { // sum rule
-					c.fixed_height += c.fixed_heights[i]
-					c.min_height += c.fixed_heights[i]
-					// c.height_mass += c.weight_heights[i]
-				} else { // max rule
-					if c.fixed_heights[i] > c.fixed_height {
-						c.fixed_height = c.fixed_heights[i]
-					}
-					if c.fixed_heights[i] > c.min_height {
-						c.min_height = c.fixed_heights[i]
-					}
+				if c.fixed_heights[i] > c.min_height {
+					c.min_height = c.fixed_heights[i]
 				}
 			}
 		} else if ch > 0 {

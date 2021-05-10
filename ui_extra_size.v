@@ -54,7 +54,6 @@ pub enum ChildSize {
 	compact
 	fixed
 	weighted
-	weighted_minsize
 	stretch
 	weighted_stretch
 }
