@@ -145,7 +145,7 @@ fn (mut win Window) add_message_dialog() {
 		heights: compact
 		spacing: 10
 		margin: Margin{5, 5, 5, 5}
-		bg_color: gx.Color{220, 255, 220, 100}
+		bg_color: gx.Color{140, 210, 240, 100}
 		bg_radius: .3
 	}, [
 		label(id: '_msg_dlg_lab', text: ' Hello World'),
