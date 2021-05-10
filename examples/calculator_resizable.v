@@ -1,6 +1,7 @@
 import ui
 import math
 import os
+import gx
 
 const (
 	buttons_per_row = 4
@@ -61,6 +62,7 @@ fn main() {
 			margin_: 10
 			spacing: 5
 			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			bg_color: gx.rgb(240, 180, 130)
 		}, children),
 	])
 	// app.text = "size= ${app.window.width} ${app.window.height}"
@@ -207,6 +209,8 @@ fn get_row(ops []string) []ui.Widget {
 			onclick: btn_click
 			text_size: 1. / 20
 			radius: .25
+			theme: 'blue'
+			hoverable: true
 		)
 	}
 	return children

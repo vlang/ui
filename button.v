@@ -16,7 +16,7 @@ const (
 
 enum ButtonState {
 	normal = 1 // synchronized with .button_normal
-	pressed
+	pressed = 2
 }
 
 type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
@@ -50,6 +50,8 @@ pub mut:
 	radius     f32
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
+	hoverable  bool
+	to_hover   bool
 	tooltip    string
 	text_cfg   gx.TextCfg
 	text_size  f64
@@ -69,6 +71,7 @@ pub struct ButtonConfig {
 	width     int
 	z_index   int
 	movable   bool
+	hoverable bool
 	tooltip   string
 	text_cfg  gx.TextCfg
 	text_size f64
@@ -83,6 +86,7 @@ pub fn button(c ButtonConfig) &Button {
 		height_: c.height
 		z_index: c.z_index
 		movable: c.movable
+		hoverable: c.hoverable
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
@@ -155,12 +159,22 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	if b.hidden {
 		return
 	}
-	if b.tooltip != '' && e.mouse_button == 256 {
+	if e.mouse_button == 256 {
 		if b.point_inside(e.x, e.y) {
 			// println("tooltip: $b.id $b.tooltip ($e.x, $e.y, $e.mouse_button)")
-			start_tooltip(mut b, b.id, b.tooltip, b.ui)
+			if b.tooltip != '' {
+				start_tooltip(mut b, b.id, b.tooltip, b.ui)
+			}
+			if b.hoverable && !b.to_hover {
+				b.to_hover = true
+			}
 		} else {
-			stop_tooltip(b, b.id, b.ui)
+			if b.hoverable && b.to_hover {
+				b.to_hover = false
+			}
+			if b.tooltip != '' {
+				stop_tooltip(b, b.id, b.ui)
+			}
 		}
 	}
 }
@@ -197,8 +211,8 @@ fn (mut b Button) draw() {
 	offset_start(mut b)
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
-	bg_color := color(b.theme, ColorType(b.state))
-	// println(bg_color)
+	bg_color := color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
+	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
 		radius := relative_radius(b.radius, b.width, b.height)
 		b.ui.gg.draw_rounded_rect(b.x, b.y, b.width, b.height, radius, bg_color) // gx.white)
@@ -279,5 +293,5 @@ pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
 }
 
 pub fn (mut b Button) update_theme() {
-	update_colors_from(mut b.theme, theme(b), [.button_normal, .button_pressed])
+	update_colors_from(mut b.theme, theme(b), [1, 2, 3])
 }
