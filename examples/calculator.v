@@ -44,6 +44,7 @@ fn main() {
 		children << ui.row({
 			spacing: 5
 			height: 30
+			widths: ui.stretch
 		}, get_row(op))
 	}
 	app.window = ui.window({
