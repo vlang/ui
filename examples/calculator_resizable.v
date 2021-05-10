@@ -46,7 +46,7 @@ fn main() {
 	]
 	for op in ops {
 		children << ui.row({
-			spacing: 5
+			spacing: .05
 			widths: ui.stretch
 		}, get_row(op))
 	}
@@ -60,7 +60,7 @@ fn main() {
 	}, [
 		ui.column({
 			margin_: 10
-			spacing: 5
+			spacing: .05
 			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 			bg_color: gx.rgb(240, 180, 130)
 		}, children),
