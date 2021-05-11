@@ -6,14 +6,6 @@ module ui
 import gx
 import gg
 
-// define a space to be used as a regular widget
-// managed by Stack widths heights parameters
-// Notably, stretch could be used.
-
-pub const (
-	space = spacing({})
-)
-
 [heap]
 pub struct Rectangle {
 pub mut:
