@@ -1259,6 +1259,15 @@ pub fn (w Window) canvas_layout(id string) &CanvasLayout {
 	}
 }
 
+pub fn (w Window) menu(id string) &Menu {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Menu {
+		return widget
+	} else {
+		return menu({})
+	}
+}
+
 // extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {

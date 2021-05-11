@@ -87,6 +87,7 @@ fn main() {
 				'red':     'Red'
 			})),
 			ui.at(150, 100, ui.menu(
+				id: 'menu'
 				text: 'Menu'
 				// width: 100
 				// theme: 'red'
@@ -104,6 +105,13 @@ fn main() {
 						action: menu_click
 					},
 				]
+			)),
+			ui.at(150, 80, ui.button(
+				text: 'hide/show menu'
+				onclick: fn (a voidptr, b &ui.Button) {
+					mut menu := b.ui.window.menu('menu')
+					menu.hidden = !menu.hidden
+				}
 			)),
 		]),
 			ui.picture(
