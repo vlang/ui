@@ -13,6 +13,8 @@ pub mut:
 	text     string
 	offset_x int
 	offset_y int
+	// component state for composable widget
+	component voidptr
 mut:
 	id           string
 	parent       Layout
@@ -26,8 +28,6 @@ mut:
 	border_color gx.Color
 	ui           &UI
 	hidden       bool
-	// component state for composable widget
-	component voidptr
 }
 
 pub struct RectangleConfig {

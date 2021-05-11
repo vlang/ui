@@ -14,6 +14,9 @@ pub mut:
 	id       string
 	offset_x int
 	offset_y int
+	hidden   bool
+	// component state for composable widget
+	component voidptr
 mut:
 	text      string
 	parent    Layout
@@ -28,9 +31,6 @@ mut:
 	image     gg.Image
 	on_click  PictureClickFn
 	use_cache bool
-	hidden    bool
-	// component state for composable widget
-	component voidptr
 }
 
 pub struct PictureConfig {

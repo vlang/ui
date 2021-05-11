@@ -14,9 +14,11 @@ const (
 [heap]
 pub struct Menu {
 pub mut:
-	id       string
-	offset_x int
-	offset_y int
+	id        string
+	offset_x  int
+	offset_y  int
+	hidden    bool
+	component voidptr
 mut:
 	text      string
 	parent    Layout
@@ -29,7 +31,6 @@ mut:
 	items     []MenuItem
 	text_cfg  gx.TextCfg
 	text_size f64
-	hidden    bool
 }
 
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)

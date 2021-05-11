@@ -7,7 +7,7 @@ import gx
 
 [heap]
 pub struct Label {
-mut:
+pub mut:
 	id         string
 	text       string
 	parent     Layout
