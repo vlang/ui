@@ -6,11 +6,11 @@ module ui
 import gx
 import gg
 
-// define a space to be used as a regular widget 
-// managed by Stack widths heights parameters 
+// define a space to be used as a regular widget
+// managed by Stack widths heights parameters
 // Notably, stretch could be used.
 
-pub const(
+pub const (
 	space = spacing({})
 )
 
