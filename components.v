@@ -6,7 +6,7 @@ module ui
 //  1) the unique composable widget ( i.e this unique root layout)
 //  2) the children of this root layout (i.e. widgets or sub-components). N.B.: the other sub-layouts possibly used in the root layout children tree are not in the component struct.
 // All composable widget and children widgets/sub-components have a unique field `component` corresponding to this Component structure.
-// All members (layout and children) are then all connected as ComponentChild having component field.
+// All members (layout and children) are then all connected as ComponentChild having `component` field.
 // Remark: To become possibly a member of a parent component, a component has to have this field `component` to be connected to
 //---
 
