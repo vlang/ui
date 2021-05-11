@@ -15,7 +15,7 @@ mut:
 	component voidptr
 }
 
-// Only layout can contain component type
+// Only layouts can contain component type since they are sort of parent component
 pub fn (s &Stack) component_type() string {
 	return s.component_type
 }
