@@ -66,7 +66,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 	return rect
 }
 
-// Workaround to have a stretched spacing
+// Workaround to have a spacing notably
 pub fn spacing(c RectangleConfig) &Rectangle {
 	mut rect := &Rectangle{
 		color: c.color

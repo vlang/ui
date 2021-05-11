@@ -47,6 +47,7 @@ pub mut:
 	icon_path  string
 	image      gg.Image
 	use_icon   bool
+	padding    f32
 	radius     f32
 	hidden     bool
 	movable    bool // drag, transition or anything allowing offset yo be updated
@@ -77,6 +78,7 @@ pub struct ButtonConfig {
 	text_size f64
 	theme     ColorThemeCfg = 'classic'
 	radius    f64
+	padding   f64
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -96,6 +98,7 @@ pub fn button(c ButtonConfig) &Button {
 		text_cfg: c.text_cfg
 		text_size: c.text_size
 		radius: f32(c.radius)
+		padding: f32(c.padding)
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -211,18 +214,20 @@ fn (mut b Button) draw() {
 	offset_start(mut b)
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
+	padding := relative_size(b.padding, b.width, b.height)
+	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
 	bg_color := color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
 	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
-		radius := relative_radius(b.radius, b.width, b.height)
-		b.ui.gg.draw_rounded_rect(b.x, b.y, b.width, b.height, radius, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rounded_rect(b.x, b.y, b.width, b.height, radius, ui.button_border_color)
+		radius := relative_size(b.radius, int(width), int(height))
+		b.ui.gg.draw_rounded_rect(x, y, width, height, radius, bg_color) // gx.white)
+		b.ui.gg.draw_empty_rounded_rect(x, y, width, height, radius, ui.button_border_color)
 	} else {
-		b.ui.gg.draw_rect(b.x, b.y, b.width, b.height, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rect(b.x, b.y, b.width, b.height, ui.button_border_color)
+		b.ui.gg.draw_rect(x, y, width, height, bg_color) // gx.white)
+		b.ui.gg.draw_empty_rect(x, y, width, height, ui.button_border_color)
 	}
 	if b.use_icon {
-		b.ui.gg.draw_image(b.x, b.y, b.width, b.height, b.image)
+		b.ui.gg.draw_image(x, y, width, height, b.image)
 	} else {
 		draw_text(b, bcenter_x, bcenter_y, b.text)
 	}

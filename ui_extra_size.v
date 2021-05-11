@@ -122,6 +122,6 @@ fn spacings(sp f64, sps []f64, len int) []f32 {
 	return spacing
 }
 
-fn relative_radius(radius f32, w int, h int) f32 {
-	return if radius < 1 { radius * f32(math.min(w, h)) } else { radius }
+fn relative_size(size f32, w int, h int) f32 {
+	return if size < 1 { size * f32(math.min(w, h)) } else { size }
 }
