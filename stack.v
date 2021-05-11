@@ -813,42 +813,17 @@ fn (mut s Stack) set_drawing_children() {
 	for mut child in s.children {
 		if mut child is Stack {
 			child.set_drawing_children()
+		} else if mut child is CanvasLayout {
+			child.set_drawing_children()
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
 			s.z_index = child.z_index
 		}
 	}
-	// println("Stack: z_index $s.z_index ")
-	// s.drawing_children = s.children.clone()
-	$if sdc ? {
-		println('(BEFORE) children[$s.id]: ')
-		for i, c in s.children {
-			id := widget_id(c)
-			print('($i)[$id] ')
-		}
-		println('\n')
-	}
 	s.drawing_children = s.children.filter(!it.hidden)
-	$if sdc ? {
-		println('(HIDDEN) drawing_children[$s.id]: ')
-		for i, c in s.drawing_children {
-			id := widget_id(c)
-			print('($i)[$id] ')
-		}
-		println('\n')
-	}
-
 	// s.drawing_children.sort(a.z_index < b.z_index)
 	s.sorted_drawing_children()
-	$if sdc ? {
-		println('(Z_INDEX) drawing_children[$s.id]: ')
-		for i, c in s.drawing_children {
-			id := widget_id(c)
-			print('($i)[$id] ')
-		}
-		println('\n')
-	}
 }
 
 fn (mut s Stack) draw() {

@@ -18,19 +18,20 @@ pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
 [heap]
 pub struct CanvasLayout {
 pub mut:
-	id         string
-	children   []Widget
-	width      int
-	height     int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	ui         &UI = 0
-	hidden     bool
-	adj_width  int
-	adj_height int
+	id               string
+	children         []Widget
+	drawing_children []Widget
+	width            int
+	height           int
+	x                int
+	y                int
+	offset_x         int
+	offset_y         int
+	z_index          int
+	ui               &UI = 0
+	hidden           bool
+	adj_width        int
+	adj_height       int
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
@@ -137,6 +138,10 @@ fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 	}
 }
 
+pub fn (mut c CanvasLayout) update_layout() {
+	c.set_drawing_children()
+}
+
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	mut h := 0
 	mut w := 0
@@ -173,6 +178,22 @@ fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	c.width = w
 	c.height = h
 	return c.width, c.height
+}
+
+fn (mut c CanvasLayout) set_drawing_children() {
+	for mut child in c.children {
+		if mut child is Stack {
+			child.set_drawing_children()
+		} else if mut child is CanvasLayout {
+			child.set_drawing_children()
+		}
+		// println("z_index: ${child.type_name()} $child.z_index")
+		if child.z_index > c.z_index {
+			c.z_index = child.z_index
+		}
+	}
+	c.drawing_children = c.children.filter(!it.hidden)
+	c.sorted_drawing_children()
 }
 
 fn (mut c CanvasLayout) draw() {

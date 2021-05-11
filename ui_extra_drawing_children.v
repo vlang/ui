@@ -29,3 +29,17 @@ fn (mut s Stack) sorted_drawing_children() {
 	}
 	s.drawing_children = sorted
 }
+
+fn (mut c CanvasLayout) sorted_drawing_children() {
+	mut dc := []SortedWidget{}
+	mut sorted := []Widget{}
+
+	for i, child in c.drawing_children {
+		dc << SortedWidget{i, child}
+	}
+	dc.sort_with_compare(compare_sorted_widget)
+	for child in dc {
+		sorted << child.w
+	}
+	c.drawing_children = sorted
+}
