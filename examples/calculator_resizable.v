@@ -3,13 +3,6 @@ import math
 import os
 import gx
 
-const (
-	buttons_per_row = 4
-	// bwidth          = 30
-	// bheight         = 30
-	bpadding        = 5
-)
-
 struct App {
 mut:
 	text       string

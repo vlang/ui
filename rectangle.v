@@ -6,6 +6,14 @@ module ui
 import gx
 import gg
 
+// define a space to be used as a regular widget 
+// managed by Stack widths heights parameters 
+// Notably, stretch could be used.
+
+pub const(
+	space = spacing({})
+)
+
 [heap]
 pub struct Rectangle {
 pub mut:
@@ -68,10 +76,11 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 
 // Workaround to have a stretched spacing
 pub fn spacing(c RectangleConfig) &Rectangle {
-	rect := &Rectangle{
+	mut rect := &Rectangle{
 		color: c.color
 		ui: 0
 	}
+	rect.hidden = true
 	return rect
 }
 
