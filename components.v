@@ -27,8 +27,3 @@ pub fn (s &Group) component_type() string {
 pub fn (s &CanvasLayout) component_type() string {
 	return s.component_type
 }
-
-// All the components could be listed here to have an overall of all components
-pub fn component_doublelistbox(w Component) &DoubleListBox {
-	return &DoubleListBox(w.component)
-}
