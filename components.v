@@ -10,10 +10,12 @@ module ui
 // Remark: To become possibly a member of a parent component, a component has to have this field `component` to be connected to
 //---
 
-interface ComponentChild {
+pub interface ComponentChild {
 mut:
 	component voidptr
 }
+
+pub type ComponentInitFn = fn (layout voidptr)
 
 // Only layouts can contain component type since they are sort of parent component
 pub fn (s &Stack) component_type() string {

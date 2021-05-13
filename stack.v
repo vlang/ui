@@ -77,6 +77,7 @@ pub mut:
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
+	component_init ComponentInitFn
 }
 
 struct StackConfig {
@@ -137,6 +138,11 @@ fn (mut s Stack) init(parent Layout) {
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
+	}
+
+	// init for component attached to s when it is the layout of a component
+	if s.component_init != ComponentInitFn(0) {
+		s.component_init(s)
 	}
 
 	if parent is Window {

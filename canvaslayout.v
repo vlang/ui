@@ -35,6 +35,7 @@ pub mut:
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
+	component_init ComponentInitFn
 mut:
 	parent        Layout
 	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
@@ -82,6 +83,11 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	for mut child in c.children {
 		child.init(c)
 	}
+	// init for component
+	if c.component_init != ComponentInitFn(0) {
+		c.component_init(c)
+	}
+
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
 	mut subscriber := parent.get_subscriber()

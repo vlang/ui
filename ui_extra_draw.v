@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import math
 
 const (
 	empty_text_cfg = gx.TextCfg{}
@@ -180,4 +181,50 @@ pub fn text_size_as_int(size f64, win_height int) int {
 fn point_inside<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
+}
+
+// h, s, l in [0,1]
+pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
+	c := v * s
+	x := c * (1. - math.abs(math.fmod(h * 6., 2.) - 1.))
+	m := v - c
+	mut r, mut g, mut b := 0., 0., 0.
+	h6 := h * 6.
+	if h6 < 1. {
+		r, g = c, x
+	} else if h6 < 2. {
+		r, g = x, c
+	} else if h6 < 3. {
+		g, b = c, x
+	} else if h6 < 4. {
+		g, b = x, c
+	} else if h6 < 5. {
+		r, b = x, c
+	} else {
+		r, b = c, x
+	}
+	return gx.rgb(byte((r + m) * 255.), byte((g + m) * 255.), byte((b + m) * 255.))
+}
+
+// h, s, l in [0,1]
+pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
+	c := (1. - math.abs(2. * l - 1.)) * s
+	x := c * (1. - math.fmod(math.abs(h * 6.), 2.) - 1.)
+	m := l - c / 2.
+	mut r, mut g, mut b := 0., 0., 0.
+	h6 := h * 6.
+	if h6 < 1. {
+		r, g = c, x
+	} else if h6 < 2. {
+		r, g = x, c
+	} else if h6 < 3. {
+		g, b = c, x
+	} else if h6 < 4. {
+		g, b = x, c
+	} else if h6 < 5. {
+		r, b = x, c
+	} else {
+		r, b = c, x
+	}
+	return gx.rgb(byte((r + m) * 255.), byte((g + m) * 255.), byte((b + m) * 255.))
 }
