@@ -45,8 +45,8 @@ fn main() {
 			ui.canvas_layout({
 			// width: 400
 			// height: 275
-			draw_fn: draw
-			mouse_move_fn: mouse_move
+			on_draw: draw
+			on_mouse_move: mouse_move
 		}, [
 			ui.at(10, 10, ui.button(
 				text: 'Theme'

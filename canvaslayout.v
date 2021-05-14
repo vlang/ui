@@ -39,6 +39,7 @@ pub mut:
 mut:
 	parent        Layout
 	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
+	click_fn      CanvasLayoutMouseFn     = voidptr(0)
 	mouse_down_fn CanvasLayoutMouseFn     = voidptr(0)
 	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
 	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
@@ -51,11 +52,12 @@ pub struct CanvasLayoutConfig {
 	height        int
 	z_index       int
 	text          string
-	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
-	mouse_down_fn CanvasLayoutMouseFn     = voidptr(0)
-	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
-	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
-	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
+	on_draw       CanvasLayoutDrawFn      = voidptr(0)
+	on_click      CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_up   CanvasLayoutMouseFn     = voidptr(0)
+	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
+	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
 	// key_down_fn   KeyFn
 	// char_fn       KeyFn
@@ -67,10 +69,11 @@ pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
-		draw_fn: c.draw_fn
-		mouse_move_fn: c.mouse_move_fn
-		mouse_down_fn: c.mouse_down_fn
-		mouse_up_fn: c.mouse_up_fn
+		draw_fn: c.on_draw
+		click_fn: c.on_click
+		mouse_move_fn: c.on_mouse_move
+		mouse_down_fn: c.on_mouse_down
+		mouse_up_fn: c.on_mouse_up
 		children: children
 	}
 	return canvas
@@ -91,10 +94,24 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
 	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
 	subscriber.subscribe_method(events.on_mouse_down, canvas_layout_mouse_down, c)
 	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
 	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
 	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
+}
+
+fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	if c.point_inside(e.x, e.y) && c.click_fn != voidptr(0) {
+		e2 := MouseEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			button: e.button
+			action: e.action
+			mods: e.mods
+		}
+		c.click_fn(e2, c)
+	}
 }
 
 fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
