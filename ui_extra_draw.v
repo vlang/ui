@@ -228,3 +228,21 @@ pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 	}
 	return gx.rgb(byte((r + m) * 255.), byte((g + m) * 255.), byte((b + m) * 255.))
 }
+
+pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
+	r, g, b := f64(col.r) / 255., f64(col.g) / 255., f64(col.b) / 255.
+	v, m := f64_max(f64_max(r, g), b), 1. - f64_max(f64_max(1. - r, 1. - g), 1. - b)
+	d := v - m
+	mut h, mut s := 0., 0.
+	if v == r {
+		h = math.fmod((g - b) / d, 6) / 6.
+	} else if v == g {
+		h = ((b - r) / d + 2) / 6.
+	} else if v == b {
+		h = ((r - g) / d + 4) / 6.
+	}
+	if v != 0 {
+		s = d / v
+	}
+	return h, s, v
+}

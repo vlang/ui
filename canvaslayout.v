@@ -30,6 +30,8 @@ pub mut:
 	z_index          int
 	ui               &UI = 0
 	hidden           bool
+	bg_color         gx.Color
+	bg_radius        f32
 	adj_width        int
 	adj_height       int
 	// component state for composable widget
@@ -44,6 +46,8 @@ mut:
 	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
 	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
 	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
+	// To keep track of original position
+	pos_ map[int]XYPos
 }
 
 pub struct CanvasLayoutConfig {
@@ -52,6 +56,8 @@ pub struct CanvasLayoutConfig {
 	height        int
 	z_index       int
 	text          string
+	bg_color      gx.Color = no_color
+	bg_radius     f64
 	on_draw       CanvasLayoutDrawFn      = voidptr(0)
 	on_click      CanvasLayoutMouseFn     = voidptr(0)
 	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
@@ -69,12 +75,19 @@ pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 		width: c.width
 		height: c.height
 		z_index: c.z_index
+		bg_radius: f32(c.bg_radius)
+		bg_color: c.bg_color
 		draw_fn: c.on_draw
 		click_fn: c.on_click
 		mouse_move_fn: c.on_mouse_move
 		mouse_down_fn: c.on_mouse_down
 		mouse_up_fn: c.on_mouse_up
 		children: children
+	}
+	// Saves the original position of children
+	// used in set_children_pos
+	for i, child in children {
+		canvas.pos_[i] = XYPos{child.x, child.y}
 	}
 	return canvas
 }
@@ -183,14 +196,15 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 }
 
 fn (c &CanvasLayout) set_children_pos() {
-	for mut child in c.children {
-		child.set_pos(child.x + c.x + c.offset_x, child.y + c.y + c.offset_y)
+	for i, mut child in c.children {
+		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
 	}
 }
 
 fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
+	c.set_children_pos()
 }
 
 fn (mut c CanvasLayout) size() (int, int) {
@@ -220,17 +234,25 @@ fn (mut c CanvasLayout) set_drawing_children() {
 }
 
 fn (mut c CanvasLayout) draw() {
+	if c.hidden {
+		return
+	}
 	offset_start(mut c)
 	parent := c.parent
 	state := parent.get_state()
+	if c.bg_color != no_color {
+		if c.bg_radius > 0 {
+			radius := relative_size(c.bg_radius, c.width, c.height)
+			c.draw_rounded_rect(0, 0, c.width, c.height, radius, c.bg_color)
+		} else {
+			c.draw_rect(0, 0, c.width, c.height, c.bg_color)
+		}
+	}
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c, state)
 	}
-	for mut child in c.children {
-		// x, y := child.x, child.y
-		// child.set_pos(child.x + c.x + c.offset_x, child.y + c.y + c.offset_y)
+	for mut child in c.drawing_children {
 		child.draw()
-		// child.set_pos(x, y)
 	}
 	offset_end(mut c)
 }

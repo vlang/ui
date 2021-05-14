@@ -125,3 +125,9 @@ fn spacings(sp f64, sps []f64, len int) []f32 {
 fn relative_size(size f32, w int, h int) f32 {
 	return if size < 1 { size * f32(math.min(w, h)) } else { size }
 }
+
+struct XYPos {
+mut:
+	x int
+	y int
+}

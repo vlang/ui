@@ -39,87 +39,88 @@ fn main() {
 		ui.row({
 			margin_: .02
 			spacing: .02
-			widths: [300., ui.compact]
-			heights: [300., ui.compact]
+			widths: [ui.compact, 350.]
+			heights: [ui.compact, 300.]
 		}, [
-			ui.canvas_layout({
-			// width: 400
-			// height: 275
-			on_draw: draw
-			on_mouse_move: mouse_move
-		}, [
-			ui.at(10, 10, ui.button(
-				text: 'Theme'
-				width: 100
-				theme: 'red'
-				movable: true
-				onclick: fn (a voidptr, b voidptr) {
-					ui.message_box('Built with V UI')
-				}
-			)),
-			ui.at(20, 280, ui.label(
-				text: '(0, 0)     '
-			)),
-			ui.at(120, 10, ui.dropdown({
-				width: 140
-				height: 20
-				def_text: 'Select a theme'
-				on_selection_changed: dd_change
-			}, [
-				{
-					text: 'classic'
-				},
-				{
-					text: 'blue'
-				},
-				ui.DropdownItem{
-					text: 'red'
-				},
-			])),
-			ui.at(10, 100, ui.listbox({
-				width: 100
-				height: 120
-				on_change: lb_change
-				// draw_lines: true
-			}, map{
-				'classic': 'Classic'
-				'blue':    'Blue'
-				'red':     'Red'
-			})),
-			ui.at(150, 100, ui.menu(
-				id: 'menu'
-				text: 'Menu'
-				// width: 100
-				// theme: 'red'
-				items: [
-					ui.MenuItem{
-						text: 'Delete all users'
-						action: menu_click
-					},
-					ui.MenuItem{
-						text: 'Export users'
-						action: menu_click
-					},
-					ui.MenuItem{
-						text: 'Exit'
-						action: menu_click
-					},
-				]
-			)),
-			ui.at(150, 80, ui.button(
-				text: 'hide/show menu'
-				onclick: fn (a voidptr, b &ui.Button) {
-					mut menu := b.ui.window.menu('menu')
-					menu.hidden = !menu.hidden
-				}
-			)),
-		]),
 			ui.picture(
-				width: 100
-				height: 100
-				movable: true
-				path: logo
-			),
+			width: 100
+			height: 100
+			movable: true
+			z_index: 20
+			path: logo
+		),
+			ui.canvas_layout({
+				// width: 400
+				// height: 275
+				on_draw: draw
+				on_mouse_move: mouse_move
+			}, [
+				ui.at(10, 10, ui.button(
+					text: 'Theme'
+					width: 100
+					theme: 'red'
+					movable: true
+					onclick: fn (a voidptr, b voidptr) {
+						ui.message_box('Built with V UI')
+					}
+				)),
+				ui.at(20, 280, ui.label(
+					text: '(0, 0)     '
+				)),
+				ui.at(120, 10, ui.dropdown({
+					width: 140
+					height: 20
+					def_text: 'Select a theme'
+					on_selection_changed: dd_change
+				}, [
+					{
+						text: 'classic'
+					},
+					{
+						text: 'blue'
+					},
+					ui.DropdownItem{
+						text: 'red'
+					},
+				])),
+				ui.at(10, 100, ui.listbox({
+					width: 100
+					height: 120
+					on_change: lb_change
+					// draw_lines: true
+				}, map{
+					'classic': 'Classic'
+					'blue':    'Blue'
+					'red':     'Red'
+				})),
+				ui.at(150, 100, ui.menu(
+					id: 'menu'
+					text: 'Menu'
+					// width: 100
+					// theme: 'red'
+					items: [
+						ui.MenuItem{
+							text: 'Delete all users'
+							action: menu_click
+						},
+						ui.MenuItem{
+							text: 'Export users'
+							action: menu_click
+						},
+						ui.MenuItem{
+							text: 'Exit'
+							action: menu_click
+						},
+					]
+				)),
+				ui.at(150, 80, ui.button(
+					text: 'hide/show menu'
+					onclick: fn (a voidptr, b &ui.Button) {
+						mut menu := b.ui.window.menu('menu')
+						menu.hidden = !menu.hidden
+					}
+				)),
+			]),
 		]),
 	])
 	ui.run(window)
@@ -132,7 +133,7 @@ fn menu_click(m &ui.Menu, item &ui.MenuItem, app voidptr) {
 fn dd_change(app voidptr, dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
-	mut b := win.child(0, 0)
+	mut b := win.child(1, 0)
 	if mut b is ui.Button {
 		b.set_theme(dd.selected().text)
 		b.update_theme()
@@ -145,7 +146,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
-	mut b := win.child(0, 0)
+	mut b := win.child(1, 0)
 	if mut b is ui.Button {
 		b.set_theme(id)
 		b.update_theme()
