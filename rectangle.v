@@ -28,6 +28,8 @@ mut:
 	border_color gx.Color
 	ui           &UI
 	hidden       bool
+	text_cfg     gx.TextCfg
+	text_size    f64
 }
 
 pub struct RectangleConfig {
@@ -44,8 +46,10 @@ pub struct RectangleConfig {
 		g: 180
 		b: 190
 	}
-	x int
-	y int
+	x         int
+	y         int
+	text_cfg  gx.TextCfg
+	text_size f64
 }
 
 pub fn rectangle(c RectangleConfig) &Rectangle {
@@ -62,6 +66,8 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 		ui: 0
 		x: c.x
 		y: c.y
+		text_size: c.text_size
+		text_cfg: c.text_cfg
 	}
 	return rect
 }
@@ -79,6 +85,7 @@ pub fn spacing(c RectangleConfig) &Rectangle {
 fn (mut r Rectangle) init(parent Layout) {
 	ui := parent.get_ui()
 	r.ui = ui
+	init_text_cfg(mut r)
 }
 
 fn (mut r Rectangle) set_pos(x int, y int) {
@@ -108,14 +115,9 @@ fn (mut r Rectangle) draw() {
 			r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.height, r.border_color)
 		}
 	}
-	text_cfg := gx.TextCfg{
-		color: gx.red
-		align: gx.align_left
-		max_width: r.x + r.width
-	}
 	// Display rectangle text
 	if r.text != '' {
-		text_width, text_height := r.ui.gg.text_size(r.text)
+		text_width, text_height := text_size(r, r.text)
 		mut dx := (r.width - text_width) / 2
 		mut dy := (r.height - text_height) / 2
 		if dx < 0 {
@@ -124,7 +126,7 @@ fn (mut r Rectangle) draw() {
 		if dy < 0 {
 			dy = 0
 		}
-		r.ui.gg.draw_text(r.x + dx, r.y + dy, r.text, text_cfg)
+		draw_text(r, r.x + dx, r.y + dy, r.text)
 	}
 	offset_end(mut r)
 }

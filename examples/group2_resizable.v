@@ -1,4 +1,5 @@
 import ui
+import gx
 
 const (
 	win_width  = 600
@@ -22,7 +23,7 @@ fn main() {
 		state: app
 		mode: .resizable
 	}, [
-		ui.column({ margin_: 10 }, [
+		ui.column({ margin_: 10, bg_color: gx.rgb(100, 100, 100) }, [
 			ui.row({ spacing: 20 }, [
 				ui.group({ title: 'First group' }, [
 					ui.textbox(
