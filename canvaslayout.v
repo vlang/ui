@@ -92,6 +92,25 @@ pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
 	return canvas
 }
 
+// canvas_plus returns a canvas_layout but without layout
+// it can be viewed as a extended canvas
+pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
+	mut canvas := &CanvasLayout{
+		id: c.id
+		width: c.width
+		height: c.height
+		z_index: c.z_index
+		bg_radius: f32(c.bg_radius)
+		bg_color: c.bg_color
+		draw_fn: c.on_draw
+		click_fn: c.on_click
+		mouse_move_fn: c.on_mouse_move
+		mouse_down_fn: c.on_mouse_down
+		mouse_up_fn: c.on_mouse_up
+	}
+	return canvas
+}
+
 fn (mut c CanvasLayout) init(parent Layout) {
 	c.parent = parent
 	ui := parent.get_ui()
@@ -347,13 +366,14 @@ pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color)
 }
 
 pub fn (c &CanvasLayout) draw_rounded_rect(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	c.ui.gg.draw_rounded_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, radius,
-		color)
+	rad := relative_size(radius, int(w), int(h))
+	c.ui.gg.draw_rounded_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, rad, color)
 }
 
 pub fn (c &CanvasLayout) draw_empty_rounded_rect(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {
+	rad := relative_size(radius, int(w), int(h))
 	c.ui.gg.draw_empty_rounded_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
-		radius, border_color)
+		rad, border_color)
 }
 
 pub fn (c &CanvasLayout) draw_convex_poly(points []f32, color gx.Color) {

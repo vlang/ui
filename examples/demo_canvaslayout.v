@@ -50,8 +50,6 @@ fn main() {
 			path: logo
 		),
 			ui.canvas_layout({
-				// width: 400
-				// height: 275
 				on_draw: draw
 				on_mouse_move: mouse_move
 			}, [
