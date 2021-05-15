@@ -46,6 +46,8 @@ pub fn label(c LabelConfig) &Label {
 		height: c.height
 		ui: 0
 		z_index: c.z_index
+		text_size: c.text_size
+		text_cfg: c.text_cfg
 	}
 	return lbl
 }

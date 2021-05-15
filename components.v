@@ -17,6 +17,13 @@ mut:
 
 pub type ComponentInitFn = fn (layout voidptr)
 
+pub fn component_link(comp voidptr, children ...ComponentChild) {
+	mut c := children.clone()
+	for mut child in c {
+		child.component = comp
+	}
+}
+
 // Only layouts can contain component type since they are sort of parent component
 pub fn (s &Stack) component_type() string {
 	return s.component_type

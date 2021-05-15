@@ -118,6 +118,8 @@ pub struct TextBoxConfig {
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
+	// added when user set text after but before init
+	text_after bool
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
@@ -149,7 +151,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text_size: c.text_size
 		is_multi: c.is_multi
 	}
-	if c.text == 0 {
+	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
 	}
 	return tb

@@ -2,6 +2,7 @@ module ui
 
 import gx
 import math
+import sokol.sgl
 
 const (
 	empty_text_cfg = gx.TextCfg{}
@@ -40,6 +41,7 @@ fn draw_text<T>(w &T, x int, y int, text_ string) {
 		}
 		w.ui.gg.draw_text(x, y, text_, tc)
 	} else {
+		// println("draw_text: $text_ $w.text_cfg.color")
 		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
 	}
 }
@@ -231,18 +233,109 @@ pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 
 pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	r, g, b := f64(col.r) / 255., f64(col.g) / 255., f64(col.b) / 255.
-	v, m := f64_max(f64_max(r, g), b), 1. - f64_max(f64_max(1. - r, 1. - g), 1. - b)
+	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
 	d := v - m
 	mut h, mut s := 0., 0.
-	if v == r {
-		h = math.fmod((g - b) / d, 6) / 6.
+	if v == m {
+		h = 0
+	} else if v == r {
+		if g > b {
+			h = ((g - b) / d) / 6.
+		} else {
+			h = (6. - (g - b) / d) / 6
+		}
 	} else if v == g {
-		h = ((b - r) / d + 2) / 6.
+		h = ((b - r) / d + 2.) / 6.
 	} else if v == b {
-		h = ((r - g) / d + 4) / 6.
+		h = ((r - g) / d + 4.) / 6.
 	}
+	// println("h: $h")
 	if v != 0 {
 		s = d / v
 	}
 	return h, s, v
+}
+
+// Texture stuff borrowed from @penguindark to deal with texture in sokol
+//
+
+pub fn create_texture(w int, h int, buf &byte) C.sg_image {
+	mut img_desc := C.sg_image_desc{
+		width: w
+		height: h
+		num_mipmaps: 0
+		min_filter: .linear
+		mag_filter: .linear
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+		label: &byte(0)
+		d3d11_texture: 0
+	}
+	sz := w * h * 4
+
+	img_desc.data.subimage[0][0] = C.sg_range{
+		ptr: buf
+		size: size_t(sz)
+	}
+
+	sg_img := C.sg_make_image(&img_desc)
+	return sg_img
+}
+
+pub fn destroy_texture(sg_img C.sg_image) {
+	C.sg_destroy_image(sg_img)
+}
+
+// Dynamic texture
+pub fn create_dynamic_texture(w int, h int) C.sg_image {
+	mut img_desc := C.sg_image_desc{
+		width: w
+		height: h
+		num_mipmaps: 0
+		min_filter: .linear
+		mag_filter: .linear
+		usage: .dynamic
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+		label: &byte(0)
+		d3d11_texture: 0
+	}
+
+	sg_img := C.sg_make_image(&img_desc)
+	return sg_img
+}
+
+// Use only if usage: .dynamic is enabled
+pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &byte) {
+	sz := w * h * 4
+	mut tmp_sbc := C.sg_image_data{}
+	tmp_sbc.subimage[0][0] = C.sg_range{
+		ptr: buf
+		size: size_t(sz)
+	}
+	C.sg_update_image(sg_img, &tmp_sbc)
+}
+
+pub fn (c &CanvasLayout) draw_texture(w int, h int, simg C.sg_image) {
+	ctx := c.ui.gg
+	cx, cy := c.x + c.offset_x, c.y + c.offset_y
+	u0 := f32(cx / w)
+	v0 := f32(cy / h)
+	u1 := f32((cx + c.width) / w)
+	v1 := f32((cy + c.height) / h)
+	x0 := f32(cx * ctx.scale)
+	y0 := f32(cy * ctx.scale)
+	x1 := f32((cx + c.width) * ctx.scale)
+	y1 := f32((cy + c.height) * ctx.scale)
+	sgl.load_pipeline(ctx.timage_pip)
+	sgl.enable_texture()
+	sgl.texture(simg)
+	sgl.begin_quads()
+	sgl.c4b(255, 255, 255, 255)
+	sgl.v2f_t2f(x0, y0, u0, v0)
+	sgl.v2f_t2f(x1, y0, u1, v0)
+	sgl.v2f_t2f(x1, y1, u1, v1)
+	sgl.v2f_t2f(x0, y1, u0, v1)
+	sgl.end()
+	sgl.disable_texture()
 }
