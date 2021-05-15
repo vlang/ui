@@ -17,7 +17,7 @@ mut:
 
 pub type ComponentInitFn = fn (layout voidptr)
 
-pub fn component_link(comp voidptr, children ...ComponentChild) {
+pub fn component_connect(comp voidptr, children ...ComponentChild) {
 	mut c := children.clone()
 	for mut child in c {
 		child.component = comp
