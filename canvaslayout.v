@@ -15,6 +15,8 @@ pub type CanvasLayoutMouseMoveFn = fn (e MouseMoveEvent, c &CanvasLayout)
 
 pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
 
+pub type CanvasLayoutKeyFn = fn (e KeyEvent, c &CanvasLayout)
+
 [heap]
 pub struct CanvasLayout {
 pub mut:
@@ -28,6 +30,7 @@ pub mut:
 	offset_x         int
 	offset_y         int
 	z_index          int
+	is_focused       bool
 	ui               &UI = 0
 	hidden           bool
 	bg_color         gx.Color
@@ -46,6 +49,8 @@ mut:
 	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
 	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
 	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
+	key_down_fn   CanvasLayoutKeyFn       = voidptr(0)
+	char_fn       CanvasLayoutKeyFn       = voidptr(0)
 	// To keep track of original position
 	pos_ map[int]XYPos
 }
@@ -65,25 +70,13 @@ pub struct CanvasLayoutConfig {
 	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
 	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
-	// key_down_fn   KeyFn
-	// char_fn       KeyFn
+	on_key_down CanvasLayoutKeyFn = voidptr(0)
+	on_char     CanvasLayoutKeyFn = voidptr(0)
 }
 
 pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
-	mut canvas := &CanvasLayout{
-		id: c.id
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		bg_radius: f32(c.bg_radius)
-		bg_color: c.bg_color
-		draw_fn: c.on_draw
-		click_fn: c.on_click
-		mouse_move_fn: c.on_mouse_move
-		mouse_down_fn: c.on_mouse_down
-		mouse_up_fn: c.on_mouse_up
-		children: children
-	}
+	mut canvas := canvas_plus(c)
+	canvas.children = children
 	// Saves the original position of children
 	// used in set_children_pos
 	for i, child in children {
@@ -107,6 +100,8 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 		mouse_move_fn: c.on_mouse_move
 		mouse_down_fn: c.on_mouse_down
 		mouse_up_fn: c.on_mouse_up
+		key_down_fn: c.on_key_down
+		char_fn: c.on_char
 	}
 	return canvas
 }
@@ -131,10 +126,14 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
 	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
 	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
+	subscriber.subscribe_method(events.on_key_down, canvas_layout_key_down, c)
+	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
-	if c.point_inside(e.x, e.y) && c.click_fn != voidptr(0) {
+	c.is_focused = c.point_inside(e.x, e.y)
+	if c.is_focused && c.click_fn != voidptr(0) {
+		c.is_focused
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
@@ -190,6 +189,32 @@ fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 			y: e.y - c.y - c.offset_y
 		}
 		c.scroll_fn(e2, c)
+	}
+}
+
+fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, window &Window) {
+	// println('key down $c.id $c.hidden $e')
+	if c.hidden {
+		return
+	}
+	if !c.is_focused {
+		return
+	}
+	if c.key_down_fn != voidptr(0) {
+		c.key_down_fn(*e, c)
+	}
+}
+
+fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
+	// println('key down $e')
+	if c.hidden {
+		return
+	}
+	if !c.is_focused {
+		return
+	}
+	if c.char_fn != voidptr(0) {
+		c.char_fn(*e, c)
 	}
 }
 

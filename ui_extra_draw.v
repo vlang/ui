@@ -211,7 +211,7 @@ pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
 // h, s, l in [0,1]
 pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 	c := (1. - math.abs(2. * l - 1.)) * s
-	x := c * (1. - math.fmod(math.abs(h * 6.), 2.) - 1.)
+	x := c * (1. - math.abs(math.fmod(h * 6., 2.) - 1.))
 	m := l - c / 2.
 	mut r, mut g, mut b := 0., 0., 0.
 	h6 := h * 6.
