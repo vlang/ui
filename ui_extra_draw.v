@@ -256,6 +256,33 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	return h, s, v
 }
 
+pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
+	r, g, b := f64(col.r) / 255., f64(col.g) / 255., f64(col.b) / 255.
+	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
+	d := v - m
+	mut h, mut s := 0., 0.
+	if v == m {
+		h = 0
+	} else if v == r {
+		if g > b {
+			h = ((g - b) / d) / 6.
+		} else {
+			h = (6. - (g - b) / d) / 6
+		}
+	} else if v == g {
+		h = ((b - r) / d + 2.) / 6.
+	} else if v == b {
+		h = ((r - g) / d + 4.) / 6.
+	}
+	l := (v + m) / 2.
+	// println("h: $h")
+	if v != 0 {
+		s = d / (1. - math.abs(2 * l - 1.))
+	}
+
+	return h, s, l
+}
+
 // Texture stuff borrowed from @penguindark to deal with texture in sokol
 //
 
