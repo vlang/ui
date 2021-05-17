@@ -41,16 +41,16 @@ pub mut:
 	component      voidptr
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
-	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
-	click_fn      CanvasLayoutMouseFn     = voidptr(0)
-	mouse_down_fn CanvasLayoutMouseFn     = voidptr(0)
-	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
-	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
-	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
-	key_down_fn   CanvasLayoutKeyFn       = voidptr(0)
-	char_fn       CanvasLayoutKeyFn       = voidptr(0)
+	draw_fn        CanvasLayoutDrawFn      = voidptr(0)
+	click_fn       CanvasLayoutMouseFn     = voidptr(0)
+	mouse_down_fn  CanvasLayoutMouseFn     = voidptr(0)
+	mouse_up_fn    CanvasLayoutMouseFn     = voidptr(0)
+	scroll_fn      CanvasLayoutScrollFn    = voidptr(0)
+	mouse_move_fn  CanvasLayoutMouseMoveFn = voidptr(0)
+	key_down_fn    CanvasLayoutKeyFn       = voidptr(0)
+	char_fn        CanvasLayoutKeyFn       = voidptr(0)
 mut:
-	parent        Layout
+	parent Layout
 	// To keep track of original position
 	pos_ map[int]XYPos
 }
