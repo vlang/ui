@@ -61,6 +61,8 @@ pub mut:
 	real_height          int
 	adj_width            int
 	adj_height           int
+	cfg_width            int
+	cfg_height           int
 	title                string
 	// children related
 	children              []Widget
@@ -125,8 +127,11 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		title: c.title
 		ui: 0
 	}
-	if s.width != 0 && s.height != 0 {
-		s.propose_size(c.width, c.height)
+	if c.width > 0 {
+		s.cfg_width = c.width
+	}
+	if c.height > 0 {
+		s.cfg_height = c.height
 	}
 	return s
 }
@@ -379,14 +384,12 @@ fn (mut s Stack) set_cache_sizes() {
 		mut adj_child_width, mut adj_child_height := child.size()
 
 		if mut child is Stack {
-			// max between adjusted and real sizes
-			real_child_width, real_child_height := adj_child_width, adj_child_height
 			adj_child_width, adj_child_height = child.adj_size()
-			if real_child_width > adj_child_width {
-				adj_child_width = real_child_width
+			if child.cfg_width != 0 {
+				adj_child_width = child.cfg_width
 			}
-			if real_child_height > adj_child_height {
-				adj_child_height = real_child_height
+			if child.cfg_height != 0 {
+				adj_child_height = child.cfg_height
 			}
 		}
 
