@@ -37,7 +37,7 @@ N.B.:
 
 [heap]
 struct Stack {
-	cache CachedSizes
+	cache 				 CachedSizes
 pub mut:
 	id                   string
 	offset_x             int
@@ -75,9 +75,9 @@ pub mut:
 	bg_radius             f32
 	is_root_layout        bool
 	// component state for composable widget
-	component      voidptr
-	component_type string // to save the type of the component
-	component_init ComponentInitFn
+	component      		  voidptr
+	component_type 		  string // to save the type of the component
+	component_init 		  ComponentInitFn
 }
 
 struct StackConfig {
@@ -655,6 +655,11 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 			}
 			child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 				child.adj_height + child.margin_top + child.margin_bottom
+		} else if mut child is CanvasLayout {
+			if force || child.adj_width == 0 {
+				child.set_adjusted_size(ui)
+			}
+			child_width, child_height = child.adj_width, child.adj_height
 		} else {
 			child_width, child_height = child.size()
 			$if adj_size ? {
@@ -1313,4 +1318,9 @@ pub fn (s &Stack) child(from ...int) Widget {
 	}
 	// by default returns s itself
 	return s
+}
+
+pub fn (mut s Stack) transpose(size bool) {
+	if s.direction == .row { s.direction = .column } else { s.direction = .row }
+	if size { s.widths, s.heights = s.heights, s.widths }
 }
