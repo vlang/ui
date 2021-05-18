@@ -37,7 +37,7 @@ N.B.:
 
 [heap]
 struct Stack {
-	cache 				 CachedSizes
+	cache CachedSizes
 pub mut:
 	id                   string
 	offset_x             int
@@ -75,9 +75,9 @@ pub mut:
 	bg_radius             f32
 	is_root_layout        bool
 	// component state for composable widget
-	component      		  voidptr
-	component_type 		  string // to save the type of the component
-	component_init 		  ComponentInitFn
+	component      voidptr
+	component_type string // to save the type of the component
+	component_init ComponentInitFn
 }
 
 struct StackConfig {
@@ -1321,6 +1321,12 @@ pub fn (s &Stack) child(from ...int) Widget {
 }
 
 pub fn (mut s Stack) transpose(size bool) {
-	if s.direction == .row { s.direction = .column } else { s.direction = .row }
-	if size { s.widths, s.heights = s.heights, s.widths }
+	if s.direction == .row {
+		s.direction = .column
+	} else {
+		s.direction = .row
+	}
+	if size {
+		s.widths, s.heights = s.heights, s.widths
+	}
 }

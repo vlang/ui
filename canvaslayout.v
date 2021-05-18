@@ -63,15 +63,15 @@ pub struct CanvasLayoutConfig {
 	text          string
 	bg_color      gx.Color = no_color
 	bg_radius     f64
-	on_draw       CanvasLayoutDrawFn    	= voidptr(0)
-	on_click      CanvasLayoutMouseFn     	= voidptr(0)
-	on_mouse_down CanvasLayoutMouseFn     	= voidptr(0)
-	on_mouse_up   CanvasLayoutMouseFn     	= voidptr(0)
-	on_scroll     CanvasLayoutScrollFn    	= voidptr(0)
-	on_mouse_move CanvasLayoutMouseMoveFn 	= voidptr(0)
+	on_draw       CanvasLayoutDrawFn      = voidptr(0)
+	on_click      CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_up   CanvasLayoutMouseFn     = voidptr(0)
+	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
+	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
-	on_key_down CanvasLayoutKeyFn 			= voidptr(0)
-	on_char     CanvasLayoutKeyFn 			= voidptr(0)
+	on_key_down CanvasLayoutKeyFn = voidptr(0)
+	on_char     CanvasLayoutKeyFn = voidptr(0)
 }
 
 pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
@@ -227,7 +227,7 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	mut w := 0
 	for mut child in c.children {
 		child_width, child_height := child.size()
-		
+
 		if child_width > w {
 			w = child_width
 		}
