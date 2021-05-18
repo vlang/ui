@@ -125,6 +125,9 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		title: c.title
 		ui: 0
 	}
+	if s.width != 0 && s.height != 0 {
+		s.propose_size(c.width, c.height)
+	}
 	return s
 }
 
@@ -376,7 +379,15 @@ fn (mut s Stack) set_cache_sizes() {
 		mut adj_child_width, mut adj_child_height := child.size()
 
 		if mut child is Stack {
+			// max between adjusted and real sizes
+			real_child_width, real_child_height := adj_child_width, adj_child_height
 			adj_child_width, adj_child_height = child.adj_size()
+			if real_child_width > adj_child_width {
+				adj_child_width = real_child_width
+			}
+			if real_child_height > adj_child_height {
+				adj_child_height = real_child_height
+			}
 		}
 
 		// fix compact when child has size 0

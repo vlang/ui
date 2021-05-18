@@ -223,18 +223,26 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
-	mut h := 0
-	mut w := 0
+	mut w, mut h := 0, 0
 	for mut child in c.children {
 		child_width, child_height := child.size()
 
-		if child_width > w {
-			w = child_width
+		if child.x + child_width > w {
+			w = child.x + child_width
 		}
-		if child_height > h {
-			h = child_height
+		if child.y + child_height > h {
+			h = child.y + child_height
 		}
+		// println("${child.type_name()} -> ($child.x + $child_width, $child.y + $child_height) -> ($w, $h)")
 	}
+	// println("$c.id -> ($w, $h)")
+	if c.width > w {
+		w = c.width
+	}
+	if c.height > h {
+		h = c.height
+	}
+
 	c.adj_width = w
 	c.adj_height = h
 }
