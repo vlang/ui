@@ -53,6 +53,10 @@ fn main() {
 				on_draw: draw
 				on_mouse_move: mouse_move
 			}, [
+				ui.at(10, 40, ui.row({ spacing: 10 }, [
+					ui.button(z_index: 1, text: 'X'),
+					ui.button(z_index: 1, text: 'Add'),
+				])),
 				ui.at(10, 10, ui.button(
 					text: 'Theme'
 					width: 100
