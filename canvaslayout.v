@@ -341,7 +341,7 @@ fn (c &CanvasLayout) unfocus_all() {
 fn (c &CanvasLayout) resize(width int, height int) {
 }
 
-fn (c &CanvasLayout) get_state() voidptr {
+pub fn (c &CanvasLayout) get_state() voidptr {
 	parent := c.parent
 	return parent.get_state()
 }
