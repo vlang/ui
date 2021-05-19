@@ -310,7 +310,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// size: int(m / cfg.lines)
 	}
 
-	// C.printf('window() state =%p \n', cfg.state)
+	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
 		draw_fn: cfg.draw_fn
@@ -686,7 +686,7 @@ fn window_click(event gg.Event, ui &UI) {
 fn window_key_down(event gg.Event, ui &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := ui.window
-	// C.printf('g child=%p\n', child)
+	// C.printf(c'g child=%p\n', child)
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
