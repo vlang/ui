@@ -312,7 +312,7 @@ fn (mut c CanvasLayout) draw() {
 	offset_end(mut c)
 }
 
-fn (mut c CanvasLayout) set_visible(state bool) {
+pub fn (mut c CanvasLayout) set_visible(state bool) {
 	c.hidden = !state
 }
 
