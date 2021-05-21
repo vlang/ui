@@ -9,8 +9,6 @@ import os
 import clipboard
 import eventbus
 
-// import gx
-// import sokol.sapp
 const (
 	version = '0.0.4'
 )
