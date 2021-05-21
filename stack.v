@@ -963,7 +963,7 @@ fn (s &Stack) point_inside(x f64, y f64) bool {
 	return point_inside(s, x, y)
 }
 
-fn (mut s Stack) set_visible(state bool) {
+pub fn (mut s Stack) set_visible(state bool) {
 	s.hidden = !state
 }
 
