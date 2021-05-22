@@ -24,7 +24,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
-pub type InitFn = fn (window &Window)
+pub type WindowFn = fn (window &Window)
 
 [heap]
 pub struct Window {
@@ -45,12 +45,13 @@ pub mut:
 	my            f64
 	width         int
 	height        int
-	init_fn       InitFn
 	click_fn      ClickFn
 	mouse_down_fn ClickFn
 	mouse_up_fn   ClickFn
 	scroll_fn     ScrollFn
 	resize_fn     ResizeFn
+	on_init       WindowFn
+	on_draw       WindowFn
 	key_down_fn   KeyFn
 	char_fn       KeyFn
 	mouse_move_fn MouseMoveFn
@@ -91,7 +92,6 @@ pub:
 	state                 voidptr
 	draw_fn               DrawFn
 	bg_color              gx.Color = ui.default_window_color
-	on_init               InitFn
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -100,6 +100,8 @@ pub:
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
+	on_init               WindowFn
+	on_draw               WindowFn
 	children              []Widget
 	custom_bold_font_path string
 	native_rendering      bool
@@ -264,8 +266,8 @@ fn gg_init(mut window Window) {
 	}
 	// refresh the layout
 	window.update_layout()
-	if window.init_fn != voidptr(0) {
-		window.init_fn(window)
+	if window.on_init != voidptr(0) {
+		window.on_init(window)
 	}
 }
 
@@ -328,7 +330,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		// orig_width: width // 800
 		// orig_height: height // 600
 		children: children
-		init_fn: cfg.on_init
+		on_init: cfg.on_init
+		on_draw: cfg.on_draw
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
 		char_fn: cfg.on_char
@@ -843,6 +846,10 @@ fn frame(mut w Window) {
 		child.draw()
 	}
 	draw_tooltip(w)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
 
 	w.ui.gg.end()
 }
