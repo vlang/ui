@@ -67,6 +67,7 @@ fn main() {
 					}
 				)),
 				ui.at(20, 280, ui.label(
+					id: 'l_mm'
 					text: '(0, 0)     '
 				)),
 				ui.at(120, 10, ui.dropdown({
@@ -163,8 +164,6 @@ fn draw(c &ui.CanvasLayout, app voidptr) {
 }
 
 fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
-	mut l := c.get_children()[1]
-	if mut l is ui.Label {
-		l.set_text('($e.x,$e.y)')
-	}
+	mut l := c.ui.window.label('l_mm')
+	l.set_text('($e.x,$e.y)')
 }
