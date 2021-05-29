@@ -81,6 +81,8 @@ pub mut:
 	component      voidptr
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
+	// scrollview
+	scrollview &ScrollView = 0
 }
 
 struct StackConfig {
@@ -103,6 +105,7 @@ struct StackConfig {
 	horizontal_alignments HorizontalAlignments
 	bg_color              gx.Color
 	bg_radius             f32
+	scrollview            bool = true
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -134,6 +137,10 @@ fn stack(c StackConfig, children []Widget) &Stack {
 	if c.height > 0 {
 		s.fixed_height = c.height
 	}
+	if c.scrollview {
+		mut sw := ScrollableWidget(s)
+		sw.add_scrollview()
+	}
 	return s
 }
 
@@ -141,6 +148,10 @@ fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
 	s.ui = ui
+
+	if s.scrollview != voidptr(0) {
+		s.scrollview.init(parent)
+	}
 
 	s.init_size()
 
