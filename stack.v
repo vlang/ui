@@ -21,18 +21,19 @@ Column & Row are identical except everything is reversed:
 */
 
 /********** different size's definitions ************
-* container_size is simply: (width, height)
-* adjusted_size is (adj_width, adj_height) corresponding of the compact/fitted size inherited from children sizes
+* container_size is simply: (s.width, s.height)
+* real_size (s.real_width, s.real_height) saves the real sizes
+* adjusted_size is (s.adj_width, s.adj_height) corresponding of the compact/fitted size inherited from children sizes
+* fixed_size (s.fixed_width, s.fixed_height) is the input size which is of higher priority with repect to adj_size
 * size() returns (full) real_size, i.e. container_size + margin_size
+* adj_size() returns (s.adj_width, s.adj_height)
 * total_spacing() returns spacing
 * free_size() returns free_size_direct and free_size_opposite (in the proper order) where:
 	* free_size_direct = container_size - total_spacing()
 	* free_size_opposite = container_size
-
 N.B.:
 	* direct size is the size in the main direction of the stack: height for .column and width  for .row
 	* opposite size is the converse
-	* no needs of functions: container_size() and adjusted_size()
 ***********************************/
 
 [heap]
@@ -385,12 +386,6 @@ fn (mut s Stack) set_cache_sizes() {
 
 		if mut child is Stack {
 			adj_child_width, adj_child_height = child.adj_size()
-			if child.fixed_width != 0 {
-				adj_child_width = child.fixed_width
-			}
-			if child.fixed_height != 0 {
-				adj_child_height = child.fixed_height
-			}
 		}
 
 		// fix compact when child has size 0
@@ -623,7 +618,11 @@ fn (mut s Stack) default_sizes() {
 }
 
 pub fn (s &Stack) adj_size() (int, int) {
-	return s.adj_width, s.adj_height
+	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
+		s.fixed_height
+	} else {
+		s.adj_height
+	}
 }
 
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
