@@ -58,6 +58,7 @@ fn main() {
 					ui.button(z_index: 1, text: 'Add'),
 				])),
 				ui.at(10, 10, ui.button(
+					id: 'b_thm'
 					text: 'Theme'
 					width: 100
 					theme: 'red'
@@ -136,26 +137,18 @@ fn menu_click(m &ui.Menu, item &ui.MenuItem, app voidptr) {
 fn dd_change(app voidptr, dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
-	mut b := win.child(1, 0)
-	if mut b is ui.Button {
-		b.set_theme(dd.selected().text)
-		b.update_theme()
-	} else {
-		println('$b.type_name()')
-	}
+	mut b := win.button('b_thm')
+	b.set_theme(dd.selected().text)
+	b.update_theme()
 }
 
 fn lb_change(app voidptr, lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
-	mut b := win.child(1, 0)
-	if mut b is ui.Button {
-		b.set_theme(id)
-		b.update_theme()
-	} else {
-		println('$b.type_name()')
-	}
+	mut b := win.button('b_thm')
+	b.set_theme(id)
+	b.update_theme()
 }
 
 fn draw(c &ui.CanvasLayout, app voidptr) {
