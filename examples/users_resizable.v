@@ -82,6 +82,7 @@ fn main() {
 			ui.column({
 			spacing: 10
 			heights: ui.compact
+			scrollview: true
 		}, [
 			ui.textbox(
 				max_len: 20

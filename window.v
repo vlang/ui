@@ -512,8 +512,10 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
-		x: event.scroll_x
-		y: event.scroll_y
+		mouse_x: event.mouse_x / ui.gg.scale
+		mouse_y: event.mouse_y / ui.gg.scale
+		x: event.scroll_x / ui.gg.scale
+		y: event.scroll_y / ui.gg.scale
 	}
 	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)

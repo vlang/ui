@@ -115,8 +115,10 @@ pub:
 
 pub struct ScrollEvent {
 pub:
-	x f64
-	y f64
+	x       f64
+	y       f64
+	mouse_x f64
+	mouse_y f64
 }
 
 pub struct MouseMoveEvent {

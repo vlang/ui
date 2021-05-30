@@ -105,7 +105,7 @@ struct StackConfig {
 	horizontal_alignments HorizontalAlignments
 	bg_color              gx.Color
 	bg_radius             f32
-	scrollview            bool = true
+	scrollview            bool
 }
 
 fn stack(c StackConfig, children []Widget) &Stack {
@@ -138,8 +138,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		s.fixed_height = c.height
 	}
 	if c.scrollview {
-		mut sw := ScrollableWidget(s)
-		sw.add_scrollview()
+		add_scrollview(mut s)
 	}
 	return s
 }
@@ -149,7 +148,7 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 
-	if s.scrollview != voidptr(0) {
+	if has_scrollview(s) {
 		s.scrollview.init(parent)
 	}
 
@@ -215,6 +214,7 @@ fn (mut s Stack) init_size() {
 		s.real_height = parent_height
 		s.real_width = parent_width
 	}
+	update_scrollview(s)
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
 	s.width = s.real_width - s.margin(.left) - s.margin(.right)
 }
@@ -640,6 +640,7 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 	// println("prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)")
+	update_scrollview(s)
 	return s.real_width, s.real_height
 }
 
@@ -875,6 +876,7 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
+	clip_scrollview(mut s)
 	$if bb ? {
 		s.draw_bb()
 	}
@@ -882,6 +884,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
+	draw_scrollview(mut s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack

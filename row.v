@@ -24,6 +24,7 @@ pub:
 	bg_color   gx.Color = no_color
 	bg_radius  f64
 	title      string
+	scrollview bool
 }
 
 pub fn row(c RowConfig, children []Widget) &Stack {
