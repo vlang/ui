@@ -150,7 +150,7 @@ fn (sv &ScrollView) point_inside(x f64, y f64) bool {
 }
 
 pub fn (mut sv ScrollView) clip(x int, y int) {
-	size := gg.window_size_real_pixels()
+	// size := gg.window_size_real_pixels()
 	if sv.is_active() {
 		// sgl.viewport(x + sv.offset_x, y + sv.offset_y, size.width, size.height, true)
 		sgl.scissor_rect(x, y, int(sv.width * gg.dpi_scale()), int(sv.height * gg.dpi_scale()),
