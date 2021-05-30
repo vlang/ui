@@ -35,24 +35,27 @@ pub fn update_scrollview<T>(w &T) {
 	}
 }
 
-pub fn clip_scrollview<T>(mut w T) {
+pub fn clip_scrollview<T>(mut w T) bool {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.clip(w.x, w.y)
 		w.x += sv.offset_x
 		w.y += sv.offset_y
-		//
-		println('clip offfset ($sv.offset_x, $sv.offset_y)')
+		// println('clip offfset ($sv.offset_x, $sv.offset_y)')
+		return true
 	}
+	return false
 }
 
-pub fn draw_scrollview<T>(mut w T) {
+pub fn draw_scrollview<T>(mut w T) bool {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
-		sv.draw(w.x, w.y)
 		w.x -= sv.offset_x
 		w.y -= sv.offset_y
+		sv.draw(w.x, w.y)
+		return true
 	}
+	return false
 }
 
 const (
@@ -188,10 +191,14 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y) {
 		if sv.active_x {
 			sv.offset_x += int(e.x * 3) * 3
-			println('scroll $sv.offset_x')
-			// if sv.offset_x > 0 { sv.offset_x = 0 }
-			// if sv.offset_x <  -sv.adj_width { sv.offset_x = -sv.adj_width }
-			sv.btn_x = -sv.offset_x
+			// println('scroll $sv.offset_x')
+			if sv.offset_x > 0 {
+				sv.offset_x = 0
+			}
+			if sv.offset_x < -int(sv.adj_width / gg.dpi_scale()) {
+				sv.offset_x = -int(sv.adj_width / gg.dpi_scale())
+			}
+			// sv.btn_x = -sv.offset_x
 		}
 
 		if sv.active_y {
@@ -199,10 +206,10 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 			if sv.offset_y > 0 {
 				sv.offset_y = 0
 			}
-			if sv.offset_y < -sv.adj_height {
-				sv.offset_y = -sv.adj_height
+			if sv.offset_y < -int(sv.adj_height / gg.dpi_scale()) {
+				sv.offset_y = -int(sv.adj_height / gg.dpi_scale())
 			}
-			sv.btn_y = -sv.offset_y
+			// sv.btn_y = -sv.offset_y
 		}
 	}
 }

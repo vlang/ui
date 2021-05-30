@@ -876,7 +876,10 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
-	clip_scrollview(mut s)
+	if clip_scrollview(mut s) {
+		s.set_children_pos()
+	}
+
 	$if bb ? {
 		s.draw_bb()
 	}
@@ -884,7 +887,9 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	draw_scrollview(mut s)
+	if draw_scrollview(mut s) {
+		s.set_children_pos()
+	}
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack
