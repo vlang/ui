@@ -148,10 +148,6 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 
-	if has_scrollview(s) {
-		s.scrollview.init(parent)
-	}
-
 	s.init_size()
 
 	// Init all children recursively
@@ -169,6 +165,10 @@ fn (mut s Stack) init(parent Layout) {
 		mut window := unsafe { parent }
 		window.root_layout = s
 		window.update_layout() // i.e s.update_all_children_recursively(parent)
+	}
+
+	if has_scrollview(s) {
+		s.scrollview.init(parent)
 	}
 }
 
@@ -887,9 +887,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	if draw_scrollview(mut s) {
-		s.set_children_pos()
-	}
+	draw_scrollview(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack

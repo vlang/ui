@@ -36,26 +36,23 @@ pub fn update_scrollview<T>(w &T) {
 }
 
 pub fn clip_scrollview<T>(mut w T) bool {
-	if has_scrollview(w) {
+	if is_active_scrollview(mut w) {
 		mut sv := w.scrollview
-		sv.clip(w.x, w.y)
-		w.x += sv.offset_x
-		w.y += sv.offset_y
+		sv.clip()
+		w.x = sv.orig_x + sv.offset_x
+		w.y = sv.orig_y + sv.offset_y
+		// sv.orig_x, sv.orig_y = w.x - sv.offset_x, w.y - sv.offset_y
 		// println('clip offfset ($sv.offset_x, $sv.offset_y)')
 		return true
 	}
 	return false
 }
 
-pub fn draw_scrollview<T>(mut w T) bool {
+pub fn draw_scrollview<T>(w &T) {
 	if has_scrollview(w) {
-		mut sv := w.scrollview
-		w.x -= sv.offset_x
-		w.y -= sv.offset_y
-		sv.draw(w.x, w.y)
-		return true
+		sv := w.scrollview
+		sv.draw()
 	}
-	return false
 }
 
 const (
@@ -87,6 +84,8 @@ pub mut:
 	active_x bool
 	active_y bool
 	// sizes of widget
+	orig_x     int
+	orig_y     int
 	width      int
 	height     int
 	adj_width  int
@@ -108,7 +107,6 @@ fn (mut sv ScrollView) init(parent Layout) {
 	mut widget := sv.widget
 	ui := widget.get_ui()
 	sv.ui = ui
-	sv.win_width, sv.win_height = int(ui.window.width * gg.dpi_scale()), int(ui.window.height * gg.dpi_scale())
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, scrollview_click, sv)
 	subscriber.subscribe_method(events.on_scroll, scrollview_scroll, sv)
@@ -124,6 +122,7 @@ fn (mut sv ScrollView) init(parent Layout) {
 }
 
 fn (mut sv ScrollView) update() {
+	prev_non_active := !sv.active_x && !sv.active_y
 	sv.width, sv.height = sv.widget.size()
 	sv.adj_width, sv.adj_height = sv.widget.adj_size()
 	sv.active_x, sv.active_y = sv.adj_width > sv.width, sv.adj_height > sv.height
@@ -140,6 +139,10 @@ fn (mut sv ScrollView) update() {
 		sv.sb_h = sv.height
 		sv.btn_h = int(f32(sv.height) / f32(sv.adj_height) * f32(sv.sb_h))
 	}
+	if prev_non_active && (sv.active_x || sv.active_y) {
+		// needs to keep the first origin size
+		sv.orig_x, sv.orig_y = sv.widget.x, sv.widget.y
+	}
 }
 
 pub fn (sv &ScrollView) is_active() bool {
@@ -147,16 +150,16 @@ pub fn (sv &ScrollView) is_active() bool {
 }
 
 fn (sv &ScrollView) point_inside(x f64, y f64) bool {
-	wx, wy := sv.widget.x + sv.widget.offset_x, sv.widget.y + sv.widget.offset_y
+	wx, wy := sv.orig_x + sv.widget.offset_x, sv.orig_y + sv.widget.offset_y
 	// println("scrollview inside ($x, $y) ($wx + $sv.width, $wy + $sv.height)")
 	return x >= wx && x <= wx + sv.width && y >= wy && y <= wy + sv.height
 }
 
-pub fn (mut sv ScrollView) clip(x int, y int) {
+pub fn (mut sv ScrollView) clip() {
 	// size := gg.window_size_real_pixels()
 	if sv.is_active() {
 		// sgl.viewport(x + sv.offset_x, y + sv.offset_y, size.width, size.height, true)
-		sgl.scissor_rect(x, y, int(sv.width * gg.dpi_scale()), int(sv.height * gg.dpi_scale()),
+		sgl.scissor_rect(sv.orig_x, sv.orig_y, int(sv.width * gg.dpi_scale()), int(sv.height * gg.dpi_scale()),
 			true)
 		// sgl.viewport(x + sv.offset_x, y + sv.offset_y, sv.win_width, sv.win_width, true)
 		// sgl.scissor_rect(x, y, int(f32(sv.width) * gg.dpi_scale() * f32(sv.win_width) / f32(size.width)  ), int(f32(sv.height) * gg.dpi_scale() * f32(sv.win_height) / f32(size.height) ), true)
@@ -165,24 +168,24 @@ pub fn (mut sv ScrollView) clip(x int, y int) {
 	}
 }
 
-pub fn (sv &ScrollView) draw(x int, y int) {
+pub fn (sv &ScrollView) draw() {
 	size := gg.window_size_real_pixels()
 	sgl.viewport(0, 0, size.width, size.height, true)
 	sgl.scissor_rect(0, 0, size.width, size.height, true)
 	if sv.active_x {
 		// horizontal scrollbar
-		sv.ui.gg.draw_rect(0, y + sv.height - ui.scrollbar_size, sv.sb_w, ui.scrollbar_size,
+		sv.ui.gg.draw_rect(0, sv.orig_y + sv.height - ui.scrollbar_size, sv.sb_w, ui.scrollbar_size,
 			ui.scrollbar_background_color)
 		// horizontal button
-		sv.ui.gg.draw_rect(sv.btn_x, y + sv.height - ui.scrollbar_size, sv.btn_w, ui.scrollbar_size,
-			ui.scrollbar_button_color)
+		sv.ui.gg.draw_rect(sv.btn_x, sv.orig_y + sv.height - ui.scrollbar_size, sv.btn_w,
+			ui.scrollbar_size, ui.scrollbar_button_color)
 	}
 	if sv.active_y {
 		// vertical scrollbar
-		sv.ui.gg.draw_rect(x + sv.width - ui.scrollbar_size, 0, ui.scrollbar_size, sv.sb_h,
-			ui.scrollbar_background_color)
+		sv.ui.gg.draw_rect(sv.orig_x + sv.width - ui.scrollbar_size, 0, ui.scrollbar_size,
+			sv.sb_h, ui.scrollbar_background_color)
 		// vertical button
-		sv.ui.gg.draw_rect(x + sv.width - ui.scrollbar_size, sv.btn_y, ui.scrollbar_size,
+		sv.ui.gg.draw_rect(sv.orig_x + sv.width - ui.scrollbar_size, sv.btn_y, ui.scrollbar_size,
 			sv.btn_h, ui.scrollbar_button_color)
 	}
 }
