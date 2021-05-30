@@ -586,6 +586,4 @@ fn (s &ScrollView) point_inside_thumb(x f64, y f64) bool {
 				&& y <= t_y + f32(s.thumb_height)
 		}
 	}
-}
-
-/* */*/*/*/
+}*/
