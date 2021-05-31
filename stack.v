@@ -722,6 +722,7 @@ fn (mut s Stack) update_pos() {
 	}
 	s.x = s.real_x + s.margin(.left)
 	s.y = s.real_y + s.margin(.top)
+	update_orig_size(s)
 }
 
 fn (mut s Stack) set_pos(x int, y int) {

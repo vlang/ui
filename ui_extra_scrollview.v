@@ -28,6 +28,14 @@ pub fn is_active_scrollview(mut w ScrollableWidget) bool {
 	return w.scrollview != voidptr(0) && w.scrollview.is_active()
 }
 
+pub fn update_orig_size<T>(w &T) {
+	if has_scrollview(w) {
+		mut sw := w.scrollview
+		sw.orig_x, sw.orig_y = w.x, w.y
+		println('orig size: ($w.x, $w.y)')
+	}
+}
+
 pub fn update_scrollview<T>(w &T) {
 	if has_scrollview(w) {
 		mut sw := w.scrollview
@@ -122,7 +130,6 @@ fn (mut sv ScrollView) init(parent Layout) {
 }
 
 fn (mut sv ScrollView) update() {
-	prev_non_active := !sv.active_x && !sv.active_y
 	sv.width, sv.height = sv.widget.size()
 	sv.adj_width, sv.adj_height = sv.widget.adj_size()
 	sv.active_x, sv.active_y = sv.adj_width > sv.width, sv.adj_height > sv.height
@@ -134,15 +141,16 @@ fn (mut sv ScrollView) update() {
 	if sv.active_x {
 		sv.sb_w = sv.width
 		sv.btn_w = int(f32(sv.width) / f32(sv.adj_width) * f32(sv.sb_w))
+		if sv.active_y {
+			sv.sb_w - ui.scrollbar_size
+		}
 	}
 	if sv.active_y {
 		sv.sb_h = sv.height
 		sv.btn_h = int(f32(sv.height) / f32(sv.adj_height) * f32(sv.sb_h))
-	}
-	if prev_non_active && (sv.active_x || sv.active_y) {
-		// needs to keep the first origin size
-		sv.orig_x, sv.orig_y = sv.widget.x, sv.widget.y
-		println('orig: ($sv.orig_x, $sv.orig_y)')
+		if sv.active_x {
+			sv.sb_h - ui.scrollbar_size
+		}
 	}
 }
 
@@ -157,16 +165,16 @@ fn (sv &ScrollView) point_inside(x f64, y f64) bool {
 }
 
 pub fn (mut sv ScrollView) clip() {
-	// size := gg.window_size_real_pixels()
 	if sv.is_active() {
-		// sgl.viewport(x + sv.offset_x, y + sv.offset_y, size.width, size.height, true)
-		// sgl.viewport(sv.orig_x, sv.orig_y, int(sv.width * gg.dpi_scale()), int(sv.height * gg.dpi_scale()),true)
 		sgl.scissor_rect(int(sv.orig_x * gg.dpi_scale()), int(sv.orig_y * gg.dpi_scale()),
 			int(sv.width * gg.dpi_scale()), int(sv.height * gg.dpi_scale()), true)
-		// sgl.viewport(x + sv.offset_x, y + sv.offset_y, sv.win_width, sv.win_width, true)
-		// sgl.scissor_rect(x, y, int(f32(sv.width) * gg.dpi_scale() * f32(sv.win_width) / f32(size.width)  ), int(f32(sv.height) * gg.dpi_scale() * f32(sv.win_height) / f32(size.height) ), true)
 	} else {
-		sv.offset_x, sv.offset_y = 0, 0
+		if !sv.active_x {
+			sv.offset_x = 0
+		}
+		if !sv.active_y {
+			sv.offset_y = 0
+		}
 	}
 }
 
@@ -176,19 +184,19 @@ pub fn (sv &ScrollView) draw() {
 	sgl.scissor_rect(0, 0, size.width, size.height, true)
 	if sv.active_x {
 		// horizontal scrollbar
-		sv.ui.gg.draw_rect(sv.orig_x, sv.orig_y + sv.height - ui.scrollbar_size, sv.sb_w,
-			ui.scrollbar_size, ui.scrollbar_background_color)
+		sv.ui.gg.draw_rounded_rect(sv.orig_x, sv.orig_y + sv.height - ui.scrollbar_size,
+			sv.sb_w, ui.scrollbar_size, ui.scrollbar_size / 3, ui.scrollbar_background_color)
 		// horizontal button
-		sv.ui.gg.draw_rect(sv.orig_x + sv.btn_x, sv.orig_y + sv.height - ui.scrollbar_size,
-			sv.btn_w, ui.scrollbar_size, ui.scrollbar_button_color)
+		sv.ui.gg.draw_rounded_rect(sv.orig_x + sv.btn_x, sv.orig_y + sv.height - ui.scrollbar_size,
+			sv.btn_w, ui.scrollbar_size, ui.scrollbar_size / 3, ui.scrollbar_button_color)
 	}
 	if sv.active_y {
 		// vertical scrollbar
-		sv.ui.gg.draw_rect(sv.orig_x + sv.width - ui.scrollbar_size, sv.orig_y, ui.scrollbar_size,
-			sv.sb_h, ui.scrollbar_background_color)
+		sv.ui.gg.draw_rounded_rect(sv.orig_x + sv.width - ui.scrollbar_size, sv.orig_y,
+			ui.scrollbar_size, sv.sb_h, ui.scrollbar_size / 3, ui.scrollbar_background_color)
 		// vertical button
-		sv.ui.gg.draw_rect(sv.orig_x + sv.width - ui.scrollbar_size, sv.orig_y + sv.btn_y,
-			ui.scrollbar_size, sv.btn_h, ui.scrollbar_button_color)
+		sv.ui.gg.draw_rounded_rect(sv.orig_x + sv.width - ui.scrollbar_size, sv.orig_y + sv.btn_y,
+			ui.scrollbar_size, sv.btn_h, ui.scrollbar_size / 3, ui.scrollbar_button_color)
 	}
 }
 
