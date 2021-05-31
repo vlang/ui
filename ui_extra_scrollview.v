@@ -139,18 +139,12 @@ fn (mut sv ScrollView) update() {
 	}
 
 	if sv.active_x {
-		sv.sb_w = sv.width
+		sv.sb_w = sv.width - ui.scrollbar_size
 		sv.btn_w = int(f32(sv.width) / f32(sv.adj_width) * f32(sv.sb_w))
-		if sv.active_y {
-			sv.sb_w - ui.scrollbar_size
-		}
 	}
 	if sv.active_y {
-		sv.sb_h = sv.height
+		sv.sb_h = sv.height - ui.scrollbar_size
 		sv.btn_h = int(f32(sv.height) / f32(sv.adj_height) * f32(sv.sb_h))
-		if sv.active_x {
-			sv.sb_h - ui.scrollbar_size
-		}
 	}
 }
 
@@ -204,14 +198,14 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y) {
 		if sv.active_x {
 			sv.offset_x += int(e.x * 3) * 3
-			// println('scroll $sv.offset_x')
 			if sv.offset_x > 0 {
 				sv.offset_x = 0
 			}
-			if sv.offset_x < -int(sv.adj_width / gg.dpi_scale()) {
-				sv.offset_x = -int(sv.adj_width / gg.dpi_scale())
+			min_offset_x := -(sv.adj_width - sv.width + 2 * ui.scrollbar_size)
+			if sv.offset_x < min_offset_x {
+				sv.offset_x = min_offset_x
 			}
-			// sv.btn_x = -sv.offset_x
+			sv.btn_x = int(f32(sv.offset_x) * f32(sv.sb_w - sv.btn_w) / f32(min_offset_x))
 		}
 
 		if sv.active_y {
@@ -219,10 +213,11 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 			if sv.offset_y > 0 {
 				sv.offset_y = 0
 			}
-			if sv.offset_y < -int(sv.adj_height / gg.dpi_scale()) {
-				sv.offset_y = -int(sv.adj_height / gg.dpi_scale())
+			min_offset_y := -(sv.adj_height - sv.height + 2 * ui.scrollbar_size)
+			if sv.offset_y < min_offset_y {
+				sv.offset_y = min_offset_y
 			}
-			// sv.btn_y = -sv.offset_y
+			sv.btn_y = int(f32(sv.offset_y) * f32(sv.sb_h - sv.btn_h) / f32(min_offset_y))
 		}
 	}
 }
