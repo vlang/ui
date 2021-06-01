@@ -51,6 +51,12 @@ pub fn update_orig_size<T>(w &T) {
 		mut sv := w.scrollview
 		sv.orig_x, sv.orig_y = w.x, w.y
 		sv.offset_x, sv.offset_y = 0, 0
+		if sv.active_x {
+			sv.change_value(.btn_x)
+		}
+		if sv.active_y {
+			sv.change_value(.btn_y)
+		}
 		// println('orig size: ($w.x, $w.y)')
 	}
 }
@@ -66,8 +72,8 @@ pub fn clip_scrollview<T>(mut w T) bool {
 	if is_active_scrollview(mut w) {
 		mut sv := w.scrollview
 		sv.clip()
-		w.x = sv.orig_x + sv.offset_x
-		w.y = sv.orig_y + sv.offset_y
+		w.x = sv.orig_x - sv.offset_x
+		w.y = sv.orig_y - sv.offset_y
 		// sv.orig_x, sv.orig_y = w.x - sv.offset_x, w.y - sv.offset_y
 		// println('clip offfset ($sv.offset_x, $sv.offset_y)')
 		return true
@@ -200,23 +206,23 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollMode) bool {
 
 fn (mut sv ScrollView) change_value(mode ScrollMode) {
 	if mode == .btn_x {
-		if sv.offset_x > 0 {
+		if sv.offset_x < 0 {
 			sv.offset_x = 0
 		}
-		min_offset_x := -(sv.adj_width - sv.width + 2 * ui.scrollbar_size)
-		if sv.offset_x < min_offset_x {
-			sv.offset_x = min_offset_x
+		max_offset_x, a_x := sv.coef_x()
+		if sv.offset_x > max_offset_x {
+			sv.offset_x = max_offset_x
 		}
-		sv.btn_x = int(f32(sv.offset_x) * f32(sv.sb_w - sv.btn_w) / f32(min_offset_x))
+		sv.btn_x = int(f32(sv.offset_x) * a_x)
 	} else if mode == .btn_y {
-		if sv.offset_y > 0 {
+		if sv.offset_y < 0 {
 			sv.offset_y = 0
 		}
-		min_offset_y := -(sv.adj_height - sv.height + 2 * ui.scrollbar_size)
-		if sv.offset_y < min_offset_y {
-			sv.offset_y = min_offset_y
+		max_offset_y, a_y := sv.coef_y()
+		if sv.offset_y > max_offset_y {
+			sv.offset_y = max_offset_y
 		}
-		sv.btn_y = int(f32(sv.offset_y) * f32(sv.sb_h - sv.btn_h) / f32(min_offset_y))
+		sv.btn_y = int(f32(sv.offset_y) * a_y)
 	}
 }
 
@@ -275,8 +281,17 @@ fn scrollview_click(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	sv.is_focused = sv.point_inside(e.x, e.y, .view)
-
-	// TODO
+	if sv.active_x && sv.point_inside(e.x, e.y, .bar_x) {
+		sv.is_focused = true
+		_, a_x := sv.coef_x()
+		sv.offset_x = int((e.x - sv.orig_x - sv.btn_x / 2) / a_x)
+		sv.change_value(.btn_x)
+	} else if sv.active_y && sv.point_inside(e.x, e.y, .bar_y) {
+		sv.is_focused = true
+		_, a_y := sv.coef_y()
+		sv.offset_y = int((e.y - sv.orig_y - sv.btn_y / 2) / a_y)
+		sv.change_value(.btn_y)
+	}
 }
 
 fn scrollview_touch_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
@@ -327,9 +342,11 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 		sv.dragging = 0 // invalid neither x nor y
 	} else if sv.dragging > 0 {
 		if sv.dragging == 1 {
-			sv.offset_x = sv.drag_offset - int(e.x)
+			_, a_x := sv.coef_x()
+			sv.offset_x = int(f32(e.x - sv.drag_offset) / a_x)
 		} else {
-			sv.offset_y = sv.drag_offset - int(e.y)
+			_, a_y := sv.coef_y()
+			sv.offset_y = int(f32(e.y - sv.drag_offset) / a_y)
 		}
 		sv.change_value(ScrollMode(sv.dragging))
 	}
@@ -366,4 +383,14 @@ fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
 		}
 		else {}
 	}
+}
+
+fn (sv &ScrollView) coef_x() (int, f32) {
+	max_offset_x := sv.adj_width - sv.width + 2 * ui.scrollbar_size
+	return max_offset_x, f32(sv.sb_w - sv.btn_w) / f32(max_offset_x)
+}
+
+fn (sv &ScrollView) coef_y() (int, f32) {
+	max_offset_y := (sv.adj_height - sv.height + 2 * ui.scrollbar_size)
+	return max_offset_y, f32(sv.sb_h - sv.btn_h) / f32(max_offset_y)
 }
