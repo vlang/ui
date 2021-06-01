@@ -44,5 +44,6 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		bg_color: c.bg_color
 		bg_radius: f32(c.bg_radius)
 		title: c.title
+		scrollview: c.scrollview
 	}, children)
 }

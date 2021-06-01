@@ -4,7 +4,7 @@ import os
 
 const (
 	win_width   = 780
-	win_height  = 385
+	win_height  = 395
 	nr_cols     = 4
 	cell_height = 25
 	cell_width  = 100
@@ -146,6 +146,7 @@ fn main() {
 			}, [app.pbar, app.label]),
 		]),
 			ui.column({
+				scrollview: true
 				alignments: {
 					center: [
 						0,
