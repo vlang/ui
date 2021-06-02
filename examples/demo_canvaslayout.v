@@ -39,8 +39,8 @@ fn main() {
 		ui.row({
 			margin_: .02
 			spacing: .02
-			widths: [ui.compact, 350.]
-			heights: [ui.compact, 300.]
+			widths: [ui.compact, ui.compact] // 350.]
+			heights: [ui.compact, ui.compact] // 300.]
 		}, [
 			ui.picture(
 			width: 100
@@ -52,6 +52,7 @@ fn main() {
 			ui.canvas_layout({
 				on_draw: draw
 				on_mouse_move: mouse_move
+				scrollview: true
 			}, [
 				ui.at(10, 40, ui.row({ spacing: 10 }, [
 					ui.button(z_index: 1, text: 'X'),
@@ -91,11 +92,18 @@ fn main() {
 					width: 100
 					height: 120
 					on_change: lb_change
-					// draw_lines: true
+					// scrollview: false
+					draw_lines: true
 				}, map{
-					'classic': 'Classic'
-					'blue':    'Blue'
-					'red':     'Red'
+					'classic':  'Classic'
+					'blue':     'Blue'
+					'red':      'Red'
+					'classic2': 'Classic'
+					'blue2':    'Blue'
+					'red2':     'Red'
+					'classic3': 'Classic'
+					'blue3':    'Blue'
+					'red3':     'Red'
 				})),
 				ui.at(150, 100, ui.menu(
 					id: 'menu'

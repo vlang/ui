@@ -44,7 +44,8 @@ pub mut:
 	adj_width  int
 	adj_height int
 	// component state for composable widget
-	component voidptr
+	component  voidptr
+	scrollview &ScrollView = 0
 }
 
 [heap]
@@ -74,16 +75,17 @@ mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	selection int = -1
+	text_cfg   gx.TextCfg
+	text_size  f64
+	selection  int  = -1
+	scrollview bool = true
 }
 
 // Keys of the items map are IDs of the elements, values are text
 pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 	mut list := &ListBox{
-		x: if c.draw_lines { c.x } else { c.x - 1 }
-		y: if c.draw_lines { c.y } else { c.y - 1 }
+		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
+		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }
 		width: c.width
 		height: c.height
 		z_index: c.z_index
@@ -104,6 +106,9 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		// println(" append $id -> $text ")
 		list.append_item(id, text, 0)
 	}
+	if c.scrollview {
+		scrollview_add(mut list)
+	}
 	return list
 }
 
@@ -122,6 +127,12 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.init_size()
 
 	lb.init_items()
+
+	if has_scrollview(lb) {
+		lb.scrollview.init(parent)
+		scrollview_update(lb)
+	}
+
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
@@ -250,31 +261,34 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
-	lb.ui.gg.draw_rect(li.x + lb.x + lb.offset_x, li.y + lb.y + lb.offset_y, lb.width,
-		lb.item_height, col)
-	lb.ui.gg.draw_text_def(li.x + lb.x + lb.offset_x + ui._text_offset_x, li.y + lb.y +
-		lb.offset_y + lb.text_offset_y, li.draw_text)
+	lb.ui.gg.draw_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+		lb.width, lb.item_height, col)
+	lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+		li.draw_text)
 	if lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(li.x + lb.x + lb.offset_x, li.y + lb.x + lb.offset_y,
+		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
+		lb.ui.gg.draw_empty_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 			lb.width, lb.item_height, lb.col_border)
 	}
 }
 
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
+	scrollview_clip(mut lb)
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	// println("draw rect")
-	if !lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(lb.x, lb.y, lb.width + 1, lb.height + 1, lb.col_border)
-	}
 	for inx, item in lb.items {
 		// println("$inx >= $lb.draw_count")
-		if inx >= lb.draw_count {
+		if inx >= lb.draw_count && !has_scrollview(lb) {
 			break
 		}
 		lb.draw_item(item, inx == lb.selection)
 	}
+	if !lb.draw_lines {
+		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, lb.height + 2, lb.col_border)
+	}
+	scrollview_draw(lb)
 	offset_end(mut lb)
 }
 
@@ -351,8 +365,10 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 }
 
 fn (mut lb ListBox) set_pos(x int, y int) {
-	lb.x = x
-	lb.y = y
+	if lb.x != x || lb.y != y {
+		lb.x = x
+		lb.y = y
+	}
 }
 
 fn (mut lb ListBox) set_visible(state bool) {
@@ -406,6 +422,7 @@ pub fn (lb &ListBox) size() (int, int) {
 fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
 	// println("lb propose: ($w, $h)")
 	lb.resize(w, h)
+	scrollview_update(lb)
 	return lb.width, lb.height
 }
 

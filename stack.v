@@ -138,7 +138,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		s.fixed_height = c.height
 	}
 	if c.scrollview {
-		add_scrollview(mut s)
+		scrollview_add(mut s)
 	}
 	return s
 }
@@ -191,6 +191,8 @@ pub fn (mut s Stack) update_layout() {
 	s.set_drawing_children()
 	// 6) set position for chilfren
 	s.set_children_pos()
+	// 7) set the origin sizes for scrollview
+	scrollview_widget_set_orig_size(s)
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
@@ -214,7 +216,7 @@ fn (mut s Stack) init_size() {
 		s.real_height = parent_height
 		s.real_width = parent_width
 	}
-	update_scrollview(s)
+	scrollview_update(s)
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
 	s.width = s.real_width - s.margin(.left) - s.margin(.right)
 }
@@ -640,7 +642,7 @@ fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 	// println("prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)")
-	update_scrollview(s)
+	scrollview_update(s)
 	return s.real_width, s.real_height
 }
 
@@ -717,22 +719,23 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
 }
 
 fn (mut s Stack) update_pos() {
-	$if pos ? {
+	$if poss ? {
 		println('update_pos($s.id):  $($s.real_x, $s.real_y) + (${s.margin(.left)}, ${s.margin(.top)})')
 	}
 	s.x = s.real_x + s.margin(.left)
 	s.y = s.real_y + s.margin(.top)
-	update_orig_size(s)
 }
 
 fn (mut s Stack) set_pos(x int, y int) {
-	// could depend on anchor in the future
-	// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-	$if pos ? {
-		println('set_pos($s.id): $($x, $y)')
+	if s.real_x != x || s.real_y != y {
+		// could depend on anchor in the future
+		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
+		$if pos ? {
+			println('set_pos($s.id): $($x, $y)')
+		}
+		s.real_x, s.real_y = x, y
+		s.update_pos()
 	}
-	s.real_x, s.real_y = x, y
-	s.update_pos()
 }
 
 fn (mut s Stack) set_children_pos() {
@@ -877,8 +880,9 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
-	if clip_scrollview(mut s) {
+	if scrollview_clip(mut s) {
 		s.set_children_pos()
+		s.scrollview.children_to_update = false
 	}
 
 	$if bb ? {
@@ -888,7 +892,7 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	draw_scrollview(s)
+	scrollview_draw(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack
@@ -1004,6 +1008,7 @@ fn (mut s Stack) resize(width int, height int) {
 	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
+	scrollview_widget_set_orig_size(s)
 }
 
 pub fn (s &Stack) get_children() []Widget {

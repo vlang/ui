@@ -41,14 +41,17 @@ pub mut:
 	component      voidptr
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
-	draw_fn        CanvasLayoutDrawFn      = voidptr(0)
-	click_fn       CanvasLayoutMouseFn     = voidptr(0)
-	mouse_down_fn  CanvasLayoutMouseFn     = voidptr(0)
-	mouse_up_fn    CanvasLayoutMouseFn     = voidptr(0)
-	scroll_fn      CanvasLayoutScrollFn    = voidptr(0)
-	mouse_move_fn  CanvasLayoutMouseMoveFn = voidptr(0)
-	key_down_fn    CanvasLayoutKeyFn       = voidptr(0)
-	char_fn        CanvasLayoutKeyFn       = voidptr(0)
+	// scrollview
+	scrollview &ScrollView = 0
+	// callbacks
+	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
+	click_fn      CanvasLayoutMouseFn     = voidptr(0)
+	mouse_down_fn CanvasLayoutMouseFn     = voidptr(0)
+	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
+	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
+	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
+	key_down_fn   CanvasLayoutKeyFn       = voidptr(0)
+	char_fn       CanvasLayoutKeyFn       = voidptr(0)
 mut:
 	parent Layout
 	// To keep track of original position
@@ -63,6 +66,7 @@ pub struct CanvasLayoutConfig {
 	text          string
 	bg_color      gx.Color = no_color
 	bg_radius     f64
+	scrollview    bool
 	on_draw       CanvasLayoutDrawFn      = voidptr(0)
 	on_click      CanvasLayoutMouseFn     = voidptr(0)
 	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
@@ -103,6 +107,9 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 		key_down_fn: c.on_key_down
 		char_fn: c.on_char
 	}
+	if c.scrollview {
+		scrollview_add(mut canvas)
+	}
 	return canvas
 }
 
@@ -120,6 +127,11 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
+
+	if has_scrollview(c) {
+		c.scrollview.init(parent)
+	}
+
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
 	subscriber.subscribe_method(events.on_mouse_down, canvas_layout_mouse_down, c)
@@ -259,7 +271,12 @@ fn (c &CanvasLayout) set_children_pos() {
 fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
+	// scrollview_update_orig_size(c)
 	c.set_children_pos()
+}
+
+fn (mut c CanvasLayout) adj_size() (int, int) {
+	return c.adj_width, c.adj_height
 }
 
 fn (mut c CanvasLayout) size() (int, int) {
@@ -269,6 +286,8 @@ fn (mut c CanvasLayout) size() (int, int) {
 fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	c.width = w
 	c.height = h
+	scrollview_update(c)
+	// println("propose_size size($c.width, $c.height) -> adj_size($c.adj_width, $c.adj_height)")
 	return c.width, c.height
 }
 
@@ -295,20 +314,28 @@ fn (mut c CanvasLayout) draw() {
 	offset_start(mut c)
 	parent := c.parent
 	state := parent.get_state()
+	if scrollview_clip(mut c) {
+		c.set_children_pos()
+		c.scrollview.children_to_update = false
+	}
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.width, c.height)
-			c.draw_rounded_rect(0, 0, c.width, c.height, radius, c.bg_color)
+			c.draw_rounded_rect(c.x, c.y, c.width, c.height, radius, c.bg_color)
 		} else {
-			c.draw_rect(0, 0, c.width, c.height, c.bg_color)
+			c.draw_rect(c.x, c.y, c.width, c.height, c.bg_color)
 		}
 	}
+
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c, state)
 	}
 	for mut child in c.drawing_children {
 		child.draw()
 	}
+
+	scrollview_draw(c)
+
 	offset_end(mut c)
 }
 
