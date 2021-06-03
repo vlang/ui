@@ -82,7 +82,8 @@ pub mut:
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
-	scrollview &ScrollView = 0
+	has_scrollview bool
+	scrollview     &ScrollView = 0
 }
 
 struct StackConfig {
@@ -169,6 +170,8 @@ fn (mut s Stack) init(parent Layout) {
 
 	if has_scrollview(s) {
 		s.scrollview.init(parent)
+	} else {
+		scrollview_delegate_parent_scrollview(mut s)
 	}
 }
 
@@ -880,10 +883,11 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
-	if scrollview_clip(mut s) {
-		s.set_children_pos()
-		s.scrollview.children_to_update = false
-	}
+	// if scrollview_clip(mut s) {
+	// 	s.set_children_pos()
+	// 	s.scrollview.children_to_update = false
+	// }
+	scrollview_draw_begin(mut s)
 
 	$if bb ? {
 		s.draw_bb()
@@ -892,7 +896,8 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name()")
 		child.draw()
 	}
-	scrollview_draw(s)
+	// scrollview_draw(s)
+	scrollview_draw_end(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack

@@ -42,7 +42,8 @@ pub mut:
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
-	scrollview &ScrollView = 0
+	has_scrollview bool
+	scrollview     &ScrollView = 0
 	// callbacks
 	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
 	click_fn      CanvasLayoutMouseFn     = voidptr(0)
@@ -130,6 +131,8 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	if has_scrollview(c) {
 		c.scrollview.init(parent)
+	} else {
+		scrollview_delegate_parent_scrollview(mut c)
 	}
 
 	mut subscriber := parent.get_subscriber()
@@ -314,10 +317,13 @@ fn (mut c CanvasLayout) draw() {
 	offset_start(mut c)
 	parent := c.parent
 	state := parent.get_state()
-	if scrollview_clip(mut c) {
-		c.set_children_pos()
-		c.scrollview.children_to_update = false
-	}
+
+	// if scrollview_clip(mut c) {
+	// 	c.set_children_pos()
+	// 	c.scrollview.children_to_update = false
+	// }
+	scrollview_draw_begin(mut c)
+
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.width, c.height)
@@ -334,7 +340,8 @@ fn (mut c CanvasLayout) draw() {
 		child.draw()
 	}
 
-	scrollview_draw(c)
+	// scrollview_draw(c)
+	scrollview_draw_end(c)
 
 	offset_end(mut c)
 }

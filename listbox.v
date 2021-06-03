@@ -44,8 +44,10 @@ pub mut:
 	adj_width  int
 	adj_height int
 	// component state for composable widget
-	component  voidptr
-	scrollview &ScrollView = 0
+	component voidptr
+	// scrollview
+	has_scrollview bool
+	scrollview     &ScrollView = 0
 }
 
 [heap]
@@ -274,7 +276,9 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
-	scrollview_clip(mut lb)
+	// scrollview_clip(mut lb)
+	scrollview_draw_begin(mut lb)
+
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	// println("draw rect")
@@ -288,7 +292,9 @@ fn (mut lb ListBox) draw() {
 	if !lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, lb.height + 2, lb.col_border)
 	}
-	scrollview_draw(lb)
+
+	// scrollview_draw(lb)
+	scrollview_draw_end(lb)
 	offset_end(mut lb)
 }
 
@@ -434,3 +440,6 @@ fn (mut lb ListBox) resize(width int, height int) {
 	lb.height = height
 	lb.draw_count = lb.height / lb.item_height
 }
+
+// Normally useless but required for scrollview_draw_begin()
+fn (lb &ListBox) set_children_pos() {}
