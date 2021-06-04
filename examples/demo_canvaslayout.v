@@ -37,10 +37,11 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.row({
-			margin_: .02
-			spacing: .02
+			margin_: 10
+			spacing: 10
 			widths: [ui.compact, ui.compact] // 350.]
 			heights: [ui.compact, ui.compact] // 300.]
+			// scrollview: true
 		}, [
 			ui.picture(
 			width: 100

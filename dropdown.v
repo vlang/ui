@@ -138,7 +138,7 @@ pub fn (mut dd Dropdown) add_item(text string) {
 }
 
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
-	if dd.hidden {
+	if dd.hidden || !dd.is_focused {
 		return
 	}
 	if dd.hover_index < 0 {
@@ -181,6 +181,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if !dd.point_inside(e.x, e.y) || e.action == .down {
+		dd.unfocus()
 		return
 	}
 	offset_start(mut dd)
