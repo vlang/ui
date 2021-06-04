@@ -372,6 +372,7 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 
 fn (mut lb ListBox) set_pos(x int, y int) {
 	if lb.x != x || lb.y != y {
+		// println("set pos lb: $x, $y")
 		lb.x = x
 		lb.y = y
 	}
