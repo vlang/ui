@@ -648,7 +648,10 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
+		tb.unfocus()
 		return
+	} else {
+		tb.focus()
 	}
 	if !tb.dragging && e.action == MouseAction(1) {
 		tb.sel_start = 0
@@ -656,7 +659,6 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	tb.dragging = int(e.action) == 1
 	tb.ui.show_cursor = true
-	tb.focus()
 	if *tb.text == '' {
 		return
 	}
