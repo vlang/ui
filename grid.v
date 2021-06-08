@@ -51,6 +51,9 @@ fn (mut gv Grid) init(parent Layout) {
 	gv.ui = ui
 }
 
+fn (mut g Grid) cleanup() {
+}
+
 fn (mut gv Grid) draw() {
 	offset_start(mut gv)
 	cell_height := gv.cell_height

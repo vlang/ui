@@ -53,6 +53,9 @@ fn (mut c Canvas) init(parent Layout) {
 	c.gg = parent.get_ui().gg
 }
 
+fn (mut c Canvas) cleanup() {
+}
+
 fn (mut c Canvas) set_pos(x int, y int) {
 	c.x = x
 	c.y = y

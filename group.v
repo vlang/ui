@@ -72,6 +72,9 @@ fn (mut g Group) init(parent Layout) {
 	g.calculate_child_positions()
 }
 
+fn (mut g Group) cleanup() {
+}
+
 fn (mut g Group) decode_size(parent Layout) {
 	parent_width, parent_height := parent.size()
 	// s.debug_show_sizes("decode before -> ")

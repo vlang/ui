@@ -180,6 +180,15 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 }
 
+fn (mut tb TextBox) cleanup() {
+	mut subscriber := tb.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, tb)
+	subscriber.unsubscribe_method(events.on_key_down, tb)
+	subscriber.unsubscribe_method(events.on_char, tb)
+	// subscriber.unsubscribe_method(events.on_key_up, tb)
+	subscriber.unsubscribe_method(events.on_mouse_move, tb)
+}
+
 // fn (tb &TextBox) draw_inner_border() {
 fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {

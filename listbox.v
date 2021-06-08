@@ -23,6 +23,7 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
+	parent        Layout
 	ui            &UI        = 0
 	items         []ListItem = []ListItem{}
 	selection     int        = -1
@@ -115,6 +116,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 }
 
 fn (mut lb ListBox) init(parent Layout) {
+	lb.parent = parent
 	ui := parent.get_ui()
 	lb.ui = ui
 
@@ -138,6 +140,12 @@ fn (mut lb ListBox) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
+}
+
+fn (mut lb ListBox) cleanup() {
+	mut subscriber := lb.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, lb)
+	subscriber.unsubscribe_method(events.on_key_up, lb)
 }
 
 fn (mut lb ListBox) init_items() {

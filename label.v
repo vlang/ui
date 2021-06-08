@@ -68,6 +68,9 @@ fn (mut l Label) init(parent Layout) {
 	l.init_size()
 }
 
+fn (mut l Label) cleanup() {
+}
+
 fn (mut l Label) set_pos(x int, y int) {
 	l.x = x
 	l.y = y

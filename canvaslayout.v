@@ -145,6 +145,17 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
 }
 
+fn (mut c CanvasLayout) cleanup() {
+	mut subscriber := c.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, c)
+	subscriber.unsubscribe_method(events.on_mouse_down, c)
+	subscriber.unsubscribe_method(events.on_mouse_up, c)
+	subscriber.unsubscribe_method(events.on_mouse_move, c)
+	subscriber.unsubscribe_method(events.on_scroll, c)
+	subscriber.unsubscribe_method(events.on_key_down, c)
+	subscriber.unsubscribe_method(events.on_char, c)
+}
+
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	c.is_focused = c.point_inside(e.x, e.y)
 	if c.is_focused && c.click_fn != voidptr(0) {

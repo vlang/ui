@@ -98,6 +98,9 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 }
 
+fn (mut p Picture) cleanup() {
+}
+
 fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	if pic.hidden {
 		return

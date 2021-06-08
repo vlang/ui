@@ -58,6 +58,9 @@ fn (mut t Transition) init(parent Layout) {
 	t.ui = ui
 }
 
+fn (mut t Transition) cleanup() {
+}
+
 pub fn (mut t Transition) set_value(animated_value &int) {
 	t.animated_value = unsafe { animated_value }
 	t.start_value = *animated_value

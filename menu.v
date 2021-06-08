@@ -75,6 +75,11 @@ fn (mut m Menu) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
 
+fn (mut m Menu) cleanup() {
+	mut subscriber := m.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, m)
+}
+
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	if m.hidden {
 		return

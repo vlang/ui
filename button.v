@@ -127,6 +127,14 @@ fn (mut b Button) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 }
 
+fn (mut b Button) cleanup() {
+	mut subscriber := b.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_mouse_down, b)
+	subscriber.unsubscribe_method(events.on_click, b)
+	subscriber.unsubscribe_method(events.on_touch_down, b)
+	subscriber.unsubscribe_method(events.on_mouse_move, b)
+}
+
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {

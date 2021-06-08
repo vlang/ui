@@ -88,6 +88,9 @@ fn (mut r Rectangle) init(parent Layout) {
 	init_text_cfg(mut r)
 }
 
+fn (mut r Rectangle) cleanup() {
+}
+
 fn (mut r Rectangle) set_pos(x int, y int) {
 	r.x = x
 	r.y = y

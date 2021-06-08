@@ -71,6 +71,7 @@ mut:
 	size() (int, int)
 	is_focused() bool
 	set_visible(bool)
+	cleanup()
 }
 
 // pub fn iwidget(x Widget) Widget { return x }

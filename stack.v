@@ -175,6 +175,9 @@ fn (mut s Stack) init(parent Layout) {
 	}
 }
 
+fn (mut s Stack) cleanup() {
+}
+
 // used inside window.update_layout()
 pub fn (mut s Stack) update_layout() {
 	// Only once for all children recursively

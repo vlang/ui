@@ -117,6 +117,20 @@ fn (mut s Slider) init(parent Layout) {
 	}
 }
 
+fn (mut s Slider) cleanup() {
+	mut subscriber := s.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, s)
+	subscriber.unsubscribe_method(events.on_key_down, s)
+	subscriber.unsubscribe_method(events.on_mouse_down, s)
+	subscriber.unsubscribe_method(events.on_mouse_up, s)
+	subscriber.unsubscribe_method(events.on_mouse_move, s)
+	$if android {
+		subscriber.unsubscribe_method(events.on_touch_down, s)
+		subscriber.unsubscribe_method(events.on_touch_up, s)
+		subscriber.unsubscribe_method(events.on_touch_move, s)
+	}
+}
+
 fn (s &Slider) draw_thumb() {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }

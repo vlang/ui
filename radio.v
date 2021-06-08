@@ -96,6 +96,11 @@ fn (mut r Radio) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
+fn (mut r Radio) cleanup() {
+	mut subscriber := r.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, r)
+}
+
 fn (mut r Radio) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
