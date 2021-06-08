@@ -348,6 +348,9 @@ fn (mut c CanvasLayout) draw() {
 
 pub fn (mut c CanvasLayout) set_visible(state bool) {
 	c.hidden = !state
+	for mut child in c.children {
+		child.set_visible(state)
+	}
 }
 
 fn (c &CanvasLayout) focus() {

@@ -991,6 +991,9 @@ fn (s &Stack) point_inside(x f64, y f64) bool {
 
 pub fn (mut s Stack) set_visible(state bool) {
 	s.hidden = !state
+	for mut child in s.children {
+		child.set_visible(state)
+	}
 }
 
 fn (mut s Stack) focus() {
