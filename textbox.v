@@ -180,6 +180,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 }
 
+[manualfree]
 fn (mut tb TextBox) cleanup() {
 	mut subscriber := tb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, tb)
@@ -187,6 +188,16 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_char, tb)
 	// subscriber.unsubscribe_method(events.on_key_up, tb)
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
+	unsafe { tb.free() }
+}
+
+[unsafe]
+pub fn (tb &TextBox) free() {
+	unsafe {
+		tb.id.free()
+		tb.placeholder.free()
+		free(tb)
+	}
 }
 
 // fn (tb &TextBox) draw_inner_border() {

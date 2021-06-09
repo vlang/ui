@@ -199,13 +199,7 @@ pub fn (s &Stack) free() {
 		s.drawing_children.free()
 		s.widths.free()
 		s.heights.free()
-		if s.component != voidptr(0) {
-			free(s.component)
-		}
 		s.component_type.free()
-		if s.component_init != voidptr(0) {
-			free(s.component_init)
-		}
 		free(s)
 	}
 }
