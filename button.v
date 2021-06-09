@@ -141,9 +141,6 @@ fn (mut b Button) cleanup() {
 
 [unsafe]
 pub fn (b &Button) free() {
-	$if prealloc {
-		return
-	}
 	unsafe {
 		b.id.free()
 		b.text.free()
