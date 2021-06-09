@@ -105,9 +105,15 @@ pub fn (mut p Picture) cleanup() {
 
 [unsafe]
 pub fn (p &Picture) free() {
+	$if free ? {
+		print('picture $p.id')
+	}
 	unsafe {
 		// p.image.free()
 		free(p)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

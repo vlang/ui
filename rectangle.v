@@ -95,10 +95,16 @@ pub fn (mut r Rectangle) cleanup() {
 
 [unsafe]
 pub fn (r &Rectangle) free() {
+	$if free ? {
+		print('rectangle $r.id')
+	}
 	unsafe {
 		r.text.free()
 		r.id.free()
 		free(r)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

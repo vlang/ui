@@ -75,10 +75,16 @@ pub fn (mut l Label) cleanup() {
 
 [unsafe]
 pub fn (l &Label) free() {
+	$if free ? {
+		print('label $l.id')
+	}
 	unsafe {
 		l.id.free()
 		l.text.free()
 		free(l)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

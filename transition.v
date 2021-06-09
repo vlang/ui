@@ -65,9 +65,15 @@ pub fn (mut t Transition) cleanup() {
 
 [unsafe]
 pub fn (t &Transition) free() {
+	$if free ? {
+		print('transition $t.id')
+	}
 	unsafe {
 		t.id.free()
 		free(t)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

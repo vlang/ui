@@ -92,6 +92,9 @@ fn (mut dd Dropdown) cleanup() {
 
 [unsafe]
 pub fn (dd &Dropdown) free() {
+	$if free ? {
+		print('dropdown $dd.id')
+	}
 	unsafe {
 		dd.id.free()
 		dd.def_text.free()
@@ -100,6 +103,9 @@ pub fn (dd &Dropdown) free() {
 		}
 		dd.items.free()
 		free(dd)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

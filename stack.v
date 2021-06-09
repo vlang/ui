@@ -190,6 +190,9 @@ fn (mut s Stack) cleanup() {
 
 [unsafe]
 pub fn (s &Stack) free() {
+	$if free ? {
+		print('slack $s.id')
+	}
 	unsafe {
 		// s.cache.free()
 		s.id.free()
@@ -201,6 +204,9 @@ pub fn (s &Stack) free() {
 		s.heights.free()
 		s.component_type.free()
 		free(s)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

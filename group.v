@@ -84,12 +84,18 @@ pub fn (mut g Group) cleanup() {
 
 [unsafe]
 pub fn (g &Group) free() {
+	$if free ? {
+		print('group $g.id')
+	}
 	unsafe {
 		g.id.free()
 		g.title.free()
 		g.children.free()
 		g.component_type.free()
 		free(g)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

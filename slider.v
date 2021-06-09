@@ -135,9 +135,15 @@ pub fn (mut s Slider) cleanup() {
 
 [unsafe]
 pub fn (s &Slider) free() {
+	$if free ? {
+		print('slider $s.id')
+	}
 	unsafe {
 		s.id.free()
 		free(s)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

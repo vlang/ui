@@ -163,6 +163,9 @@ pub fn (mut c CanvasLayout) cleanup() {
 
 [unsafe]
 pub fn (c &CanvasLayout) free() {
+	$if free ? {
+		print('canvas_layout $c.id')
+	}
 	unsafe {
 		c.id.free()
 		c.drawing_children.free()
@@ -171,6 +174,9 @@ pub fn (c &CanvasLayout) free() {
 			c.scrollview.free()
 		}
 		free(c)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

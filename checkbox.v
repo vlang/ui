@@ -93,7 +93,13 @@ pub fn (mut cb CheckBox) cleanup() {
 
 [unsafe]
 pub fn (cb &CheckBox) free() {
+	$if free ? {
+		print('checkbox $cb.id')
+	}
 	unsafe { free(cb) }
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {

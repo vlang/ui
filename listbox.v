@@ -152,6 +152,9 @@ fn (mut lb ListBox) cleanup() {
 
 [unsafe]
 pub fn (lb &ListBox) free() {
+	$if free ? {
+		print('listbox $lb.id')
+	}
 	unsafe {
 		lb.id.free()
 		for item in lb.items {
@@ -162,6 +165,9 @@ pub fn (lb &ListBox) free() {
 		}
 		lb.items.free()
 		free(lb)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

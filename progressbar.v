@@ -71,9 +71,15 @@ pub fn (mut pb ProgressBar) cleanup() {
 
 [unsafe]
 pub fn (pb &ProgressBar) free() {
+	$if free ? {
+		print('progress_bar $pb.id')
+	}
 	unsafe {
 		pb.id.free()
 		free(pb)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

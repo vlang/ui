@@ -74,9 +74,15 @@ pub fn (mut s Switch) cleanup() {
 
 [unsafe]
 pub fn (s &Switch) free() {
+	$if free ? {
+		print('switch $s.id')
+	}
 	unsafe {
 		s.id.free()
 		free(s)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

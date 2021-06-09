@@ -105,6 +105,9 @@ pub fn (mut r Radio) cleanup() {
 
 [unsafe]
 pub fn (r &Radio) free() {
+	$if free ? {
+		print('radio $r.id')
+	}
 	unsafe {
 		r.id.free()
 		for v in r.values {
@@ -113,6 +116,9 @@ pub fn (r &Radio) free() {
 		r.values.free()
 		r.title.free()
 		free(r)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

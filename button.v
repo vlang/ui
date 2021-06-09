@@ -141,6 +141,9 @@ fn (mut b Button) cleanup() {
 
 [unsafe]
 pub fn (b &Button) free() {
+	$if free ? {
+		print('button $b.id')
+	}
 	unsafe {
 		b.id.free()
 		b.text.free()
@@ -152,6 +155,9 @@ pub fn (b &Button) free() {
 			free(b.component)
 		}
 		free(b)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

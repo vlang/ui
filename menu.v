@@ -84,6 +84,9 @@ pub fn (mut m Menu) cleanup() {
 
 [unsafe]
 pub fn (m &Menu) free() {
+	$if free ? {
+		print('menu $m.id')
+	}
 	unsafe {
 		m.id.free()
 		m.text.free()
@@ -92,6 +95,9 @@ pub fn (m &Menu) free() {
 		}
 		m.items.free()
 		free(m)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

@@ -193,10 +193,16 @@ fn (mut tb TextBox) cleanup() {
 
 [unsafe]
 pub fn (tb &TextBox) free() {
+	$if free ? {
+		print('textbox $tb.id')
+	}
 	unsafe {
 		tb.id.free()
 		tb.placeholder.free()
 		free(tb)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 

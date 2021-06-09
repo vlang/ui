@@ -273,6 +273,14 @@ fn gg_init(mut window Window) {
 	}
 }
 
+fn gg_cleanup(mut window Window) {
+	// All the ckeanup goes here
+	for mut child in window.children {
+		// println('cleanup ${widget_id(*child)}')
+		child.cleanup()
+	}
+}
+
 pub fn window(cfg WindowConfig, children []Widget) &Window {
 	/*
 	println('window()')
@@ -373,6 +381,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		font_path: font_path
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
+		cleanup_fn: gg_cleanup
 		// keydown_fn: window_key_down
 		// char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
