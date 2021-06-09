@@ -273,12 +273,14 @@ fn gg_init(mut window Window) {
 	}
 }
 
+[manualfree]
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
 		// println('cleanup ${widget_id(*child)}')
 		child.cleanup()
 	}
+	unsafe { window.free() }
 }
 
 pub fn window(cfg WindowConfig, children []Widget) &Window {
@@ -1353,5 +1355,28 @@ pub fn (w &Window) update_layout() {
 	mut s := w.root_layout
 	if mut s is Stack {
 		s.update_layout()
+	}
+}
+
+[unsafe]
+pub fn (w &Window) free() {
+	$if free ? {
+		println('window $w.title')
+	}
+	unsafe {
+		w.ui.free()
+		w.children.free()
+		w.title.free()
+		// w.eventbus.free()
+		// touch       TouchInfo
+		w.color_themes.free()
+		w.widgets.free()
+		w.widgets_counts.free()
+		// dragger Dragger = Dragger{}
+		// tooltip Tooltip = Tooltip{}
+		free(w)
+	}
+	$if free ? {
+		println('window -> freed')
 	}
 }

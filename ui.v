@@ -251,3 +251,21 @@ pub fn open_url(url string) {
 pub fn confirm(s string) bool {
 	return false
 }
+
+[unsafe]
+pub fn (gui &UI) free() {
+	unsafe {
+		// gg             &gg.Context = voidptr(0)
+		// window         &Window     = voidptr(0)
+		// clipboard      &clipboard.Clipboard
+		// cb_image             gg.Image
+		// circle_image         gg.Image
+		// radio_image          gg.Image
+		// selected_radio_image gg.Image
+		// down_arrow           gg.Image
+		gui.resource_cache.free()
+	}
+	$if free ? {
+		println('\tui -> freed')
+	}
+}
