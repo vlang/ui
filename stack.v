@@ -56,8 +56,8 @@ pub mut:
 	stretch              bool
 	direction            Direction
 	margins              Margins
-	real_x               int
-	real_y               int
+	real_x               int = -1
+	real_y               int = -1
 	real_width           int
 	real_height          int
 	adj_width            int
