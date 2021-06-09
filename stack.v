@@ -1161,10 +1161,12 @@ pub fn (mut s Stack) add(cfg_ ChildrenConfig) {
 			s.children.insert(pos, cfg.children)
 			for mut w in cfg.children {
 				w.init(s)
+				s.register_child(*w)
 			}
 		} else {
 			s.children.insert(pos, cfg.child)
 			cfg.child.init(s)
+			s.register_child(cfg.child)
 		}
 		s.update_widths(cfg, .add)
 		s.update_heights(cfg, .add)
@@ -1376,4 +1378,9 @@ pub fn (mut s Stack) transpose(size bool) {
 	if size {
 		s.widths, s.heights = s.heights, s.widths
 	}
+}
+
+fn (mut s Stack) register_child(child Widget) {
+	mut window := s.ui.window
+	window.register_child(child)
 }
