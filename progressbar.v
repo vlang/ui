@@ -64,7 +64,17 @@ fn (mut pb ProgressBar) init(parent Layout) {
 	pb.ui = ui
 }
 
-fn (mut pb ProgressBar) cleanup() {
+[manualfree]
+pub fn (mut pb ProgressBar) cleanup() {
+	unsafe { pb.free() }
+}
+
+[unsafe]
+pub fn (pb &ProgressBar) free() {
+	unsafe {
+		pb.id.free()
+		free(pb)
+	}
 }
 
 fn (mut pb ProgressBar) set_pos(x int, y int) {

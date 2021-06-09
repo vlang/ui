@@ -65,9 +65,19 @@ fn (mut s Switch) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, sw_click, s)
 }
 
-fn (mut s Switch) cleanup() {
+[manualfree]
+pub fn (mut s Switch) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, s)
+	unsafe { s.free() }
+}
+
+[unsafe]
+pub fn (s &Switch) free() {
+	unsafe {
+		s.id.free()
+		free(s)
+	}
 }
 
 fn (mut s Switch) set_pos(x int, y int) {

@@ -72,7 +72,25 @@ fn (mut g Group) init(parent Layout) {
 	g.calculate_child_positions()
 }
 
-fn (mut g Group) cleanup() {
+[manualfree]
+pub fn (mut g Group) cleanup() {
+	for mut child in g.children {
+		child.cleanup()
+	}
+	unsafe {
+		g.free()
+	}
+}
+
+[unsafe]
+pub fn (g &Group) free() {
+	unsafe {
+		g.id.free()
+		g.title.free()
+		g.children.free()
+		g.component_type.free()
+		free(g)
+	}
 }
 
 fn (mut g Group) decode_size(parent Layout) {

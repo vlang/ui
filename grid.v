@@ -51,7 +51,27 @@ fn (mut gv Grid) init(parent Layout) {
 	gv.ui = ui
 }
 
-fn (mut g Grid) cleanup() {
+[manualfree]
+pub fn (mut g Grid) cleanup() {
+	unsafe { g.free() }
+}
+
+[unsafe]
+pub fn (g &Grid) free() {
+	unsafe {
+		g.id.free()
+		for e in g.header {
+			e.free()
+		}
+		g.header.free()
+		for l in g.body {
+			for c in l {
+				c.free()
+			}
+			l.free()
+		}
+		free(g)
+	}
 }
 
 fn (mut gv Grid) draw() {

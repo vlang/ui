@@ -96,9 +96,24 @@ fn (mut r Radio) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
-fn (mut r Radio) cleanup() {
+[manualfree]
+pub fn (mut r Radio) cleanup() {
 	mut subscriber := r.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, r)
+	unsafe { r.free() }
+}
+
+[unsafe]
+pub fn (r &Radio) free() {
+	unsafe {
+		r.id.free()
+		for v in r.values {
+			v.free()
+		}
+		r.values.free()
+		r.title.free()
+		free(r)
+	}
 }
 
 fn (mut r Radio) set_pos(x int, y int) {

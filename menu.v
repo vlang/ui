@@ -75,9 +75,24 @@ fn (mut m Menu) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
 
-fn (mut m Menu) cleanup() {
+[manualfree]
+pub fn (mut m Menu) cleanup() {
 	mut subscriber := m.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, m)
+	unsafe { m.free() }
+}
+
+[unsafe]
+pub fn (m &Menu) free() {
+	unsafe {
+		m.id.free()
+		m.text.free()
+		for item in m.items {
+			item.text.free()
+		}
+		m.items.free()
+		free(m)
+	}
 }
 
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {

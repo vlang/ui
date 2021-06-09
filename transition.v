@@ -58,7 +58,17 @@ fn (mut t Transition) init(parent Layout) {
 	t.ui = ui
 }
 
-fn (mut t Transition) cleanup() {
+[manualfree]
+pub fn (mut t Transition) cleanup() {
+	unsafe { t.free() }
+}
+
+[unsafe]
+pub fn (t &Transition) free() {
+	unsafe {
+		t.id.free()
+		free(t)
+	}
 }
 
 pub fn (mut t Transition) set_value(animated_value &int) {

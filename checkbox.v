@@ -84,9 +84,16 @@ fn (mut cb CheckBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
-fn (mut cb CheckBox) cleanup() {
+[manualfree]
+pub fn (mut cb CheckBox) cleanup() {
 	mut subscriber := cb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, cb)
+	unsafe { cb.free() }
+}
+
+[unsafe]
+pub fn (cb &CheckBox) free() {
+	unsafe { free(cb) }
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {

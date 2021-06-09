@@ -98,7 +98,17 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 }
 
-fn (mut p Picture) cleanup() {
+[manualfree]
+pub fn (mut p Picture) cleanup() {
+	unsafe { p.free() }
+}
+
+[unsafe]
+pub fn (p &Picture) free() {
+	unsafe {
+		// p.image.free()
+		free(p)
+	}
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {

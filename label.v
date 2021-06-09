@@ -68,7 +68,18 @@ fn (mut l Label) init(parent Layout) {
 	l.init_size()
 }
 
-fn (mut l Label) cleanup() {
+[manualfree]
+pub fn (mut l Label) cleanup() {
+	unsafe { l.free() }
+}
+
+[unsafe]
+pub fn (l &Label) free() {
+	unsafe {
+		l.id.free()
+		l.text.free()
+		free(l)
+	}
 }
 
 fn (mut l Label) set_pos(x int, y int) {

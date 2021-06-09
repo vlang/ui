@@ -145,7 +145,8 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
 }
 
-fn (mut c CanvasLayout) cleanup() {
+[manualfree]
+pub fn (mut c CanvasLayout) cleanup() {
 	mut subscriber := c.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, c)
 	subscriber.unsubscribe_method(events.on_mouse_down, c)
@@ -154,6 +155,23 @@ fn (mut c CanvasLayout) cleanup() {
 	subscriber.unsubscribe_method(events.on_scroll, c)
 	subscriber.unsubscribe_method(events.on_key_down, c)
 	subscriber.unsubscribe_method(events.on_char, c)
+	for mut child in c.children {
+		child.cleanup()
+	}
+	unsafe { c.free() }
+}
+
+[unsafe]
+pub fn (c &CanvasLayout) free() {
+	unsafe {
+		c.id.free()
+		c.drawing_children.free()
+		c.children.free()
+		if c.has_scrollview {
+			c.scrollview.free()
+		}
+		free(c)
+	}
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {

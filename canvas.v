@@ -53,7 +53,17 @@ fn (mut c Canvas) init(parent Layout) {
 	c.gg = parent.get_ui().gg
 }
 
-fn (mut c Canvas) cleanup() {
+[manualfree]
+pub fn (mut c Canvas) cleanup() {
+	unsafe { c.free() }
+}
+
+[unsafe]
+pub fn (c &Canvas) free() {
+	unsafe {
+		c.id.free()
+		free(c)
+	}
 }
 
 fn (mut c Canvas) set_pos(x int, y int) {

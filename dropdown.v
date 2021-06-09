@@ -81,11 +81,26 @@ fn (mut dd Dropdown) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
 }
 
+[manualfree]
 fn (mut dd Dropdown) cleanup() {
 	mut subscriber := dd.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, dd)
 	subscriber.unsubscribe_method(events.on_key_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_move, dd)
+	unsafe { dd.free() }
+}
+
+[unsafe]
+pub fn (dd &Dropdown) free() {
+	unsafe {
+		dd.id.free()
+		dd.def_text.free()
+		for item in dd.items {
+			item.text.free()
+		}
+		dd.items.free()
+		free(dd)
+	}
 }
 
 fn (mut dd Dropdown) set_pos(x int, y int) {

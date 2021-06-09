@@ -88,7 +88,18 @@ fn (mut r Rectangle) init(parent Layout) {
 	init_text_cfg(mut r)
 }
 
-fn (mut r Rectangle) cleanup() {
+[manualfree]
+pub fn (mut r Rectangle) cleanup() {
+	unsafe { r.free() }
+}
+
+[unsafe]
+pub fn (r &Rectangle) free() {
+	unsafe {
+		r.text.free()
+		r.id.free()
+		free(r)
+	}
 }
 
 fn (mut r Rectangle) set_pos(x int, y int) {

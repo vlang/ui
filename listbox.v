@@ -142,10 +142,27 @@ fn (mut lb ListBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
 }
 
+[manualfree]
 fn (mut lb ListBox) cleanup() {
 	mut subscriber := lb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, lb)
 	subscriber.unsubscribe_method(events.on_key_up, lb)
+	unsafe { lb.free() }
+}
+
+[unsafe]
+pub fn (lb &ListBox) free() {
+	unsafe {
+		lb.id.free()
+		for item in lb.items {
+			item.id.free()
+			item.text.free()
+			item.draw_text.free()
+			free(item)
+		}
+		lb.items.free()
+		free(lb)
+	}
 }
 
 fn (mut lb ListBox) init_items() {

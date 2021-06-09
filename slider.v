@@ -117,7 +117,8 @@ fn (mut s Slider) init(parent Layout) {
 	}
 }
 
-fn (mut s Slider) cleanup() {
+[manualfree]
+pub fn (mut s Slider) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, s)
 	subscriber.unsubscribe_method(events.on_key_down, s)
@@ -128,6 +129,15 @@ fn (mut s Slider) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_down, s)
 		subscriber.unsubscribe_method(events.on_touch_up, s)
 		subscriber.unsubscribe_method(events.on_touch_move, s)
+	}
+	unsafe { s.free() }
+}
+
+[unsafe]
+pub fn (s &Slider) free() {
+	unsafe {
+		s.id.free()
+		free(s)
 	}
 }
 
