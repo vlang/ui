@@ -180,12 +180,34 @@ fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
 	}
-	unsafe { s.free() }
+	unsafe {
+		if s.has_scrollview {
+			s.scrollview.cleanup()
+		}
+		s.free()
+	}
 }
 
 [unsafe]
 pub fn (s &Stack) free() {
-	unsafe { free(s) }
+	unsafe {
+		// s.cache.free()
+		s.id.free()
+		s.spacings.free()
+		s.title.free()
+		s.children.free()
+		s.drawing_children.free()
+		s.widths.free()
+		s.heights.free()
+		if s.component != voidptr(0) {
+			free(s.component)
+		}
+		s.component_type.free()
+		if s.component_init != voidptr(0) {
+			free(s.component_init)
+		}
+		free(s)
+	}
 }
 
 // used inside window.update_layout()

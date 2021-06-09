@@ -289,6 +289,28 @@ fn (mut sv ScrollView) init(parent Layout) {
 	}
 }
 
+[manualfree]
+pub fn (mut sv ScrollView) cleanup() {
+	mut subscriber := sv.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, sv)
+	subscriber.unsubscribe_method(events.on_scroll, sv)
+	subscriber.unsubscribe_method(events.on_key_down, sv)
+	subscriber.unsubscribe_method(events.on_mouse_down, sv)
+	subscriber.unsubscribe_method(events.on_mouse_up, sv)
+	subscriber.unsubscribe_method(events.on_mouse_move, sv)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, sv)
+		subscriber.subscribe_method(events.on_touch_up, sv)
+		subscriber.subscribe_method(events.on_touch_move, sv)
+	}
+	unsafe { sv.free() }
+}
+
+[unsafe]
+pub fn (sv &ScrollView) free() {
+	unsafe { free(sv) }
+}
+
 fn (sv &ScrollView) parent_offset() (int, int) {
 	mut ox, mut oy := 0, 0
 	parent := sv.parent

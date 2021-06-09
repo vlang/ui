@@ -78,6 +78,21 @@ mut:
 	height_mass    f64
 }
 
+[unsafe]
+pub fn (c &CachedSizes) free() {
+	unsafe {
+		c.width_type.free()
+		c.height_type.free()
+		c.adj_widths.free()
+		c.adj_heights.free()
+		c.fixed_widths.free()
+		c.fixed_heights.free()
+		c.weight_widths.free()
+		c.weight_heights.free()
+		free(c)
+	}
+}
+
 //********** Margin *********
 
 pub enum Side {
