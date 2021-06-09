@@ -1368,12 +1368,10 @@ pub fn (w &Window) free() {
 		w.children.free()
 		w.title.free()
 		// w.eventbus.free()
-		// touch       TouchInfo
 		w.color_themes.free()
 		w.widgets.free()
 		w.widgets_counts.free()
-		// dragger Dragger = Dragger{}
-		// tooltip Tooltip = Tooltip{}
+		w.tooltip.free()
 		free(w)
 	}
 	$if free ? {

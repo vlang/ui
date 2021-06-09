@@ -83,6 +83,20 @@ mut:
 	ui       &UI      = 0
 }
 
+[unsafe]
+pub fn (t &Tooltip) free() {
+	unsafe {
+		for line in t.lines {
+			line.free()
+		}
+		t.lines.free()
+		t.id.free()
+	}
+	$if free ? {
+		println('\tTooltip -> freed')
+	}
+}
+
 pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 	mut win := wui.window
 	win.tooltip.id = id
