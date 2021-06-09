@@ -136,7 +136,7 @@ fn (mut b Button) cleanup() {
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_move, b)
-	unsafe { b.free() }
+	// unsafe { b.free() }
 }
 
 [unsafe]
@@ -151,6 +151,7 @@ pub fn (b &Button) free() {
 		if b.component != voidptr(0) {
 			free(b.component)
 		}
+		free(b)
 	}
 }
 
