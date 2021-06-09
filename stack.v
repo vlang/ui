@@ -176,6 +176,10 @@ fn (mut s Stack) init(parent Layout) {
 }
 
 fn (mut s Stack) cleanup() {
+	for mut child in s.children {
+		child.cleanup()
+	}
+	s.cleanup()
 }
 
 // used inside window.update_layout()
@@ -1190,6 +1194,7 @@ pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 		// set child hidden
 		mut child := s.children[pos]
 		child.set_visible(false)
+		child.cleanup()
 		// delete child in the children tree
 		s.children.delete(pos)
 		s.update_widths(cfg, .remove)

@@ -125,14 +125,36 @@ fn (mut b Button) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, btn_click, b)
 	subscriber.subscribe_method(events.on_touch_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
+	subscriber.subscribe_method(events.on_mouse_up, btn_mouse_up, b)
+	subscriber.subscribe_method(events.on_touch_up, btn_mouse_up, b)
 }
 
+[manualfree]
 fn (mut b Button) cleanup() {
 	mut subscriber := b.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_mouse_down, b)
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_move, b)
+	unsafe { b.free() }
+}
+
+[unsafe]
+pub fn (b &Button) free() {
+	$if prealloc {
+		return
+	}
+	unsafe {
+		b.id.free()
+		b.text.free()
+		b.icon_path.free()
+		// s.onclick   ButtonClickFn
+		b.tooltip.free()
+		// s.theme     ColorThemeCfg = 'classic'
+		if b.component != voidptr(0) {
+			free(b.component)
+		}
+	}
 }
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
@@ -165,6 +187,14 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
+fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	if b.hidden {
+		return
+	}
+	b.state = .normal
+}
+
 fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {
@@ -186,6 +216,7 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 			if b.tooltip != '' {
 				stop_tooltip(b, b.id, b.ui)
 			}
+			b.state = .normal
 		}
 	}
 }
