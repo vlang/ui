@@ -65,9 +65,10 @@ pub fn (g &Grid) free() {
 		}
 		g.header.free()
 		for l in g.body {
-			for c in l {
-				c.free()
-			}
+			// See free for []string in vlib/builtin
+			// for c in l {
+			// 	c.free()
+			// }
 			l.free()
 		}
 		free(g)

@@ -158,13 +158,26 @@ pub fn (lb &ListBox) free() {
 	unsafe {
 		lb.id.free()
 		for item in lb.items {
-			item.id.free()
-			item.text.free()
-			item.draw_text.free()
-			// Failing: free(item)
+			item.free()
 		}
 		lb.items.free()
 		free(lb)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
+}
+
+[unsafe]
+fn (item &ListItem) free() {
+	$if free ? {
+		print('\tlistbox item $item.id')
+	}
+	unsafe {
+		item.id.free()
+		item.text.free()
+		item.draw_text.free()
+		// Failing: free(item)
 	}
 	$if free ? {
 		println(' -> freed')
@@ -286,7 +299,11 @@ pub fn (mut lb ListBox) remove_inx(i int) {
 	lb.items.delete(i)
 }
 
+[manualfree]
 pub fn (mut lb ListBox) clear() {
+	for item in lb.items {
+		unsafe { item.free() }
+	}
 	lb.items.clear()
 	lb.selection = -1
 }

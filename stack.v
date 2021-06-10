@@ -1242,7 +1242,7 @@ pub fn (mut s Stack) move(cfg ChildrenConfig) {
 			if from_pos < to_pos {
 				to_pos--
 			}
-			child := s.children[from_pos]
+			mut child := s.children[from_pos]
 			// remove
 			s.children.delete(from_pos)
 			// add the new one
@@ -1416,4 +1416,13 @@ pub fn (mut s Stack) transpose(size bool) {
 fn (mut s Stack) register_child(child Widget) {
 	mut window := s.ui.window
 	window.register_child(child)
+}
+
+pub fn (s &Stack) child_index_by_id(id string) int {
+	for i, child in s.children {
+		if widget_id(child) == id {
+			return i
+		}
+	}
+	return -1
 }
