@@ -161,7 +161,7 @@ pub fn (lb &ListBox) free() {
 			item.id.free()
 			item.text.free()
 			item.draw_text.free()
-			free(item)
+			// Failing: free(item)
 		}
 		lb.items.free()
 		free(lb)
