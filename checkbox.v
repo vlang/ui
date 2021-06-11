@@ -19,6 +19,8 @@ enum CheckBoxState {
 */
 type CheckChangedFn = fn (voidptr, bool)
 
+type CheckBowClickFn = fn (voidptr, voidptr)
+
 [heap]
 pub struct CheckBox {
 pub mut:
@@ -35,6 +37,7 @@ pub mut:
 	is_focused       bool
 	checked          bool
 	ui               &UI
+	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
 	text             string
 	disabled         bool
@@ -52,6 +55,7 @@ pub struct CheckBoxConfig {
 	z_index          int
 	parent           Layout
 	text             string
+	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
 	checked          bool
 	disabled         bool
@@ -66,6 +70,7 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		z_index: c.z_index
 		ui: 0
 		text: c.text
+		on_click: c.on_click
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
@@ -111,6 +116,9 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 		// println("checked: $cb.checked")
 		if cb.on_check_changed != voidptr(0) {
 			cb.on_check_changed(window.state, cb.checked)
+		}
+		if cb.on_click != voidptr(0) {
+			cb.on_click(cb, window.state)
 		}
 	}
 }

@@ -11,7 +11,7 @@ enum RadioState {
 	check
 }
 */
-type RadioClickFn = fn ()
+type RadioClickFn = fn (voidptr, voidptr)
 
 [heap]
 pub struct Radio {
@@ -38,16 +38,16 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// selected_value string
-	// onclick    RadioClickFn
+	on_click RadioClickFn
 }
 
 pub struct RadioConfig {
-	id string
-	// onclick    RadioClickFn
-	values  []string
-	title   string
-	width   int
-	z_index int
+	id       string
+	on_click RadioClickFn
+	values   []string
+	title    string
+	width    int
+	z_index  int
 	// ref       &Radio = voidptr(0)
 	text_cfg  gx.TextCfg
 	text_size f64
@@ -64,7 +64,7 @@ pub fn radio(c RadioConfig) &Radio {
 		text_cfg: c.text_cfg
 		text_size: c.text_size
 		ui: 0
-		// onclick: c.onclick
+		on_click: c.on_click
 	}
 	/*
 	if c.ref != 0 {
