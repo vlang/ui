@@ -348,7 +348,11 @@ fn (mut lb ListBox) draw() {
 
 fn (lb &ListBox) point_inside(x f64, y f64) bool {
 	// println("inside lb $x $y (${lb.x + lb.offset_x}, ${lb.y + lb.offset_y}, $lb.width, $lb.height)")
-	return point_inside(lb, x, y)
+	if lb.has_scrollview {
+		return lb.scrollview.point_inside(x, y, .view)
+	} else {
+		return point_inside(lb, x, y)
+	}
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
@@ -370,9 +374,10 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	}
 	lb.focus()
 	for inx, item in lb.items {
-		if inx >= lb.draw_count {
+		if !lb.has_scrollview && inx >= lb.draw_count {
 			break
 		}
+		println(' $item.id -> ($e.x,$e.y)')
 		if item.point_inside(e.x, e.y) {
 			if lb.selection != inx {
 				lb.selection = inx

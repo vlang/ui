@@ -91,7 +91,7 @@ fn main() {
 				])),
 				ui.at(10, 100, ui.listbox({
 					width: 100
-					height: 120
+					height: 140
 					on_change: lb_change
 					// scrollview: false
 					draw_lines: true
@@ -99,12 +99,12 @@ fn main() {
 					'classic':  'Classic'
 					'blue':     'Blue'
 					'red':      'Red'
-					'classic2': 'Classic'
-					'blue2':    'Blue'
-					'red2':     'Red'
-					'classic3': 'Classic'
-					'blue3':    'Blue'
-					'red3':     'Red'
+					'classic2': 'Classic2'
+					'blue2':    'Blue2'
+					'red2':     'Red2'
+					'classic3': 'Classic3'
+					'blue3':    'Blue3'
+					'red3':     'Red3'
 				})),
 				ui.at(150, 100, ui.menu(
 					id: 'menu'

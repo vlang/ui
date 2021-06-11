@@ -435,6 +435,9 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.btn_h
 		}
 	}
+	// if mode == .view {
+	// 	println("${sv.widget.id} $x >= $x_min && $x <= $x_max && $y >= $y_min && $y <= $y_max")
+	// }
 	return x >= x_min && x <= x_max && y >= y_min && y <= y_max
 }
 
