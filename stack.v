@@ -320,7 +320,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 		match c.width_type[i] {
 			.weighted {
 				mut weight := c.weight_widths[i]
-				if child.z_index == ui.z_index_hidden {
+				if child.z_index == z_index_hidden {
 					weight = 0
 				}
 				mcw[i] = int(weight * f32(s.real_width))
@@ -329,7 +329,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 				}
 			}
 			.compact, .fixed {
-				if child.z_index != ui.z_index_hidden {
+				if child.z_index != z_index_hidden {
 					mcw[i] = c.fixed_widths[i]
 				}
 				if s.direction == .row {
@@ -342,7 +342,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 		match c.height_type[i] {
 			.weighted {
 				mut weight := c.weight_heights[i]
-				if child.z_index == ui.z_index_hidden {
+				if child.z_index == z_index_hidden {
 					weight = 0
 				}
 				mch[i] = int(weight * f32(s.real_height))
@@ -351,7 +351,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 				}
 			}
 			.compact, .fixed {
-				if child.z_index != ui.z_index_hidden {
+				if child.z_index != z_index_hidden {
 					mch[i] = c.fixed_heights[i]
 				}
 				if s.direction == .column {
@@ -451,12 +451,12 @@ fn (mut s Stack) set_cache_sizes() {
 
 		// fix compact when child has size 0
 		if adj_child_width == 0 && cw == compact {
-			s.widths[i] = ui.stretch
-			cw = ui.stretch
+			s.widths[i] = stretch
+			cw = stretch
 		}
 		if adj_child_height == 0 && ch == compact {
-			s.heights[i] = ui.stretch
-			ch = ui.stretch
+			s.heights[i] = stretch
+			ch = stretch
 		}
 
 		// cw as child width with type f64
@@ -520,10 +520,10 @@ fn (mut s Stack) set_cache_sizes() {
 			}
 		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
 			c.width_type[i] = .stretch
-			if child.z_index == ui.z_index_hidden {
+			if child.z_index == z_index_hidden {
 				cw = 0
 			}
-			c.weight_widths[i] = cw / ui.stretch
+			c.weight_widths[i] = cw / stretch
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row { // sum rule
 				c.width_mass += c.weight_widths[i]
@@ -597,10 +597,10 @@ fn (mut s Stack) set_cache_sizes() {
 			}
 		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
 			c.height_type[i] = .stretch
-			if child.z_index == ui.z_index_hidden {
+			if child.z_index == z_index_hidden {
 				ch = 0
 			}
-			c.weight_heights[i] = ch / ui.stretch
+			c.weight_heights[i] = ch / stretch
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column { // sum rule
 				c.height_mass += c.weight_heights[i]
@@ -620,7 +620,7 @@ fn (mut s Stack) set_cache_sizes() {
 
 // default values for s.widths and s.heights
 fn (mut s Stack) default_sizes() {
-	st := f32(ui.stretch)
+	st := f32(stretch)
 	// comp := f32(ui.compact)
 	p_equi := f32(1) / f32(s.children.len)
 	if s.direction == .row {
@@ -643,7 +643,7 @@ fn (mut s Stack) default_sizes() {
 					continue
 				}
 				p := if is_children_have_widget(s.children) {
-					ui.compact
+					compact
 				} else {
 					// equispaced
 					p_equi
@@ -672,7 +672,7 @@ fn (mut s Stack) default_sizes() {
 					continue
 				}
 				p := if is_children_have_widget(s.children) {
-					ui.compact
+					compact
 				} else {
 					// equispaced
 					p_equi
@@ -798,9 +798,9 @@ fn (mut s Stack) set_children_pos() {
 	$if scp ? {
 		println('Stack  $s.id pos: ($x, $y)')
 	}
-	// z_index < ui.z_index_ hidden => hidden and without positionning 
-	mut children := s.children.filter(it.z_index > ui.z_index_hidden)
-	
+	// z_index < ui.z_index_ hidden => hidden and without positionning
+	mut children := s.children.filter(it.z_index > z_index_hidden)
+
 	for i, mut child in children {
 		child_width, child_height := child.size()
 		s.set_child_pos(child, i, x, y)
@@ -927,7 +927,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			s.z_index = child.z_index
 		}
 	}
-	s.drawing_children = s.children.filter(!it.hidden && it.z_index > ui.z_index_hidden)
+	s.drawing_children = s.children.filter(!it.hidden && it.z_index > z_index_hidden)
 	// s.drawing_children.sort(a.z_index < b.z_index)
 	s.sorted_drawing_children()
 }
@@ -1316,7 +1316,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 		if cfg_widths == -1. {
 			match mode {
 				.add, .migrate {
-					widths := if s.direction == .row { ui.compact } else { ui.stretch }
+					widths := if s.direction == .row { compact } else { stretch }
 					s.widths = Size(widths).as_f32_array(s.children.len)
 				}
 				.remove {
@@ -1343,7 +1343,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 		if cfg_heights == -1. {
 			match mode {
 				.add, .migrate {
-					heights := if s.direction == .row { ui.stretch } else { ui.compact }
+					heights := if s.direction == .row { stretch } else { compact }
 					s.heights = Size(heights).as_f32_array(s.children.len)
 				}
 				.remove {
