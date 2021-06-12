@@ -36,6 +36,7 @@ fn main() {
 			ui.button(text: 'remove last', onclick: btn_remove_click),
 			ui.button(text: 'remove second', onclick: btn_remove_second_click),
 			ui.button(text: 'hide', onclick: btn_show_hide_click),
+			ui.button(text: 'deactivate', onclick: btn_show_activate_click),
 			ui.button(text: 'move', onclick: btn_move_click),
 			ui.button(text: 'text last', onclick: btn_last_text_click),
 			ui.button(text: 'text third', onclick: btn_third_text_click),
@@ -118,6 +119,20 @@ fn btn_show_hide_click(mut app State, btn &ui.Button) {
 	s.set_children_visible(state, 0)
 	mut b := btn
 	b.text = if state { 'hide' } else { 'show' }
+}
+
+fn btn_show_activate_click(mut app State, btn &ui.Button) {
+	window := btn.ui.window
+	mut s := window.stack('col2')
+	state := btn.text == 'deactivate'
+	if state {
+		s.set_children_depth(ui.z_index_hidden, 0)
+	} else {
+		s.set_children_depth(0, 0)
+	}
+	mut b := btn
+	b.text = if state { 'activate' } else { 'deactivate' }
+	window.update_layout()
 }
 
 fn btn_remove_second_click(mut app State, btn &ui.Button) {

@@ -5,6 +5,7 @@ import math
 pub const (
 	stretch = -10000.
 	compact = 0. // from parent
+	z_index_hidden = -10000
 )
 
 pub enum WindowSizeType {
