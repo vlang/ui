@@ -63,6 +63,8 @@ fn (mut dd Dropdown) init(parent Layout) {
 
 pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
+		x: c.x
+		y: c.y
 		width: c.width
 		dropdown_height: c.height
 		z_index: c.z_index
@@ -96,14 +98,19 @@ fn (mut dd Dropdown) draw() {
 	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
 	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.border_color)
-	if dd.selected_index >= 0 {
+	if dd.selected_index >= 0 && dd.items.len > dd.selected_index {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
 	dd.draw_open()
 	// draw the arrow
-	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	if !dd.open {
+		gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	} else {
+		gg.draw_image(dd.x + (dd.width), dd.y - 3 + 28, -28, -28, dd.ui.down_arrow)
+	}
+
 	offset_end(mut dd)
 }
 
@@ -127,8 +134,13 @@ fn (dd &Dropdown) draw_open() {
 	}
 }
 
-pub fn (mut dd Dropdown) add_item(text string) {
+pub fn (mut dd Dropdown) add_item(text string) int {
 	dd.items << DropdownItem{text}
+	return dd.items.len - 1
+}
+
+pub fn (mut dd Dropdown) remove_item(index int) {
+	dd.items.delete(index)
 }
 
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
@@ -175,12 +187,15 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if !dd.point_inside(e.x, e.y) || e.action == .down {
+		dd.open = false
 		return
 	}
 	offset_start(mut dd)
 	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
-	} else if dd.open {
+	
+	// Check if the items length is greater than zero so that a division by zero error doesn't occur
+	} else if dd.open && dd.items.len > 0 {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.selected_index = index
@@ -198,7 +213,10 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
-	if dd.open {
+	if !(dd.items.len > 0) {
+		return
+	}
+	if dd.open && dd.point_inside_drawer(e.x, e.y) {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.hover_index = index
@@ -232,7 +250,13 @@ fn (mut dd Dropdown) unfocus() {
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
-	return y >= ddy && y <= ddy + (dd.items.len * dd.dropdown_height) + dd.dropdown_height
+	return y >= ddy && y <= ddy + (dd.items.len * dd.dropdown_height) + dd.dropdown_height 
+		&& x >= ddx && x <= ddx + dd.width
+}
+
+fn (dd &Dropdown) point_inside_drawer(x int, y int) bool {
+	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
+	return y >= ddy + dd.dropdown_height && y <= ddy + (dd.items.len * dd.dropdown_height) + dd.dropdown_height - 1
 		&& x >= ddx && x <= ddx + dd.width
 }
 

@@ -26,6 +26,8 @@ pub struct ButtonConfig {
 	text      string
 	icon_path string
 	onclick   ButtonClickFn
+	x         int
+	y         int
 	height    int
 	width     int
 	z_index   int
@@ -89,6 +91,8 @@ fn (mut b Button) init(parent Layout) {
 pub fn button(c ButtonConfig) &Button {
 	mut b := &Button{
 		id: c.id
+		x: c.x
+		y: c.y
 		width_: c.width
 		height_: c.height
 		z_index: c.z_index

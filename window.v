@@ -480,8 +480,8 @@ fn window_resize(event gg.Event, ui &UI) {
 fn window_mouse_move(event gg.Event, ui &UI) {
 	mut window := ui.window
 	e := MouseMoveEvent{
-		x: event.mouse_x / ui.gg.scale
-		y: event.mouse_y / ui.gg.scale
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
 		mouse_button: int(event.mouse_button)
 	}
 	if window.drag_activated {
@@ -644,8 +644,8 @@ fn window_touch_up(event gg.Event, ui &UI) {
 fn window_touch_move(event gg.Event, ui &UI) {
 	window := ui.window
 	e := MouseMoveEvent{
-		x: f64(window.touch.move.pos.x)
-		y: f64(window.touch.move.pos.y)
+		x: int(window.touch.move.pos.x)
+		y: int(window.touch.move.pos.y)
 		mouse_button: window.touch.button
 	}
 	if window.mouse_move_fn != voidptr(0) {
