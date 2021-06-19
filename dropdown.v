@@ -193,7 +193,6 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	offset_start(mut dd)
 	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
-	
 	// Check if the items length is greater than zero so that a division by zero error doesn't occur
 	} else if dd.open && dd.items.len > 0 {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
