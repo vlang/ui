@@ -131,6 +131,9 @@ fn margins(m f64, ms Margin) Margins {
 //******** spacings ***********
 
 fn spacings(sp f64, sps []f64, len int) []f32 {
+	if len < 0 {
+		return []f32{}
+	}
 	mut spacing := [f32(sp)].repeat(len)
 	if sps.len == len {
 		spacing = sps.map(f32(it))

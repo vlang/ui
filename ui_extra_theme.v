@@ -3,7 +3,7 @@ module ui
 import gx
 
 // No color is defined when alpha = 0 at least
-const no_color = gx.Color{0, 0, 0, 0}
+pub const no_color = gx.Color{0, 0, 0, 0}
 
 enum ColorType {
 	button_normal = 1 // see button.v

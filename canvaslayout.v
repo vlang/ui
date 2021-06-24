@@ -37,6 +37,8 @@ pub mut:
 	bg_radius        f32
 	adj_width        int
 	adj_height       int
+	full_width       int
+	full_height      int
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
@@ -63,6 +65,8 @@ pub struct CanvasLayoutConfig {
 	id            string
 	width         int
 	height        int
+	full_width    int
+	full_height   int
 	z_index       int
 	text          string
 	bg_color      gx.Color = no_color
@@ -97,6 +101,8 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 		id: c.id
 		width: c.width
 		height: c.height
+		full_width: c.full_width
+		full_height: c.full_height
 		z_index: c.z_index
 		bg_radius: f32(c.bg_radius)
 		bg_color: c.bg_color
@@ -273,6 +279,10 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
+	if c.full_width > 0 && c.full_height > 0 {
+		c.adj_width, c.adj_height = c.full_width, c.full_height
+		return
+	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
 		child_width, child_height := child.size()
@@ -292,7 +302,6 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	if c.height > h {
 		h = c.height
 	}
-
 	c.adj_width = w
 	c.adj_height = h
 }
@@ -360,11 +369,15 @@ fn (mut c CanvasLayout) draw() {
 	scrollview_draw_begin(mut c)
 
 	if c.bg_color != no_color {
+		mut w, mut h := c.width, c.height
+		if c.full_width * c.full_height > 0 {
+			w, h = c.full_width, c.full_height
+		}
 		if c.bg_radius > 0 {
-			radius := relative_size(c.bg_radius, c.width, c.height)
-			c.draw_rounded_rect(c.x, c.y, c.width, c.height, radius, c.bg_color)
+			radius := relative_size(c.bg_radius, w, h) 
+			c.draw_rounded_rect(c.x, c.y, w, h, radius, c.bg_color)
 		} else {
-			c.draw_rect(c.x, c.y, c.width, c.height, c.bg_color)
+			c.draw_rect(c.x, c.y, w, h, c.bg_color)
 		}
 	}
 

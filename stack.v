@@ -148,7 +148,6 @@ fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
 	s.ui = ui
-
 	s.init_size()
 
 	// Init all children recursively
