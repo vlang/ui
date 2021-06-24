@@ -374,7 +374,7 @@ fn (mut c CanvasLayout) draw() {
 			w, h = c.full_width, c.full_height
 		}
 		if c.bg_radius > 0 {
-			radius := relative_size(c.bg_radius, w, h) 
+			radius := relative_size(c.bg_radius, w, h)
 			c.draw_rounded_rect(c.x, c.y, w, h, radius, c.bg_color)
 		} else {
 			c.draw_rect(c.x, c.y, w, h, c.bg_color)
