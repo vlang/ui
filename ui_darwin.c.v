@@ -3,8 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-// import sokol.sapp
-
 #include "@VROOT/ui_darwin.m"
 
 fn C.vui_message_box(s string)

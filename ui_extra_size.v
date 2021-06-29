@@ -1,8 +1,11 @@
 module ui
 
+import math
+
 pub const (
-	stretch = -100.
-	compact = 0. // from parent
+	stretch        = -10000.
+	compact        = 0. // from parent
+	z_index_hidden = -10000
 )
 
 pub enum WindowSizeType {
@@ -54,7 +57,6 @@ pub enum ChildSize {
 	compact
 	fixed
 	weighted
-	weighted_minsize
 	stretch
 	weighted_stretch
 }
@@ -77,9 +79,24 @@ mut:
 	height_mass    f64
 }
 
+[unsafe]
+pub fn (c &CachedSizes) free() {
+	unsafe {
+		c.width_type.free()
+		c.height_type.free()
+		c.adj_widths.free()
+		c.adj_heights.free()
+		c.fixed_widths.free()
+		c.fixed_heights.free()
+		c.weight_widths.free()
+		c.weight_heights.free()
+		free(c)
+	}
+}
+
 //********** Margin *********
 
-pub enum MarginSide {
+pub enum Side {
 	top
 	left
 	right
@@ -114,9 +131,22 @@ fn margins(m f64, ms Margin) Margins {
 //******** spacings ***********
 
 fn spacings(sp f64, sps []f64, len int) []f32 {
+	if len < 0 {
+		return []f32{}
+	}
 	mut spacing := [f32(sp)].repeat(len)
 	if sps.len == len {
 		spacing = sps.map(f32(it))
 	}
 	return spacing
+}
+
+fn relative_size(size f32, w int, h int) f32 {
+	return if size < 1 { size * f32(math.min(w, h)) } else { size }
+}
+
+struct XYPos {
+mut:
+	x int
+	y int
 }

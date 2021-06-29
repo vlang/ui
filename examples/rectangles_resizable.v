@@ -19,6 +19,8 @@ fn main() {
 		height: 64
 		width: 64
 		color: gx.rgb(255, 100, 100)
+		radius: 10
+		text: 'Red'
 	)
 	window := ui.window({
 		width: win_width
@@ -37,9 +39,9 @@ fn main() {
 			widths: ui.stretch
 		}, [
 			rect,
-			ui.rectangle(color: gx.rgb(100, 255, 100)),
-			ui.rectangle(color: gx.rgb(100, 100, 255)),
-			ui.rectangle(color: gx.rgb(255, 100, 255)),
+			ui.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
+			ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
+			ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
 		]),
 	])
 	app.window = window

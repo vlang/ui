@@ -7,7 +7,7 @@ import gx
 
 [heap]
 pub struct Label {
-mut:
+pub mut:
 	id         string
 	text       string
 	parent     Layout
@@ -24,6 +24,8 @@ mut:
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct LabelConfig {
@@ -34,6 +36,20 @@ pub struct LabelConfig {
 	text      string
 	text_cfg  gx.TextCfg
 	text_size f64
+}
+
+pub fn label(c LabelConfig) &Label {
+	lbl := &Label{
+		id: c.id
+		text: c.text
+		width: c.width
+		height: c.height
+		ui: 0
+		z_index: c.z_index
+		text_size: c.text_size
+		text_cfg: c.text_cfg
+	}
+	return lbl
 }
 
 fn (mut l Label) init(parent Layout) {
@@ -52,16 +68,24 @@ fn (mut l Label) init(parent Layout) {
 	l.init_size()
 }
 
-pub fn label(c LabelConfig) &Label {
-	lbl := &Label{
-		id: c.id
-		text: c.text
-		width: c.width
-		height: c.height
-		ui: 0
-		z_index: c.z_index
+[manualfree]
+pub fn (mut l Label) cleanup() {
+	unsafe { l.free() }
+}
+
+[unsafe]
+pub fn (l &Label) free() {
+	$if free ? {
+		print('label $l.id')
 	}
-	return lbl
+	unsafe {
+		l.id.free()
+		l.text.free()
+		free(l)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut l Label) set_pos(x int, y int) {
@@ -72,7 +96,7 @@ fn (mut l Label) set_pos(x int, y int) {
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
 		// println("size $l.text")
-		w, h := text_size<Label>(l, l.text)
+		w, h := text_size(l, l.text)
 		// println("label size: $w, $h ${l.text.split('\n').len}")
 		l.adj_width, l.adj_height = w, h * l.text.split('\n').len
 	}
@@ -106,7 +130,7 @@ fn (mut l Label) draw() {
 		// Draw the text at l.x and l.y + line height * current line
 		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
 		// l.draw_text(l.x, l.y + (height * i), split)
-		draw_text<Label>(l, l.x, l.y + (height * i), split)
+		draw_text(l, l.x, l.y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
 			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')
@@ -121,7 +145,7 @@ fn (mut l Label) draw() {
 }
 
 fn (mut l Label) set_visible(state bool) {
-	l.hidden = state
+	l.hidden = !state
 }
 
 fn (l &Label) focus() {

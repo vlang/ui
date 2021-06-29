@@ -11,11 +11,12 @@ enum RadioState {
 	check
 }
 */
-type RadioClickFn = fn ()
+type RadioClickFn = fn (voidptr, voidptr)
 
 [heap]
 pub struct Radio {
 pub mut:
+	id             string
 	selected_index int
 	values         []string
 	// state      RadioState
@@ -34,19 +35,45 @@ pub mut:
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 	// selected_value string
-	// onclick    RadioClickFn
+	on_click RadioClickFn
 }
 
 pub struct RadioConfig {
-	// onclick    RadioClickFn
-	values    []string
-	title     string
-	width     int
-	z_index   int
-	ref       &Radio = voidptr(0)
+	id       string
+	on_click RadioClickFn
+	values   []string
+	title    string
+	width    int
+	z_index  int
+	// ref       &Radio = voidptr(0)
 	text_cfg  gx.TextCfg
 	text_size f64
+}
+
+pub fn radio(c RadioConfig) &Radio {
+	mut r := &Radio{
+		id: c.id
+		height: 20
+		z_index: c.z_index
+		values: c.values
+		title: c.title
+		width: c.width
+		text_cfg: c.text_cfg
+		text_size: c.text_size
+		ui: 0
+		on_click: c.on_click
+	}
+	/*
+	if c.ref != 0 {
+		mut ref := c.ref
+		*ref = *r
+		return &ref
+	}
+	*/
+	return r
 }
 
 fn (mut r Radio) init(parent Layout) {
@@ -57,38 +84,42 @@ fn (mut r Radio) init(parent Layout) {
 	if r.width == 0 {
 		mut max := 0
 		for value in r.values {
-			width := text_width<Radio>(r, value)
+			width := text_width(r, value)
 			if width > max {
 				max = width
 			}
 		}
 		r.width = max + check_mark_size + 10
 	}
-	init_text_cfg<Radio>(mut r)
+	init_text_cfg(mut r)
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
-pub fn radio(c RadioConfig) &Radio {
-	mut r := &Radio{
-		height: 20
-		z_index: c.z_index
-		values: c.values
-		title: c.title
-		width: c.width
-		text_cfg: c.text_cfg
-		text_size: c.text_size
-		ui: 0
-		// onclick: c.onclick
+[manualfree]
+pub fn (mut r Radio) cleanup() {
+	mut subscriber := r.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, r)
+	unsafe { r.free() }
+}
+
+[unsafe]
+pub fn (r &Radio) free() {
+	$if free ? {
+		print('radio $r.id')
 	}
-	/*
-	if c.ref != 0 {
-		mut ref := c.ref
-		*ref = *r
-		return &ref
+	unsafe {
+		r.id.free()
+		for v in r.values {
+			v.free()
+		}
+		r.values.free()
+		r.title.free()
+		free(r)
 	}
-	*/
-	return r
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut r Radio) set_pos(x int, y int) {
@@ -115,7 +146,7 @@ fn (mut r Radio) draw() {
 		10, default_window_color)
 	// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
 	// r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
-	draw_text<Radio>(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+	draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
 	// Values
 	for i, val in r.values {
 		y := r.y + r.height * i + 15
@@ -128,7 +159,7 @@ fn (mut r Radio) draw() {
 		// Text
 		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
 		// r.draw_text(r.x + check_mark_size + 10, y, val)
-		draw_text<Radio>(r, r.x + check_mark_size + 10, y, val)
+		draw_text(r, r.x + check_mark_size + 10, y, val)
 	}
 	$if bb ? {
 		draw_bb(mut r, r.ui)
@@ -158,7 +189,7 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut r Radio) set_visible(state bool) {
-	r.hidden = state
+	r.hidden = !state
 }
 
 fn (mut r Radio) focus() {

@@ -77,7 +77,7 @@ fn main() {
 		ui.row({
 			margin: ui.Margin{10, 10, 10, 10}
 			widths: [200., ui.stretch]
-			// spacing: 10
+			spacing: 30
 		}, [
 			ui.column({ spacing: 13 }, [
 			ui.textbox(

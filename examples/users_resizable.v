@@ -4,7 +4,7 @@ import os
 
 const (
 	win_width   = 780
-	win_height  = 385
+	win_height  = 395
 	nr_cols     = 4
 	cell_height = 25
 	cell_width  = 100
@@ -72,6 +72,7 @@ fn main() {
 		state: app
 		title: 'V UI Demo'
 		mode: .resizable
+		native_message: false
 	}, [
 		ui.row({
 			margin_: .02
@@ -81,6 +82,7 @@ fn main() {
 			ui.column({
 			spacing: 10
 			heights: ui.compact
+			scrollview: true
 		}, [
 			ui.textbox(
 				max_len: 20
@@ -123,13 +125,18 @@ fn main() {
 				widths: [.5, .2]
 				heights: 20.
 				spacing: .3
-			}, [ui.button(
+			}, [
+				ui.button(
 				text: 'Add user'
+				tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
 				onclick: btn_add_click
+				radius: .3
 			),
 				ui.button(
+					tooltip: 'about'
 					text: '?'
 					onclick: btn_help_click
+					radius: .3
 				),
 			]),
 			ui.row({
@@ -139,6 +146,7 @@ fn main() {
 			}, [app.pbar, app.label]),
 		]),
 			ui.column({
+				scrollview: true
 				alignments: {
 					center: [
 						0,
@@ -157,10 +165,10 @@ fn main() {
 				]
 				bg_color: gx.white
 			}, [
-				ui.canvas_layout(
+				ui.canvas_plus(
 					width: 400
 					height: 275
-					draw_fn: draw
+					on_draw: draw
 				),
 				ui.picture(
 					width: 100
@@ -181,8 +189,9 @@ fn main() {
 fn menu_click() {
 }
 
-fn btn_help_click(a voidptr, b voidptr) {
-	ui.message_box('Built with V UI')
+fn btn_help_click(a voidptr, b &ui.Button) {
+	// ui.message_box('Built with V UI')
+	b.ui.window.message('Built with V UI\nThus \nAnd')
 }
 
 /*

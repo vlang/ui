@@ -311,7 +311,9 @@ fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
 	mut lb := win.listbox('lb1w')
 	sw, sh := lb.size()
-	println('win init ($sw, $sh)')
+	mut row := win.stack('row_btn1')
+	rw, rh := row.size()
+	println('win init ($sw, $sh) ($row.x, $row.y ,$rw, $rh)')
 	set_output_label(win)
 	win.update_layout()
 }

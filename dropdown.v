@@ -13,8 +13,10 @@ const (
 
 pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
+[heap]
 pub struct Dropdown {
 pub mut:
+	id                   string
 	def_text             string
 	width                int = 150
 	dropdown_height      int
@@ -32,9 +34,12 @@ pub mut:
 	is_focused           bool
 	on_selection_changed SelectionChangedFn
 	hidden               bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct DropdownConfig {
+	id                   string
 	def_text             string
 	x                    int
 	y                    int
@@ -51,18 +56,9 @@ pub:
 	text string
 }
 
-fn (mut dd Dropdown) init(parent Layout) {
-	dd.parent = parent
-	ui := parent.get_ui()
-	dd.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, dd_click, dd)
-	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
-	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
-}
-
 pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 	mut dd := &Dropdown{
+		id: c.id
 		width: c.width
 		dropdown_height: c.height
 		z_index: c.z_index
@@ -73,6 +69,44 @@ pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
 		ui: 0
 	}
 	return dd
+}
+
+fn (mut dd Dropdown) init(parent Layout) {
+	dd.parent = parent
+	ui := parent.get_ui()
+	dd.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, dd_click, dd)
+	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
+	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
+}
+
+[manualfree]
+fn (mut dd Dropdown) cleanup() {
+	mut subscriber := dd.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, dd)
+	subscriber.unsubscribe_method(events.on_key_down, dd)
+	subscriber.unsubscribe_method(events.on_mouse_move, dd)
+	unsafe { dd.free() }
+}
+
+[unsafe]
+pub fn (dd &Dropdown) free() {
+	$if free ? {
+		print('dropdown $dd.id')
+	}
+	unsafe {
+		dd.id.free()
+		dd.def_text.free()
+		for item in dd.items {
+			item.text.free()
+		}
+		dd.items.free()
+		free(dd)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut dd Dropdown) set_pos(x int, y int) {
@@ -132,7 +166,7 @@ pub fn (mut dd Dropdown) add_item(text string) {
 }
 
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
-	if dd.hidden {
+	if dd.hidden || !dd.is_focused {
 		return
 	}
 	if dd.hover_index < 0 {
@@ -175,6 +209,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if !dd.point_inside(e.x, e.y) || e.action == .down {
+		dd.unfocus()
 		return
 	}
 	offset_start(mut dd)
@@ -206,7 +241,7 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut dd Dropdown) set_visible(state bool) {
-	dd.hidden = state
+	dd.hidden = !state
 }
 
 fn (mut dd Dropdown) focus() {

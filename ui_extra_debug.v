@@ -46,7 +46,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	adj_width, adj_height := s.adj_size()
 	real_width, real_height := s.size()
 	println('$tab   free size: ($free_width, $free_height) adj_size: ($adj_width, $adj_height) real_size: ($real_width, $real_height)')
-	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
+	println('$tab   types: (widths: $s.cache.width_type, heights: $s.cache.height_type)')
 	println('$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: $s.total_spacing()')
 	println('$tab   margin')
 	widths, heights := s.children_sizes()
@@ -67,7 +67,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 
 fn (s &Stack) debug_show_size(t string) {
 	print('${t}size of Stack ${typeof(s).name}')
-	C.printf(' %p: ', s)
+	C.printf(c' %p: ', s)
 	println(' ($s.width, $s.height)')
 }
 
@@ -75,11 +75,11 @@ fn (s &Stack) debug_show_sizes(t string) {
 	parent := s.parent
 	sw, sh := s.size()
 	print('${t}Stack ${typeof(s).name}')
-	C.printf(' %p', s)
+	C.printf(c' %p', s)
 	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacings')
 	if mut parent is Stack {
 		// print('	parent: $${typeof(parent).name} ')
-		C.printf(' %p', parent)
+		C.printf(c' %p', parent)
 		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacings')
 	} else if parent is Window {
 		println('	parent: Window => size ($parent.width, $parent.height)  orig: ($parent.orig_width, $parent.orig_height) ')
@@ -87,7 +87,7 @@ fn (s &Stack) debug_show_sizes(t string) {
 	for i, mut child in s.children {
 		w, h := child.size()
 		print('		$i) $child.type_name()')
-		C.printf(' %p', child)
+		C.printf(c' %p', child)
 		println(' size => $w, $h')
 	}
 }

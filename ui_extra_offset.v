@@ -22,6 +22,17 @@ fn offset_end(mut w Widget) {
 
 //** Drag stuff ***//
 
+struct Dragger {
+pub mut:
+	activated bool
+	widget    Widget
+	start_x   f64
+	start_y   f64
+	pos_x     f64
+	pos_y     f64
+	time      time.Time
+}
+
 /*
 NB: would like external mechanism only depending on point_inside methods of Widgets
 shift key (or other) to activate possible dragging
@@ -33,60 +44,60 @@ fn drag_register(w Widget, ui &UI, e &MouseEvent) {
 			println('drag ${typeof(w).name}')
 		}
 		mut window := ui.window
-		if window.drag_activated {
-			if w.z_index > window.drag_widget.z_index {
-				window.drag_widget = w
-				window.drag_start_x = e.x - w.offset_x
-				window.drag_start_y = e.y - w.offset_y
-				// println('drag: ($e.x, $e.y, ${window.drag_start_x},${window.drag_start_y})')
-				window.drag_pos_x = e.x
-				window.drag_pos_y = e.y
-				window.drag_time = time.now()
+		if window.dragger.activated {
+			if w.z_index > window.dragger.widget.z_index {
+				window.dragger.widget = w
+				window.dragger.start_x = e.x - w.offset_x
+				window.dragger.start_y = e.y - w.offset_y
+				// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
+				window.dragger.pos_x = e.x
+				window.dragger.pos_y = e.y
+				window.dragger.time = time.now()
 			}
 		} else {
-			window.drag_activated = true
-			window.drag_widget = w
-			window.drag_start_x = e.x - w.offset_x
-			window.drag_start_y = e.y - w.offset_y
-			// println('drag: ($e.x, $e.y, ${window.drag_start_x},${window.drag_start_y})')
-			window.drag_pos_x = e.x
-			window.drag_pos_y = e.y
-			window.drag_time = time.now()
+			window.dragger.activated = true
+			window.dragger.widget = w
+			window.dragger.start_x = e.x - w.offset_x
+			window.dragger.start_y = e.y - w.offset_y
+			// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
+			window.dragger.pos_x = e.x
+			window.dragger.pos_y = e.y
+			window.dragger.time = time.now()
 		}
 	}
 }
 
 fn drag_child(mut window Window, x f64, y f64) {
-	mut w := window.drag_widget
+	mut w := window.dragger.widget
 	sapp.show_mouse(false)
 	$if speed ? {
 		t := time.now()
 		speed := 0.1
-		dt := (t - window.drag_time).milliseconds() * speed
-		window.drag_time = t
+		dt := (t - window.dragger.time).milliseconds() * speed
+		window.dragger.time = t
 
-		dx := (x - window.drag_pos_x) / dt
-		dy := (y - window.drag_pos_y) / dt
+		dx := (x - window.dragger.pos_x) / dt
+		dy := (y - window.dragger.pos_y) / dt
 		// println("dt=$dt dx=$dx dy=$dy")
 
-		w.offset_x = int(x + dx - window.drag_start_x)
-		w.offset_y = int(y + dy - window.drag_start_y)
+		w.offset_x = int(x + dx - window.dragger.start_x)
+		w.offset_y = int(y + dy - window.dragger.start_y)
 
-		window.drag_pos_x = x
-		window.drag_pos_y = y
+		window.dragger.pos_x = x
+		window.dragger.pos_y = y
 	} $else {
-		w.offset_x = int(x - window.drag_start_x)
-		w.offset_y = int(y - window.drag_start_y)
+		w.offset_x = int(x - window.dragger.start_x)
+		w.offset_y = int(y - window.dragger.start_y)
 	}
 }
 
 fn drop_child(mut window Window) {
 	$if drag ? {
-		w := window.drag_widget
+		w := window.dragger.widget
 		println('drop $w.type_name()')
 	}
 	sapp.show_mouse(true)
-	window.drag_activated = false
+	window.dragger.activated = false
 }
 
 //**** offset ****
@@ -109,8 +120,9 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 	}
 }
 
-pub struct At {
-	x      int
-	y      int
-	widget Widget
+// allow to specify widgets with absolute coordinates (CanvasLayout and Window)
+pub fn at(x int, y int, w Widget) Widget {
+	mut w2 := w
+	w2.x, w2.y = x, y
+	return w2
 }

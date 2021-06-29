@@ -22,7 +22,9 @@ pub:
 	align      Alignments
 	alignments VerticalAlignments
 	bg_color   gx.Color = no_color
+	bg_radius  f64
 	title      string
+	scrollview bool
 }
 
 pub fn row(c RowConfig, children []Widget) &Stack {
@@ -40,6 +42,8 @@ pub fn row(c RowConfig, children []Widget) &Stack {
 		vertical_alignments: c.alignments
 		align: c.align
 		bg_color: c.bg_color
+		bg_radius: f32(c.bg_radius)
 		title: c.title
+		scrollview: c.scrollview
 	}, children)
 }

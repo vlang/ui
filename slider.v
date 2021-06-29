@@ -19,6 +19,7 @@ pub enum Orientation {
 [heap]
 pub struct Slider {
 pub mut:
+	id                   string
 	height               int // track width
 	width                int // track height
 	thumb_width          int
@@ -43,9 +44,12 @@ pub mut:
 	track_line_displayed bool
 	entering             bool
 	hidden               bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct SliderConfig {
+	id                   string
 	width                int
 	height               int
 	z_index              int
@@ -61,25 +65,9 @@ pub struct SliderConfig {
 	entering             bool
 }
 
-fn (mut s Slider) init(parent Layout) {
-	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, slider_click, s)
-	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
-	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
-	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
-	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
-	$if android {
-		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
-		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
-		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
-	}
-}
-
 pub fn slider(c SliderConfig) &Slider {
 	mut s := &Slider{
+		id: c.id
 		height: c.height
 		width: c.width
 		min: c.min
@@ -110,6 +98,53 @@ pub fn slider(c SliderConfig) &Slider {
 		s.min = tmp
 	}
 	return s
+}
+
+fn (mut s Slider) init(parent Layout) {
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, slider_click, s)
+	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
+	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
+	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
+		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
+		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
+	}
+}
+
+[manualfree]
+pub fn (mut s Slider) cleanup() {
+	mut subscriber := s.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, s)
+	subscriber.unsubscribe_method(events.on_key_down, s)
+	subscriber.unsubscribe_method(events.on_mouse_down, s)
+	subscriber.unsubscribe_method(events.on_mouse_up, s)
+	subscriber.unsubscribe_method(events.on_mouse_move, s)
+	$if android {
+		subscriber.unsubscribe_method(events.on_touch_down, s)
+		subscriber.unsubscribe_method(events.on_touch_up, s)
+		subscriber.unsubscribe_method(events.on_touch_move, s)
+	}
+	unsafe { s.free() }
+}
+
+[unsafe]
+pub fn (s &Slider) free() {
+	$if free ? {
+		print('slider $s.id')
+	}
+	unsafe {
+		s.id.free()
+		free(s)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (s &Slider) draw_thumb() {
@@ -243,7 +278,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 }
 
 fn (s &Slider) point_inside(x f64, y f64) bool {
-	return point_inside<Slider>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+	return point_inside(s, x, y)
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
@@ -328,7 +363,7 @@ fn (mut s Slider) change_value(x int, y int) {
 }
 
 fn (mut s Slider) set_visible(state bool) {
-	s.hidden = state
+	s.hidden = !state
 }
 
 fn (mut s Slider) focus() {

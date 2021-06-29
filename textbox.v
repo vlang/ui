@@ -37,6 +37,7 @@ type TextBoxEnterFn = fn (string, voidptr)
 [heap]
 pub struct TextBox {
 pub mut:
+	id         string
 	height     int
 	width      int
 	x          int
@@ -75,6 +76,8 @@ pub mut:
 	text_cfg  gx.TextCfg
 	text_size f64
 	hidden    bool
+	// component state for composable widget
+	component voidptr
 mut:
 	is_typing bool
 }
@@ -88,6 +91,7 @@ struct Rect {
 }
 */
 pub struct TextBoxConfig {
+	id               string
 	width            int
 	height           int = 22
 	z_index          int
@@ -114,33 +118,13 @@ pub struct TextBoxConfig {
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
-}
-
-fn (mut tb TextBox) init(parent Layout) {
-	tb.parent = parent
-	ui := parent.get_ui()
-	tb.ui = ui
-	if is_empty_text_cfg(tb.text_cfg) {
-		tb.text_cfg = tb.ui.window.text_cfg
-	}
-	if tb.text_size > 0 {
-		_, win_height := tb.ui.window.size()
-		tb.text_cfg = gx.TextCfg{
-			...tb.text_cfg
-			size: text_size_as_int(tb.text_size, win_height)
-		}
-	}
-	// return widget
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, tb_click, tb)
-	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
-	subscriber.subscribe_method(events.on_char, tb_char, tb)
-	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
-	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
+	// added when user set text after but before init
+	text_after bool
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
 	tb := &TextBox{
+		id: c.id
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		z_index: c.z_index
@@ -167,10 +151,59 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text_size: c.text_size
 		is_multi: c.is_multi
 	}
-	if c.text == 0 {
+	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
 	}
 	return tb
+}
+
+fn (mut tb TextBox) init(parent Layout) {
+	tb.parent = parent
+	ui := parent.get_ui()
+	tb.ui = ui
+	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
+		tb.text_cfg = tb.ui.window.text_cfg
+	}
+	if tb.text_size > 0 {
+		_, win_height := tb.ui.window.size()
+		tb.text_cfg = gx.TextCfg{
+			...tb.text_cfg
+			size: text_size_as_int(tb.text_size, win_height)
+		}
+	}
+	// return widget
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, tb_click, tb)
+	subscriber.subscribe_method(events.on_key_down, tb_key_down, tb)
+	subscriber.subscribe_method(events.on_char, tb_char, tb)
+	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
+	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
+}
+
+[manualfree]
+fn (mut tb TextBox) cleanup() {
+	mut subscriber := tb.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, tb)
+	subscriber.unsubscribe_method(events.on_key_down, tb)
+	subscriber.unsubscribe_method(events.on_char, tb)
+	// subscriber.unsubscribe_method(events.on_key_up, tb)
+	subscriber.unsubscribe_method(events.on_mouse_move, tb)
+	unsafe { tb.free() }
+}
+
+[unsafe]
+pub fn (tb &TextBox) free() {
+	$if free ? {
+		print('textbox $tb.id')
+	}
+	unsafe {
+		tb.id.free()
+		tb.placeholder.free()
+		free(tb)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 // fn (tb &TextBox) draw_inner_border() {
@@ -195,7 +228,7 @@ fn (mut t TextBox) set_pos(x int, y int) {
 }
 
 fn (tb &TextBox) adj_size() (int, int) {
-	w, mut h := text_size<TextBox>(tb, tb.text)
+	w, mut h := text_size(tb, tb.text)
 	if tb.is_multi {
 		h = h * tb.text.split('\n').len
 	}
@@ -213,6 +246,7 @@ fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	if tb.height > ui.max_textbox_height && !tb.is_multi {
 		tb.height = ui.max_textbox_height
 	}
+	update_text_size(mut tb)
 	return tb.width, tb.height
 }
 
@@ -228,15 +262,14 @@ fn (mut tb TextBox) draw() {
 		draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 			tb.is_error != 0 && *tb.is_error)
 	}
-	width := if text.len == 0 { 0 } else { text_width<TextBox>(tb, text) }
+	width := if text.len == 0 { 0 } else { text_width(tb, text) }
 	text_y := tb.y + 2 // TODO off by 1px
 	mut skip_idx := 0
 	// Placeholder
 	if text == '' && placeholder != '' {
 		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, placeholder, tb.placeholder_cfg)
 		// tb.draw_text(tb.x + ui.textbox_padding, text_y, placeholder)
-		draw_text_with_color<TextBox>(tb, tb.x + ui.textbox_padding, text_y, placeholder,
-			gx.gray)
+		draw_text_with_color(tb, tb.x + ui.textbox_padding, text_y, placeholder, gx.gray)
 	}
 	// Text
 	else {
@@ -266,7 +299,8 @@ fn (mut tb TextBox) draw() {
 			}
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..], tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding, text_y, text[skip_idx..])
-			draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			// draw_text(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
+			draw_text(tb, tb.x + ui.textbox_padding, text_y, text[skip_idx..])
 		} else {
 			if tb.is_password {
 				/*
@@ -278,12 +312,12 @@ fn (mut tb TextBox) draw() {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
 				// 	text.len), tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, strings.repeat(`*`, text.len))
-				draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, strings.repeat(`*`,
-					text.len))
+				draw_text(tb, tb.x + ui.textbox_padding, text_y, strings.repeat(`*`, text.len))
 			} else {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding, text_y, text, tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding, text_y, text)
-				draw_text<TextBox>(tb, tb.x + ui.textbox_padding, text_y, text)
+				// draw_text(tb, tb.x + ui.textbox_padding, text_y, text)
+				draw_text(tb, tb.x + ui.textbox_padding, text_y, text)
 			}
 		}
 	}
@@ -292,13 +326,13 @@ fn (mut tb TextBox) draw() {
 		// no cursor in sel mode
 		mut cursor_x := tb.x + ui.textbox_padding
 		if tb.is_password {
-			cursor_x += text_width<TextBox>(tb, strings.repeat(`*`, tb.cursor_pos))
+			cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos))
 		} else if skip_idx > 0 {
-			cursor_x += text_width<TextBox>(tb, text[skip_idx..])
+			cursor_x += text_width(tb, text[skip_idx..])
 		} else if text.len > 0 {
 			// left := tb.text[..tb.cursor_pos]
 			left := text.ustring().left(tb.cursor_pos)
-			cursor_x += text_width<TextBox>(tb, left)
+			cursor_x += text_width(tb, left)
 		}
 		if text.len == 0 {
 			cursor_x = tb.x + ui.textbox_padding
@@ -590,7 +624,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
-	return point_inside<TextBox>(tb, x, y) // x >= tb.x && x <= tb.x + tb.width && y >= tb.y && y <= tb.y + tb.height
+	return point_inside(tb, x, y)
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
@@ -610,7 +644,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		mut prev_width := 0
 		ustr := tb.text.ustring()
 		for i in 1 .. ustr.len {
-			width := text_width<TextBox>(tb, ustr.left(i))
+			width := text_width(tb, ustr.left(i))
 			if prev_width <= x && x <= width {
 				if i < tb.sel_start && tb.sel_end < tb.sel_start {
 					tb.sel_end = tb.sel_start
@@ -640,7 +674,10 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
+		tb.unfocus()
 		return
+	} else {
+		tb.focus()
 	}
 	if !tb.dragging && e.action == MouseAction(1) {
 		tb.sel_start = 0
@@ -648,7 +685,6 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	tb.dragging = int(e.action) == 1
 	tb.ui.show_cursor = true
-	tb.focus()
 	if *tb.text == '' {
 		return
 	}
@@ -662,7 +698,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	ustr := tb.text.ustring()
 	for i in 1 .. ustr.len {
 		// width := tb.ui.gg.text_width(tb.text[..i])
-		width := text_width<TextBox>(tb, ustr.left(i))
+		width := text_width(tb, ustr.left(i))
 		if prev_width <= x && x <= width {
 			tb.cursor_pos = i
 			return
@@ -673,7 +709,7 @@ fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 }
 
 fn (mut tb TextBox) set_visible(state bool) {
-	tb.hidden = state
+	tb.hidden = !state
 }
 
 pub fn (mut tb TextBox) focus() {

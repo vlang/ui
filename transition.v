@@ -5,6 +5,7 @@ module ui
 
 import time
 
+[heap]
 pub struct Transition {
 mut:
 	// pub:
@@ -24,6 +25,7 @@ mut:
 	ui               &UI = voidptr(0)
 	hidden           bool
 pub mut:
+	id             string
 	target_value   int
 	animated_value &int
 }
@@ -34,12 +36,6 @@ pub struct TransitionConfig {
 	animated_value &int = 0
 	easing         EasingFunction
 	ref            &Transition = voidptr(0)
-}
-
-fn (mut t Transition) init(parent Layout) {
-	t.parent = parent
-	ui := parent.get_ui()
-	t.ui = ui
 }
 
 pub fn transition(c TransitionConfig) &Transition {
@@ -56,8 +52,33 @@ pub fn transition(c TransitionConfig) &Transition {
 	return transition
 }
 
+fn (mut t Transition) init(parent Layout) {
+	t.parent = parent
+	ui := parent.get_ui()
+	t.ui = ui
+}
+
+[manualfree]
+pub fn (mut t Transition) cleanup() {
+	unsafe { t.free() }
+}
+
+[unsafe]
+pub fn (t &Transition) free() {
+	$if free ? {
+		print('transition $t.id')
+	}
+	unsafe {
+		t.id.free()
+		free(t)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
+}
+
 pub fn (mut t Transition) set_value(animated_value &int) {
-	t.animated_value = animated_value
+	t.animated_value = unsafe { animated_value }
 	t.start_value = *animated_value
 	t.target_value = *animated_value
 	t.last_draw_target = *animated_value
