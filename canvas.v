@@ -7,8 +7,10 @@ import gg
 
 pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int, y_offset int)
 
+[heap]
 pub struct Canvas {
 pub mut:
+	id       string
 	width    int
 	height   int
 	x        int
@@ -18,6 +20,8 @@ pub mut:
 	z_index  int
 	ui       &UI = 0
 	hidden   bool
+	// component state for composable widget
+	component voidptr
 mut:
 	parent  Layout
 	draw_fn DrawFn      = voidptr(0)
@@ -25,6 +29,7 @@ mut:
 }
 
 pub struct CanvasConfig {
+	id      string
 	width   int
 	height  int
 	z_index int
@@ -32,19 +37,39 @@ pub struct CanvasConfig {
 	draw_fn DrawFn = voidptr(0)
 }
 
-fn (mut c Canvas) init(parent Layout) {
-	c.parent = parent
-	c.gg = parent.get_ui().gg
-}
-
 pub fn canvas(c CanvasConfig) &Canvas {
 	mut canvas := &Canvas{
+		id: c.id
 		width: c.width
 		height: c.height
 		z_index: c.z_index
 		draw_fn: c.draw_fn
 	}
 	return canvas
+}
+
+fn (mut c Canvas) init(parent Layout) {
+	c.parent = parent
+	c.gg = parent.get_ui().gg
+}
+
+[manualfree]
+pub fn (mut c Canvas) cleanup() {
+	unsafe { c.free() }
+}
+
+[unsafe]
+pub fn (c &Canvas) free() {
+	$if free ? {
+		print('canvas $c.id')
+	}
+	unsafe {
+		c.id.free()
+		free(c)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut c Canvas) set_pos(x int, y int) {
@@ -72,7 +97,7 @@ fn (mut c Canvas) draw() {
 }
 
 fn (mut c Canvas) set_visible(state bool) {
-	c.hidden = state
+	c.hidden = !state
 }
 
 fn (c &Canvas) focus() {
@@ -86,5 +111,5 @@ fn (c &Canvas) unfocus() {
 }
 
 fn (c &Canvas) point_inside(x f64, y f64) bool {
-	return point_inside<Canvas>(c, x, y)
+	return point_inside(c, x, y)
 }

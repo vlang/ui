@@ -8,10 +8,15 @@ import gg
 
 type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
 
+[heap]
 pub struct Picture {
 pub mut:
+	id       string
 	offset_x int
 	offset_y int
+	hidden   bool
+	// component state for composable widget
+	component voidptr
 mut:
 	text      string
 	parent    Layout
@@ -26,10 +31,10 @@ mut:
 	image     gg.Image
 	on_click  PictureClickFn
 	use_cache bool
-	hidden    bool
 }
 
 pub struct PictureConfig {
+	id        string
 	path      string
 	width     int
 	height    int
@@ -39,6 +44,28 @@ pub struct PictureConfig {
 	use_cache bool     = true
 	ref       &Picture = voidptr(0)
 	image     gg.Image
+}
+
+pub fn picture(c PictureConfig) &Picture {
+	if !os.exists(c.path) {
+		eprintln('V UI: picture file "$c.path" not found')
+	}
+	// if c.width == 0 || c.height == 0 {
+	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
+	// }
+	mut pic := &Picture{
+		id: c.id
+		width: c.width
+		height: c.height
+		z_index: c.z_index
+		movable: c.movable
+		path: c.path
+		use_cache: c.use_cache
+		on_click: c.on_click
+		image: c.image
+		ui: 0
+	}
+	return pic
 }
 
 fn (mut pic Picture) init(parent Layout) {
@@ -71,25 +98,23 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 }
 
-pub fn picture(c PictureConfig) &Picture {
-	if !os.exists(c.path) {
-		eprintln('V UI: picture file "$c.path" not found')
+[manualfree]
+pub fn (mut p Picture) cleanup() {
+	unsafe { p.free() }
+}
+
+[unsafe]
+pub fn (p &Picture) free() {
+	$if free ? {
+		print('picture $p.id')
 	}
-	// if c.width == 0 || c.height == 0 {
-	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
-	// }
-	mut pic := &Picture{
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		movable: c.movable
-		path: c.path
-		use_cache: c.use_cache
-		on_click: c.on_click
-		image: c.image
-		ui: 0
+	unsafe {
+		// p.image.free()
+		free(p)
 	}
-	return pic
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
@@ -137,7 +162,7 @@ fn (mut pic Picture) draw() {
 }
 
 fn (mut pic Picture) set_visible(state bool) {
-	pic.hidden = state
+	pic.hidden = !state
 }
 
 fn (pic &Picture) focus() {
@@ -151,5 +176,5 @@ fn (pic &Picture) unfocus() {
 }
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {
-	return point_inside<Picture>(pic, x, y)
+	return point_inside(pic, x, y)
 }

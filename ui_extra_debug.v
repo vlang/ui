@@ -46,7 +46,7 @@ fn (s &Stack) debug_show_cache(depth int, txt string) {
 	adj_width, adj_height := s.adj_size()
 	real_width, real_height := s.size()
 	println('$tab   free size: ($free_width, $free_height) adj_size: ($adj_width, $adj_height) real_size: ($real_width, $real_height)')
-	println('$tab   types: ($s.cache.width_type,$s.cache.height_type)')
+	println('$tab   types: (widths: $s.cache.width_type, heights: $s.cache.height_type)')
 	println('$tab   margins: (${s.margin(.top)}, ${s.margin(.bottom)}, ${s.margin(.left)}, ${s.margin(.right)}) total_spacing: $s.total_spacing()')
 	println('$tab   margin')
 	widths, heights := s.children_sizes()

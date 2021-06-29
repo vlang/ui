@@ -1,13 +1,7 @@
 import ui
 import math
 import os
-
-const (
-	buttons_per_row = 4
-	// bwidth          = 30
-	// bheight         = 30
-	bpadding        = 5
-)
+import gx
 
 struct App {
 mut:
@@ -43,12 +37,25 @@ fn main() {
 			read_only: true
 		),
 	]
-	for op in ops {
+
+	for row_ops in ops {
+		mut row_children := []ui.Widget{}
+		for op in row_ops {
+			row_children << ui.button(
+				text: op
+				onclick: btn_click
+				text_size: 1. / 20
+				radius: .25
+				theme: 'blue'
+				hoverable: true
+			)
+		}
 		children << ui.row({
-			spacing: 5
+			spacing: .02
 			widths: ui.stretch
-		}, get_row(op))
+		}, row_children)
 	}
+
 	app.window = ui.window({
 		width: 300
 		height: 400
@@ -59,8 +66,9 @@ fn main() {
 	}, [
 		ui.column({
 			margin_: 10
-			spacing: 5
+			spacing: .02
 			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+			bg_color: gx.rgb(240, 180, 130)
 		}, children),
 	])
 	// app.text = "size= ${app.window.width} ${app.window.height}"
@@ -195,38 +203,3 @@ fn (mut app App) calculate() {
 	// eprintln('Operands: $app.operands  | Operations: $app.operations ')
 	// eprintln('-------- result: $result | i: $i -------------------')
 }
-
-fn get_row(ops []string) []ui.Widget {
-	mut children := []ui.Widget{}
-	for op in ops {
-		if op == ' ' {
-			continue
-		}
-		children << ui.button(
-			text: op
-			onclick: btn_click
-			text_size: 1. / 20
-		)
-	}
-	return children
-}
-
-/*
-fn (mut app App) add_button(text string, button_idx int) {
-	// Calculate button's coordinates from its index
-	x := bpadding + (button_idx % buttons_per_row) * (bwidth + bpadding)
-	y := bpadding + bheight + (button_idx / buttons_per_row) * (bwidth + bpadding)
-	// Skip empty buttons
-	if text != ' ' {
-		app.btns << ui.new_button({
-			text: text
-			x: x
-			y: y
-			parent: app.window
-			onclick: btn_click
-			width: bwidth
-			height: bheight
-		})
-	}
-}
-*/

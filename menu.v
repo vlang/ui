@@ -11,10 +11,14 @@ const (
 	menu_border_color = gx.rgb(223, 223, 223)
 )
 
+[heap]
 pub struct Menu {
 pub mut:
-	offset_x int
-	offset_y int
+	id        string
+	offset_x  int
+	offset_y  int
+	hidden    bool
+	component voidptr
 mut:
 	text      string
 	parent    Layout
@@ -27,16 +31,6 @@ mut:
 	items     []MenuItem
 	text_cfg  gx.TextCfg
 	text_size f64
-	hidden    bool
-}
-
-pub struct MenuConfig {
-	width     int = 150
-	z_index   int
-	text_cfg  gx.TextCfg
-	text_size f64
-	text      string
-	items     []MenuItem
 }
 
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
@@ -48,18 +42,19 @@ pub mut:
 	text string
 }
 
-fn (mut m Menu) init(parent Layout) {
-	m.parent = parent
-	ui := parent.get_ui()
-	m.ui = ui
-	init_text_cfg<Menu>(mut m)
-	m.update_height()
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, menu_click, m)
+pub struct MenuConfig {
+	id        string
+	width     int = 150
+	z_index   int
+	text_cfg  gx.TextCfg
+	text_size f64
+	text      string
+	items     []MenuItem
 }
 
 pub fn menu(c MenuConfig) &Menu {
 	return &Menu{
+		id: c.id
 		text: c.text
 		items: c.items
 		width: c.width
@@ -67,6 +62,42 @@ pub fn menu(c MenuConfig) &Menu {
 		z_index: c.z_index
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+	}
+}
+
+fn (mut m Menu) init(parent Layout) {
+	m.parent = parent
+	ui := parent.get_ui()
+	m.ui = ui
+	init_text_cfg(mut m)
+	m.update_height()
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, menu_click, m)
+}
+
+[manualfree]
+pub fn (mut m Menu) cleanup() {
+	mut subscriber := m.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, m)
+	unsafe { m.free() }
+}
+
+[unsafe]
+pub fn (m &Menu) free() {
+	$if free ? {
+		print('menu $m.id')
+	}
+	unsafe {
+		m.id.free()
+		m.text.free()
+		for item in m.items {
+			item.text.free()
+		}
+		m.items.free()
+		free(m)
+	}
+	$if free ? {
+		println(' -> freed')
 	}
 }
 
@@ -127,7 +158,7 @@ pub fn (mut m Menu) add_item(text string, action MenuItemFn) {
 }
 
 fn (mut m Menu) set_visible(state bool) {
-	m.hidden = state
+	m.hidden = !state
 }
 
 fn (m &Menu) focus() {
@@ -141,7 +172,7 @@ fn (m &Menu) unfocus() {
 }
 
 fn (m &Menu) point_inside(x f64, y f64) bool {
-	return point_inside<Menu>(m, x, y)
+	return point_inside(m, x, y)
 }
 
 pub fn (mut m Menu) set_text(s string) {

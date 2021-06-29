@@ -15,6 +15,7 @@ const (
 [heap]
 pub struct ProgressBar {
 pub mut:
+	id         string
 	height     int
 	width      int
 	x          int
@@ -29,9 +30,12 @@ pub mut:
 	max        int
 	is_focused bool
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct ProgressBarConfig {
+	id      string
 	width   int
 	height  int = 16
 	z_index int
@@ -40,14 +44,9 @@ pub struct ProgressBarConfig {
 	val     int
 }
 
-fn (mut pb ProgressBar) init(parent Layout) {
-	pb.parent = parent
-	ui := parent.get_ui()
-	pb.ui = ui
-}
-
 pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 	mut pb := &ProgressBar{
+		id: c.id
 		height: c.height
 		width: c.width
 		z_index: c.z_index
@@ -57,6 +56,31 @@ pub fn progressbar(c ProgressBarConfig) &ProgressBar {
 		ui: 0
 	}
 	return pb
+}
+
+fn (mut pb ProgressBar) init(parent Layout) {
+	pb.parent = parent
+	ui := parent.get_ui()
+	pb.ui = ui
+}
+
+[manualfree]
+pub fn (mut pb ProgressBar) cleanup() {
+	unsafe { pb.free() }
+}
+
+[unsafe]
+pub fn (pb &ProgressBar) free() {
+	$if free ? {
+		print('progress_bar $pb.id')
+	}
+	unsafe {
+		pb.id.free()
+		free(pb)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut pb ProgressBar) set_pos(x int, y int) {
@@ -95,11 +119,11 @@ fn (mut pb ProgressBar) draw() {
 }
 
 fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
-	return point_inside<ProgressBar>(pb, x, y) // x >= pb.x && x <= pb.x + pb.width && y >= pb.y && y <= pb.y + pb.height
+	return point_inside(pb, x, y)
 }
 
 fn (mut pb ProgressBar) set_visible(state bool) {
-	pb.hidden = state
+	pb.hidden = !state
 }
 
 fn (pb &ProgressBar) focus() {
