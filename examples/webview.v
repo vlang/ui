@@ -1,5 +1,5 @@
 import ui
-import ui.webview
+import webview
 
 struct App {
 }

@@ -1,8 +1,8 @@
 // Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license that can be found in the LICENSE file.
 module webview
+import ui
 
-// import ui
 [heap]
 struct WebView {
 	// widget ui.Widget
@@ -29,7 +29,7 @@ pub fn new_window(cfg Config) &WebView {
 		create_linux_web_view(cfg.url, cfg.title)
 	}
 	$if windows {
-		println('webview not implemented on windows yet')
+		C.new_windows_web_view(cfg.url.str, cfg.title.str)
 	}
 	return &WebView{
 		url: cfg.url
@@ -44,5 +44,8 @@ pub fn (w &WebView) close() {
 	$if linux {
 		// Untested: not sure!
 		C.gtk_main_quit()
+	}
+	$if windows {
+		C.windows_webview_close()
 	}
 }
