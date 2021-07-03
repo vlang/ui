@@ -53,6 +53,8 @@ fn main() {
 			ui.canvas_layout({
 				on_draw: draw
 				on_mouse_move: mouse_move
+				full_width: win_width - 100
+				full_height: win_height
 				scrollview: true
 			}, [
 				ui.at(10, 40, ui.row({ spacing: 10 }, [
@@ -165,7 +167,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 }
 
 fn draw(c &ui.CanvasLayout, app voidptr) {
-	w, h := c.width, c.height
+	w, h := c.full_width, c.full_height
 	c.draw_rect(0, 0, w, h, gx.white)
 }
 

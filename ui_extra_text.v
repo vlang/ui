@@ -187,6 +187,7 @@ pub fn (win &Window) message(s string) {
 			tw = 200
 		}
 		th += 50
+		println("msg: ($tw, $th) $s")
 		dlg.propose_size(tw, th)
 		ww, wh := win.size()
 		dlg.set_pos(ww / 2 - tw / 2, wh / 2 - th / 2)
