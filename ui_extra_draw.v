@@ -283,7 +283,6 @@ pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
 	return h, s, l
 }
 
-/*
 // Texture stuff borrowed from @penguindark to deal with texture in sokol
 //
 
@@ -367,4 +366,3 @@ pub fn (c &CanvasLayout) draw_texture(w int, h int, simg C.sg_image) {
 	sgl.end()
 	sgl.disable_texture()
 }
-*/
