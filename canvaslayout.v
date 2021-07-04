@@ -82,9 +82,9 @@ pub struct CanvasLayoutConfig {
 	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
 	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
-	on_key_down   CanvasLayoutKeyFn = voidptr(0)
-	on_char       CanvasLayoutKeyFn = voidptr(0)
-	full_size_fn  CanvasLayoutSizeFn = voidptr(0)
+	on_key_down  CanvasLayoutKeyFn  = voidptr(0)
+	on_char      CanvasLayoutKeyFn  = voidptr(0)
+	full_size_fn CanvasLayoutSizeFn = voidptr(0)
 }
 
 pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
@@ -284,11 +284,11 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
-	println("set_adj $c.full_width $c.full_height")
+	println('set_adj $c.full_width $c.full_height')
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
 		return
-	} else if c.full_width == -1 ||  c.full_height == -1 { // dynamical
+	} else if c.full_width == -1 || c.full_height == -1 { // dynamical
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
 			c.adj_width, c.adj_height = fw, fh
@@ -344,8 +344,8 @@ fn (mut c CanvasLayout) size() (int, int) {
 
 // possibly dynamic full size
 pub fn (c &CanvasLayout) full_size() (int, int) {
-	mut fw, mut fh := c.full_width, c.full_height  
-	println("full_size $fw, $fh")
+	mut fw, mut fh := c.full_width, c.full_height
+	println('full_size $fw, $fh')
 	if c.full_width == -1 || c.full_height == -1 {
 		if c.full_size_fn == voidptr(0) {
 			return 0, 0
@@ -359,7 +359,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 			}
 		}
 	}
-	println("$fw, $fh")
+	println('$fw, $fh')
 	return fw, fh
 }
 
@@ -409,7 +409,7 @@ fn (mut c CanvasLayout) draw() {
 		}
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
-			c.draw_rounded_rect(c.x, c.y, w , h, radius, c.bg_color)
+			c.draw_rounded_rect(c.x, c.y, w, h, radius, c.bg_color)
 		} else {
 			c.draw_rect(c.x, c.y, w, h, c.bg_color)
 		}

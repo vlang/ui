@@ -57,10 +57,10 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable        bool // currently only for events.on_resized not modify children
-	mode             WindowSizeType
-	root_layout      Layout
-	dpi_scale        f32
+	resizable   bool // currently only for events.on_resized not modify children
+	mode        WindowSizeType
+	root_layout Layout
+	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
