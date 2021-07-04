@@ -385,6 +385,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		}
 	}
 	tb.is_typing = true
+	if *tb.text == '' { tb.cursor_pos = 0 }
 	if tb.on_key_down != voidptr(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
