@@ -76,7 +76,7 @@ pub mut:
 	hidden                bool
 	bg_color              gx.Color
 	bg_radius             f32
-	is_root_layout        bool
+	is_root_layout        bool = true
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
@@ -163,8 +163,12 @@ fn (mut s Stack) init(parent Layout) {
 	if parent is Window {
 		ui.window = unsafe { parent }
 		mut window := unsafe { parent }
-		window.root_layout = s
-		window.update_layout() // i.e s.update_all_children_recursively(parent)
+		if s.is_root_layout { 
+			window.root_layout = s //}
+			window.update_layout() // i.e s.update_all_children_recursively(parent)
+		} else {
+			s.update_layout()
+		}
 	}
 
 	if has_scrollview(s) {
@@ -248,7 +252,7 @@ fn (mut s Stack) init_size() {
 	parent_width, parent_height := parent.size()
 	// println('parent size: ($parent_width, $parent_height)')
 	// s.debug_show_sizes("decode before -> ")
-	if parent is Window {
+	if s.is_root_layout {
 		// Default: same as s.stretch == true
 		s.real_height = parent_height
 		s.real_width = parent_width
@@ -694,7 +698,8 @@ pub fn (s &Stack) adj_size() (int, int) {
 fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	// println("prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)")
+	// 
+	if s.id =="_msg_dlg_col" {println("prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)")}
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }

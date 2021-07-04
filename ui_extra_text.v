@@ -90,7 +90,7 @@ pub fn (t &Tooltip) free() {
 			line.free()
 		}
 		t.lines.free()
-		t.id.free()
+		// t.id.free()
 	}
 	$if free ? {
 		println('\tTooltip -> freed')
@@ -165,6 +165,7 @@ fn (mut win Window) add_message_dialog() {
 		label(id: '_msg_dlg_lab', text: ' Hello World'),
 		button(id: '_msg_dlg_btn', text: 'OK', width: 100, radius: .3, onclick: message_dialog_click),
 	])
+	dlg.is_root_layout = false
 	win.children << dlg
 	dlg.set_visible(false)
 }
@@ -187,7 +188,7 @@ pub fn (win &Window) message(s string) {
 			tw = 200
 		}
 		th += 50
-		println("msg: ($tw, $th) $s")
+		// println("msg: ($tw, $th) $s")
 		dlg.propose_size(tw, th)
 		ww, wh := win.size()
 		dlg.set_pos(ww / 2 - tw / 2, wh / 2 - th / 2)
