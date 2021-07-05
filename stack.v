@@ -794,8 +794,8 @@ fn (mut s Stack) set_pos(x int, y int) {
 			println('set_pos($s.id): $($x, $y)')
 		}
 		s.real_x, s.real_y = x, y
-		s.update_pos()
 	}
+	s.update_pos()
 }
 
 fn (mut s Stack) set_children_pos() {
