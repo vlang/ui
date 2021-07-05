@@ -206,6 +206,9 @@ pub fn (s &Stack) free() {
 		s.widths.free()
 		s.heights.free()
 		s.component_type.free()
+		if s.has_scrollview {
+			s.scrollview.free()
+		}
 		free(s)
 	}
 	$if free ? {

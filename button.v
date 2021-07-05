@@ -151,9 +151,10 @@ pub fn (b &Button) free() {
 		// s.onclick   ButtonClickFn
 		b.tooltip.free()
 		// s.theme     ColorThemeCfg = 'classic'
-		if b.component != voidptr(0) {
-			free(b.component)
-		}
+
+		// if b.component != voidptr(0) {
+		// 	free(b.component)
+		// }
 		free(b)
 	}
 	$if free ? {
