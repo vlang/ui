@@ -1,34 +1,28 @@
 #include "WebView2.h"
 // Adapted from https://stackoverflow.com/questions/66820213/basic-win32-webview2-example-not-working-in-pure-c
 
-/////////////////
-// GLOBAL VARS //
-/////////////////
-ICoreWebView2Environment *environment;
-ICoreWebView2Controller *controller;
-ICoreWebView2 *webviewWindow;
-
-ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler environmentCreatedHandler;
-ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandlerVtbl environmentCreatedHandlerVtbl;
-ICoreWebView2CreateCoreWebView2ControllerCompletedHandler controllerCreatedHandler;
-ICoreWebView2CreateCoreWebView2ControllerCompletedHandlerVtbl controllerCreatedHandlerVtbl;
-ICoreWebView2ExecuteScriptCompletedHandler scriptCompletedHandler;
-ICoreWebView2ExecuteScriptCompletedHandlerVtbl scriptCompletedHandlerVtbl;
-
-typedef void(*navCallback)();
-
-typedef struct {
-    ICoreWebView2 window;
-    ICoreWebView2Controller controller;
-    ICoreWebView2Environment enviromnent;
-    void* on_navigate;
-} WebViewInstance;
-
-WebViewInstance g_WebView;
-
 //////////////////////////
 // FORWARD DECLARATIONS //
 //////////////////////////
+// STRUCTS
+typedef struct _webview_instance
+{
+    ICoreWebView2 *window;
+    ICoreWebView2Settings *settings;
+    ICoreWebView2Controller *controller;
+    ICoreWebView2Environment *environment;
+    void *on_navigate;
+    wchar_t *url;
+    wchar_t *title;
+} WebViewInstance;
+
+// PUBLIC API FUNCTIONS
+
+// HELPER FUNCTIONS
+void ConfigureWebViewWindow();
+void SetupCOMHandlers();
+
+// COM HANDLERS
 ULONG __stdcall EnvironmentAddRef(ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *);
 ULONG __stdcall EnvironmentRelease(ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *);
 HRESULT __stdcall EnvironmentQueryInterface(
@@ -50,10 +44,122 @@ HRESULT __stdcall ControllerInvoke(
     ICoreWebView2CreateCoreWebView2ControllerCompletedHandler *,
     HRESULT,
     ICoreWebView2Controller *);
+HRESULT __stdcall ScriptInvoke(
+    ICoreWebView2CreateCoreWebView2ControllerCompletedHandler *This,
+    HRESULT errorCode,
+    ICoreWebView2Controller *newController);
+HRESULT __stdcall ScriptQueryInterface(
+    ICoreWebView2CreateCoreWebView2ControllerCompletedHandler *This,
+    REFIID riid,
+    void **ppvObject);
 
-/////////////////////////////////
-// ENVIRONMENT CREATED HANDLER //
-/////////////////////////////////
+/////////////////
+// GLOBAL VARS //
+/////////////////
+BOOL hasCalledCoInitialize = FALSE;
+WebViewInstance g_WebView;
+
+ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler environmentCreatedHandler;
+ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandlerVtbl environmentCreatedHandlerVtbl;
+ICoreWebView2CreateCoreWebView2ControllerCompletedHandler controllerCreatedHandler;
+ICoreWebView2CreateCoreWebView2ControllerCompletedHandlerVtbl controllerCreatedHandlerVtbl;
+ICoreWebView2ExecuteScriptCompletedHandler scriptCompletedHandler;
+ICoreWebView2ExecuteScriptCompletedHandlerVtbl scriptCompletedHandlerVtbl;
+
+////////////////
+// PUBLIC API //
+////////////////
+void *new_windows_web_view(wchar_t *url, wchar_t *title)
+{
+    // To use COM functions at all, you have to call CoInitialize once and only once
+    if (!hasCalledCoInitialize)
+        CoInitialize(NULL);
+
+    SetupCOMHandlers();
+
+    g_WebView.url = url;
+    g_WebView.title = title;
+
+    // The first step is to call CreateCoreWebView2Environment,
+    // which is our only way to enter the WebView2 world.
+    HRESULT hr = CreateCoreWebView2Environment(&environmentCreatedHandler);
+    if (FAILED(hr))
+    {
+        OutputDebugStringA("Failed to create corewebview2environment");
+    }
+
+    return &g_WebView;
+}
+
+void windows_webview_close()
+{
+    g_WebView.controller->lpVtbl->Close(g_WebView.controller);
+}
+
+void exec(wchar_t scriptSource)
+{
+    HRESULT hr = g_WebView.window->lpVtbl->ExecuteScript(g_WebView.window, scriptSource, &scriptCompletedHandler);
+    if (FAILED(hr))
+        OutputDebugStringA("Failed to execute script");
+    OutputDebugStringA("Inside exec");
+}
+
+void navigate(wchar_t *url)
+{
+    g_WebView.window->lpVtbl->Navigate(g_WebView.window, url);
+}
+
+//////////////////////
+// HELPER FUNCTIONS //
+//////////////////////
+
+void SetupCOMHandlers()
+{
+    // Initialize vtables
+    environmentCreatedHandler.lpVtbl = &environmentCreatedHandlerVtbl;
+    controllerCreatedHandler.lpVtbl = &controllerCreatedHandlerVtbl;
+    scriptCompletedHandler.lpVtbl = &scriptCompletedHandlerVtbl;
+    // Set up IUnknown functions
+    environmentCreatedHandler.lpVtbl->AddRef = EnvironmentAddRef;
+    environmentCreatedHandler.lpVtbl->Release = EnvironmentRelease;
+    environmentCreatedHandler.lpVtbl->QueryInterface = EnvironmentQueryInterface;
+    environmentCreatedHandler.lpVtbl->Invoke = EnvironmentInvoke;
+
+    controllerCreatedHandler.lpVtbl->AddRef = ControllerAddRef;
+    controllerCreatedHandler.lpVtbl->Release = ControllerRelease;
+    controllerCreatedHandler.lpVtbl->QueryInterface = ControllerQueryInterface;
+    controllerCreatedHandler.lpVtbl->Invoke = ControllerInvoke;
+
+    scriptCompletedHandler.lpVtbl->AddRef = ControllerAddRef;
+    scriptCompletedHandler.lpVtbl->Release = ControllerRelease;
+    scriptCompletedHandler.lpVtbl->QueryInterface = ScriptQueryInterface;
+    scriptCompletedHandler.lpVtbl->Invoke = ScriptInvoke;
+}
+
+void ConfigureWebViewWindow()
+{
+    RECT bounds = {.left = 100, .top = 100, .right = 1280, .bottom = 720};
+    //void* hWnd = sapp_win32_get_hwnd();
+    //GetClientRect(hWnd, &bounds);
+    HRESULT hr = g_WebView.controller->lpVtbl->put_Bounds(g_WebView.controller, bounds);
+    if (FAILED(hr))
+        OutputDebugStringA("Failed to put bounds");
+
+    ICoreWebView2Settings *webviewSettings = malloc(sizeof(ICoreWebView2Settings));
+    hr = g_WebView.window->lpVtbl->get_Settings(g_WebView.window, &webviewSettings);
+    if (FAILED(hr))
+        OutputDebugStringA("Failed to get settings");
+
+    g_WebView.settings = webviewSettings;
+
+    g_WebView.settings->lpVtbl->put_IsStatusBarEnabled(g_WebView.window, FALSE);
+}
+
+//////////////////
+// COM HANDLERS //
+//////////////////
+
+// ENVIRONMENT CREATED HANDLER
 ULONG __stdcall EnvironmentAddRef(ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler *This)
 {
     // Not concerned with refcount
@@ -81,16 +187,11 @@ HRESULT __stdcall EnvironmentInvoke(
     HRESULT errorCode,
     ICoreWebView2Environment *newEnvironment)
 {
-    environment = newEnvironment;
+    g_WebView.environment = newEnvironment;
     void *hWnd = sapp_win32_get_hwnd();
-    environment->lpVtbl->CreateCoreWebView2Controller(environment, (HWND)hWnd, &controllerCreatedHandler);
+    g_WebView.environment->lpVtbl->CreateCoreWebView2Controller(g_WebView.environment, (HWND)hWnd, &controllerCreatedHandler);
     return S_OK;
 }
-
-// void on_navigate(navCallback callbackfn)
-// {
-//     callbackfn();
-// }
 
 ////////////////////////////////
 // CONTROLLER CREATED HANDLER //
@@ -122,30 +223,20 @@ HRESULT __stdcall ControllerInvoke(
     HRESULT errorCode,
     ICoreWebView2Controller *newController)
 {
-    controller = newController;
-    HRESULT hr = controller->lpVtbl->get_CoreWebView2(controller, &webviewWindow);
+    g_WebView.controller = newController;
+
+    HRESULT hr = g_WebView.controller->lpVtbl->get_CoreWebView2(g_WebView.controller, &g_WebView.window);
     if (FAILED(hr))
         OutputDebugStringA("Failed to get corewebview2 window");
 
-    hr = controller->lpVtbl->AddRef(controller);
+    // Window won't show if we don't call AddRef
+    hr = g_WebView.controller->lpVtbl->AddRef(g_WebView.controller);
     if (FAILED(hr))
         OutputDebugStringA("Failed to increment controller refcount");
 
-    RECT bounds = {.left = 100, .top = 100, .right = 1280, .bottom = 720};
-    //void* hWnd = sapp_win32_get_hwnd();
-    //GetClientRect(hWnd, &bounds);
-    hr = controller->lpVtbl->put_Bounds(controller, bounds);
-    if (FAILED(hr))
-        OutputDebugStringA("Failed to put bounds");
+    ConfigureWebViewWindow();
 
-    ICoreWebView2Settings* webviewSettings = malloc(sizeof(ICoreWebView2Settings));
-    hr = webviewWindow->lpVtbl->get_Settings(webviewWindow, &webviewSettings);
-    if (FAILED(hr))
-        OutputDebugStringA("Failed to get settings");
-
-    webviewSettings->lpVtbl->put_IsStatusBarEnabled(webviewSettings, FALSE);
-
-    hr = webviewWindow->lpVtbl->Navigate(webviewWindow, L"https://vlang.io");
+    hr = g_WebView.window->lpVtbl->Navigate(g_WebView.window, g_WebView.url);
     if (FAILED(hr))
         OutputDebugStringA("Failed to get corewebview2 window");
     return S_OK;
@@ -153,65 +244,9 @@ HRESULT __stdcall ControllerInvoke(
 
 HRESULT __stdcall ScriptQueryInterface()
 {
-
 }
 
 HRESULT __stdcall ScriptInvoke()
 {
     OutputDebugStringA("Inside invoke");
 }
-
-/////////////////
-// ENTRY POINT //
-/////////////////
-void* new_windows_web_view(char *url, char *title)
-{
-    CoInitialize(NULL);
-    // Initialize vtables
-    environmentCreatedHandler.lpVtbl = &environmentCreatedHandlerVtbl;
-    controllerCreatedHandler.lpVtbl = &controllerCreatedHandlerVtbl;
-    scriptCompletedHandler.lpVtbl = &scriptCompletedHandlerVtbl;
-
-    // Set up IUnknown functions
-    environmentCreatedHandler.lpVtbl->AddRef = EnvironmentAddRef;
-    environmentCreatedHandler.lpVtbl->Release = EnvironmentRelease;
-    environmentCreatedHandler.lpVtbl->QueryInterface = EnvironmentQueryInterface;
-    environmentCreatedHandler.lpVtbl->Invoke = EnvironmentInvoke;
-
-    controllerCreatedHandler.lpVtbl->AddRef = ControllerAddRef;
-    controllerCreatedHandler.lpVtbl->Release = ControllerRelease;
-    controllerCreatedHandler.lpVtbl->QueryInterface = ControllerQueryInterface;
-    controllerCreatedHandler.lpVtbl->Invoke = ControllerInvoke;
-
-    scriptCompletedHandler.lpVtbl->AddRef = ControllerAddRef;
-    scriptCompletedHandler.lpVtbl->Release = ControllerRelease;
-    scriptCompletedHandler.lpVtbl->QueryInterface = ScriptQueryInterface;
-    scriptCompletedHandler.lpVtbl->Invoke = ScriptInvoke;
-
-    // The first step is to call CreateCoreWebView2Environment,
-    // which is our only way to enter the WebView2 world.
-    HRESULT hr = CreateCoreWebView2Environment(&environmentCreatedHandler);
-    if (FAILED(hr))
-    {
-        OutputDebugStringA("Failed to create corewebview2environment");
-    }
-}
-
-void windows_webview_close()
-{
-    controller->lpVtbl->Close(controller);
-}
-
-void exec(char* scriptSource)
-{
-    // ExecuteScript requires a wchar_t string, converting from char
-    size_t scriptLength = strlen(scriptSource) + 1;
-    wchar_t scriptSourceWide[500];
-    int requiredSize = MultiByteToWideChar(CP_UTF8, 0, scriptSource, -1, &scriptSourceWide, 0);
-    MultiByteToWideChar(CP_UTF8, 0, scriptSource, -1, &scriptSourceWide, requiredSize);
-    HRESULT hr = webviewWindow->lpVtbl->ExecuteScript(webviewWindow, scriptSourceWide, &scriptCompletedHandler);
-    if (FAILED(hr))
-        OutputDebugStringA("Failed to execute script");
-    OutputDebugStringA("Inside exec");
-}
-
