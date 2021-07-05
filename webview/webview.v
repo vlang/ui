@@ -8,6 +8,8 @@ struct WebView {
 	// widget ui.Widget
 	url string
 	obj voidptr
+mut:
+	nav_finished_fn NavFinishedFn
 }
 
 type NavFinishedFn = fn (url string)
@@ -16,6 +18,7 @@ pub struct Config {
 	url   string
 	title string
 	// parent          &ui.Window
+mut:
 	nav_finished_fn NavFinishedFn
 	// js_on_init      string
 }
@@ -29,12 +32,27 @@ pub fn new_window(cfg Config) &WebView {
 		create_linux_web_view(cfg.url, cfg.title)
 	}
 	$if windows {
-		C.new_windows_web_view(cfg.url.str, cfg.title.str)
+		obj = C.new_windows_web_view(cfg.url.str, cfg.title.str)
 	}
 	return &WebView{
 		url: cfg.url
 		obj: obj
+		nav_finished_fn: cfg.nav_finished_fn
 	}
+}
+
+pub fn exec(scriptSource string) {
+	$if windows {
+		C.exec(scriptSource.str)
+	}
+}
+
+pub fn (mut wv WebView) on_navigate(callback NavFinishedFn) {
+	wv.nav_finished_fn = callback
+}
+
+pub fn navigate(url string) {
+	C.navigate(url.str)
 }
 
 pub fn (w &WebView) close() {

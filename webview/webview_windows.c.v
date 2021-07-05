@@ -10,10 +10,14 @@ module webview
 
 #flag Version.lib Advapi32.lib Shell32.lib
 
-#flag @VMODROOT/webview/WebView2LoaderStatic.lib
-#flag @VMODROOT/webview/stbi.lib
-#include "@VMODROOT/webview/webview_windows.c"
+#flag @VMODROOT/webview/windows/WebView2LoaderStatic.lib
+#flag @VMODROOT/webview/windows/stbi.lib
+#include "@VMODROOT/webview/windows/webview_windows.c"
 
 fn C.new_windows_web_view(url &byte, title &byte) voidptr
 
 fn C.windows_webview_close()
+
+fn C.exec(scriptSource &byte)
+
+fn C.on_navigate(callbackfn voidptr)

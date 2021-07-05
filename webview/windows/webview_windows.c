@@ -12,6 +12,19 @@ ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler environmentCreatedHan
 ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandlerVtbl environmentCreatedHandlerVtbl;
 ICoreWebView2CreateCoreWebView2ControllerCompletedHandler controllerCreatedHandler;
 ICoreWebView2CreateCoreWebView2ControllerCompletedHandlerVtbl controllerCreatedHandlerVtbl;
+ICoreWebView2ExecuteScriptCompletedHandler scriptCompletedHandler;
+ICoreWebView2ExecuteScriptCompletedHandlerVtbl scriptCompletedHandlerVtbl;
+
+typedef void(*navCallback)();
+
+typedef struct {
+    ICoreWebView2 window;
+    ICoreWebView2Controller controller;
+    ICoreWebView2Environment enviromnent;
+    void* on_navigate;
+} WebViewInstance;
+
+WebViewInstance g_WebView;
 
 //////////////////////////
 // FORWARD DECLARATIONS //
@@ -74,6 +87,11 @@ HRESULT __stdcall EnvironmentInvoke(
     return S_OK;
 }
 
+// void on_navigate(navCallback callbackfn)
+// {
+//     callbackfn();
+// }
+
 ////////////////////////////////
 // CONTROLLER CREATED HANDLER //
 ////////////////////////////////
@@ -104,37 +122,55 @@ HRESULT __stdcall ControllerInvoke(
     HRESULT errorCode,
     ICoreWebView2Controller *newController)
 {
-    EventRegistrationToken th;
-    HRESULT hr;
     controller = newController;
-    hr = controller->lpVtbl->get_CoreWebView2(controller, &webviewWindow);
+    HRESULT hr = controller->lpVtbl->get_CoreWebView2(controller, &webviewWindow);
     if (FAILED(hr))
         OutputDebugStringA("Failed to get corewebview2 window");
 
     hr = controller->lpVtbl->AddRef(controller);
     if (FAILED(hr))
         OutputDebugStringA("Failed to increment controller refcount");
-    RECT bounds = {.left = 0, .top = 0, .right = 1280, .bottom = 720};
+
+    RECT bounds = {.left = 100, .top = 100, .right = 1280, .bottom = 720};
     //void* hWnd = sapp_win32_get_hwnd();
     //GetClientRect(hWnd, &bounds);
     hr = controller->lpVtbl->put_Bounds(controller, bounds);
     if (FAILED(hr))
         OutputDebugStringA("Failed to put bounds");
+
+    ICoreWebView2Settings* webviewSettings = malloc(sizeof(ICoreWebView2Settings));
+    hr = webviewWindow->lpVtbl->get_Settings(webviewWindow, &webviewSettings);
+    if (FAILED(hr))
+        OutputDebugStringA("Failed to get settings");
+
+    webviewSettings->lpVtbl->put_IsStatusBarEnabled(webviewSettings, FALSE);
+
     hr = webviewWindow->lpVtbl->Navigate(webviewWindow, L"https://vlang.io");
     if (FAILED(hr))
         OutputDebugStringA("Failed to get corewebview2 window");
     return S_OK;
 }
 
+HRESULT __stdcall ScriptQueryInterface()
+{
+
+}
+
+HRESULT __stdcall ScriptInvoke()
+{
+    OutputDebugStringA("Inside invoke");
+}
+
 /////////////////
 // ENTRY POINT //
 /////////////////
-void new_windows_web_view(char *url, char *title)
+void* new_windows_web_view(char *url, char *title)
 {
     CoInitialize(NULL);
     // Initialize vtables
     environmentCreatedHandler.lpVtbl = &environmentCreatedHandlerVtbl;
     controllerCreatedHandler.lpVtbl = &controllerCreatedHandlerVtbl;
+    scriptCompletedHandler.lpVtbl = &scriptCompletedHandlerVtbl;
 
     // Set up IUnknown functions
     environmentCreatedHandler.lpVtbl->AddRef = EnvironmentAddRef;
@@ -146,6 +182,11 @@ void new_windows_web_view(char *url, char *title)
     controllerCreatedHandler.lpVtbl->Release = ControllerRelease;
     controllerCreatedHandler.lpVtbl->QueryInterface = ControllerQueryInterface;
     controllerCreatedHandler.lpVtbl->Invoke = ControllerInvoke;
+
+    scriptCompletedHandler.lpVtbl->AddRef = ControllerAddRef;
+    scriptCompletedHandler.lpVtbl->Release = ControllerRelease;
+    scriptCompletedHandler.lpVtbl->QueryInterface = ScriptQueryInterface;
+    scriptCompletedHandler.lpVtbl->Invoke = ScriptInvoke;
 
     // The first step is to call CreateCoreWebView2Environment,
     // which is our only way to enter the WebView2 world.
@@ -160,3 +201,17 @@ void windows_webview_close()
 {
     controller->lpVtbl->Close(controller);
 }
+
+void exec(char* scriptSource)
+{
+    // ExecuteScript requires a wchar_t string, converting from char
+    size_t scriptLength = strlen(scriptSource) + 1;
+    wchar_t scriptSourceWide[500];
+    int requiredSize = MultiByteToWideChar(CP_UTF8, 0, scriptSource, -1, &scriptSourceWide, 0);
+    MultiByteToWideChar(CP_UTF8, 0, scriptSource, -1, &scriptSourceWide, requiredSize);
+    HRESULT hr = webviewWindow->lpVtbl->ExecuteScript(webviewWindow, scriptSourceWide, &scriptCompletedHandler);
+    if (FAILED(hr))
+        OutputDebugStringA("Failed to execute script");
+    OutputDebugStringA("Inside exec");
+}
+
