@@ -299,9 +299,9 @@ pub fn (mut sv ScrollView) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_up, sv)
 	subscriber.unsubscribe_method(events.on_mouse_move, sv)
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, sv)
-		subscriber.subscribe_method(events.on_touch_up, sv)
-		subscriber.subscribe_method(events.on_touch_move, sv)
+		subscriber.unsubscribe_method(events.on_touch_down, sv)
+		subscriber.unsubscribe_method(events.on_touch_up, sv)
+		subscriber.unsubscribe_method(events.on_touch_move, sv)
 	}
 	unsafe { sv.free() }
 }
