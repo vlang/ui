@@ -372,7 +372,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e')
 	$if tb_keydown ? {
-		println("tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused")
+		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
 	}
 	if tb.hidden {
 		return
@@ -435,7 +435,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	match e.key {
 		.enter {
 			if tb.on_enter != TextBoxEnterFn(0) {
-				println("tb_enter: <${*tb.text}>")
+				println('tb_enter: <${*tb.text}>')
 				tb.on_enter(*tb.text, window.state)
 			}
 		}
@@ -763,7 +763,7 @@ pub fn (mut tb TextBox) insert(s string) {
 		}
 	} else {
 		$if tb_insert ? {
-			println("tb_insert: $tb.id $ustr $tb.cursor_pos")
+			println('tb_insert: $tb.id $ustr $tb.cursor_pos')
 		}
 		// Insert one character
 		// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]

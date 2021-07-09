@@ -174,7 +174,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .normal
 			if b.onclick != voidptr(0) && b.is_focused() {
 				$if btn_onclick ? {
-					println("onclick $b.id")
+					println('onclick $b.id')
 				}
 				b.onclick(window.state, b)
 			}

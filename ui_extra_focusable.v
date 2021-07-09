@@ -2,7 +2,8 @@ module ui
 
 // Widget having a field is_focused
 pub fn (w Widget) is_focusable() bool {
-	return w.type_name() in ["ui.Button", "ui.CanvasLayout", "ui.CheckBox", "ui.Dropdown", "ui.ListBox", "ui.Radio", "ui.Slider", "ui.Switch", "ui.TextBox"]
+	return w.type_name() in ['ui.Button', 'ui.CanvasLayout', 'ui.CheckBox', 'ui.Dropdown',
+		'ui.ListBox', 'ui.Radio', 'ui.Slider', 'ui.Switch', 'ui.TextBox']
 }
 
 // Only one widget can have the focus inside a Window
