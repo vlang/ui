@@ -79,8 +79,6 @@ pub mut:
 	tooltip Tooltip = Tooltip{}
 	// with message
 	native_message bool
-	// scrollview scissor
-	// last_scissor_rect  gg.Rect
 }
 
 pub struct WindowConfig {

@@ -371,22 +371,25 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e')
+	$if tb_keydown ? {
+		println("tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused")
+	}
 	if tb.hidden {
 		return
 	}
-	text := *tb.text
 	if !tb.is_focused {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
+	text := *tb.text
 	if tb.is_error != voidptr(0) {
 		unsafe {
 			*tb.is_error = false
 		}
 	}
 	tb.is_typing = true
-	if *tb.text == '' {
-		tb.cursor_pos = 0
+	if text == '' {
+		tb.update()
 	}
 	if tb.on_key_down != voidptr(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
@@ -432,6 +435,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	match e.key {
 		.enter {
 			if tb.on_enter != TextBoxEnterFn(0) {
+				println("tb_enter: <${*tb.text}>")
 				tb.on_enter(*tb.text, window.state)
 			}
 		}
@@ -716,14 +720,12 @@ fn (mut tb TextBox) set_visible(state bool) {
 }
 
 pub fn (mut tb TextBox) focus() {
-	if tb.is_focused {
-		return
-	}
-	parent := tb.parent
-	parent.unfocus_all()
-	mut wnd := parent.get_ui().window
-	wnd.unfocus_all()
-	tb.is_focused = true
+	// if tb.is_focused {
+	// 	return
+	// }
+	// tb.ui.window.unfocus_all()
+	// tb.is_focused = true
+	set_focus(tb.ui.window, mut tb)
 }
 
 fn (tb &TextBox) is_focused() bool {
@@ -760,6 +762,9 @@ pub fn (mut tb TextBox) insert(s string) {
 			*tb.text = ustr[..tb.sel_start].string() + s + ustr[tb.sel_end + 1..].string()
 		}
 	} else {
+		$if tb_insert ? {
+			println("tb_insert: $tb.id $ustr $tb.cursor_pos")
+		}
 		// Insert one character
 		// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]
 		unsafe {

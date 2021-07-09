@@ -194,7 +194,7 @@ fn (mut s Stack) cleanup() {
 [unsafe]
 pub fn (s &Stack) free() {
 	$if free ? {
-		print('slack $s.id')
+		print('stack $s.id')
 	}
 	unsafe {
 		// s.cache.free()
@@ -206,9 +206,9 @@ pub fn (s &Stack) free() {
 		s.widths.free()
 		s.heights.free()
 		s.component_type.free()
-		if s.has_scrollview {
-			s.scrollview.free()
-		}
+		// if s.has_scrollview {
+		// 	s.scrollview.free()
+		// }
 		free(s)
 	}
 	$if free ? {

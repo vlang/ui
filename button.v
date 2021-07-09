@@ -172,7 +172,10 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.onclick != voidptr(0) {
+			if b.onclick != voidptr(0) && b.is_focused() {
+				$if btn_onclick ? {
+					println("onclick $b.id")
+				}
 				b.onclick(window.state, b)
 			}
 		}
@@ -185,6 +188,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 		return
 	}
 	if b.point_inside(e.x, e.y) {
+		b.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if b.movable {
 			drag_register(b, b.ui, e)
 		}
@@ -325,7 +329,8 @@ fn (mut b Button) set_visible(state bool) {
 
 // fn (mut b Button) mouse_move(e MouseEvent) {}
 fn (mut b Button) focus() {
-	b.is_focused = true
+	// b.is_focused = true
+	set_focus(b.ui.window, mut b)
 }
 
 fn (mut b Button) unfocus() {

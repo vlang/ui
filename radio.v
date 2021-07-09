@@ -193,7 +193,8 @@ fn (mut r Radio) set_visible(state bool) {
 }
 
 fn (mut r Radio) focus() {
-	r.is_focused = true
+	// r.is_focused = true
+	set_focus(r.ui.window, mut r)
 }
 
 fn (mut r Radio) unfocus() {

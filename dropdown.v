@@ -245,7 +245,8 @@ fn (mut dd Dropdown) set_visible(state bool) {
 }
 
 fn (mut dd Dropdown) focus() {
-	dd.is_focused = true
+	// dd.is_focused = true
+	set_focus(dd.ui.window, mut dd)
 }
 
 fn (mut dd Dropdown) open_drawer() {

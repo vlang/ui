@@ -367,9 +367,10 @@ fn (mut s Slider) set_visible(state bool) {
 }
 
 fn (mut s Slider) focus() {
-	parent := s.parent
-	parent.unfocus_all()
-	s.is_focused = true
+	// parent := s.parent
+	// parent.unfocus_all()
+	// s.is_focused = true
+	set_focus(s.ui.window, mut s)
 }
 
 fn (s &Slider) is_focused() bool {

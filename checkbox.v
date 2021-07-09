@@ -180,7 +180,8 @@ fn (mut cb CheckBox) set_visible(state bool) {
 }
 
 fn (mut cb CheckBox) focus() {
-	cb.is_focused = true
+	// cb.is_focused = true
+	set_focus(cb.ui.window, mut cb)
 }
 
 fn (mut cb CheckBox) unfocus() {

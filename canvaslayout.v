@@ -181,9 +181,9 @@ pub fn (c &CanvasLayout) free() {
 		c.id.free()
 		c.drawing_children.free()
 		c.children.free()
-		if c.has_scrollview {
-			c.scrollview.free()
-		}
+		// if c.has_scrollview {
+		// 	c.scrollview.free()
+		// }
 		free(c)
 	}
 	$if free ? {

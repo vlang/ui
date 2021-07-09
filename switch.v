@@ -142,7 +142,8 @@ fn (mut s Switch) set_visible(state bool) {
 }
 
 fn (mut s Switch) focus() {
-	s.is_focused = true
+	// s.is_focused = true
+	set_focus(s.ui.window, mut s)
 }
 
 fn (mut s Switch) unfocus() {

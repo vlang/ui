@@ -29,7 +29,7 @@ pub mut:
 	selection     int        = -1
 	draw_count    int
 	on_change     SelectionChangedFn = SelectionChangedFn(0)
-	focused       bool
+	is_focused    bool
 	draw_lines    bool
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
 	col_selected  gx.Color = ui._col_item_select
@@ -390,12 +390,12 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	}
 }
 
-// Up and Down keys work on the list when it's focused
+// Up and Down keys work on the list when it's is_focused
 fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 	if lb.hidden {
 		return
 	}
-	if !lb.focused {
+	if !lb.is_focused {
 		return
 	}
 	match e.key {
@@ -436,15 +436,16 @@ fn (mut lb ListBox) set_visible(state bool) {
 }
 
 fn (mut lb ListBox) focus() {
-	lb.focused = true
+	// lb.is_focused = true
+	set_focus(lb.ui.window, mut lb)
 }
 
 fn (mut lb ListBox) unfocus() {
-	lb.focused = false
+	lb.is_focused = false
 }
 
 fn (lb &ListBox) is_focused() bool {
-	return lb.focused
+	return lb.is_focused
 }
 
 fn (mut lb ListBox) adj_size() (int, int) {
