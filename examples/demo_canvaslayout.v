@@ -57,7 +57,7 @@ fn main() {
 				full_height: win_height
 				scrollview: true
 			}, [
-				ui.at(10, 40, ui.row({ spacing: 10 }, [
+				ui.at(10, 40, ui.row({ spacing: 10, heights: ui.compact }, [
 					ui.button(z_index: 1, text: 'X'),
 					ui.button(z_index: 1, text: 'Add'),
 				])),
