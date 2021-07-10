@@ -116,7 +116,7 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut m Menu) set_pos(x int, y int) {
+pub fn (mut m Menu) set_pos(x int, y int) {
 	m.x = x
 	m.y = y
 }
@@ -125,12 +125,12 @@ fn (mut m Menu) update_height() {
 	m.height = m.items.len * ui.menu_height
 }
 
-fn (mut m Menu) size() (int, int) {
+pub fn (mut m Menu) size() (int, int) {
 	m.update_height()
 	return m.width, m.height
 }
 
-fn (mut m Menu) propose_size(w int, h int) (int, int) {
+pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	m.width = w
 	m.height = h
 	return m.width, m.height

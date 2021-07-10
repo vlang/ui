@@ -220,7 +220,7 @@ fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, widt
 	}
 }
 
-fn (mut t TextBox) set_pos(x int, y int) {
+pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
 	// println('text box $xx set pos $x, $y')
 	t.x = x
@@ -235,13 +235,13 @@ fn (tb &TextBox) adj_size() (int, int) {
 	return w, h
 }
 
-fn (mut tb TextBox) size() (int, int) {
+pub fn (mut tb TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
 const max_textbox_height = 25
 
-fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
+pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
 	if tb.height > ui.max_textbox_height && !tb.is_multi {
 		tb.height = ui.max_textbox_height

@@ -141,16 +141,16 @@ fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut pic Picture) set_pos(x int, y int) {
+pub fn (mut pic Picture) set_pos(x int, y int) {
 	pic.x = x
 	pic.y = y
 }
 
-fn (mut pic Picture) size() (int, int) {
+pub fn (mut pic Picture) size() (int, int) {
 	return pic.width, pic.height
 }
 
-fn (mut pic Picture) propose_size(w int, h int) (int, int) {
+pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 	// pic.width = w
 	// pic.height = h
 	return pic.width, pic.height

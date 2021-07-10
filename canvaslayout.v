@@ -327,7 +327,7 @@ fn (c &CanvasLayout) set_children_pos() {
 	}
 }
 
-fn (mut c CanvasLayout) set_pos(x int, y int) {
+pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
 	// scrollview_update_orig_size(c)
@@ -338,7 +338,7 @@ fn (mut c CanvasLayout) adj_size() (int, int) {
 	return c.adj_width, c.adj_height
 }
 
-fn (mut c CanvasLayout) size() (int, int) {
+pub fn (mut c CanvasLayout) size() (int, int) {
 	return c.width, c.height
 }
 
@@ -363,7 +363,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 	return fw, fh
 }
 
-fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
+pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	c.width = w
 	c.height = h
 	scrollview_update(c)

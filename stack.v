@@ -698,7 +698,7 @@ pub fn (s &Stack) adj_size() (int, int) {
 	}
 }
 
-fn (mut s Stack) propose_size(w int, h int) (int, int) {
+pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 	//
@@ -789,7 +789,7 @@ fn (mut s Stack) update_pos() {
 	s.y = s.real_y + s.margin(.top)
 }
 
-fn (mut s Stack) set_pos(x int, y int) {
+pub fn (mut s Stack) set_pos(x int, y int) {
 	if s.real_x != x || s.real_y != y {
 		// could depend on anchor in the future
 		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)

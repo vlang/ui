@@ -122,16 +122,16 @@ pub fn (r &Radio) free() {
 	}
 }
 
-fn (mut r Radio) set_pos(x int, y int) {
+pub fn (mut r Radio) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
 }
 
-fn (mut r Radio) size() (int, int) {
+pub fn (mut r Radio) size() (int, int) {
 	return r.width, r.values.len * (r.height + 5)
 }
 
-fn (mut r Radio) propose_size(w int, h int) (int, int) {
+pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
 	// r.width = w
 	// r.height = 20//default_font_size
 	return r.width, r.values.len * (r.height + 5)

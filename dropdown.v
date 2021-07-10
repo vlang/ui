@@ -109,16 +109,16 @@ pub fn (dd &Dropdown) free() {
 	}
 }
 
-fn (mut dd Dropdown) set_pos(x int, y int) {
+pub fn (mut dd Dropdown) set_pos(x int, y int) {
 	dd.x = x
 	dd.y = y
 }
 
-fn (mut dd Dropdown) size() (int, int) {
+pub fn (mut dd Dropdown) size() (int, int) {
 	return dd.width, dd.dropdown_height
 }
 
-fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
+pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	dd.width = w
 	// dd.height = h
 	return w, dd.dropdown_height

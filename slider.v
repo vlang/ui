@@ -174,7 +174,7 @@ fn (s &Slider) draw_thumb() {
 	}
 }
 
-fn (mut s Slider) set_pos(x int, y int) {
+pub fn (mut s Slider) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
@@ -189,7 +189,7 @@ fn (mut s Slider) set_thumb_size() {
 	}
 }
 
-fn (mut s Slider) size() (int, int) {
+pub fn (mut s Slider) size() (int, int) {
 	// if s.orientation == .horizontal {
 	// 	return s.width, s.thumb_height
 	// } else {
@@ -198,7 +198,7 @@ fn (mut s Slider) size() (int, int) {
 	return s.width, s.height
 }
 
-fn (mut s Slider) propose_size(w int, h int) (int, int) {
+pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	// TODO: fix
 	$if debug_slider ? {
 		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')

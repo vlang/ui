@@ -83,16 +83,16 @@ pub fn (pb &ProgressBar) free() {
 	}
 }
 
-fn (mut pb ProgressBar) set_pos(x int, y int) {
+pub fn (mut pb ProgressBar) set_pos(x int, y int) {
 	pb.x = x
 	pb.y = y
 }
 
-fn (mut pb ProgressBar) size() (int, int) {
+pub fn (mut pb ProgressBar) size() (int, int) {
 	return pb.width, pb.height
 }
 
-fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
+pub fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 	/*
 	pb.width = w
 	pb.height = h

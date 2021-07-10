@@ -123,16 +123,16 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	}
 }
 
-fn (mut cb CheckBox) set_pos(x int, y int) {
+pub fn (mut cb CheckBox) set_pos(x int, y int) {
 	cb.x = x
 	cb.y = y
 }
 
-fn (mut cb CheckBox) size() (int, int) {
+pub fn (mut cb CheckBox) size() (int, int) {
 	return cb.width, cb.height
 }
 
-fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
+pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 	// cb.width = w
 	// cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)

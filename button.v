@@ -230,7 +230,7 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 }
 
-fn (mut b Button) set_pos(x int, y int) {
+pub fn (mut b Button) set_pos(x int, y int) {
 	b.x = x
 	b.y = y
 }
@@ -242,7 +242,7 @@ pub fn (mut b Button) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (mut b Button) propose_size(w int, h int) (int, int) {
+pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// println('prop size $w $h')
 	if w != 0 {
 		b.width = w
@@ -297,7 +297,7 @@ pub fn (mut b Button) set_text(text string) {
 	b.set_text_size()
 }
 
-fn (mut b Button) set_text_size() {
+pub fn (mut b Button) set_text_size() {
 	if b.use_icon {
 		b.width = b.image.width
 		b.height = b.image.height

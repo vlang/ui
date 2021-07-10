@@ -423,7 +423,7 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn (mut lb ListBox) set_pos(x int, y int) {
+pub fn (mut lb ListBox) set_pos(x int, y int) {
 	if lb.x != x || lb.y != y {
 		// println("set pos lb: $x, $y")
 		lb.x = x
@@ -480,7 +480,7 @@ pub fn (lb &ListBox) size() (int, int) {
 	return lb.width, lb.height
 }
 
-fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
+pub fn (mut lb ListBox) propose_size(w int, h int) (int, int) {
 	// println("lb propose: ($w, $h)")
 	lb.resize(w, h)
 	scrollview_update(lb)

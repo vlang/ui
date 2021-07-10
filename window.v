@@ -1287,6 +1287,15 @@ pub fn (w Window) menu(id string) &Menu {
 	}
 }
 
+pub fn (w Window) rectangle(id string) &Rectangle {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Rectangle {
+		return widget
+	} else {
+		return rectangle({})
+	}
+}
+
 // extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
