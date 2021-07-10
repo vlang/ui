@@ -79,8 +79,13 @@ mut:
 	active   bool
 	color    gx.Color = gx.black
 	bg_color gx.Color = gx.Color{255, 220, 127, 220}
-	side     Side     = .top
+	side     Side     = .right
 	ui       &UI      = 0
+}
+
+struct TooltipMessage {
+	text string
+	side Side = .right
 }
 
 [unsafe]
@@ -97,7 +102,18 @@ pub fn (t &Tooltip) free() {
 	}
 }
 
-pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
+[unsafe]
+pub fn (t &TooltipMessage) free() {
+	unsafe {
+		t.text.free()
+		// t.id.free()
+	}
+	$if free ? {
+		println('\tTooltipMessage -> freed')
+	}
+}
+
+pub fn start_tooltip(mut w Widget, id string, msg TooltipMessage, wui &UI) {
 	mut win := wui.window
 	win.tooltip.id = id
 	if !win.tooltip.active { // only once
@@ -106,7 +122,7 @@ pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 			win.tooltip.ui = wui
 		}
 
-		win.tooltip.lines = word_wrap_text_to_lines(msg, 70)
+		win.tooltip.lines = word_wrap_text_to_lines(msg.text, 70)
 		win.tooltip.width, win.tooltip.height = text_lines_size(win.tooltip.lines, wui)
 
 		win.tooltip.width += 2 * ui.tooltip_margin
@@ -116,19 +132,23 @@ pub fn start_tooltip(mut w Widget, id string, msg string, wui &UI) {
 		set_text_cfg_style(mut win.tooltip, true, true, false)
 
 		win.tooltip.active = true
-		width, _ := w.size()
-		match win.tooltip.side {
+		width, height := w.size()
+		match msg.side {
 			// TODO: the other sides
 			.top {
 				win.tooltip.x = w.x + w.offset_x + width / 2 - win.tooltip.width / 2
 				win.tooltip.y = w.y + w.offset_y - win.tooltip.height - ui.tooltip_margin
+			}
+			.right {
+				win.tooltip.x = w.x + w.offset_x + width + ui.tooltip_margin
+				win.tooltip.y = w.y + w.offset_y + height / 2 - win.tooltip.height / 2
 			}
 			else {}
 		}
 	}
 }
 
-fn stop_tooltip(w Widget, id string, wui &UI) {
+fn stop_tooltip(id string, wui &UI) {
 	mut win := wui.window
 	if win.tooltip.active && win.tooltip.id == id {
 		// println("tooltip stop $win.tooltip.id")
@@ -145,6 +165,27 @@ fn draw_tooltip(win Window) {
 			.3, win.tooltip.bg_color)
 		draw_text_lines(win.tooltip, win.tooltip.x + ui.tooltip_margin, win.tooltip.y,
 			win.tooltip.lines)
+	}
+}
+
+pub fn (mut w Window) append_tooltip(child Widget, tooltip TooltipMessage) {
+	w.widgets_tooltip << child
+	w.tooltips << tooltip
+}
+
+pub fn (w &Window) update_tooltip(e &MouseMoveEvent) {
+	for i, mut child in w.widgets_tooltip {
+		id := widget_id(*child)
+		if !child.hidden {
+			if child.point_inside(e.x, e.y) {
+				start_tooltip(mut child, id, w.tooltips[i], w.ui)
+			} else {
+				stop_tooltip(id, w.ui)
+			}
+			if w.dragger.activated {
+				stop_tooltip(id, w.ui)
+			}
+		}
 	}
 }
 

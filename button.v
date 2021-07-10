@@ -53,7 +53,7 @@ pub mut:
 	movable    bool // drag, transition or anything allowing offset yo be updated
 	hoverable  bool
 	to_hover   bool
-	tooltip    string
+	tooltip    TooltipMessage
 	text_cfg   gx.TextCfg
 	text_size  f64
 	// theme
@@ -64,21 +64,22 @@ pub mut:
 }
 
 pub struct ButtonConfig {
-	id        string
-	text      string
-	icon_path string
-	onclick   ButtonClickFn
-	height    int
-	width     int
-	z_index   int
-	movable   bool
-	hoverable bool
-	tooltip   string
-	text_cfg  gx.TextCfg
-	text_size f64
-	theme     ColorThemeCfg = 'classic'
-	radius    f64
-	padding   f64
+	id           string
+	text         string
+	icon_path    string
+	onclick      ButtonClickFn
+	height       int
+	width        int
+	z_index      int
+	movable      bool
+	hoverable    bool
+	tooltip      string
+	tooltip_side Side = .top
+	text_cfg     gx.TextCfg
+	text_size    f64
+	theme        ColorThemeCfg = 'classic'
+	radius       f64
+	padding      f64
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -92,7 +93,7 @@ pub fn button(c ButtonConfig) &Button {
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
-		tooltip: c.tooltip
+		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		theme_cfg: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
@@ -120,6 +121,11 @@ fn (mut b Button) init(parent Layout) {
 	set_text_cfg_vertical_align(mut b, .middle)
 	b.set_text_size()
 	b.update_theme()
+
+	if b.tooltip.text != '' {
+		mut win := ui.window
+		win.append_tooltip(b, b.tooltip)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -211,19 +217,12 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 	if e.mouse_button == 256 {
 		if b.point_inside(e.x, e.y) {
-			// println("tooltip: $b.id $b.tooltip ($e.x, $e.y, $e.mouse_button)")
-			if b.tooltip != '' {
-				start_tooltip(mut b, b.id, b.tooltip, b.ui)
-			}
 			if b.hoverable && !b.to_hover {
 				b.to_hover = true
 			}
 		} else {
 			if b.hoverable && b.to_hover {
 				b.to_hover = false
-			}
-			if b.tooltip != '' {
-				stop_tooltip(b, b.id, b.ui)
 			}
 			b.state = .normal
 		}

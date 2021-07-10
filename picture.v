@@ -31,19 +31,22 @@ mut:
 	image     gg.Image
 	on_click  PictureClickFn
 	use_cache bool
+	tooltip   TooltipMessage
 }
 
 pub struct PictureConfig {
-	id        string
-	path      string
-	width     int
-	height    int
-	z_index   int
-	movable   bool
-	on_click  PictureClickFn
-	use_cache bool     = true
-	ref       &Picture = voidptr(0)
-	image     gg.Image
+	id           string
+	path         string
+	width        int
+	height       int
+	z_index      int
+	movable      bool
+	on_click     PictureClickFn
+	use_cache    bool     = true
+	ref          &Picture = voidptr(0)
+	image        gg.Image
+	tooltip      string
+	tooltip_side Side = .top
 }
 
 pub fn picture(c PictureConfig) &Picture {
@@ -63,6 +66,7 @@ pub fn picture(c PictureConfig) &Picture {
 		use_cache: c.use_cache
 		on_click: c.on_click
 		image: c.image
+		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		ui: 0
 	}
 	return pic
@@ -95,6 +99,10 @@ fn (mut pic Picture) init(parent Layout) {
 	if pic.width == 0 || pic.height == 0 {
 		pic.width = pic.image.width
 		pic.height = pic.image.height
+	}
+	if pic.tooltip.text != '' {
+		mut win := ui.window
+		win.append_tooltip(pic, pic.tooltip)
 	}
 }
 

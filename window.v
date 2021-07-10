@@ -76,7 +76,9 @@ pub mut:
 	// drag
 	dragger Dragger = Dragger{}
 	// tooltip
-	tooltip Tooltip = Tooltip{}
+	tooltip         Tooltip = Tooltip{}
+	widgets_tooltip []Widget
+	tooltips        []TooltipMessage
 	// with message
 	native_message bool
 }
@@ -260,8 +262,8 @@ fn gg_init(mut window Window) {
 	}
 	for _, mut child in window.children {
 		// println('init $child.type_name()')
-		child.init(window)
 		window.register_child(*child)
+		child.init(window)
 	}
 	// refresh the layout
 	window.update_layout()
@@ -515,6 +517,9 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
+
+	window.update_tooltip(e)
+
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 

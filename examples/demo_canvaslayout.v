@@ -49,6 +49,8 @@ fn main() {
 			movable: true
 			z_index: 20
 			path: logo
+			tooltip: 'press Shift to drag'
+			tooltip_side: .right
 		),
 			ui.canvas_layout({
 				on_draw: draw
@@ -91,10 +93,6 @@ fn main() {
 						text: 'red'
 					},
 				])),
-				ui.at(200, 200, ui.dropdown({
-					width: 30
-					height: 30
-				}, [])),
 				ui.at(10, 100, ui.listbox({
 					width: 100
 					height: 140
