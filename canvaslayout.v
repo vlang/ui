@@ -284,7 +284,7 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
-	println('set_adj $c.full_width $c.full_height')
+	// println('set_adj $c.full_width $c.full_height')
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
 		return
@@ -345,7 +345,7 @@ pub fn (mut c CanvasLayout) size() (int, int) {
 // possibly dynamic full size
 pub fn (c &CanvasLayout) full_size() (int, int) {
 	mut fw, mut fh := c.full_width, c.full_height
-	println('full_size $fw, $fh')
+	// println('full_size $fw, $fh')
 	if c.full_width == -1 || c.full_height == -1 {
 		if c.full_size_fn == voidptr(0) {
 			return 0, 0
