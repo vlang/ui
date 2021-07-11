@@ -292,8 +292,8 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
 			c.adj_width, c.adj_height = fw, fh
+			return
 		}
-		return
 	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
@@ -314,6 +314,7 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	if c.height > h {
 		h = c.height
 	}
+	// println("cl set_adj $c.id -> ($w, $h)")
 	c.adj_width = w
 	c.adj_height = h
 }
