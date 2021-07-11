@@ -360,7 +360,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 			}
 		}
 	}
-	println('$fw, $fh')
+	// println('$fw, $fh')
 	return fw, fh
 }
 
