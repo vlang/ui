@@ -132,7 +132,7 @@ pub fn (mut r Radio) size() (int, int) {
 }
 
 pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
-	// r.width = w
+	r.width = w
 	// r.height = 20//default_font_size
 	return r.width, r.values.len * (r.height + 5)
 }

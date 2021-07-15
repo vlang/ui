@@ -66,7 +66,7 @@ pub struct CheckBoxConfig {
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
 		id: c.id
-		height: 20 // TODO
+		height: ui.check_mark_size + 5 // TODO
 		z_index: c.z_index
 		ui: 0
 		text: c.text
@@ -133,10 +133,11 @@ pub fn (mut cb CheckBox) size() (int, int) {
 }
 
 pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
-	// cb.width = w
+	cb.width = w
+	// TODO: fix height
 	// cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
-	return cb.width, ui.check_mark_size
+	return cb.width, cb.height
 }
 
 fn (mut cb CheckBox) draw() {
