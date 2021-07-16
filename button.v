@@ -53,7 +53,7 @@ pub mut:
 	movable    bool // drag, transition or anything allowing offset yo be updated
 	hoverable  bool
 	to_hover   bool
-	tooltip    string
+	tooltip    TooltipMessage
 	text_cfg   gx.TextCfg
 	text_size  f64
 	// theme
@@ -64,21 +64,22 @@ pub mut:
 }
 
 pub struct ButtonConfig {
-	id        string
-	text      string
-	icon_path string
-	onclick   ButtonClickFn
-	height    int
-	width     int
-	z_index   int
-	movable   bool
-	hoverable bool
-	tooltip   string
-	text_cfg  gx.TextCfg
-	text_size f64
-	theme     ColorThemeCfg = 'classic'
-	radius    f64
-	padding   f64
+	id           string
+	text         string
+	icon_path    string
+	onclick      ButtonClickFn
+	height       int
+	width        int
+	z_index      int
+	movable      bool
+	hoverable    bool
+	tooltip      string
+	tooltip_side Side = .top
+	text_cfg     gx.TextCfg
+	text_size    f64
+	theme        ColorThemeCfg = 'classic'
+	radius       f64
+	padding      f64
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -92,7 +93,7 @@ pub fn button(c ButtonConfig) &Button {
 		text: c.text
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
-		tooltip: c.tooltip
+		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		theme_cfg: c.theme
 		onclick: c.onclick
 		text_cfg: c.text_cfg
@@ -120,6 +121,11 @@ fn (mut b Button) init(parent Layout) {
 	set_text_cfg_vertical_align(mut b, .middle)
 	b.set_text_size()
 	b.update_theme()
+
+	if b.tooltip.text != '' {
+		mut win := ui.window
+		win.append_tooltip(b, b.tooltip)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
@@ -151,9 +157,10 @@ pub fn (b &Button) free() {
 		// s.onclick   ButtonClickFn
 		b.tooltip.free()
 		// s.theme     ColorThemeCfg = 'classic'
-		if b.component != voidptr(0) {
-			free(b.component)
-		}
+
+		// if b.component != voidptr(0) {
+		// 	free(b.component)
+		// }
 		free(b)
 	}
 	$if free ? {
@@ -171,7 +178,10 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.onclick != voidptr(0) {
+			if b.onclick != voidptr(0) && b.is_focused() {
+				$if btn_onclick ? {
+					println('onclick $b.id')
+				}
 				b.onclick(window.state, b)
 			}
 		}
@@ -184,6 +194,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 		return
 	}
 	if b.point_inside(e.x, e.y) {
+		b.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if b.movable {
 			drag_register(b, b.ui, e)
 		}
@@ -206,10 +217,6 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 	if e.mouse_button == 256 {
 		if b.point_inside(e.x, e.y) {
-			// println("tooltip: $b.id $b.tooltip ($e.x, $e.y, $e.mouse_button)")
-			if b.tooltip != '' {
-				start_tooltip(mut b, b.id, b.tooltip, b.ui)
-			}
 			if b.hoverable && !b.to_hover {
 				b.to_hover = true
 			}
@@ -217,15 +224,12 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 			if b.hoverable && b.to_hover {
 				b.to_hover = false
 			}
-			if b.tooltip != '' {
-				stop_tooltip(b, b.id, b.ui)
-			}
 			b.state = .normal
 		}
 	}
 }
 
-fn (mut b Button) set_pos(x int, y int) {
+pub fn (mut b Button) set_pos(x int, y int) {
 	b.x = x
 	b.y = y
 }
@@ -237,7 +241,7 @@ pub fn (mut b Button) size() (int, int) {
 	return b.width, b.height
 }
 
-fn (mut b Button) propose_size(w int, h int) (int, int) {
+pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// println('prop size $w $h')
 	if w != 0 {
 		b.width = w
@@ -292,7 +296,7 @@ pub fn (mut b Button) set_text(text string) {
 	b.set_text_size()
 }
 
-fn (mut b Button) set_text_size() {
+pub fn (mut b Button) set_text_size() {
 	if b.use_icon {
 		b.width = b.image.width
 		b.height = b.image.height
@@ -324,7 +328,8 @@ fn (mut b Button) set_visible(state bool) {
 
 // fn (mut b Button) mouse_move(e MouseEvent) {}
 fn (mut b Button) focus() {
-	b.is_focused = true
+	// b.is_focused = true
+	set_focus(b.ui.window, mut b)
 }
 
 fn (mut b Button) unfocus() {

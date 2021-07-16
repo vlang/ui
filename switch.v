@@ -86,16 +86,16 @@ pub fn (s &Switch) free() {
 	}
 }
 
-fn (mut s Switch) set_pos(x int, y int) {
+pub fn (mut s Switch) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
 
-fn (mut s Switch) size() (int, int) {
+pub fn (mut s Switch) size() (int, int) {
 	return s.width, s.height
 }
 
-fn (mut s Switch) propose_size(w int, h int) (int, int) {
+pub fn (mut s Switch) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
@@ -142,7 +142,8 @@ fn (mut s Switch) set_visible(state bool) {
 }
 
 fn (mut s Switch) focus() {
-	s.is_focused = true
+	// s.is_focused = true
+	set_focus(s.ui.window, mut s)
 }
 
 fn (mut s Switch) unfocus() {
