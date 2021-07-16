@@ -17,6 +17,8 @@ pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
 
 pub type CanvasLayoutKeyFn = fn (e KeyEvent, c &CanvasLayout)
 
+pub type CanvasLayoutSizeFn = fn (c &CanvasLayout) (int, int)
+
 [heap]
 pub struct CanvasLayout {
 pub mut:
@@ -55,6 +57,7 @@ pub mut:
 	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
 	key_down_fn   CanvasLayoutKeyFn       = voidptr(0)
 	char_fn       CanvasLayoutKeyFn       = voidptr(0)
+	full_size_fn  CanvasLayoutSizeFn
 mut:
 	parent Layout
 	// To keep track of original position
@@ -65,8 +68,8 @@ pub struct CanvasLayoutConfig {
 	id            string
 	width         int
 	height        int
-	full_width    int
-	full_height   int
+	full_width    int = -1
+	full_height   int = -1
 	z_index       int
 	text          string
 	bg_color      gx.Color = no_color
@@ -79,8 +82,9 @@ pub struct CanvasLayoutConfig {
 	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
 	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
-	on_key_down CanvasLayoutKeyFn = voidptr(0)
-	on_char     CanvasLayoutKeyFn = voidptr(0)
+	on_key_down  CanvasLayoutKeyFn  = voidptr(0)
+	on_char      CanvasLayoutKeyFn  = voidptr(0)
+	full_size_fn CanvasLayoutSizeFn = voidptr(0)
 }
 
 pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
@@ -112,6 +116,7 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 		mouse_down_fn: c.on_mouse_down
 		mouse_up_fn: c.on_mouse_up
 		key_down_fn: c.on_key_down
+		full_size_fn: c.full_size_fn
 		char_fn: c.on_char
 	}
 	if c.scrollview {
@@ -176,9 +181,9 @@ pub fn (c &CanvasLayout) free() {
 		c.id.free()
 		c.drawing_children.free()
 		c.children.free()
-		if c.has_scrollview {
-			c.scrollview.free()
-		}
+		// if c.has_scrollview {
+		// 	c.scrollview.free()
+		// }
 		free(c)
 	}
 	$if free ? {
@@ -279,9 +284,16 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
+	// println('set_adj $c.full_width $c.full_height')
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
 		return
+	} else if c.full_width == -1 || c.full_height == -1 { // dynamical
+		fw, fh := c.full_size()
+		if fw > 0 && fh > 0 {
+			c.adj_width, c.adj_height = fw, fh
+			return
+		}
 	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
@@ -302,6 +314,7 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	if c.height > h {
 		h = c.height
 	}
+	// println("cl set_adj $c.id -> ($w, $h)")
 	c.adj_width = w
 	c.adj_height = h
 }
@@ -315,7 +328,7 @@ fn (c &CanvasLayout) set_children_pos() {
 	}
 }
 
-fn (mut c CanvasLayout) set_pos(x int, y int) {
+pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.x = x
 	c.y = y
 	// scrollview_update_orig_size(c)
@@ -326,11 +339,32 @@ fn (mut c CanvasLayout) adj_size() (int, int) {
 	return c.adj_width, c.adj_height
 }
 
-fn (mut c CanvasLayout) size() (int, int) {
+pub fn (mut c CanvasLayout) size() (int, int) {
 	return c.width, c.height
 }
 
-fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
+// possibly dynamic full size
+pub fn (c &CanvasLayout) full_size() (int, int) {
+	mut fw, mut fh := c.full_width, c.full_height
+	// println('full_size $fw, $fh')
+	if c.full_width == -1 || c.full_height == -1 {
+		if c.full_size_fn == voidptr(0) {
+			return 0, 0
+		} else {
+			w, h := c.full_size_fn(c)
+			if c.full_width == -1 {
+				fw = w
+			}
+			if c.full_height == -1 {
+				fh = h
+			}
+		}
+	}
+	// println('$fw, $fh')
+	return fw, fh
+}
+
+pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	c.width = w
 	c.height = h
 	scrollview_update(c)
@@ -370,14 +404,15 @@ fn (mut c CanvasLayout) draw() {
 
 	if c.bg_color != no_color {
 		mut w, mut h := c.width, c.height
-		if c.full_width * c.full_height > 0 {
-			w, h = c.full_width, c.full_height
+		fw, fh := c.full_size()
+		if fw > 0 && fh > 0 {
+			w, h = int(f32(fw) * c.ui.gg.scale), int(f32(fh) * c.ui.gg.scale)
 		}
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
-			c.draw_rounded_rect(c.x, c.y, w, h, radius, c.bg_color)
+			c.draw_rounded_rect(0, 0, w, h, radius, c.bg_color)
 		} else {
-			c.draw_rect(c.x, c.y, w, h, c.bg_color)
+			c.draw_rect(0, 0, w, h, c.bg_color)
 		}
 	}
 

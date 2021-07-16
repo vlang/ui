@@ -108,16 +108,16 @@ pub fn (r &Rectangle) free() {
 	}
 }
 
-fn (mut r Rectangle) set_pos(x int, y int) {
+pub fn (mut r Rectangle) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
 }
 
-fn (mut r Rectangle) size() (int, int) {
+pub fn (mut r Rectangle) size() (int, int) {
 	return r.width, r.height
 }
 
-fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
+pub fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 	r.width, r.height = w, h
 	return r.width, r.height
 }

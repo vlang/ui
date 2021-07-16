@@ -57,11 +57,10 @@ pub mut:
 	mouse_move_fn MouseMoveFn
 	eventbus      &eventbus.EventBus = eventbus.new()
 	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable        bool // currently only for events.on_resized not modify children
-	mode             WindowSizeType
-	root_layout      Layout
-	root_layout_once bool
-	dpi_scale        f32
+	resizable   bool // currently only for events.on_resized not modify children
+	mode        WindowSizeType
+	root_layout Layout
+	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -77,11 +76,11 @@ pub mut:
 	// drag
 	dragger Dragger = Dragger{}
 	// tooltip
-	tooltip Tooltip = Tooltip{}
+	tooltip         Tooltip = Tooltip{}
+	widgets_tooltip []Widget
+	tooltips        []TooltipMessage
 	// with message
 	native_message bool
-	// scrollview scissor
-	// last_scissor_rect  gg.Rect
 }
 
 pub struct WindowConfig {
@@ -263,8 +262,8 @@ fn gg_init(mut window Window) {
 	}
 	for _, mut child in window.children {
 		// println('init $child.type_name()')
-		child.init(window)
 		window.register_child(*child)
+		child.init(window)
 	}
 	// refresh the layout
 	window.update_layout()
@@ -518,6 +517,9 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
+
+	window.update_tooltip(e)
+
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
@@ -1287,6 +1289,15 @@ pub fn (w Window) menu(id string) &Menu {
 		return widget
 	} else {
 		return menu({})
+	}
+}
+
+pub fn (w Window) rectangle(id string) &Rectangle {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Rectangle {
+		return widget
+	} else {
+		return rectangle({})
 	}
 }
 
