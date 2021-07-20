@@ -49,7 +49,7 @@ pub struct DropdownConfig {
 	parent               Layout
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
-	items []DropdownItem
+	items                []DropdownItem
 }
 
 pub struct DropdownItem {

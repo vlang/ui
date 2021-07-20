@@ -204,7 +204,13 @@ fn (mut win Window) add_message_dialog() {
 		bg_radius: .3
 		children: [
 			label(id: '_msg_dlg_lab', text: ' Hello World'),
-			button(id: '_msg_dlg_btn', text: 'OK', width: 100, radius: .3, onclick: message_dialog_click),
+			button(
+				id: '_msg_dlg_btn'
+				text: 'OK'
+				width: 100
+				radius: .3
+				onclick: message_dialog_click
+			),
 		]
 	)
 	dlg.is_root_layout = false

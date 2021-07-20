@@ -82,7 +82,7 @@ mut:
 	text_size  f64
 	selection  int  = -1
 	scrollview bool = true
-	items map[string]string
+	items      map[string]string
 }
 
 // Keys of the items map are IDs of the elements, values are text

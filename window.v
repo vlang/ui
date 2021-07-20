@@ -153,8 +153,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
-			window.touch.start = ui.Touch{
-				pos: ui.Pos{
+			window.touch.start = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -166,8 +166,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_mouse_up(e, mut window.ui)
 			// NOT THERE since already done
 			// touch-like
-			window.touch.end = ui.Touch{
-				pos: ui.Pos{
+			window.touch.end = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -196,8 +196,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_began {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.start = ui.Touch{
-					pos: ui.Pos{
+				window.touch.start = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -211,8 +211,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_ended {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.end = ui.Touch{
-					pos: ui.Pos{
+				window.touch.end = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -227,8 +227,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_moved {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.move = ui.Touch{
-					pos: ui.Pos{
+				window.touch.move = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
