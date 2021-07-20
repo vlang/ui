@@ -50,27 +50,30 @@ fn main() {
 				hoverable: true
 			)
 		}
-		children << ui.row({
+		children << ui.row(
 			spacing: .02
 			widths: ui.stretch
-		}, row_children)
+			children: row_children
+		)
 	}
 
-	app.window = ui.window({
+	app.window = ui.window(
 		width: 300
 		height: 400
 		title: 'V Calc'
 		state: app
 		mode: .resizable // .max_size //
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
-	}, [
-		ui.column({
-			margin_: 10
-			spacing: .02
-			heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
-			bg_color: gx.rgb(240, 180, 130)
-		}, children),
-	])
+		children: [
+			ui.column(
+				margin_: 10
+				spacing: .02
+				heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+				bg_color: gx.rgb(240, 180, 130)
+				children: children
+			),
+		]
+	)
 	// app.text = "size= ${app.window.width} ${app.window.height}"
 	ui.run(app.window)
 }

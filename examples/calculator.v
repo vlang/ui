@@ -41,23 +41,26 @@ fn main() {
 		),
 	]
 	for op in ops {
-		children << ui.row({
+		children << ui.row(
 			spacing: 5
 			height: 30
 			widths: ui.stretch
-		}, get_row(op))
+			children: get_row(op)
+		)
 	}
-	app.window = ui.window({
+	app.window = ui.window(
 		width: 145
 		height: 210
 		title: 'V Calc'
 		state: app
-	}, [
-		ui.column({
-			margin: ui.Margin{5, 5, 5, 5}
-			spacing: 5
-		}, children),
-	])
+		children: [
+			ui.column(
+				margin: ui.Margin{5, 5, 5, 5}
+				spacing: 5
+				children: children
+			),
+		]
+	)
 	ui.run(app.window)
 }
 

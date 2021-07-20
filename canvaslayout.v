@@ -85,14 +85,15 @@ pub struct CanvasLayoutConfig {
 	on_key_down  CanvasLayoutKeyFn  = voidptr(0)
 	on_char      CanvasLayoutKeyFn  = voidptr(0)
 	full_size_fn CanvasLayoutSizeFn = voidptr(0)
+	children     []Widget
 }
 
-pub fn canvas_layout(c CanvasLayoutConfig, children []Widget) &CanvasLayout {
+pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
 	mut canvas := canvas_plus(c)
-	canvas.children = children
+	canvas.children = c.children
 	// Saves the original position of children
 	// used in set_children_pos
-	for i, child in children {
+	for i, child in c.children {
 		canvas.pos_[i] = XYPos{child.x, child.y}
 	}
 	return canvas
