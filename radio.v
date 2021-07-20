@@ -20,32 +20,32 @@ pub mut:
 	selected_index int
 	values         []string
 	// state      RadioState
-	title       string
+	title string
 	// items sizes except for compact mode where width is the full size
-	height      int
-	width       int
+	height int
+	width  int
 	// real sizes (returned by size()) which is a sort of cached sizes to avoid recomputation
-	real_height int = 20 
+	real_height int = 20
 	real_width  int
 	// items widths for compact mode
-	widths 		[]int
+	widths []int
 	// adjusted sizes that fit the items contents
-	adj_height 	int
-	adj_width  	int
-	x           int
-	y           int
-	offset_x    int
-	offset_y    int
-	z_index     int
-	parent      Layout
-	is_focused  bool
-	is_checked  bool
-	ui          &UI
-	text_cfg    gx.TextCfg
-	text_size   f64
-	hidden      bool
-	horizontal  bool
-	compact 	bool
+	adj_height int
+	adj_width  int
+	x          int
+	y          int
+	offset_x   int
+	offset_y   int
+	z_index    int
+	parent     Layout
+	is_focused bool
+	is_checked bool
+	ui         &UI
+	text_cfg   gx.TextCfg
+	text_size  f64
+	hidden     bool
+	horizontal bool
+	compact    bool
 	// component state for composable widget
 	component voidptr
 	// selected_value string
@@ -63,7 +63,7 @@ pub struct RadioConfig {
 	text_cfg   gx.TextCfg
 	text_size  f64
 	horizontal bool
-	compact	   bool
+	compact    bool
 }
 
 pub fn radio(c RadioConfig) &Radio {
@@ -151,7 +151,7 @@ pub fn (r &Radio) size() (int, int) {
 
 pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
 	if r.horizontal {
-		if r.compact{
+		if r.compact {
 			if r.real_width > w {
 				// TODO: would need a scrollview
 			}
