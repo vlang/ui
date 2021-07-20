@@ -107,9 +107,10 @@ struct StackConfig {
 	bg_color              gx.Color
 	bg_radius             f32
 	scrollview            bool
+	children              []Widget
 }
 
-fn stack(c StackConfig, children []Widget) &Stack {
+fn stack(c StackConfig) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
 		id: c.id
@@ -121,7 +122,7 @@ fn stack(c StackConfig, children []Widget) &Stack {
 		stretch: c.stretch
 		direction: c.direction
 		margins: c.margins
-		children: children
+		children: c.children
 		widths: c.widths
 		heights: c.heights
 		vertical_alignments: c.vertical_alignments

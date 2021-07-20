@@ -37,16 +37,17 @@ pub mut:
 
 pub struct GroupConfig {
 pub mut:
-	id      string
-	title   string
-	x       int
-	y       int
-	width   int
-	height  int
-	spacing int = 5
+	id       string
+	title    string
+	x        int
+	y        int
+	width    int
+	height   int
+	spacing  int = 5
+	children []Widget
 }
 
-pub fn group(c GroupConfig, children []Widget) &Group {
+pub fn group(c GroupConfig) &Group {
 	mut g := &Group{
 		id: c.id
 		title: c.title
@@ -54,7 +55,7 @@ pub fn group(c GroupConfig, children []Widget) &Group {
 		y: c.y
 		width: c.width
 		height: c.height
-		children: children
+		children: c.children
 		spacing: c.spacing
 		ui: 0
 	}

@@ -153,8 +153,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
-			window.touch.start = {
-				pos: {
+			window.touch.start = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -166,8 +166,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_mouse_up(e, mut window.ui)
 			// NOT THERE since already done
 			// touch-like
-			window.touch.end = {
-				pos: {
+			window.touch.end = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -196,8 +196,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_began {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.start = {
-					pos: {
+				window.touch.start = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -211,8 +211,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_ended {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.end = {
-					pos: {
+				window.touch.end = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -227,8 +227,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_moved {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.move = {
-					pos: {
+				window.touch.move = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -282,7 +282,7 @@ fn gg_cleanup(mut window Window) {
 	unsafe { window.free() }
 }
 
-pub fn window(cfg WindowConfig, children []Widget) &Window {
+pub fn window(cfg WindowConfig) &Window {
 	/*
 	println('window()')
 	defer {
@@ -340,7 +340,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		height: height
 		// orig_width: width // 800
 		// orig_height: height // 600
-		children: children
+		children: cfg.children
 		on_init: cfg.on_init
 		on_draw: cfg.on_draw
 		click_fn: cfg.on_click
@@ -431,7 +431,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	return window
 }
 
-pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widget) &Window {
+pub fn child_window(mut parent_window Window, cfg WindowConfig) &Window {
 	// q := int(parent_window)
 	// println('child_window() parent=$q.hex()')
 	mut window := &Window{
@@ -445,7 +445,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 		bg_color: cfg.bg_color
 		width: cfg.width
 		height: cfg.height
-		children: children
+		children: cfg.children
 		click_fn: cfg.on_click
 	}
 	parent_window.child_window = window
@@ -1234,7 +1234,7 @@ pub fn (w Window) label(id string) &Label {
 	if widget is Label {
 		return widget
 	} else {
-		return label({})
+		return label()
 	}
 }
 
@@ -1243,7 +1243,7 @@ pub fn (w Window) listbox(id string) &ListBox {
 	if widget is ListBox {
 		return widget
 	} else {
-		return listbox({}, map{})
+		return listbox()
 	}
 }
 
@@ -1252,7 +1252,7 @@ pub fn (w Window) textbox(id string) &TextBox {
 	if widget is TextBox {
 		return widget
 	} else {
-		return textbox({})
+		return textbox()
 	}
 }
 
@@ -1261,7 +1261,7 @@ pub fn (w Window) stack(id string) &Stack {
 	if widget is Stack {
 		return widget
 	} else {
-		return stack({}, [])
+		return stack()
 	}
 }
 
@@ -1270,7 +1270,7 @@ pub fn (w Window) group(id string) &Group {
 	if widget is Group {
 		return widget
 	} else {
-		return group({}, [])
+		return group()
 	}
 }
 
@@ -1279,7 +1279,7 @@ pub fn (w Window) canvas_layout(id string) &CanvasLayout {
 	if widget is CanvasLayout {
 		return widget
 	} else {
-		return canvas_layout({}, [])
+		return canvas_layout()
 	}
 }
 
@@ -1288,7 +1288,7 @@ pub fn (w Window) menu(id string) &Menu {
 	if widget is Menu {
 		return widget
 	} else {
-		return menu({})
+		return menu()
 	}
 }
 
@@ -1297,7 +1297,7 @@ pub fn (w Window) rectangle(id string) &Rectangle {
 	if widget is Rectangle {
 		return widget
 	} else {
-		return rectangle({})
+		return rectangle()
 	}
 }
 
