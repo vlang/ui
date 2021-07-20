@@ -134,45 +134,46 @@ fn main() {
 						ui.message_box(txt)
 					}
 				),
-				app.rgb_rectangle,
-				ui.row(
-					margin: ui.Margin{
-						right: .05
-						left: .05
-						top: 5
-						bottom: 5
-					}
-					// alignments: {center: [0,1,2]}
-					spacing: .3
-					heights: ui.compact
-					widths: .1
-					children: [app.r_textbox, app.g_textbox, app.b_textbox]
-				),
-				ui.row(
-					margin: ui.Margin{
-						right: .05
-						left: .05
-						top: 5
-						bottom: 5
-					}
-					// alignments: {center: [0,1,2]}
-					spacing: .3
-					widths: .1
-					children: [app.r_slider, app.g_slider, app.b_slider]
-				),
-				ui.row(
-					margin: ui.Margin{
-						right: .05
-						left: .05
-						top: 5
-						bottom: 5
-					}
-					// alignments: {center: [0,1,2]}
-					spacing: .3
-					widths: .1
-					children: [app.r_label, app.g_label, app.b_label]
-				),
-			]),
+					app.rgb_rectangle,
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						heights: ui.compact
+						widths: .1
+						children: [app.r_textbox, app.g_textbox, app.b_textbox]
+					),
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						widths: .1
+						children: [app.r_slider, app.g_slider, app.b_slider]
+					),
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						widths: .1
+						children: [app.r_label, app.g_label, app.b_label]
+					),
+				]
+			),
 		]
 	)
 	ui.run(app.window)

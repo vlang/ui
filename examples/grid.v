@@ -30,7 +30,7 @@ fn main() {
 				children: [
 					app.grid,
 				]
-			)
+			),
 		]
 	)
 	ui.run(app.window)

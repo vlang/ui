@@ -79,7 +79,9 @@ fn main() {
 				widths: [200., ui.stretch]
 				spacing: 30
 				children: [
-					ui.column(spacing: 13, children: [
+					ui.column(
+					spacing: 13
+					children: [
 						ui.textbox(
 							max_len: 20
 							width: 200
@@ -131,40 +133,47 @@ fn main() {
 								),
 							]
 						),
-						ui.row(spacing: 5, children: [app.pbar, app.label]),
-					]
-				),
-				ui.column(
-					alignments: ui.HorizontalAlignments{
-						center: [
-							0,
-						]
-						right: [
-							1,
-						]
-					}
-					widths: [
-						ui.stretch,
-						ui.compact,
-					]
-					heights: [
-						ui.stretch,
-						100.,
-					]
-					children: [
-						ui.canvas(
-							width: 400
-							height: 275
-							draw_fn: canvas_draw
-						),
-						ui.picture(
-							width: 100
-							height: 100
-							path: logo
+						ui.row(
+							spacing: 5
+							children: [
+								app.pbar,
+								app.label,
+							]
 						),
 					]
 				),
-			]),
+					ui.column(
+						alignments: ui.HorizontalAlignments{
+							center: [
+								0,
+							]
+							right: [
+								1,
+							]
+						}
+						widths: [
+							ui.stretch,
+							ui.compact,
+						]
+						heights: [
+							ui.stretch,
+							100.,
+						]
+						children: [
+							ui.canvas(
+								width: 400
+								height: 275
+								draw_fn: canvas_draw
+							),
+							ui.picture(
+								width: 100
+								height: 100
+								path: logo
+							),
+						]
+					),
+				]
+			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},
 			// 		ui.MenuItem{'Export users', menu_click}, ui.MenuItem{'Exit', menu_click}]

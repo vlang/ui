@@ -43,7 +43,10 @@ fn main() {
 				spacing: 10
 				widths: [.2, .3, .2, .3]
 				heights: 20.
-				children: [ui.label(text: 'Celsius'), app.txt_box_celsius, ui.label(text: 'Fahrenheit'), app.txt_box_fahrenheit]
+				children: [ui.label(text: 'Celsius'), app.txt_box_celsius,
+					ui.label(
+					text: 'Fahrenheit'
+				), app.txt_box_fahrenheit]
 			),
 		]
 	)

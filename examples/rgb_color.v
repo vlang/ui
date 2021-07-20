@@ -124,13 +124,13 @@ fn main() {
 				}
 				children: [
 					ui.button(
-						text: 'Show rgb color'
-						// width: 70
-						onclick: fn (app &App, b voidptr) {
-							txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
-							ui.message_box(txt)
-						}
-					),
+					text: 'Show rgb color'
+					// width: 70
+					onclick: fn (app &App, b voidptr) {
+						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+						ui.message_box(txt)
+					}
+				),
 					app.rgb_rectangle,
 					ui.row(
 						margin: ui.Margin{

@@ -20,9 +20,12 @@ fn main() {
 						text: 'Open'
 						width: 70
 						onclick: fn (a voidptr, b voidptr) {
-							webview.new_window(url: 'https://vlang.io', title: 'The V programming language')
+							webview.new_window(
+								url: 'https://vlang.io'
+								title: 'The V programming language'
+							)
 						}
-					)
+					),
 				]
 			),
 		]

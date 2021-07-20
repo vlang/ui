@@ -19,9 +19,14 @@ fn main() {
 		resizable: true
 		state: app
 		children: [
-			ui.row(margin_: .3, widths: .4, heights: .4, children: [
-				ui.button(text: 'Add user'),
-			]),
+			ui.row(
+				margin_: .3
+				widths: .4
+				heights: .4
+				children: [
+					ui.button(text: 'Add user'),
+				]
+			),
 		]
 	)
 	app.window = window

@@ -49,27 +49,26 @@ fn main() {
 				heights: [.5, .1, .1]
 				children: [
 					ui.row(
+					margin_: .05
+					spacing: .05
+					widths: [.3, .55]
+					children: [
+						ui.column(
+						spacing: .1
 						margin_: .05
-						spacing: .05
-						widths: [.3, .55]
-						children: [
-							ui.column(
-								spacing: .1
-								margin_: .05
-								heights: [.2, .1, .1]
-								children: [
-									ui.label(text: 'Elapsed Time:', text_size: 1. / 10),
-									ui.label(text: 'Duration:', text_size: 1. / 10),
-								]
-							),
-							ui.column(
-								spacing: .1
-								heights: [.4, ui.compact]
-								widths: ui.stretch
-								children: [app.lbl_elapsed_value, app.slider]
-							),
+						heights: [.2, .1, .1]
+						children: [ui.label(text: 'Elapsed Time:', text_size: 1. / 10),
+							ui.label(text: 'Duration:', text_size: 1. / 10),
 						]
 					),
+						ui.column(
+							spacing: .1
+							heights: [.4, ui.compact]
+							widths: ui.stretch
+							children: [app.lbl_elapsed_value, app.slider]
+						),
+					]
+				),
 					ui.row(
 						margin_: .05
 						spacing: .05
