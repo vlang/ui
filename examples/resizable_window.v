@@ -12,17 +12,18 @@ mut:
 
 fn main() {
 	mut app := &App{}
-	window := ui.window({
+	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'Resizable Window'
 		resizable: true
 		state: app
-	}, [
-		ui.row({ margin_: .3, widths: .4, heights: .4 }, [
-			ui.button(text: 'Add user'),
-		]),
-	])
+		children: [
+			ui.row(margin_: .3, widths: .4, heights: .4, children: [
+				ui.button(text: 'Add user'),
+			]),
+		]
+	)
 	app.window = window
 	ui.run(window)
 }

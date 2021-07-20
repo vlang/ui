@@ -193,7 +193,7 @@ pub fn (w &Window) update_tooltip(e &MouseMoveEvent) {
 // Before sokol deals with multiple window (soon)
 
 fn (mut win Window) add_message_dialog() {
-	mut dlg := column({
+	mut dlg := column(
 		id: '_msg_dlg_col'
 		alignment: .center
 		widths: compact
@@ -202,10 +202,11 @@ fn (mut win Window) add_message_dialog() {
 		margin: Margin{5, 5, 5, 5}
 		bg_color: gx.Color{140, 210, 240, 100}
 		bg_radius: .3
-	}, [
-		label(id: '_msg_dlg_lab', text: ' Hello World'),
-		button(id: '_msg_dlg_btn', text: 'OK', width: 100, radius: .3, onclick: message_dialog_click),
-	])
+		children: [
+			label(id: '_msg_dlg_lab', text: ' Hello World'),
+			button(id: '_msg_dlg_btn', text: 'OK', width: 100, radius: .3, onclick: message_dialog_click),
+		]
+	)
 	dlg.is_root_layout = false
 	win.children << dlg
 	dlg.set_visible(false)

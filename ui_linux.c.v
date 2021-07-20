@@ -47,19 +47,21 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 	}
 	widgets << label(text: ' ')
 	widgets << button(text: 'OK')
-	message_app.window = window({
+	message_app.window = window(
 		width: 400
 		height: height
 		title: 'Message box'
 		bg_color: default_window_color
 		state: message_app
-	}, [
-		column({
-			stretch: true
-			alignment: .center
-			margin: Margin{5, 5, 5, 5}
-		}, widgets),
-	])
+		children: [
+			column(
+				stretch: true
+				alignment: .center
+				margin: Margin{5, 5, 5, 5}
+				children: widgets
+			),
+		]
+	)
 	mut subscriber := message_app.window.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
 	run(message_app.window)

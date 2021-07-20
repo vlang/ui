@@ -32,21 +32,21 @@ fn main() {
 	}
 	app.txt_box_celsius.text = &app.txt_box_celsius_text
 	app.txt_box_fahrenheit.text = &app.txt_box_fahrenheit_text
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'Temperature Converter'
 		state: app
-	}, [
-		ui.row({
-			margin: ui.Margin{10, 10, 10, 10}
-			spacing: 10
-			widths: [.2, .3, .2, .3]
-			heights: 20.
-		}, [ui.label(text: 'Celsius'), app.txt_box_celsius, ui.label(text: 'Fahrenheit'),
-			app.txt_box_fahrenheit,
-		]),
-	])
+		children: [
+			ui.row(
+				margin: ui.Margin{10, 10, 10, 10}
+				spacing: 10
+				widths: [.2, .3, .2, .3]
+				heights: 20.
+				children: [ui.label(text: 'Celsius'), app.txt_box_celsius, ui.label(text: 'Fahrenheit'), app.txt_box_fahrenheit]
+			),
+		]
+	)
 	ui.run(app.window)
 }
 

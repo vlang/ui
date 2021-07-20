@@ -49,6 +49,7 @@ pub struct DropdownConfig {
 	parent               Layout
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
+	items []DropdownItem
 }
 
 pub struct DropdownItem {
@@ -56,13 +57,13 @@ pub:
 	text string
 }
 
-pub fn dropdown(c DropdownConfig, items []DropdownItem) &Dropdown {
+pub fn dropdown(c DropdownConfig) &Dropdown {
 	mut dd := &Dropdown{
 		id: c.id
 		width: c.width
 		dropdown_height: c.height
 		z_index: c.z_index
-		items: items
+		items: c.items
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
 		def_text: c.def_text
