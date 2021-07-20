@@ -21,10 +21,17 @@ pub mut:
 	values         []string
 	// state      RadioState
 	title       string
+	// items sizes except for compact mode where width is the full size
 	height      int
 	width       int
-	real_height int = 20
+	// real sizes (returned by size()) which is a sort of cached sizes to avoid recomputation
+	real_height int = 20 
 	real_width  int
+	// items widths for compact mode
+	widths 		[]int
+	// adjusted sizes that fit the items contents
+	adj_height 	int
+	adj_width  	int
 	x           int
 	y           int
 	offset_x    int
@@ -38,6 +45,7 @@ pub mut:
 	text_size   f64
 	hidden      bool
 	horizontal  bool
+	compact 	bool
 	// component state for composable widget
 	component voidptr
 	// selected_value string
@@ -55,6 +63,7 @@ pub struct RadioConfig {
 	text_cfg   gx.TextCfg
 	text_size  f64
 	horizontal bool
+	compact	   bool
 }
 
 pub fn radio(c RadioConfig) &Radio {
@@ -68,6 +77,7 @@ pub fn radio(c RadioConfig) &Radio {
 		text_cfg: c.text_cfg
 		text_size: c.text_size
 		horizontal: c.horizontal
+		compact: c.compact
 		ui: 0
 		on_click: c.on_click
 	}
@@ -88,14 +98,7 @@ fn (mut r Radio) init(parent Layout) {
 	r.ui = ui
 	// Get max value text width
 	if r.width == 0 {
-		mut max := 0
-		for value in r.values {
-			width := text_width(r, value)
-			if width > max {
-				max = width
-			}
-		}
-		r.width = max + check_mark_size + 10
+		r.set_adjusted_size()
 	}
 	init_text_cfg(mut r)
 	mut subscriber := parent.get_subscriber()
@@ -133,13 +136,28 @@ pub fn (mut r Radio) set_pos(x int, y int) {
 	r.y = y
 }
 
-pub fn (mut r Radio) size() (int, int) {
-	return r.real_width, r.real_height
+pub fn (r &Radio) size() (int, int) {
+	if r.horizontal {
+		if r.compact {
+			// r.width is here the sum of r.widths
+			return r.width, r.height + 15
+		} else {
+			return r.values.len * r.width, r.height + 15
+		}
+	} else {
+		return r.width, r.values.len * (r.height + 5)
+	}
 }
 
 pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
 	if r.horizontal {
-		r.width = w / r.values.len
+		if r.compact{
+			if r.real_width > w {
+				// TODO: would need a scrollview
+			}
+		} else {
+			r.width = w / r.values.len
+		}
 	} else {
 		r.width = w
 	}
@@ -148,9 +166,33 @@ pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
 	return r.real_width, r.real_height
 }
 
+fn (mut r Radio) set_adjusted_size() {
+	mut max := 0
+	for value in r.values {
+		width := text_width(r, value)
+		if r.horizontal {
+			if r.compact {
+				w := width + check_mark_size + 10
+				r.widths << w
+				r.width += w
+			}
+		} else {
+			if width > max {
+				max = width
+			}
+			r.width = max + check_mark_size + 10
+		}
+	}
+}
+
 fn (mut r Radio) update_size() {
 	if r.horizontal {
-		r.real_width, r.real_height = r.values.len * r.width, r.height + 15
+		if r.compact {
+			// r.width is here the sum of r.widths
+			r.real_width, r.real_height = r.width, r.height + 15
+		} else {
+			r.real_width, r.real_height = r.values.len * r.width, r.height + 15
+		}
 	} else {
 		r.real_width, r.real_height = r.width, r.values.len * (r.height + 5)
 	}

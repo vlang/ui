@@ -1225,7 +1225,7 @@ pub fn (w Window) button(id string) &Button {
 	if widget is Button {
 		return widget
 	} else {
-		return button({})
+		return button()
 	}
 }
 
