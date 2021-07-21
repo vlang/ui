@@ -1256,6 +1256,24 @@ pub fn (w Window) textbox(id string) &TextBox {
 	}
 }
 
+pub fn (w Window) radio(id string) &Radio {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Radio {
+		return widget
+	} else {
+		return radio()
+	}
+}
+
+pub fn (w Window) checkbox(id string) &CheckBox {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is CheckBox {
+		return widget
+	} else {
+		return checkbox()
+	}
+}
+
 pub fn (w Window) stack(id string) &Stack {
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Stack {

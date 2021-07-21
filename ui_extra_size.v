@@ -5,6 +5,7 @@ import math
 pub const (
 	stretch        = -10000.
 	compact        = 0. // from parent
+	fit            = 0
 	z_index_hidden = -10000
 )
 
