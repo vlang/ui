@@ -227,6 +227,7 @@ pub fn (mut t TextBox) set_pos(x int, y int) {
 	t.y = y
 }
 
+// Needed for ScrollableWidget
 fn (tb &TextBox) adj_size() (int, int) {
 	w, mut h := text_size(tb, tb.text)
 	if tb.is_multi {

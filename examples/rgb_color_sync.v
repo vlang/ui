@@ -109,68 +109,73 @@ fn main() {
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'RGB color displayed in rectangle'
 		state: app
 		mode: .resizable
-	}, [
-		ui.column({
-			// margin: {
-			// 	right: .1
-			// 	left: .1
-			// }
-			heights: [.1, .2, .1, .5, .1]
-			alignments: {
-				center: [0, 1, 2, 3]
-			}
-		}, [
-			ui.button(
-			text: 'Show rgb color'
-			// width: 70
-			onclick: fn (app &App, b voidptr) {
-				txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
-				ui.message_box(txt)
-			}
-		),
-			app.rgb_rectangle,
-			ui.row({
-				margin: {
-					right: .05
-					left: .05
-					top: 5
-					bottom: 5
+		children: [
+			ui.column(
+				// margin: {
+				// 	right: .1
+				// 	left: .1
+				// }
+				heights: [.1, .2, .1, .5, .1]
+				alignments: ui.HorizontalAlignments{
+					center: [0, 1, 2, 3]
 				}
-				// alignments: {center: [0,1,2]}
-				spacing: .3
-				heights: ui.compact
-				widths: .1
-			}, [app.r_textbox, app.g_textbox, app.b_textbox]),
-			ui.row({
-				margin: {
-					right: .05
-					left: .05
-					top: 5
-					bottom: 5
-				}
-				// alignments: {center: [0,1,2]}
-				spacing: .3
-				widths: .1
-			}, [app.r_slider, app.g_slider, app.b_slider]),
-			ui.row({
-				margin: {
-					right: .05
-					left: .05
-					top: 5
-					bottom: 5
-				}
-				// alignments: {center: [0,1,2]}
-				spacing: .3
-				widths: .1
-			}, [app.r_label, app.g_label, app.b_label]),
-		]),
-	])
+				children: [
+					ui.button(
+					text: 'Show rgb color'
+					// width: 70
+					onclick: fn (app &App, b voidptr) {
+						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+						ui.message_box(txt)
+					}
+				),
+					app.rgb_rectangle,
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						heights: ui.compact
+						widths: .1
+						children: [app.r_textbox, app.g_textbox, app.b_textbox]
+					),
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						widths: .1
+						children: [app.r_slider, app.g_slider, app.b_slider]
+					),
+					ui.row(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+							top: 5
+							bottom: 5
+						}
+						// alignments: {center: [0,1,2]}
+						spacing: .3
+						widths: .1
+						children: [app.r_label, app.g_label, app.b_label]
+					),
+				]
+			),
+		]
+	)
 	ui.run(app.window)
 }
 

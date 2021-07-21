@@ -82,10 +82,11 @@ mut:
 	text_size  f64
 	selection  int  = -1
 	scrollview bool = true
+	items      map[string]string
 }
 
 // Keys of the items map are IDs of the elements, values are text
-pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
+pub fn listbox(c ListBoxConfig) &ListBox {
 	mut list := &ListBox{
 		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
 		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }
@@ -105,7 +106,7 @@ pub fn listbox(c ListBoxConfig, items map[string]string) &ListBox {
 		id: c.id
 		ui: 0
 	}
-	for id, text in items {
+	for id, text in c.items {
 		// println(" append $id -> $text ")
 		list.append_item(id, text, 0)
 	}
@@ -448,6 +449,7 @@ fn (lb &ListBox) is_focused() bool {
 	return lb.is_focused
 }
 
+// Needed for ScrollableWidget
 fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {
 		mut width := 0

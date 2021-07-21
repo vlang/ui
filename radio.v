@@ -20,9 +20,18 @@ pub mut:
 	selected_index int
 	values         []string
 	// state      RadioState
-	title      string
-	height     int
-	width      int
+	title string
+	// items sizes except for compact mode where width is the full size
+	height int
+	width  int
+	// real sizes (returned by size()) which is a sort of cached sizes to avoid recomputation
+	real_height int = 20
+	real_width  int
+	// items widths for compact mode
+	widths []int
+	// adjusted sizes that fit the items contents
+	adj_height int
+	adj_width  int
 	x          int
 	y          int
 	offset_x   int
@@ -35,6 +44,8 @@ pub mut:
 	text_cfg   gx.TextCfg
 	text_size  f64
 	hidden     bool
+	horizontal bool
+	compact    bool
 	// component state for composable widget
 	component voidptr
 	// selected_value string
@@ -49,8 +60,10 @@ pub struct RadioConfig {
 	width    int
 	z_index  int
 	// ref       &Radio = voidptr(0)
-	text_cfg  gx.TextCfg
-	text_size f64
+	text_cfg   gx.TextCfg
+	text_size  f64
+	horizontal bool
+	compact    bool
 }
 
 pub fn radio(c RadioConfig) &Radio {
@@ -63,9 +76,12 @@ pub fn radio(c RadioConfig) &Radio {
 		width: c.width
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		horizontal: c.horizontal
+		compact: c.compact
 		ui: 0
 		on_click: c.on_click
 	}
+	r.update_size()
 	/*
 	if c.ref != 0 {
 		mut ref := c.ref
@@ -82,14 +98,7 @@ fn (mut r Radio) init(parent Layout) {
 	r.ui = ui
 	// Get max value text width
 	if r.width == 0 {
-		mut max := 0
-		for value in r.values {
-			width := text_width(r, value)
-			if width > max {
-				max = width
-			}
-		}
-		r.width = max + check_mark_size + 10
+		r.set_size_from_values()
 	}
 	init_text_cfg(mut r)
 	mut subscriber := parent.get_subscriber()
@@ -122,35 +131,140 @@ pub fn (r &Radio) free() {
 	}
 }
 
+fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
+	if r.hidden {
+		return
+	}
+	if !r.point_inside(e.x, e.y) {
+		return
+	}
+	if r.horizontal {
+		x := e.x - r.x
+		if r.compact {
+			mut w := 0
+			r.selected_index = r.values.len - 1
+			for i in 0 .. (r.values.len - 1) {
+				w += r.widths[i]
+				if x <= w {
+					r.selected_index = i
+					break
+				}
+			}
+		} else {
+			r.selected_index = x / (r.width + 5)
+			if r.selected_index == r.values.len {
+				r.selected_index = r.values.len - 1
+			}
+		}
+	} else {
+		// println('e.y=$e.y r.y=$r.y')
+		y := e.y - r.y
+		r.selected_index = y / (r.height + 5)
+		if r.selected_index == r.values.len {
+			r.selected_index = r.values.len - 1
+		}
+	}
+	// println(r.selected_index)
+}
+
 pub fn (mut r Radio) set_pos(x int, y int) {
 	r.x = x
 	r.y = y
 }
 
-pub fn (mut r Radio) size() (int, int) {
-	return r.width, r.values.len * (r.height + 5)
+pub fn (r &Radio) size() (int, int) {
+	if r.horizontal {
+		if r.compact {
+			// r.width is here the sum of r.widths
+			return r.width, r.height + 15
+		} else {
+			return r.values.len * r.width, r.height + 15
+		}
+	} else {
+		return r.width, r.values.len * (r.height + 5)
+	}
 }
 
 pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
-	r.width = w
+	if r.horizontal {
+		if r.compact {
+			if r.real_width > w {
+				// TODO: would need a scrollview
+			}
+		} else {
+			r.width = w / r.values.len
+		}
+	} else {
+		r.width = w
+	}
+	r.update_size()
 	// r.height = 20//default_font_size
-	return r.width, r.values.len * (r.height + 5)
+	return r.real_width, r.real_height
+}
+
+pub fn (mut r Radio) set_size_from_values() {
+	mut max := 0
+	if r.horizontal {
+		r.adj_width, r.adj_height = 0, r.height + 15
+	} else {
+		r.adj_width, r.adj_height = 0, (r.height + 5) * r.values.len
+	}
+	for value in r.values {
+		width := text_width(r, value)
+		if r.horizontal {
+			if r.compact {
+				w := width + check_mark_size + 10
+				r.widths << w
+				r.adj_width += w
+			}
+		} else {
+			if width > max {
+				max = width
+			}
+		}
+	}
+	if !r.horizontal {
+		r.width = max + check_mark_size + 10
+		r.adj_width = r.width
+	}
+}
+
+pub fn (mut r Radio) update_size() {
+	if r.horizontal {
+		if r.compact {
+			// r.width is here the sum of r.widths
+			r.real_width, r.real_height = r.adj_width, r.height + 15
+		} else {
+			r.real_width, r.real_height = r.values.len * r.width, r.height + 15
+		}
+	} else {
+		r.real_width, r.real_height = r.width, r.values.len * (r.height + 5)
+	}
 }
 
 fn (mut r Radio) draw() {
 	offset_start(mut r)
-	// Border
-	r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.values.len * (r.height + 5), gx.gray)
-	// Title
-	r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
-		10, default_window_color)
-	// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
-	// r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
-	draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+	if r.title != '' {
+		// Border
+		r.ui.gg.draw_empty_rect(r.x, r.y, r.real_width, r.real_height, gx.gray)
+		// Title
+		r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
+			10, default_window_color)
+		// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
+		// r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
+		draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+	}
 	// Values
+	dy := if r.title == '' { 0 } else { 15 }
+	mut x, mut y := r.x + 5, r.y + dy
 	for i, val in r.values {
-		y := r.y + r.height * i + 15
-		x := r.x + 5
+		if i > 0 {
+			if r.horizontal {
+				x += if r.compact { r.widths[i - 1] } else { r.width }
+			} else {
+				y += r.height
+			}
+		}
 		r.ui.gg.draw_image(x, y - 1, 16, 16, r.ui.selected_radio_image)
 		if i != r.selected_index {
 			r.ui.gg.draw_rect(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
@@ -159,7 +273,7 @@ fn (mut r Radio) draw() {
 		// Text
 		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
 		// r.draw_text(r.x + check_mark_size + 10, y, val)
-		draw_text(r, r.x + check_mark_size + 10, y, val)
+		draw_text(r, x + check_mark_size + 5, y, val)
 	}
 	$if bb ? {
 		draw_bb(mut r, r.ui)
@@ -169,23 +283,7 @@ fn (mut r Radio) draw() {
 
 fn (r &Radio) point_inside(x f64, y f64) bool {
 	rx, ry := r.x + r.offset_x, r.y + r.offset_y
-	return x >= rx && x <= rx + r.width && y >= ry && y <= ry + (r.height + 5) * r.values.len
-}
-
-fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
-	if r.hidden {
-		return
-	}
-	if !r.point_inside(e.x, e.y) {
-		return
-	}
-	// println('e.y=$e.y r.y=$r.y')
-	y := e.y - r.y
-	r.selected_index = y / (r.height + 5)
-	if r.selected_index == r.values.len {
-		r.selected_index = r.values.len - 1
-	}
-	// println(r.selected_index)
+	return x >= rx && x <= rx + r.real_width && y >= ry && y <= ry + r.real_height
 }
 
 fn (mut r Radio) set_visible(state bool) {

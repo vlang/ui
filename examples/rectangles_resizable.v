@@ -22,7 +22,7 @@ fn main() {
 		radius: 10
 		text: 'Red'
 	)
-	window := ui.window({
+	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'V UI: Rectangles'
@@ -31,19 +31,21 @@ fn main() {
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
 		//}
-	}, [
-		ui.row({
-			alignment: .center
-			spacing: 5
-			margin: ui.Margin{5, 5, 5, 5}
-			widths: ui.stretch
-		}, [
-			rect,
-			ui.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
-			ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
-			ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
-		]),
-	])
+		children: [
+			ui.row(
+				alignment: .center
+				spacing: 5
+				margin: ui.Margin{5, 5, 5, 5}
+				widths: ui.stretch
+				children: [
+					rect,
+					ui.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
+					ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
+					ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
+				]
+			),
+		]
+	)
 	app.window = window
 	ui.run(window)
 }
