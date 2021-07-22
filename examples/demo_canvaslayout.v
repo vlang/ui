@@ -11,20 +11,6 @@ const (
 	table_width = cell_width * nr_cols
 )
 
-struct User {
-	first_name string
-	last_name  string
-	age        int
-	country    string
-}
-
-// struct State {
-// mut:
-// 	window     &ui.Window = voidptr(0)
-// 	label      &ui.Label
-// 	country    &ui.Radio
-// }
-
 fn main() {
 	mut logo := os.resource_abs_path(os.join_path('assets/img', 'logo.png'))
 	$if android {
