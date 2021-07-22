@@ -19,8 +19,8 @@ const (
 	text_border_color             = gx.rgb(177, 177, 177)
 	text_inner_border_color       = gx.rgb(240, 240, 240)
 	text_border_accentuated_color = gx.rgb(255, 0, 0)
-	textbox_padding_x               = 5
-	textbox_padding_y 				= 2
+	textbox_padding_x             = 5
+	textbox_padding_y             = 2
 	// selection_color = gx.rgb(226, 233, 241)
 	selection_color               = gx.rgb(186, 214, 251)
 )
@@ -51,13 +51,13 @@ pub mut:
 	// gg &gg.GG
 	ui &UI = 0
 	// text               string
-	text             &string = voidptr(0)
-	max_len          int
+	text    &string = voidptr(0)
+	max_len int
 	// multilines mode
-	is_multi         bool
-	wordwrap 		 bool
-	line_height      int
-	lines 			 []string
+	is_multi    bool
+	wordwrap    bool
+	line_height int
+	lines       []string
 	// placeholder
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
@@ -105,7 +105,7 @@ pub struct TextBoxConfig {
 	width            int
 	height           int = 22
 	multilines       bool
-	wordwrap		 bool
+	wordwrap         bool
 	z_index          int
 	min              int
 	max              int
@@ -183,7 +183,9 @@ fn (mut tb TextBox) init(parent Layout) {
 			size: text_size_as_int(tb.text_size, win_height)
 		}
 	}
-	if tb.is_multi { tb.update_textlines() }
+	if tb.is_multi {
+		tb.update_textlines()
+	}
 	// TODO: Maybe in a method later
 	tb.line_height = text_height(tb, 'W') + 6
 	// return widget
@@ -332,7 +334,8 @@ fn (mut tb TextBox) draw() {
 				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
 				// 	text.len), tb.placeholder_cfg)
 				// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
-				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
+				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
+					text.len))
 			} else {
 				if tb.is_multi {
 					tb.draw_textlines()
@@ -343,7 +346,8 @@ fn (mut tb TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && tb.sel_start_x == 0 && tb.sel_end_x == 0 {
+	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && tb.sel_start_x == 0
+		&& tb.sel_end_x == 0 {
 		// no cursor in sel mode
 		mut cursor_x := tb.x + ui.textbox_padding_x
 		if tb.is_password {
@@ -359,7 +363,8 @@ fn (mut tb TextBox) draw() {
 			cursor_x = tb.x + ui.textbox_padding_x
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-		tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y + tb.cursor_pos_j * tb.line_height, 1, tb.line_height, gx.black) // , gx.Black)
+		tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y + tb.cursor_pos_j * tb.line_height,
+			1, tb.line_height, gx.black) // , gx.Black)
 	}
 	$if bb ? {
 		draw_bb(mut tb, tb.ui)
@@ -433,12 +438,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	if tb.is_multi {
-		if int(e.codepoint) !in [0,27] && e.mods != .super  {
-			s := utf32_to_str(e.codepoint)	
+		if int(e.codepoint) !in [0, 27] && e.mods != .super {
+			s := utf32_to_str(e.codepoint)
 			tb.insert(s)
 		}
 	} else {
-		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super  { // skip enter and escape // && e.key !in [.enter, .escape] {
+		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
 			if tb.max_len > 0 && text.len >= tb.max_len {
 				return
 			}
@@ -715,7 +720,6 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if tb.hidden {
 		return
@@ -758,7 +762,6 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		width := text_width(tb, ustr[..i].string())
 		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
 		if prev_width <= x && x <= width {
-			
 			tb.cursor_pos_i = i
 			return
 		}
@@ -848,16 +851,16 @@ pub fn (mut tb TextBox) insert(s string) {
 	if tb.is_multi {
 		mut ustr := tb.lines[tb.cursor_pos_j].runes()
 		old_len := ustr.len
-		str_tmp := s.split("\n")
+		str_tmp := s.split('\n')
 		if str_tmp.len > 1 {
 			tb.lines.insert(tb.cursor_pos_i + 1, str_tmp[1..])
-			ustr.insert(tb.cursor_pos_i,str_tmp[0].runes())
+			ustr.insert(tb.cursor_pos_i, str_tmp[0].runes())
 		} else {
-			ustr.insert(tb.cursor_pos_i,s.runes())
+			ustr.insert(tb.cursor_pos_i, s.runes())
 		}
 		tb.lines[tb.cursor_pos_j] = ustr.string()
 		unsafe {
-			*tb.text = tb.lines.join("\n")
+			*tb.text = tb.lines.join('\n')
 		}
 	} else {
 		mut ustr := tb.text.runes()

@@ -1,14 +1,14 @@
 import ui
 
 struct State {
-	tb1 string
+	tb1  string
 	tb2m string
 }
 
 fn main() {
 	mut app := &State{
-		tb1: "hggyjgyguguglul"
-		tb2m: "toto\ntiti\ntatatata"
+		tb1: 'hggyjgyguguglul'
+		tb2m: 'toto\ntiti\ntatatata'
 	}
 	c := ui.column(
 		widths: ui.stretch
@@ -17,15 +17,15 @@ fn main() {
 		spacing: 10
 		children: [
 			ui.textbox(
-				id: "tb1"
-				text: &app.tb1 
-			)
+				id: 'tb1'
+				text: &app.tb1
+			),
 			ui.textbox(
 				multilines: true
-				id: "tb2m"
-				text: &app.tb2m 
+				id: 'tb2m'
+				text: &app.tb2m
 				height: 200
-			)
+			),
 		]
 	)
 	w := ui.window(
