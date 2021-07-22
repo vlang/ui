@@ -419,7 +419,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	text := *tb.text
+	mut text := if tb.is_multi { tb.lines[tb.cursor_pos_j] } else { *tb.text }
 	if tb.is_error != voidptr(0) {
 		unsafe {
 			*tb.is_error = false
@@ -438,7 +438,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	if tb.is_multi {
-		if int(e.codepoint) !in [0, 27] && e.mods != .super {
+		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super {
 			s := utf32_to_str(e.codepoint)
 			tb.insert(s)
 		}
@@ -477,8 +477,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 		}
 	}
+	// println("tb key_down $e.key ${int(e.codepoint)}")
 	match e.key {
 		.enter {
+			if tb.is_multi {
+				tb.insert('\n')
+			}
 			if tb.on_enter != TextBoxEnterFn(0) {
 				println('tb_enter: <${*tb.text}>')
 				tb.on_enter(*tb.text, window.state)
@@ -554,7 +558,16 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
 			tb.cursor_pos_i--
 			if tb.cursor_pos_i <= 0 {
-				tb.cursor_pos_i = 0
+				if tb.is_multi {
+					if tb.cursor_pos_j == 0 {
+						tb.cursor_pos_i = 0
+					} else {
+						tb.cursor_pos_j -= 1
+						tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+					}
+				} else {
+					tb.cursor_pos_i = 0
+				}
 			}
 		}
 		.right {
@@ -569,7 +582,36 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.ui.show_cursor = true
 			tb.cursor_pos_i++
 			if tb.cursor_pos_i > text.len {
-				tb.cursor_pos_i = text.len
+				if tb.is_multi {
+					if tb.cursor_pos_j == tb.lines.len - 1 {
+						tb.cursor_pos_i = text.len
+					} else {
+						tb.cursor_pos_i = 0
+						tb.cursor_pos_j += 1
+					}
+				} else {
+					tb.cursor_pos_i = text.len
+				}
+			}
+		}
+		.up {
+			if tb.is_multi {
+				if tb.cursor_pos_j > 0 {
+					tb.cursor_pos_j -= 1
+				}
+				if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
+					tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+				}
+			}
+		}
+		.down {
+			if tb.is_multi {
+				if tb.cursor_pos_j < tb.lines.len - 1 {
+					tb.cursor_pos_j += 1
+				}
+				if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
+					tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+				}
 			}
 		}
 		.a {
@@ -834,7 +876,8 @@ fn (mut t TextBox) unfocus() {
 }
 
 fn (mut tb TextBox) update() {
-	tb.cursor_pos_i = tb.text.runes().len
+	tb.cursor_pos_i = if tb.is_multi { tb.lines[tb.cursor_pos_j].len } else { tb.text.runes().len }
+	// println("update: $tb.cursor_pos_i")
 }
 
 pub fn (mut tb TextBox) hide() {
@@ -849,18 +892,42 @@ pub fn (mut tb TextBox) set_text(s string) {
 // }
 pub fn (mut tb TextBox) insert(s string) {
 	if tb.is_multi {
-		mut ustr := tb.lines[tb.cursor_pos_j].runes()
-		old_len := ustr.len
-		str_tmp := s.split('\n')
-		if str_tmp.len > 1 {
-			tb.lines.insert(tb.cursor_pos_i + 1, str_tmp[1..])
-			ustr.insert(tb.cursor_pos_i, str_tmp[0].runes())
+		if s == '\n' {
+			// println("multi insert newline ($tb.cursor_pos_i, $tb.cursor_pos_j)")
+			if tb.cursor_pos_i == tb.lines[tb.cursor_pos_j].len {
+				// insert newline after
+				tb.lines.insert(tb.cursor_pos_j + 1, '')
+				tb.cursor_pos_j += 1
+				tb.cursor_pos_i = 0
+			} else if tb.cursor_pos_i == 0 {
+				// insert newline before
+				tb.lines.insert(tb.cursor_pos_j, '')
+			} else {
+				ustr := tb.lines[tb.cursor_pos_j].runes()
+				tb.lines.insert(tb.cursor_pos_j + 1, ustr[tb.cursor_pos_i..].string())
+				tb.lines[tb.cursor_pos_j] = ustr[..tb.cursor_pos_i].string()
+				tb.cursor_pos_j += 1
+				tb.cursor_pos_i = 0
+			}
+			unsafe {
+				*tb.text = tb.lines.join('\n')
+			}
 		} else {
-			ustr.insert(tb.cursor_pos_i, s.runes())
-		}
-		tb.lines[tb.cursor_pos_j] = ustr.string()
-		unsafe {
-			*tb.text = tb.lines.join('\n')
+			mut ustr := tb.lines[tb.cursor_pos_j].runes()
+			// old_len := ustr.len
+			str_tmp := s.split('\n')
+			if str_tmp.len > 1 {
+				// TODO: to fix (when copy-paste)
+				tb.lines.insert(tb.cursor_pos_i + 1, str_tmp[1..])
+				ustr.insert(tb.cursor_pos_i, str_tmp[0].runes())
+			} else {
+				ustr.insert(tb.cursor_pos_i, s.runes())
+			}
+			tb.lines[tb.cursor_pos_j] = ustr.string()
+			tb.cursor_pos_i += str_tmp[0].len
+			unsafe {
+				*tb.text = tb.lines.join('\n')
+			}
 		}
 	} else {
 		mut ustr := tb.text.runes()
