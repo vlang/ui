@@ -438,7 +438,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	if tb.is_multi {
-		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super {
+		if int(e.codepoint) !in [0, 13, 27, 127] && e.mods != .super {
+			// println("insert multi ${int(e.codepoint)}")
 			s := utf32_to_str(e.codepoint)
 			tb.insert(s)
 		}
@@ -490,9 +491,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		}
 		.backspace {
 			tb.ui.show_cursor = true
-			// println('backspace cursor_pos_i=$tb.cursor_pos_i len=${(*tb.text).len} ')
-			if text != '' {
-				if tb.cursor_pos_i == 0 {
+			// println('backspace cursor_pos=($tb.cursor_pos_i, $tb.cursor_pos_j) len=${(*tb.text).len} ')
+			if text != '' || tb.is_multi {
+				if !tb.is_multi && tb.cursor_pos_i == 0 {
 					return
 				}
 				u := text.runes()
@@ -519,10 +520,29 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					tb.cursor_pos_i = i
 				} else {
 					// Delete just one character
-					unsafe {
-						*tb.text = u[..tb.cursor_pos_i - 1].string() + u[tb.cursor_pos_i..].string()
+					if tb.is_multi {
+						if tb.cursor_pos_i == 0 {
+							if tb.cursor_pos_j > 0 {
+								tb.cursor_pos_i = tb.lines[tb.cursor_pos_j - 1].len
+								tb.lines[tb.cursor_pos_j] = tb.lines[tb.cursor_pos_j - 1] +
+									tb.lines[tb.cursor_pos_j]
+								tb.lines.delete(tb.cursor_pos_j - 1)
+								tb.cursor_pos_j -= 1
+							}
+						} else {
+							unsafe {
+								tb.lines[tb.cursor_pos_j] = u[..tb.cursor_pos_i - 1].string() +
+									u[tb.cursor_pos_i..].string()
+							}
+							tb.cursor_pos_i--
+						}
+					} else {
+						unsafe {
+							*tb.text = u[..tb.cursor_pos_i - 1].string() +
+								u[tb.cursor_pos_i..].string()
+						}
+						tb.cursor_pos_i--
 					}
-					tb.cursor_pos_i--
 				}
 				// u.free() // TODO remove
 				// tb.text = tb.text[..tb.cursor_pos_i - 1] + tb.text[tb.cursor_pos_i..]
