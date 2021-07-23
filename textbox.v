@@ -348,7 +348,7 @@ fn (mut tb TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.sel_active() {
+	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.is_sel_active() {
 		// && tb.sel_end_i == 0 {
 		// no cursor in sel mode
 		mut cursor_x := tb.x + ui.textbox_padding_x
@@ -374,7 +374,7 @@ fn (mut tb TextBox) draw() {
 	offset_end(mut tb)
 }
 
-fn (tb &TextBox) sel_active() bool {
+fn (tb &TextBox) is_sel_active() bool {
 	if tb.is_multi {
 		return tb.sel_end_j > -1
 			&& (tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j)
@@ -384,7 +384,8 @@ fn (tb &TextBox) sel_active() bool {
 }
 
 fn (tb &TextBox) draw_textlines() {
-	if tb.sel_active() {
+	if tb.is_sel_active() {
+		// println("drawtl j=$tb.sel_start_j, $tb.sel_end_j i=$tb.sel_start_i, $tb.sel_end_i")
 		if tb.sel_start_j == tb.sel_end_j {
 			sel_from, sel_width := text_xminmax_from_pos(tb, tb.lines[tb.sel_start_j],
 				tb.sel_start_i, tb.sel_end_i)
@@ -397,12 +398,12 @@ fn (tb &TextBox) draw_textlines() {
 				tb.sel_end_i, tb.sel_start_i, tb.sel_end_j, tb.sel_start_j
 			}
 			mut sel_from, mut sel_width := text_xminmax_from_pos(tb, tb.lines[start_j],
-				start_i, tb.lines[start_j].len)
+				start_i, tb.lines[start_j].runes().len)
 			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
 				start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
 			if end_j - start_j > 1 {
 				for j in (start_j + 1) .. end_j {
-					sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[j], 0, tb.lines[j].len)
+					sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[j], 0, tb.lines[j].runes().len)
 					tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y +
 						ui.textbox_padding_y + j * tb.line_height, sel_width, tb.line_height,
 						ui.selection_color)
@@ -412,21 +413,14 @@ fn (tb &TextBox) draw_textlines() {
 			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
 				end_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
 		}
-		// ustr := tb.lines[0].runes()
-		// if tb.sel_start_i < tb.sel_end_i && tb.sel_start_i < ustr.len {
-		// 	left := ustr[..tb.sel_start_i].string()
-		// 	right := ustr[tb.sel_end_i..].string()
-		// 	tb.ui.gg.set_cfg(tb.text_cfg)
-		// 	sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
-		// 	x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding_x
-		// 	tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.line_height, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
-		// }
 	}
+	// println("dtl2")
 	mut y := tb.y + ui.textbox_padding_y
 	for line in tb.lines {
 		draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
 		y += tb.line_height
 	}
+	// println("dtl3")
 }
 
 fn (mut tb TextBox) update_textlines() {
@@ -491,10 +485,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			// println("insert multi ${int(e.codepoint)}")
 			s := utf32_to_str(e.codepoint)
 			tb.insert(s)
+			tb.sel_end_i = tb.sel_start_i
+			tb.sel_end_j = tb.sel_start_j
 		}
 	} else {
 		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
-			if tb.max_len > 0 && text.len >= tb.max_len {
+			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
 			}
 			if byte(e.codepoint) in [`\t`, 127] {
@@ -504,7 +500,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			s := utf32_to_str(e.codepoint)
 			// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 			if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
-				|| ((text.len > 0) && (tb.cursor_pos_i > 0))))) {
+				|| ((text.runes().len > 0) && (tb.cursor_pos_i > 0))))) {
 				return
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
@@ -546,9 +542,49 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				u := text.runes()
 				// Delete the entire selection
-				if tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j {
+				if tb.is_sel_active() {
 					if tb.is_multi {
-						// TODO
+						if tb.sel_start_j == tb.sel_end_j {
+							ustr := tb.lines[tb.sel_start_j].runes()
+							// println("bsp1 $tb.sel_start_i, $tb.sel_end_i,  $ustr.len")
+							tb.lines[tb.sel_start_j] = ustr[0..tb.sel_start_i].string() +
+								ustr[tb.sel_end_i..ustr.len].string()
+							tb.sel_end_i = tb.sel_start_i
+						} else {
+							start_i, end_i, start_j, end_j := if tb.sel_start_j < tb.sel_end_j {
+								tb.sel_start_i, tb.sel_end_i, tb.sel_start_j, tb.sel_end_j
+							} else {
+								tb.sel_end_i, tb.sel_start_i, tb.sel_end_j, tb.sel_start_j
+							}
+							// modif in the reverse order
+							mut ustr := tb.lines[end_j].runes()
+							tb.lines[end_j] = ustr[end_i..].string()
+							for j := end_j - 1; j > start_j; j-- {
+								tb.lines.delete(j)
+							}
+							ustr = tb.lines[start_j].runes()
+							tb.lines[start_j] = ustr[..start_i].string()
+							tb.sel_start_i = start_i
+							tb.sel_start_j = start_j
+							tb.sel_end_i = start_i
+							tb.sel_end_j = start_j
+							// mut sel_from, mut sel_width := text_xminmax_from_pos(tb, tb.lines[start_j],
+							// 	start_i, tb.lines[start_j].len)
+							// tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
+							// 	start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
+							// if end_j - start_j > 1 {
+							// 	for j in (start_j + 1) .. end_j {
+							// 		sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[j], 0, tb.lines[j].len)
+							// 		tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y +
+							// 			ui.textbox_padding_y + j * tb.line_height, sel_width, tb.line_height,
+							// 			ui.selection_color)
+							// 	}
+							// }
+							// sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[end_j], 0, end_i)
+							// tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
+							// 	end_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
+						}
+						// return
 					} else {
 						unsafe {
 							*tb.text = u[..tb.sel_start_i].string() + u[tb.sel_end_i..].string()
@@ -599,6 +635,10 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// u.free() // TODO remove
 				// tb.text = tb.text[..tb.cursor_pos_i - 1] + tb.text[tb.cursor_pos_i..]
 			}
+			unsafe {
+				*tb.text = tb.lines.join('\n')
+			}
+			// println("after bsp ${tb.lines} ${*tb.text}")
 			if tb.on_change != TextBoxChangeFn(0) {
 				// tb.on_change(*tb.text, window.state)
 			}
@@ -635,7 +675,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 						tb.cursor_pos_i = 0
 					} else {
 						tb.cursor_pos_j -= 1
-						tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+						tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].runes().len
 					}
 				} else {
 					tb.cursor_pos_i = 0
@@ -845,13 +885,14 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			if reverse {
 				tb.sel_start_i = 0
 			} else {
-				tb.sel_end_i = tb.text.len
+				tb.sel_end_i = tb.text.runes().len
 			}
 		}
 	}
 }
 
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+	// println("mouse first")
 	if tb.hidden {
 		return
 	}
@@ -890,7 +931,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if tb.dragging {
 		tb.sel_start_i, tb.sel_start_j = tb.cursor_pos_i, tb.cursor_pos_j
 	}
-	// println("cursor: ($tb.cursor_pos_i, $tb.cursor_pos_j)")
+	// println("cursor move: ($tb.cursor_pos_i, $tb.cursor_pos_j)")
 }
 
 fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
@@ -975,7 +1016,9 @@ pub fn (mut tb TextBox) insert(s string) {
 	if tb.is_multi {
 		if s == '\n' {
 			// println("multi insert newline ($tb.cursor_pos_i, $tb.cursor_pos_j)")
-			if tb.cursor_pos_i == tb.lines[tb.cursor_pos_j].len {
+			ustr := tb.lines[tb.cursor_pos_j].runes()
+			text_len := ustr.len
+			if tb.cursor_pos_i == text_len {
 				// insert newline after
 				tb.lines.insert(tb.cursor_pos_j + 1, '')
 				tb.cursor_pos_j += 1
@@ -984,7 +1027,6 @@ pub fn (mut tb TextBox) insert(s string) {
 				// insert newline before
 				tb.lines.insert(tb.cursor_pos_j, '')
 			} else {
-				ustr := tb.lines[tb.cursor_pos_j].runes()
 				tb.lines.insert(tb.cursor_pos_j + 1, ustr[tb.cursor_pos_i..].string())
 				tb.lines[tb.cursor_pos_j] = ustr[..tb.cursor_pos_i].string()
 				tb.cursor_pos_j += 1
@@ -1005,7 +1047,7 @@ pub fn (mut tb TextBox) insert(s string) {
 				ustr.insert(tb.cursor_pos_i, s.runes())
 			}
 			tb.lines[tb.cursor_pos_j] = ustr.string()
-			tb.cursor_pos_i += str_tmp[0].len
+			tb.cursor_pos_i += str_tmp[0].runes().len
 			unsafe {
 				*tb.text = tb.lines.join('\n')
 			}

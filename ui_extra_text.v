@@ -33,7 +33,7 @@ pub fn text_pos_from_x<T>(w &T, text string, x int) int {
 		}
 		prev_width = width
 	}
-	return text.len
+	return ustr.len
 }
 
 // Initially inside ui_linux_c.v
