@@ -294,7 +294,8 @@ fn (mut tb TextBox) draw() {
 		if text == '' && placeholder != '' {
 			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder, tb.placeholder_cfg)
 			// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder)
-			draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder, gx.gray)
+			draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
+				gx.gray)
 		}
 		// Text
 		else {
@@ -373,8 +374,8 @@ fn (mut tb TextBox) draw() {
 }
 
 fn (tb &TextBox) draw_textlines() {
-	// start_j, stop_j := tb.sel_start_y / tb.line_height, tb.sel_stop_y / tb.line_height 
-	// mut x_min, mut x_max, mut y_min, mut y_max := 0, 0, 0, 0 
+	// start_j, stop_j := tb.sel_start_y / tb.line_height, tb.sel_stop_y / tb.line_height
+	// mut x_min, mut x_max, mut y_min, mut y_max := 0, 0, 0, 0
 	// if start_i == stop_i {
 	// 	if tb.sel_start_x < tb.sel_stop_x {
 	// 		x_min, x_max = tb.sel_start_x, tb.sel_stop_x
@@ -382,7 +383,7 @@ fn (tb &TextBox) draw_textlines() {
 	// 		x_min, x_max = tb.sel_stop_x, tb.sel_start_x
 	// 	}
 	// 	tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + x_min, tb.y + 3, sel_width, tb.line_height, ui.selection_color)
-	// } 
+	// }
 	// ustr := tb.lines[0].runes()
 	// if tb.sel_start_x < tb.sel_end_x && tb.sel_start_x < ustr.len {
 	// 	left := ustr[..tb.sel_start_x].string()
@@ -830,7 +831,11 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 			}
 		}
 	}
-	tb.cursor_pos_i = text_pos_from_x(tb, if tb.is_multi { tb.lines[tb.cursor_pos_j] } else { *tb.text }, x)
+	tb.cursor_pos_i = text_pos_from_x(tb, if tb.is_multi {
+		tb.lines[tb.cursor_pos_j]
+	} else {
+		*tb.text
+	}, x)
 	// println("cursor: ($tb.cursor_pos_i, $tb.cursor_pos_j)")
 }
 

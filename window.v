@@ -80,11 +80,11 @@ pub mut:
 	widgets_tooltip []Widget
 	tooltips        []TooltipMessage
 	// with message
-	native_message 		bool
+	native_message bool
 	// ui mode on gg
-	immediate 			bool
-	children_immediate  []Widget
-	needs_refresh 		bool = true
+	immediate          bool
+	children_immediate []Widget
+	needs_refresh      bool = true
 }
 
 pub struct WindowConfig {
@@ -112,7 +112,7 @@ pub:
 	native_rendering      bool
 	resizable             bool
 	mode                  WindowSizeType
-	immediate 			  bool
+	immediate             bool
 	// Text Config
 	lines int = 10
 	// message
@@ -381,7 +381,13 @@ pub fn window(cfg WindowConfig) &Window {
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
-		frame_fn: if cfg.immediate { frame_immediate } else if cfg.native_rendering { native_frame } else { frame }
+		frame_fn: if cfg.immediate {
+			frame_immediate
+		} else if cfg.native_rendering {
+			native_frame
+		} else {
+			frame
+		}
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window

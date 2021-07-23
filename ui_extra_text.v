@@ -2,7 +2,7 @@ module ui
 
 import gx
 
-pub fn text_x_from_pos<T>(w &T, text string, x int) int  {
+pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 	ustr := text.runes()
 	left := ustr[..x].string()
 	return text_width(w, left)
