@@ -2,6 +2,40 @@ module ui
 
 import gx
 
+pub fn text_x_from_pos<T>(w &T, text string, x int) int  {
+	ustr := text.runes()
+	left := ustr[..x].string()
+	return text_width(w, left)
+}
+
+pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
+	ustr := text.runes()
+	x_min, x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	left := ustr[..x_min].string()
+	right := ustr[x_max..].string()
+	ww, lw, rw := text_width(w, text), text_width(w, left), text_width(w, right)
+	return lw, ww - lw - rw
+}
+
+pub fn text_pos_from_x<T>(w &T, text string, x int) int {
+	if x <= 0 {
+		return 0
+	}
+	mut prev_width := 0
+	ustr := text.runes()
+	// println("tb down: (${ustr.string()}) $ustr.len")
+	for i in 1 .. ustr.len {
+		// width := tb.ui.gg.text_width(tb.text[..i])
+		width := text_width(w, ustr[..i].string())
+		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
+		if prev_width <= x && x <= width {
+			return i
+		}
+		prev_width = width
+	}
+	return text.len
+}
+
 // Initially inside ui_linux_c.v
 fn word_wrap_to_lines(s string, max_line_length int) []string {
 	words := s.split(' ')

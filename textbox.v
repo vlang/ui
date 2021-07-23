@@ -287,58 +287,58 @@ fn (mut tb TextBox) draw() {
 	width := if text.len == 0 { 0 } else { text_width(tb, text) }
 	text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
 	mut skip_idx := 0
-	// Placeholder
-	if text == '' && placeholder != '' {
-		// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder, tb.placeholder_cfg)
-		// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder)
-		draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder, gx.gray)
-	}
-	// Text
-	else {
-		// Selection box
-		// if tb.sel_start_x != 0 {
-		ustr := text.runes()
-		if tb.sel_start_x < tb.sel_end_x && tb.sel_start_x < ustr.len {
-			left := ustr[..tb.sel_start_x].string()
-			right := ustr[tb.sel_end_x..].string()
-			tb.ui.gg.set_cfg(tb.text_cfg)
-			sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
-			x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding_x
-			tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.line_height, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
+	if tb.is_multi {
+		tb.draw_textlines()
+	} else {
+		// Placeholder
+		if text == '' && placeholder != '' {
+			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder, tb.placeholder_cfg)
+			// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder)
+			draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder, gx.gray)
 		}
-		// The text doesn'tb fit, find the largest substring we can draw
-		if !tb.is_multi && width > tb.width {
-			tb.ui.gg.set_cfg(tb.text_cfg)
-			for i := text.len - 1; i >= 0; i-- {
-				if i >= text.len {
-					continue
-				}
-				// TODO: To fix since it fails when resizing to thin window
-				// if tb.ui.gg.text_width(text[i..]) > tb.width {
-				// 	skip_idx = i + 3
-				// 	break
-				// }
+		// Text
+		else {
+			// Selection box
+			// if tb.sel_start_x != 0 {
+			ustr := text.runes()
+			if tb.sel_start_x < tb.sel_end_x && tb.sel_start_x < ustr.len {
+				left := ustr[..tb.sel_start_x].string()
+				right := ustr[tb.sel_end_x..].string()
+				tb.ui.gg.set_cfg(tb.text_cfg)
+				sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
+				x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding_x
+				tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.line_height, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
 			}
-			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..], tb.placeholder_cfg)
-			// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
-			// draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
-			draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
-		} else {
-			if tb.is_password {
-				/*
-				for i in 0..tb.text.len {
-					// TODO drawing multiple circles is broken
-					//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
+			// The text doesn'tb fit, find the largest substring we can draw
+			if !tb.is_multi && width > tb.width {
+				tb.ui.gg.set_cfg(tb.text_cfg)
+				for i := text.len - 1; i >= 0; i-- {
+					if i >= text.len {
+						continue
+					}
+					// TODO: To fix since it fails when resizing to thin window
+					// if tb.ui.gg.text_width(text[i..]) > tb.width {
+					// 	skip_idx = i + 3
+					// 	break
+					// }
 				}
-				*/
-				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-				// 	text.len), tb.placeholder_cfg)
-				// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
-				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-					text.len))
+				// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..], tb.placeholder_cfg)
+				// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				// draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
 			} else {
-				if tb.is_multi {
-					tb.draw_textlines()
+				if tb.is_password {
+					/*
+					for i in 0..tb.text.len {
+						// TODO drawing multiple circles is broken
+						//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
+					}
+					*/
+					// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
+					// 	text.len), tb.placeholder_cfg)
+					// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
+					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
+						text.len))
 				} else {
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
 				}
@@ -373,6 +373,25 @@ fn (mut tb TextBox) draw() {
 }
 
 fn (tb &TextBox) draw_textlines() {
+	// start_j, stop_j := tb.sel_start_y / tb.line_height, tb.sel_stop_y / tb.line_height 
+	// mut x_min, mut x_max, mut y_min, mut y_max := 0, 0, 0, 0 
+	// if start_i == stop_i {
+	// 	if tb.sel_start_x < tb.sel_stop_x {
+	// 		x_min, x_max = tb.sel_start_x, tb.sel_stop_x
+	// 	} else {
+	// 		x_min, x_max = tb.sel_stop_x, tb.sel_start_x
+	// 	}
+	// 	tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + x_min, tb.y + 3, sel_width, tb.line_height, ui.selection_color)
+	// } 
+	// ustr := tb.lines[0].runes()
+	// if tb.sel_start_x < tb.sel_end_x && tb.sel_start_x < ustr.len {
+	// 	left := ustr[..tb.sel_start_x].string()
+	// 	right := ustr[tb.sel_end_x..].string()
+	// 	tb.ui.gg.set_cfg(tb.text_cfg)
+	// 	sel_width := width - tb.ui.gg.text_width(right) - tb.ui.gg.text_width(left)
+	// 	x := tb.ui.gg.text_width(left) + tb.x + ui.textbox_padding_x
+	// 	tb.ui.gg.draw_rect(x, tb.y + 3, sel_width, tb.line_height, ui.selection_color) // sel_width := tb.ui.gg.text_width(right) + 1
+	// }
 	mut y := tb.y + ui.textbox_padding_y
 	for line in tb.lines {
 		draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
@@ -811,25 +830,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 			}
 		}
 	}
-	// println("cursor: ($tb.cursor_pos_i, $tb.cursor_pos_j)")
-	if x <= 0 {
-		tb.cursor_pos_i = 0
-		return
-	}
-	mut prev_width := 0
-	ustr := if tb.is_multi { tb.lines[tb.cursor_pos_j].runes() } else { tb.text.runes() }
-	// println("tb down: (${ustr.string()}) $ustr.len")
-	for i in 1 .. ustr.len {
-		// width := tb.ui.gg.text_width(tb.text[..i])
-		width := text_width(tb, ustr[..i].string())
-		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
-		if prev_width <= x && x <= width {
-			tb.cursor_pos_i = i
-			return
-		}
-		prev_width = width
-	}
-	tb.cursor_pos_i = if tb.is_multi { tb.lines[tb.cursor_pos_j].len } else { tb.text.len }
+	tb.cursor_pos_i = text_pos_from_x(tb, if tb.is_multi { tb.lines[tb.cursor_pos_j] } else { *tb.text }, x)
 	// println("cursor: ($tb.cursor_pos_i, $tb.cursor_pos_j)")
 }
 
@@ -910,6 +911,7 @@ pub fn (mut tb TextBox) set_text(s string) {
 
 // pub fn (mut tb TextBox) on_change(func voidptr) {
 // }
+
 pub fn (mut tb TextBox) insert(s string) {
 	if tb.is_multi {
 		if s == '\n' {
