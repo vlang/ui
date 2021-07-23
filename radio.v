@@ -11,7 +11,7 @@ enum RadioState {
 	check
 }
 */
-type RadioClickFn = fn (voidptr, voidptr)
+type RadioClickFn = fn (state voidptr, radio &Radio)
 
 [heap]
 pub struct Radio {
@@ -131,7 +131,7 @@ pub fn (r &Radio) free() {
 	}
 }
 
-fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
+fn radio_click(mut r Radio, e &MouseEvent, window &Window) {
 	if r.hidden {
 		return
 	}
@@ -159,10 +159,13 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 	} else {
 		// println('e.y=$e.y r.y=$r.y')
 		y := e.y - r.y
-		r.selected_index = y / (r.height + 5)
+		r.selected_index = y / (r.height)
 		if r.selected_index == r.values.len {
 			r.selected_index = r.values.len - 1
 		}
+	}
+	if r.on_click != voidptr(0) {
+		r.on_click(window.state, r)
 	}
 	// println(r.selected_index)
 }
