@@ -158,7 +158,8 @@ fn radio_click(mut r Radio, e &MouseEvent, zzz voidptr) {
 		}
 	} else {
 		// println('e.y=$e.y r.y=$r.y')
-		y := e.y - r.y
+		dy := if r.title == '' { 15 } else { 0 }
+		y := e.y - r.y + dy
 		r.selected_index = y / (r.height + 5)
 		if r.selected_index == r.values.len {
 			r.selected_index = r.values.len - 1
