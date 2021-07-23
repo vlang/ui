@@ -275,6 +275,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 fn (mut tb TextBox) draw() {
 	offset_start(mut tb)
 	text := if tb.is_multi { tb.lines[tb.cursor_pos_j] } else { *(tb.text) }
+	text_len := text.runes().len
 	mut placeholder := tb.placeholder
 	if tb.placeholder_bind != 0 {
 		placeholder = *(tb.placeholder_bind)
@@ -284,7 +285,7 @@ fn (mut tb TextBox) draw() {
 		draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 			tb.is_error != 0 && *tb.is_error)
 	}
-	width := if text.len == 0 { 0 } else { text_width(tb, text) }
+	width := if text_len == 0 { 0 } else { text_width(tb, text) }
 	text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
 	mut skip_idx := 0
 	if tb.is_multi {
@@ -313,8 +314,8 @@ fn (mut tb TextBox) draw() {
 			// The text doesn'tb fit, find the largest substring we can draw
 			if !tb.is_multi && width > tb.width {
 				tb.ui.gg.set_cfg(tb.text_cfg)
-				for i := text.len - 1; i >= 0; i-- {
-					if i >= text.len {
+				for i := text_len - 1; i >= 0; i-- {
+					if i >= text_len {
 						continue
 					}
 					// TODO: To fix since it fails when resizing to thin window
@@ -339,7 +340,7 @@ fn (mut tb TextBox) draw() {
 					// 	text.len), tb.placeholder_cfg)
 					// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-						text.len))
+						text_len))
 				} else {
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
 				}
@@ -347,20 +348,20 @@ fn (mut tb TextBox) draw() {
 		}
 	}
 	// Draw the cursor
-	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && tb.sel_start_i == 0
-		&& tb.sel_end_i == 0 {
+	if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.sel_active() {
+		// && tb.sel_end_i == 0 {
 		// no cursor in sel mode
 		mut cursor_x := tb.x + ui.textbox_padding_x
 		if tb.is_password {
 			cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos_i))
 		} else if skip_idx > 0 {
 			cursor_x += text_width(tb, text[skip_idx..])
-		} else if text.len > 0 {
+		} else if text_len > 0 {
 			// left := tb.text[..tb.cursor_pos_i]
 			left := text.runes()[..tb.cursor_pos_i].string()
 			cursor_x += text_width(tb, left)
 		}
-		if text.len == 0 {
+		if text_len == 0 {
 			cursor_x = tb.x + ui.textbox_padding_x
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
@@ -373,8 +374,17 @@ fn (mut tb TextBox) draw() {
 	offset_end(mut tb)
 }
 
+fn (tb &TextBox) sel_active() bool {
+	if tb.is_multi {
+		return tb.sel_end_j > -1
+			&& (tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j)
+	} else {
+		return tb.sel_start_i < tb.sel_end_i
+	}
+}
+
 fn (tb &TextBox) draw_textlines() {
-	if tb.sel_end_j > -1 && (tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j) {
+	if tb.sel_active() {
 		if tb.sel_start_j == tb.sel_end_j {
 			sel_from, sel_width := text_xminmax_from_pos(tb, tb.lines[tb.sel_start_j],
 				tb.sel_start_i, tb.sel_end_i)
@@ -522,8 +532,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		.enter {
 			if tb.is_multi {
 				tb.insert('\n')
-			}
-			if tb.on_enter != TextBoxEnterFn(0) {
+			} else if tb.on_enter != TextBoxEnterFn(0) {
 				println('tb_enter: <${*tb.text}>')
 				tb.on_enter(*tb.text, window.state)
 			}
@@ -537,13 +546,17 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				u := text.runes()
 				// Delete the entire selection
-				if tb.sel_start_i < tb.sel_end_i {
-					unsafe {
-						*tb.text = u[..tb.sel_start_i].string() + u[tb.sel_end_i..].string()
+				if tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j {
+					if tb.is_multi {
+						// TODO
+					} else {
+						unsafe {
+							*tb.text = u[..tb.sel_start_i].string() + u[tb.sel_end_i..].string()
+						}
+						tb.cursor_pos_i = tb.sel_start_i
+						tb.sel_start_i = 0
+						tb.sel_end_i = 0
 					}
-					tb.cursor_pos_i = tb.sel_start_i
-					tb.sel_start_i = 0
-					tb.sel_end_i = 0
 				} else if e.mods in [.super, .ctrl] {
 					// Delete until previous whitespace
 					mut i := tb.cursor_pos_i
@@ -634,32 +647,35 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				return
 			}
 			if tb.sel_start_i > 0 {
-				tb.cursor_pos_i = tb.sel_end_i - 1
+				tb.cursor_pos_i = tb.sel_start_i - 1
 			}
 			tb.sel_end_i = 0
 			tb.sel_start_i = 0
 			tb.ui.show_cursor = true
 			tb.cursor_pos_i++
-			if tb.cursor_pos_i > text.len {
+			text_len := text.runes().len
+			if tb.cursor_pos_i > text_len {
 				if tb.is_multi {
 					if tb.cursor_pos_j == tb.lines.len - 1 {
-						tb.cursor_pos_i = text.len
+						tb.cursor_pos_i = text_len
 					} else {
 						tb.cursor_pos_i = 0
 						tb.cursor_pos_j += 1
 					}
 				} else {
-					tb.cursor_pos_i = text.len
+					tb.cursor_pos_i = text_len
 				}
 			}
+			// println("right: $tb.cursor_pos_i, $tb.cursor_pos_j")
 		}
 		.up {
 			if tb.is_multi {
 				if tb.cursor_pos_j > 0 {
 					tb.cursor_pos_j -= 1
 				}
-				if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
-					tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+				text_len := tb.lines[tb.cursor_pos_j].runes().len
+				if tb.cursor_pos_i > text_len {
+					tb.cursor_pos_i = text_len
 				}
 			}
 		}
@@ -848,8 +864,8 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	if !tb.dragging && e.action == .down {
 		tb.sel_start_i = 0
-		tb.sel_start_j = 0
-		tb.sel_end_i = -1
+		tb.sel_start_j = -1
+		tb.sel_end_i = 0
 		tb.sel_end_j = -1
 	}
 	tb.dragging = e.action == .down
