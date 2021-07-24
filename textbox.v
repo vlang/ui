@@ -559,30 +559,17 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 							// modif in the reverse order
 							mut ustr := tb.lines[end_j].runes()
 							tb.lines[end_j] = ustr[end_i..].string()
-							for j := end_j - 1; j > start_j; j-- {
+							ustr = tb.lines[start_j].runes()
+							tb.lines[start_j] = ustr[..start_i].string() + tb.lines[end_j]
+							for j := end_j; j > start_j; j-- {
 								tb.lines.delete(j)
 							}
-							ustr = tb.lines[start_j].runes()
-							tb.lines[start_j] = ustr[..start_i].string()
 							tb.sel_start_i = start_i
 							tb.sel_start_j = start_j
 							tb.sel_end_i = start_i
 							tb.sel_end_j = start_j
-							// mut sel_from, mut sel_width := text_xminmax_from_pos(tb, tb.lines[start_j],
-							// 	start_i, tb.lines[start_j].len)
-							// tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-							// 	start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
-							// if end_j - start_j > 1 {
-							// 	for j in (start_j + 1) .. end_j {
-							// 		sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[j], 0, tb.lines[j].len)
-							// 		tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y +
-							// 			ui.textbox_padding_y + j * tb.line_height, sel_width, tb.line_height,
-							// 			ui.selection_color)
-							// 	}
-							// }
-							// sel_from, sel_width = text_xminmax_from_pos(tb, tb.lines[end_j], 0, end_i)
-							// tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-							// 	end_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
+							tb.cursor_pos_i = start_i
+							tb.cursor_pos_j = start_j
 						}
 						// return
 					} else {
@@ -638,7 +625,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			unsafe {
 				*tb.text = tb.lines.join('\n')
 			}
-			// println("after bsp ${tb.lines} ${*tb.text}")
+			$if tb_bsp ? {
+				println('after bsp $tb.lines ${*tb.text}')
+			}
 			if tb.on_change != TextBoxChangeFn(0) {
 				// tb.on_change(*tb.text, window.state)
 			}
