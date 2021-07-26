@@ -2,6 +2,10 @@ module ui
 
 import gx
 
+const (
+	word_wrap_id = '\n'
+)
+
 pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 	ustr := text.runes()
 	left := ustr[..x].string()
@@ -36,35 +40,36 @@ pub fn text_pos_from_x<T>(w &T, text string, x int) int {
 	return ustr.len
 }
 
-fn word_wrap_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
+fn word_wrap_to_line_by_width<T>(w &T, s string, max_line_width int) string {
 	words := s.split(' ')
 	mut line := ''
 	mut line_width := 0
-	mut text_lines := []string{}
+	mut text_line := ''
 	for i, word in words {
 		sp := if i > 0 { ' ' } else { '' }
 		word_width := text_width(w, sp + word)
-		if line_width + word_width < max_line_width {
+		if i == words.len - 1 || line_width + word_width < max_line_width {
 			line += sp + word
 			line_width += word_width
-			continue
+			// continue
 		} else {
-			text_lines << line.join(' ')
+			text_line += line + '\n'
 			line = ''
 			line_width = 0
 		}
 	}
 	if line_width > 0 {
-		text_lines << line.join(' ')
+		text_line += line
 	}
-	return text_lines
+	println('tl: $text_line')
+	return text_line
 }
 
 fn word_wrap_text_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
 	lines := s.split('\n')
 	mut word_wrapped_lines := []string{}
 	for line in lines {
-		word_wrapped_lines << word_wrap_to_lines_by_width(line, max_line_width)
+		word_wrapped_lines << word_wrap_to_line_by_width(w, line, max_line_width)
 	}
 	return word_wrapped_lines
 }

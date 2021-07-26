@@ -8,7 +8,7 @@ struct State {
 fn main() {
 	mut app := &State{
 		tb1: 'hggyjgyguguglul'
-		tb2m: 'toto\ntiti\ntatatata'
+		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
 	}
 	c := ui.column(
 		widths: ui.stretch
@@ -21,7 +21,7 @@ fn main() {
 				text: &app.tb1
 			),
 			ui.textbox(
-				multilines: true
+				is_multiline: true
 				id: 'tb2m'
 				text: &app.tb2m
 				height: 200
