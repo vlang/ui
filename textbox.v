@@ -73,6 +73,7 @@ pub mut:
 	last_y           int
 	read_only        bool
 	borderless       bool
+	fitted_height    bool // if true fit height in propose_size
 	on_key_down      KeyDownFn = KeyDownFn(0)
 	on_char          CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
@@ -120,9 +121,10 @@ pub struct TextBoxConfig {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	borderless  bool
-	on_key_down KeyDownFn
-	on_char     CharFn
+	borderless    bool
+	fitted_height bool
+	on_key_down   KeyDownFn
+	on_char       CharFn
 	// on_key_up          KeyUpFn
 	on_change          voidptr
 	on_enter           voidptr
@@ -148,6 +150,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		max_len: c.max_len
 		read_only: c.read_only
 		borderless: c.borderless
+		fitted_height: c.fitted_height
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -265,7 +268,7 @@ const max_textbox_height = 25
 
 pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	tb.width, tb.height = w, h
-	if tb.height > ui.max_textbox_height && !tb.is_multiline {
+	if tb.height > ui.max_textbox_height && !tb.fitted_height {
 		tb.height = ui.max_textbox_height
 	}
 	update_text_size(mut tb)
