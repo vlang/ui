@@ -459,7 +459,16 @@ fn (mut tb TextBox) update_text() {
 	}
 }
 
-fn (mut tb TextBox) delete_selection() {
+pub fn (mut tb TextBox) cancel_selection() {
+	if tb.is_sel_active() {
+		tb.sel_start_i = 0
+		tb.sel_start_j = -1
+		tb.sel_end_i = 0
+		tb.sel_end_j = -1
+	}
+}
+
+pub fn (mut tb TextBox) delete_selection() {
 	if tb.is_multiline {
 		if tb.sel_start_j == tb.sel_end_j {
 			ustr := tb.lines[tb.sel_start_j].runes()
@@ -743,6 +752,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			if tb.sel(e.mods, e.key) {
 				return
 			}
+			tb.cancel_selection()
 			if tb.sel_end_i > 0 {
 				tb.cursor_pos_i = tb.sel_start_i + 1
 			}
@@ -767,6 +777,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			if tb.sel(e.mods, e.key) {
 				return
 			}
+			tb.cancel_selection()
 			if tb.sel_start_i > 0 {
 				tb.cursor_pos_i = tb.sel_start_i - 1
 			}
@@ -790,6 +801,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			// println("right: $tb.cursor_pos_i, $tb.cursor_pos_j")
 		}
 		.up {
+			tb.cancel_selection()
 			if tb.is_multiline {
 				if tb.cursor_pos_j > 0 {
 					tb.cursor_pos_j -= 1
@@ -801,6 +813,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 		}
 		.down {
+			tb.cancel_selection()
 			if tb.is_multiline {
 				if tb.cursor_pos_j < tb.lines.len - 1 {
 					tb.cursor_pos_j += 1
@@ -957,10 +970,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.focus()
 	}
 	if !tb.dragging && e.action == .down {
-		tb.sel_start_i = 0
-		tb.sel_start_j = -1
-		tb.sel_end_i = 0
-		tb.sel_end_j = -1
+		tb.cancel_selection()
 	}
 	tb.dragging = e.action == .down
 	// Calculate cursor position from x
@@ -997,34 +1007,6 @@ fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	tb.dragging = false
 }
 
-// fn tb_click(mut tb TextBox, e &MouseEvent, zzz voidptr) {
-// 	if tb.hidden {
-// 		return
-// 	}
-// 	tb.ui.show_cursor = true
-// 	if *tb.text == '' {
-// 		return
-// 	}
-// 	// // Calculate cursor position from x
-// 	// x := e.x - tb.x - ui.textbox_padding_x
-// 	// if x <= 0 {
-// 	// 	tb.cursor_pos_i = 0
-// 	// 	return
-// 	// }
-// 	// mut prev_width := 0
-// 	// ustr := tb.text.runes()
-// 	// for i in 1 .. ustr.len {
-// 	// 	// width := tb.ui.gg.text_width(tb.text[..i])
-// 	// 	width := text_width(tb, ustr[..i].string())
-// 	// 	if prev_width <= x && x <= width {
-// 	// 		tb.cursor_pos_i = i
-// 	// 		return
-// 	// 	}
-// 	// 	prev_width = width
-// 	// }
-// 	// tb.cursor_pos_i = tb.text.len
-// }
-
 fn (mut tb TextBox) set_visible(state bool) {
 	tb.hidden = !state
 }
@@ -1048,11 +1030,6 @@ fn (mut t TextBox) unfocus() {
 	t.sel_start_i = 0
 	t.sel_end_i = 0
 }
-
-// fn (mut tb TextBox) update() {
-// 	tb.cursor_pos_i = if tb.is_multiline { tb.lines[tb.cursor_pos_j].runes().len } else { tb.text.runes().len }
-// 	// println("update: $tb.cursor_pos_i")
-// }
 
 pub fn (mut tb TextBox) hide() {
 }
