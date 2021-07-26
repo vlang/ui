@@ -1,7 +1,7 @@
 import ui
 
 fn main() {
-	r := ui.column(
+	c := ui.column(
 		widths: ui.stretch
 		margin_: 5
 		spacing: 10
@@ -55,7 +55,7 @@ fn main() {
 		width: 500
 		height: 300
 		mode: .resizable
-		children: [r]
+		children: [c]
 	)
 	ui.run(w)
 }

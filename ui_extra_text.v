@@ -2,6 +2,73 @@ module ui
 
 import gx
 
+pub fn text_x_from_pos<T>(w &T, text string, x int) int {
+	ustr := text.runes()
+	left := ustr[..x].string()
+	return text_width(w, left)
+}
+
+pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
+	ustr := text.runes()
+	x_min, x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	left := ustr[..x_min].string()
+	right := ustr[x_max..].string()
+	ww, lw, rw := text_width(w, text), text_width(w, left), text_width(w, right)
+	return lw, ww - lw - rw
+}
+
+pub fn text_pos_from_x<T>(w &T, text string, x int) int {
+	if x <= 0 {
+		return 0
+	}
+	mut prev_width := 0
+	ustr := text.runes()
+	// println("tb down: (${ustr.string()}) $ustr.len")
+	for i in 1 .. ustr.len {
+		// width := tb.ui.gg.text_width(tb.text[..i])
+		width := text_width(w, ustr[..i].string())
+		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
+		if prev_width <= x && x <= width {
+			return i
+		}
+		prev_width = width
+	}
+	return ustr.len
+}
+
+fn word_wrap_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
+	words := s.split(' ')
+	mut line := ''
+	mut line_width := 0
+	mut text_lines := []string{}
+	for i, word in words {
+		sp := if i > 0 { ' ' } else { '' }
+		word_width := text_width(w, sp + word)
+		if line_width + word_width < max_line_width {
+			line += sp + word
+			line_width += word_width
+			continue
+		} else {
+			text_lines << line.join(' ')
+			line = ''
+			line_width = 0
+		}
+	}
+	if line_width > 0 {
+		text_lines << line.join(' ')
+	}
+	return text_lines
+}
+
+fn word_wrap_text_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
+	lines := s.split('\n')
+	mut word_wrapped_lines := []string{}
+	for line in lines {
+		word_wrapped_lines << word_wrap_to_lines_by_width(line, max_line_width)
+	}
+	return word_wrapped_lines
+}
+
 // Initially inside ui_linux_c.v
 fn word_wrap_to_lines(s string, max_line_length int) []string {
 	words := s.split(' ')
@@ -9,9 +76,10 @@ fn word_wrap_to_lines(s string, max_line_length int) []string {
 	mut line_len := 0
 	mut text_lines := []string{}
 	for word in words {
-		if line_len + word.len < max_line_length {
+		word_len := word.runes().len
+		if line_len + word_len < max_line_length {
 			line << word
-			line_len += word.len + 1
+			line_len += word_len + 1
 			continue
 		} else {
 			text_lines << line.join(' ')
