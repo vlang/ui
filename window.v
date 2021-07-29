@@ -551,7 +551,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
-		// window.mouse_down_fn(e, window)
+		window.mouse_down_fn(e, window)
 	}
 	/*
 	for child in window.children {
