@@ -12,7 +12,7 @@ fn main() {
 	}
 	c := ui.column(
 		widths: ui.stretch
-		heights: [ui.compact, ui.stretch]
+		heights: [ui.compact, ui.compact, ui.stretch]
 		margin_: 5
 		spacing: 10
 		children: [
@@ -20,8 +20,16 @@ fn main() {
 				id: 'tb1'
 				text: &app.tb1
 			),
+			ui.row(
+				spacing: 5
+				children: [
+					ui.label(text: 'Word wrap'),
+					ui.switcher(open: true, onclick: on_switch_click),
+				]
+			),
 			ui.textbox(
 				is_multiline: true
+				is_wordwrap: true
 				id: 'tb2m'
 				text: &app.tb2m
 				height: 200
@@ -36,4 +44,10 @@ fn main() {
 		children: [c]
 	)
 	ui.run(w)
+}
+
+fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
+	mut tb := switcher.ui.window.textbox('tb2m')
+	tb.is_wordwrap = !tb.is_wordwrap
+	switcher.ui.window.update_layout()
 }

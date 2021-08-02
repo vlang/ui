@@ -107,6 +107,8 @@ pub fn scrollview_is_active(mut w ScrollableWidget) bool {
 
 pub fn scrollview_add<T>(mut w T) {
 	mut sv := &ScrollView{
+		parent: w.parent
+		widget: w
 		ui: 0
 	}
 	// IMPORTANT (sort of bug):

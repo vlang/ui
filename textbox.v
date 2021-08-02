@@ -58,6 +58,7 @@ pub mut:
 	is_wordwrap  bool
 	line_height  int
 	lines        []string
+	wordwrap     []int
 	// placeholder
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
@@ -150,7 +151,6 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		max_len: c.max_len
 		read_only: c.read_only
 		borderless: c.borderless
-		fitted_height: c.fitted_height
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -165,6 +165,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		text_size: c.text_size
 		is_multiline: c.is_multiline
 		is_wordwrap: c.is_wordwrap
+		fitted_height: c.fitted_height || c.is_multiline
 	}
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
@@ -424,16 +425,8 @@ fn (tb &TextBox) draw_textlines() {
 	tb.draw_selection()
 	mut y := tb.y + ui.textbox_padding_y
 	for line in tb.lines {
-		if tb.is_wordwrap {
-			slines := line.split('\n')
-			for line_ww in slines {
-				draw_text(tb, tb.x + ui.textbox_padding_x, y, line_ww)
-				y += tb.line_height
-			}
-		} else {
-			draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
-			y += tb.line_height
-		}
+		draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
+		y += tb.line_height
 	}
 }
 
@@ -442,7 +435,9 @@ fn (mut tb TextBox) update_textlines() {
 		return
 	}
 	if tb.is_wordwrap {
-		tb.lines = word_wrap_text_to_lines_by_width(tb, tb.text, tb.width)
+		pos := text_lines_pos_at(tb.lines, tb.cursor_pos_i, tb.cursor_pos_j)
+		tb.lines, tb.wordwrap = word_wrap_text_to_lines_by_width(tb, tb.text, tb.width)
+		tb.cursor_pos_i, tb.cursor_pos_j = text_lines_row_column_at(tb.lines, pos)
 	} else {
 		tb.lines = tb.text.split('\n')
 	}
@@ -450,14 +445,13 @@ fn (mut tb TextBox) update_textlines() {
 
 fn (mut tb TextBox) update_text() {
 	if tb.is_multiline {
-		if tb.is_wordwrap {
-			// Remove '\n' that represent wordwrap marks
-			for i, _ in tb.lines {
-				tb.lines[i] = tb.lines[i].replace('\n', '')
-			}
+		res := if tb.is_wordwrap {
+			word_wrap_join(tb.lines, tb.wordwrap)
+		} else {
+			tb.lines.join('\n')
 		}
 		unsafe {
-			*tb.text = tb.lines.join('\n')
+			*tb.text = res
 		}
 	}
 }
@@ -518,13 +512,9 @@ pub fn (mut tb TextBox) delete_selection() {
 	}
 }
 
-// fn tb_key_up(mut tb TextBox, e &KeyEvent, window &Window) {
-// 	println("hvhvh")
-// 	if !tb.is_focused {
-// 		return
-// 	}
-// 	if tb.on_key_up != voidptr(0) {
-// 		tb.on_key_up(window.state, tb, e.codepoint)
+// fn (mut tb TextBox) cursor_move(direction Side) {
+// 	match direction {
+// 		.bottom
 // 	}
 // }
 
@@ -642,49 +632,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// Delete the entire selection
 				if tb.is_sel_active() {
 					tb.delete_selection()
-					// if tb.is_multiline {
-					// 	if tb.sel_start_j == tb.sel_end_j {
-					// 		ustr := tb.lines[tb.sel_start_j].runes()
-					// 		// println("bsp1 $tb.sel_start_i, $tb.sel_end_i,  $ustr.len")
-					// 		tb.lines[tb.sel_start_j] = ustr[0..tb.sel_start_i].string() +
-					// 			ustr[tb.sel_end_i..ustr.len].string()
-					// 		tb.sel_end_i = tb.sel_start_i
-					// 	} else {
-					// 		start_i, end_i, start_j, end_j := if tb.sel_start_j < tb.sel_end_j {
-					// 			tb.sel_start_i, tb.sel_end_i, tb.sel_start_j, tb.sel_end_j
-					// 		} else {
-					// 			tb.sel_end_i, tb.sel_start_i, tb.sel_end_j, tb.sel_start_j
-					// 		}
-					// 		// modif in the reverse order
-					// 		mut ustr := tb.lines[end_j].runes()
-					// 		tb.lines[end_j] = ustr[end_i..].string()
-					// 		ustr = tb.lines[start_j].runes()
-					// 		tb.lines[start_j] = ustr[..start_i].string() + tb.lines[end_j]
-					// 		for j := end_j; j > start_j; j-- {
-					// 			tb.lines.delete(j)
-					// 		}
-					// 		tb.sel_start_i = start_i
-					// 		tb.sel_start_j = start_j
-					// 		tb.sel_end_i = start_i
-					// 		tb.sel_end_j = start_j
-					// 		tb.cursor_pos_i = start_i
-					// 		tb.cursor_pos_j = start_j
-					// 	}
-					// 	// return
-					// } else {
-					// 	start_i, end_i := if tb.sel_start_i < tb.sel_end_i {
-					// 		tb.sel_start_i, tb.sel_end_i
-					// 	} else {
-					// 		tb.sel_end_i, tb.sel_start_i
-					// 	}
-					// 	// println("rm sel: $tb.sel_start_i, $tb.sel_end_i -> $start_i, $end_i")
-					// 	unsafe {
-					// 		*tb.text = u[..start_i].string() + u[end_i..].string()
-					// 	}
-					// 	tb.cursor_pos_i = tb.sel_start_i
-					// 	tb.sel_start_i = 0
-					// 	tb.sel_end_i = 0
-					// }
 				} else if e.mods in [.super, .ctrl] {
 					// Delete until previous whitespace
 					mut i := tb.cursor_pos_i
