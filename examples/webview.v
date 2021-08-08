@@ -8,7 +8,7 @@ struct App {
 fn main() {
 	
 	mut app := &App{
-		webview: tempvw
+		webview: voidptr(0)
 	}
 	window := ui.window({
 		width: 800
@@ -27,7 +27,10 @@ fn main() {
 				height: 100
 				onclick: fn (a voidptr, b voidptr) {
 					// println("onclick open")
-					// app.webview.navigate("https://vlang.io")
+					webview.new_window(
+						url: "https://github.com/revosw/ui/tree/master",
+						title: "hello"
+					)
 				}
 			),
 			ui.button(

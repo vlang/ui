@@ -20,4 +20,4 @@ fn C.windows_webview_close()
 
 fn C.exec(scriptSource &byte)
 
-fn C.on_navigate(callbackfn voidptr)
+fn C.navigate(url &u16)

@@ -4,7 +4,7 @@ module webview
 import ui
 
 [heap]
-struct WebView {
+pub struct WebView {
 	// widget ui.Widget
 	url string
 	obj voidptr
@@ -32,7 +32,7 @@ pub fn new_window(cfg Config) &WebView {
 		create_linux_web_view(cfg.url, cfg.title)
 	}
 	$if windows {
-		obj = C.new_windows_web_view(cfg.url.str, cfg.title.str)
+		obj = C.new_windows_web_view(cfg.url.to_wide(), cfg.title.to_wide())
 	}
 	return &WebView{
 		url: cfg.url
@@ -47,12 +47,16 @@ pub fn exec(scriptSource string) {
 	}
 }
 
-pub fn (mut wv WebView) on_navigate(callback NavFinishedFn) {
-	wv.nav_finished_fn = callback
+pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
+	wv.nav_finished_fn = nav_callback
+}
+pub fn (mut wv WebView) on_navigate(url string) {
+	wv.nav_finished_fn(url)
 }
 
-pub fn navigate(url string) {
-	C.navigate(url.str)
+pub fn (mut wv WebView) navigate(url string) {
+	C.navigate(url.to_wide())
+	wv.on_navigate(url)
 }
 
 pub fn (w &WebView) close() {
