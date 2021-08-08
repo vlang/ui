@@ -18,16 +18,20 @@ fn main() {
 		window: 0
 		grid: ui.grid(header: h, body: b, width: win_width - 10, height: win_height)
 	}
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'Grid'
 		state: app
 		mode: .resizable
-	}, [
-		ui.row({ margin: ui.Margin{5, 5, 5, 5} }, [
-			app.grid,
-		]),
-	])
+		children: [
+			ui.row(
+				margin: ui.Margin{5, 5, 5, 5}
+				children: [
+					app.grid,
+				]
+			),
+		]
+	)
 	ui.run(app.window)
 }

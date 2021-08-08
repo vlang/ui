@@ -15,8 +15,10 @@ const (
 
 type SwitchClickFn = fn (arg_1 voidptr, arg_2 voidptr)
 
+[heap]
 pub struct Switch {
 pub mut:
+	id         string
 	idx        int
 	height     int
 	width      int
@@ -31,24 +33,20 @@ pub mut:
 	ui         &UI
 	onclick    SwitchClickFn
 	hidden     bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct SwitchConfig {
+	id      string
 	z_index int
 	onclick SwitchClickFn
 	open    bool
 }
 
-fn (mut s Switch) init(parent Layout) {
-	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, sw_click, s)
-}
-
 pub fn switcher(c SwitchConfig) &Switch {
 	mut s := &Switch{
+		id: c.id
 		height: ui.sw_height
 		width: ui.sw_width
 		z_index: c.z_index
@@ -59,16 +57,45 @@ pub fn switcher(c SwitchConfig) &Switch {
 	return s
 }
 
-fn (mut s Switch) set_pos(x int, y int) {
+fn (mut s Switch) init(parent Layout) {
+	s.parent = parent
+	ui := parent.get_ui()
+	s.ui = ui
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, sw_click, s)
+}
+
+[manualfree]
+pub fn (mut s Switch) cleanup() {
+	mut subscriber := s.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, s)
+	unsafe { s.free() }
+}
+
+[unsafe]
+pub fn (s &Switch) free() {
+	$if free ? {
+		print('switch $s.id')
+	}
+	unsafe {
+		s.id.free()
+		free(s)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
+}
+
+pub fn (mut s Switch) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
 }
 
-fn (mut s Switch) size() (int, int) {
+pub fn (mut s Switch) size() (int, int) {
 	return s.width, s.height
 }
 
-fn (mut s Switch) propose_size(w int, h int) (int, int) {
+pub fn (mut s Switch) propose_size(w int, h int) (int, int) {
 	return s.width, s.height
 }
 
@@ -91,7 +118,7 @@ fn (mut s Switch) draw() {
 }
 
 fn (s &Switch) point_inside(x f64, y f64) bool {
-	return point_inside<Switch>(s, x, y) // x >= s.x && x <= s.x + s.width && y >= s.y && y <= s.y + s.height
+	return point_inside(s, x, y)
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
@@ -111,11 +138,12 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 }
 
 fn (mut s Switch) set_visible(state bool) {
-	s.hidden = state
+	s.hidden = !state
 }
 
 fn (mut s Switch) focus() {
-	s.is_focused = true
+	// s.is_focused = true
+	set_focus(s.ui.window, mut s)
 }
 
 fn (mut s Switch) unfocus() {

@@ -19,9 +19,12 @@ enum CheckBoxState {
 */
 type CheckChangedFn = fn (voidptr, bool)
 
+type CheckBowClickFn = fn (voidptr, voidptr)
+
 [heap]
 pub struct CheckBox {
 pub mut:
+	id string
 	// state      CheckBoxState
 	height           int
 	width            int
@@ -34,20 +37,25 @@ pub mut:
 	is_focused       bool
 	checked          bool
 	ui               &UI
+	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
 	text             string
 	disabled         bool
 	text_cfg         gx.TextCfg
 	text_size        f64
 	hidden           bool
+	// component state for composable widget
+	component voidptr
 }
 
 pub struct CheckBoxConfig {
+	id               string
 	x                int
 	y                int
 	z_index          int
 	parent           Layout
 	text             string
+	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
 	checked          bool
 	disabled         bool
@@ -55,21 +63,14 @@ pub struct CheckBoxConfig {
 	text_size        f64
 }
 
-fn (mut cb CheckBox) init(parent Layout) {
-	cb.parent = parent
-	cb.ui = parent.get_ui()
-	cb.width = text_width<CheckBox>(cb, cb.text) + 5 + ui.check_mark_size
-	init_text_cfg<CheckBox>(mut cb)
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, cb_click, cb)
-}
-
 pub fn checkbox(c CheckBoxConfig) &CheckBox {
 	mut cb := &CheckBox{
-		height: 20 // TODO
+		id: c.id
+		height: ui.check_mark_size + 5 // TODO
 		z_index: c.z_index
 		ui: 0
 		text: c.text
+		on_click: c.on_click
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
@@ -77,6 +78,33 @@ pub fn checkbox(c CheckBoxConfig) &CheckBox {
 		text_size: c.text_size
 	}
 	return cb
+}
+
+fn (mut cb CheckBox) init(parent Layout) {
+	cb.parent = parent
+	cb.ui = parent.get_ui()
+	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
+	init_text_cfg(mut cb)
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, cb_click, cb)
+}
+
+[manualfree]
+pub fn (mut cb CheckBox) cleanup() {
+	mut subscriber := cb.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, cb)
+	unsafe { cb.free() }
+}
+
+[unsafe]
+pub fn (cb &CheckBox) free() {
+	$if free ? {
+		print('checkbox $cb.id')
+	}
+	unsafe { free(cb) }
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
@@ -89,23 +117,27 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 		if cb.on_check_changed != voidptr(0) {
 			cb.on_check_changed(window.state, cb.checked)
 		}
+		if cb.on_click != voidptr(0) {
+			cb.on_click(cb, window.state)
+		}
 	}
 }
 
-fn (mut cb CheckBox) set_pos(x int, y int) {
+pub fn (mut cb CheckBox) set_pos(x int, y int) {
 	cb.x = x
 	cb.y = y
 }
 
-fn (mut cb CheckBox) size() (int, int) {
+pub fn (mut cb CheckBox) size() (int, int) {
 	return cb.width, cb.height
 }
 
-fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
-	// cb.width = w
+pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
+	cb.width = w
+	// TODO: fix height
 	// cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
-	return cb.width, ui.check_mark_size
+	return cb.width, cb.height
 }
 
 fn (mut cb CheckBox) draw() {
@@ -138,18 +170,19 @@ fn (mut cb CheckBox) draw() {
 }
 
 fn (cb &CheckBox) point_inside(x f64, y f64) bool {
-	return point_inside<CheckBox>(cb, x, y)
+	return point_inside(cb, x, y)
 }
 
 fn (mut cb CheckBox) mouse_move(e MouseEvent) {
 }
 
 fn (mut cb CheckBox) set_visible(state bool) {
-	cb.hidden = state
+	cb.hidden = !state
 }
 
 fn (mut cb CheckBox) focus() {
-	cb.is_focused = true
+	// cb.is_focused = true
+	set_focus(cb.ui.window, mut cb)
 }
 
 fn (mut cb CheckBox) unfocus() {

@@ -2,8 +2,10 @@ module ui
 
 import gx
 
+[heap]
 pub struct Grid {
 pub mut:
+	id          string
 	header      []string
 	body        [][]string
 	x           int
@@ -30,12 +32,6 @@ pub struct GridConfig {
 	cell_height f32 = 25
 }
 
-fn (mut gv Grid) init(parent Layout) {
-	gv.parent = parent
-	ui := parent.get_ui()
-	gv.ui = ui
-}
-
 pub fn grid(c GridConfig) &Grid {
 	mut gv := &Grid{
 		width: c.width
@@ -47,6 +43,36 @@ pub fn grid(c GridConfig) &Grid {
 		ui: 0
 	}
 	return gv
+}
+
+fn (mut gv Grid) init(parent Layout) {
+	gv.parent = parent
+	ui := parent.get_ui()
+	gv.ui = ui
+}
+
+[manualfree]
+pub fn (mut g Grid) cleanup() {
+	unsafe { g.free() }
+}
+
+[unsafe]
+pub fn (g &Grid) free() {
+	unsafe {
+		g.id.free()
+		for e in g.header {
+			e.free()
+		}
+		g.header.free()
+		for l in g.body {
+			// See free for []string in vlib/builtin
+			// for c in l {
+			// 	c.free()
+			// }
+			l.free()
+		}
+		free(g)
+	}
 }
 
 fn (mut gv Grid) draw() {
@@ -131,7 +157,7 @@ fn check_cells(gv Grid) int {
 }
 
 fn (mut gv Grid) set_visible(state bool) {
-	gv.hidden = state
+	gv.hidden = !state
 }
 
 fn (mut gv Grid) focus() {
@@ -164,5 +190,5 @@ fn (mut gv Grid) propose_size(w int, h int) (int, int) {
 }
 
 fn (gv &Grid) point_inside(x f64, y f64) bool {
-	return point_inside<Grid>(gv, x, y)
+	return point_inside(gv, x, y)
 }

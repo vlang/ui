@@ -47,19 +47,21 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 	}
 	widgets << label(text: ' ')
 	widgets << button(text: 'OK')
-	message_app.window = window({
+	message_app.window = window(
 		width: 400
 		height: height
 		title: 'Message box'
 		bg_color: default_window_color
 		state: message_app
-	}, [
-		column({
-			stretch: true
-			alignment: .center
-			margin: Margin{5, 5, 5, 5}
-		}, widgets),
-	])
+		children: [
+			column(
+				stretch: true
+				alignment: .center
+				margin: Margin{5, 5, 5, 5}
+				children: widgets
+			),
+		]
+	)
 	mut subscriber := message_app.window.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
 	run(message_app.window)
@@ -77,26 +79,4 @@ fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window) {
 
 fn msgbox_btn_ok_click(mut app MessageApp) {
 	// app.window.glfw_obj.set_should_close(true)
-}
-
-fn word_wrap_to_lines(s string, max_line_length int) []string {
-	words := s.split(' ')
-	mut line := []string{}
-	mut line_len := 0
-	mut text_lines := []string{}
-	for word in words {
-		if line_len + word.len < max_line_length {
-			line << word
-			line_len += word.len + 1
-			continue
-		} else {
-			text_lines << line.join(' ')
-			line = []
-			line_len = 0
-		}
-	}
-	if line_len > 0 {
-		text_lines << line.join(' ')
-	}
-	return text_lines
 }

@@ -9,8 +9,6 @@ import os
 import clipboard
 import eventbus
 
-// import gx
-// import sokol.sapp
 const (
 	version = '0.0.4'
 )
@@ -73,6 +71,7 @@ mut:
 	size() (int, int)
 	is_focused() bool
 	set_visible(bool)
+	cleanup()
 }
 
 // pub fn iwidget(x Widget) Widget { return x }
@@ -117,8 +116,10 @@ pub:
 
 pub struct ScrollEvent {
 pub:
-	x f64
-	y f64
+	x       f64
+	y       f64
+	mouse_x f64
+	mouse_y f64
 }
 
 pub struct MouseMoveEvent {
@@ -249,4 +250,22 @@ pub fn open_url(url string) {
 
 pub fn confirm(s string) bool {
 	return false
+}
+
+[unsafe]
+pub fn (gui &UI) free() {
+	unsafe {
+		// gg             &gg.Context = voidptr(0)
+		// window         &Window     = voidptr(0)
+		// clipboard      &clipboard.Clipboard
+		// cb_image             gg.Image
+		// circle_image         gg.Image
+		// radio_image          gg.Image
+		// selected_radio_image gg.Image
+		// down_arrow           gg.Image
+		gui.resource_cache.free()
+	}
+	$if free ? {
+		println('\tui -> freed')
+	}
 }

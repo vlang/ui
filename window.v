@@ -24,7 +24,7 @@ pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
-pub type InitFn = fn (window &Window)
+pub type WindowFn = fn (window &Window)
 
 [heap]
 pub struct Window {
@@ -45,13 +45,13 @@ pub mut:
 	my            f64
 	width         int
 	height        int
-	bg_color      gx.Color
-	init_fn       InitFn
 	click_fn      ClickFn
 	mouse_down_fn ClickFn
 	mouse_up_fn   ClickFn
 	scroll_fn     ScrollFn
 	resize_fn     ResizeFn
+	on_init       WindowFn
+	on_draw       WindowFn
 	key_down_fn   KeyFn
 	char_fn       KeyFn
 	mouse_move_fn MouseMoveFn
@@ -65,21 +65,26 @@ pub mut:
 	orig_width  int
 	orig_height int
 	touch       TouchInfo
+	bg_color    gx.Color
 	// Text Config
 	text_cfg gx.TextCfg
-	// drag
-	drag_activated bool
-	drag_widget    Widget
-	drag_start_x   f64
-	drag_start_y   f64
-	drag_pos_x     f64
-	drag_pos_y     f64
-	drag_time      time.Time
 	// themes
-	color_themes ColorThemes
+	color_themes map[string]ColorTheme
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
+	// drag
+	dragger Dragger = Dragger{}
+	// tooltip
+	tooltip         Tooltip = Tooltip{}
+	widgets_tooltip []Widget
+	tooltips        []TooltipMessage
+	// with message
+	native_message bool
+	// ui mode on gg
+	immediate          bool
+	children_immediate []Widget
+	needs_refresh      bool = true
 }
 
 pub struct WindowConfig {
@@ -92,7 +97,6 @@ pub:
 	state                 voidptr
 	draw_fn               DrawFn
 	bg_color              gx.Color = ui.default_window_color
-	on_init               InitFn
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -101,13 +105,18 @@ pub:
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
 	on_mouse_move         MouseMoveFn
+	on_init               WindowFn
+	on_draw               WindowFn
 	children              []Widget
 	custom_bold_font_path string
 	native_rendering      bool
 	resizable             bool
 	mode                  WindowSizeType
+	immediate             bool
 	// Text Config
 	lines int = 10
+	// message
+	native_message bool = true
 }
 
 /*
@@ -149,8 +158,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
-			window.touch.start = {
-				pos: {
+			window.touch.start = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -162,8 +171,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_mouse_up(e, mut window.ui)
 			// NOT THERE since already done
 			// touch-like
-			window.touch.end = {
-				pos: {
+			window.touch.end = Touch{
+				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
 					y: int(e.mouse_y / window.ui.gg.scale)
 				}
@@ -192,8 +201,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_began {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.start = {
-					pos: {
+				window.touch.start = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -207,8 +216,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_ended {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.end = {
-					pos: {
+				window.touch.end = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -223,8 +232,8 @@ fn on_event(e &gg.Event, mut window Window) {
 		.touches_moved {
 			if e.num_touches > 0 {
 				t := e.touches[0]
-				window.touch.move = {
-					pos: {
+				window.touch.move = Touch{
+					pos: Pos{
 						x: int(t.pos_x / window.ui.gg.scale)
 						y: int(t.pos_y / window.ui.gg.scale)
 					}
@@ -251,19 +260,34 @@ fn gg_init(mut window Window) {
 	window.width, window.height = w, h
 	window.orig_width, window.orig_height = w, h
 	// println('gg_init: $w, $h')
+
+	// This add experimental ui message system
+	if !window.native_message {
+		window.add_message_dialog()
+	}
 	for _, mut child in window.children {
 		// println('init $child.type_name()')
-		child.init(window)
 		window.register_child(*child)
+		child.init(window)
 	}
 	// refresh the layout
 	window.update_layout()
-	if window.init_fn != voidptr(0) {
-		window.init_fn(window)
+	if window.on_init != voidptr(0) {
+		window.on_init(window)
 	}
 }
 
-pub fn window(cfg WindowConfig, children []Widget) &Window {
+[manualfree]
+fn gg_cleanup(mut window Window) {
+	// All the ckeanup goes here
+	for mut child in window.children {
+		// println('cleanup ${widget_id(*child)}')
+		child.cleanup()
+	}
+	unsafe { window.free() }
+}
+
+pub fn window(cfg WindowConfig) &Window {
 	/*
 	println('window()')
 	defer {
@@ -307,6 +331,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	mut text_cfg := gx.TextCfg{
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
+		// vertical_align: gx.VerticalAlign.middle
 		// size: int(m / cfg.lines)
 	}
 
@@ -320,8 +345,9 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		height: height
 		// orig_width: width // 800
 		// orig_height: height // 600
-		children: children
-		init_fn: cfg.on_init
+		children: cfg.children
+		on_init: cfg.on_init
+		on_draw: cfg.on_draw
 		click_fn: cfg.on_click
 		key_down_fn: cfg.on_key_down
 		char_fn: cfg.on_char
@@ -333,6 +359,8 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
 		text_cfg: text_cfg
+		native_message: cfg.native_message
+		immediate: cfg.immediate
 	}
 
 	// register default color themes
@@ -353,19 +381,26 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
-		frame_fn: if cfg.native_rendering { native_frame } else { frame }
+		frame_fn: if cfg.immediate {
+			frame_immediate
+		} else if cfg.native_rendering {
+			native_frame
+		} else {
+			frame
+		}
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
 		font_path: font_path
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
+		cleanup_fn: gg_cleanup
 		// keydown_fn: window_key_down
 		// char_fn: window_char
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
-		ui_mode: true
+		ui_mode: !cfg.immediate
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -408,7 +443,7 @@ pub fn window(cfg WindowConfig, children []Widget) &Window {
 	return window
 }
 
-pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widget) &Window {
+pub fn child_window(mut parent_window Window, cfg WindowConfig) &Window {
 	// q := int(parent_window)
 	// println('child_window() parent=$q.hex()')
 	mut window := &Window{
@@ -422,7 +457,7 @@ pub fn child_window(cfg WindowConfig, mut parent_window Window, children []Widge
 		bg_color: cfg.bg_color
 		width: cfg.width
 		height: cfg.height
-		children: children
+		children: cfg.children
 		click_fn: cfg.on_click
 	}
 	parent_window.child_window = window
@@ -484,15 +519,19 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		y: event.mouse_y / ui.gg.scale
 		mouse_button: int(event.mouse_button)
 	}
-	if window.drag_activated {
+	if window.dragger.activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
 		}
 		drag_child(mut window, e.x, e.y)
 	}
+
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}
+
+	window.update_tooltip(e)
+
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
@@ -500,8 +539,10 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
-		x: event.scroll_x
-		y: event.scroll_y
+		mouse_x: event.mouse_x / ui.gg.scale
+		mouse_y: event.mouse_y / ui.gg.scale
+		x: event.scroll_x / ui.gg.scale
+		y: event.scroll_y / ui.gg.scale
 	}
 	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)
@@ -522,7 +563,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
-		// window.mouse_down_fn(e, window)
+		window.mouse_down_fn(e, window)
 	}
 	/*
 	for child in window.children {
@@ -553,7 +594,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = false
 	}
 
-	if window.drag_activated {
+	if window.dragger.activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')
 		}
@@ -822,90 +863,54 @@ pub fn (w &Window) focus() {
 pub fn (w &Window) always_on_top(val bool) {
 }
 
-// TODO remove this once interfaces are smarter
-fn foo(w Widget) {
-}
-
-fn foo2(l Layout) {
-}
-
-fn bar() {
-	// foo(&TextBox{
-	// 	ui: 0
-	// })
-	// foo(&Button{
-	// 	ui: 0
-	// })
-	// foo(&ProgressBar{
-	// 	ui: 0
-	// })
-	// foo(&Slider{
-	// 	ui: 0
-	// })
-	// foo(&CheckBox{
-	// 	ui: 0
-	// })
-	// foo(&Label{
-	// 	ui: 0
-	// })
-	// foo(&Radio{
-	// 	ui: 0
-	// })
-	// foo(&Picture{
-	// 	ui: 0
-	// })
-	// foo(&Canvas{})
-	// foo(&Menu{
-	// 	ui: 0
-	// })
-	// foo(&Dropdown{
-	// 	ui: 0
-	// })
-	foo(&Transition{
-		ui: 0
-		animated_value: 0
-	})
-	// foo(&Stack{
-	// 	ui: 0
-	// })
-	// foo(&Switch{
-	// 	ui: 0
-	// })
-	// foo(&Rectangle{
-	// 	ui: 0
-	// })
-	// foo(&Group{
-	// 	ui: 0
-	// })
-	// foo(&Grid{
-	// 	ui: 0
-	// })
-}
-
 fn (w &Window) draw() {
 }
 
 fn frame(mut w Window) {
-	// Commented to make timer.v fluid and working on android at the same time
-	// if !w.ui.needs_refresh {
-	// 	// Draw 3 more frames after the "stop refresh" command
-	// 	w.ui.ticks++
-	// 	if w.ui.ticks > 3 {
-	// 		return
-	// 	}
-	// }
-
-	// println('frame() needs_refresh=$w.ui.needs_refresh $w.ui.ticks nr children=$w.children.len')
-	// game.frame_sw.restart()
-	// game.ft.flush()
 	w.ui.gg.begin()
-	// draw_scene()
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
 	for mut child in children {
 		child.draw()
 	}
+	draw_tooltip(w)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.ui.gg.end()
+}
+
+fn frame_immediate(mut w Window) {
+	w.ui.gg.begin()
+
+	for mut child in w.children_immediate {
+		child.draw()
+	}
+
+	if !w.needs_refresh {
+		// Draw 3 more frames after the "stop refresh" command
+		w.ui.ticks++
+		if w.ui.ticks > 3 {
+			return
+		}
+	}
+
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+
+	for mut child in children {
+		child.draw()
+	}
+	draw_tooltip(w)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.needs_refresh = false
+
 	w.ui.gg.end()
 }
 
@@ -999,13 +1004,14 @@ pub fn (w &Window) get_children() []Widget {
 }
 
 // Experimental: attempt to register child to get it by id from window
+// RMK: If id is accepted by community, put `id` inside interface Widget
 fn (mut w Window) register_child(child Widget) {
 	if mut child is Button {
 		// println("register Button")
 		if child.id == '' {
-			mode := 'button'
+			mode := 'btn'
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -1016,12 +1022,43 @@ fn (mut w Window) register_child(child Widget) {
 			}
 		} $else { // required to avoid confusion with next else
 		}
-	} else if child is ListBox {
-		// println("register ListBox")
-		if child.id != '' {
+	} else if mut child is Canvas {
+		if child.id == '' {
+			mode := 'can'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
 			w.widgets[child.id] = child
 		}
-	} else if child is Label {
+	} else if mut child is CheckBox {
+		if child.id == '' {
+			mode := 'cb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Dropdown {
+		if child.id == '' {
+			mode := 'dd'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Grid {
+		if child.id == '' {
+			mode := 'grid'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Label {
 		// println("register Label")
 		if child.id != '' {
 			w.widgets[child.id] = child
@@ -1032,12 +1069,102 @@ fn (mut w Window) register_child(child Widget) {
 			}
 		} $else {
 		}
+	} else if mut child is ListBox {
+		if child.id == '' {
+			mode := 'lb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Menu {
+		if child.id == '' {
+			mode := 'menu'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Picture {
+		if child.id == '' {
+			mode := 'pic'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is ProgressBar {
+		if child.id == '' {
+			mode := 'pb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Radio {
+		if child.id == '' {
+			mode := 'rad'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Rectangle {
+		if child.id == '' {
+			mode := 'rec'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Slider {
+		if child.id == '' {
+			mode := 'sli'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Switch {
+		if child.id == '' {
+			mode := 'swi'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is TextBox {
+		if child.id == '' {
+			mode := 'tb'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+	} else if mut child is Transition {
+		if child.id == '' {
+			mode := 'tra'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
 	} else if mut child is Stack {
 		// println("register Stack")
 		if child.id == '' {
-			mode := if child.direction == .row { 'row' } else { 'column' }
+			mode := if child.direction == .row { 'row' } else { 'col' }
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -1053,9 +1180,27 @@ fn (mut w Window) register_child(child Widget) {
 	} else if mut child is Group {
 		// println("register Group")
 		if child.id == '' {
-			mode := 'group'
+			mode := 'gr'
 			w.widgets_counts[mode] += 1
-			child.id = 'ui_${mode}_${w.widgets_counts[mode]}'
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	} else if mut child is CanvasLayout {
+		// println("register CanvasLayout")
+		if child.id == '' {
+			mode := 'cl'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
 		} else {
 			w.widgets[child.id] = child
@@ -1071,13 +1216,59 @@ fn (mut w Window) register_child(child Widget) {
 	}
 }
 
+// TODO: If id is added to Widget interface,
+// this could be simplified and above all extensible with external widgets
+fn widget_id(child Widget) string {
+	if child is Button {
+		return child.id
+	} else if child is Canvas {
+		return child.id
+	} else if child is CheckBox {
+		return child.id
+	} else if child is Dropdown {
+		return child.id
+	} else if child is Grid {
+		return child.id
+	} else if child is Label {
+		return child.id
+	} else if child is ListBox {
+		return child.id
+	} else if child is Menu {
+		return child.id
+	} else if child is Picture {
+		return child.id
+	} else if child is ProgressBar {
+		return child.id
+	} else if child is Radio {
+		return child.id
+	} else if child is Rectangle {
+		return child.id
+	} else if child is Slider {
+		return child.id
+	} else if child is Switch {
+		return child.id
+	} else if child is TextBox {
+		return child.id
+	} else if child is Transition {
+		return child.id
+	} else if child is Stack {
+		return child.id
+	} else if child is Group {
+		return child.id
+	} else if child is CanvasLayout {
+		return child.id
+	} else {
+		return '_unknown'
+	}
+}
+
 // direct access of registered widget by id
 pub fn (w Window) button(id string) &Button {
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is Button {
 		return widget
 	} else {
-		return button({})
+		return button()
 	}
 }
 
@@ -1086,7 +1277,7 @@ pub fn (w Window) label(id string) &Label {
 	if widget is Label {
 		return widget
 	} else {
-		return label({})
+		return label()
 	}
 }
 
@@ -1095,7 +1286,34 @@ pub fn (w Window) listbox(id string) &ListBox {
 	if widget is ListBox {
 		return widget
 	} else {
-		return listbox({}, map{})
+		return listbox()
+	}
+}
+
+pub fn (w Window) textbox(id string) &TextBox {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is TextBox {
+		return widget
+	} else {
+		return textbox()
+	}
+}
+
+pub fn (w Window) radio(id string) &Radio {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Radio {
+		return widget
+	} else {
+		return radio()
+	}
+}
+
+pub fn (w Window) checkbox(id string) &CheckBox {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is CheckBox {
+		return widget
+	} else {
+		return checkbox()
 	}
 }
 
@@ -1104,7 +1322,7 @@ pub fn (w Window) stack(id string) &Stack {
 	if widget is Stack {
 		return widget
 	} else {
-		return stack({}, [])
+		return stack()
 	}
 }
 
@@ -1113,7 +1331,34 @@ pub fn (w Window) group(id string) &Group {
 	if widget is Group {
 		return widget
 	} else {
-		return group({}, [])
+		return group()
+	}
+}
+
+pub fn (w Window) canvas_layout(id string) &CanvasLayout {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is CanvasLayout {
+		return widget
+	} else {
+		return canvas_layout()
+	}
+}
+
+pub fn (w Window) menu(id string) &Menu {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Menu {
+		return widget
+	} else {
+		return menu()
+	}
+}
+
+pub fn (w Window) rectangle(id string) &Rectangle {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Rectangle {
+		return widget
+	} else {
+		return rectangle()
 	}
 }
 
@@ -1181,6 +1426,27 @@ pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
 	if mut s is Stack {
-		s.update_all_children_recursively(w)
+		s.update_layout()
+	}
+}
+
+[unsafe]
+pub fn (w &Window) free() {
+	$if free ? {
+		println('window $w.title')
+	}
+	unsafe {
+		w.ui.free()
+		w.children.free()
+		w.title.free()
+		// w.eventbus.free()
+		w.color_themes.free()
+		w.widgets.free()
+		w.widgets_counts.free()
+		w.tooltip.free()
+		free(w)
+	}
+	$if free ? {
+		println('window -> freed')
 	}
 }

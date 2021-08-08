@@ -68,24 +68,31 @@ fn main() {
 	}
 	app.hor_textbox.text = &app.hor_text
 	app.vert_textbox.text = &app.vert_text
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'Slider & textbox Example'
 		state: app
-	}, [
-		ui.column({ heights: [.1, .9] }, [
-			ui.row({
-			margin: ui.Margin{50, 115, 30, 30}
-			spacing: 100
-			heights: 20.
-		}, [app.hor_textbox, app.vert_textbox]),
-			ui.row({
-				margin: ui.Margin{100, 30, 30, 30}
-				spacing: 30
-			}, [app.hor_slider, app.vert_slider]),
-		]),
-	])
+		children: [
+			ui.column(
+				heights: [.1, .9]
+				children: [
+					ui.row(
+					margin: ui.Margin{50, 115, 30, 30}
+					spacing: 100
+					heights: 20.
+					children: [app.hor_textbox, app.vert_textbox]
+				),
+					ui.row(
+						heights: [ui.compact, ui.stretch]
+						margin: ui.Margin{100, 30, 30, 30}
+						spacing: 30
+						children: [app.hor_slider, app.vert_slider]
+					),
+				]
+			),
+		]
+	)
 	ui.run(app.window)
 }
 

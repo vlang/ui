@@ -27,7 +27,7 @@ fn main() {
 		'2*ui.stretch':   2 * ui.stretch
 		'3*ui.stretch':   3 * ui.stretch
 	}
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'Stack widths and heights management'
@@ -35,166 +35,180 @@ fn main() {
 		mode: .resizable
 		on_resize: win_resize
 		on_init: win_init
-	}, [
-		ui.column({
-			heights: [ui.compact, ui.compact, ui.stretch]
-			spacing: .01
-		}, [
-			ui.row({
-			widths: ui.compact
-			heights: ui.compact
-			margin_: 5
-			spacing: .03
-		}, [
-			ui.row({
-				id: 'row_btn1'
-				title: 'btn1'
-				margin_: .05
-				spacing: .1
-				widths: ui.compact
-				heights: ui.compact
-			}, [
-				ui.listbox({
-					id: 'lb1w'
-					height: lb_height
-					selection: 0
-					on_change: lb_change
-				}, map{
-					'.3':             '.3'
-					'100':            '100'
-					'ui.stretch':     'ui.stretch'
-					'ui.compact':     'ui.compact'
-					'1.5*ui.stretch': '1.5 * ui.stretch'
-					'2*ui.stretch':   '2 * ui.stretch'
-					'3*ui.stretch':   '3 * ui.stretch'
-				}),
-				ui.listbox({
-					id: 'lb1h'
-					height: lb_height
-					selection: 0
-					on_change: lb_change
-				}, map{
-					'.3':         '.3'
-					'20':         '20'
-					'ui.stretch': 'ui.stretch'
-					'ui.compact': 'ui.compact'
-				}),
-			]),
-			ui.row({
-				id: 'row_btn2'
-				title: 'btn2'
-				margin_: .05
-				spacing: .1
-				widths: ui.compact
-				heights: ui.compact
-			}, [
-				ui.listbox({
-					id: 'lb2w'
-					height: lb_height
-					selection: 1
-					on_change: lb_change
-				}, map{
-					'.3':             '.3'
-					'100':            '100'
-					'ui.stretch':     'ui.stretch'
-					'ui.compact':     'ui.compact'
-					'1.5*ui.stretch': '1.5 * ui.stretch'
-					'2*ui.stretch':   '2 * ui.stretch'
-					'3*ui.stretch':   '3 * ui.stretch'
-				}),
-				ui.listbox({
-					id: 'lb2h'
-					height: lb_height
-					selection: 1
-					on_change: lb_change
-				}, map{
-					'.3':         '.3'
-					'20':         '20'
-					'ui.stretch': 'ui.stretch'
-					'ui.compact': 'ui.compact'
-				}),
-			]),
-			ui.row({
-				id: 'row_space'
-				title: 'Margins and Spacing'
-				margin_: .05
-				spacing: .1
-				widths: ui.compact
-				heights: ui.compact
-			}, [
-				ui.listbox({
-					id: 'lbmargin'
-					height: lb_height
-					selection: 3
-					on_change: lb_change_sp
-				}, map{
-					'20':  'margin_: 20'
-					'50':  'margin_: 50'
-					'.05': 'margin_: .05'
-					'.1':  'margin_: .1'
-				}),
-				ui.listbox({
-					id: 'lbspace'
-					height: lb_height
-					selection: 3
-					on_change: lb_change_sp
-				}, map{
-					'20':  'spacing: 20'
-					'50':  'spacing: 50'
-					'.05': 'spacing: .05'
-					'.1':  'spacing: .1'
-				}),
-			]),
-		]),
-			ui.column({
-				margin: {
-					right: .05
-					left: .05
-				}
+		children: [
+			ui.column(
+				heights: [ui.compact, ui.compact, ui.stretch]
 				spacing: .01
-				widths: ui.stretch
-				bg_color: gx.Color{255, 255, 255, 128}
-			}, [
-				ui.label(
-					id: 'l_btns_sizes'
-					height: 25
-					text: 'Button 1 & 2 declaration: ui.button({width: 200, height: 30, ...})'
+				children: [
+					ui.row(
+					widths: ui.compact
+					heights: ui.compact
+					margin_: 5
+					spacing: .03
+					children: [
+						ui.row(
+							id: 'row_btn1'
+							title: 'btn1'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lb1w'
+									height: lb_height
+									selection: 0
+									on_change: lb_change
+									items: map{
+										'.3':             '.3'
+										'100':            '100'
+										'ui.stretch':     'ui.stretch'
+										'ui.compact':     'ui.compact'
+										'1.5*ui.stretch': '1.5 * ui.stretch'
+										'2*ui.stretch':   '2 * ui.stretch'
+										'3*ui.stretch':   '3 * ui.stretch'
+									}
+								),
+								ui.listbox(
+									id: 'lb1h'
+									height: lb_height
+									selection: 0
+									on_change: lb_change
+									items: map{
+										'.3':         '.3'
+										'20':         '20'
+										'ui.stretch': 'ui.stretch'
+										'ui.compact': 'ui.compact'
+									}
+								),
+							]
+						),
+						ui.row(
+							id: 'row_btn2'
+							title: 'btn2'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lb2w'
+									height: lb_height
+									selection: 1
+									on_change: lb_change
+									items: map{
+										'.3':             '.3'
+										'100':            '100'
+										'ui.stretch':     'ui.stretch'
+										'ui.compact':     'ui.compact'
+										'1.5*ui.stretch': '1.5 * ui.stretch'
+										'2*ui.stretch':   '2 * ui.stretch'
+										'3*ui.stretch':   '3 * ui.stretch'
+									}
+								),
+								ui.listbox(
+									id: 'lb2h'
+									height: lb_height
+									selection: 1
+									on_change: lb_change
+									items: map{
+										'.3':         '.3'
+										'20':         '20'
+										'ui.stretch': 'ui.stretch'
+										'ui.compact': 'ui.compact'
+									}
+								),
+							]
+						),
+						ui.row(
+							id: 'row_space'
+							title: 'Margins and Spacing'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lbmargin'
+									height: lb_height
+									selection: 3
+									on_change: lb_change_sp
+									items: map{
+										'20':  'margin_: 20'
+										'50':  'margin_: 50'
+										'.05': 'margin_: .05'
+										'.1':  'margin_: .1'
+									}
+								),
+								ui.listbox(
+									id: 'lbspace'
+									height: lb_height
+									selection: 3
+									on_change: lb_change_sp
+									items: map{
+										'20':  'spacing: 20'
+										'50':  'spacing: 50'
+										'.05': 'spacing: .05'
+										'.1':  'spacing: .1'
+									}
+								),
+							]
+						),
+					]
 				),
-				ui.label(
-					id: 'l_stack_sizes'
-					height: 25
-					text: 'Row (Stack) declaration:  ui.row({ margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact]})'
-				),
-			]),
-			ui.row({
-				id: 'row'
-				widths: [
-					.3,
-					100,
+					ui.column(
+						margin: ui.Margin{
+							right: .05
+							left: .05
+						}
+						spacing: .01
+						widths: ui.stretch
+						bg_color: gx.Color{255, 255, 255, 128}
+						children: [
+							ui.label(
+								id: 'l_btns_sizes'
+								height: 25
+								text: 'Button 1 & 2 declaration: ui.button(width: 200, height: 30, ...)'
+							),
+							ui.label(
+								id: 'l_stack_sizes'
+								height: 25
+								text: 'Row (Stack) declaration:  ui.row( margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact])'
+							),
+						]
+					),
+					ui.row(
+						id: 'row'
+						widths: [
+							.3,
+							100,
+						]
+						heights: [
+							.3,
+							ui.compact,
+						]
+						margin_: .1
+						spacing: .1
+						bg_color: gx.Color{50, 100, 0, 50}
+						children: [
+							ui.button(
+								id: 'btn1'
+								width: 200
+								height: 30
+								text: 'Button 1'
+							),
+							ui.button(
+								id: 'btn2'
+								width: 200
+								height: 30
+								text: 'Button 2'
+							),
+						]
+					),
 				]
-				heights: [
-					.3,
-					ui.compact,
-				]
-				margin_: .1
-				spacing: .1
-				bg_color: gx.Color{50, 100, 0, 50}
-			}, [
-				ui.button(
-					id: 'btn1'
-					width: 200
-					height: 30
-					text: 'Button 1'
-				),
-				ui.button(
-					id: 'btn2'
-					width: 200
-					height: 30
-					text: 'Button 2'
-				),
-			]),
-		]),
-	])
+			),
+		]
+	)
 	ui.run(app.window)
 }
 
@@ -288,7 +302,7 @@ fn set_output_label(win &ui.Window) {
 	_, marg := lbm.selected() or { '100', '' }
 	_, sp := lbs.selected() or { '100', '' }
 	mut lss := win.label('l_stack_sizes')
-	lss.set_text('Row (Stack) declaration: ui.row({ $marg, $sp, widths: [$w1, $w2], heights: [$h1, $h2]})')
+	lss.set_text('Row (Stack) declaration: ui.row( $marg, $sp, widths: [$w1, $w2], heights: [$h1, $h2])')
 }
 
 fn set_sizes_labels(win &ui.Window) {
@@ -311,7 +325,9 @@ fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
 	mut lb := win.listbox('lb1w')
 	sw, sh := lb.size()
-	println('win init ($sw, $sh)')
+	mut row := win.stack('row_btn1')
+	rw, rh := row.size()
+	println('win init ($sw, $sh) ($row.x, $row.y ,$rw, $rh)')
 	set_output_label(win)
 	win.update_layout()
 }

@@ -63,7 +63,7 @@ fn main() {
 					// app.webview.exec("alert('Ran some javascript')")
 				}
 			),
-		]),
-	])
+		]
+	)
 	ui.run(window)
 }

@@ -7,6 +7,7 @@ import math
 import gx
 import eventbus
 
+[heap]
 pub struct Group {
 pub mut:
 	id            string
@@ -29,17 +30,36 @@ pub mut:
 	adj_height    int
 	adj_width     int
 	hidden        bool
+	// component state for composable widget
+	component      voidptr
+	component_type string // to save the type of the component
 }
 
 pub struct GroupConfig {
 pub mut:
-	id      string
-	title   string
-	x       int
-	y       int
-	width   int
-	height  int
-	spacing int = 5
+	id       string
+	title    string
+	x        int
+	y        int
+	width    int
+	height   int
+	spacing  int = 5
+	children []Widget
+}
+
+pub fn group(c GroupConfig) &Group {
+	mut g := &Group{
+		id: c.id
+		title: c.title
+		x: c.x
+		y: c.y
+		width: c.width
+		height: c.height
+		children: c.children
+		spacing: c.spacing
+		ui: 0
+	}
+	return g
 }
 
 fn (mut g Group) init(parent Layout) {
@@ -51,6 +71,33 @@ fn (mut g Group) init(parent Layout) {
 		child.init(g)
 	}
 	g.calculate_child_positions()
+}
+
+[manualfree]
+pub fn (mut g Group) cleanup() {
+	for mut child in g.children {
+		child.cleanup()
+	}
+	unsafe {
+		g.free()
+	}
+}
+
+[unsafe]
+pub fn (g &Group) free() {
+	$if free ? {
+		print('group $g.id')
+	}
+	unsafe {
+		g.id.free()
+		g.title.free()
+		g.children.free()
+		g.component_type.free()
+		free(g)
+	}
+	$if free ? {
+		println(' -> freed')
+	}
 }
 
 fn (mut g Group) decode_size(parent Layout) {
@@ -71,21 +118,6 @@ fn (mut g Group) decode_size(parent Layout) {
 	// }
 	println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
 	// s.debug_show_size("decode after -> ")
-}
-
-pub fn group(c GroupConfig, children []Widget) &Group {
-	mut g := &Group{
-		id: c.id
-		title: c.title
-		x: c.x
-		y: c.y
-		width: c.width
-		height: c.height
-		children: children
-		spacing: c.spacing
-		ui: 0
-	}
-	return g
 }
 
 fn (mut g Group) set_pos(x int, y int) {
@@ -140,11 +172,11 @@ fn (mut g Group) draw() {
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
-	return point_inside<Group>(g, x, y)
+	return point_inside(g, x, y)
 }
 
 fn (mut g Group) set_visible(state bool) {
-	g.hidden = state
+	g.hidden = !state
 }
 
 fn (mut g Group) focus() {

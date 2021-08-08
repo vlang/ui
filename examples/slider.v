@@ -32,21 +32,22 @@ fn main() {
 		)
 		window: 0
 	}
-	app.window = ui.window({
+	app.window = ui.window(
 		width: win_width
 		height: win_height
 		title: 'Slider Example'
 		state: app
-	}, [
-		ui.row({
-			alignment: .center
-			margin: ui.Margin{25, 25, 25, 25}
-			spacing: 10
-		}, [
-			app.vert_slider,
-			app.hor_slider,
-		]),
-	])
+		children: [
+			ui.row(
+				alignment: .center
+				widths: [.1, .9]
+				heights: [.9, .1]
+				margin: ui.Margin{25, 25, 25, 25}
+				spacing: 10
+				children: [app.vert_slider, app.hor_slider]
+			),
+		]
+	)
 	ui.run(app.window)
 }
 
