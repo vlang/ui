@@ -49,7 +49,6 @@ fn main() {
 
 fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	mut tb := switcher.ui.window.textbox('tb2m')
-	tb.is_wordwrap = !tb.is_wordwrap
-	tb.update_textlines()
-	// switcher.ui.window.update_layout()
+	tb.tv.switch_wordwrap()
+	tb.focus()
 }

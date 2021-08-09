@@ -386,7 +386,7 @@ fn (tb &TextBox) draw_selection() {
 		return
 	}
 	if tb.is_multiline {
-		// println("drawtl ${tb.lines[tb.tv.tlv.sel_start_j]} (${tb.lines[tb.tv.tlv.sel_start_j].runes().len}) j=$tb.tv.tlv.sel_start_j, $tb.tv.tlv.sel_end_j i=$tb.tv.tlv.sel_start_i, $tb.tv.tlv.sel_end_i")
+		// println("drawtl ${tb.tv.sel_start_line()} (${tb.tv.sel_start_line().runes().len}) j=$tb.tv.tlv.sel_start_j, $tb.tv.tlv.sel_end_j i=$tb.tv.tlv.sel_start_i, $tb.tv.tlv.sel_end_i")
 		if tb.tv.tlv.sel_start_j == tb.tv.tlv.sel_end_j {
 			sel_from, sel_width := text_xminmax_from_pos(tb, tb.tv.sel_start_line(), tb.tv.tlv.sel_start_i,
 				tb.tv.tlv.sel_end_i)

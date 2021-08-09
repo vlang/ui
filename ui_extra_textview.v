@@ -37,10 +37,22 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 
 pub fn (tv &TextView) info() {
 	println('cursor: $tv.cursor_pos -> ($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j)')
+	println('sel: ($tv.sel_start, $tv.sel_end) -> ($tv.tlv.sel_start_i, $tv.tlv.sel_start_j, $tv.tlv.sel_end_i, $tv.tlv.sel_end_j)')
 }
 
 pub fn (mut tv TextView) is_wordwrap() bool {
 	return tv.tb.is_wordwrap
+}
+
+pub fn (mut tv TextView) switch_wordwrap() {
+	tv.tb.is_wordwrap = !tv.tb.is_wordwrap
+	if tv.is_sel_active() {
+		// tv.info()
+		tv.sync_text_pos()
+		tv.update_lines()
+		tv.sync_text_lines()
+		// tv.info()
+	}
 }
 
 fn (tv &TextView) line(j int) string {
@@ -221,7 +233,6 @@ fn (mut tv TextView) move_cursor(side Side) {
 
 fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
-	tb := tv.tb
 	mut word_wrapped_lines := []string{}
 	for line in lines {
 		ww_lines := tv.word_wrap_line(line)
