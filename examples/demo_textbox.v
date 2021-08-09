@@ -33,6 +33,7 @@ fn main() {
 				id: 'tb2m'
 				text: &app.tb2m
 				height: 200
+				text_size: 24
 			),
 		]
 	)
@@ -49,5 +50,6 @@ fn main() {
 fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	mut tb := switcher.ui.window.textbox('tb2m')
 	tb.is_wordwrap = !tb.is_wordwrap
-	switcher.ui.window.update_layout()
+	tb.update_textlines()
+	// switcher.ui.window.update_layout()
 }

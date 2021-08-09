@@ -8,13 +8,22 @@ const (
 
 pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 	ustr := text.runes()
+	if x > ustr.len {
+		println('warning: text_x_from_pos $x > $ustr.len')
+		x = ustr.len
+	}
 	left := ustr[..x].string()
 	return text_width(w, left)
 }
 
 pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
 	ustr := text.runes()
-	x_min, x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	if x_max > ustr.len {
+		println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		x_max = ustr.len
+	}
+	// println("xminmax: ${ustr.len} $x_min $x_max")
 	left := ustr[..x_min].string()
 	right := ustr[x_max..].string()
 	ww, lw, rw := text_width(w, text), text_width(w, left), text_width(w, right)
@@ -101,25 +110,25 @@ fn word_wrap_join(lines []string, ind []int) string {
 }
 
 // get text position from row i and column j
-fn text_lines_pos_at(lines []string, i int, j int) int {
+pub fn text_lines_pos_at(lines []string, i int, j int) int {
 	mut pos := 0
 	for k in 0 .. j {
-		pos += lines[k].runes().len
+		pos += lines[k].runes().len + 1 // +1 for \n or space
 	}
 	pos += i
-	println('text_lines_pos_at: ($i, $j) -> $pos ')
+	// println('text_lines_pos_at: ($i, $j) -> $pos ')
 	return pos
 }
 
 // get row and column from text position
-fn text_lines_row_column_at(lines []string, pos int) (int, int) {
+pub fn text_lines_row_column_at(lines []string, pos int) (int, int) {
 	if pos == 0 {
 		return 0, 0
 	}
 	mut i, mut j := 0, 0
 	mut total_len, mut ustr_len := 0, 0
 	for line in lines {
-		ustr_len = line.runes().len
+		ustr_len = line.runes().len + 1
 		total_len += ustr_len
 		if pos > total_len {
 			j++
@@ -128,7 +137,7 @@ fn text_lines_row_column_at(lines []string, pos int) (int, int) {
 			break
 		}
 	}
-	println('text_lines_row_column_at: $pos -> ($pos - $total_len, $j)')
+	// println('text_lines_row_column_at: $pos -> ($pos - $total_len, $j)')
 	return pos - total_len, j
 }
 
