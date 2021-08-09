@@ -423,6 +423,7 @@ fn (tb &TextBox) draw_selection() {
 fn (tb &TextBox) draw_textlines() {
 	tb.draw_selection()
 	mut y := tb.y + ui.textbox_padding_y
+	// println("draw_textlines: $tb.tv.tlv.lines")
 	for line in tb.tv.tlv.lines {
 		draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
 		y += tb.line_height
@@ -433,12 +434,12 @@ fn (tb &TextBox) draw_textlines() {
 		mut cursor_x := tb.x + ui.textbox_padding_x
 		if ustr.len > 0 {
 			// println("ici ($tb.tv.tlv.cursor_pos_i, $tb.tv.tlv.cursor_pos_j) $ustr.len")
-			cursor_pos_i := if tb.tv.tlv.cursor_pos_i > ustr.len {
-				ustr.len
-			} else {
-				tb.tv.tlv.cursor_pos_i
-			}
-			left := ustr[..cursor_pos_i].string()
+			// cursor_pos_i := if tb.tv.tlv.cursor_pos_i > ustr.len {
+			// 	ustr.len
+			// } else {
+			// 	tb.tv.tlv.cursor_pos_i
+			// }
+			left := ustr[..tb.tv.tlv.cursor_pos_i].string()
 			cursor_x += text_width(tb, left)
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)

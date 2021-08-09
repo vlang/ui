@@ -115,7 +115,6 @@ fn (mut tv TextView) update_lines() {
 
 fn (mut tv TextView) insert(s string) {
 	mut ustr := tv.text.runes()
-	println('feferfvaer')
 	ustr.insert(tv.cursor_pos, s.runes())
 	unsafe {
 		*tv.text = ustr.string()
@@ -136,15 +135,11 @@ fn (mut tv TextView) delete_prev_char() {
 		return
 	}
 	mut ustr := tv.text.runes()
-	println('prev $ustr')
 	tv.cursor_pos--
 	ustr.delete(tv.cursor_pos)
-	println('prev2 $ustr')
 	unsafe {
 		*tv.text = ustr.string()
 	}
-	println('prev3 <${*tv.text}>')
-	tv.info()
 	tv.update_lines()
 }
 
@@ -214,8 +209,8 @@ fn (mut tv TextView) move_cursor(side Side) {
 		.right {
 			tv.cursor_pos++
 			ustr := tv.text.runes()
-			if tv.cursor_pos >= ustr.len {
-				tv.cursor_pos = ustr.len - 1
+			if tv.cursor_pos > ustr.len {
+				tv.cursor_pos = ustr.len
 			}
 			tv.sync_text_lines()
 		}
@@ -254,6 +249,8 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 		s := utf32_to_str(e.codepoint)
 		tv.insert(s)
+		tv.cursor_pos++
+		tv.sync_text_lines()
 	}
 	// println(e.key)
 	// println('mods=$e.mods')
@@ -268,6 +265,8 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	match e.key {
 		.enter {
 			tv.insert('\n')
+			tv.cursor_pos++
+			tv.sync_text_lines()
 		}
 		.backspace {
 			println('baskspace')
@@ -329,58 +328,16 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		// 		// tb.on_change(*tb.text, window.state)
 		// 	}
 		// }
-		// .left {
-		// 	if tb.sel(e.mods, e.key) {
-		// 		return
-		// 	}
-		// 	tb.cancel_selection()
-		// 	if tb.sel_end_i > 0 {
-		// 		tb.cursor_pos_i = tb.sel_start_i + 1
-		// 	}
-		// 	tb.sel_start_i = 0
-		// 	tb.sel_end_i = 0
-		// 	tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-		// 	tb.cursor_pos_i--
-		// 	if tb.cursor_pos_i <= 0 {
-		// 		if tb.is_multiline {
-		// 			if tb.cursor_pos_j == 0 {
-		// 				tb.cursor_pos_i = 0
-		// 			} else {
-		// 				tb.cursor_pos_j -= 1
-		// 				tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].runes().len
-		// 			}
-		// 		} else {
-		// 			tb.cursor_pos_i = 0
-		// 		}
-		// 	}
-		// }
-		// .right {
-		// 	if tb.sel(e.mods, e.key) {
-		// 		return
-		// 	}
-		// 	tb.cancel_selection()
-		// 	if tb.sel_start_i > 0 {
-		// 		tb.cursor_pos_i = tb.sel_start_i - 1
-		// 	}
-		// 	tb.sel_end_i = 0
-		// 	tb.sel_start_i = 0
-		// 	tb.ui.show_cursor = true
-		// 	tb.cursor_pos_i++
-		// 	text_len := text.runes().len
-		// 	if tb.cursor_pos_i > text_len {
-		// 		if tb.is_multiline {
-		// 			if tb.cursor_pos_j == tb.lines.len - 1 {
-		// 				tb.cursor_pos_i = text_len
-		// 			} else {
-		// 				tb.cursor_pos_i = 0
-		// 				tb.cursor_pos_j += 1
-		// 			}
-		// 		} else {
-		// 			tb.cursor_pos_i = text_len
-		// 		}
-		// 	}
-		// 	// println("right: $tb.cursor_pos_i, $tb.cursor_pos_j")
-		// }
+		.left {
+			tv.cancel_selection()
+			tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+			tv.move_cursor(.left)
+		}
+		.right {
+			tv.cancel_selection()
+			tv.tb.ui.show_cursor = true
+			tv.move_cursor(.right)
+		}
 		// .up {
 		// 	tb.cancel_selection()
 		// 	if tb.is_multiline {
@@ -444,11 +401,14 @@ fn (mut tv TextView) word_wrap_text() {
 		ww_lines := tv.word_wrap_line(line)
 		word_wrapped_lines << ww_lines
 	}
-	// println('tl: $word_wrapped_lines')
+	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
 	tv.tlv.lines = word_wrapped_lines
 }
 
 fn (tv &TextView) word_wrap_line(s string) []string {
+	if s == '' {
+		return ['']
+	}
 	words := s.split(' ')
 	max_line_width := tv.tb.width
 	mut line := ''
@@ -497,7 +457,7 @@ pub fn (tv &TextView) text_line_at(pos int) (int, int) {
 	mut i, mut j := 0, 0
 	mut total_len, mut ustr_len := 0, 0
 	for line in lines {
-		ustr_len = line.runes().len + 1
+		ustr_len = line.runes().len + 1 // +1 is the return last char
 		total_len += ustr_len
 		if pos > total_len {
 			j++
@@ -506,6 +466,12 @@ pub fn (tv &TextView) text_line_at(pos int) (int, int) {
 			break
 		}
 	}
-	// println('text_lines_row_column_at: $pos -> ($pos - $total_len, $j)')
-	return pos - total_len, j
+	i = pos - total_len
+	if i > tv.line(j).runes().len {
+		// IMPORTANT: go to the beginning of the next line
+		j++
+		i = 0
+	}
+	// println('text_lines_row_column_at: $pos -> ($i, $j)')
+	return i, j
 }
