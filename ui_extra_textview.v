@@ -124,7 +124,7 @@ fn (mut tv TextView) draw_textlines() {
 		y += tv.tb.line_height
 	}
 	// draw cursor
-	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor { //&& !tb.tv.is_sel_active() {
+	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
 		ustr := tv.current_line().runes()
 		mut cursor_x := tv.tb.x + textbox_padding_x
 		if ustr.len > 0 {
