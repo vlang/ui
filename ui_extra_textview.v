@@ -44,15 +44,15 @@ pub fn (mut tv TextView) is_wordwrap() bool {
 	return tv.tb.is_wordwrap
 }
 
+pub fn (mut tv TextView) set_wordwrap(state bool) {
+	tv.tb.is_wordwrap = state
+	tv.sync_text_pos()
+	tv.update_lines()
+	tv.sync_text_lines()
+}
+
 pub fn (mut tv TextView) switch_wordwrap() {
-	tv.tb.is_wordwrap = !tv.tb.is_wordwrap
-	if tv.is_sel_active() {
-		// tv.info()
-		tv.sync_text_pos()
-		tv.update_lines()
-		tv.sync_text_lines()
-		// tv.info()
-	}
+	tv.set_wordwrap(!tv.tb.is_wordwrap)
 }
 
 fn (tv &TextView) line(j int) string {
@@ -143,12 +143,39 @@ fn (mut tv TextView) delete_prev_char() {
 	tv.update_lines()
 }
 
+fn (mut tv TextView) draw_selection() {
+	if tv.tlv.sel_start_j == tv.tlv.sel_end_j {
+		sel_from, sel_width := text_xminmax_from_pos(tv.tb, tv.sel_start_line(), tv.tlv.sel_start_i,
+			tv.tlv.sel_end_i)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			tv.tlv.sel_start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+	} else {
+		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
+		mut ustr := tv.line(start_j)
+		mut sel_from, mut sel_width := text_xminmax_from_pos(tv.tb, ustr, start_i, ustr.len)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+		if end_j - start_j > 1 {
+			for j in (start_j + 1) .. end_j {
+				ustr = tv.line(j)
+				sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, ustr.runes().len)
+				tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+					textbox_padding_y + j * tv.tb.line_height, sel_width, tv.tb.line_height,
+					selection_color)
+			}
+		}
+		sel_from, sel_width = text_xminmax_from_pos(tv.tb, tv.sel_end_line(), 0, end_i)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			end_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+	}
+}
+
 fn (mut tv TextView) delete_selection() {
 	if tv.sel_start > tv.sel_end {
 		tv.sel_start, tv.sel_end = tv.sel_end, tv.sel_start
 	}
 	mut ustr := tv.text.runes()
-	ustr.delete_many(tv.sel_start, tv.sel_end - tv.sel_start - 1)
+	ustr.delete_many(tv.sel_start, tv.sel_end - tv.sel_start)
 	tv.cursor_pos = tv.sel_start
 	tv.sel_end = -1
 	unsafe {
@@ -176,7 +203,7 @@ fn (mut tv TextView) start_selection(x int, y int) {
 }
 
 fn (mut tv TextView) end_selection(x int, y int) {
-	println('end selection: ($x, $y)')
+	// println('end selection: ($x, $y)')
 	if y <= 0 {
 		tv.tlv.sel_end_j = 0
 	} else {
@@ -187,7 +214,7 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	}
 	tv.tlv.sel_end_i = text_pos_from_x(tv.tb, tv.tlv.lines[tv.tlv.sel_end_j], x)
 	tv.sync_text_pos()
-	println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
+	// println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
 }
 
 pub fn (mut tv TextView) cancel_selection() {
@@ -250,13 +277,35 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		tv.insert(es)
 		tv.cursor_pos++
 		tv.sync_text_lines()
-	} else if e.mods in [.ctrl, .super] && es == 'a' {
-		println('super a')
-		tv.sel_start = 0
-		tv.sel_end = (*tv.text).runes().len
-		tv.sync_text_lines()
-		tv.tb.ui.show_cursor = false
-		return
+	} else if e.mods in [.ctrl, .super] {
+		match es {
+			'a' {
+				tv.sel_start = 0
+				tv.sel_end = tv.text.runes().len
+				tv.sync_text_lines()
+				tv.tb.ui.show_cursor = false
+				return
+			}
+			'c' {
+				if tv.is_sel_active() {
+					ustr := tv.text.runes()
+					sel_start, sel_end := tv.ordered_pos_selection()
+					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+				}
+			}
+			'v' {
+				tv.insert(tv.tb.ui.clipboard.paste())
+			}
+			'x' {
+				if tv.is_sel_active() {
+					ustr := tv.text.runes()
+					sel_start, sel_end := tv.ordered_pos_selection()
+					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+					tv.delete_selection()
+				}
+			}
+			else {}
+		}
 	}
 	// println(e.key)
 	// println('mods=$e.mods')
@@ -275,7 +324,6 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.sync_text_lines()
 		}
 		.backspace {
-			println('baskspace')
 			tv.tb.ui.show_cursor = true
 			// println('backspace cursor_pos=($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j) len=${(*tv.text).len} \n <${*tv.text}>')
 			if *tv.text == '' {
@@ -474,4 +522,20 @@ pub fn (tv &TextView) text_line_at(pos int) (int, int) {
 	}
 	// println('text_lines_row_column_at: $pos -> ($i, $j)')
 	return i, j
+}
+
+fn (tv &TextView) ordered_pos_selection() (int, int) {
+	return if tv.sel_start < tv.sel_end {
+		tv.sel_start, tv.sel_end
+	} else {
+		tv.sel_end, tv.sel_start
+	}
+}
+
+fn (tv &TextView) ordered_lines_selection() (int, int, int, int) {
+	return if tv.tlv.sel_start_j < tv.tlv.sel_end_j {
+		tv.tlv.sel_start_i, tv.tlv.sel_end_i, tv.tlv.sel_start_j, tv.tlv.sel_end_j
+	} else {
+		tv.tlv.sel_end_i, tv.tlv.sel_start_i, tv.tlv.sel_end_j, tv.tlv.sel_start_j
+	}
 }

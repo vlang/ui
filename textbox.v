@@ -376,41 +376,14 @@ fn (tb &TextBox) is_sel_active() bool {
 	}
 }
 
-fn (tb &TextBox) draw_selection() {
+fn (mut tb TextBox) draw_selection() {
 	if !tb.is_sel_active() {
 		// println("return draw_sel")
 		return
 	}
 	if tb.is_multiline {
 		// println("drawtl ${tb.tv.sel_start_line()} (${tb.tv.sel_start_line().runes().len}) j=$tb.tv.tlv.sel_start_j, $tb.tv.tlv.sel_end_j i=$tb.tv.tlv.sel_start_i, $tb.tv.tlv.sel_end_i")
-		if tb.tv.tlv.sel_start_j == tb.tv.tlv.sel_end_j {
-			sel_from, sel_width := text_xminmax_from_pos(tb, tb.tv.sel_start_line(), tb.tv.tlv.sel_start_i,
-				tb.tv.tlv.sel_end_i)
-			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-				tb.tv.tlv.sel_start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
-		} else {
-			start_i, end_i, start_j, end_j := if tb.tv.tlv.sel_start_j < tb.tv.tlv.sel_end_j {
-				tb.tv.tlv.sel_start_i, tb.tv.tlv.sel_end_i, tb.tv.tlv.sel_start_j, tb.tv.tlv.sel_end_j
-			} else {
-				tb.tv.tlv.sel_end_i, tb.tv.tlv.sel_start_i, tb.tv.tlv.sel_end_j, tb.tv.tlv.sel_start_j
-			}
-			mut ustr := tb.tv.line(start_j)
-			mut sel_from, mut sel_width := text_xminmax_from_pos(tb, ustr, start_i, ustr.len)
-			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-				start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
-			if end_j - start_j > 1 {
-				for j in (start_j + 1) .. end_j {
-					ustr = tb.tv.line(j)
-					sel_from, sel_width = text_xminmax_from_pos(tb, ustr, 0, ustr.runes().len)
-					tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y +
-						ui.textbox_padding_y + j * tb.line_height, sel_width, tb.line_height,
-						ui.selection_color)
-				}
-			}
-			sel_from, sel_width = text_xminmax_from_pos(tb, tb.tv.sel_end_line(), 0, end_i)
-			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-				end_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
-		}
+		tb.tv.draw_selection()
 	} else {
 		sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
 		// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
@@ -419,7 +392,7 @@ fn (tb &TextBox) draw_selection() {
 	}
 }
 
-fn (tb &TextBox) draw_textlines() {
+fn (mut tb TextBox) draw_textlines() {
 	tb.draw_selection()
 	mut y := tb.y + ui.textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
