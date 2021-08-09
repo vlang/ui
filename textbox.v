@@ -54,6 +54,9 @@ pub mut:
 	text        &string = voidptr(0)
 	max_len     int
 	line_height int
+	cursor_pos  int
+	sel_start   int
+	sel_end     int
 	// placeholder
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
@@ -63,9 +66,6 @@ pub mut:
 	is_wordwrap  bool
 	lines        []string
 	wordwrap     []int
-	cursor_pos   int
-	sel_start    int
-	sel_end      int
 	// others
 	is_numeric    bool
 	is_password   bool
@@ -372,7 +372,7 @@ fn (tb &TextBox) is_sel_active() bool {
 	if tb.is_multiline {
 		return tb.tv.is_sel_active()
 	} else {
-		return tb.sel_start != tb.sel_end
+		return tb.sel_end != -1 && tb.sel_start != tb.sel_end
 	}
 }
 
@@ -394,7 +394,7 @@ fn (tb &TextBox) draw_selection() {
 			} else {
 				tb.tv.tlv.sel_end_i, tb.tv.tlv.sel_start_i, tb.tv.tlv.sel_end_j, tb.tv.tlv.sel_start_j
 			}
-			mut ustr := tb.tv.sel_start_line()
+			mut ustr := tb.tv.line(start_j)
 			mut sel_from, mut sel_width := text_xminmax_from_pos(tb, ustr, start_i, ustr.len)
 			tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
 				start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
@@ -412,11 +412,10 @@ fn (tb &TextBox) draw_selection() {
 				end_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
 		}
 	} else {
-		sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.tv.tlv.sel_start_i,
-			tb.tv.tlv.sel_end_i)
-		// println("tb draw sel ($tb.tv.tlv.sel_start_i, $tb.tv.tlv.sel_end_i): $sel_from, $sel_width")
-		tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y +
-			tb.tv.tlv.sel_start_j * tb.line_height, sel_width, tb.line_height, ui.selection_color)
+		sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
+		// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
+		tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
+			sel_width, tb.line_height, ui.selection_color)
 	}
 }
 
@@ -473,7 +472,7 @@ pub fn (mut tb TextBox) cancel_selection() {
 		tb.tv.cancel_selection()
 	} else {
 		tb.sel_start = 0
-		tb.sel_end = 0
+		tb.sel_end = -1
 	}
 }
 

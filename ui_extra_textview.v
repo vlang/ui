@@ -158,7 +158,7 @@ fn (mut tv TextView) delete_selection() {
 }
 
 fn (mut tv TextView) start_selection(x int, y int) {
-	println('start selection: ($x, $y)')
+	// println('start selection: ($x, $y)')
 	if y <= 0 {
 		tv.tlv.cursor_pos_j = 0
 	} else {
@@ -197,7 +197,6 @@ pub fn (mut tv TextView) cancel_selection() {
 }
 
 fn (mut tv TextView) move_cursor(side Side) {
-	mut tlv := tv.tlv
 	match side {
 		.left {
 			tv.cursor_pos--
@@ -215,24 +214,24 @@ fn (mut tv TextView) move_cursor(side Side) {
 			tv.sync_text_lines()
 		}
 		.top {
-			tlv.cursor_pos_j--
-			if tlv.cursor_pos_j < 0 {
-				tlv.cursor_pos_j = 0
+			tv.tlv.cursor_pos_j--
+			if tv.tlv.cursor_pos_j < 0 {
+				tv.tlv.cursor_pos_j = 0
 			}
-			ustr := tlv.lines[tlv.cursor_pos_j].runes()
-			if tlv.cursor_pos_i >= ustr.len {
-				tlv.cursor_pos_i = ustr.len - 1
+			ustr := tv.current_line().runes()
+			if tv.tlv.cursor_pos_i >= ustr.len {
+				tv.tlv.cursor_pos_i = ustr.len - 1
 			}
 			tv.sync_text_pos()
 		}
 		.bottom {
-			tlv.cursor_pos_j++
-			if tlv.cursor_pos_j >= tlv.lines.len {
-				tlv.cursor_pos_j = tlv.lines.len - 1
+			tv.tlv.cursor_pos_j++
+			if tv.tlv.cursor_pos_j >= tv.tlv.lines.len {
+				tv.tlv.cursor_pos_j = tv.tlv.lines.len - 1
 			}
-			ustr := tlv.lines[tlv.cursor_pos_j].runes()
-			if tlv.cursor_pos_i >= ustr.len {
-				tlv.cursor_pos_i = ustr.len - 1
+			ustr := tv.current_line().runes()
+			if tv.tlv.cursor_pos_i > ustr.len {
+				tv.tlv.cursor_pos_i = ustr.len
 			}
 			tv.sync_text_pos()
 		}
@@ -241,16 +240,23 @@ fn (mut tv TextView) move_cursor(side Side) {
 
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
-
-	if int(e.codepoint) !in [0, 13, 27, 127] && e.mods != .super {
+	es := utf32_to_str(e.codepoint)
+	// println("tv key_down $e <$e.key> ${int(e.codepoint)} <$es>")
+	if int(e.codepoint) !in [0, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
 			tv.delete_selection()
 		}
-		s := utf32_to_str(e.codepoint)
-		tv.insert(s)
+		tv.insert(es)
 		tv.cursor_pos++
 		tv.sync_text_lines()
+	} else if e.mods in [.ctrl, .super] && es == 'a' {
+		println('super a')
+		tv.sel_start = 0
+		tv.sel_end = (*tv.text).runes().len
+		tv.sync_text_lines()
+		tv.tb.ui.show_cursor = false
+		return
 	}
 	// println(e.key)
 	// println('mods=$e.mods')
@@ -338,38 +344,32 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.tb.ui.show_cursor = true
 			tv.move_cursor(.right)
 		}
-		// .up {
-		// 	tb.cancel_selection()
-		// 	if tb.is_multiline {
-		// 		if tb.cursor_pos_j > 0 {
-		// 			tb.cursor_pos_j -= 1
-		// 		}
-		// 		text_len := tb.lines[tb.cursor_pos_j].runes().len
-		// 		if tb.cursor_pos_i > text_len {
-		// 			tb.cursor_pos_i = text_len
-		// 		}
-		// 	}
-		// }
-		// .down {
-		// 	tb.cancel_selection()
-		// 	if tb.is_multiline {
-		// 		if tb.cursor_pos_j < tb.lines.len - 1 {
-		// 			tb.cursor_pos_j += 1
-		// 		}
-		// 		if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
-		// 			tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
-		// 		}
-		// 	}
-		// }
+		.up {
+			tv.cancel_selection()
+			tv.tb.ui.show_cursor = true
+			tv.move_cursor(.top)
+		}
+		.down {
+			tv.cancel_selection()
+			tv.tb.ui.show_cursor = true
+			tv.move_cursor(.bottom)
+		}
+		.escape {
+			tv.cancel_selection()
+			tv.tb.ui.show_cursor = true
+		}
 		// .a {
+		// 	println("aaaaa")
 		// 	if e.mods in [.super, .ctrl] {
-		// 		tb.sel_start_i = 0
-		// 		tb.sel_end_i = text.runes().len - 1
+		// 		println("super a")
+		// 		tv.sel_start = 0
+		// 		tv.sel_end = (*tv.text).runes().len - 1
+		// 		tv.sync_text_lines()
 		// 	}
 		// }
 		// .v {
 		// 	if e.mods in [.super, .ctrl] {
-		// 		tb.insert(tb.ui.clipboard.paste())
+		// 		// tb.insert(tb.ui.clipboard.paste())
 		// 	}
 		// }
 		// .tab {
