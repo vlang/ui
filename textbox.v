@@ -270,7 +270,9 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 		tb.height = ui.max_textbox_height
 	}
 	update_text_size(mut tb)
-	tb.update_textlines()
+	if tb.is_multiline {
+		tb.tv.update_lines()
+	}
 	return tb.width, tb.height
 }
 
@@ -283,7 +285,7 @@ fn (mut tb TextBox) draw() {
 			tb.is_error != 0 && *tb.is_error)
 	}
 	if tb.is_multiline {
-		tb.draw_textlines()
+		tb.tv.draw_textlines()
 	} else {
 		text := *(tb.text)
 		text_len := text.runes().len
@@ -307,7 +309,7 @@ fn (mut tb TextBox) draw() {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if !tb.is_multiline && width > tb.width {
+			if width > tb.width {
 				tb.ui.gg.set_cfg(tb.text_cfg)
 				for i := text_len - 1; i >= 0; i-- {
 					if i >= text_len {
@@ -369,11 +371,7 @@ fn (tb &TextBox) is_sel_active() bool {
 	if !tb.is_focused {
 		return false
 	}
-	if tb.is_multiline {
-		return tb.tv.is_sel_active()
-	} else {
-		return tb.sel_end != -1 && tb.sel_start != tb.sel_end
-	}
+	return tb.sel_end != -1 && tb.sel_start != tb.sel_end
 }
 
 fn (mut tb TextBox) draw_selection() {
@@ -381,91 +379,31 @@ fn (mut tb TextBox) draw_selection() {
 		// println("return draw_sel")
 		return
 	}
-	if tb.is_multiline {
-		// println("drawtl ${tb.tv.sel_start_line()} (${tb.tv.sel_start_line().runes().len}) j=$tb.tv.tlv.sel_start_j, $tb.tv.tlv.sel_end_j i=$tb.tv.tlv.sel_start_i, $tb.tv.tlv.sel_end_i")
-		tb.tv.draw_selection()
-	} else {
-		sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
-		// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
-		tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
-			sel_width, tb.line_height, ui.selection_color)
-	}
-}
-
-fn (mut tb TextBox) draw_textlines() {
-	tb.draw_selection()
-	mut y := tb.y + ui.textbox_padding_y
-	// println("draw_textlines: $tb.tv.tlv.lines")
-	for line in tb.tv.tlv.lines {
-		draw_text(tb, tb.x + ui.textbox_padding_x, y, line)
-		y += tb.line_height
-	}
-	// draw cursor
-	if tb.is_focused && !tb.read_only && tb.ui.show_cursor { //&& !tb.tv.is_sel_active() {
-		ustr := tb.tv.current_line().runes()
-		mut cursor_x := tb.x + ui.textbox_padding_x
-		if ustr.len > 0 {
-			// println("ici ($tb.tv.tlv.cursor_pos_i, $tb.tv.tlv.cursor_pos_j) $ustr.len")
-			// cursor_pos_i := if tb.tv.tlv.cursor_pos_i > ustr.len {
-			// 	ustr.len
-			// } else {
-			// 	tb.tv.tlv.cursor_pos_i
-			// }
-			left := ustr[..tb.tv.tlv.cursor_pos_i].string()
-			cursor_x += text_width(tb, left)
-		}
-		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-		tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y +
-			tb.tv.tlv.cursor_pos_j * tb.line_height, 1, tb.line_height, gx.black) // , gx.Black)
-	}
-}
-
-pub fn (mut tb TextBox) update_textlines() {
-	if !tb.is_multiline {
-		return
-	}
-	tb.tv.update_lines()
-}
-
-pub fn (mut tb TextBox) update_text() {
-	if tb.is_multiline {
-		// res := if tb.is_wordwrap {
-		// 	word_wrap_join(tb.lines, tb.wordwrap)
-		// } else {
-		// 	tb.lines.join('\n')
-		// }
-		// unsafe {
-		// 	*tb.text = res
-		// }
-	}
+	sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
+	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
+	tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
+		sel_width, tb.line_height, ui.selection_color)
 }
 
 pub fn (mut tb TextBox) cancel_selection() {
-	if tb.is_multiline {
-		tb.tv.cancel_selection()
-	} else {
-		tb.sel_start = 0
-		tb.sel_end = -1
-	}
+	tb.sel_start = 0
+	tb.sel_end = -1
 }
 
 pub fn (mut tb TextBox) delete_selection() {
-	if tb.is_multiline {
+	u := tb.text.runes()
+	start_i, end_i := if tb.sel_start < tb.sel_end {
+		tb.sel_start, tb.sel_end
 	} else {
-		u := tb.text.runes()
-		start_i, end_i := if tb.sel_start < tb.sel_end {
-			tb.sel_start, tb.sel_end
-		} else {
-			tb.sel_end, tb.sel_start
-		}
-		// println("rm sel: $tb.sel_start, $tb.sel_end -> $start_i, $end_i")
-		unsafe {
-			*tb.text = u[..start_i].string() + u[end_i..].string()
-		}
-		tb.cursor_pos = tb.sel_start
-		tb.sel_start = 0
-		tb.sel_end = 0
+		tb.sel_end, tb.sel_start
 	}
+	// println("rm sel: $tb.sel_start, $tb.sel_end -> $start_i, $end_i")
+	unsafe {
+		*tb.text = u[..start_i].string() + u[end_i..].string()
+	}
+	tb.cursor_pos = tb.sel_start
+	tb.sel_start = 0
+	tb.sel_end = 0
 }
 
 // fn (mut tb TextBox) cursor_move(direction Side) {
@@ -848,38 +786,34 @@ pub fn (mut tb TextBox) set_text(s string) {
 // }
 
 pub fn (mut tb TextBox) insert(s string) {
-	if tb.is_multiline {
-		tb.tv.insert(s)
+	mut ustr := tb.text.runes()
+	old_len := ustr.len
+	// Remove the selection
+	if tb.sel_start < tb.sel_end {
+		unsafe {
+			*tb.text = ustr[..tb.sel_start].string() + s + ustr[tb.sel_end + 1..].string()
+		}
 	} else {
-		mut ustr := tb.text.runes()
-		old_len := ustr.len
-		// Remove the selection
-		if tb.sel_start < tb.sel_end {
+		$if tb_insert ? {
+			println('tb_insert: $tb.id $ustr $tb.cursor_pos')
+		}
+		// Insert one character
+		// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]
+		unsafe {
+			*tb.text = ustr[..tb.cursor_pos].string() + s + ustr[tb.cursor_pos..].string()
+		}
+		ustr = tb.text.runes()
+		// The string is too long
+		if tb.max_len > 0 && ustr.len >= tb.max_len {
+			// tb.text = tb.text.limit(tb.max_len)
 			unsafe {
-				*tb.text = ustr[..tb.sel_start].string() + s + ustr[tb.sel_end + 1..].string()
-			}
-		} else {
-			$if tb_insert ? {
-				println('tb_insert: $tb.id $ustr $tb.cursor_pos')
-			}
-			// Insert one character
-			// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]
-			unsafe {
-				*tb.text = ustr[..tb.cursor_pos].string() + s + ustr[tb.cursor_pos..].string()
+				*tb.text = ustr[..tb.max_len].string()
 			}
 			ustr = tb.text.runes()
-			// The string is too long
-			if tb.max_len > 0 && ustr.len >= tb.max_len {
-				// tb.text = tb.text.limit(tb.max_len)
-				unsafe {
-					*tb.text = ustr[..tb.max_len].string()
-				}
-				ustr = tb.text.runes()
-			}
 		}
-		// tb.cursor_pos += tb.text.len - old_len
-		tb.cursor_pos += ustr.len - old_len
-		tb.sel_start = 0
-		tb.sel_end = 0
 	}
+	// tb.cursor_pos += tb.text.len - old_len
+	tb.cursor_pos += ustr.len - old_len
+	tb.sel_start = 0
+	tb.sel_end = 0
 }

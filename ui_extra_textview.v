@@ -1,5 +1,7 @@
 module ui
 
+import gx
+
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 struct TextView {
 pub mut:
@@ -113,6 +115,58 @@ fn (mut tv TextView) update_lines() {
 	tv.sync_text_lines()
 }
 
+fn (mut tv TextView) draw_textlines() {
+	tv.draw_selection()
+	mut y := tv.tb.y + textbox_padding_y
+	// println("draw_textlines: $tb.tv.tlv.lines")
+	for line in tv.tlv.lines {
+		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		y += tv.tb.line_height
+	}
+	// draw cursor
+	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor { //&& !tb.tv.is_sel_active() {
+		ustr := tv.current_line().runes()
+		mut cursor_x := tv.tb.x + textbox_padding_x
+		if ustr.len > 0 {
+			left := ustr[..tv.tlv.cursor_pos_i].string()
+			cursor_x += text_width(tv.tb, left)
+		}
+		tv.tb.ui.gg.draw_rect(cursor_x, tv.tb.y + textbox_padding_y +
+			tv.tlv.cursor_pos_j * tv.tb.line_height, 1, tv.tb.line_height, gx.black) // , gx.Black)
+	}
+}
+
+fn (mut tv TextView) draw_selection() {
+	if !tv.is_sel_active() {
+		// println("return draw_sel")
+		return
+	}
+	if tv.tlv.sel_start_j == tv.tlv.sel_end_j {
+		sel_from, sel_width := text_xminmax_from_pos(tv.tb, tv.sel_start_line(), tv.tlv.sel_start_i,
+			tv.tlv.sel_end_i)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			tv.tlv.sel_start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+	} else {
+		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
+		mut ustr := tv.line(start_j)
+		mut sel_from, mut sel_width := text_xminmax_from_pos(tv.tb, ustr, start_i, ustr.len)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+		if end_j - start_j > 1 {
+			for j in (start_j + 1) .. end_j {
+				ustr = tv.line(j)
+				sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, ustr.runes().len)
+				tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+					textbox_padding_y + j * tv.tb.line_height, sel_width, tv.tb.line_height,
+					selection_color)
+			}
+		}
+		sel_from, sel_width = text_xminmax_from_pos(tv.tb, tv.sel_end_line(), 0, end_i)
+		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
+			end_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+	}
+}
+
 fn (mut tv TextView) insert(s string) {
 	mut ustr := tv.text.runes()
 	ustr.insert(tv.cursor_pos, s.runes())
@@ -141,33 +195,6 @@ fn (mut tv TextView) delete_prev_char() {
 		*tv.text = ustr.string()
 	}
 	tv.update_lines()
-}
-
-fn (mut tv TextView) draw_selection() {
-	if tv.tlv.sel_start_j == tv.tlv.sel_end_j {
-		sel_from, sel_width := text_xminmax_from_pos(tv.tb, tv.sel_start_line(), tv.tlv.sel_start_i,
-			tv.tlv.sel_end_i)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			tv.tlv.sel_start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
-	} else {
-		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
-		mut ustr := tv.line(start_j)
-		mut sel_from, mut sel_width := text_xminmax_from_pos(tv.tb, ustr, start_i, ustr.len)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
-		if end_j - start_j > 1 {
-			for j in (start_j + 1) .. end_j {
-				ustr = tv.line(j)
-				sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, ustr.runes().len)
-				tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
-					textbox_padding_y + j * tv.tb.line_height, sel_width, tv.tb.line_height,
-					selection_color)
-			}
-		}
-		sel_from, sel_width = text_xminmax_from_pos(tv.tb, tv.sel_end_line(), 0, end_i)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			end_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
-	}
 }
 
 fn (mut tv TextView) delete_selection() {

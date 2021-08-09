@@ -9,7 +9,7 @@ const (
 pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 	ustr := text.runes()
 	if x > ustr.len {
-		println('warning: text_x_from_pos $x > $ustr.len')
+		// println('warning: text_x_from_pos $x > $ustr.len')
 		x = ustr.len
 	}
 	left := ustr[..x].string()
@@ -20,7 +20,7 @@ pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
 	ustr := text.runes()
 	x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
-		println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
 		x_max = ustr.len
 	}
 	// println("xminmax: ${ustr.len} $x_min $x_max")
