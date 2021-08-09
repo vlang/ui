@@ -56,7 +56,13 @@ pub fn (mut tv TextView) switch_wordwrap() {
 }
 
 fn (tv &TextView) line(j int) string {
-	return tv.tlv.lines[j]
+	mut jj := j
+	if jj < 0 {
+		jj = 0
+	} else if jj == tv.tlv.lines.len {
+		jj = tv.tlv.lines.len - 1
+	}
+	return tv.tlv.lines[jj]
 }
 
 fn (tv &TextView) current_line() string {
@@ -109,6 +115,7 @@ fn (mut tv TextView) update_lines() {
 
 fn (mut tv TextView) insert(s string) {
 	mut ustr := tv.text.runes()
+	println('feferfvaer')
 	ustr.insert(tv.cursor_pos, s.runes())
 	unsafe {
 		*tv.text = ustr.string()
@@ -129,10 +136,30 @@ fn (mut tv TextView) delete_prev_char() {
 		return
 	}
 	mut ustr := tv.text.runes()
+	println('prev $ustr')
+	tv.cursor_pos--
 	ustr.delete(tv.cursor_pos)
+	println('prev2 $ustr')
 	unsafe {
 		*tv.text = ustr.string()
 	}
+	println('prev3 <${*tv.text}>')
+	tv.info()
+	tv.update_lines()
+}
+
+fn (mut tv TextView) delete_selection() {
+	if tv.sel_start > tv.sel_end {
+		tv.sel_start, tv.sel_end = tv.sel_end, tv.sel_start
+	}
+	mut ustr := tv.text.runes()
+	ustr.delete_many(tv.sel_start, tv.sel_end - tv.sel_start - 1)
+	tv.cursor_pos = tv.sel_start
+	tv.sel_end = -1
+	unsafe {
+		*tv.text = ustr.string()
+	}
+	tv.update_lines()
 }
 
 fn (mut tv TextView) start_selection(x int, y int) {
@@ -166,20 +193,6 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	tv.tlv.sel_end_i = text_pos_from_x(tv.tb, tv.tlv.lines[tv.tlv.sel_end_j], x)
 	tv.sync_text_pos()
 	println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
-}
-
-fn (mut tv TextView) delete_selection() {
-	if tv.sel_start > tv.sel_end {
-		tv.sel_start, tv.sel_end = tv.sel_end, tv.sel_start
-	}
-	mut ustr := tv.text.runes()
-	ustr.delete_many(tv.sel_start, tv.sel_end - tv.sel_start - 1)
-	tv.cursor_pos = tv.sel_start
-	tv.sel_end = tv.sel_start
-	unsafe {
-		*tv.text = ustr.string()
-	}
-	tv.sync_text_lines()
 }
 
 pub fn (mut tv TextView) cancel_selection() {
@@ -228,6 +241,199 @@ fn (mut tv TextView) move_cursor(side Side) {
 			}
 			tv.sync_text_pos()
 		}
+	}
+}
+
+fn (mut tv TextView) key_down(e &KeyEvent) {
+	// println('key down $e')
+
+	if int(e.codepoint) !in [0, 13, 27, 127] && e.mods != .super {
+		// println("insert multi ${int(e.codepoint)}")
+		if tv.is_sel_active() {
+			tv.delete_selection()
+		}
+		s := utf32_to_str(e.codepoint)
+		tv.insert(s)
+	}
+	// println(e.key)
+	// println('mods=$e.mods')
+	defer {
+		if tv.tb.on_change != TextBoxChangeFn(0) {
+			if e.key == .backspace {
+				tv.tb.on_change(*tv.text, tv.tb.ui.window.state)
+			}
+		}
+	}
+	// println("tb key_down $e.key ${int(e.codepoint)}")
+	match e.key {
+		.enter {
+			tv.insert('\n')
+		}
+		.backspace {
+			println('baskspace')
+			tv.tb.ui.show_cursor = true
+			// println('backspace cursor_pos=($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j) len=${(*tv.text).len} \n <${*tv.text}>')
+			if *tv.text == '' {
+				return
+			}
+			// Delete the entire selection
+			if tv.is_sel_active() {
+				tv.delete_selection()
+			} else if e.mods in [.super, .ctrl] {
+				// Delete until previous whitespace
+				// mut i := tv.tlv.cursor_pos_i
+				// for {
+				// 	if i > 0 {
+				// 		i--
+				// 	}
+				// 	if text[i].is_space() || i == 0 {
+				// 		// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos_i]}
+				// 		break
+				// 	}
+				// }
+				// tb.cursor_pos_i = i
+			} else {
+				// Delete just one character
+				tv.delete_prev_char()
+				// if tb.cursor_pos_i == 0 {
+				// 	if tb.cursor_pos_j > 0 {
+				// 		tb.cursor_pos_i = tb.lines[tb.cursor_pos_j - 1].runes().len
+				// 		tb.lines[tb.cursor_pos_j] = tb.lines[tb.cursor_pos_j - 1] +
+				// 			tb.lines[tb.cursor_pos_j]
+				// 		tb.lines.delete(tb.cursor_pos_j - 1)
+				// 		tb.cursor_pos_j -= 1
+				// 	}
+				// } else {
+				// 	unsafe {
+				// 		tb.lines[tb.cursor_pos_j] = u[..tb.cursor_pos_i - 1].string() +
+				// 			u[tb.cursor_pos_i..].string()
+				// 	}
+				// 	tb.cursor_pos_i--
+				// }
+			}
+			// u.free() // TODO remove
+			// tb.text = tb.text[..tb.cursor_pos_i - 1] + tb.text[tb.cursor_pos_i..]
+		}
+		// .delete {
+		// 	tb.ui.show_cursor = true
+		// 	if tb.cursor_pos_i == text.len || text == '' {
+		// 		return
+		// 	}
+		// 	u := text.runes()
+		// 	unsafe {
+		// 		*tb.text = u[..tb.cursor_pos_i].string() + u[tb.cursor_pos_i + 1..].string()
+		// 	}
+		// 	// tb.text = tb.text[..tb.cursor_pos_i] + tb.text[tb.cursor_pos_i + 1..]
+		// 	// u.free() // TODO remove
+		// 	if tb.on_change != TextBoxChangeFn(0) {
+		// 		// tb.on_change(*tb.text, window.state)
+		// 	}
+		// }
+		// .left {
+		// 	if tb.sel(e.mods, e.key) {
+		// 		return
+		// 	}
+		// 	tb.cancel_selection()
+		// 	if tb.sel_end_i > 0 {
+		// 		tb.cursor_pos_i = tb.sel_start_i + 1
+		// 	}
+		// 	tb.sel_start_i = 0
+		// 	tb.sel_end_i = 0
+		// 	tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+		// 	tb.cursor_pos_i--
+		// 	if tb.cursor_pos_i <= 0 {
+		// 		if tb.is_multiline {
+		// 			if tb.cursor_pos_j == 0 {
+		// 				tb.cursor_pos_i = 0
+		// 			} else {
+		// 				tb.cursor_pos_j -= 1
+		// 				tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].runes().len
+		// 			}
+		// 		} else {
+		// 			tb.cursor_pos_i = 0
+		// 		}
+		// 	}
+		// }
+		// .right {
+		// 	if tb.sel(e.mods, e.key) {
+		// 		return
+		// 	}
+		// 	tb.cancel_selection()
+		// 	if tb.sel_start_i > 0 {
+		// 		tb.cursor_pos_i = tb.sel_start_i - 1
+		// 	}
+		// 	tb.sel_end_i = 0
+		// 	tb.sel_start_i = 0
+		// 	tb.ui.show_cursor = true
+		// 	tb.cursor_pos_i++
+		// 	text_len := text.runes().len
+		// 	if tb.cursor_pos_i > text_len {
+		// 		if tb.is_multiline {
+		// 			if tb.cursor_pos_j == tb.lines.len - 1 {
+		// 				tb.cursor_pos_i = text_len
+		// 			} else {
+		// 				tb.cursor_pos_i = 0
+		// 				tb.cursor_pos_j += 1
+		// 			}
+		// 		} else {
+		// 			tb.cursor_pos_i = text_len
+		// 		}
+		// 	}
+		// 	// println("right: $tb.cursor_pos_i, $tb.cursor_pos_j")
+		// }
+		// .up {
+		// 	tb.cancel_selection()
+		// 	if tb.is_multiline {
+		// 		if tb.cursor_pos_j > 0 {
+		// 			tb.cursor_pos_j -= 1
+		// 		}
+		// 		text_len := tb.lines[tb.cursor_pos_j].runes().len
+		// 		if tb.cursor_pos_i > text_len {
+		// 			tb.cursor_pos_i = text_len
+		// 		}
+		// 	}
+		// }
+		// .down {
+		// 	tb.cancel_selection()
+		// 	if tb.is_multiline {
+		// 		if tb.cursor_pos_j < tb.lines.len - 1 {
+		// 			tb.cursor_pos_j += 1
+		// 		}
+		// 		if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
+		// 			tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+		// 		}
+		// 	}
+		// }
+		// .a {
+		// 	if e.mods in [.super, .ctrl] {
+		// 		tb.sel_start_i = 0
+		// 		tb.sel_end_i = text.runes().len - 1
+		// 	}
+		// }
+		// .v {
+		// 	if e.mods in [.super, .ctrl] {
+		// 		tb.insert(tb.ui.clipboard.paste())
+		// 	}
+		// }
+		// .tab {
+		// 	tb.ui.show_cursor = true
+		// 	/*
+		// 	TODO if tb.parent.just_tabbed {
+		// 		tb.parent.just_tabbed = false
+		// 		return
+		// 	}
+		// 	*/
+		// 	// println('TAB $tb.id')
+		// 	/*
+		// 	if e.mods == .shift {
+		// 		tb.parent.focus_previous()
+		// 	}
+		// 	else {
+		// 		tb.parent.focus_next()
+		// 	}
+		// 	*/
+		// }
+		else {}
 	}
 }
 

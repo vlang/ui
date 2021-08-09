@@ -63,12 +63,9 @@ pub mut:
 	is_wordwrap  bool
 	lines        []string
 	wordwrap     []int
-	cursor_pos_i int
-	cursor_pos_j int
-	sel_start_i  int
-	sel_end_i    int
-	sel_start_j  int
-	sel_end_j    int
+	cursor_pos   int
+	sel_start    int
+	sel_end      int
 	// others
 	is_numeric    bool
 	is_password   bool
@@ -346,20 +343,20 @@ fn (mut tb TextBox) draw() {
 			// no cursor in sel mode
 			mut cursor_x := tb.x + ui.textbox_padding_x
 			if tb.is_password {
-				cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos_i))
+				cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos))
 			} else if skip_idx > 0 {
 				cursor_x += text_width(tb, text[skip_idx..])
 			} else if text_len > 0 {
-				// left := tb.text[..tb.cursor_pos_i]
-				left := text.runes()[..tb.cursor_pos_i].string()
+				// left := tb.text[..tb.cursor_pos]
+				left := text.runes()[..tb.cursor_pos].string()
 				cursor_x += text_width(tb, left)
 			}
 			if text_len == 0 {
 				cursor_x = tb.x + ui.textbox_padding_x
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y +
-				tb.cursor_pos_j * tb.line_height, 1, tb.line_height, gx.black) // , gx.Black)
+			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+				gx.black) // , gx.Black)
 		}
 	}
 	$if bb ? {
@@ -374,9 +371,8 @@ fn (tb &TextBox) is_sel_active() bool {
 	}
 	if tb.is_multiline {
 		return tb.tv.is_sel_active()
-		// 	&& (tb.sel_start_i != tb.sel_end_i || tb.sel_start_j != tb.sel_end_j)
 	} else {
-		return tb.sel_end_j > -1 && (tb.sel_start_i != tb.sel_end_i)
+		return tb.sel_start != tb.sel_end
 	}
 }
 
@@ -436,7 +432,13 @@ fn (tb &TextBox) draw_textlines() {
 		ustr := tb.tv.current_line().runes()
 		mut cursor_x := tb.x + ui.textbox_padding_x
 		if ustr.len > 0 {
-			left := ustr[..tb.tv.tlv.cursor_pos_i].string()
+			// println("ici ($tb.tv.tlv.cursor_pos_i, $tb.tv.tlv.cursor_pos_j) $ustr.len")
+			cursor_pos_i := if tb.tv.tlv.cursor_pos_i > ustr.len {
+				ustr.len
+			} else {
+				tb.tv.tlv.cursor_pos_i
+			}
+			left := ustr[..cursor_pos_i].string()
 			cursor_x += text_width(tb, left)
 		}
 		// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
@@ -469,57 +471,27 @@ pub fn (mut tb TextBox) cancel_selection() {
 	if tb.is_multiline {
 		tb.tv.cancel_selection()
 	} else {
-		tb.sel_start_i = 0
-		tb.sel_start_j = -1
-		tb.sel_end_i = 0
-		tb.sel_end_j = -1
+		tb.sel_start = 0
+		tb.sel_end = 0
 	}
 }
 
 pub fn (mut tb TextBox) delete_selection() {
 	if tb.is_multiline {
-		// if tb.sel_start_j == tb.sel_end_j {
-		// 	ustr := tb.lines[tb.sel_start_j].runes()
-		// 	// println("bsp1 $tb.sel_start_i, $tb.sel_end_i,  $ustr.len")
-		// 	tb.lines[tb.sel_start_j] = ustr[0..tb.sel_start_i].string() +
-		// 		ustr[tb.sel_end_i..ustr.len].string()
-		// 	tb.sel_end_i = tb.sel_start_i
-		// } else {
-		// 	start_i, end_i, start_j, end_j := if tb.sel_start_j < tb.sel_end_j {
-		// 		tb.sel_start_i, tb.sel_end_i, tb.sel_start_j, tb.sel_end_j
-		// 	} else {
-		// 		tb.sel_end_i, tb.sel_start_i, tb.sel_end_j, tb.sel_start_j
-		// 	}
-		// 	// modif in the reverse order
-		// 	mut ustr := tb.lines[end_j].runes()
-		// 	tb.lines[end_j] = ustr[end_i..].string()
-		// 	ustr = tb.lines[start_j].runes()
-		// 	tb.lines[start_j] = ustr[..start_i].string() + tb.lines[end_j]
-		// 	for j := end_j; j > start_j; j-- {
-		// 		tb.lines.delete(j)
-		// 	}
-		// 	tb.sel_start_i = start_i
-		// 	tb.sel_start_j = start_j
-		// 	tb.sel_end_i = start_i
-		// 	tb.sel_end_j = start_j
-		// 	tb.cursor_pos_i = start_i
-		// 	tb.cursor_pos_j = start_j
-		// }
-		// return
 	} else {
 		u := tb.text.runes()
-		start_i, end_i := if tb.sel_start_i < tb.sel_end_i {
-			tb.sel_start_i, tb.sel_end_i
+		start_i, end_i := if tb.sel_start < tb.sel_end {
+			tb.sel_start, tb.sel_end
 		} else {
-			tb.sel_end_i, tb.sel_start_i
+			tb.sel_end, tb.sel_start
 		}
-		// println("rm sel: $tb.sel_start_i, $tb.sel_end_i -> $start_i, $end_i")
+		// println("rm sel: $tb.sel_start, $tb.sel_end -> $start_i, $end_i")
 		unsafe {
 			*tb.text = u[..start_i].string() + u[end_i..].string()
 		}
-		tb.cursor_pos_i = tb.sel_start_i
-		tb.sel_start_i = 0
-		tb.sel_end_i = 0
+		tb.cursor_pos = tb.sel_start
+		tb.sel_start = 0
+		tb.sel_end = 0
 	}
 }
 
@@ -554,21 +526,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	mut text := if tb.is_multiline { tb.lines[tb.cursor_pos_j] } else { *tb.text }
 	if tb.is_error != voidptr(0) {
 		unsafe {
 			*tb.is_error = false
 		}
 	}
 	tb.is_typing = true
-	if text == '' {
-		// tb.update()
-		tb.cursor_pos_i = if tb.is_multiline {
-			tb.lines[tb.cursor_pos_j].runes().len
-		} else {
-			tb.text.runes().len
-		}
-	}
 	if tb.on_key_down != voidptr(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
@@ -578,17 +541,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	if tb.is_multiline {
-		if int(e.codepoint) !in [0, 13, 27, 127] && e.mods != .super {
-			// println("insert multi ${int(e.codepoint)}")
-			if tb.is_sel_active() {
-				tb.delete_selection()
-			}
-			s := utf32_to_str(e.codepoint)
-			tb.insert(s)
-			tb.sel_end_i = tb.sel_start_i
-			tb.sel_end_j = tb.sel_start_j
-		}
+		tb.tv.key_down(e)
 	} else {
+		mut text := *tb.text
+		if text.len == 0 {
+			tb.cursor_pos = 0
+		}
 		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
 			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
@@ -600,7 +558,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			s := utf32_to_str(e.codepoint)
 			// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 			if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
-				|| ((text.runes().len > 0) && (tb.cursor_pos_i > 0))))) {
+				|| ((text.runes().len > 0) && (tb.cursor_pos > 0))))) {
 				return
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
@@ -608,231 +566,169 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
 			}
-			// println('T "$s " $tb.cursor_pos_i')
+			// println('T "$s " $tb.cursor_pos')
 			// tb.text += s
-			// tb.cursor_pos_i ++//= utf8_char_len(s[0])// s.le-112
+			// tb.cursor_pos ++//= utf8_char_len(s[0])// s.le-112
 			return
 		}
-	}
-	// println(e.key)
-	// println('mods=$e.mods')
-	defer {
-		if tb.on_change != TextBoxChangeFn(0) {
-			if e.key == .backspace {
-				tb.on_change(*tb.text, window.state)
+		// println(e.key)
+		// println('mods=$e.mods')
+		defer {
+			if tb.on_change != TextBoxChangeFn(0) {
+				if e.key == .backspace {
+					tb.on_change(*tb.text, window.state)
+				}
 			}
 		}
-	}
-	// println("tb key_down $e.key ${int(e.codepoint)}")
-	match e.key {
-		.enter {
-			if tb.is_multiline {
-				tb.insert('\n')
-			} else if tb.on_enter != TextBoxEnterFn(0) {
-				println('tb_enter: <${*tb.text}>')
-				tb.on_enter(*tb.text, window.state)
+		// println("tb key_down $e.key ${int(e.codepoint)}")
+		match e.key {
+			.enter {
+				if tb.on_enter != TextBoxEnterFn(0) {
+					println('tb_enter: <${*tb.text}>')
+					tb.on_enter(*tb.text, window.state)
+				}
 			}
-		}
-		.backspace {
-			tb.ui.show_cursor = true
-			// println('backspace cursor_pos=($tb.cursor_pos_i, $tb.cursor_pos_j) len=${(*tb.text).len} ')
-			if text != '' || tb.is_multiline {
-				if !tb.is_multiline && tb.cursor_pos_i == 0 {
+			.backspace {
+				tb.ui.show_cursor = true
+				if text != '' {
+					if tb.cursor_pos == 0 {
+						return
+					}
+					// Delete the entire selection
+					if tb.is_sel_active() {
+						tb.delete_selection()
+					} else if e.mods in [.super, .ctrl] {
+						// Delete until previous whitespace
+						mut i := tb.cursor_pos
+						for {
+							if i > 0 {
+								i--
+							}
+							if text[i].is_space() || i == 0 {
+								// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos]}
+								break
+							}
+						}
+						tb.cursor_pos = i
+					} else {
+						u := text.runes()
+						// Delete just one character
+						unsafe {
+							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()
+						}
+						tb.cursor_pos--
+					}
+					// u.free() // TODO remove
+					// tb.text = tb.text[..tb.cursor_pos - 1] + tb.text[tb.cursor_pos..]
+				}
+				// RO REMOVE?
+				// tb.update_text()
+				$if tb_bsp ? {
+					println('after bsp $tb.lines ${*tb.text}')
+				}
+				if tb.on_change != TextBoxChangeFn(0) {
+					// tb.on_change(*tb.text, window.state)
+				}
+			}
+			.delete {
+				tb.ui.show_cursor = true
+				if tb.cursor_pos == text.len || text == '' {
 					return
 				}
-				// Delete the entire selection
-				if tb.is_sel_active() {
-					tb.delete_selection()
-				} else if e.mods in [.super, .ctrl] {
-					// Delete until previous whitespace
-					mut i := tb.cursor_pos_i
-					for {
-						if i > 0 {
-							i--
-						}
-						if text[i].is_space() || i == 0 {
-							// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos_i]}
-							break
-						}
-					}
-					tb.cursor_pos_i = i
-				} else {
-					u := text.runes()
-					// Delete just one character
-					if tb.is_multiline {
-						if tb.cursor_pos_i == 0 {
-							if tb.cursor_pos_j > 0 {
-								tb.cursor_pos_i = tb.lines[tb.cursor_pos_j - 1].runes().len
-								tb.lines[tb.cursor_pos_j] = tb.lines[tb.cursor_pos_j - 1] +
-									tb.lines[tb.cursor_pos_j]
-								tb.lines.delete(tb.cursor_pos_j - 1)
-								tb.cursor_pos_j -= 1
-							}
-						} else {
-							unsafe {
-								tb.lines[tb.cursor_pos_j] = u[..tb.cursor_pos_i - 1].string() +
-									u[tb.cursor_pos_i..].string()
-							}
-							tb.cursor_pos_i--
-						}
-					} else {
-						unsafe {
-							*tb.text = u[..tb.cursor_pos_i - 1].string() +
-								u[tb.cursor_pos_i..].string()
-						}
-						tb.cursor_pos_i--
-					}
+				u := text.runes()
+				unsafe {
+					*tb.text = u[..tb.cursor_pos].string() + u[tb.cursor_pos + 1..].string()
 				}
+				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
-				// tb.text = tb.text[..tb.cursor_pos_i - 1] + tb.text[tb.cursor_pos_i..]
-			}
-			tb.update_text()
-			$if tb_bsp ? {
-				println('after bsp $tb.lines ${*tb.text}')
-			}
-			if tb.on_change != TextBoxChangeFn(0) {
-				// tb.on_change(*tb.text, window.state)
-			}
-		}
-		.delete {
-			tb.ui.show_cursor = true
-			if tb.cursor_pos_i == text.len || text == '' {
-				return
-			}
-			u := text.runes()
-			unsafe {
-				*tb.text = u[..tb.cursor_pos_i].string() + u[tb.cursor_pos_i + 1..].string()
-			}
-			// tb.text = tb.text[..tb.cursor_pos_i] + tb.text[tb.cursor_pos_i + 1..]
-			// u.free() // TODO remove
-			if tb.on_change != TextBoxChangeFn(0) {
-				// tb.on_change(*tb.text, window.state)
-			}
-		}
-		.left {
-			if tb.sel(e.mods, e.key) {
-				return
-			}
-			tb.cancel_selection()
-			if tb.sel_end_i > 0 {
-				tb.cursor_pos_i = tb.sel_start_i + 1
-			}
-			tb.sel_start_i = 0
-			tb.sel_end_i = 0
-			tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-			tb.cursor_pos_i--
-			if tb.cursor_pos_i <= 0 {
-				if tb.is_multiline {
-					if tb.cursor_pos_j == 0 {
-						tb.cursor_pos_i = 0
-					} else {
-						tb.cursor_pos_j -= 1
-						tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].runes().len
-					}
-				} else {
-					tb.cursor_pos_i = 0
+				if tb.on_change != TextBoxChangeFn(0) {
+					// tb.on_change(*tb.text, window.state)
 				}
 			}
-		}
-		.right {
-			if tb.sel(e.mods, e.key) {
-				return
-			}
-			tb.cancel_selection()
-			if tb.sel_start_i > 0 {
-				tb.cursor_pos_i = tb.sel_start_i - 1
-			}
-			tb.sel_end_i = 0
-			tb.sel_start_i = 0
-			tb.ui.show_cursor = true
-			tb.cursor_pos_i++
-			text_len := text.runes().len
-			if tb.cursor_pos_i > text_len {
-				if tb.is_multiline {
-					if tb.cursor_pos_j == tb.lines.len - 1 {
-						tb.cursor_pos_i = text_len
-					} else {
-						tb.cursor_pos_i = 0
-						tb.cursor_pos_j += 1
-					}
-				} else {
-					tb.cursor_pos_i = text_len
+			.left {
+				if tb.sel(e.mods, e.key) {
+					return
+				}
+				tb.cancel_selection()
+				if tb.sel_end > 0 {
+					tb.cursor_pos = tb.sel_start + 1
+				}
+				tb.sel_start = 0
+				tb.sel_end = 0
+				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+				tb.cursor_pos--
+				if tb.cursor_pos < 0 {
+					tb.cursor_pos = 0
 				}
 			}
-			// println("right: $tb.cursor_pos_i, $tb.cursor_pos_j")
-		}
-		.up {
-			tb.cancel_selection()
-			if tb.is_multiline {
-				if tb.cursor_pos_j > 0 {
-					tb.cursor_pos_j -= 1
+			.right {
+				if tb.sel(e.mods, e.key) {
+					return
 				}
-				text_len := tb.lines[tb.cursor_pos_j].runes().len
-				if tb.cursor_pos_i > text_len {
-					tb.cursor_pos_i = text_len
+				tb.cancel_selection()
+				if tb.sel_start > 0 {
+					tb.cursor_pos = tb.sel_start - 1
+				}
+				tb.sel_end = 0
+				tb.sel_start = 0
+				tb.ui.show_cursor = true
+				tb.cursor_pos++
+				text_len := text.runes().len
+				if tb.cursor_pos > text_len {
+					tb.cursor_pos = text_len
+				}
+				// println("right: $tb.cursor_posj")
+			}
+			.a {
+				if e.mods in [.super, .ctrl] {
+					tb.sel_start = 0
+					tb.sel_end = text.runes().len - 1
 				}
 			}
-		}
-		.down {
-			tb.cancel_selection()
-			if tb.is_multiline {
-				if tb.cursor_pos_j < tb.lines.len - 1 {
-					tb.cursor_pos_j += 1
-				}
-				if tb.cursor_pos_i > tb.lines[tb.cursor_pos_j].len {
-					tb.cursor_pos_i = tb.lines[tb.cursor_pos_j].len
+			.v {
+				if e.mods in [.super, .ctrl] {
+					tb.insert(tb.ui.clipboard.paste())
 				}
 			}
+			.tab {
+				tb.ui.show_cursor = true
+				/*
+				TODO if tb.parent.just_tabbed {
+					tb.parent.just_tabbed = false
+					return
+				}
+				*/
+				// println('TAB $tb.id')
+				/*
+				if e.mods == .shift {
+					tb.parent.focus_previous()
+				}
+				else {
+					tb.parent.focus_next()
+				}
+				*/
+			}
+			else {}
 		}
-		.a {
-			if e.mods in [.super, .ctrl] {
-				tb.sel_start_i = 0
-				tb.sel_end_i = text.runes().len - 1
-			}
-		}
-		.v {
-			if e.mods in [.super, .ctrl] {
-				tb.insert(tb.ui.clipboard.paste())
-			}
-		}
-		.tab {
-			tb.ui.show_cursor = true
-			/*
-			TODO if tb.parent.just_tabbed {
-				tb.parent.just_tabbed = false
-				return
-			}
-			*/
-			// println('TAB $tb.id')
-			/*
-			if e.mods == .shift {
-				tb.parent.focus_previous()
-			}
-			else {
-				tb.parent.focus_next()
-			}
-			*/
-		}
-		else {}
 	}
 }
 
 fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
 	if tb.sel_direction == .right_to_left {
-		tb.sel_start_i = sel_start_i
-		tb.sel_end_i = sel_end_i
+		tb.sel_start = sel_start_i
+		tb.sel_end = sel_end_i
 	} else {
-		tb.sel_start_i = sel_end_i
-		tb.sel_end_i = sel_start_i
+		tb.sel_start = sel_end_i
+		tb.sel_end = sel_start_i
 	}
 }
 
 fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
-	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start_i } else { tb.sel_end_i }
-	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end_i } else { tb.sel_start_i }
+	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
+	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
 	text := *tb.text
 	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
-		mut i := tb.cursor_pos_i
+		mut i := tb.cursor_pos
 		if sel_start_i > 0 {
 			i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
 		} else if sel_start_i == 0 && sel_end_i > 0 {
@@ -844,7 +740,7 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 				SelectionDirection.left_to_right
 			}
 		}
-		sel_end_i = tb.cursor_pos_i
+		sel_end_i = tb.cursor_pos
 		for {
 			if key == .left && i > 0 {
 				i--
@@ -871,8 +767,8 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 			return true
 		}
 		if sel_start_i <= 0 {
-			sel_end_i = tb.cursor_pos_i
-			sel_start_i = if key == .left { tb.cursor_pos_i - 1 } else { tb.cursor_pos_i + 1 }
+			sel_end_i = tb.cursor_pos
+			sel_start_i = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
 			tb.sel_direction = if key == .left {
 				SelectionDirection.right_to_left
 			} else {
@@ -904,8 +800,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			y := int(e.y - tb.y - ui.textbox_padding_y)
 			tb.tv.end_selection(x, y)
 		} else {
-			tb.sel_end_i = text_pos_from_x(tb, *tb.text, x)
-			tb.sel_end_j = 0
+			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
 		}
 	}
 }
@@ -915,7 +810,6 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if tb.hidden {
 		return
 	}
-	// println("mouse down (start): ($tb.cursor_pos_i, $tb.cursor_pos_j) sel: ($tb.sel_start_i, $tb.sel_start_j, $tb.sel_end_i, $tb.sel_end_j)")
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
@@ -933,12 +827,11 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		y := e.y - tb.y - ui.textbox_padding_y
 		tb.tv.start_selection(x, y)
 	} else {
-		tb.cursor_pos_i = text_pos_from_x(tb, *tb.text, x)
+		tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
 		if tb.dragging {
-			tb.sel_start_i, tb.sel_start_j = tb.cursor_pos_i, tb.cursor_pos_j
+			tb.sel_start = tb.cursor_pos
 		}
 	}
-	// println("mouse down (end): ($tb.cursor_pos_i, $tb.cursor_pos_j) sel: ($tb.sel_start_i, $tb.sel_start_j, $tb.sel_end_i, $tb.sel_end_j)")
 }
 
 fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
@@ -956,11 +849,6 @@ fn (mut tb TextBox) set_visible(state bool) {
 }
 
 pub fn (mut tb TextBox) focus() {
-	// if tb.is_focused {
-	// 	return
-	// }
-	// tb.ui.window.unfocus_all()
-	// tb.is_focused = true
 	set_focus(tb.ui.window, mut tb)
 }
 
@@ -968,11 +856,11 @@ fn (tb &TextBox) is_focused() bool {
 	return tb.is_focused
 }
 
-fn (mut t TextBox) unfocus() {
+fn (mut tb TextBox) unfocus() {
 	// println('textbox $t.placeholder unfocus()')
-	t.is_focused = false
-	t.sel_start_i = 0
-	t.sel_end_i = 0
+	tb.is_focused = false
+	tb.sel_start = 0
+	tb.sel_end = 0
 }
 
 pub fn (mut tb TextBox) hide() {
@@ -988,55 +876,23 @@ pub fn (mut tb TextBox) set_text(s string) {
 
 pub fn (mut tb TextBox) insert(s string) {
 	if tb.is_multiline {
-		if s == '\n' {
-			// println("multi insert newline ($tb.cursor_pos_i, $tb.cursor_pos_j)")
-			ustr := tb.lines[tb.cursor_pos_j].runes()
-			text_len := ustr.len
-			if tb.cursor_pos_i == text_len {
-				// insert newline after
-				tb.lines.insert(tb.cursor_pos_j + 1, '')
-				tb.cursor_pos_j += 1
-				tb.cursor_pos_i = 0
-			} else if tb.cursor_pos_i == 0 {
-				// insert newline before
-				tb.lines.insert(tb.cursor_pos_j, '')
-			} else {
-				tb.lines.insert(tb.cursor_pos_j + 1, ustr[tb.cursor_pos_i..].string())
-				tb.lines[tb.cursor_pos_j] = ustr[..tb.cursor_pos_i].string()
-				tb.cursor_pos_j += 1
-				tb.cursor_pos_i = 0
-			}
-		} else {
-			mut ustr := tb.lines[tb.cursor_pos_j].runes()
-			// old_len := ustr.len
-			str_tmp := s.split('\n')
-			if str_tmp.len > 1 {
-				// TODO: to fix (when copy-paste)
-				tb.lines.insert(tb.cursor_pos_i + 1, str_tmp[1..])
-				ustr.insert(tb.cursor_pos_i, str_tmp[0].runes())
-			} else {
-				ustr.insert(tb.cursor_pos_i, s.runes())
-			}
-			tb.lines[tb.cursor_pos_j] = ustr.string()
-			tb.cursor_pos_i += str_tmp[0].runes().len
-		}
-		tb.update_text()
+		tb.tv.insert(s)
 	} else {
 		mut ustr := tb.text.runes()
 		old_len := ustr.len
 		// Remove the selection
-		if tb.sel_start_i < tb.sel_end_i {
+		if tb.sel_start < tb.sel_end {
 			unsafe {
-				*tb.text = ustr[..tb.sel_start_i].string() + s + ustr[tb.sel_end_i + 1..].string()
+				*tb.text = ustr[..tb.sel_start].string() + s + ustr[tb.sel_end + 1..].string()
 			}
 		} else {
 			$if tb_insert ? {
-				println('tb_insert: $tb.id $ustr $tb.cursor_pos_i')
+				println('tb_insert: $tb.id $ustr $tb.cursor_pos')
 			}
 			// Insert one character
-			// tb.text = tb.text[..tb.cursor_pos_i] + s + tb.text[tb.cursor_pos_i..]
+			// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]
 			unsafe {
-				*tb.text = ustr[..tb.cursor_pos_i].string() + s + ustr[tb.cursor_pos_i..].string()
+				*tb.text = ustr[..tb.cursor_pos].string() + s + ustr[tb.cursor_pos..].string()
 			}
 			ustr = tb.text.runes()
 			// The string is too long
@@ -1048,9 +904,9 @@ pub fn (mut tb TextBox) insert(s string) {
 				ustr = tb.text.runes()
 			}
 		}
-		// tb.cursor_pos_i += tb.text.len - old_len
-		tb.cursor_pos_i += ustr.len - old_len
-		tb.sel_start_i = 0
-		tb.sel_end_i = 0
+		// tb.cursor_pos += tb.text.len - old_len
+		tb.cursor_pos += ustr.len - old_len
+		tb.sel_start = 0
+		tb.sel_end = 0
 	}
 }
