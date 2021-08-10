@@ -331,6 +331,26 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 					tv.delete_selection()
 				}
 			}
+			'-' {
+				tv.tb.text_size -= 2
+				if tv.tb.text_size < 8 {
+					tv.tb.text_size = 8
+				}
+				mut tb := tv.tb
+				update_text_size(mut tb)
+				tv.tb.update_line_height()
+				tv.update_lines()
+			}
+			'=', '+' {
+				tv.tb.text_size += 2
+				if tv.tb.text_size > 48 {
+					tv.tb.text_size = 48
+				}
+				mut tb := tv.tb
+				update_text_size(mut tb)
+				tv.tb.update_line_height()
+				tv.update_lines()
+			}
 			else {}
 		}
 	}

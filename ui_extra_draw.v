@@ -152,9 +152,8 @@ pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
 }
 
 fn update_text_size(mut w DrawText) {
-	window := w.ui.window
-	_, win_height := window.size()
 	if w.text_size > 0 {
+		_, win_height := w.ui.window.size()
 		w.text_cfg = gx.TextCfg{
 			...w.text_cfg
 			size: text_size_as_int(w.text_size, win_height)

@@ -141,45 +141,6 @@ pub fn text_lines_row_column_at(lines []string, pos int) (int, int) {
 	return pos - total_len, j
 }
 
-/*
-fn word_wrap_to_line_by_width<T>(w &T, s string, max_line_width int) string {
-	words := s.split(' ')
-	mut line := ''
-	mut line_width := 0
-	mut text_line := ''
-	for i, word in words {
-		if i == 0 { // at least the first
-			line = word
-			line_width = text_width(w, word)
-		} else {
-			word_width := text_width(w, ' ' + word)
-			if line_width + word_width < max_line_width {
-				line += ' ' + word
-				line_width += word_width
-			} else {
-				text_line += line + '\n'
-				line = word
-				line_width = word_width
-			}
-		}
-	}
-	if line_width > 0 {
-		text_line += line
-	}
-	println('tl: $text_line')
-	return text_line
-}
-
-fn word_wrap_text_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
-	lines := s.split('\n')
-	mut word_wrapped_lines := []string{}
-	for line in lines {
-		word_wrapped_lines << word_wrap_to_line_by_width(w, line, max_line_width)
-	}
-	return word_wrapped_lines
-}
-*/
-
 // Initially inside ui_linux_c.v
 fn word_wrap_to_lines(s string, max_line_length int) []string {
 	words := s.split(' ')

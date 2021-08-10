@@ -20,7 +20,7 @@ const (
 	text_inner_border_color       = gx.rgb(240, 240, 240)
 	text_border_accentuated_color = gx.rgb(255, 0, 0)
 	textbox_padding_x             = 5
-	textbox_padding_y             = 2
+	textbox_padding_y             = 5
 	// selection_color = gx.rgb(226, 233, 241)
 	selection_color               = gx.rgb(186, 214, 251)
 )
@@ -177,18 +177,13 @@ fn (mut tb TextBox) init(parent Layout) {
 	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
 		tb.text_cfg = tb.ui.window.text_cfg
 	}
-	if tb.text_size > 0 {
-		_, win_height := tb.ui.window.size()
-		tb.text_cfg = gx.TextCfg{
-			...tb.text_cfg
-			size: text_size_as_int(tb.text_size, win_height)
-		}
-	}
+	update_text_size(mut tb)
+	// TODO: Maybe in a method later to allow font size update
+	tb.update_line_height()
+
 	if tb.is_multiline {
 		tb.tv.init(tb)
 	}
-	// TODO: Maybe in a method later to allow font size update
-	tb.line_height = text_height(tb, 'W') + 6
 	// return widget
 	mut subscriber := parent.get_subscriber()
 	// subscriber.subscribe_method(events.on_click, tb_click, tb)
@@ -274,6 +269,10 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 		tb.tv.update_lines()
 	}
 	return tb.width, tb.height
+}
+
+fn (mut tb TextBox) update_line_height() {
+	tb.line_height = text_height(tb, 'W') + 6
 }
 
 fn (mut tb TextBox) draw() {
