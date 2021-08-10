@@ -294,18 +294,19 @@ fn (mut tv TextView) move_cursor(side Side) {
 
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
-	es := utf32_to_str(e.codepoint)
-	// println("tv key_down $e <$e.key> ${int(e.codepoint)} <$es>")
-	if int(e.codepoint) !in [0, 13, 27, 127] && e.mods !in [.ctrl, .super] {
+	s := utf32_to_str(e.codepoint)
+	//
+	println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
+	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
 			tv.delete_selection()
 		}
-		tv.insert(es)
+		tv.insert(s)
 		tv.cursor_pos++
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
-		match es {
+		match s {
 			'a' {
 				tv.sel_start = 0
 				tv.sel_end = tv.text.runes().len
@@ -424,6 +425,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		.escape {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
+		}
+		.tab {
+			println('tab')
 		}
 		else {}
 	}

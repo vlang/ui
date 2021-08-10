@@ -395,14 +395,14 @@ pub fn (mut tb TextBox) cancel_selection() {
 
 pub fn (mut tb TextBox) delete_selection() {
 	u := tb.text.runes()
-	start_i, end_i := if tb.sel_start < tb.sel_end {
+	sel_start, sel_end := if tb.sel_start < tb.sel_end {
 		tb.sel_start, tb.sel_end
 	} else {
 		tb.sel_end, tb.sel_start
 	}
-	// println("rm sel: $tb.sel_start, $tb.sel_end -> $start_i, $end_i")
+	// println("rm sel: $tb.sel_start, $tb.sel_end -> $sel_start, $sel_end")
 	unsafe {
-		*tb.text = u[..start_i].string() + u[end_i..].string()
+		*tb.text = u[..sel_start].string() + u[sel_end..].string()
 	}
 	tb.cursor_pos = tb.sel_start
 	tb.sel_start = 0
@@ -461,15 +461,11 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		if text.len == 0 {
 			tb.cursor_pos = 0
 		}
-		if int(e.codepoint) !in [0, 13, 27] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
+		s := utf32_to_str(e.codepoint)
+		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
 			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
 			}
-			if byte(e.codepoint) in [`\t`, 127] {
-				// Do not print the tab character, delete etc
-				return
-			}
-			s := utf32_to_str(e.codepoint)
 			// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
 			if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
 				|| ((text.runes().len > 0) && (tb.cursor_pos > 0))))) {
@@ -480,10 +476,57 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
 			}
-			// println('T "$s " $tb.cursor_pos')
-			// tb.text += s
-			// tb.cursor_pos ++//= utf8_char_len(s[0])// s.le-112
 			return
+		} else if e.mods in [.ctrl, .super] {
+			match s {
+				'a' {
+					tb.sel_start = 0
+					tb.sel_end = text.runes().len
+				}
+				'c' {
+					if tb.is_sel_active() {
+						ustr := tb.text.runes()
+						sel_start, sel_end := if tb.sel_start < tb.sel_end {
+							tb.sel_start, tb.sel_end
+						} else {
+							tb.sel_end, tb.sel_start
+						}
+						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+					}
+				}
+				'v' {
+					tb.insert(tb.ui.clipboard.paste())
+				}
+				'x' {
+					if tb.is_sel_active() {
+						ustr := tb.text.runes()
+						sel_start, sel_end := if tb.sel_start < tb.sel_end {
+							tb.sel_start, tb.sel_end
+						} else {
+							tb.sel_end, tb.sel_start
+						}
+						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+						tb.delete_selection()
+					}
+				}
+				'- ' { // DISABLED: remove space to activate
+					tb.text_size -= 2
+					if tb.text_size < 8 {
+						tb.text_size = 8
+					}
+					update_text_size(mut tb)
+					tb.update_line_height()
+				}
+				'= ', '+ ' { //  DISABLED: remove space to activate
+					tb.text_size += 2
+					if tb.text_size > 48 {
+						tb.text_size = 48
+					}
+					update_text_size(mut tb)
+					tb.update_line_height()
+				}
+				else {}
+			}
 		}
 		// println(e.key)
 		// println('mods=$e.mods')
@@ -605,7 +648,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			.tab {
-				tb.ui.show_cursor = true
+				tb.ui.show_cursor = false
 				/*
 				TODO if tb.parent.just_tabbed {
 					tb.parent.just_tabbed = false
