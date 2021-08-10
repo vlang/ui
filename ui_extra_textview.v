@@ -375,40 +375,12 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			} else {
 				// Delete just one character
 				tv.delete_prev_char()
-				// if tb.cursor_pos_i == 0 {
-				// 	if tb.cursor_pos_j > 0 {
-				// 		tb.cursor_pos_i = tb.lines[tb.cursor_pos_j - 1].runes().len
-				// 		tb.lines[tb.cursor_pos_j] = tb.lines[tb.cursor_pos_j - 1] +
-				// 			tb.lines[tb.cursor_pos_j]
-				// 		tb.lines.delete(tb.cursor_pos_j - 1)
-				// 		tb.cursor_pos_j -= 1
-				// 	}
-				// } else {
-				// 	unsafe {
-				// 		tb.lines[tb.cursor_pos_j] = u[..tb.cursor_pos_i - 1].string() +
-				// 			u[tb.cursor_pos_i..].string()
-				// 	}
-				// 	tb.cursor_pos_i--
-				// }
 			}
-			// u.free() // TODO remove
-			// tb.text = tb.text[..tb.cursor_pos_i - 1] + tb.text[tb.cursor_pos_i..]
 		}
-		// .delete {
-		// 	tb.ui.show_cursor = true
-		// 	if tb.cursor_pos_i == text.len || text == '' {
-		// 		return
-		// 	}
-		// 	u := text.runes()
-		// 	unsafe {
-		// 		*tb.text = u[..tb.cursor_pos_i].string() + u[tb.cursor_pos_i + 1..].string()
-		// 	}
-		// 	// tb.text = tb.text[..tb.cursor_pos_i] + tb.text[tb.cursor_pos_i + 1..]
-		// 	// u.free() // TODO remove
-		// 	if tb.on_change != TextBoxChangeFn(0) {
-		// 		// tb.on_change(*tb.text, window.state)
-		// 	}
-		// }
+		.delete {
+			tv.tb.ui.show_cursor = true
+			tv.delete_cur_char()
+		}
 		.left {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
@@ -433,38 +405,6 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
 		}
-		// .a {
-		// 	println("aaaaa")
-		// 	if e.mods in [.super, .ctrl] {
-		// 		println("super a")
-		// 		tv.sel_start = 0
-		// 		tv.sel_end = (*tv.text).runes().len - 1
-		// 		tv.sync_text_lines()
-		// 	}
-		// }
-		// .v {
-		// 	if e.mods in [.super, .ctrl] {
-		// 		// tb.insert(tb.ui.clipboard.paste())
-		// 	}
-		// }
-		// .tab {
-		// 	tb.ui.show_cursor = true
-		// 	/*
-		// 	TODO if tb.parent.just_tabbed {
-		// 		tb.parent.just_tabbed = false
-		// 		return
-		// 	}
-		// 	*/
-		// 	// println('TAB $tb.id')
-		// 	/*
-		// 	if e.mods == .shift {
-		// 		tb.parent.focus_previous()
-		// 	}
-		// 	else {
-		// 		tb.parent.focus_next()
-		// 	}
-		// 	*/
-		// }
 		else {}
 	}
 }

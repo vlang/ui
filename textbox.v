@@ -386,8 +386,12 @@ fn (mut tb TextBox) draw_selection() {
 }
 
 pub fn (mut tb TextBox) cancel_selection() {
-	tb.sel_start = 0
-	tb.sel_end = -1
+	if tb.is_multiline {
+		tb.tv.cancel_selection()
+	} else {
+		tb.sel_start = 0
+		tb.sel_end = -1
+	}
 }
 
 pub fn (mut tb TextBox) delete_selection() {
