@@ -20,7 +20,7 @@ const (
 	text_inner_border_color       = gx.rgb(240, 240, 240)
 	text_border_accentuated_color = gx.rgb(255, 0, 0)
 	textbox_padding_x             = 5
-	textbox_padding_y             = 5
+	textbox_padding_y             = 2
 	// selection_color = gx.rgb(226, 233, 241)
 	selection_color               = gx.rgb(186, 214, 251)
 )
@@ -272,7 +272,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) update_line_height() {
-	tb.line_height = text_height(tb, 'W') + 6
+	tb.line_height = int(f64(text_height(tb, 'W')) * 1.5)
 }
 
 fn (mut tb TextBox) draw() {
