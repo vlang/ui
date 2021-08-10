@@ -19,6 +19,7 @@ fn main() {
 			ui.textbox(
 				id: 'tb1'
 				text: &app.tb1
+				fitted_height: true
 			),
 			ui.row(
 				spacing: 5

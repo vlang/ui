@@ -72,6 +72,7 @@ pub mut:
 	read_only     bool
 	borderless    bool
 	fitted_height bool // if true fit height in propose_size
+	twosided_sel  bool // if true extension selection is made from both sides
 	on_key_down   KeyDownFn = KeyDownFn(0)
 	on_char       CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
@@ -121,6 +122,7 @@ pub struct TextBoxConfig {
 	// is_error bool
 	borderless    bool
 	fitted_height bool
+	twosided_sel  bool
 	on_key_down   KeyDownFn
 	on_char       CharFn
 	// on_key_up          KeyUpFn
@@ -370,7 +372,11 @@ fn (tb &TextBox) is_sel_active() bool {
 	if !tb.is_focused {
 		return false
 	}
-	return tb.sel_end != -1 && tb.sel_start != tb.sel_end
+	if tb.is_multiline {
+		return tb.tv.is_sel_active()
+	} else {
+		return tb.sel_end != -1 && tb.sel_start != tb.sel_end
+	}
 }
 
 fn (mut tb TextBox) draw_selection() {
@@ -509,21 +515,26 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 						tb.delete_selection()
 					}
 				}
-				'- ' { // DISABLED: remove space to activate
-					tb.text_size -= 2
-					if tb.text_size < 8 {
-						tb.text_size = 8
+				'-' {
+					if tb.fitted_height {
+						// TODO: propose_size
+						tb.text_size -= 2
+						if tb.text_size < 8 {
+							tb.text_size = 8
+						}
+						update_text_size(mut tb)
+						tb.update_line_height()
 					}
-					update_text_size(mut tb)
-					tb.update_line_height()
 				}
-				'= ', '+ ' { //  DISABLED: remove space to activate
-					tb.text_size += 2
-					if tb.text_size > 48 {
-						tb.text_size = 48
+				'=', '+' {
+					if tb.fitted_height {
+						tb.text_size += 2
+						if tb.text_size > 48 {
+							tb.text_size = 48
+						}
+						update_text_size(mut tb)
+						tb.update_line_height()
 					}
-					update_text_size(mut tb)
-					tb.update_line_height()
 				}
 				else {}
 			}
@@ -774,19 +785,39 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	} else {
 		tb.focus()
 	}
-	if !tb.dragging && e.action == .down {
-		tb.cancel_selection()
-	}
-	tb.dragging = e.action == .down
-	// Calculate cursor position from x
-	x := e.x - tb.x - ui.textbox_padding_x
-	if tb.is_multiline {
-		y := e.y - tb.y - ui.textbox_padding_y
-		tb.tv.start_selection(x, y)
+	// Calculate cursor position
+	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y
+	if shift_key(e.mods) && tb.is_sel_active() {
+		if tb.is_multiline {
+			tb.tv.extend_selection(x, y)
+		} else {
+			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			if tb.twosided_sel { // mode extend selection from both sides
+				// now tv.sel_start and tv.sel_end can and have to be sorted
+				if tb.sel_start > tb.sel_end {
+					tb.sel_start, tb.sel_end = tb.sel_end, tb.sel_start
+				}
+				if tb.cursor_pos < tb.sel_start {
+					tb.sel_start = tb.cursor_pos
+				} else if tb.cursor_pos > tb.sel_end {
+					tb.sel_end = tb.cursor_pos
+				}
+			} else {
+				tb.sel_end = tb.cursor_pos
+			}
+		}
 	} else {
-		tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
-		if tb.dragging {
-			tb.sel_start = tb.cursor_pos
+		if !tb.dragging && e.action == .down {
+			tb.cancel_selection()
+		}
+		tb.dragging = e.action == .down
+		if tb.is_multiline {
+			tb.tv.start_selection(x, y)
+		} else {
+			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			if tb.dragging {
+				tb.sel_start = tb.cursor_pos
+			}
 		}
 	}
 }

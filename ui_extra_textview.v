@@ -244,6 +244,31 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	// println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
 }
 
+pub fn (mut tv TextView) extend_selection(x int, y int) {
+	if y <= 0 {
+		tv.tlv.cursor_pos_j = 0
+	} else {
+		tv.tlv.cursor_pos_j = y / tv.tb.line_height
+		if tv.tlv.cursor_pos_j > tv.tlv.lines.len - 1 {
+			tv.tlv.cursor_pos_j = tv.tlv.lines.len - 1
+		}
+	}
+	tv.tlv.cursor_pos_i = text_pos_from_x(tv.tb, tv.current_line(), x)
+	tv.sync_text_pos()
+	if tv.tb.twosided_sel { // mode to extend from both sides
+		// now tv.sel_start and tv.sel_end can and have to be sorted
+		tv.sel_start, tv.sel_end = tv.ordered_pos_selection()
+		if tv.cursor_pos < tv.sel_start {
+			tv.sel_start = tv.cursor_pos
+		} else if tv.cursor_pos > tv.sel_end {
+			tv.sel_end = tv.cursor_pos
+		}
+	} else {
+		tv.sel_end = tv.cursor_pos
+	}
+	tv.sync_text_lines()
+}
+
 pub fn (mut tv TextView) cancel_selection() {
 	tv.sel_start = 0
 	tv.sel_end = -1
@@ -295,8 +320,7 @@ fn (mut tv TextView) move_cursor(side Side) {
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
 	s := utf32_to_str(e.codepoint)
-	//
-	println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
+	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
