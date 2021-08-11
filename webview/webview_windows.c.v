@@ -3,7 +3,7 @@ module webview
 // WebView2.h includes objidl.h, but _too late_.
 // We fix it by including objidl.h earlier than including WebView2.h
 #include <objidl.h>
- 
+
 // WinRT headers. EventToken.h lies here.
 #flag -I /Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/winrt
 #include <EventToken.h>
