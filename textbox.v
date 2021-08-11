@@ -86,18 +86,13 @@ pub mut:
 	hidden    bool
 	// component state for composable widget
 	component voidptr
+	// scrollview
+	has_scrollview bool
+	scrollview     &ScrollView = 0
 mut:
 	is_typing bool
 }
 
-/*
-struct Rect {
-	x      int
-	y      int
-	width  int
-	height int
-}
-*/
 pub struct TextBoxConfig {
 	id               string
 	width            int
@@ -131,10 +126,11 @@ pub struct TextBoxConfig {
 	text_size          f64
 	// added when user set text after declaration but before init (see colorbox component)
 	text_after bool
+	scrollview bool
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
-	tb := &TextBox{
+	mut tb := &TextBox{
 		id: c.id
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
@@ -168,6 +164,9 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
 	}
+	if c.scrollview {
+		scrollview_add(mut tb)
+	}
 	return tb
 }
 
@@ -184,6 +183,10 @@ fn (mut tb TextBox) init(parent Layout) {
 
 	if tb.is_multiline {
 		tb.tv.init(tb)
+	}
+	if has_scrollview(tb) {
+		tb.scrollview.init(parent)
+		scrollview_update(tb)
 	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
@@ -247,11 +250,11 @@ pub fn (mut t TextBox) set_pos(x int, y int) {
 
 // Needed for ScrollableWidget
 fn (tb &TextBox) adj_size() (int, int) {
-	w, mut h := text_size(tb, tb.text)
 	if tb.is_multiline {
-		h = h * tb.text.split('\n').len
+		return tb.tv.size()
+	} else {
+		return text_size(tb, tb.text)
 	}
-	return w, h
 }
 
 pub fn (mut tb TextBox) size() (int, int) {
@@ -269,6 +272,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	if tb.is_multiline {
 		tb.tv.update_lines()
 	}
+	scrollview_update(tb)
 	return tb.width, tb.height
 }
 
@@ -278,11 +282,17 @@ fn (mut tb TextBox) update_line_height() {
 
 fn (mut tb TextBox) draw() {
 	offset_start(mut tb)
+	scrollview_draw_begin(mut tb)
 	// draw background
-	tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, gx.white)
-	if !tb.borderless {
-		draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
-			tb.is_error != 0 && *tb.is_error)
+	if tb.has_scrollview {
+		tb.ui.gg.draw_rect(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
+			tb.scrollview.width, tb.scrollview.height, gx.white)
+	} else {
+		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, gx.white)
+		if !tb.borderless {
+			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
+				tb.is_error != 0 && *tb.is_error)
+		}
 	}
 	if tb.is_multiline {
 		tb.tv.draw_textlines()
@@ -364,6 +374,7 @@ fn (mut tb TextBox) draw() {
 	$if bb ? {
 		draw_bb(mut tb, tb.ui)
 	}
+	scrollview_draw_end(tb)
 	offset_end(mut tb)
 }
 
@@ -745,12 +756,19 @@ fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
 }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
-	return point_inside(tb, x, y)
+	if tb.has_scrollview {
+		return tb.scrollview.point_inside(x, y, .view)
+	} else {
+		return point_inside(tb, x, y)
+	}
 }
 
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	// println("mouse first")
 	if tb.hidden {
+		return
+	}
+	if tb.has_scrollview && tb.scrollview.point_inside(e.x, e.y, .bar) {
 		return
 	}
 	if !tb.point_inside(e.x, e.y) {
@@ -889,3 +907,6 @@ pub fn (mut tb TextBox) insert(s string) {
 	tb.sel_start = 0
 	tb.sel_end = 0
 }
+
+// Normally useless but required for scrollview_draw_begin()
+fn (tb &TextBox) set_children_pos() {}

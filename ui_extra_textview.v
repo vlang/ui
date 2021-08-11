@@ -37,6 +37,18 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.sync_text_pos()
 }
 
+pub fn (tv &TextView) size() (int, int) {
+	mut w, h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
+	for line in tv.tlv.lines {
+		lw := text_width(tv.tb, line)
+		if lw > w {
+			w = lw
+		}
+	}
+	w += textbox_padding_x * 2
+	return w, h
+}
+
 pub fn (tv &TextView) info() {
 	println('cursor: $tv.cursor_pos -> ($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j)')
 	println('sel: ($tv.sel_start, $tv.sel_end) -> ($tv.tlv.sel_start_i, $tv.tlv.sel_start_j, $tv.tlv.sel_end_i, $tv.tlv.sel_end_j)')
@@ -114,6 +126,9 @@ fn (mut tv TextView) update_lines() {
 	}
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
+	if tv.tb.has_scrollview {
+		scrollview_update(tv.tb)
+	}
 }
 
 fn (mut tv TextView) draw_textlines() {

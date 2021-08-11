@@ -47,6 +47,7 @@ enum ScrollViewPart {
 	btn_y
 	bar_x
 	bar_y
+	bar
 }
 
 interface ScrollableWidget {
@@ -73,6 +74,10 @@ pub fn scrollview(w Widget) (bool, &ScrollView) {
 			return true, w.scrollview
 		}
 	} else if w is ListBox {
+		if w.has_scrollview {
+			return true, w.scrollview
+		}
+	} else if w is TextBox {
 		if w.has_scrollview {
 			return true, w.scrollview
 		}
@@ -138,6 +143,10 @@ pub fn scrollview_widget_set_orig_size(w Widget) {
 			scrollview_widget_set_orig_size(child)
 		}
 	} else if w is ListBox {
+		if has_scrollview(w) {
+			scrollview_set_orig_size(w)
+		}
+	} else if w is TextBox {
 		if has_scrollview(w) {
 			scrollview_set_orig_size(w)
 		}
@@ -435,6 +444,9 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 		.btn_y {
 			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy + sv.btn_y
 			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.btn_h
+		}
+		.bar {
+			return sv.point_inside(x, y, .bar_x) || sv.point_inside(x, y, .bar_y)
 		}
 	}
 	// if mode == .view {
