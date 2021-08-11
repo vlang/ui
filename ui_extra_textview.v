@@ -81,13 +81,14 @@ fn (tv &TextView) sel_end_line() string {
 
 fn (tv &TextView) is_sel_active() bool {
 	// println("tv sel active: $tv.sel_end")
-	return tv.sel_end >= 0
+	return tv.tb.is_focused && tv.sel_end >= 0
 }
 
 fn (mut tv TextView) sync_text_pos() {
 	tv.cursor_pos = tv.text_pos_at(tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j)
 	if tv.tlv.sel_end_j == -1 {
-		tv.sel_end == -1
+		tv.sel_start = -1
+		tv.sel_end = -1
 	} else {
 		tv.sel_start = tv.text_pos_at(tv.tlv.sel_start_i, tv.tlv.sel_start_j)
 		tv.sel_end = tv.text_pos_at(tv.tlv.sel_end_i, tv.tlv.sel_end_j)
@@ -97,8 +98,8 @@ fn (mut tv TextView) sync_text_pos() {
 fn (mut tv TextView) sync_text_lines() {
 	tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j = tv.text_line_at(tv.cursor_pos)
 	if tv.sel_end == -1 {
-		tv.tlv.sel_start_i, tv.tlv.sel_start_j = 0, -1
-		tv.tlv.sel_end_i, tv.tlv.sel_end_j = 0, -1
+		tv.tlv.sel_start_i, tv.tlv.sel_start_j = -1, -1
+		tv.tlv.sel_end_i, tv.tlv.sel_end_j = -1, -1
 	} else {
 		tv.tlv.sel_start_i, tv.tlv.sel_start_j = tv.text_line_at(tv.sel_start)
 		tv.tlv.sel_end_i, tv.tlv.sel_end_j = tv.text_line_at(tv.sel_end)
@@ -270,7 +271,7 @@ pub fn (mut tv TextView) extend_selection(x int, y int) {
 }
 
 pub fn (mut tv TextView) cancel_selection() {
-	tv.sel_start = 0
+	tv.sel_start = -1
 	tv.sel_end = -1
 	tv.sync_text_lines()
 }

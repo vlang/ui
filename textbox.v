@@ -368,13 +368,10 @@ fn (mut tb TextBox) draw() {
 }
 
 fn (tb &TextBox) is_sel_active() bool {
-	if !tb.is_focused {
-		return false
-	}
 	if tb.is_multiline {
 		return tb.tv.is_sel_active()
 	} else {
-		return tb.sel_end != -1 && tb.sel_start != tb.sel_end
+		return tb.is_focused && tb.sel_end != -1 //&& tb.sel_start != tb.sel_end
 	}
 }
 
@@ -393,7 +390,7 @@ pub fn (mut tb TextBox) cancel_selection() {
 	if tb.is_multiline {
 		tb.tv.cancel_selection()
 	} else {
-		tb.sel_start = 0
+		tb.sel_start = -1
 		tb.sel_end = -1
 	}
 }
