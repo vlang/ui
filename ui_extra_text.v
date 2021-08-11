@@ -36,12 +36,10 @@ pub fn text_pos_from_x<T>(w &T, text string, x int) int {
 	}
 	mut prev_width := 0
 	ustr := text.runes()
-	// println("tb down: (${ustr.string()}) $ustr.len")
-	for i in 1 .. ustr.len {
-		// width := tb.ui.gg.text_width(tb.text[..i])
+	for i in 0 .. ustr.len {
 		width := text_width(w, ustr[..i].string())
-		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
-		if prev_width <= x && x <= width {
+		width2 := if i < ustr.len { text_width(w, ustr[..(i + 1)].string()) } else { width }
+		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
 			return i
 		}
 		prev_width = width
