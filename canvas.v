@@ -23,7 +23,7 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 mut:
-	parent  Layout
+	parent  Layout      = empty_stack
 	draw_fn DrawFn      = voidptr(0)
 	gg      &gg.Context = 0
 }

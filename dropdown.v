@@ -20,7 +20,7 @@ pub mut:
 	def_text             string
 	width                int = 150
 	dropdown_height      int
-	parent               Layout
+	parent               Layout = empty_stack
 	x                    int
 	y                    int
 	offset_x             int

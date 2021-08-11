@@ -10,7 +10,7 @@ pub struct Label {
 pub mut:
 	id         string
 	text       string
-	parent     Layout
+	parent     Layout = empty_stack
 	x          int
 	y          int
 	offset_x   int

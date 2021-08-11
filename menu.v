@@ -21,7 +21,7 @@ pub mut:
 	component voidptr
 mut:
 	text      string
-	parent    Layout
+	parent    Layout = empty_stack
 	x         int
 	y         int
 	width     int

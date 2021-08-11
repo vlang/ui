@@ -59,7 +59,7 @@ pub mut:
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable   bool // currently only for events.on_resized not modify children
 	mode        WindowSizeType
-	root_layout Layout
+	root_layout Layout = empty_stack
 	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
