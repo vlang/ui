@@ -63,6 +63,7 @@ pub mut:
 	component voidptr
 }
 
+[kwargs]
 pub struct ButtonConfig {
 	id           string
 	text         string

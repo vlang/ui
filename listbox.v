@@ -62,6 +62,7 @@ mut:
 	draw_text string
 }
 
+[kwargs]
 pub struct ListBoxConfig {
 mut:
 	x             int

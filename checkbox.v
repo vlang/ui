@@ -48,6 +48,7 @@ pub mut:
 	component voidptr
 }
 
+[kwargs]
 pub struct CheckBoxConfig {
 	id               string
 	x                int

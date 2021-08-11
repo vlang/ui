@@ -52,6 +52,7 @@ pub mut:
 	on_click RadioClickFn
 }
 
+[kwargs]
 pub struct RadioConfig {
 	id       string
 	on_click RadioClickFn
