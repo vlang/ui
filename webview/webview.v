@@ -49,6 +49,7 @@ pub fn exec(scriptSource string) {
 pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
 	wv.nav_finished_fn = nav_callback
 }
+
 pub fn (mut wv WebView) on_navigate(url string) {
 	wv.nav_finished_fn(url)
 }
