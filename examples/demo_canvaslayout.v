@@ -90,7 +90,7 @@ fn main() {
 								on_change: lb_change
 								// scrollview: false
 								draw_lines: true
-								items: map{
+								items: {
 									'classic':  'Classic'
 									'blue':     'Blue'
 									'red':      'Red'
