@@ -255,8 +255,8 @@ pub fn (mut tv TextView) extend_selection(x int, y int) {
 	}
 	tv.tlv.cursor_pos_i = text_pos_from_x(tv.tb, tv.current_line(), x)
 	tv.sync_text_pos()
-	if tv.tb.twosided_sel { // mode to extend from both sides
-		// now tv.sel_start and tv.sel_end can and have to be sorted
+	if tv.tb.twosided_sel { // extend from both sides
+		// tv.sel_start and tv.sel_end can and have to be sorted
 		tv.sel_start, tv.sel_end = tv.ordered_pos_selection()
 		if tv.cursor_pos < tv.sel_start {
 			tv.sel_start = tv.cursor_pos
@@ -320,7 +320,10 @@ fn (mut tv TextView) move_cursor(side Side) {
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
 	s := utf32_to_str(e.codepoint)
-	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
+	//
+	println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
+	wui := tv.tb.ui
+	println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {

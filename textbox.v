@@ -60,19 +60,17 @@ pub mut:
 	// placeholder
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
-	// is_multiline mode
+	// multiline mode
 	is_multiline bool
 	tv           TextView
 	is_wordwrap  bool
-	lines        []string
-	wordwrap     []int
+	twosided_sel bool // if true extension selection is made from both sides
 	// others
 	is_numeric    bool
 	is_password   bool
 	read_only     bool
 	borderless    bool
 	fitted_height bool // if true fit height in propose_size
-	twosided_sel  bool // if true extension selection is made from both sides
 	on_key_down   KeyDownFn = KeyDownFn(0)
 	on_char       CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
@@ -106,6 +104,7 @@ pub struct TextBoxConfig {
 	height           int = 22
 	is_multiline     bool
 	is_wordwrap      bool
+	twosided_sel     bool
 	z_index          int
 	min              int
 	max              int
@@ -122,7 +121,6 @@ pub struct TextBoxConfig {
 	// is_error bool
 	borderless    bool
 	fitted_height bool
-	twosided_sel  bool
 	on_key_down   KeyDownFn
 	on_char       CharFn
 	// on_key_up          KeyUpFn
@@ -165,6 +163,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_multiline: c.is_multiline
 		is_wordwrap: c.is_wordwrap
 		fitted_height: c.fitted_height || c.is_multiline
+		twosided_sel: c.twosided_sel
 	}
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
@@ -591,9 +590,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// RO REMOVE?
 				// tb.update_text()
-				$if tb_bsp ? {
-					println('after bsp $tb.lines ${*tb.text}')
-				}
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
 				}
@@ -755,24 +751,6 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 	return point_inside(tb, x, y)
 }
 
-fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
-	if tb.hidden {
-		return
-	}
-	if !tb.point_inside(e.x, e.y) {
-		return
-	}
-	if tb.dragging {
-		x := int(e.x - tb.x - ui.textbox_padding_x)
-		if tb.is_multiline {
-			y := int(e.y - tb.y - ui.textbox_padding_y)
-			tb.tv.end_selection(x, y)
-		} else {
-			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
-		}
-	}
-}
-
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	// println("mouse first")
 	if tb.hidden {
@@ -781,6 +759,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
+		// tb.cancel_selection()
 		return
 	} else {
 		tb.focus()
@@ -792,8 +771,8 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 			tb.tv.extend_selection(x, y)
 		} else {
 			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
-			if tb.twosided_sel { // mode extend selection from both sides
-				// now tv.sel_start and tv.sel_end can and have to be sorted
+			if tb.twosided_sel { // extend selection from both sides
+				// tv.sel_start and tv.sel_end can and have to be sorted
 				if tb.sel_start > tb.sel_end {
 					tb.sel_start, tb.sel_end = tb.sel_end, tb.sel_start
 				}
@@ -808,6 +787,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		}
 	} else {
 		if !tb.dragging && e.action == .down {
+			// println("$tb.id $tb.dragging $e.action")
 			tb.cancel_selection()
 		}
 		tb.dragging = e.action == .down
@@ -818,6 +798,24 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 			if tb.dragging {
 				tb.sel_start = tb.cursor_pos
 			}
+		}
+	}
+}
+
+fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
+	if tb.hidden {
+		return
+	}
+	if !tb.point_inside(e.x, e.y) {
+		return
+	}
+	if tb.dragging {
+		x := int(e.x - tb.x - ui.textbox_padding_x)
+		if tb.is_multiline {
+			y := int(e.y - tb.y - ui.textbox_padding_y)
+			tb.tv.end_selection(x, y)
+		} else {
+			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
 		}
 	}
 }
