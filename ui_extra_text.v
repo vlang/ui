@@ -18,10 +18,14 @@ pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 
 pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
 	ustr := text.runes()
-	x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
 		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
 		x_max = ustr.len
+	}
+	if x_min < 0 {
+		// println('warning: text_xminmax_from_pos $x_min < 0')
+		x_min = 0
 	}
 	// println("xminmax: ${ustr.len} $x_min $x_max")
 	left := ustr[..x_min].string()
@@ -123,7 +127,7 @@ pub fn text_lines_row_column_at(lines []string, pos int) (int, int) {
 	if pos == 0 {
 		return 0, 0
 	}
-	mut i, mut j := 0, 0
+	mut j := 0
 	mut total_len, mut ustr_len := 0, 0
 	for line in lines {
 		ustr_len = line.runes().len + 1
