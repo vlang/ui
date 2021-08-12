@@ -424,7 +424,7 @@ pub fn (mut tb TextBox) delete_selection() {
 	unsafe {
 		*tb.text = u[..sel_start].string() + u[sel_end..].string()
 	}
-	println('delete: <${*tb.text}>')
+	// println('delete: <${*tb.text}>')
 	tb.cursor_pos = sel_start
 	tb.cancel_selection()
 }
