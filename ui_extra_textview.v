@@ -141,6 +141,9 @@ fn (mut tv TextView) update_lines() {
 }
 
 fn (mut tv TextView) draw_textlines() {
+	if tv.tb.is_sync {
+		tv.update_lines()
+	}
 	tv.draw_selection()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")

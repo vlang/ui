@@ -39,15 +39,17 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
+				is_sync: true
 			),
 			ui.textbox(
 				is_multiline: true
 				is_wordwrap: true
 				scrollview: true
 				id: 'tb3m'
-				text: &app.tb3m
+				text: &app.tb2m
 				height: 200
 				text_size: 24
+				is_sync: true
 			),
 		]
 	)

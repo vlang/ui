@@ -64,6 +64,7 @@ pub mut:
 	is_multiline bool
 	tv           TextView
 	is_wordwrap  bool
+	is_sync      bool // if true lines are computed from text when drawing
 	twosided_sel bool // if true extension selection is made from both sides
 	// others
 	is_numeric    bool
@@ -99,6 +100,7 @@ pub struct TextBoxConfig {
 	height           int = 22
 	is_multiline     bool
 	is_wordwrap      bool
+	is_sync          bool
 	twosided_sel     bool
 	z_index          int
 	min              int
@@ -159,6 +161,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_multiline: c.is_multiline
 		is_wordwrap: c.is_wordwrap
 		fitted_height: c.fitted_height || c.is_multiline
+		is_sync: c.is_sync
 		twosided_sel: c.twosided_sel
 	}
 	if c.text == 0 && !c.text_after {
