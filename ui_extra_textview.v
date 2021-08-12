@@ -247,6 +247,8 @@ fn (mut tv TextView) start_selection(x int, y int) {
 	tv.tlv.cursor_pos_i = text_pos_from_x(tv.tb, tv.current_line(), x)
 	if tv.tb.dragging {
 		tv.tlv.sel_start_i, tv.tlv.sel_start_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
+		// put sel_end at the sel_start position too to make selection active
+		tv.tlv.sel_end_i, tv.tlv.sel_end_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
 	}
 	tv.sync_text_pos()
 	// tv.info()
@@ -264,6 +266,7 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	}
 	tv.tlv.sel_end_i = text_pos_from_x(tv.tb, tv.tlv.lines[tv.tlv.sel_end_j], x)
 	tv.sync_text_pos()
+	// tv.info()
 	// println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
 }
 

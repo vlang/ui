@@ -42,6 +42,7 @@ fn main() {
 				is_sync: true
 			),
 			ui.textbox(
+				read_only: true
 				is_multiline: true
 				is_wordwrap: true
 				scrollview: true
