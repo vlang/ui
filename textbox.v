@@ -416,13 +416,17 @@ pub fn (mut tb TextBox) delete_selection() {
 	} else {
 		tb.sel_end, tb.sel_start
 	}
+	if sel_start < 0 {
+		return
+	}
 	// println("rm sel: $tb.sel_start, $tb.sel_end -> $sel_start, $sel_end")
+	// println("delete_sel: $sel_start, $sel_end, u.len: $u.len")
 	unsafe {
 		*tb.text = u[..sel_start].string() + u[sel_end..].string()
 	}
-	tb.cursor_pos = tb.sel_start
-	tb.sel_start = 0
-	tb.sel_end = 0
+	println('delete: <${*tb.text}>')
+	tb.cursor_pos = sel_start
+	tb.cancel_selection()
 }
 
 // fn (mut tb TextBox) cursor_move(direction Side) {
@@ -488,9 +492,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				return
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
-			if tb.is_sel_active() {
-				tb.delete_selection()
-			}
 			tb.insert(s)
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
@@ -882,36 +883,21 @@ pub fn (mut tb TextBox) set_text(s string) {
 // }
 
 pub fn (mut tb TextBox) insert(s string) {
-	mut ustr := tb.text.runes()
-	old_len := ustr.len
 	// Remove the selection
-	if tb.sel_start < tb.sel_end {
-		unsafe {
-			*tb.text = ustr[..tb.sel_start].string() + s + ustr[tb.sel_end + 1..].string()
-		}
-	} else {
-		$if tb_insert ? {
-			println('tb_insert: $tb.id $ustr $tb.cursor_pos')
-		}
-		// Insert one character
-		// tb.text = tb.text[..tb.cursor_pos] + s + tb.text[tb.cursor_pos..]
-		unsafe {
-			*tb.text = ustr[..tb.cursor_pos].string() + s + ustr[tb.cursor_pos..].string()
-		}
-		ustr = tb.text.runes()
-		// The string is too long
-		if tb.max_len > 0 && ustr.len >= tb.max_len {
-			// tb.text = tb.text.limit(tb.max_len)
-			unsafe {
-				*tb.text = ustr[..tb.max_len].string()
-			}
-			ustr = tb.text.runes()
-		}
+	if tb.is_sel_active() {
+		tb.delete_selection()
 	}
-	// tb.cursor_pos += tb.text.len - old_len
-	tb.cursor_pos += ustr.len - old_len
-	tb.sel_start = 0
-	tb.sel_end = 0
+	mut ustr := tb.text.runes()
+	$if tb_insert ? {
+		println('tb_insert: $tb.id $ustr $tb.cursor_pos')
+	}
+	// Insert s
+	sr := s.runes()
+	ustr.insert(tb.cursor_pos, sr)
+	unsafe {
+		*tb.text = ustr.string()
+	}
+	tb.cursor_pos += sr.len
 }
 
 // Normally useless but required for scrollview_draw_begin()
