@@ -210,27 +210,6 @@ pub fn scrollview_draw_end<T>(w &T) {
 	}
 }
 
-// OBSOLETE:
-// pub fn scrollview_clip<T>(mut w T) bool {
-// 	if scrollview_is_active(mut w) {
-// 		mut sv := w.scrollview
-// 		sv.clip()
-// 		w.x = sv.orig_x - sv.offset_x
-// 		w.y = sv.orig_y - sv.offset_y
-// 		// sv.orig_x, sv.orig_y = w.x - sv.offset_x, w.y - sv.offset_y
-// 		// println('clip offfset ($sv.offset_x, $sv.offset_y)')
-// 		return sv.children_to_update
-// 	}
-// 	return false
-// }
-
-// pub fn scrollview_draw<T>(w &T) {
-// 	if has_scrollview(w) {
-// 		sv := w.scrollview
-// 		sv.draw()
-// 	}
-// }
-
 // type ScrollViewChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 [heap]
@@ -527,6 +506,18 @@ pub fn (sv &ScrollView) draw() {
 	}
 }
 
+fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
+	if sv.is_active() {
+		if sv.active_x && mode == .btn_x {
+			sv.offset_x += delta
+			sv.change_value(.btn_x)
+		} else if sv.active_y && mode == .btn_y {
+			sv.offset_y += delta
+			sv.change_value(.btn_y)
+		}
+	}
+}
+
 fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
 		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
@@ -666,7 +657,7 @@ fn intersection(r1 gg.Rect, r2 gg.Rect) gg.Rect {
 	tl_x, tl_y := math.max(r1.x, r2.x), math.max(r1.y, r2.y)
 	br_x, br_y := math.min(r1.x + r1.width, r2.x + r2.width), math.min(r1.y + r1.height,
 		r2.y + r2.height)
-	// interesction
+	// intersection
 	r := gg.Rect{f32(tl_x), f32(tl_y), f32(br_x - tl_x), f32(br_y - tl_y)}
 	return r
 }

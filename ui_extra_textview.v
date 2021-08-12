@@ -141,14 +141,7 @@ fn (mut tv TextView) draw_textlines() {
 	}
 	// draw cursor
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
-		ustr := tv.current_line().runes()
-		mut cursor_x := tv.tb.x + textbox_padding_x
-		if ustr.len > 0 {
-			left := ustr[..tv.tlv.cursor_pos_i].string()
-			cursor_x += text_width(tv.tb, left)
-		}
-		tv.tb.ui.gg.draw_rect(cursor_x, tv.tb.y + textbox_padding_y +
-			tv.tlv.cursor_pos_j * tv.tb.line_height, 1, tv.tb.line_height, gx.black) // , gx.Black)
+		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.tb.line_height, gx.black) // , gx.Black)
 	}
 }
 
@@ -336,10 +329,9 @@ fn (mut tv TextView) move_cursor(side Side) {
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
 	s := utf32_to_str(e.codepoint)
-	//
-	println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
-	wui := tv.tb.ui
-	println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
+	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
+	// wui := tv.tb.ui
+	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
@@ -413,6 +405,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.insert('\n')
 			tv.cursor_pos++
 			tv.sync_text_lines()
+			tv.cursor_adjust_after_newline()
 		}
 		.backspace {
 			tv.tb.ui.show_cursor = true
@@ -473,6 +466,33 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			println('tab')
 		}
 		else {}
+	}
+}
+
+fn (tv &TextView) cursor_y() int {
+	return tv.tb.y + textbox_padding_y + tv.tlv.cursor_pos_j * tv.tb.line_height
+}
+
+fn (tv &TextView) cursor_x() int {
+	ustr := tv.current_line().runes()
+	mut cursor_x := tv.tb.x + textbox_padding_x
+	if ustr.len > 0 {
+		left := ustr[..tv.tlv.cursor_pos_i].string()
+		cursor_x += text_width(tv.tb, left)
+	}
+	return cursor_x
+}
+
+fn (tv &TextView) cursor_xy() (int, int) {
+	return tv.cursor_x(), tv.cursor_y()
+}
+
+fn (mut tv TextView) cursor_adjust_after_newline() {
+	if tv.tb.has_scrollview {
+		if tv.tb.scrollview.active_y
+			&& !tv.tb.scrollview.point_inside(tv.cursor_x(), tv.cursor_y() + tv.tb.line_height, .view) {
+			tv.tb.scrollview.inc(tv.tb.line_height, .btn_y)
+		}
 	}
 }
 
