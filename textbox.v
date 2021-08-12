@@ -488,6 +488,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				return
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
+			if tb.is_sel_active() {
+				tb.delete_selection()
+			}
 			tb.insert(s)
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
