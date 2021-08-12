@@ -170,7 +170,8 @@ fn (mut tv TextView) draw_selection() {
 					selection_color)
 			}
 		}
-		sel_from, sel_width = text_xminmax_from_pos(tv.tb, tv.sel_end_line(), 0, end_i)
+		ustr = tv.line(end_j)
+		sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, end_i)
 		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
 			end_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
 	}
