@@ -38,7 +38,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 }
 
 pub fn (tv &TextView) size() (int, int) {
-	mut w, h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
+	mut w, mut h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
 	for line in tv.tlv.lines {
 		lw := text_width(tv.tb, line)
 		if lw > w {
@@ -46,6 +46,15 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 	}
 	w += textbox_padding_x * 2
+	if tv.tb.has_scrollview && tv.tb.scrollview.active_y {
+		if tv.tb.scrollview.offset_y > 0 {
+			// println("scrollview size: offset_y -> $tv.tb.scrollview.offset_y")
+			// println(" $h > $tv.tb.height")
+
+			// Force active_y to be true (since adj_height > height)
+			h = tv.tb.scrollview.offset_y + tv.tb.height
+		}
+	}
 	return w, h
 }
 
