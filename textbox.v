@@ -629,11 +629,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					return
 				}
 				tb.cancel_selection()
-				if tb.sel_end > 0 {
-					tb.cursor_pos = tb.sel_start + 1
-				}
-				tb.sel_start = 0
-				tb.sel_end = 0
 				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
 				tb.cursor_pos--
 				if tb.cursor_pos < 0 {
@@ -645,11 +640,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					return
 				}
 				tb.cancel_selection()
-				if tb.sel_start > 0 {
-					tb.cursor_pos = tb.sel_start - 1
-				}
-				tb.sel_end = 0
-				tb.sel_start = 0
 				tb.ui.show_cursor = true
 				tb.cursor_pos++
 				text_len := text.runes().len
