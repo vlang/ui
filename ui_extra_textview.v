@@ -162,7 +162,7 @@ fn (mut tv TextView) draw_selection() {
 		// println("return draw_sel")
 		return
 	}
-	 
+
 	if tv.tlv.sel_start_j == tv.tlv.sel_end_j {
 		// if on the same line draw the selected background
 		sel_from, sel_width := text_xminmax_from_pos(tv.tb, tv.sel_start_line(), tv.tlv.sel_start_i,
@@ -177,7 +177,7 @@ fn (mut tv TextView) draw_selection() {
 		mut sel_from, mut sel_width := text_xminmax_from_pos(tv.tb, ustr, start_i, ustr.len)
 		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
 			start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
-		// then all the intermediate lines 
+		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
 				ustr = tv.line(j)
