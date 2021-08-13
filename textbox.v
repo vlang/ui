@@ -771,7 +771,6 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
-		// tb.cancel_selection()
 		return
 	} else {
 		tb.focus()
@@ -802,6 +801,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 			// println("$tb.id $tb.dragging $e.action")
 			tb.cancel_selection()
 		}
+		tb.ui.show_cursor = true
 		tb.dragging = e.action == .down
 		if tb.is_multiline {
 			tb.tv.start_selection(x, y)

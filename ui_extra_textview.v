@@ -102,7 +102,7 @@ fn (tv &TextView) sel_end_line() string {
 
 fn (tv &TextView) is_sel_active() bool {
 	// println("tv sel active: $tv.sel_end")
-	return tv.tb.is_focused && tv.sel_end >= 0
+	return tv.tb.is_focused && tv.sel_end >= 0 && tv.sel_start != tv.sel_end
 }
 
 fn (mut tv TextView) sync_text_pos() {
