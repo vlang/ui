@@ -25,9 +25,9 @@ const (
 	selection_color               = gx.rgb(186, 214, 251)
 )
 
-type KeyDownFn = fn (voidptr, voidptr, u32)
+type KeyDownFn = fn (voidptr, &TextBox, u32)
 
-type CharFn = fn (voidptr, voidptr, u32)
+type CharFn = fn (voidptr, &TextBox, u32)
 
 // type KeyUpFn = fn (voidptr, voidptr, u32)
 
@@ -443,7 +443,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	if !tb.is_focused {
 		return
 	}
-	if tb.on_char != voidptr(0) {
+	if tb.on_char != CharFn(0) {
 		tb.on_char(window.state, tb, e.codepoint)
 	}
 }
@@ -466,7 +466,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		}
 	}
 	tb.is_typing = true
-	if tb.on_key_down != voidptr(0) {
+	if tb.on_key_down != KeyDownFn(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
