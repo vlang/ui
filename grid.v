@@ -16,8 +16,8 @@ pub mut:
 	width       int
 	z_index     int
 	cell_height f32
-	cell_width  f32 = 40
-	parent      Layout
+	cell_width  f32    = 40
+	parent      Layout = empty_stack
 	is_focused  bool
 	ui          &UI
 	hidden      bool
@@ -33,7 +33,7 @@ pub struct GridConfig {
 }
 
 pub fn grid(c GridConfig) &Grid {
-	mut gv := &Grid{
+	gv := &Grid{
 		width: c.width
 		height: c.height
 		z_index: c.z_index

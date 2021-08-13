@@ -33,7 +33,7 @@ pub mut:
 	offset_x         int
 	offset_y         int
 	z_index          int
-	parent           Layout
+	parent           Layout = empty_stack
 	is_focused       bool
 	checked          bool
 	ui               &UI
@@ -53,7 +53,6 @@ pub struct CheckBoxConfig {
 	x                int
 	y                int
 	z_index          int
-	parent           Layout
 	text             string
 	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn

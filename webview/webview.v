@@ -1,6 +1,7 @@
 // Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license that can be found in the LICENSE file.
 module webview
+
 import ui
 
 [heap]
@@ -50,12 +51,15 @@ pub fn exec(scriptSource string) {
 pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
 	wv.nav_finished_fn = nav_callback
 }
+
 pub fn (mut wv WebView) on_navigate(url string) {
 	wv.nav_finished_fn(url)
 }
 
 pub fn (mut wv WebView) navigate(url string) {
-	C.navigate(url.to_wide())
+	$if windows {
+		C.navigate(url.to_wide())
+	}
 	wv.on_navigate(url)
 }
 

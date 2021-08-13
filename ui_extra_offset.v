@@ -25,7 +25,7 @@ fn offset_end(mut w Widget) {
 struct Dragger {
 pub mut:
 	activated bool
-	widget    Widget
+	widget    Widget = empty_stack
 	start_x   f64
 	start_y   f64
 	pos_x     f64

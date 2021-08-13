@@ -20,7 +20,7 @@ pub mut:
 	def_text             string
 	width                int = 150
 	dropdown_height      int
-	parent               Layout
+	parent               Layout = empty_stack
 	x                    int
 	y                    int
 	offset_x             int
@@ -46,7 +46,6 @@ pub struct DropdownConfig {
 	width                int = 150
 	height               int = 25
 	z_index              int = 10
-	parent               Layout
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
 	items                []DropdownItem

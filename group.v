@@ -19,7 +19,7 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
-	parent        Layout
+	parent        Layout = empty_stack
 	ui            &UI
 	children      []Widget
 	margin_left   int = 5

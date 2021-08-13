@@ -2,15 +2,32 @@ module ui
 
 import gx
 
+const (
+	word_wrap_id = '\n'
+)
+
 pub fn text_x_from_pos<T>(w &T, text string, x int) int {
 	ustr := text.runes()
+	if x > ustr.len {
+		// println('warning: text_x_from_pos $x > $ustr.len')
+		x = ustr.len
+	}
 	left := ustr[..x].string()
 	return text_width(w, left)
 }
 
 pub fn text_xminmax_from_pos<T>(w &T, text string, x1 int, x2 int) (int, int) {
 	ustr := text.runes()
-	x_min, x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	if x_max > ustr.len {
+		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		x_max = ustr.len
+	}
+	if x_min < 0 {
+		// println('warning: text_xminmax_from_pos $x_min < 0')
+		x_min = 0
+	}
+	// println("xminmax: ${ustr.len} $x_min $x_max")
 	left := ustr[..x_min].string()
 	right := ustr[x_max..].string()
 	ww, lw, rw := text_width(w, text), text_width(w, left), text_width(w, right)
@@ -23,12 +40,10 @@ pub fn text_pos_from_x<T>(w &T, text string, x int) int {
 	}
 	mut prev_width := 0
 	ustr := text.runes()
-	// println("tb down: (${ustr.string()}) $ustr.len")
-	for i in 1 .. ustr.len {
-		// width := tb.ui.gg.text_width(tb.text[..i])
+	for i in 0 .. ustr.len {
 		width := text_width(w, ustr[..i].string())
-		// println("$i: (${ustr[..i].string()}) $prev_width <= $x < $width")
-		if prev_width <= x && x <= width {
+		width2 := if i < ustr.len { text_width(w, ustr[..(i + 1)].string()) } else { width }
+		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
 			return i
 		}
 		prev_width = width
@@ -36,37 +51,96 @@ pub fn text_pos_from_x<T>(w &T, text string, x int) int {
 	return ustr.len
 }
 
-fn word_wrap_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
+fn word_wrap_to_line_by_width<T>(w &T, s string, max_line_width int) ([]string, []int) {
 	words := s.split(' ')
 	mut line := ''
 	mut line_width := 0
 	mut text_lines := []string{}
+	mut word_wrap, mut cpt := []int{}, 0
 	for i, word in words {
-		sp := if i > 0 { ' ' } else { '' }
-		word_width := text_width(w, sp + word)
-		if line_width + word_width < max_line_width {
-			line += sp + word
-			line_width += word_width
-			continue
+		if i == 0 { // at least the first
+			line = word
+			line_width = text_width(w, word)
 		} else {
-			text_lines << line.join(' ')
-			line = ''
-			line_width = 0
+			word_width := text_width(w, ' ' + word)
+			if line_width + word_width < max_line_width {
+				line += ' ' + word
+				line_width += word_width
+			} else {
+				text_lines << line
+				word_wrap << cpt
+				line = word
+				line_width = word_width
+				cpt++
+			}
 		}
 	}
 	if line_width > 0 {
-		text_lines << line.join(' ')
+		text_lines << line
+		word_wrap << cpt
 	}
-	return text_lines
+	return text_lines, word_wrap
 }
 
-fn word_wrap_text_to_lines_by_width<T>(w &T, s string, max_line_width int) []string {
+fn word_wrap_text_to_lines_by_width<T>(w &T, s string, max_line_width int) ([]string, []int) {
 	lines := s.split('\n')
-	mut word_wrapped_lines := []string{}
+	mut word_wrapped_lines, mut word_wrap_ind := []string{}, []int{}
 	for line in lines {
-		word_wrapped_lines << word_wrap_to_lines_by_width(line, max_line_width)
+		ww_lines, ww_ind := word_wrap_to_line_by_width(w, line, max_line_width)
+		word_wrapped_lines << ww_lines
+		word_wrap_ind << ww_ind
 	}
-	return word_wrapped_lines
+	// println('tl: $word_wrapped_lines ww: $word_wrap_ind')
+	return word_wrapped_lines, word_wrap_ind
+}
+
+fn word_wrap_join(lines []string, ind []int) string {
+	mut res := ''
+	// println("lines: $lines, ind: $ind")
+	for i, line in lines {
+		sp := if i == 0 {
+			''
+		} else if ind[i] > 0 {
+			' '
+		} else {
+			'\n'
+		}
+		res += sp + line
+	}
+	// println("res: $res")
+	return res
+}
+
+// get text position from row i and column j
+pub fn text_lines_pos_at(lines []string, i int, j int) int {
+	mut pos := 0
+	for k in 0 .. j {
+		pos += lines[k].runes().len + 1 // +1 for \n or space
+	}
+	pos += i
+	// println('text_lines_pos_at: ($i, $j) -> $pos ')
+	return pos
+}
+
+// get row and column from text position
+pub fn text_lines_row_column_at(lines []string, pos int) (int, int) {
+	if pos == 0 {
+		return 0, 0
+	}
+	mut j := 0
+	mut total_len, mut ustr_len := 0, 0
+	for line in lines {
+		ustr_len = line.runes().len + 1
+		total_len += ustr_len
+		if pos > total_len {
+			j++
+		} else {
+			total_len -= ustr_len
+			break
+		}
+	}
+	// println('text_lines_row_column_at: $pos -> ($pos - $total_len, $j)')
+	return pos - total_len, j
 }
 
 // Initially inside ui_linux_c.v
