@@ -482,7 +482,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.cursor_pos = 0
 		}
 		s := utf32_to_str(e.codepoint)
-		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
+		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
 			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
 			}
