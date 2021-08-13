@@ -27,7 +27,7 @@ pub mut:
 	offset_x   int
 	offset_y   int
 	z_index    int
-	parent     Layout
+	parent     Layout = empty_stack
 	is_focused bool
 	open       bool
 	ui         &UI

@@ -59,7 +59,7 @@ pub mut:
 	char_fn       CanvasLayoutKeyFn       = voidptr(0)
 	full_size_fn  CanvasLayoutSizeFn
 mut:
-	parent Layout
+	parent Layout = empty_stack
 	// To keep track of original position
 	pos_ map[int]XYPos
 }

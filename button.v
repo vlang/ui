@@ -39,7 +39,7 @@ pub mut:
 	y          int
 	offset_x   int
 	offset_y   int
-	parent     Layout
+	parent     Layout = empty_stack
 	is_focused bool
 	ui         &UI = 0
 	onclick    ButtonClickFn

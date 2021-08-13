@@ -18,7 +18,7 @@ mut:
 
 fn main() {
 	mut app := &App{}
-	app.sizes = map{
+	app.sizes = {
 		'100':            100.
 		'20':             20.
 		'.3':             .3
@@ -59,7 +59,7 @@ fn main() {
 									height: lb_height
 									selection: 0
 									on_change: lb_change
-									items: map{
+									items: {
 										'.3':             '.3'
 										'100':            '100'
 										'ui.stretch':     'ui.stretch'
@@ -74,7 +74,7 @@ fn main() {
 									height: lb_height
 									selection: 0
 									on_change: lb_change
-									items: map{
+									items: {
 										'.3':         '.3'
 										'20':         '20'
 										'ui.stretch': 'ui.stretch'
@@ -96,7 +96,7 @@ fn main() {
 									height: lb_height
 									selection: 1
 									on_change: lb_change
-									items: map{
+									items: {
 										'.3':             '.3'
 										'100':            '100'
 										'ui.stretch':     'ui.stretch'
@@ -111,7 +111,7 @@ fn main() {
 									height: lb_height
 									selection: 1
 									on_change: lb_change
-									items: map{
+									items: {
 										'.3':         '.3'
 										'20':         '20'
 										'ui.stretch': 'ui.stretch'
@@ -133,7 +133,7 @@ fn main() {
 									height: lb_height
 									selection: 3
 									on_change: lb_change_sp
-									items: map{
+									items: {
 										'20':  'margin_: 20'
 										'50':  'margin_: 50'
 										'.05': 'margin_: .05'
@@ -145,7 +145,7 @@ fn main() {
 									height: lb_height
 									selection: 3
 									on_change: lb_change_sp
-									items: map{
+									items: {
 										'20':  'spacing: 20'
 										'50':  'spacing: 50'
 										'.05': 'spacing: .05'

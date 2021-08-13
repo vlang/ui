@@ -19,7 +19,7 @@ mut:
 	duration         i64
 	animating        bool
 	easing           EasingFunction
-	parent           Layout
+	parent           Layout = empty_stack
 	start_value      int
 	last_draw_target int
 	ui               &UI = voidptr(0)

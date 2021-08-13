@@ -59,7 +59,7 @@ pub mut:
 	// resizable has limitation https://github.com/vlang/ui/issues/231
 	resizable   bool // currently only for events.on_resized not modify children
 	mode        WindowSizeType
-	root_layout Layout
+	root_layout Layout = empty_stack
 	dpi_scale   f32
 	// saved origin sizes
 	orig_width  int
@@ -81,6 +81,10 @@ pub mut:
 	tooltips        []TooltipMessage
 	// with message
 	native_message bool
+	// ui mode on gg
+	immediate          bool
+	children_immediate []Widget
+	needs_refresh      bool = true
 }
 
 pub struct WindowConfig {
@@ -108,6 +112,7 @@ pub:
 	native_rendering      bool
 	resizable             bool
 	mode                  WindowSizeType
+	immediate             bool
 	// Text Config
 	lines int = 10
 	// message
@@ -355,6 +360,7 @@ pub fn window(cfg WindowConfig) &Window {
 		resize_fn: cfg.on_resize
 		text_cfg: text_cfg
 		native_message: cfg.native_message
+		immediate: cfg.immediate
 	}
 
 	// register default color themes
@@ -375,7 +381,13 @@ pub fn window(cfg WindowConfig) &Window {
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
-		frame_fn: if cfg.native_rendering { native_frame } else { frame }
+		frame_fn: if cfg.immediate {
+			frame_immediate
+		} else if cfg.native_rendering {
+			native_frame
+		} else {
+			frame
+		}
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
@@ -388,7 +400,7 @@ pub fn window(cfg WindowConfig) &Window {
 		bg_color: cfg.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
-		ui_mode: true
+		ui_mode: !cfg.immediate
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -551,7 +563,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
-		// window.mouse_down_fn(e, window)
+		window.mouse_down_fn(e, window)
 	}
 	/*
 	for child in window.children {
@@ -867,6 +879,37 @@ fn frame(mut w Window) {
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
 	}
+
+	w.ui.gg.end()
+}
+
+fn frame_immediate(mut w Window) {
+	w.ui.gg.begin()
+
+	for mut child in w.children_immediate {
+		child.draw()
+	}
+
+	if !w.needs_refresh {
+		// Draw 3 more frames after the "stop refresh" command
+		w.ui.ticks++
+		if w.ui.ticks > 3 {
+			return
+		}
+	}
+
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+
+	for mut child in children {
+		child.draw()
+	}
+	draw_tooltip(w)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.needs_refresh = false
 
 	w.ui.gg.end()
 }

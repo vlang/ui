@@ -6,6 +6,10 @@ module ui
 import eventbus
 import gx
 
+const (
+	empty_stack = stack()
+)
+
 enum Direction {
 	row
 	column
@@ -48,7 +52,7 @@ pub mut:
 	width                int
 	height               int
 	z_index              int
-	parent               Layout
+	parent               Layout = ui.empty_stack
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
