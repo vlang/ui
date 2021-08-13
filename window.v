@@ -32,35 +32,39 @@ pub mut:
 	// pub:
 	ui &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
-	children      []Widget
-	child_window  &Window = voidptr(0)
-	parent_window &Window = voidptr(0)
-	has_textbox   bool // for initial focus
-	tab_index     int
-	just_tabbed   bool
-	state         voidptr
-	draw_fn       DrawFn
-	title         string
-	mx            f64
-	my            f64
-	width         int
-	height        int
-	click_fn      ClickFn
-	mouse_down_fn ClickFn
-	mouse_up_fn   ClickFn
-	scroll_fn     ScrollFn
-	resize_fn     ResizeFn
-	on_init       WindowFn
-	on_draw       WindowFn
-	key_down_fn   KeyFn
-	char_fn       KeyFn
-	mouse_move_fn MouseMoveFn
-	eventbus      &eventbus.EventBus = eventbus.new()
-	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable   bool // currently only for events.on_resized not modify children
-	mode        WindowSizeType
-	root_layout Layout = empty_stack
-	dpi_scale   f32
+	children          []Widget
+	child_window      &Window = voidptr(0)
+	parent_window     &Window = voidptr(0)
+	has_textbox       bool // for initial focus
+	tab_index         int
+	just_tabbed       bool
+	state             voidptr
+	draw_fn           DrawFn
+	title             string
+	mx                f64
+	my                f64
+	width             int
+	height            int
+	click_fn          ClickFn
+	mouse_down_fn     ClickFn
+	mouse_up_fn       ClickFn
+	mouse_move_fn     MouseMoveFn
+	scroll_fn         ScrollFn
+	key_down_fn       KeyFn
+	char_fn           KeyFn
+	resize_fn         ResizeFn
+	iconified_fn      WindowFn
+	restored_fn       WindowFn
+	quit_requested_fn WindowFn
+	suspended_fn      WindowFn
+	resumed_fn        WindowFn
+	on_init           WindowFn
+	on_draw           WindowFn
+	eventbus          &eventbus.EventBus = eventbus.new()
+	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
+	mode              WindowSizeType
+	root_layout       Layout = empty_stack
+	dpi_scale         f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -104,6 +108,11 @@ pub:
 	on_char               KeyFn
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
+	on_iconify            WindowFn
+	on_restore            WindowFn
+	on_quit_request       WindowFn
+	on_suspend            WindowFn
+	on_resume             WindowFn
 	on_mouse_move         MouseMoveFn
 	on_init               WindowFn
 	on_draw               WindowFn
@@ -195,8 +204,33 @@ fn on_event(e &gg.Event, mut window Window) {
 			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
-		.resized, .restored, .resumed {
+		.resized {
 			window_resize(e, window.ui)
+		}
+		.iconified {
+			if window.iconified_fn != voidptr(0) {
+				window.iconified_fn(window)
+			}
+		}
+		.restored {
+			if window.restored_fn != voidptr(0) {
+				window.restored_fn(window)
+			}
+		}
+		.quit_requested {
+			if window.quit_requested_fn != voidptr(0) {
+				window.quit_requested_fn(window)
+			}
+		}
+		.suspended {
+			if window.suspended_fn != voidptr(0) {
+				window.suspended_fn(window)
+			}
+		}
+		.resumed {
+			if window.resumed_fn != voidptr(0) {
+				window.resumed_fn(window)
+			}
 		}
 		.touches_began {
 			if e.num_touches > 0 {
@@ -361,6 +395,11 @@ pub fn window(cfg WindowConfig) &Window {
 		text_cfg: text_cfg
 		native_message: cfg.native_message
 		immediate: cfg.immediate
+		iconified_fn: cfg.on_iconify
+		restored_fn: cfg.on_restore
+		quit_requested_fn: cfg.on_quit_request
+		suspended_fn: cfg.on_suspend
+		resumed_fn: cfg.on_resume
 	}
 
 	// register default color themes
