@@ -46,7 +46,6 @@ pub struct DropdownConfig {
 	width    int = 150
 	height   int = 25
 	z_index  int = 10
-	// parent               Layout = ui.empty_stack
 	selected_index       int = -1
 	on_selection_changed SelectionChangedFn
 	items                []DropdownItem
