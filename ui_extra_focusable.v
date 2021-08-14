@@ -1,9 +1,22 @@
 module ui
 
+const (
+	idx_btn = typeof(button()).idx
+	idx_cb  = typeof(checkbox()).idx
+	idx_dd  = typeof(dropdown()).idx
+	idx_lb  = typeof(listbox()).idx
+	idx_rad = typeof(radio()).idx
+	idx_sl  = typeof(slider()).idx
+	idx_sw  = typeof(switcher()).idx
+	idx_tb  = typeof(textbox()).idx
+)
+
 // Widget having a field is_focused
 pub fn (w Widget) is_focusable() bool {
-	is_focusable_type := w.type_name() in ['ui.Button', 'ui.CheckBox', 'ui.Dropdown', 'ui.ListBox',
-		'ui.Radio', 'ui.Slider', 'ui.Switch', 'ui.TextBox']
+	// is_focusable_type := w.type_name() in ['ui.Button', 'ui.CheckBox', 'ui.Dropdown', 'ui.ListBox',
+	// 	'ui.Radio', 'ui.Slider', 'ui.Switch', 'ui.TextBox']
+	is_focusable_type := w.type_idx() in [ui.idx_btn, ui.idx_cb, ui.idx_dd, ui.idx_lb, ui.idx_rad,
+		ui.idx_sl, ui.idx_sw, ui.idx_tb]
 	mut read_only := false
 	if w is TextBox {
 		read_only = w.read_only

@@ -10,6 +10,7 @@ import os
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
 	button_border_color       = gx.rgb(200, 200, 200)
+	button_focus_border_color = gx.rgb(50, 50, 50)
 	button_horizontal_padding = 26
 	button_vertical_padding   = 8
 )
@@ -268,10 +269,18 @@ fn (mut b Button) draw() {
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))
 		b.ui.gg.draw_rounded_rect(x, y, width, height, radius, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rounded_rect(x, y, width, height, radius, ui.button_border_color)
+		b.ui.gg.draw_empty_rounded_rect(x, y, width, height, radius, if b.is_focused {
+			ui.button_focus_border_color
+		} else {
+			ui.button_border_color
+		})
 	} else {
 		b.ui.gg.draw_rect(x, y, width, height, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rect(x, y, width, height, ui.button_border_color)
+		b.ui.gg.draw_empty_rect(x, y, width, height, if b.is_focused {
+			ui.button_focus_border_color
+		} else {
+			ui.button_border_color
+		})
 	}
 	if b.use_icon {
 		b.ui.gg.draw_image(x, y, width, height, b.image)
