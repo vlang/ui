@@ -81,6 +81,8 @@ pub mut:
 	tooltips        []TooltipMessage
 	// with message
 	native_message bool
+	// Current focus
+	focused_widget Widget = empty_stack
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -736,7 +738,9 @@ fn window_key_down(event gg.Event, ui &UI) {
 		// action: action
 		// mods: mod
 	}
-	if e.key == .escape {
+	if e.key == .tab {
+		window.focus_next()
+	} else if e.key == .escape {
 		println('escape')
 	}
 	if e.key == .escape && window.child_window != 0 {
@@ -792,19 +796,30 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn (mut w Window) focus_next() {
-	mut doit := false
-	for mut child in w.children {
-		// Focus on the next widget
-		if doit {
-			child.focus()
-			break
-		}
-		is_focused := child.is_focused()
-		if is_focused {
-			doit = true
-		}
+	if !set_focus_next(mut w) {
+		set_focus_first(mut w)
 	}
-	w.just_tabbed = true
+
+	// mut doit := false
+	// for mut child in w.children {
+	// 	if child is Stack {
+	// 		child.focust_next()
+	// 	} else if child is CanvasLayout {
+	// 		child.focust_next()
+	// 	} else if child.is_focusable() {
+	// 		println("here")
+	// 		// Focus on the next widget
+	// 		if doit {
+	// 			child.focus()
+	// 			break
+	// 		}
+	// 		is_focused := child.is_focused()
+	// 		if is_focused {
+	// 			doit = true
+	// 		}
+	// 	}
+	// }
+	// w.just_tabbed = true
 }
 
 fn (w &Window) focus_previous() {

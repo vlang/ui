@@ -101,8 +101,8 @@ fn (tv &TextView) sel_end_line() string {
 }
 
 fn (tv &TextView) is_sel_active() bool {
-	// println("tv sel active: $tv.sel_end")
-	return tv.tb.is_focused && tv.sel_end >= 0 && tv.sel_start != tv.sel_end
+	// Make selection drawable in read-only mode too
+	return (tv.tb.is_focused || tv.tb.read_only) && tv.tb.sel_active && tv.sel_end >= 0 // && tv.sel_start != tv.sel_end
 }
 
 fn (mut tv TextView) sync_text_pos() {
@@ -356,6 +356,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	// wui := tv.tb.ui
 	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
+		if tv.tb.read_only {
+			return
+		}
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
 			tv.delete_selection()
@@ -364,12 +367,17 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		tv.cursor_pos++
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
+		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
 		match s {
 			'a' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.sel_start = 0
 				tv.sel_end = tv.text.runes().len
 				tv.sync_text_lines()
 				tv.tb.ui.show_cursor = false
+				tv.tb.sel_active = true
 				return
 			}
 			'c' {
@@ -380,9 +388,15 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				}
 			}
 			'v' {
+				if tv.tb.read_only {
+					return
+				}
 				tv.insert(tv.tb.ui.clipboard.paste())
 			}
 			'x' {
+				if tv.tb.read_only {
+					return
+				}
 				if tv.is_sel_active() {
 					ustr := tv.text.runes()
 					sel_start, sel_end := tv.ordered_pos_selection()
@@ -391,6 +405,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				}
 			}
 			'-' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.tb.text_size -= 2
 				if tv.tb.text_size < 8 {
 					tv.tb.text_size = 8
@@ -401,6 +418,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				tv.update_lines()
 			}
 			'=', '+' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.tb.text_size += 2
 				if tv.tb.text_size > 48 {
 					tv.tb.text_size = 48
@@ -485,9 +505,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
 		}
-		.tab {
-			println('tab')
-		}
+		// .tab {
+		// 	// println('tab')
+		// }
 		else {}
 	}
 }

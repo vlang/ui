@@ -75,6 +75,8 @@ pub mut:
 	on_key_down   KeyDownFn = KeyDownFn(0)
 	on_char       CharFn    = CharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
+	is_selectable      bool // for read_only textbox
+	sel_active         bool // to deal with show cursor when selection active
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
@@ -354,6 +356,7 @@ fn (mut tb TextBox) draw() {
 			}
 		}
 		// Draw the cursor
+		// println("draw cursor: $tb.is_focused && !$tb.read_only && $tb.ui.show_cursor && ${!tb.is_sel_active()}")
 		if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.is_sel_active() {
 			// no cursor in sel mode
 			mut cursor_x := tb.x + ui.textbox_padding_x
@@ -385,7 +388,7 @@ fn (tb &TextBox) is_sel_active() bool {
 	if tb.is_multiline {
 		return tb.tv.is_sel_active()
 	} else {
-		return tb.is_focused && tb.sel_end != -1 //&& tb.sel_start != tb.sel_end
+		return (tb.is_focused || tb.read_only) && tb.sel_active && tb.sel_end != -1 //&& tb.sel_start != tb.sel_end
 	}
 }
 
@@ -407,6 +410,7 @@ pub fn (mut tb TextBox) cancel_selection() {
 		tb.sel_start = -1
 		tb.sel_end = -1
 	}
+	tb.sel_active = false
 }
 
 pub fn (mut tb TextBox) delete_selection() {
@@ -456,7 +460,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	if tb.hidden {
 		return
 	}
-	if !tb.is_focused {
+	if !tb.is_focused && !tb.read_only {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
@@ -471,9 +475,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
 	// Entering text
-	if tb.read_only {
-		return
-	}
 	if tb.is_multiline {
 		tb.tv.key_down(e)
 	} else {
@@ -482,7 +483,11 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.cursor_pos = 0
 		}
 		s := utf32_to_str(e.codepoint)
+		// println("key_down: $s $e.mods")
 		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
+			if tb.read_only {
+				return
+			}
 			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
 			}
@@ -500,8 +505,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		} else if e.mods in [.ctrl, .super] {
 			match s {
 				'a' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					tb.sel_start = 0
 					tb.sel_end = text.runes().len
+					tb.sel_active = true
 				}
 				'c' {
 					if tb.is_sel_active() {
@@ -515,9 +524,15 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'v' {
+					if tb.read_only {
+						return
+					}
 					tb.insert(tb.ui.clipboard.paste())
 				}
 				'x' {
+					if tb.read_only {
+						return
+					}
 					if tb.is_sel_active() {
 						ustr := tb.text.runes()
 						sel_start, sel_end := if tb.sel_start < tb.sel_end {
@@ -530,6 +545,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'-' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					if tb.fitted_height {
 						// TODO: propose_size
 						tb.text_size -= 2
@@ -541,6 +559,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'=', '+' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					if tb.fitted_height {
 						tb.text_size += 2
 						if tb.text_size > 48 {
@@ -660,7 +681,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			.tab {
-				tb.ui.show_cursor = false
+				// tb.ui.show_cursor = false
 				/*
 				TODO if tb.parent.just_tabbed {
 					tb.parent.just_tabbed = false
@@ -761,7 +782,7 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 }
 
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
-	// println("mouse first")
+	// println("mouse first $tb.id")
 	if tb.hidden {
 		return
 	}
@@ -773,6 +794,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.unfocus()
 		return
 	} else {
+		println('mouse first $tb.id')
 		tb.focus()
 	}
 	// Calculate cursor position
@@ -818,7 +840,8 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 	if tb.hidden {
 		return
 	}
-	if !tb.point_inside(e.x, e.y) {
+	tb.is_selectable = tb.point_inside(e.x, e.y)
+	if !(tb.is_selectable) {
 		return
 	}
 	if tb.dragging {
@@ -828,7 +851,9 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			tb.tv.end_selection(x, y)
 		} else {
 			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
+			tb.ui.show_cursor = false
 		}
+		tb.sel_active = true
 	}
 }
 
@@ -857,6 +882,7 @@ fn (tb &TextBox) is_focused() bool {
 fn (mut tb TextBox) unfocus() {
 	// println('textbox $t.placeholder unfocus()')
 	tb.is_focused = false
+	tb.sel_active = false
 	tb.sel_start = 0
 	tb.sel_end = 0
 }
