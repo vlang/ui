@@ -68,5 +68,4 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
 	mut tb := switcher.ui.window.textbox(tbs)
 	tb.tv.switch_wordwrap()
-	tb.focus()
 }
