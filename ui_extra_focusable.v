@@ -24,13 +24,18 @@ pub fn set_focus<T>(w &Window, mut f T) {
 }
 
 pub fn set_focus_next<T>(mut w T) bool {
-	mut doit, mut focused_found := false, false
+	mut focused_found := false
+	mut window := w.ui.window
 	for mut child in w.children {
+		// println("child to focus_next ${widget_id(*child)} ${child.type_name()} ${child.is_focusable()}")
 		focused_found = if mut child is Stack {
+			// println("focus next inside $child.id")
 			set_focus_next(mut child)
 		} else if mut child is CanvasLayout {
+			// println("focus next inside $child.id")
 			set_focus_next(mut child)
 		} else if mut child is Group {
+			// println("focus next inside $child.id")
 			set_focus_next(mut child)
 		} else {
 			false
@@ -40,14 +45,48 @@ pub fn set_focus_next<T>(mut w T) bool {
 		}
 		if child.is_focusable() {
 			// Focus on the next widget
-			if doit {
+			if window.do_focus {
 				child.focus()
 				focused_found = true
+				window.do_focus = false
 				break
+			} else {
+				window.do_focus = child.is_focused()
 			}
-			is_focused := child.is_focused()
-			if is_focused {
-				doit = true
+		}
+	}
+	return focused_found
+}
+
+pub fn set_focus_prev<T>(mut w T) bool {
+	mut focused_found := false
+	mut window := w.ui.window
+	for mut child in w.children.reverse() {
+		// println("child to focus_prev ${widget_id(*child)} ${child.type_name()} ${child.is_focusable()}")
+		focused_found = if mut child is Stack {
+			// println("focus next inside $child.id")
+			set_focus_prev(mut child)
+		} else if mut child is CanvasLayout {
+			// println("focus next inside $child.id")
+			set_focus_prev(mut child)
+		} else if mut child is Group {
+			// println("focus next inside $child.id")
+			set_focus_prev(mut child)
+		} else {
+			false
+		}
+		if focused_found {
+			break
+		}
+		if child.is_focusable() {
+			// Focus on the next widget
+			if window.do_focus {
+				child.focus()
+				focused_found = true
+				window.do_focus = false
+				break
+			} else {
+				window.do_focus = child.is_focused()
 			}
 		}
 	}
@@ -63,6 +102,29 @@ pub fn set_focus_first<T>(mut w T) bool {
 			set_focus_first(mut child)
 		} else if mut child is Group {
 			set_focus_first(mut child)
+		} else if child.is_focusable() {
+			// Focus on the next widget
+			child.focus()
+			true
+		} else {
+			false
+		}
+		if doit {
+			break
+		}
+	}
+	return doit
+}
+
+pub fn set_focus_last<T>(mut w T) bool {
+	mut doit := false
+	for mut child in w.children.reverse() {
+		doit = if mut child is Stack {
+			set_focus_last(mut child)
+		} else if mut child is CanvasLayout {
+			set_focus_last(mut child)
+		} else if mut child is Group {
+			set_focus_last(mut child)
 		} else if child.is_focusable() {
 			// Focus on the next widget
 			child.focus()

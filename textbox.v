@@ -453,7 +453,8 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 }
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
-	// println('key down $e')
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_keydown ? {
 		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
 	}
@@ -468,6 +469,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		unsafe {
 			*tb.is_error = false
 		}
+	}
+	if e.key == .tab || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
+		return
 	}
 	tb.is_typing = true
 	if tb.on_key_down != KeyDownFn(0) {
