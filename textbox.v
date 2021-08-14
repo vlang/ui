@@ -5,7 +5,6 @@ module ui
 
 import gx
 import gg
-import strings
 import time
 // import sokol.sapp
 
@@ -324,7 +323,8 @@ fn (mut tb TextBox) draw() {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if width > tb.width {
+			if width > tb.width && !tb.is_password {
+				// Less useful with scrollview
 				tb.ui.gg.set_cfg(tb.text_cfg)
 				for i := text_len - 1; i >= 0; i-- {
 					if i >= text_len {
@@ -339,17 +339,7 @@ fn (mut tb TextBox) draw() {
 				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
 			} else {
 				if tb.is_password {
-					/*
-					for i in 0..tb.text.len {
-						// TODO drawing multiple circles is broken
-						//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
-					}
-					*/
-					// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-					// 	text.len), tb.placeholder_cfg)
-					// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-						text_len))
+					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
 				} else {
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
 				}
@@ -360,17 +350,16 @@ fn (mut tb TextBox) draw() {
 		if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.is_sel_active() {
 			// no cursor in sel mode
 			mut cursor_x := tb.x + ui.textbox_padding_x
-			if tb.is_password {
-				cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos))
-			} else if skip_idx > 0 {
-				cursor_x += text_width(tb, text[skip_idx..])
-			} else if text_len > 0 {
-				// left := tb.text[..tb.cursor_pos]
-				left := text.runes()[..tb.cursor_pos].string()
-				cursor_x += text_width(tb, left)
-			}
-			if text_len == 0 {
-				cursor_x = tb.x + ui.textbox_padding_x
+			if text_len > 0 {
+				if tb.is_password {
+					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
+				} else if skip_idx > 0 {
+					cursor_x += text_width(tb, text[skip_idx..])
+				} else if text_len > 0 {
+					// left := tb.text[..tb.cursor_pos]
+					left := text.runes()[..tb.cursor_pos].string()
+					cursor_x += text_width(tb, left)
+				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
