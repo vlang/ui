@@ -25,9 +25,9 @@ const (
 	selection_color               = gx.rgb(186, 214, 251)
 )
 
-type KeyDownFn = fn (voidptr, &TextBox, u32)
+type TextBoxKeyDownFn = fn (voidptr, &TextBox, u32)
 
-type CharFn = fn (voidptr, &TextBox, u32)
+type TextBoxCharFn = fn (voidptr, &TextBox, u32)
 
 // type KeyUpFn = fn (voidptr, voidptr, u32)
 
@@ -72,8 +72,8 @@ pub mut:
 	read_only     bool
 	borderless    bool
 	fitted_height bool // if true fit height in propose_size
-	on_key_down   KeyDownFn = KeyDownFn(0)
-	on_char       CharFn    = CharFn(0)
+	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
+	on_char       TextBoxCharFn    = TextBoxCharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	is_selectable      bool // for read_only textbox
 	sel_active         bool // to deal with show cursor when selection active
@@ -120,8 +120,8 @@ pub struct TextBoxConfig {
 	// is_error bool
 	borderless    bool
 	fitted_height bool
-	on_key_down   KeyDownFn
-	on_char       CharFn
+	on_key_down   TextBoxKeyDownFn
+	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
 	on_change          voidptr
 	on_enter           voidptr
@@ -447,7 +447,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	if !tb.is_focused {
 		return
 	}
-	if tb.on_char != CharFn(0) {
+	if tb.on_char != TextBoxCharFn(0) {
 		tb.on_char(window.state, tb, e.codepoint)
 	}
 }
@@ -474,7 +474,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	tb.is_typing = true
-	if tb.on_key_down != KeyDownFn(0) {
+	if tb.on_key_down != TextBoxKeyDownFn(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?

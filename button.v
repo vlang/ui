@@ -20,7 +20,9 @@ enum ButtonState {
 	pressed = 2
 }
 
-type ButtonClickFn = fn (voidptr, voidptr) // userptr, btn
+type ButtonClickFn = fn (voidptr, &Button) // userptr, btn
+
+type ButtonKeyDownFn = fn (voidptr, &Button, u32)
 
 [heap]
 pub struct Button {
@@ -44,19 +46,21 @@ pub mut:
 	is_focused bool
 	ui         &UI = 0
 	onclick    ButtonClickFn
-	text       string
-	icon_path  string
-	image      gg.Image
-	use_icon   bool
-	padding    f32
-	radius     f32
-	hidden     bool
-	movable    bool // drag, transition or anything allowing offset yo be updated
-	hoverable  bool
-	to_hover   bool
-	tooltip    TooltipMessage
-	text_cfg   gx.TextCfg
-	text_size  f64
+	// TODO: same convention for all callback
+	on_key_down ButtonKeyDownFn = ButtonKeyDownFn(0)
+	text        string
+	icon_path   string
+	image       gg.Image
+	use_icon    bool
+	padding     f32
+	radius      f32
+	hidden      bool
+	movable     bool // drag, transition or anything allowing offset yo be updated
+	hoverable   bool
+	to_hover    bool
+	tooltip     TooltipMessage
+	text_cfg    gx.TextCfg
+	text_size   f64
 	// theme
 	theme_cfg ColorThemeCfg
 	theme     map[int]gx.Color = map[int]gx.Color{}
@@ -69,6 +73,7 @@ pub struct ButtonConfig {
 	text         string
 	icon_path    string
 	onclick      ButtonClickFn
+	on_key_down  ButtonKeyDownFn
 	height       int
 	width        int
 	z_index      int
@@ -97,6 +102,7 @@ pub fn button(c ButtonConfig) &Button {
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		theme_cfg: c.theme
 		onclick: c.onclick
+		on_key_down: c.on_key_down
 		text_cfg: c.text_cfg
 		text_size: c.text_size
 		radius: f32(c.radius)
@@ -128,6 +134,7 @@ fn (mut b Button) init(parent Layout) {
 		win.append_tooltip(b, b.tooltip)
 	}
 	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_key_down, btn_key_down, b)
 	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
 	subscriber.subscribe_method(events.on_click, btn_click, b)
 	subscriber.subscribe_method(events.on_touch_down, btn_mouse_down, b)
@@ -139,6 +146,7 @@ fn (mut b Button) init(parent Layout) {
 [manualfree]
 fn (mut b Button) cleanup() {
 	mut subscriber := b.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_key_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_down, b)
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
@@ -169,6 +177,31 @@ pub fn (b &Button) free() {
 	}
 }
 
+fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
+	$if btn_keydown ? {
+		println('btn_keydown: $b.id  -> $b.hidden $b.is_focused')
+	}
+	if b.hidden {
+		return
+	}
+	if !b.is_focused {
+		return
+	}
+	if b.on_key_down != ButtonKeyDownFn(0) {
+		b.on_key_down(window.state, b, e.codepoint)
+	} else {
+		// default behavior like click for space and enter
+		if e.key in [.enter, .space] {
+			// println("btn key as a click")
+			if b.onclick != ButtonClickFn(0) {
+				b.onclick(window.state, b)
+			}
+		}
+	}
+}
+
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {
@@ -179,7 +212,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.onclick != voidptr(0) && b.is_focused() {
+			if b.onclick != ButtonClickFn(0) && b.is_focused() {
 				$if btn_onclick ? {
 					println('onclick $b.id')
 				}
@@ -323,8 +356,6 @@ pub fn (mut b Button) set_text_size() {
 		}
 	}
 }
-
-// fn (b &Button) key_down(e KeyEvent) {}
 
 fn (b &Button) point_inside(x f64, y f64) bool {
 	// println("point_inside button: ($b.x $b.offset_x, $b.y $b.offset_y) ($x, $y) ($b.width, $b.height)")
