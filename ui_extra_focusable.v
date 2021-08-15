@@ -21,7 +21,7 @@ pub fn (w Widget) is_focusable() bool {
 	if w is TextBox {
 		read_only = w.read_only
 	}
-	return is_focusable_type && !read_only
+	return is_focusable_type && !read_only && !w.hidden
 }
 
 // Only one widget can have the focus inside a Window
