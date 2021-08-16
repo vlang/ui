@@ -539,11 +539,12 @@ pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	}
 }
 
+/*
 pub fn (mut tv TextView) is_cursor_at_end() bool {
 	max_offset_y, _ := tv.tb.scrollview.coef_y()
 	println('is_cursor_at_End? $tv.tb.scrollview.offset_y >=  $max_offset_y')
 	return tv.tb.scrollview.offset_y >= max_offset_y
-}
+}*/
 
 pub fn (mut tv TextView) cursor_at_end() {
 	// println("here cursor at end")
