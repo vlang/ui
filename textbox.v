@@ -787,7 +787,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.unfocus()
 		return
 	} else {
-		println('mouse first $tb.id')
+		// println('mouse first $tb.id')
 		tb.focus()
 	}
 	// Calculate cursor position
