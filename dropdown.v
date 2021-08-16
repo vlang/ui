@@ -176,6 +176,14 @@ pub fn (mut dd Dropdown) add_item(text string) {
 	dd.items << DropdownItem{text}
 }
 
+fn (mut dd Dropdown) open_drawer() {
+	dd.open = !dd.open
+	if !dd.open {
+		dd.hover_index = dd.selected_index
+	}
+	dd.focus()
+}
+
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 	if dd.hidden || !dd.is_focused {
 		return
@@ -247,7 +255,6 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	// println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
 	if dd.point_inside(e.x, e.y) {
 		dd.focus()
-		dd.ui.window.lock_focus()
 	} else {
 		dd.unfocus()
 	}
@@ -271,14 +278,7 @@ fn (mut dd Dropdown) set_visible(state bool) {
 fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
 	set_focus(dd.ui.window, mut dd)
-}
-
-fn (mut dd Dropdown) open_drawer() {
-	dd.open = !dd.open
-	if !dd.open {
-		dd.hover_index = dd.selected_index
-	}
-	dd.focus()
+	dd.ui.window.lock_focus()
 }
 
 fn (dd &Dropdown) is_focused() bool {
