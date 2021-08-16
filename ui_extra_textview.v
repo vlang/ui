@@ -147,10 +147,8 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
-	for j, line in tv.tlv.lines {
-		// if j >= tv.tlv.cursor_pos_j - 30 && j <= tv.tlv.cursor_pos_j + 30 {
+	for line in tv.tlv.lines {
 		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
-		// }
 		y += tv.tb.line_height
 	}
 	// draw cursor
