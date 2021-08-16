@@ -6,9 +6,10 @@ module ui
 import gx
 
 const (
-	dropdown_color = gx.rgb(240, 240, 240)
-	border_color   = gx.rgb(223, 223, 223)
-	drawer_color   = gx.rgb(255, 255, 255)
+	dropdown_color        = gx.rgb(240, 240, 240)
+	dropdown_border_color = gx.rgb(223, 223, 223)
+	dropdown_focus_color  = gx.rgb(50, 50, 50)
+	dropdown_drawer_color = gx.rgb(255, 255, 255)
 )
 
 pub type SelectionChangedFn = fn (voidptr, &Dropdown)
@@ -131,7 +132,11 @@ fn (mut dd Dropdown) draw() {
 	gg := dd.ui.gg
 	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
-	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.border_color)
+	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
+		ui.dropdown_focus_color
+	} else {
+		ui.dropdown_border_color
+	})
 	if dd.selected_index >= 0 {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
@@ -148,16 +153,20 @@ fn (dd &Dropdown) draw_open() {
 	if dd.open {
 		gg := dd.ui.gg
 		gg.draw_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.drawer_color)
+			ui.dropdown_drawer_color)
 		gg.draw_empty_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.border_color)
+			ui.dropdown_border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
-			color := if i == dd.hover_index { ui.border_color } else { ui.drawer_color }
+			color := if i == dd.hover_index {
+				ui.dropdown_border_color
+			} else {
+				ui.dropdown_drawer_color
+			}
 			gg.draw_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
 			gg.draw_empty_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
-				ui.border_color)
+				ui.dropdown_border_color)
 			gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 		}
 	}
@@ -236,7 +245,7 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
-	println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
+	// println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
 	if dd.point_inside(e.x, e.y) {
 		dd.focus()
 		dd.ui.window.lock_focus()
