@@ -147,8 +147,10 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
-	for line in tv.tlv.lines {
+	for j, line in tv.tlv.lines {
+		// if j >= tv.tlv.cursor_pos_j - 30 && j <= tv.tlv.cursor_pos_j + 30 {
 		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		// }
 		y += tv.tb.line_height
 	}
 	// draw cursor
@@ -213,7 +215,8 @@ fn (mut tv TextView) delete_cur_char() {
 }
 
 fn (mut tv TextView) delete_prev_char() {
-	if tv.cursor_pos == 0 {
+	if tv.cursor_pos <= 0 {
+		tv.cursor_pos = 0
 		return
 	}
 	mut ustr := tv.text.runes()
@@ -443,8 +446,12 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 	}
 	// println("tb key_down $e.key ${int(e.codepoint)}")
+	if tv.tb.read_only {
+		return
+	}
 	match e.key {
 		.enter {
+			println('enter $tv.tb.id')
 			tv.insert('\n')
 			tv.cursor_pos++
 			tv.sync_text_lines()
