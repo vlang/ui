@@ -63,7 +63,7 @@ pub fn set_focus_next<T>(mut w T) bool {
 	mut window := w.ui.window
 	for mut child in w.children {
 		$if focus ? {
-			println('child to focus_next ${widget_id(*child)} $child.type_name() $child.is_focusable()')
+			println('child to focus_next $child.id() $child.type_name() $child.is_focusable()')
 		}
 		focused_found = if mut child is Stack {
 			// $if focus ? {
@@ -106,7 +106,7 @@ pub fn set_focus_prev<T>(mut w T) bool {
 	mut window := w.ui.window
 	for mut child in w.children.reverse() {
 		$if focus ? {
-			println('child to focus_prev ${widget_id(*child)} $child.type_name() $child.is_focusable()')
+			println('child to focus_prev $child.id() $child.type_name() $child.is_focusable()')
 		}
 		focused_found = if mut child is Stack {
 			// println("focus next inside $child.id")
@@ -233,5 +233,5 @@ mut win := w
 		println("h5")
 	}
 	//
-	println("f_w: $w.focusable_widgets.len ${w.focusable_widgets.map(it.t)} ${w.focusable_widgets.map(widget_id(it.w))} ${w.focusable_widgets.map(it.w.z_index)}")
+	println("f_w: $w.focusable_widgets.len ${w.focusable_widgets.map(it.t)} ${w.focusable_widgets.map(it.w.id())} ${w.focusable_widgets.map(it.w.z_index)}")
 */

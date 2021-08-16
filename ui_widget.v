@@ -11,7 +11,7 @@ pub fn set_depth(mut w Widget, z_index int) {
 
 // TODO: If id is added to Widget interface,
 // this could be simplified and above all extensible with external widgets
-pub fn widget_id(child Widget) string {
+pub fn (child &Widget) id() string {
 	match child {
 		Button, Canvas, CheckBox, Dropdown, Grid, Label, ListBox, Menu, Picture, ProgressBar,
 		Radio, Rectangle, Slider, Switch, TextBox, Transition, Stack, Group, CanvasLayout {

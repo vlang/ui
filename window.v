@@ -284,7 +284,7 @@ fn gg_init(mut window Window) {
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
-		// println('cleanup ${widget_id(*child)}')
+		// println('cleanup ${child.id()}')
 		child.cleanup()
 	}
 	unsafe { window.free() }
