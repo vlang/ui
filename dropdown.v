@@ -12,7 +12,7 @@ const (
 	dropdown_drawer_color = gx.rgb(255, 255, 255)
 )
 
-pub type SelectionChangedFn = fn (voidptr, &Dropdown)
+pub type DropDownSelectionChangedFn = fn (voidptr, &Dropdown)
 
 [heap]
 pub struct Dropdown {
@@ -33,7 +33,7 @@ pub mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed SelectionChangedFn
+	on_selection_changed DropDownSelectionChangedFn
 	hidden               bool
 	// component state for composable widget
 	component voidptr
@@ -48,7 +48,7 @@ pub struct DropdownConfig {
 	height               int = 25
 	z_index              int = 10
 	selected_index       int = -1
-	on_selection_changed SelectionChangedFn
+	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
 }
 
@@ -204,7 +204,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		}
 		.enter {
 			dd.selected_index = dd.hover_index
-			if dd.on_selection_changed != SelectionChangedFn(0) {
+			if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 				parent := dd.parent
 				state := parent.get_state()
 				dd.on_selection_changed(state, dd)
@@ -230,7 +230,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.selected_index = index
-		if dd.on_selection_changed != SelectionChangedFn(0) {
+		if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 			parent := dd.parent
 			state := parent.get_state()
 			dd.on_selection_changed(state, dd)
