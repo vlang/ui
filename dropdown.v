@@ -236,7 +236,6 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 			dd.on_selection_changed(state, dd)
 		}
 		dd.unfocus()
-		dd.ui.window.unlock_focus()
 	}
 	offset_end(mut dd)
 }
@@ -289,6 +288,7 @@ fn (dd &Dropdown) is_focused() bool {
 fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
+	dd.ui.window.unlock_focus()
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
