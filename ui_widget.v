@@ -54,3 +54,15 @@ pub fn widget_id(child Widget) string {
 		return '_unknown'
 	}
 }
+
+// pub fn widget_id(child Widget) string {
+// 	match child {
+// 		Button, Canvas, CheckBox, Dropdown, Grid, Label, ListBox, Menu, Picture, ProgressBar,
+// 		Radio, Rectangle, Slider, Switch, TextBox, Transition, Stack, Group, CanvasLayout {
+// 			return child.id
+// 		}
+// 		else {
+// 			return '_unknown'
+// 		}
+// 	}
+// }

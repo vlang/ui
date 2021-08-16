@@ -506,6 +506,18 @@ pub fn (sv &ScrollView) draw() {
 	}
 }
 
+fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
+	if sv.is_active() {
+		if sv.active_x && mode == .btn_x {
+			sv.offset_x = val
+			sv.change_value(.btn_x)
+		} else if sv.active_y && mode == .btn_y {
+			sv.offset_y = val
+			sv.change_value(.btn_y)
+		}
+	}
+}
+
 fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 	if sv.is_active() {
 		if sv.active_x && mode == .btn_x {

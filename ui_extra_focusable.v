@@ -184,6 +184,9 @@ pub fn set_focus_last<T>(mut w T) bool {
 	return doit
 }
 
+/*
+All this stuff is a future development
+
 interface Focusable {
 	hidden bool
 	focus()
@@ -210,7 +213,7 @@ fn (w Widget) focusable() (bool, Focusable) {
 	} else {
 		return false, empty_stack
 	}
-}
+}*/
 
 /*
 mut win := w

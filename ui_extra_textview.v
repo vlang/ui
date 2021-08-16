@@ -46,7 +46,7 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 	}
 	w += textbox_padding_x * 2
-	if tv.tb.has_scrollview && tv.tb.scrollview.active_y {
+	if !tv.tb.read_only && tv.tb.has_scrollview && tv.tb.scrollview.active_y {
 		if tv.tb.scrollview.offset_y > 0 {
 			// println("scrollview size: offset_y -> $tv.tb.scrollview.offset_y")
 			// println(" $h > $tv.tb.height")
@@ -127,7 +127,7 @@ fn (mut tv TextView) sync_text_lines() {
 	}
 }
 
-fn (mut tv TextView) update_lines() {
+pub fn (mut tv TextView) update_lines() {
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
@@ -307,7 +307,7 @@ pub fn (mut tv TextView) cancel_selection() {
 	tv.sync_text_lines()
 }
 
-fn (mut tv TextView) move_cursor(side Side) {
+pub fn (mut tv TextView) move_cursor(side Side) {
 	match side {
 		.left {
 			tv.cursor_pos--
@@ -530,12 +530,25 @@ fn (tv &TextView) cursor_xy() (int, int) {
 	return tv.cursor_x(), tv.cursor_y()
 }
 
-fn (mut tv TextView) cursor_adjust_after_newline() {
+pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	if tv.tb.has_scrollview {
 		if tv.tb.scrollview.active_y
 			&& !tv.tb.scrollview.point_inside(tv.cursor_x(), tv.cursor_y() + tv.tb.line_height, .view) {
 			tv.tb.scrollview.inc(tv.tb.line_height, .btn_y)
 		}
+	}
+}
+
+pub fn (mut tv TextView) is_cursor_at_end() bool {
+	max_offset_y, _ := tv.tb.scrollview.coef_y()
+	println('is_cursor_at_End? $tv.tb.scrollview.offset_y >=  $max_offset_y')
+	return tv.tb.scrollview.offset_y >= max_offset_y
+}
+
+pub fn (mut tv TextView) cursor_at_end() {
+	// println("here cursor at end")
+	if tv.tb.scrollview.active_y {
+		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.tb.line_height, .btn_y)
 	}
 }
 
