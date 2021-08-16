@@ -506,7 +506,7 @@ pub fn (sv &ScrollView) draw() {
 	}
 }
 
-fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
+pub fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 	if sv.is_active() {
 		if sv.active_x && mode == .btn_x {
 			sv.offset_x = val
@@ -518,7 +518,12 @@ fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 	}
 }
 
-fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
+pub fn (mut sv ScrollView) move_to_end_y() {
+	max_offset_y, _ := sv.coef_y()
+	sv.set(max_offset_y, .btn_y)
+}
+
+pub fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 	if sv.is_active() {
 		if sv.active_x && mode == .btn_x {
 			sv.offset_x += delta
@@ -654,12 +659,12 @@ fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-fn (sv &ScrollView) coef_x() (int, f32) {
+pub fn (sv &ScrollView) coef_x() (int, f32) {
 	max_offset_x := sv.adj_width - sv.width + 2 * ui.scrollbar_size
 	return max_offset_x, f32(sv.sb_w - sv.btn_w) / f32(max_offset_x)
 }
 
-fn (sv &ScrollView) coef_y() (int, f32) {
+pub fn (sv &ScrollView) coef_y() (int, f32) {
 	max_offset_y := (sv.adj_height - sv.height + 2 * ui.scrollbar_size)
 	return max_offset_y, f32(sv.sb_h - sv.btn_h) / f32(max_offset_y)
 }
