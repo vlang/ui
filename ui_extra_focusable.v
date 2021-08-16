@@ -11,6 +11,12 @@ const (
 	idx_tb  = typeof(textbox()).idx
 )
 
+struct TimeWidget {
+pub mut:
+	w Widget
+	t u64
+}
+
 // Widget having a field is_focused
 pub fn (w Widget) is_focusable() bool {
 	// is_focusable_type := w.type_name() in ['ui.Button', 'ui.CheckBox', 'ui.Dropdown', 'ui.ListBox',
@@ -24,16 +30,30 @@ pub fn (w Widget) is_focusable() bool {
 	return is_focusable_type && !read_only && !w.hidden
 }
 
+pub fn (mut w Window) lock_focus() {
+	w.locked_focus = true
+}
+
+pub fn (mut w Window) unlock_focus() {
+	w.locked_focus = false
+}
+
 // Only one widget can have the focus inside a Window
 pub fn set_focus<T>(w &Window, mut f T) {
+	if w.locked_focus {
+		return
+	}
 	if f.is_focused() {
+		$if focus ? {
+			println('$f.id already has focus at $w.ui.gg.frame')
+		}
 		return
 	}
 	w.unfocus_all()
 	if Widget(f).is_focusable() {
 		f.is_focused = true
 		$if focus ? {
-			println('$f.id has focus')
+			println('$f.id has focus at $w.ui.gg.frame')
 		}
 	}
 }
@@ -163,3 +183,52 @@ pub fn set_focus_last<T>(mut w T) bool {
 	}
 	return doit
 }
+
+interface Focusable {
+	hidden bool
+	focus()
+	is_focused() bool
+}
+
+fn (w Widget) focusable() (bool, Focusable) {
+	if w is Button {
+		return true, w
+	} else if w is CheckBox {
+		return true, w
+	} else if w is Dropdown {
+		return true, w
+	} else if w is ListBox {
+		return true, w
+	} else if w is Radio {
+		return true, w
+	} else if w is Slider {
+		return true, w
+	} else if w is Switch {
+		return true, w
+	} else if w is TextBox {
+		return true, w
+	} else {
+		return false, empty_stack
+	}
+}
+
+/*
+mut win := w
+	t := win.ui.gg.frame
+	println("here")
+	if win.focusable_widgets.len == 0 {
+		println("here2")
+		win.focusable_widgets << TimeWidget{w: f, t: t}
+		println("here3")
+	} else {
+		fw := win.focusable_widgets[win.focusable_widgets.len - 1]
+		println("here4: $fw.t == $t")
+		if fw.t == t {
+			println("h4")
+			win.focusable_widgets << TimeWidget{f, t}
+		}
+		println("h5")
+	}
+	//
+	println("f_w: $w.focusable_widgets.len ${w.focusable_widgets.map(it.t)} ${w.focusable_widgets.map(widget_id(it.w))} ${w.focusable_widgets.map(it.w.z_index)}")
+*/

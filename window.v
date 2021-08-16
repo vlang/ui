@@ -82,7 +82,8 @@ pub mut:
 	// with message
 	native_message bool
 	// focus stuff
-	do_focus bool
+	do_focus     bool
+	locked_focus bool
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -267,7 +268,7 @@ fn gg_init(mut window Window) {
 	if !window.native_message {
 		window.add_message_dialog()
 	}
-	for _, mut child in window.children {
+	for mut child in window.children {
 		// println('init $child.type_name()')
 		window.register_child(*child)
 		child.init(window)

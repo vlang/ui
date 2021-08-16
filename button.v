@@ -207,6 +207,9 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.hidden {
 		return
 	}
+	if !b.is_focused {
+		return
+	}
 	if b.point_inside(e.x, e.y) {
 		if e.action == .down {
 			b.state = .pressed
@@ -366,9 +369,7 @@ fn (mut b Button) set_visible(state bool) {
 	b.hidden = !state
 }
 
-// fn (mut b Button) mouse_move(e MouseEvent) {}
 fn (mut b Button) focus() {
-	// b.is_focused = true
 	set_focus(b.ui.window, mut b)
 }
 

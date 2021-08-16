@@ -11,7 +11,7 @@ const (
 	drawer_color   = gx.rgb(255, 255, 255)
 )
 
-pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
+pub type SelectionChangedFn = fn (voidptr, &Dropdown)
 
 [heap]
 pub struct Dropdown {
@@ -78,6 +78,7 @@ fn (mut dd Dropdown) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
+	subscriber.subscribe_method(events.on_mouse_down, dd_mouse_down, dd)
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
 }
 
@@ -86,6 +87,7 @@ fn (mut dd Dropdown) cleanup() {
 	mut subscriber := dd.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, dd)
 	subscriber.unsubscribe_method(events.on_key_down, dd)
+	subscriber.unsubscribe_method(events.on_mouse_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_move, dd)
 	unsafe { dd.free() }
 }
@@ -193,7 +195,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		}
 		.enter {
 			dd.selected_index = dd.hover_index
-			if dd.on_selection_changed != voidptr(0) {
+			if dd.on_selection_changed != SelectionChangedFn(0) {
 				parent := dd.parent
 				state := parent.get_state()
 				dd.on_selection_changed(state, dd)
@@ -208,10 +210,10 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
-	if !dd.point_inside(e.x, e.y) || e.action == .down {
-		dd.unfocus()
+	if !dd.is_focused {
 		return
 	}
+
 	offset_start(mut dd)
 	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
@@ -219,14 +221,28 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.selected_index = index
-		if dd.on_selection_changed != voidptr(0) {
+		if dd.on_selection_changed != SelectionChangedFn(0) {
 			parent := dd.parent
 			state := parent.get_state()
 			dd.on_selection_changed(state, dd)
 		}
 		dd.unfocus()
+		dd.ui.window.unlock_focus()
 	}
 	offset_end(mut dd)
+}
+
+fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+	if dd.hidden {
+		return
+	}
+	println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
+	if dd.point_inside(e.x, e.y) {
+		dd.focus()
+		dd.ui.window.lock_focus()
+	} else {
+		dd.unfocus()
+	}
 }
 
 fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
@@ -268,8 +284,11 @@ fn (mut dd Dropdown) unfocus() {
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
-	return y >= ddy && y <= ddy + (dd.items.len * dd.dropdown_height) + dd.dropdown_height
-		&& x >= ddx && x <= ddx + dd.width
+	return y >= ddy && y <= ddy + if dd.open {
+		dd.items.len * dd.dropdown_height
+	} else {
+		0
+	} + dd.dropdown_height && x >= ddx && x <= ddx + dd.width
 }
 
 // Returns the currently selected DropdownItem
