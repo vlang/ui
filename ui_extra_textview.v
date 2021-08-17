@@ -144,7 +144,7 @@ fn (mut tv TextView) draw_textlines() {
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
 	for line in tv.tlv.lines {
-		if y >= svy - 2 * tv.tb.line_height && y <= svy + tv.tb.height + 2 * tv.tb.line_height {
+		if y >= svy - tv.tb.line_height && y <= svy + tv.tb.height + tv.tb.line_height {
 			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
 		}
 		y += tv.tb.line_height
