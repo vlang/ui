@@ -135,13 +135,21 @@ fn (mut tv TextView) draw_textlines() {
 	if tv.tb.is_sync {
 		tv.update_lines()
 	}
+
+	// draw selection
 	tv.draw_selection()
+
+	// draw only visible text lines
+	_, svy := tv.tb.scrollview.orig_size()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
 	for line in tv.tlv.lines {
-		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		if y >= svy - 2 * tv.tb.line_height && y <= svy + tv.tb.height + 2 * tv.tb.line_height {
+			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		}
 		y += tv.tb.line_height
 	}
+
 	// draw cursor
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
 		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.tb.line_height, gx.black) // , gx.Black)

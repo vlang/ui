@@ -782,6 +782,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y
+	// println("($x, $y) = ($e.x - $tb.x - $ui.textbox_padding_x, $e.y - $tb.y - $ui.textbox_padding_y)")
 	if shift_key(e.mods) && tb.is_sel_active() {
 		if tb.is_multiline {
 			tb.tv.extend_selection(x, y)
