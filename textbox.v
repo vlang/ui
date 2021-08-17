@@ -5,7 +5,6 @@ module ui
 
 import gx
 import gg
-import strings
 import time
 // import sokol.sapp
 
@@ -25,9 +24,9 @@ const (
 	selection_color               = gx.rgb(186, 214, 251)
 )
 
-type KeyDownFn = fn (voidptr, &TextBox, u32)
+type TextBoxKeyDownFn = fn (voidptr, &TextBox, u32)
 
-type CharFn = fn (voidptr, &TextBox, u32)
+type TextBoxCharFn = fn (voidptr, &TextBox, u32)
 
 // type KeyUpFn = fn (voidptr, voidptr, u32)
 
@@ -72,9 +71,11 @@ pub mut:
 	read_only     bool
 	borderless    bool
 	fitted_height bool // if true fit height in propose_size
-	on_key_down   KeyDownFn = KeyDownFn(0)
-	on_char       CharFn    = CharFn(0)
+	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
+	on_char       TextBoxCharFn    = TextBoxCharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
+	is_selectable      bool // for read_only textbox
+	sel_active         bool // to deal with show cursor when selection active
 	dragging           bool
 	sel_direction      SelectionDirection
 	border_accentuated bool
@@ -118,8 +119,8 @@ pub struct TextBoxConfig {
 	// is_error bool
 	borderless    bool
 	fitted_height bool
-	on_key_down   KeyDownFn
-	on_char       CharFn
+	on_key_down   TextBoxKeyDownFn
+	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
 	on_change          voidptr
 	on_enter           voidptr
@@ -273,9 +274,9 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	}
 	update_text_size(mut tb)
 	if tb.is_multiline {
+		scrollview_update(tb)
 		tb.tv.update_lines()
 	}
-	scrollview_update(tb)
 	return tb.width, tb.height
 }
 
@@ -322,7 +323,8 @@ fn (mut tb TextBox) draw() {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if width > tb.width {
+			if width > tb.width && !tb.is_password {
+				// Less useful with scrollview
 				tb.ui.gg.set_cfg(tb.text_cfg)
 				for i := text_len - 1; i >= 0; i-- {
 					if i >= text_len {
@@ -337,37 +339,27 @@ fn (mut tb TextBox) draw() {
 				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
 			} else {
 				if tb.is_password {
-					/*
-					for i in 0..tb.text.len {
-						// TODO drawing multiple circles is broken
-						//tb.ui.gg.draw_image(tb.x + 5 + i * 12, tb.y + 5, 8, 8, tb.ui.circle_image)
-					}
-					*/
-					// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-					// 	text.len), tb.placeholder_cfg)
-					// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`, text.len))
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, strings.repeat(`*`,
-						text_len))
+					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
 				} else {
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
 				}
 			}
 		}
 		// Draw the cursor
+		// println("draw cursor: $tb.is_focused && !$tb.read_only && $tb.ui.show_cursor && ${!tb.is_sel_active()}")
 		if tb.is_focused && !tb.read_only && tb.ui.show_cursor && !tb.is_sel_active() {
 			// no cursor in sel mode
 			mut cursor_x := tb.x + ui.textbox_padding_x
-			if tb.is_password {
-				cursor_x += text_width(tb, strings.repeat(`*`, tb.cursor_pos))
-			} else if skip_idx > 0 {
-				cursor_x += text_width(tb, text[skip_idx..])
-			} else if text_len > 0 {
-				// left := tb.text[..tb.cursor_pos]
-				left := text.runes()[..tb.cursor_pos].string()
-				cursor_x += text_width(tb, left)
-			}
-			if text_len == 0 {
-				cursor_x = tb.x + ui.textbox_padding_x
+			if text_len > 0 {
+				if tb.is_password {
+					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
+				} else if skip_idx > 0 {
+					cursor_x += text_width(tb, text[skip_idx..])
+				} else if text_len > 0 {
+					// left := tb.text[..tb.cursor_pos]
+					left := text.runes()[..tb.cursor_pos].string()
+					cursor_x += text_width(tb, left)
+				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
@@ -385,7 +377,7 @@ fn (tb &TextBox) is_sel_active() bool {
 	if tb.is_multiline {
 		return tb.tv.is_sel_active()
 	} else {
-		return tb.is_focused && tb.sel_end != -1 //&& tb.sel_start != tb.sel_end
+		return (tb.is_focused || tb.read_only) && tb.sel_active && tb.sel_end != -1 //&& tb.sel_start != tb.sel_end
 	}
 }
 
@@ -407,6 +399,7 @@ pub fn (mut tb TextBox) cancel_selection() {
 		tb.sel_start = -1
 		tb.sel_end = -1
 	}
+	tb.sel_active = false
 }
 
 pub fn (mut tb TextBox) delete_selection() {
@@ -443,20 +436,21 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	if !tb.is_focused {
 		return
 	}
-	if tb.on_char != CharFn(0) {
+	if tb.on_char != TextBoxCharFn(0) {
 		tb.on_char(window.state, tb, e.codepoint)
 	}
 }
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
-	// println('key down $e')
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_keydown ? {
 		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
 	}
 	if tb.hidden {
 		return
 	}
-	if !tb.is_focused {
+	if !tb.is_focused && !tb.read_only {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
@@ -465,15 +459,15 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			*tb.is_error = false
 		}
 	}
+	if e.key == .tab || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
+		return
+	}
 	tb.is_typing = true
-	if tb.on_key_down != KeyDownFn(0) {
+	if tb.on_key_down != TextBoxKeyDownFn(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
 	// Entering text
-	if tb.read_only {
-		return
-	}
 	if tb.is_multiline {
 		tb.tv.key_down(e)
 	} else {
@@ -482,7 +476,11 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.cursor_pos = 0
 		}
 		s := utf32_to_str(e.codepoint)
-		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods != .super { // skip enter and escape // && e.key !in [.enter, .escape] {
+		// println("key_down: $s $e.mods")
+		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
+			if tb.read_only {
+				return
+			}
 			if tb.max_len > 0 && text.runes().len >= tb.max_len {
 				return
 			}
@@ -500,8 +498,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		} else if e.mods in [.ctrl, .super] {
 			match s {
 				'a' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					tb.sel_start = 0
 					tb.sel_end = text.runes().len
+					tb.sel_active = true
 				}
 				'c' {
 					if tb.is_sel_active() {
@@ -515,9 +517,16 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'v' {
+					if tb.read_only {
+						return
+					}
+					// println("paste ${tb.ui.clipboard.paste()}")
 					tb.insert(tb.ui.clipboard.paste())
 				}
 				'x' {
+					if tb.read_only {
+						return
+					}
 					if tb.is_sel_active() {
 						ustr := tb.text.runes()
 						sel_start, sel_end := if tb.sel_start < tb.sel_end {
@@ -530,6 +539,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'-' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					if tb.fitted_height {
 						// TODO: propose_size
 						tb.text_size -= 2
@@ -541,6 +553,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 				}
 				'=', '+' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
 					if tb.fitted_height {
 						tb.text_size += 2
 						if tb.text_size > 48 {
@@ -648,19 +663,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// println("right: $tb.cursor_posj")
 			}
-			.a {
-				if e.mods in [.super, .ctrl] {
-					tb.sel_start = 0
-					tb.sel_end = text.runes().len - 1
-				}
-			}
-			.v {
-				if e.mods in [.super, .ctrl] {
-					tb.insert(tb.ui.clipboard.paste())
-				}
-			}
 			.tab {
-				tb.ui.show_cursor = false
+				// tb.ui.show_cursor = false
 				/*
 				TODO if tb.parent.just_tabbed {
 					tb.parent.just_tabbed = false
@@ -761,7 +765,7 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 }
 
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
-	// println("mouse first")
+	// println("mouse first $tb.id")
 	if tb.hidden {
 		return
 	}
@@ -773,10 +777,12 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.unfocus()
 		return
 	} else {
+		// println('mouse first $tb.id')
 		tb.focus()
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y
+	// println("($x, $y) = ($e.x - $tb.x - $ui.textbox_padding_x, $e.y - $tb.y - $ui.textbox_padding_y)")
 	if shift_key(e.mods) && tb.is_sel_active() {
 		if tb.is_multiline {
 			tb.tv.extend_selection(x, y)
@@ -818,7 +824,8 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 	if tb.hidden {
 		return
 	}
-	if !tb.point_inside(e.x, e.y) {
+	tb.is_selectable = tb.point_inside(e.x, e.y)
+	if !(tb.is_selectable) {
 		return
 	}
 	if tb.dragging {
@@ -828,7 +835,9 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			tb.tv.end_selection(x, y)
 		} else {
 			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
+			tb.ui.show_cursor = false
 		}
+		tb.sel_active = true
 	}
 }
 
@@ -857,6 +866,7 @@ fn (tb &TextBox) is_focused() bool {
 fn (mut tb TextBox) unfocus() {
 	// println('textbox $t.placeholder unfocus()')
 	tb.is_focused = false
+	tb.sel_active = false
 	tb.sel_start = 0
 	tb.sel_end = 0
 }

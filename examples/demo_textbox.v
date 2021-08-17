@@ -9,7 +9,7 @@ struct State {
 fn main() {
 	mut app := &State{
 		tb1: 'hggyjgyguguglul'
-		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
+		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(300)
 		tb3m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
 	}
 	c := ui.column(
@@ -68,5 +68,4 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
 	mut tb := switcher.ui.window.textbox(tbs)
 	tb.tv.switch_wordwrap()
-	tb.focus()
 }

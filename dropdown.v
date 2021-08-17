@@ -6,12 +6,13 @@ module ui
 import gx
 
 const (
-	dropdown_color = gx.rgb(240, 240, 240)
-	border_color   = gx.rgb(223, 223, 223)
-	drawer_color   = gx.rgb(255, 255, 255)
+	dropdown_color        = gx.rgb(240, 240, 240)
+	dropdown_border_color = gx.rgb(223, 223, 223)
+	dropdown_focus_color  = gx.rgb(50, 50, 50)
+	dropdown_drawer_color = gx.rgb(255, 255, 255)
 )
 
-pub type SelectionChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
+pub type DropDownSelectionChangedFn = fn (voidptr, &Dropdown)
 
 [heap]
 pub struct Dropdown {
@@ -32,7 +33,7 @@ pub mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed SelectionChangedFn
+	on_selection_changed DropDownSelectionChangedFn
 	hidden               bool
 	// component state for composable widget
 	component voidptr
@@ -47,7 +48,7 @@ pub struct DropdownConfig {
 	height               int = 25
 	z_index              int = 10
 	selected_index       int = -1
-	on_selection_changed SelectionChangedFn
+	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
 }
 
@@ -78,6 +79,7 @@ fn (mut dd Dropdown) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
+	subscriber.subscribe_method(events.on_mouse_down, dd_mouse_down, dd)
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
 }
 
@@ -86,6 +88,7 @@ fn (mut dd Dropdown) cleanup() {
 	mut subscriber := dd.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, dd)
 	subscriber.unsubscribe_method(events.on_key_down, dd)
+	subscriber.unsubscribe_method(events.on_mouse_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_move, dd)
 	unsafe { dd.free() }
 }
@@ -129,7 +132,11 @@ fn (mut dd Dropdown) draw() {
 	gg := dd.ui.gg
 	// draw the main dropdown
 	gg.draw_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
-	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.border_color)
+	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
+		ui.dropdown_focus_color
+	} else {
+		ui.dropdown_border_color
+	})
 	if dd.selected_index >= 0 {
 		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
@@ -146,16 +153,20 @@ fn (dd &Dropdown) draw_open() {
 	if dd.open {
 		gg := dd.ui.gg
 		gg.draw_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.drawer_color)
+			ui.dropdown_drawer_color)
 		gg.draw_empty_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.border_color)
+			ui.dropdown_border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
-			color := if i == dd.hover_index { ui.border_color } else { ui.drawer_color }
+			color := if i == dd.hover_index {
+				ui.dropdown_border_color
+			} else {
+				ui.dropdown_drawer_color
+			}
 			gg.draw_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
 			gg.draw_empty_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
-				ui.border_color)
+				ui.dropdown_border_color)
 			gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 		}
 	}
@@ -163,6 +174,14 @@ fn (dd &Dropdown) draw_open() {
 
 pub fn (mut dd Dropdown) add_item(text string) {
 	dd.items << DropdownItem{text}
+}
+
+fn (mut dd Dropdown) open_drawer() {
+	dd.open = !dd.open
+	if !dd.open {
+		dd.hover_index = dd.selected_index
+	}
+	dd.focus()
 }
 
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
@@ -193,7 +212,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		}
 		.enter {
 			dd.selected_index = dd.hover_index
-			if dd.on_selection_changed != voidptr(0) {
+			if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 				parent := dd.parent
 				state := parent.get_state()
 				dd.on_selection_changed(state, dd)
@@ -208,10 +227,10 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
-	if !dd.point_inside(e.x, e.y) || e.action == .down {
-		dd.unfocus()
+	if !dd.is_focused {
 		return
 	}
+
 	offset_start(mut dd)
 	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
@@ -219,7 +238,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		th := dd.y + (dd.items.len * dd.dropdown_height)
 		index := ((e.y * dd.items.len) / th) - 1
 		dd.selected_index = index
-		if dd.on_selection_changed != voidptr(0) {
+		if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 			parent := dd.parent
 			state := parent.get_state()
 			dd.on_selection_changed(state, dd)
@@ -227,6 +246,18 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		dd.unfocus()
 	}
 	offset_end(mut dd)
+}
+
+fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+	if dd.hidden {
+		return
+	}
+	// println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
+	if dd.point_inside(e.x, e.y) {
+		dd.focus()
+	} else {
+		dd.unfocus()
+	}
 }
 
 fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
@@ -247,14 +278,7 @@ fn (mut dd Dropdown) set_visible(state bool) {
 fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
 	set_focus(dd.ui.window, mut dd)
-}
-
-fn (mut dd Dropdown) open_drawer() {
-	dd.open = !dd.open
-	if !dd.open {
-		dd.hover_index = dd.selected_index
-	}
-	dd.focus()
+	dd.ui.window.lock_focus()
 }
 
 fn (dd &Dropdown) is_focused() bool {
@@ -264,12 +288,16 @@ fn (dd &Dropdown) is_focused() bool {
 fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
+	dd.ui.window.unlock_focus()
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 	ddx, ddy := dd.x + dd.offset_x, dd.y + dd.offset_y
-	return y >= ddy && y <= ddy + (dd.items.len * dd.dropdown_height) + dd.dropdown_height
-		&& x >= ddx && x <= ddx + dd.width
+	return y >= ddy && y <= ddy + if dd.open {
+		dd.items.len * dd.dropdown_height
+	} else {
+		0
+	} + dd.dropdown_height && x >= ddx && x <= ddx + dd.width
 }
 
 // Returns the currently selected DropdownItem

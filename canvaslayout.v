@@ -541,7 +541,7 @@ pub fn (c &CanvasLayout) draw_empty_poly(points []f32, color gx.Color) {
 
 pub fn (c &CanvasLayout) child_index_by_id(id string) int {
 	for i, child in c.children {
-		if widget_id(child) == id {
+		if child.id() == id {
 			return i
 		}
 	}

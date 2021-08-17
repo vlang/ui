@@ -32,35 +32,39 @@ pub mut:
 	// pub:
 	ui &UI = voidptr(0)
 	// glfw_obj      &glfw.Window = voidptr(0)
-	children      []Widget
-	child_window  &Window = voidptr(0)
-	parent_window &Window = voidptr(0)
-	has_textbox   bool // for initial focus
-	tab_index     int
-	just_tabbed   bool
-	state         voidptr
-	draw_fn       DrawFn
-	title         string
-	mx            f64
-	my            f64
-	width         int
-	height        int
-	click_fn      ClickFn
-	mouse_down_fn ClickFn
-	mouse_up_fn   ClickFn
-	scroll_fn     ScrollFn
-	resize_fn     ResizeFn
-	on_init       WindowFn
-	on_draw       WindowFn
-	key_down_fn   KeyFn
-	char_fn       KeyFn
-	mouse_move_fn MouseMoveFn
-	eventbus      &eventbus.EventBus = eventbus.new()
-	// resizable has limitation https://github.com/vlang/ui/issues/231
-	resizable   bool // currently only for events.on_resized not modify children
-	mode        WindowSizeType
-	root_layout Layout = empty_stack
-	dpi_scale   f32
+	children          []Widget
+	child_window      &Window = voidptr(0)
+	parent_window     &Window = voidptr(0)
+	has_textbox       bool // for initial focus
+	tab_index         int
+	just_tabbed       bool
+	state             voidptr
+	draw_fn           DrawFn
+	title             string
+	mx                f64
+	my                f64
+	width             int
+	height            int
+	click_fn          ClickFn
+	mouse_down_fn     ClickFn
+	mouse_up_fn       ClickFn
+	mouse_move_fn     MouseMoveFn
+	scroll_fn         ScrollFn
+	key_down_fn       KeyFn
+	char_fn           KeyFn
+	resize_fn         ResizeFn
+	iconified_fn      WindowFn
+	restored_fn       WindowFn
+	quit_requested_fn WindowFn
+	suspended_fn      WindowFn
+	resumed_fn        WindowFn
+	on_init           WindowFn
+	on_draw           WindowFn
+	eventbus          &eventbus.EventBus = eventbus.new()
+	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
+	mode              WindowSizeType
+	root_layout       Layout = empty_stack
+	dpi_scale         f32
 	// saved origin sizes
 	orig_width  int
 	orig_height int
@@ -81,6 +85,9 @@ pub mut:
 	tooltips        []TooltipMessage
 	// with message
 	native_message bool
+	// focus stuff
+	do_focus     bool
+	locked_focus bool
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -104,6 +111,11 @@ pub:
 	on_char               KeyFn
 	on_scroll             ScrollFn
 	on_resize             ResizeFn
+	on_iconify            WindowFn
+	on_restore            WindowFn
+	on_quit_request       WindowFn
+	on_suspend            WindowFn
+	on_resume             WindowFn
 	on_mouse_move         MouseMoveFn
 	on_init               WindowFn
 	on_draw               WindowFn
@@ -195,8 +207,33 @@ fn on_event(e &gg.Event, mut window Window) {
 			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
 			window_mouse_move(e, window.ui)
 		}
-		.resized, .restored, .resumed {
+		.resized {
 			window_resize(e, window.ui)
+		}
+		.iconified {
+			if window.iconified_fn != voidptr(0) {
+				window.iconified_fn(window)
+			}
+		}
+		.restored {
+			if window.restored_fn != voidptr(0) {
+				window.restored_fn(window)
+			}
+		}
+		.quit_requested {
+			if window.quit_requested_fn != voidptr(0) {
+				window.quit_requested_fn(window)
+			}
+		}
+		.suspended {
+			if window.suspended_fn != voidptr(0) {
+				window.suspended_fn(window)
+			}
+		}
+		.resumed {
+			if window.resumed_fn != voidptr(0) {
+				window.resumed_fn(window)
+			}
 		}
 		.touches_began {
 			if e.num_touches > 0 {
@@ -265,7 +302,7 @@ fn gg_init(mut window Window) {
 	if !window.native_message {
 		window.add_message_dialog()
 	}
-	for _, mut child in window.children {
+	for mut child in window.children {
 		// println('init $child.type_name()')
 		window.register_child(*child)
 		child.init(window)
@@ -281,7 +318,7 @@ fn gg_init(mut window Window) {
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
-		// println('cleanup ${widget_id(*child)}')
+		// println('cleanup ${child.id()}')
 		child.cleanup()
 	}
 	unsafe { window.free() }
@@ -361,6 +398,11 @@ pub fn window(cfg WindowConfig) &Window {
 		text_cfg: text_cfg
 		native_message: cfg.native_message
 		immediate: cfg.immediate
+		iconified_fn: cfg.on_iconify
+		restored_fn: cfg.on_restore
+		quit_requested_fn: cfg.on_quit_request
+		suspended_fn: cfg.on_suspend
+		resumed_fn: cfg.on_resume
 	}
 
 	// register default color themes
@@ -736,7 +778,13 @@ fn window_key_down(event gg.Event, ui &UI) {
 		// action: action
 		// mods: mod
 	}
-	if e.key == .escape {
+	if e.key == .tab {
+		if shift_key(e.mods) {
+			window.focus_prev()
+		} else {
+			window.focus_next()
+		}
+	} else if e.key == .escape {
 		println('escape')
 	}
 	if e.key == .escape && window.child_window != 0 {
@@ -792,29 +840,16 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn (mut w Window) focus_next() {
-	mut doit := false
-	for mut child in w.children {
-		// Focus on the next widget
-		if doit {
-			child.focus()
-			break
-		}
-		is_focused := child.is_focused()
-		if is_focused {
-			doit = true
-		}
+	w.do_focus = false
+	if !set_focus_next(mut w) {
+		set_focus_first(mut w)
 	}
-	w.just_tabbed = true
 }
 
-fn (w &Window) focus_previous() {
-	for i, mut child in w.children {
-		is_focused := child.is_focused()
-		if is_focused && i > 0 {
-			mut prev := w.children[i - 1]
-			prev.focus()
-			// w.children[i - 1].focus()
-		}
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !set_focus_prev(mut w) {
+		set_focus_last(mut w)
 	}
 }
 
@@ -1213,52 +1248,6 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
-	}
-}
-
-// TODO: If id is added to Widget interface,
-// this could be simplified and above all extensible with external widgets
-fn widget_id(child Widget) string {
-	if child is Button {
-		return child.id
-	} else if child is Canvas {
-		return child.id
-	} else if child is CheckBox {
-		return child.id
-	} else if child is Dropdown {
-		return child.id
-	} else if child is Grid {
-		return child.id
-	} else if child is Label {
-		return child.id
-	} else if child is ListBox {
-		return child.id
-	} else if child is Menu {
-		return child.id
-	} else if child is Picture {
-		return child.id
-	} else if child is ProgressBar {
-		return child.id
-	} else if child is Radio {
-		return child.id
-	} else if child is Rectangle {
-		return child.id
-	} else if child is Slider {
-		return child.id
-	} else if child is Switch {
-		return child.id
-	} else if child is TextBox {
-		return child.id
-	} else if child is Transition {
-		return child.id
-	} else if child is Stack {
-		return child.id
-	} else if child is Group {
-		return child.id
-	} else if child is CanvasLayout {
-		return child.id
-	} else {
-		return '_unknown'
 	}
 }
 

@@ -9,6 +9,7 @@ import gg
 [heap]
 pub struct Rectangle {
 pub mut:
+	id       string
 	color    gx.Color
 	text     string
 	offset_x int
@@ -16,7 +17,6 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 mut:
-	id           string
 	parent       Layout = empty_stack
 	x            int
 	y            int

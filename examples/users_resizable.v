@@ -122,6 +122,7 @@ fn main() {
 						ui.checkbox(text: 'Subscribe to the newsletter'),
 						app.country,
 						ui.row(
+							id: 'btn_row'
 							widths: [.5, .2]
 							heights: 20.
 							spacing: .3
