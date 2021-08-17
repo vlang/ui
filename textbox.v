@@ -520,6 +520,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					if tb.read_only {
 						return
 					}
+					// println("paste ${tb.ui.clipboard.paste()}")
 					tb.insert(tb.ui.clipboard.paste())
 				}
 				'x' {
@@ -661,17 +662,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					tb.cursor_pos = text_len
 				}
 				// println("right: $tb.cursor_posj")
-			}
-			.a {
-				if e.mods in [.super, .ctrl] {
-					tb.sel_start = 0
-					tb.sel_end = text.runes().len - 1
-				}
-			}
-			.v {
-				if e.mods in [.super, .ctrl] {
-					tb.insert(tb.ui.clipboard.paste())
-				}
 			}
 			.tab {
 				// tb.ui.show_cursor = false
