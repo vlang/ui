@@ -85,6 +85,9 @@ pub mut:
 	tooltips        []TooltipMessage
 	// with message
 	native_message bool
+	// focus stuff
+	do_focus     bool
+	locked_focus bool
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -299,7 +302,7 @@ fn gg_init(mut window Window) {
 	if !window.native_message {
 		window.add_message_dialog()
 	}
-	for _, mut child in window.children {
+	for mut child in window.children {
 		// println('init $child.type_name()')
 		window.register_child(*child)
 		child.init(window)
@@ -315,7 +318,7 @@ fn gg_init(mut window Window) {
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
-		// println('cleanup ${widget_id(*child)}')
+		// println('cleanup ${child.id()}')
 		child.cleanup()
 	}
 	unsafe { window.free() }
@@ -775,7 +778,13 @@ fn window_key_down(event gg.Event, ui &UI) {
 		// action: action
 		// mods: mod
 	}
-	if e.key == .escape {
+	if e.key == .tab {
+		if shift_key(e.mods) {
+			window.focus_prev()
+		} else {
+			window.focus_next()
+		}
+	} else if e.key == .escape {
 		println('escape')
 	}
 	if e.key == .escape && window.child_window != 0 {
@@ -831,29 +840,16 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn (mut w Window) focus_next() {
-	mut doit := false
-	for mut child in w.children {
-		// Focus on the next widget
-		if doit {
-			child.focus()
-			break
-		}
-		is_focused := child.is_focused()
-		if is_focused {
-			doit = true
-		}
+	w.do_focus = false
+	if !set_focus_next(mut w) {
+		set_focus_first(mut w)
 	}
-	w.just_tabbed = true
 }
 
-fn (w &Window) focus_previous() {
-	for i, mut child in w.children {
-		is_focused := child.is_focused()
-		if is_focused && i > 0 {
-			mut prev := w.children[i - 1]
-			prev.focus()
-			// w.children[i - 1].focus()
-		}
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !set_focus_prev(mut w) {
+		set_focus_last(mut w)
 	}
 }
 
@@ -1252,52 +1248,6 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
-	}
-}
-
-// TODO: If id is added to Widget interface,
-// this could be simplified and above all extensible with external widgets
-fn widget_id(child Widget) string {
-	if child is Button {
-		return child.id
-	} else if child is Canvas {
-		return child.id
-	} else if child is CheckBox {
-		return child.id
-	} else if child is Dropdown {
-		return child.id
-	} else if child is Grid {
-		return child.id
-	} else if child is Label {
-		return child.id
-	} else if child is ListBox {
-		return child.id
-	} else if child is Menu {
-		return child.id
-	} else if child is Picture {
-		return child.id
-	} else if child is ProgressBar {
-		return child.id
-	} else if child is Radio {
-		return child.id
-	} else if child is Rectangle {
-		return child.id
-	} else if child is Slider {
-		return child.id
-	} else if child is Switch {
-		return child.id
-	} else if child is TextBox {
-		return child.id
-	} else if child is Transition {
-		return child.id
-	} else if child is Stack {
-		return child.id
-	} else if child is Group {
-		return child.id
-	} else if child is CanvasLayout {
-		return child.id
-	} else {
-		return '_unknown'
 	}
 }
 

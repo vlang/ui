@@ -2,7 +2,7 @@ module ui
 
 import gx
 
-type SelectionChangedFn = fn (voidptr, voidptr) // The second arg is ListBox
+type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
 
 const (
 	_item_height     = 20
@@ -28,7 +28,7 @@ pub mut:
 	items         []ListItem = []ListItem{}
 	selection     int        = -1
 	draw_count    int
-	on_change     SelectionChangedFn = SelectionChangedFn(0)
+	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
 	is_focused    bool
 	draw_lines    bool
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
@@ -69,7 +69,7 @@ mut:
 	width         int
 	height        int
 	z_index       int
-	on_change     SelectionChangedFn = SelectionChangedFn(0)
+	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
 	draw_lines    bool     // Draw a rectangle around every item?
 	col_border    gx.Color = ui._col_border // Item and list border color
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd // ListBox background color
@@ -382,7 +382,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 		if item.point_inside(e.x, e.y) {
 			if lb.selection != inx {
 				lb.selection = inx
-				if lb.on_change != voidptr(0) {
+				if lb.on_change != ListBoxSelectionChangedFn(0) {
 					lb.on_change(window.state, lb)
 				}
 			}
@@ -419,7 +419,7 @@ fn on_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 			return
 		}
 	}
-	if lb.on_change != voidptr(0) {
+	if lb.on_change != ListBoxSelectionChangedFn(0) {
 		lb.on_change(window.state, lb)
 	}
 }

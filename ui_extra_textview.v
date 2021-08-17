@@ -46,15 +46,6 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 	}
 	w += textbox_padding_x * 2
-	if tv.tb.has_scrollview && tv.tb.scrollview.active_y {
-		if tv.tb.scrollview.offset_y > 0 {
-			// println("scrollview size: offset_y -> $tv.tb.scrollview.offset_y")
-			// println(" $h > $tv.tb.height")
-
-			// Force active_y to be true (since adj_height > height)
-			h = tv.tb.scrollview.offset_y + tv.tb.height
-		}
-	}
 	return w, h
 }
 
@@ -101,8 +92,8 @@ fn (tv &TextView) sel_end_line() string {
 }
 
 fn (tv &TextView) is_sel_active() bool {
-	// println("tv sel active: $tv.sel_end")
-	return tv.tb.is_focused && tv.sel_end >= 0 && tv.sel_start != tv.sel_end
+	// Make selection drawable in read-only mode too
+	return (tv.tb.is_focused || tv.tb.read_only) && tv.tb.sel_active && tv.sel_end >= 0 // && tv.sel_start != tv.sel_end
 }
 
 fn (mut tv TextView) sync_text_pos() {
@@ -127,7 +118,7 @@ fn (mut tv TextView) sync_text_lines() {
 	}
 }
 
-fn (mut tv TextView) update_lines() {
+pub fn (mut tv TextView) update_lines() {
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
@@ -144,13 +135,21 @@ fn (mut tv TextView) draw_textlines() {
 	if tv.tb.is_sync {
 		tv.update_lines()
 	}
+
+	// draw selection
 	tv.draw_selection()
+
+	// draw only visible text lines
+	_, svy := tv.tb.scrollview.orig_size()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
 	for line in tv.tlv.lines {
-		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		if y >= svy - 2 * tv.tb.line_height && y <= svy + tv.tb.height + 2 * tv.tb.line_height {
+			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		}
 		y += tv.tb.line_height
 	}
+
 	// draw cursor
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
 		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.tb.line_height, gx.black) // , gx.Black)
@@ -213,7 +212,8 @@ fn (mut tv TextView) delete_cur_char() {
 }
 
 fn (mut tv TextView) delete_prev_char() {
-	if tv.cursor_pos == 0 {
+	if tv.cursor_pos <= 0 {
+		tv.cursor_pos = 0
 		return
 	}
 	mut ustr := tv.text.runes()
@@ -238,6 +238,10 @@ fn (mut tv TextView) delete_selection() {
 		*tv.text = ustr.string()
 	}
 	tv.update_lines()
+	mut tb := tv.tb
+	// Only if scrollview become inactive, reset the scrollview
+	scrollview_reset(mut tb)
+	tv.cancel_selection()
 }
 
 fn (mut tv TextView) start_selection(x int, y int) {
@@ -307,7 +311,7 @@ pub fn (mut tv TextView) cancel_selection() {
 	tv.sync_text_lines()
 }
 
-fn (mut tv TextView) move_cursor(side Side) {
+pub fn (mut tv TextView) move_cursor(side Side) {
 	match side {
 		.left {
 			tv.cursor_pos--
@@ -356,6 +360,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	// wui := tv.tb.ui
 	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
+		if tv.tb.read_only {
+			return
+		}
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
 			tv.delete_selection()
@@ -364,12 +371,17 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		tv.cursor_pos++
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
+		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
 		match s {
 			'a' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.sel_start = 0
 				tv.sel_end = tv.text.runes().len
 				tv.sync_text_lines()
 				tv.tb.ui.show_cursor = false
+				tv.tb.sel_active = true
 				return
 			}
 			'c' {
@@ -380,9 +392,15 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				}
 			}
 			'v' {
+				if tv.tb.read_only {
+					return
+				}
 				tv.insert(tv.tb.ui.clipboard.paste())
 			}
 			'x' {
+				if tv.tb.read_only {
+					return
+				}
 				if tv.is_sel_active() {
 					ustr := tv.text.runes()
 					sel_start, sel_end := tv.ordered_pos_selection()
@@ -391,6 +409,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				}
 			}
 			'-' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.tb.text_size -= 2
 				if tv.tb.text_size < 8 {
 					tv.tb.text_size = 8
@@ -401,6 +422,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				tv.update_lines()
 			}
 			'=', '+' {
+				if tv.tb.read_only && !tv.tb.is_selectable {
+					return
+				}
 				tv.tb.text_size += 2
 				if tv.tb.text_size > 48 {
 					tv.tb.text_size = 48
@@ -423,8 +447,12 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 	}
 	// println("tb key_down $e.key ${int(e.codepoint)}")
+	if tv.tb.read_only {
+		return
+	}
 	match e.key {
 		.enter {
+			// println('enter $tv.tb.id')
 			tv.insert('\n')
 			tv.cursor_pos++
 			tv.sync_text_lines()
@@ -485,9 +513,9 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
 		}
-		.tab {
-			println('tab')
-		}
+		// .tab {
+		// 	// println('tab')
+		// }
 		else {}
 	}
 }
@@ -510,12 +538,26 @@ fn (tv &TextView) cursor_xy() (int, int) {
 	return tv.cursor_x(), tv.cursor_y()
 }
 
-fn (mut tv TextView) cursor_adjust_after_newline() {
+pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	if tv.tb.has_scrollview {
 		if tv.tb.scrollview.active_y
 			&& !tv.tb.scrollview.point_inside(tv.cursor_x(), tv.cursor_y() + tv.tb.line_height, .view) {
 			tv.tb.scrollview.inc(tv.tb.line_height, .btn_y)
 		}
+	}
+}
+
+/*
+pub fn (mut tv TextView) is_cursor_at_end() bool {
+	max_offset_y, _ := tv.tb.scrollview.coef_y()
+	println('is_cursor_at_End? $tv.tb.scrollview.offset_y >=  $max_offset_y')
+	return tv.tb.scrollview.offset_y >= max_offset_y
+}*/
+
+pub fn (mut tv TextView) cursor_at_end() {
+	// println("here cursor at end")
+	if tv.tb.scrollview.active_y {
+		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.tb.line_height, .btn_y)
 	}
 }
 

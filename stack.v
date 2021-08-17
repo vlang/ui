@@ -1462,7 +1462,7 @@ fn (mut s Stack) register_child(child Widget) {
 
 pub fn (s &Stack) child_index_by_id(id string) int {
 	for i, child in s.children {
-		if widget_id(child) == id {
+		if child.id() == id {
 			return i
 		}
 	}
