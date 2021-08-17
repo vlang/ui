@@ -9,7 +9,7 @@ struct State {
 fn main() {
 	mut app := &State{
 		tb1: 'hggyjgyguguglul'
-		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
+		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(2)
 		tb3m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
 	}
 	c := ui.column(

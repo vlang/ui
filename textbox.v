@@ -274,9 +274,9 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	}
 	update_text_size(mut tb)
 	if tb.is_multiline {
+		scrollview_update(tb)
 		tb.tv.update_lines()
 	}
-	scrollview_update(tb)
 	return tb.width, tb.height
 }
 

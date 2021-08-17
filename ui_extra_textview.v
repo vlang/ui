@@ -46,15 +46,6 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 	}
 	w += textbox_padding_x * 2
-	if !tv.tb.read_only && tv.tb.has_scrollview && tv.tb.scrollview.active_y {
-		if tv.tb.scrollview.offset_y > 0 {
-			// println("scrollview size: offset_y -> $tv.tb.scrollview.offset_y")
-			// println(" $h > $tv.tb.height")
-
-			// Force active_y to be true (since adj_height > height)
-			h = tv.tb.scrollview.offset_y + tv.tb.height
-		}
-	}
 	return w, h
 }
 
@@ -239,6 +230,10 @@ fn (mut tv TextView) delete_selection() {
 		*tv.text = ustr.string()
 	}
 	tv.update_lines()
+	mut tb := tv.tb
+	// Only if scrollview become inactive, reset the scrollview
+	scrollview_reset(mut tb)
+	tv.cancel_selection()
 }
 
 fn (mut tv TextView) start_selection(x int, y int) {
@@ -449,7 +444,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	}
 	match e.key {
 		.enter {
-			println('enter $tv.tb.id')
+			// println('enter $tv.tb.id')
 			tv.insert('\n')
 			tv.cursor_pos++
 			tv.sync_text_lines()

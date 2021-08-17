@@ -210,6 +210,20 @@ pub fn scrollview_draw_end<T>(w &T) {
 	}
 }
 
+pub fn scrollview_reset<T>(mut w T) {
+	mut sv := w.scrollview
+	svx, svy := sv.orig_size()
+	if !sv.active_x {
+		sv.offset_x = 0
+		w.x = svx - sv.offset_x
+	}
+	if !sv.active_y {
+		sv.offset_y = 0
+		w.y = svy - sv.offset_y
+	}
+	w.set_children_pos()
+}
+
 // type ScrollViewChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 [heap]
