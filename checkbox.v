@@ -216,7 +216,3 @@ fn (mut cb CheckBox) focus() {
 fn (mut cb CheckBox) unfocus() {
 	cb.is_focused = false
 }
-
-fn (cb &CheckBox) is_focused() bool {
-	return cb.is_focused
-}

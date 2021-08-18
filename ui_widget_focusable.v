@@ -1,39 +1,10 @@
 module ui
 
-pub fn (layout Layout) unfocus_all() {
-	// println('window.unfocus_all()')
-	for mut child in layout.get_children() {
-		if child is Layout {
-			l := child as Layout
-			l.unfocus_all()
-		} else if child is Focusable {
-			mut f := child as Focusable
-			f.unfocus()
-		}
-	}
-}
-
-fn (mut w Window) focus_next() {
-	w.do_focus = false
-	if !Layout(w).set_focus_next() {
-		Layout(w).set_focus_first()
-	}
-}
-
-fn (mut w Window) focus_prev() {
-	w.do_focus = false
-	if !Layout(w).set_focus_prev() {
-		Layout(w).set_focus_last()
-	}
-}
-
-pub fn (mut w Window) lock_focus() {
-	w.locked_focus = true
-}
-
-pub fn (mut w Window) unlock_focus() {
-	w.locked_focus = false
-}
+// Contains all the methods related to focus management
+// that is to say:
+// * Focusable interface and its methods
+// * methods for Window
+// * methods for Layout interface
 
 interface Focusable {
 	ui &UI
@@ -42,7 +13,6 @@ mut:
 	is_focused bool
 	focus()
 	unfocus()
-	// is_focused() bool
 }
 
 pub fn (w Focusable) has_focusable() bool {
@@ -70,6 +40,44 @@ pub fn (mut f Focusable) set_focus() {
 		f.is_focused = true
 		$if focus ? {
 			println('$f.id has focus at $w.ui.gg.frame')
+		}
+	}
+}
+
+//
+fn (mut w Window) focus_next() {
+	w.do_focus = false
+	if !Layout(w).set_focus_next() {
+		Layout(w).set_focus_first()
+	}
+}
+
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !Layout(w).set_focus_prev() {
+		Layout(w).set_focus_last()
+	}
+}
+
+pub fn (mut w Window) lock_focus() {
+	w.locked_focus = true
+}
+
+pub fn (mut w Window) unlock_focus() {
+	w.locked_focus = false
+}
+
+// Layout focusable methods
+
+pub fn (layout Layout) unfocus_all() {
+	// println('window.unfocus_all()')
+	for mut child in layout.get_children() {
+		if child is Layout {
+			l := child as Layout
+			l.unfocus_all()
+		} else if child is Focusable {
+			mut f := child as Focusable
+			f.unfocus()
 		}
 	}
 }
@@ -142,44 +150,6 @@ pub fn (layout Layout) set_focus_prev() bool {
 	return focused_found
 }
 
-/*
-pub fn set_focus_prev<T>(mut w T) bool {
-	mut focused_found := false
-	mut window := w.ui.window
-	for mut child in w.children.reverse() {
-		$if focus ? {
-			println('child to focus_prev $child.id() $child.type_name() $child.is_focusable()')
-		}
-		focused_found = if mut child is Stack {
-			// println("focus next inside $child.id")
-			set_focus_prev(mut child)
-		} else if mut child is CanvasLayout {
-			// println("focus next inside $child.id")
-			set_focus_prev(mut child)
-		} else if mut child is Group {
-			// println("focus next inside $child.id")
-			set_focus_prev(mut child)
-		} else {
-			false
-		}
-		if focused_found {
-			break
-		}
-		if child.is_focusable() {
-			// Focus on the next widget
-			if window.do_focus {
-				child.focus()
-				focused_found = true
-				window.do_focus = false
-				break
-			} else {
-				window.do_focus = child.is_focused()
-			}
-		}
-	}
-	return focused_found
-}
-*/
 pub fn (layout Layout) set_focus_first() bool {
 	mut doit := false
 	for child in layout.get_children() {

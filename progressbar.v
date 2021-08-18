@@ -15,20 +15,20 @@ const (
 [heap]
 pub struct ProgressBar {
 pub mut:
-	id         string
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	parent     Layout = empty_stack
-	ui         &UI
-	val        int
-	min        int
-	max        int
-	hidden     bool
+	id       string
+	height   int
+	width    int
+	x        int
+	y        int
+	offset_x int
+	offset_y int
+	z_index  int
+	parent   Layout = empty_stack
+	ui       &UI
+	val      int
+	min      int
+	max      int
+	hidden   bool
 	// component state for composable widget
 	component voidptr
 }

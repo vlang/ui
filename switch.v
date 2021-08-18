@@ -186,7 +186,3 @@ fn (mut s Switch) focus() {
 fn (mut s Switch) unfocus() {
 	s.is_focused = false
 }
-
-fn (s &Switch) is_focused() bool {
-	return s.is_focused
-}

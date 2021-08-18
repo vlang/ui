@@ -355,7 +355,3 @@ pub fn (mut r Radio) select_prev_value() {
 		r.selected_index = r.values.len - 1
 	}
 }
-
-fn (r &Radio) is_focused() bool {
-	return r.is_focused
-}

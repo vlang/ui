@@ -371,10 +371,6 @@ fn (mut s Slider) focus() {
 	f.set_focus()
 }
 
-fn (s &Slider) is_focused() bool {
-	return s.is_focused
-}
-
 fn (mut s Slider) unfocus() {
 	s.is_focused = false
 }

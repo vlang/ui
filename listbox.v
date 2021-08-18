@@ -445,10 +445,6 @@ fn (mut lb ListBox) unfocus() {
 	lb.is_focused = false
 }
 
-fn (lb &ListBox) is_focused() bool {
-	return lb.is_focused
-}
-
 // Needed for ScrollableWidget
 fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {

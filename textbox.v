@@ -860,10 +860,6 @@ pub fn (mut tb TextBox) focus() {
 	f.set_focus()
 }
 
-fn (tb &TextBox) is_focused() bool {
-	return tb.is_focused
-}
-
 fn (mut tb TextBox) unfocus() {
 	// println('textbox $t.placeholder unfocus()')
 	tb.is_focused = false

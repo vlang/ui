@@ -282,10 +282,6 @@ fn (mut dd Dropdown) focus() {
 	dd.ui.window.lock_focus()
 }
 
-fn (dd &Dropdown) is_focused() bool {
-	return dd.is_focused
-}
-
 fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
