@@ -161,16 +161,6 @@ fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
 }
 
-fn (m &Menu) focus() {
-}
-
-fn (m &Menu) is_focused() bool {
-	return false
-}
-
-fn (m &Menu) unfocus() {
-}
-
 fn (m &Menu) point_inside(x f64, y f64) bool {
 	return point_inside(m, x, y)
 }

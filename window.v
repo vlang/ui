@@ -839,20 +839,6 @@ fn window_char(event gg.Event, ui &UI) {
 	*/
 }
 
-fn (mut w Window) focus_next() {
-	w.do_focus = false
-	if !set_focus_next(mut w) {
-		set_focus_first(mut w)
-	}
-}
-
-fn (mut w Window) focus_prev() {
-	w.do_focus = false
-	if !set_focus_prev(mut w) {
-		set_focus_last(mut w)
-	}
-}
-
 pub fn (w &Window) set_cursor(cursor Cursor) {
 	// glfw.set_cursor(.ibeam)
 	// w.glfw_obj.set_cursor(.ibeam)
@@ -890,9 +876,6 @@ pub fn (mut w Window) on_scroll(func ScrollFn) {
 
 pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
 	return false
-}
-
-pub fn (w &Window) focus() {
 }
 
 pub fn (w &Window) always_on_top(val bool) {
@@ -1024,13 +1007,6 @@ fn (mut window Window) resize(w int, h int) {
 		if mut child is Stack {
 			child.resize(w, h)
 		}
-	}
-}
-
-pub fn (window &Window) unfocus_all() {
-	// println('window.unfocus_all()')
-	for mut child in window.children {
-		child.unfocus()
 	}
 }
 

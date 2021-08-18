@@ -437,8 +437,8 @@ fn (mut lb ListBox) set_visible(state bool) {
 }
 
 fn (mut lb ListBox) focus() {
-	// lb.is_focused = true
-	set_focus(lb.ui.window, mut lb)
+	mut f := Focusable(lb)
+	f.set_focus()
 }
 
 fn (mut lb ListBox) unfocus() {

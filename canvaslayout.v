@@ -437,29 +437,12 @@ pub fn (mut c CanvasLayout) set_visible(state bool) {
 	}
 }
 
-fn (c &CanvasLayout) focus() {
-}
-
-fn (c &CanvasLayout) is_focused() bool {
-	return false
-}
-
-fn (c &CanvasLayout) unfocus() {
-	c.unfocus_all()
-}
-
 fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
 	return point_inside(c, x, y)
 }
 
 fn (c &CanvasLayout) get_ui() &UI {
 	return c.ui
-}
-
-fn (c &CanvasLayout) unfocus_all() {
-	for mut child in c.children {
-		child.unfocus()
-	}
 }
 
 fn (c &CanvasLayout) resize(width int, height int) {

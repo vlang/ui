@@ -277,7 +277,8 @@ fn (mut dd Dropdown) set_visible(state bool) {
 
 fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
-	set_focus(dd.ui.window, mut dd)
+	mut f := Focusable(dd)
+	f.set_focus()
 	dd.ui.window.lock_focus()
 }
 

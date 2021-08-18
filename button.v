@@ -370,7 +370,8 @@ fn (mut b Button) set_visible(state bool) {
 }
 
 fn (mut b Button) focus() {
-	set_focus(b.ui.window, mut b)
+	mut f := Focusable(b)
+	f.set_focus()
 }
 
 fn (mut b Button) unfocus() {

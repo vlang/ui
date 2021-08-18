@@ -64,12 +64,12 @@ mut:
 	// click(MouseEvent)
 	// mouse_move(MouseEvent)
 	point_inside(x f64, y f64) bool
-	unfocus()
-	focus()
+	// unfocus()
+	// focus()
+	// is_focused() bool
 	set_pos(x int, y int)
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
-	is_focused() bool
 	set_visible(bool)
 	cleanup()
 }
@@ -81,7 +81,7 @@ pub interface Layout {
 	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
 	// on_click(ClickFn)
-	unfocus_all()
+	// unfocus_all()
 	// on_mousemove(MouseMoveFn)
 	draw()
 	resize(w int, h int)

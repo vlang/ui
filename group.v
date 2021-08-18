@@ -179,25 +179,8 @@ fn (mut g Group) set_visible(state bool) {
 	g.hidden = !state
 }
 
-fn (mut g Group) focus() {
-}
-
-fn (mut g Group) unfocus() {
-	g.unfocus_all()
-}
-
-fn (g &Group) is_focused() bool {
-	return false
-}
-
 fn (g &Group) get_ui() &UI {
 	return g.ui
-}
-
-fn (g &Group) unfocus_all() {
-	for mut child in g.children {
-		child.unfocus()
-	}
 }
 
 fn (g &Group) resize(width int, height int) {

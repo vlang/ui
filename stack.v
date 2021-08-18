@@ -1051,12 +1051,6 @@ fn (s &Stack) get_ui() &UI {
 	return s.ui
 }
 
-fn (s &Stack) unfocus_all() {
-	for mut child in s.children {
-		child.unfocus()
-	}
-}
-
 fn (s &Stack) get_state() voidptr {
 	parent := s.parent
 	return parent.get_state()
@@ -1071,21 +1065,6 @@ pub fn (mut s Stack) set_visible(state bool) {
 	for mut child in s.children {
 		child.set_visible(state)
 	}
-}
-
-fn (mut s Stack) focus() {
-	// s.is_focused = true
-	// println('')
-}
-
-fn (mut s Stack) unfocus() {
-	s.unfocus_all()
-	// s.is_focused = false
-	// println('')
-}
-
-fn (s &Stack) is_focused() bool {
-	return false // s.is_focused
 }
 
 fn (mut s Stack) resize(width int, height int) {

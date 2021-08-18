@@ -856,7 +856,8 @@ fn (mut tb TextBox) set_visible(state bool) {
 }
 
 pub fn (mut tb TextBox) focus() {
-	set_focus(tb.ui.window, mut tb)
+	mut f := Focusable(tb)
+	f.set_focus()
 }
 
 fn (tb &TextBox) is_focused() bool {
