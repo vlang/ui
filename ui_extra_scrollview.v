@@ -50,9 +50,9 @@ enum ScrollViewPart {
 	bar
 }
 
-type ScrollViewChangedFn = fn (sw ScrollableWidget)
-
-// WORKAROUND: type ScrollViewChangedFn = fn (sw voidptr)
+// SOON: type ScrollViewChangedFn = fn (sw ScrollableWidget)
+// WORKAROUND:
+type ScrollViewChangedFn = fn (sw voidptr)
 
 interface ScrollableWidget {
 mut:
@@ -480,14 +480,15 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	}
 	// User defined treatment for scrollable widget
 	if sw.on_scroll_change != ScrollViewChangedFn(0) {
-		sw.on_scroll_change(sw)
+		// SOON:
+		// sw.on_scroll_change(sw)
 		// WORKAROUND:
-		// if mut sw is TextBox {
-		// 	sw.on_scroll_change(sw)
-		// } else if mut sw is ListBox {
-		// 	sw.on_scroll_change(sw)
-		// } else {
-		// }
+		if mut sw is TextBox {
+			sw.on_scroll_change(sw)
+		} else if mut sw is ListBox {
+			sw.on_scroll_change(sw)
+		} else {
+		}
 	}
 }
 

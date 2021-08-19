@@ -46,6 +46,7 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
+				on_scroll_change: on_scroll_change
 				// is_sync: true
 			),
 			ui.textbox(
@@ -75,4 +76,10 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
 	mut tb := switcher.ui.window.textbox(tbs)
 	tb.tv.switch_wordwrap()
+}
+
+// SOON: fn on_scroll_change(sw ui.ScrollableWidget) {
+// WORKAROUND:
+fn on_scroll_change(sw &ui.TextBox) {
+	println('sw has srcollview: $sw.has_scrollview')
 }
