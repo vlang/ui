@@ -86,8 +86,9 @@ pub mut:
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 struct StackConfig {

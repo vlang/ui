@@ -89,8 +89,9 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 mut:
 	is_typing bool
 }
@@ -128,8 +129,9 @@ pub struct TextBoxConfig {
 	text_cfg           gx.TextCfg
 	text_size          f64
 	// added when user set text after declaration but before init (see colorbox component)
-	text_after bool
-	scrollview bool
+	text_after       bool
+	scrollview       bool
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
@@ -164,6 +166,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		fitted_height: c.fitted_height || c.is_multiline
 		is_sync: c.is_sync
 		twosided_sel: c.twosided_sel
+		on_scroll_change: c.on_scroll_change
 	}
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')

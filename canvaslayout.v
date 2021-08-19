@@ -49,15 +49,16 @@ pub mut:
 	has_scrollview bool
 	scrollview     &ScrollView = 0
 	// callbacks
-	draw_fn       CanvasLayoutDrawFn      = voidptr(0)
-	click_fn      CanvasLayoutMouseFn     = voidptr(0)
-	mouse_down_fn CanvasLayoutMouseFn     = voidptr(0)
-	mouse_up_fn   CanvasLayoutMouseFn     = voidptr(0)
-	scroll_fn     CanvasLayoutScrollFn    = voidptr(0)
-	mouse_move_fn CanvasLayoutMouseMoveFn = voidptr(0)
-	key_down_fn   CanvasLayoutKeyFn       = voidptr(0)
-	char_fn       CanvasLayoutKeyFn       = voidptr(0)
-	full_size_fn  CanvasLayoutSizeFn
+	draw_fn          CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
+	click_fn         CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
+	mouse_down_fn    CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
+	mouse_up_fn      CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
+	scroll_fn        CanvasLayoutScrollFn    = CanvasLayoutScrollFn(0)
+	mouse_move_fn    CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
+	key_down_fn      CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
+	char_fn          CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
+	full_size_fn     CanvasLayoutSizeFn      = CanvasLayoutSizeFn(0)
+	on_scroll_change ScrollViewChangedFn     = ScrollViewChangedFn(0)
 mut:
 	parent Layout = empty_stack
 	// To keep track of original position

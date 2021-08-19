@@ -19,9 +19,21 @@ pub mut:
 // Structure to help for drawing text line by line and cursor update between lines
 // Insertion and deletion would be made directly on TextView.text field and then synchronized
 // on textlines except for cursor vertical motion
+
+/*
+In the process to make lines only dealing with visible lines:
+- if <from> is the line starting the visibility and <to> the line ending the visibility
+- if lines := (*tv.text).split("\n")
+- then:
+	tvl.lines[0] = lines[..from].join("\n")
+	tvl.lines[1..(to - from)] = lines[from .. (to + 1)]
+	tvl.lines[to - from] = lines[(to + 1) ..]
+*/
 struct TextLinesView {
 pub mut:
 	lines        []string
+	from         int
+	to           int
 	cursor_pos_i int
 	cursor_pos_j int
 	sel_start_j  int
@@ -40,7 +52,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 
 pub fn (tv &TextView) size() (int, int) {
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
-	for line in tv.tlv.lines {
+	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
 		lw := text_width(tv.tb, line)
 		if lw > w {
 			w = lw
@@ -119,7 +131,7 @@ fn (mut tv TextView) sync_text_lines() {
 	}
 }
 
-pub fn (tv &TextView) visible_lines() (int, int) {
+pub fn (mut tv TextView) visible_lines() {
 	_, svy := tv.tb.scrollview.orig_xy()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
@@ -133,8 +145,7 @@ pub fn (tv &TextView) visible_lines() (int, int) {
 	if j2 > jmax {
 		j2 = jmax
 	}
-	println('from ${tv.tlv.lines[j1]} \nto ${tv.tlv.lines[j2]}')
-	return j1, j2
+	tv.tlv.from, tv.tlv.to = j1, j2
 }
 
 pub fn (mut tv TextView) update_lines() {
@@ -142,6 +153,7 @@ pub fn (mut tv TextView) update_lines() {
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
+		tv.visible_lines()
 	}
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
@@ -584,11 +596,20 @@ pub fn (mut tv TextView) cursor_at_end() {
 
 fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
+	tv.visible_lines()
 	mut word_wrapped_lines := []string{}
-	for line in lines {
-		ww_lines := tv.word_wrap_line(line)
+	println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
+	mut cpt := 0
+	for j, line in lines {
+		ww_lines := if j < tv.tlv.from || j > tv.tlv.to {
+			[line]
+		} else {
+			cpt++
+			tv.word_wrap_line(line)
+		}
 		word_wrapped_lines << ww_lines
 	}
+	println('cpt line word_wrap: $cpt')
 	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
 	tv.tlv.lines = word_wrapped_lines
 }

@@ -50,6 +50,8 @@ enum ScrollViewPart {
 	bar
 }
 
+type ScrollViewChangedFn = fn (voidptr)
+
 interface ScrollableWidget {
 mut:
 	has_scrollview bool
@@ -60,6 +62,7 @@ mut:
 	ui &UI
 	offset_x int
 	offset_y int
+	on_scroll_change ScrollViewChangedFn
 	adj_size() (int, int)
 	size() (int, int)
 }
@@ -223,8 +226,6 @@ pub fn scrollview_reset<T>(mut w T) {
 	}
 	w.set_children_pos()
 }
-
-// type ScrollViewChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
 
 [heap]
 pub struct ScrollView {
@@ -468,6 +469,21 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 			sv.offset_y = max_offset_y
 		}
 		sv.btn_y = int(f32(sv.offset_y) * a_y)
+	}
+	// Special treatment for textbox
+	mut sw := sv.widget
+	if mut sw is TextBox {
+		// println("textbox change")
+		sw.tv.update_lines()
+	}
+	// User defined treatment for scrollable widget
+	if sw.on_scroll_change != ScrollViewChangedFn(0) {
+		if mut sw is TextBox {
+			sw.on_scroll_change(sw)
+		} else if mut sw is ListBox {
+			sw.on_scroll_change(sw)
+		} else {
+		}
 	}
 }
 
