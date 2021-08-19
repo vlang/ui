@@ -135,7 +135,7 @@ pub fn (mut tv TextView) visible_lines() {
 	_, svy := tv.tb.scrollview.orig_xy()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
-	println('y: $y ($svy - $tv.tb.line_height) $tv.tb.height')
+	// println('y: $y ($svy - $tv.tb.line_height) $tv.tb.height')
 	mut j1 := (svy - y) / tv.tb.line_height
 	if j1 < 0 {
 		j1 = 0
@@ -149,11 +149,11 @@ pub fn (mut tv TextView) visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
+	tv.visible_lines()
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
-		tv.visible_lines()
 	}
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
@@ -596,20 +596,12 @@ pub fn (mut tv TextView) cursor_at_end() {
 
 fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
-	tv.visible_lines()
 	mut word_wrapped_lines := []string{}
-	println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
-	mut cpt := 0
+	// println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
 	for j, line in lines {
-		ww_lines := if j < tv.tlv.from || j > tv.tlv.to {
-			[line]
-		} else {
-			cpt++
-			tv.word_wrap_line(line)
-		}
+		ww_lines := if j < tv.tlv.from || j > tv.tlv.to { [line] } else { tv.word_wrap_line(line) }
 		word_wrapped_lines << ww_lines
 	}
-	println('cpt line word_wrap: $cpt')
 	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
 	tv.tlv.lines = word_wrapped_lines
 }

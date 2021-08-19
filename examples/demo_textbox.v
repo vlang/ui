@@ -81,5 +81,5 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 // SOON: fn on_scroll_change(sw ui.ScrollableWidget) {
 // WORKAROUND:
 fn on_scroll_change(sw &ui.TextBox) {
-	println('sw has srcollview: $sw.has_scrollview')
+	println('sw cb example: $sw.id has scrollview? $sw.has_scrollview with x: $sw.x and y: $sw.y')
 }
