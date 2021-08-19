@@ -58,7 +58,7 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
-				// is_sync: true
+				is_sync: true
 			),
 		]
 	)
@@ -78,8 +78,6 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	tb.tv.switch_wordwrap()
 }
 
-// SOON: fn on_scroll_change(sw ui.ScrollableWidget) {
-// WORKAROUND:
-fn on_scroll_change(sw &ui.TextBox) {
+fn on_scroll_change(sw ui.ScrollableWidget) {
 	println('sw cb example: $sw.id has scrollview? $sw.has_scrollview with x: $sw.x and y: $sw.y')
 }
