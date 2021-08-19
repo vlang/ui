@@ -407,65 +407,22 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
 		match s {
 			'a' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.sel_start = 0
-				tv.sel_end = tv.text.runes().len
-				tv.sync_text_lines()
-				tv.tb.ui.show_cursor = false
-				tv.tb.sel_active = true
-				return
+				tv.do_select_all()
 			}
 			'c' {
-				if tv.is_sel_active() {
-					ustr := tv.text.runes()
-					sel_start, sel_end := tv.ordered_pos_selection()
-					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-				}
+				tv.do_copy()
 			}
 			'v' {
-				if tv.tb.read_only {
-					return
-				}
-				tv.insert(tv.tb.ui.clipboard.paste())
+				tv.do_paste()
 			}
 			'x' {
-				if tv.tb.read_only {
-					return
-				}
-				if tv.is_sel_active() {
-					ustr := tv.text.runes()
-					sel_start, sel_end := tv.ordered_pos_selection()
-					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-					tv.delete_selection()
-				}
+				tv.do_cut()
 			}
 			'-' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.tb.text_size -= 2
-				if tv.tb.text_size < 8 {
-					tv.tb.text_size = 8
-				}
-				mut tb := tv.tb
-				update_text_size(mut tb)
-				tv.tb.update_line_height()
-				tv.update_lines()
+				tv.do_zoom_down()
 			}
 			'=', '+' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.tb.text_size += 2
-				if tv.tb.text_size > 48 {
-					tv.tb.text_size = 48
-				}
-				mut tb := tv.tb
-				update_text_size(mut tb)
-				tv.tb.update_line_height()
-				tv.update_lines()
+				tv.do_zoom_up()
 			}
 			else {}
 		}
@@ -546,11 +503,75 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
 		}
-		// .tab {
-		// 	// println('tab')
-		// }
 		else {}
 	}
+}
+
+pub fn (mut tv TextView) do_select_all() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.sel_start = 0
+	tv.sel_end = tv.text.runes().len
+	tv.sync_text_lines()
+	tv.tb.ui.show_cursor = false
+	tv.tb.sel_active = true
+	return
+}
+
+pub fn (mut tv TextView) do_copy() {
+	if tv.is_sel_active() {
+		ustr := tv.text.runes()
+		sel_start, sel_end := tv.ordered_pos_selection()
+		tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+	}
+}
+
+pub fn (mut tv TextView) do_paste() {
+	if tv.tb.read_only {
+		return
+	}
+	tv.insert(tv.tb.ui.clipboard.paste())
+}
+
+pub fn (mut tv TextView) do_cut() {
+	if tv.tb.read_only {
+		return
+	}
+	if tv.is_sel_active() {
+		ustr := tv.text.runes()
+		sel_start, sel_end := tv.ordered_pos_selection()
+		tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+		tv.delete_selection()
+	}
+}
+
+pub fn (mut tv TextView) do_zoom_down() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.tb.text_size -= 2
+	if tv.tb.text_size < 8 {
+		tv.tb.text_size = 8
+	}
+	mut tb := tv.tb
+	update_text_size(mut tb)
+	tv.tb.update_line_height()
+	tv.update_lines()
+}
+
+pub fn (mut tv TextView) do_zoom_up() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.tb.text_size += 2
+	if tv.tb.text_size > 48 {
+		tv.tb.text_size = 48
+	}
+	mut tb := tv.tb
+	update_text_size(mut tb)
+	tv.tb.update_line_height()
+	tv.update_lines()
 }
 
 fn (tv &TextView) cursor_y() int {
