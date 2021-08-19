@@ -1,6 +1,7 @@
 import ui
 
 struct State {
+mut:
 	tb1  string
 	tb2m string
 	tb3m string
@@ -9,9 +10,15 @@ struct State {
 fn main() {
 	mut app := &State{
 		tb1: 'hggyjgyguguglul'
-		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(3)
+		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(1000)
 		tb3m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'
 	}
+	lines := app.tb2m.split('\n')
+	mut s := ''
+	for i, l in lines {
+		s += '($i) $l\n'
+	}
+	app.tb2m = s
 	c := ui.column(
 		widths: ui.stretch
 		heights: [ui.compact, ui.compact, ui.stretch, ui.stretch]
@@ -39,7 +46,7 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
-				is_sync: true
+				// is_sync: true
 			),
 			ui.textbox(
 				read_only: true
@@ -50,7 +57,7 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
-				is_sync: true
+				// is_sync: true
 			),
 		]
 	)

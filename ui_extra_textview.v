@@ -1,6 +1,7 @@
 module ui
 
 import gx
+// import encoding.utf8
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 struct TextView {
@@ -118,6 +119,24 @@ fn (mut tv TextView) sync_text_lines() {
 	}
 }
 
+pub fn (tv &TextView) visible_lines() (int, int) {
+	_, svy := tv.tb.scrollview.orig_xy()
+	mut y := tv.tb.y + textbox_padding_y
+	// println("draw_textlines: $tb.tv.tlv.lines")
+	println('y: $y ($svy - $tv.tb.line_height) $tv.tb.height')
+	mut j1 := (svy - y) / tv.tb.line_height
+	if j1 < 0 {
+		j1 = 0
+	}
+	mut j2 := (svy + tv.tb.height - y) / tv.tb.line_height
+	jmax := (*tv.text).count('\n')
+	if j2 > jmax {
+		j2 = jmax
+	}
+	println('from ${tv.tlv.lines[j1]} \nto ${tv.tlv.lines[j2]}')
+	return j1, j2
+}
+
 pub fn (mut tv TextView) update_lines() {
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
@@ -140,9 +159,10 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	_, svy := tv.tb.scrollview.orig_size()
+	_, svy := tv.tb.scrollview.orig_xy()
 	mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
+	// println("y: $y ($svy - $tv.tb.line_height) $tv.tb.height")
 	for line in tv.tlv.lines {
 		if y >= svy - tv.tb.line_height && y <= svy + tv.tb.height + tv.tb.line_height {
 			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
@@ -261,6 +281,7 @@ fn (mut tv TextView) start_selection(x int, y int) {
 		tv.tlv.sel_end_i, tv.tlv.sel_end_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
 	}
 	tv.sync_text_pos()
+	tv.visible_lines()
 	// tv.info()
 }
 

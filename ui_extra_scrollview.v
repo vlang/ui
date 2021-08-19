@@ -127,33 +127,33 @@ pub fn scrollview_add<T>(mut w T) {
 	w.has_scrollview = true
 }
 
-pub fn scrollview_widget_set_orig_size(w Widget) {
+pub fn scrollview_widget_set_orig_xy(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
-			scrollview_set_orig_size(w)
+			scrollview_set_orig_xy(w)
 		}
 		for child in w.children {
-			scrollview_widget_set_orig_size(child)
+			scrollview_widget_set_orig_xy(child)
 		}
 	} else if w is CanvasLayout {
 		if has_scrollview(w) {
-			scrollview_set_orig_size(w)
+			scrollview_set_orig_xy(w)
 		}
 		for child in w.children {
-			scrollview_widget_set_orig_size(child)
+			scrollview_widget_set_orig_xy(child)
 		}
 	} else if w is ListBox {
 		if has_scrollview(w) {
-			scrollview_set_orig_size(w)
+			scrollview_set_orig_xy(w)
 		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
-			scrollview_set_orig_size(w)
+			scrollview_set_orig_xy(w)
 		}
 	}
 }
 
-pub fn scrollview_set_orig_size<T>(w &T) {
+pub fn scrollview_set_orig_xy<T>(w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.orig_x, sv.orig_y = w.x, w.y
@@ -188,7 +188,7 @@ pub fn scrollview_draw_begin<T>(mut w T) {
 	if scrollview_is_active(mut w) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
-			svx, svy := sv.orig_size()
+			svx, svy := sv.orig_xy()
 			if sv.active_x {
 				w.x = svx - sv.offset_x
 			}
@@ -212,7 +212,7 @@ pub fn scrollview_draw_end<T>(w &T) {
 
 pub fn scrollview_reset<T>(mut w T) {
 	mut sv := w.scrollview
-	svx, svy := sv.orig_size()
+	svx, svy := sv.orig_xy()
 	if !sv.active_x {
 		sv.offset_x = 0
 		w.x = svx - sv.offset_x
@@ -348,7 +348,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 	return ox, oy
 }
 
-fn (sv &ScrollView) orig_size() (int, int) {
+fn (sv &ScrollView) orig_xy() (int, int) {
 	ox, oy := sv.parent_offset()
 	return sv.orig_x - ox, sv.orig_y - oy
 }
@@ -416,7 +416,7 @@ fn (sv &ScrollView) children_point_inside(x f64, y f64, mode ScrollViewPart) boo
 
 fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 	mut x_min, mut y_min, mut x_max, mut y_max := 0, 0, 0, 0
-	svx, svy := sv.orig_size()
+	svx, svy := sv.orig_xy()
 	match mode {
 		.view {
 			x_min, y_min = svx + sv.widget.offset_x, svy + sv.widget.offset_y
@@ -473,7 +473,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 
 pub fn (mut sv ScrollView) clip() {
 	if sv.is_active() {
-		svx, svy := sv.orig_size()
+		svx, svy := sv.orig_xy()
 		sr := gg.Rect{
 			x: svx * gg.dpi_scale()
 			y: svy * gg.dpi_scale()
@@ -500,7 +500,7 @@ pub fn (sv &ScrollView) draw() {
 	sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
 		int(scissor_rect.height), true)
 
-	svx, svy := sv.orig_size()
+	svx, svy := sv.orig_xy()
 
 	if sv.active_x {
 		// horizontal scrollbar
