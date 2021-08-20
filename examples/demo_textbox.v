@@ -46,7 +46,6 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
-				on_scroll_change: on_scroll_change
 				// is_sync: true
 			),
 			ui.textbox(
@@ -59,6 +58,7 @@ fn main() {
 				height: 200
 				text_size: 24
 				is_sync: true
+				on_scroll_change: on_scroll_change
 			),
 		]
 	)

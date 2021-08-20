@@ -349,7 +349,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 	return ox, oy
 }
 
-fn (sv &ScrollView) orig_xy() (int, int) {
+pub fn (sv &ScrollView) orig_xy() (int, int) {
 	ox, oy := sv.parent_offset()
 	return sv.orig_x - ox, sv.orig_y - oy
 }

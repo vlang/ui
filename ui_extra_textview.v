@@ -574,6 +574,16 @@ pub fn (mut tv TextView) do_zoom_up() {
 	tv.update_lines()
 }
 
+pub struct LogViewConfig {
+	nb_lines int = 5
+}
+
+pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+	if tv.tlv.to + cfg.nb_lines > tv.tlv.lines.len {
+		tv.tb.scrollview.move_to_end_y()
+	}
+}
+
 fn (tv &TextView) cursor_y() int {
 	return tv.tb.y + textbox_padding_y + tv.tlv.cursor_pos_j * tv.tb.line_height
 }
