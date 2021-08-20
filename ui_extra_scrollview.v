@@ -543,7 +543,7 @@ pub fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 	}
 }
 
-pub fn (mut sv ScrollView) move_to_end_y() {
+pub fn (mut sv ScrollView) scroll_to_end_y() {
 	max_offset_y, _ := sv.coef_y()
 	sv.set(max_offset_y, .btn_y)
 }
@@ -651,8 +651,9 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
+// N.B.: deactivated for TextBox
 fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
-	if !sv.is_active() || !sv.is_focused {
+	if !sv.is_active() || !sv.is_focused || sv.widget is TextBox {
 		return
 	}
 	match e.key {

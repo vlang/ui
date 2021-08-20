@@ -132,15 +132,17 @@ fn (mut tv TextView) sync_text_lines() {
 }
 
 pub fn (mut tv TextView) visible_lines() {
-	_, svy := tv.tb.scrollview.orig_xy()
-	mut y := tv.tb.y + textbox_padding_y
+	// _, svy := tv.tb.scrollview.orig_xy()
+	// mut y := tv.tb.y + textbox_padding_y
 	// println("draw_textlines: $tb.tv.tlv.lines")
 	// println('y: $y ($svy - $tv.tb.line_height) $tv.tb.height')
-	mut j1 := (svy - y) / tv.tb.line_height
+	// mut j1 := (svy - y) / tv.tb.line_height
+	mut j1 := tv.tb.scrollview.offset_y / tv.tb.line_height
 	if j1 < 0 {
 		j1 = 0
 	}
-	mut j2 := (svy + tv.tb.height - y) / tv.tb.line_height
+	// mut j2 := (svy + tv.tb.height - y) / tv.tb.line_height
+	mut j2 := (tv.tb.scrollview.offset_y + tv.tb.height) / tv.tb.line_height
 	jmax := (*tv.text).count('\n')
 	if j2 > jmax {
 		j2 = jmax
@@ -387,6 +389,23 @@ pub fn (mut tv TextView) move_cursor(side Side) {
 	}
 }
 
+pub fn (mut tv TextView) cursor_allways_visible() {
+	// vertically
+	if tv.tlv.cursor_pos_j <= tv.tlv.from {
+		tv.scroll_y_to_cursor(false)
+	} else if tv.tlv.cursor_pos_j >= tv.tlv.to {
+		tv.scroll_y_to_cursor(true)
+	}
+	// horizontally
+	ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
+	ulen := text_width(tv.tb, ustr[..(tv.tlv.cursor_pos_i)].string())
+	if ulen <= tv.tb.scrollview.offset_x {
+		tv.scroll_x_to_cursor(false)
+	} else if ulen >= tv.tb.scrollview.offset_x + tv.tb.width - scrollbar_size {
+		tv.scroll_x_to_cursor(true)
+	}
+}
+
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('key down $e')
 	s := utf32_to_str(e.codepoint)
@@ -518,6 +537,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 		else {}
 	}
+	tv.cursor_allways_visible()
 }
 
 pub fn (mut tv TextView) do_select_all() {
@@ -593,7 +613,7 @@ pub struct LogViewConfig {
 
 pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
 	if tv.tlv.to + cfg.nb_lines > tv.tlv.lines.len {
-		tv.tb.scrollview.move_to_end_y()
+		tv.scroll_y_to_end()
 	}
 }
 
@@ -624,15 +644,23 @@ pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	}
 }
 
-/*
-pub fn (mut tv TextView) is_cursor_at_end() bool {
-	max_offset_y, _ := tv.tb.scrollview.coef_y()
-	println('is_cursor_at_End? $tv.tb.scrollview.offset_y >=  $max_offset_y')
-	return tv.tb.scrollview.offset_y >= max_offset_y
-}*/
+pub fn (mut tv TextView) scroll_x_to_cursor(end bool) {
+	if tv.tb.scrollview.active_x {
+		delta := if end { tv.tb.width - 2 * scrollbar_size } else { 0 }
+		ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
+		ulen := text_width(tv.tb, ustr[..tv.tlv.cursor_pos_i].string())
+		tv.tb.scrollview.set(ulen - delta, .btn_x)
+	}
+}
 
-pub fn (mut tv TextView) cursor_at_end() {
-	// println("here cursor at end")
+pub fn (mut tv TextView) scroll_y_to_cursor(end bool) {
+	if tv.tb.scrollview.active_y {
+		delta := if end { tv.tb.height - tv.tb.line_height / 2 - tv.tb.line_height } else { 0 }
+		tv.tb.scrollview.set(tv.tlv.cursor_pos_j * tv.tb.line_height - delta, .btn_y)
+	}
+}
+
+pub fn (mut tv TextView) scroll_y_to_end() {
 	if tv.tb.scrollview.active_y {
 		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.tb.line_height, .btn_y)
 	}

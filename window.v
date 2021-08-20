@@ -778,6 +778,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 		// action: action
 		// mods: mod
 	}
+	// TODO: [Ctl]+[Tab] and [Ctl]+[Shift]+[Tab] not captured by sokol
 	if e.key == .tab {
 		if shift_key(e.mods) {
 			window.focus_prev()
