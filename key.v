@@ -181,7 +181,6 @@ fn shift_key(mods KeyMod) bool {
 }
 
 fn ctl_key(mods KeyMod) bool {
-	println('ctl_key: $mods')
 	return int(mods) & 2 == 2
 }
 
