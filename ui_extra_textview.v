@@ -341,6 +341,7 @@ pub fn (mut tv TextView) extend_selection(x int, y int) {
 pub fn (mut tv TextView) cancel_selection() {
 	tv.sel_start = 0
 	tv.sel_end = -1
+	tv.tb.sel_active = false
 	tv.sync_text_lines()
 }
 
@@ -479,26 +480,38 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.tb.ui.show_cursor = true
 			tv.delete_cur_char()
 		}
-		.left {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-			tv.move_cursor(.left)
+		.left, .right, .up, .down {
+			dir := match e.key {
+				.left { Side.left }
+				.right { Side.right }
+				.up { Side.top }
+				else { Side.bottom }
+			}
+			if shift_key(e.mods) {
+				if !tv.is_sel_active() {
+					tv.tb.sel_active = true
+					tv.sel_start = tv.cursor_pos
+					tv.tb.ui.show_cursor = false
+				}
+				tv.move_cursor(dir)
+				tv.sel_end = tv.cursor_pos
+				tv.sync_text_lines()
+			} else {
+				tv.cancel_selection()
+				tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+				tv.move_cursor(dir)
+			}
 		}
-		.right {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.right)
-		}
-		.up {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.top)
-		}
-		.down {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.bottom)
-		}
+		// .up {
+		// 	tv.cancel_selection()
+		// 	tv.tb.ui.show_cursor = true
+		// 	tv.move_cursor(.top)
+		// }
+		// .down {
+		// 	tv.cancel_selection()
+		// 	tv.tb.ui.show_cursor = true
+		// 	tv.move_cursor(.bottom)
+		// }
 		.escape {
 			tv.cancel_selection()
 			tv.tb.ui.show_cursor = true
