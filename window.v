@@ -774,7 +774,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		codepoint: 0 // event.char_code
+		mods_orig: event.modifiers
+		codepoint: event.char_code
 		code: int(event.key_code)
 		// action: action
 		// mods: mod
