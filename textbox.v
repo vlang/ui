@@ -427,30 +427,138 @@ pub fn (mut tb TextBox) delete_selection() {
 	tb.cancel_selection()
 }
 
-// fn (mut tb TextBox) cursor_move(direction Side) {
-// 	match direction {
-// 		.bottom
-// 	}
-// }
-
-fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
-	//  println("tb_char")
+fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
+	$if tb_keydown ? {
+		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
+	}
 	if tb.hidden {
 		return
 	}
-	if !tb.is_focused {
+	if !tb.is_focused && !tb.read_only {
+		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.on_char != TextBoxCharFn(0) {
-		tb.on_char(window.state, tb, e.codepoint)
+	if tb.on_key_down != TextBoxKeyDownFn(0) {
+		tb.on_key_down(window.state, tb, e.codepoint)
+	}
+	// println("tb key_down $e.key ${int(e.codepoint)}")
+	if tb.is_multiline {
+		tb.tv.key_down(e)
+	} else {
+		mut text := *tb.text
+		match e.key {
+			.enter {
+				if tb.on_enter != TextBoxEnterFn(0) {
+					println('tb_enter: <${*tb.text}>')
+					tb.on_enter(*tb.text, window.state)
+				}
+			}
+			.backspace {
+				tb.ui.show_cursor = true
+				if text != '' {
+					if tb.cursor_pos == 0 {
+						return
+					}
+					// Delete the entire selection
+					if tb.is_sel_active() {
+						tb.delete_selection()
+					} else if e.mods in [.super, .ctrl] {
+						// Delete until previous whitespace
+						mut i := tb.cursor_pos
+						for {
+							if i > 0 {
+								i--
+							}
+							if text[i].is_space() || i == 0 {
+								// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos]}
+								break
+							}
+						}
+						tb.cursor_pos = i
+					} else {
+						u := text.runes()
+						// Delete just one character
+						unsafe {
+							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()
+						}
+						tb.cursor_pos--
+					}
+					// u.free() // TODO remove
+					// tb.text = tb.text[..tb.cursor_pos - 1] + tb.text[tb.cursor_pos..]
+				}
+				// RO REMOVE?
+				// tb.update_text()
+				if tb.on_change != TextBoxChangeFn(0) {
+					// tb.on_change(*tb.text, window.state)
+				}
+			}
+			.delete {
+				tb.ui.show_cursor = true
+				if tb.cursor_pos == text.len || text == '' {
+					return
+				}
+				u := text.runes()
+				unsafe {
+					*tb.text = u[..tb.cursor_pos].string() + u[tb.cursor_pos + 1..].string()
+				}
+				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
+				// u.free() // TODO remove
+				if tb.on_change != TextBoxChangeFn(0) {
+					// tb.on_change(*tb.text, window.state)
+				}
+			}
+			.left {
+				if tb.sel(e.mods, e.key) {
+					return
+				}
+				tb.cancel_selection()
+				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+				tb.cursor_pos--
+				if tb.cursor_pos < 0 {
+					tb.cursor_pos = 0
+				}
+			}
+			.right {
+				if tb.sel(e.mods, e.key) {
+					return
+				}
+				tb.cancel_selection()
+				tb.ui.show_cursor = true
+				tb.cursor_pos++
+				text_len := text.runes().len
+				if tb.cursor_pos > text_len {
+					tb.cursor_pos = text_len
+				}
+				// println("right: $tb.cursor_posj")
+			}
+			.tab {
+				// tb.ui.show_cursor = false
+				/*
+				TODO if tb.parent.just_tabbed {
+					tb.parent.just_tabbed = false
+					return
+				}
+				*/
+				// println('TAB $tb.id')
+				/*
+				if e.mods == .shift {
+					tb.parent.focus_previous()
+				}
+				else {
+					tb.parent.focus_next()
+				}
+				*/
+			}
+			else {}
+		}
 	}
 }
 
-fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
+fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
-	$if tb_keydown ? {
-		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
+	$if tb_char ? {
+		println('tb_char: $tb.id  -> $tb.hidden $tb.is_focused')
 	}
 	if tb.hidden {
 		return
@@ -468,13 +576,13 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		return
 	}
 	tb.is_typing = true
-	if tb.on_key_down != TextBoxKeyDownFn(0) {
-		tb.on_key_down(window.state, tb, e.codepoint)
+	if tb.on_char != TextBoxCharFn(0) {
+		tb.on_char(window.state, tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
 	// Entering text
 	if tb.is_multiline {
-		tb.tv.key_down(e)
+		tb.tv.key_char(e)
 	} else {
 		mut text := *tb.text
 		if text.len == 0 {
@@ -581,112 +689,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					tb.on_change(*tb.text, window.state)
 				}
 			}
-		}
-		// println("tb key_down $e.key ${int(e.codepoint)}")
-		match e.key {
-			.enter {
-				if tb.on_enter != TextBoxEnterFn(0) {
-					println('tb_enter: <${*tb.text}>')
-					tb.on_enter(*tb.text, window.state)
-				}
-			}
-			.backspace {
-				tb.ui.show_cursor = true
-				if text != '' {
-					if tb.cursor_pos == 0 {
-						return
-					}
-					// Delete the entire selection
-					if tb.is_sel_active() {
-						tb.delete_selection()
-					} else if e.mods in [.super, .ctrl] {
-						// Delete until previous whitespace
-						mut i := tb.cursor_pos
-						for {
-							if i > 0 {
-								i--
-							}
-							if text[i].is_space() || i == 0 {
-								// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos]}
-								break
-							}
-						}
-						tb.cursor_pos = i
-					} else {
-						u := text.runes()
-						// Delete just one character
-						unsafe {
-							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()
-						}
-						tb.cursor_pos--
-					}
-					// u.free() // TODO remove
-					// tb.text = tb.text[..tb.cursor_pos - 1] + tb.text[tb.cursor_pos..]
-				}
-				// RO REMOVE?
-				// tb.update_text()
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-			}
-			.delete {
-				tb.ui.show_cursor = true
-				if tb.cursor_pos == text.len || text == '' {
-					return
-				}
-				u := text.runes()
-				unsafe {
-					*tb.text = u[..tb.cursor_pos].string() + u[tb.cursor_pos + 1..].string()
-				}
-				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
-				// u.free() // TODO remove
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-			}
-			.left {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-				tb.cursor_pos--
-				if tb.cursor_pos < 0 {
-					tb.cursor_pos = 0
-				}
-			}
-			.right {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true
-				tb.cursor_pos++
-				text_len := text.runes().len
-				if tb.cursor_pos > text_len {
-					tb.cursor_pos = text_len
-				}
-				// println("right: $tb.cursor_posj")
-			}
-			.tab {
-				// tb.ui.show_cursor = false
-				/*
-				TODO if tb.parent.just_tabbed {
-					tb.parent.just_tabbed = false
-					return
-				}
-				*/
-				// println('TAB $tb.id')
-				/*
-				if e.mods == .shift {
-					tb.parent.focus_previous()
-				}
-				else {
-					tb.parent.focus_next()
-				}
-				*/
-			}
-			else {}
 		}
 	}
 }
@@ -877,8 +879,12 @@ pub fn (mut tb TextBox) hide() {
 }
 
 pub fn (mut tb TextBox) set_text(s string) {
-	// tb.text = s
-	// tb.update()
+	if tb.is_multiline {
+		unsafe {
+			*tb.text = s
+		}
+		tb.tv.update_lines()
+	}
 }
 
 // pub fn (mut tb TextBox) on_change(func voidptr) {

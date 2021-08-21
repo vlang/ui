@@ -372,7 +372,9 @@ pub fn (mut tv TextView) move_cursor(side Side) {
 				tv.tlv.cursor_pos_j = 0
 			}
 			ustr := tv.current_line().runes()
-			if tv.tlv.cursor_pos_i >= ustr.len {
+			if ustr.len == 0 {
+				tv.tlv.cursor_pos_i = 0
+			} else if tv.tlv.cursor_pos_i >= ustr.len {
 				tv.tlv.cursor_pos_i = ustr.len - 1
 			}
 			tv.sync_text_pos()
@@ -411,8 +413,8 @@ pub fn (mut tv TextView) cursor_allways_visible() {
 	}
 }
 
-fn (mut tv TextView) key_down(e &KeyEvent) {
-	// println('key down $e')
+fn (mut tv TextView) key_char(e &KeyEvent) {
+	// println('key char $e')
 	s := utf32_to_str(e.codepoint)
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
@@ -465,6 +467,48 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	if tv.tb.read_only {
 		return
 	}
+	tv.cursor_allways_visible()
+}
+
+fn (mut tv TextView) key_down(e &KeyEvent) {
+	// println('tv key down $e')
+	s := utf32_to_str(e.codepoint)
+	if e.mods in [.ctrl, .super] {
+		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
+		match s {
+			'a' {
+				tv.do_select_all()
+			}
+			'c' {
+				tv.do_copy()
+			}
+			'v' {
+				tv.do_paste()
+			}
+			'x' {
+				tv.do_cut()
+			}
+			'-' {
+				tv.do_zoom_down()
+			}
+			'=', '+' {
+				tv.do_zoom_up()
+			}
+			else {}
+		}
+	}
+	// println('key_down: $e.key mods=$e.mods')
+	defer {
+		if tv.tb.on_change != TextBoxChangeFn(0) {
+			if e.key == .backspace {
+				tv.tb.on_change(*tv.text, tv.tb.ui.window.state)
+			}
+		}
+	}
+	// println("tb key_down $e.key ${int(e.codepoint)}")
+	if tv.tb.read_only {
+		return
+	}
 	match e.key {
 		.enter {
 			// println('enter $tv.tb.id')
@@ -472,6 +516,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cursor_pos++
 			tv.sync_text_lines()
 			tv.cursor_adjust_after_newline()
+			tv.cursor_allways_visible()
 		}
 		.backspace {
 			tv.tb.ui.show_cursor = true
@@ -499,10 +544,12 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				// Delete just one character
 				tv.delete_prev_char()
 			}
+			tv.cursor_allways_visible()
 		}
 		.delete {
 			tv.tb.ui.show_cursor = true
 			tv.delete_cur_char()
+			tv.cursor_allways_visible()
 		}
 		.left, .right, .up, .down {
 			dir := match e.key {
@@ -525,6 +572,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
 				tv.move_cursor(dir)
 			}
+			tv.cursor_allways_visible()
 		}
 		// .up {
 		// 	tv.cancel_selection()
@@ -542,7 +590,6 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 		else {}
 	}
-	tv.cursor_allways_visible()
 }
 
 pub fn (mut tv TextView) do_select_all() {
@@ -618,7 +665,7 @@ pub struct LogViewConfig {
 
 pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
 	if !tv.tb.has_scrollview {
-		println("Task do_logview requires textbox to have 'scrollview: true'")
+		println("Warning: use of task do_logview requires textbox to have 'scrollview: true'")
 		return
 	}
 	if tv.tlv.to + cfg.nb_lines > tv.tlv.lines.len {
