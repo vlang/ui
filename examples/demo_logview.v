@@ -27,7 +27,7 @@ fn main() {
 						height: 200
 						is_sync: true
 						// is_wordwrap: true
-						scrollview: true
+						// scrollview: true
 						read_only: true
 						// text_size: 20
 					),

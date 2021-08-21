@@ -474,7 +474,9 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	mut sw := sv.widget
 	if mut sw is TextBox {
 		// println("textbox change")
-		sw.tv.update_lines()
+		if sw.has_scrollview {
+			sw.tv.update_lines()
+		}
 	}
 	// User defined treatment for scrollable widget
 	if sw.on_scroll_change != ScrollViewChangedFn(0) {

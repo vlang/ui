@@ -132,17 +132,19 @@ fn (mut tv TextView) sync_text_lines() {
 }
 
 pub fn (mut tv TextView) visible_lines() {
-	// _, svy := tv.tb.scrollview.orig_xy()
-	// mut y := tv.tb.y + textbox_padding_y
-	// println("draw_textlines: $tb.tv.tlv.lines")
-	// println('y: $y ($svy - $tv.tb.line_height) $tv.tb.height')
-	// mut j1 := (svy - y) / tv.tb.line_height
-	mut j1 := tv.tb.scrollview.offset_y / tv.tb.line_height
-	if j1 < 0 {
-		j1 = 0
+	mut j1, mut j2 := 0, 0
+	if tv.tb.has_scrollview {
+		j1 = tv.tb.scrollview.offset_y / tv.tb.line_height
+		if j1 < 0 {
+			j1 = 0
+		}
 	}
-	// mut j2 := (svy + tv.tb.height - y) / tv.tb.line_height
-	mut j2 := (tv.tb.scrollview.offset_y + tv.tb.height) / tv.tb.line_height
+
+	if tv.tb.has_scrollview {
+		j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.tb.line_height
+	} else {
+		j2 = tv.tb.height / tv.tb.line_height
+	}
 	jmax := (*tv.text).count('\n')
 	if j2 > jmax {
 		j2 = jmax
@@ -151,7 +153,9 @@ pub fn (mut tv TextView) visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
-	tv.visible_lines()
+	if tv.tb.has_scrollview {
+		tv.visible_lines()
+	}
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
@@ -173,14 +177,12 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	_, svy := tv.tb.scrollview.orig_xy()
 	mut y := tv.tb.y + textbox_padding_y
-	// println("draw_textlines: $tb.tv.tlv.lines")
-	// println("y: $y ($svy - $tv.tb.line_height) $tv.tb.height")
-	for line in tv.tlv.lines {
-		if y >= svy - tv.tb.line_height && y <= svy + tv.tb.height + tv.tb.line_height {
-			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
-		}
+	if tv.tb.has_scrollview {
+		y += (tv.tlv.from) * tv.tb.line_height
+	}
+	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
+		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
 		y += tv.tb.line_height
 	}
 
@@ -390,6 +392,9 @@ pub fn (mut tv TextView) move_cursor(side Side) {
 }
 
 pub fn (mut tv TextView) cursor_allways_visible() {
+	if !tv.tb.has_scrollview {
+		return
+	}
 	// vertically
 	if tv.tlv.cursor_pos_j <= tv.tlv.from {
 		tv.scroll_y_to_cursor(false)
@@ -612,6 +617,10 @@ pub struct LogViewConfig {
 }
 
 pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+	if !tv.tb.has_scrollview {
+		println("Task do_logview requires textbox to have 'scrollview: true'")
+		return
+	}
 	if tv.tlv.to + cfg.nb_lines > tv.tlv.lines.len {
 		tv.scroll_y_to_end()
 	}

@@ -70,6 +70,7 @@ pub mut:
 	is_password   bool
 	read_only     bool
 	borderless    bool
+	bg_color      gx.Color
 	fitted_height bool // if true fit height in propose_size
 	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
 	on_char       TextBoxCharFn    = TextBoxCharFn(0)
@@ -118,6 +119,7 @@ pub struct TextBoxConfig {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
+	bg_color      gx.Color = gx.white
 	borderless    bool
 	fitted_height bool
 	on_key_down   TextBoxKeyDownFn
@@ -149,6 +151,7 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		max_len: c.max_len
 		read_only: c.read_only
 		borderless: c.borderless
+		bg_color: c.bg_color
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -187,7 +190,6 @@ fn (mut tb TextBox) init(parent Layout) {
 	update_text_size(mut tb)
 	// TODO: Maybe in a method later to allow font size update
 	tb.update_line_height()
-
 	if tb.is_multiline {
 		tb.tv.init(tb)
 	}
@@ -293,9 +295,9 @@ fn (mut tb TextBox) draw() {
 	// draw background
 	if tb.has_scrollview {
 		tb.ui.gg.draw_rect(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
-			tb.scrollview.width, tb.scrollview.height, gx.white)
+			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
 	} else {
-		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, gx.white)
+		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
 		if !tb.borderless {
 			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)

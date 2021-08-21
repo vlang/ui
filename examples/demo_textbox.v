@@ -1,4 +1,5 @@
 import ui
+import gx
 
 struct State {
 mut:
@@ -46,6 +47,7 @@ fn main() {
 				text: &app.tb2m
 				height: 200
 				text_size: 24
+				bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
 				// is_sync: true
 			),
 			ui.textbox(
