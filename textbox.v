@@ -579,8 +579,8 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			*tb.is_error = false
 		}
 	}
-	if e.codepoint == 9 || (e.codepoint == 9 && e.mods == .shift) { // .tab used for focus and .invalid
-		// println("tab $tb.id  return")
+	if e.codepoint == 9 || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
+		// println("tab $tb.id  $e.mods return")
 		return
 	}
 	if tb.on_char != TextBoxCharFn(0) {
@@ -790,10 +790,16 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
+		if tb.is_multiline {
+			Focusable(tb).unlock_focus()
+		}
 		return
 	} else {
 		// println('mouse first $tb.id')
 		tb.focus()
+		if tb.is_multiline {
+			Focusable(tb).lock_focus()
+		}
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y

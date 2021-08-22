@@ -87,7 +87,7 @@ pub mut:
 	native_message bool
 	// focus stuff
 	do_focus     bool
-	locked_focus bool
+	locked_focus string
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -1059,14 +1059,13 @@ fn (mut w Window) register_child(child Widget) {
 		}
 	} else if mut child is Label {
 		// println("register Label")
-		if child.id != '' {
+		if child.id == '' {
+			mode := 'lab'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
-		}
-		$if register ? {
-			if child.id != '' {
-				println('registered $child.id')
-			}
-		} $else {
+		} else {
+			w.widgets[child.id] = child
 		}
 	} else if mut child is ListBox {
 		if child.id == '' {
@@ -1211,6 +1210,16 @@ fn (mut w Window) register_child(child Widget) {
 		}
 		for child2 in child.children {
 			w.register_child(child2)
+		}
+	} else {
+		if child.id == '' {
+			mode := 'unknown'
+			w.widgets_counts[mode] += 1
+			mut u := child
+			u.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
 		}
 	}
 }

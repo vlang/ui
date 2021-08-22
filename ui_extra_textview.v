@@ -427,7 +427,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 		if tv.is_sel_active() {
 			tv.delete_selection()
 		}
-		tv.tb.ui.window.lock_focus()
+		Focusable(tv.tb).lock_focus()
 		tv.insert(s)
 		tv.cursor_pos++
 		tv.sync_text_lines()
@@ -497,7 +497,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 		.tab {
 			// println("tab multi")
-			if tv.tb.ui.window.locked_focus {
+			if !tv.tb.ui.window.unlocked_focus() {
 				if tv.is_sel_active() {
 					tv.do_indent()
 				} else {
@@ -566,15 +566,15 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cursor_allways_visible()
 		}
 		.escape {
-			if tv.tb.ui.window.locked_focus {
+			if tv.tb.ui.window.unlocked_focus() {
+				// allow to use tab inside textbox
+				Focusable(tv.tb).lock_focus()
+			} else {
 				if !tv.is_sel_active() {
-					tv.tb.ui.window.unlock_focus()
+					Focusable(tv.tb).unlock_focus()
 				}
 				tv.cancel_selection()
 				tv.tb.ui.show_cursor = true
-			} else {
-				// allow to use tab inside textbox
-				tv.tb.ui.window.lock_focus()
 			}
 		}
 		else {}
@@ -582,6 +582,17 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 }
 
 pub fn (mut tv TextView) do_indent() {
+	if tv.is_sel_active() {
+		cursor_pos := tv.cursor_pos
+		for j in tv.tlv.sel_start_j .. (tv.tlv.sel_end_j + 1) {
+			tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j = 0, j
+			tv.sync_text_pos()
+			tv.sel_end += 2
+			tv.insert('  ')
+		}
+		tv.cursor_pos = cursor_pos
+		tv.sync_text_lines()
+	}
 }
 
 pub fn (mut tv TextView) do_select_all() {

@@ -279,13 +279,13 @@ fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
 	mut f := Focusable(dd)
 	f.set_focus()
-	dd.ui.window.lock_focus()
+	f.lock_focus()
 }
 
 fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
-	dd.ui.window.unlock_focus()
+	Focusable(dd).unlock_focus()
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {

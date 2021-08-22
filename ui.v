@@ -52,6 +52,7 @@ pub enum HorizontalAlignment {
 
 pub interface Widget {
 mut:
+	id string
 	x int
 	y int
 	z_index int
