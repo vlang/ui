@@ -50,14 +50,18 @@ pub fn (mut f Focusable) set_focus() {
 
 pub fn (f Focusable) lock_focus() {
 	mut w := f.ui.window
-	println('$f.id lock focus')
+	$if focus ? {
+		println('$f.id lock focus')
+	}
 	w.locked_focus = f.id
 }
 
 pub fn (f Focusable) unlock_focus() {
 	mut w := f.ui.window
 	if w.locked_focus == f.id {
-		println('$f.id unlock focus')
+		$if focus ? {
+			println('$f.id unlock focus')
+		}
 		w.locked_focus = ''
 	}
 }

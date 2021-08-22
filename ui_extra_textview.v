@@ -245,6 +245,7 @@ fn (mut tv TextView) delete_cur_char() {
 	unsafe {
 		*tv.text = ustr.string()
 	}
+	tv.update_lines()
 }
 
 fn (mut tv TextView) delete_prev_char() {
@@ -499,7 +500,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			// println("tab multi")
 			if !tv.tb.ui.window.unlocked_focus() {
 				if tv.is_sel_active() {
-					tv.do_indent()
+					tv.do_indent(e.mods == .shift)
 				} else {
 					tv.insert('  ')
 					tv.cursor_pos += 2
@@ -581,14 +582,22 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	}
 }
 
-pub fn (mut tv TextView) do_indent() {
+pub fn (mut tv TextView) do_indent(shift bool) {
 	if tv.is_sel_active() {
 		cursor_pos := tv.cursor_pos
 		for j in tv.tlv.sel_start_j .. (tv.tlv.sel_end_j + 1) {
 			tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j = 0, j
 			tv.sync_text_pos()
-			tv.sel_end += 2
-			tv.insert('  ')
+			if shift {
+				if tv.tlv.lines[j][..2] == '  ' {
+					tv.sel_end -= 2
+					tv.delete_cur_char()
+					tv.delete_cur_char()
+				}
+			} else {
+				tv.sel_end += 2
+				tv.insert('  ')
+			}
 		}
 		tv.cursor_pos = cursor_pos
 		tv.sync_text_lines()
