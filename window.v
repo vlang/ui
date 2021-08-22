@@ -770,11 +770,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := ui.window
 	// C.printf(c'g child=%p\n', child)
-	// println("keydown $event")
+	// println('window_keydown $event')
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		mods_orig: event.modifiers
 		codepoint: event.char_code
 		code: int(event.key_code)
 		// action: action
@@ -817,7 +816,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 // fn window_char(glfw_wnd voidptr, codepoint u32) {
 fn window_char(event gg.Event, ui &UI) {
 	// println('keychar char=$event.char_code')
-	// println("char: $event")
+	// println("window_char: $event")
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code

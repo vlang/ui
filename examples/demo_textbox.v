@@ -40,26 +40,19 @@ fn main() {
 				]
 			),
 			ui.textbox(
-				is_multiline: true
-				is_wordwrap: true
-				scrollview: true
+				mode: .multiline | .word_wrap
 				id: 'tb2m'
 				text: &app.tb2m
 				height: 200
 				text_size: 24
 				bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
-				// is_sync: true
 			),
 			ui.textbox(
-				read_only: true
-				is_multiline: true
-				is_wordwrap: true
-				scrollview: true
+				mode: .read_only | .multiline | .word_wrap
 				id: 'tb3m'
 				text: &app.tb2m
 				height: 200
 				text_size: 24
-				is_sync: true
 				on_scroll_change: on_scroll_change
 			),
 		]

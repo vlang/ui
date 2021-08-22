@@ -427,11 +427,13 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 		if tv.is_sel_active() {
 			tv.delete_selection()
 		}
+		tv.tb.ui.window.lock_focus()
 		tv.insert(s)
 		tv.cursor_pos++
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
-		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
+		// WORKAROUND to deal with international keyboard
+		// println('key_char:  <$s> <$e.mods> <${utf32_to_str(u32(e.key))}>')
 		match s {
 			'a' {
 				tv.do_select_all()
@@ -472,31 +474,6 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 
 fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('tv key down $e')
-	s := utf32_to_str(e.codepoint)
-	if e.mods in [.ctrl, .super] {
-		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
-		match s {
-			'a' {
-				tv.do_select_all()
-			}
-			'c' {
-				tv.do_copy()
-			}
-			'v' {
-				tv.do_paste()
-			}
-			'x' {
-				tv.do_cut()
-			}
-			'-' {
-				tv.do_zoom_down()
-			}
-			'=', '+' {
-				tv.do_zoom_up()
-			}
-			else {}
-		}
-	}
 	// println('key_down: $e.key mods=$e.mods')
 	defer {
 		if tv.tb.on_change != TextBoxChangeFn(0) {
@@ -517,6 +494,20 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.sync_text_lines()
 			tv.cursor_adjust_after_newline()
 			tv.cursor_allways_visible()
+		}
+		.tab {
+			// println("tab multi")
+			if tv.tb.ui.window.locked_focus {
+				if tv.is_sel_active() {
+					tv.do_indent()
+				} else {
+					tv.insert('  ')
+					tv.cursor_pos += 2
+				}
+				tv.sync_text_lines()
+				tv.cursor_adjust_after_newline()
+				tv.cursor_allways_visible()
+			}
 		}
 		.backspace {
 			tv.tb.ui.show_cursor = true
@@ -574,22 +565,23 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			}
 			tv.cursor_allways_visible()
 		}
-		// .up {
-		// 	tv.cancel_selection()
-		// 	tv.tb.ui.show_cursor = true
-		// 	tv.move_cursor(.top)
-		// }
-		// .down {
-		// 	tv.cancel_selection()
-		// 	tv.tb.ui.show_cursor = true
-		// 	tv.move_cursor(.bottom)
-		// }
 		.escape {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
+			if tv.tb.ui.window.locked_focus {
+				if !tv.is_sel_active() {
+					tv.tb.ui.window.unlock_focus()
+				}
+				tv.cancel_selection()
+				tv.tb.ui.show_cursor = true
+			} else {
+				// allow to use tab inside textbox
+				tv.tb.ui.window.lock_focus()
+			}
 		}
 		else {}
 	}
+}
+
+pub fn (mut tv TextView) do_indent() {
 }
 
 pub fn (mut tv TextView) do_select_all() {

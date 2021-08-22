@@ -47,6 +47,7 @@ pub mut:
 	z_index    int
 	parent     Layout = empty_stack
 	is_focused bool
+	is_typing  bool
 	// gg &gg.GG
 	ui &UI = 0
 	// text               string
@@ -93,17 +94,24 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
-mut:
-	is_typing bool
+}
+
+[flag]
+pub enum TextBoxMode {
+	read_only
+	multiline
+	word_wrap
 }
 
 pub struct TextBoxConfig {
 	id               string
 	width            int
 	height           int = 22
+	read_only        bool
 	is_multiline     bool
 	is_wordwrap      bool
-	is_sync          bool
+	mode             TextBoxMode // to summarize the three previous logical
+	is_sync          bool = true
 	twosided_sel     bool
 	z_index          int
 	min              int
@@ -114,7 +122,6 @@ pub struct TextBoxConfig {
 	max_len          int
 	is_numeric       bool
 	is_password      bool
-	read_only        bool
 	text             &string = voidptr(0)
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
@@ -132,7 +139,7 @@ pub struct TextBoxConfig {
 	text_size          f64
 	// added when user set text after declaration but before init (see colorbox component)
 	text_after       bool
-	scrollview       bool
+	scrollview       bool = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
@@ -149,7 +156,6 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
-		read_only: c.read_only
 		borderless: c.borderless
 		bg_color: c.bg_color
 		on_key_down: c.on_key_down
@@ -164,17 +170,18 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_error: c.is_error
 		text_cfg: c.text_cfg
 		text_size: c.text_size
-		is_multiline: c.is_multiline
-		is_wordwrap: c.is_wordwrap
-		fitted_height: c.fitted_height || c.is_multiline
-		is_sync: c.is_sync
+		read_only: c.read_only || c.mode.has(.read_only)
+		is_multiline: c.is_multiline || c.mode.has(.multiline)
+		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
+		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
+		is_sync: c.is_sync || c.read_only
 		twosided_sel: c.twosided_sel
 		on_scroll_change: c.on_scroll_change
 	}
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
 	}
-	if c.scrollview {
+	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
 	}
 	return tb
@@ -572,10 +579,10 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			*tb.is_error = false
 		}
 	}
-	if e.key == .tab || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
+	if e.codepoint == 9 || (e.codepoint == 9 && e.mods == .shift) { // .tab used for focus and .invalid
+		// println("tab $tb.id  return")
 		return
 	}
-	tb.is_typing = true
 	if tb.on_char != TextBoxCharFn(0) {
 		tb.on_char(window.state, tb, e.codepoint)
 	}
@@ -589,7 +596,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.cursor_pos = 0
 		}
 		s := utf32_to_str(e.codepoint)
-		// println("key_down: $s $e.mods")
+		// println("tb_char: $s $e.codepoint $e.mods")
 		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
 			if tb.read_only {
 				return
@@ -609,6 +616,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {
+			// WORKAROUND to deal with international keyboard
 			match s {
 				'a' {
 					if tb.read_only && !tb.is_selectable {
@@ -884,6 +892,9 @@ pub fn (mut tb TextBox) set_text(s string) {
 			*tb.text = s
 		}
 		tb.tv.update_lines()
+		if tb.read_only {
+			tb.tv.cancel_selection()
+		}
 	}
 }
 

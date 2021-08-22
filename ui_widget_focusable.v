@@ -16,11 +16,11 @@ mut:
 }
 
 pub fn (w Focusable) has_focusable() bool {
-	mut read_only := false
+	mut focusable := true
 	if w is TextBox {
-		read_only = w.read_only
+		focusable = !w.read_only
 	}
-	return !read_only && !w.hidden
+	return focusable && !w.hidden && !w.ui.window.locked_focus
 }
 
 // Only one widget can have the focus inside a Window
