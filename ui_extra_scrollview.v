@@ -586,12 +586,13 @@ fn scrollview_click(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 	if sv.active_x && sv.point_inside(e.x, e.y, .bar_x) {
 		sv.is_focused = true
 		_, a_x := sv.coef_x()
-		sv.offset_x = int((e.x - sv.orig_x - sv.btn_x / 2) / a_x)
+		sv.offset_x = int((e.x - sv.orig_x - sv.btn_w / 2) / a_x)
 		sv.change_value(.btn_x)
 	} else if sv.active_y && sv.point_inside(e.x, e.y, .bar_y) {
 		sv.is_focused = true
 		_, a_y := sv.coef_y()
-		sv.offset_y = int((e.y - sv.orig_y - sv.btn_y / 2) / a_y)
+		sv.offset_y = int((e.y - sv.orig_y - sv.btn_h / 2) / a_y)
+		// println("$sv.offset_y = int(($e.y - $sv.orig_y - $sv.btn_h / 2) / $a_y)")
 		sv.change_value(.btn_y)
 	}
 }
