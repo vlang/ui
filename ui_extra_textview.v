@@ -177,12 +177,12 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	mut y := tv.tb.y + textbox_padding_y
+	x, mut y := tv.tb.x + textbox_padding_x, tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from) * tv.tb.line_height
 	}
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
-		draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
+		draw_text(tv.tb, x, y, line)
 		y += tv.tb.line_height
 	}
 
