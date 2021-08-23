@@ -251,6 +251,7 @@ pub mut:
 	// dragging
 	dragging    int // 0=invalid, 1=x, 2=y
 	drag_offset int
+	orig_offset int
 	// to update children pos
 	children_to_update bool
 	// focus
@@ -610,9 +611,11 @@ fn scrollview_mouse_down(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 		if sv.active_x && sv.point_inside(e.x, e.y, .btn_x) {
 			sv.dragging = 1 // x
 			sv.drag_offset = e.x
+			sv.orig_offset = sv.offset_x
 		} else if sv.active_y && sv.point_inside(e.x, e.y, .btn_y) {
 			sv.dragging = 2 // y
 			sv.drag_offset = e.y
+			sv.orig_offset = sv.offset_y
 		}
 	}
 }
@@ -644,10 +647,11 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 	} else if sv.dragging > 0 {
 		if sv.dragging == 1 {
 			_, a_x := sv.coef_x()
-			sv.offset_x = int(f32(e.x - sv.drag_offset) / a_x)
+			sv.offset_x = sv.orig_offset + int(f32(e.x - sv.drag_offset) / a_x)
 		} else {
 			_, a_y := sv.coef_y()
-			sv.offset_y = int(f32(e.y - sv.drag_offset) / a_y)
+			sv.offset_y = sv.orig_offset + int(f32(e.y - sv.drag_offset) / a_y)
+			// println("move: $sv.offset_y = $sv.orig_offset + ($e.y - $sv.drag_offset) /  $a_y")
 		}
 		sv.change_value(ScrollViewPart(sv.dragging))
 	}

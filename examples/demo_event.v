@@ -1,5 +1,4 @@
 import ui
-// import gg
 import gx
 
 struct App {
@@ -14,7 +13,7 @@ fn main() {
 		state: app
 		width: 600
 		height: 600
-		title: 'V UI: Rectangles'
+		title: 'V UI: Event'
 		mode: .resizable
 		on_key_down: fn (e ui.KeyEvent, w &ui.Window) {
 			mut tb := w.textbox('info')
