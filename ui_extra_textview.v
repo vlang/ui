@@ -1,6 +1,7 @@
 module ui
 
 import gx
+// import encoding.utf8
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 struct TextView {
@@ -18,9 +19,21 @@ pub mut:
 // Structure to help for drawing text line by line and cursor update between lines
 // Insertion and deletion would be made directly on TextView.text field and then synchronized
 // on textlines except for cursor vertical motion
+
+/*
+In the process to make lines only dealing with visible lines:
+- if <from> is the line starting the visibility and <to> the line ending the visibility
+- if lines := (*tv.text).split("\n")
+- then:
+	tvl.lines[0] = lines[..from].join("\n")
+	tvl.lines[1..(to - from)] = lines[from .. (to + 1)]
+	tvl.lines[to - from] = lines[(to + 1) ..]
+*/
 struct TextLinesView {
 pub mut:
 	lines        []string
+	from         int
+	to           int
 	cursor_pos_i int
 	cursor_pos_j int
 	sel_start_j  int
@@ -39,7 +52,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 
 pub fn (tv &TextView) size() (int, int) {
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
-	for line in tv.tlv.lines {
+	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
 		lw := text_width(tv.tb, line)
 		if lw > w {
 			w = lw
@@ -118,7 +131,31 @@ fn (mut tv TextView) sync_text_lines() {
 	}
 }
 
+pub fn (mut tv TextView) visible_lines() {
+	mut j1, mut j2 := 0, 0
+	if tv.tb.has_scrollview {
+		j1 = tv.tb.scrollview.offset_y / tv.tb.line_height
+		if j1 < 0 {
+			j1 = 0
+		}
+	}
+
+	if tv.tb.has_scrollview {
+		j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.tb.line_height
+	} else {
+		j2 = tv.tb.height / tv.tb.line_height
+	}
+	jmax := (*tv.text).count('\n')
+	if j2 > jmax {
+		j2 = jmax
+	}
+	tv.tlv.from, tv.tlv.to = j1, j2
+}
+
 pub fn (mut tv TextView) update_lines() {
+	if tv.tb.has_scrollview {
+		tv.visible_lines()
+	}
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
@@ -140,13 +177,12 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	_, svy := tv.tb.scrollview.orig_size()
-	mut y := tv.tb.y + textbox_padding_y
-	// println("draw_textlines: $tb.tv.tlv.lines")
-	for line in tv.tlv.lines {
-		if y >= svy - 2 * tv.tb.line_height && y <= svy + tv.tb.height + 2 * tv.tb.line_height {
-			draw_text(tv.tb, tv.tb.x + textbox_padding_x, y, line)
-		}
+	x, mut y := tv.tb.x + textbox_padding_x, tv.tb.y + textbox_padding_y
+	if tv.tb.has_scrollview {
+		y += (tv.tlv.from) * tv.tb.line_height
+	}
+	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
+		draw_text(tv.tb, x, y, line)
 		y += tv.tb.line_height
 	}
 
@@ -209,6 +245,7 @@ fn (mut tv TextView) delete_cur_char() {
 	unsafe {
 		*tv.text = ustr.string()
 	}
+	tv.update_lines()
 }
 
 fn (mut tv TextView) delete_prev_char() {
@@ -261,6 +298,7 @@ fn (mut tv TextView) start_selection(x int, y int) {
 		tv.tlv.sel_end_i, tv.tlv.sel_end_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
 	}
 	tv.sync_text_pos()
+	tv.visible_lines()
 	// tv.info()
 }
 
@@ -308,6 +346,7 @@ pub fn (mut tv TextView) extend_selection(x int, y int) {
 pub fn (mut tv TextView) cancel_selection() {
 	tv.sel_start = 0
 	tv.sel_end = -1
+	tv.tb.sel_active = false
 	tv.sync_text_lines()
 }
 
@@ -334,7 +373,9 @@ pub fn (mut tv TextView) move_cursor(side Side) {
 				tv.tlv.cursor_pos_j = 0
 			}
 			ustr := tv.current_line().runes()
-			if tv.tlv.cursor_pos_i >= ustr.len {
+			if ustr.len == 0 {
+				tv.tlv.cursor_pos_i = 0
+			} else if tv.tlv.cursor_pos_i >= ustr.len {
 				tv.tlv.cursor_pos_i = ustr.len - 1
 			}
 			tv.sync_text_pos()
@@ -353,8 +394,28 @@ pub fn (mut tv TextView) move_cursor(side Side) {
 	}
 }
 
-fn (mut tv TextView) key_down(e &KeyEvent) {
-	// println('key down $e')
+pub fn (mut tv TextView) cursor_allways_visible() {
+	if !tv.tb.has_scrollview {
+		return
+	}
+	// vertically
+	if tv.tlv.cursor_pos_j <= tv.tlv.from {
+		tv.scroll_y_to_cursor(false)
+	} else if tv.tlv.cursor_pos_j >= tv.tlv.to {
+		tv.scroll_y_to_cursor(true)
+	}
+	// horizontally
+	ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
+	ulen := text_width(tv.tb, ustr[..(tv.tlv.cursor_pos_i)].string())
+	if ulen <= tv.tb.scrollview.offset_x {
+		tv.scroll_x_to_cursor(false)
+	} else if ulen >= tv.tb.scrollview.offset_x + tv.tb.width - scrollbar_size {
+		tv.scroll_x_to_cursor(true)
+	}
+}
+
+fn (mut tv TextView) key_char(e &KeyEvent) {
+	// println('key char $e')
 	s := utf32_to_str(e.codepoint)
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
@@ -367,78 +428,54 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		if tv.is_sel_active() {
 			tv.delete_selection()
 		}
+		Focusable(tv.tb).lock_focus()
 		tv.insert(s)
 		tv.cursor_pos++
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
-		// println("here <$e.mods> <${utf32_to_str(u32(e.key))}> <$s>")
+		// WORKAROUND to deal with international keyboard
+		// println('key_char:  <$s> <$e.mods> <${utf32_to_str(u32(e.key))}>')
 		match s {
 			'a' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.sel_start = 0
-				tv.sel_end = tv.text.runes().len
-				tv.sync_text_lines()
-				tv.tb.ui.show_cursor = false
-				tv.tb.sel_active = true
-				return
+				tv.do_select_all()
 			}
 			'c' {
-				if tv.is_sel_active() {
-					ustr := tv.text.runes()
-					sel_start, sel_end := tv.ordered_pos_selection()
-					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-				}
+				tv.do_copy()
 			}
 			'v' {
-				if tv.tb.read_only {
-					return
-				}
-				tv.insert(tv.tb.ui.clipboard.paste())
+				tv.do_paste()
 			}
 			'x' {
-				if tv.tb.read_only {
-					return
-				}
-				if tv.is_sel_active() {
-					ustr := tv.text.runes()
-					sel_start, sel_end := tv.ordered_pos_selection()
-					tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-					tv.delete_selection()
-				}
+				tv.do_cut()
 			}
 			'-' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.tb.text_size -= 2
-				if tv.tb.text_size < 8 {
-					tv.tb.text_size = 8
-				}
-				mut tb := tv.tb
-				update_text_size(mut tb)
-				tv.tb.update_line_height()
-				tv.update_lines()
+				tv.do_zoom_down()
 			}
 			'=', '+' {
-				if tv.tb.read_only && !tv.tb.is_selectable {
-					return
-				}
-				tv.tb.text_size += 2
-				if tv.tb.text_size > 48 {
-					tv.tb.text_size = 48
-				}
-				mut tb := tv.tb
-				update_text_size(mut tb)
-				tv.tb.update_line_height()
-				tv.update_lines()
+				tv.do_zoom_up()
 			}
 			else {}
 		}
 	}
 	// println(e.key)
 	// println('mods=$e.mods')
+	defer {
+		if tv.tb.on_change != TextBoxChangeFn(0) {
+			if e.key == .backspace {
+				tv.tb.on_change(*tv.text, tv.tb.ui.window.state)
+			}
+		}
+	}
+	// println("tb key_down $e.key ${int(e.codepoint)}")
+	if tv.tb.read_only {
+		return
+	}
+	tv.cursor_allways_visible()
+}
+
+fn (mut tv TextView) key_down(e &KeyEvent) {
+	// println('tv key down $e')
+	// println('key_down: $e.key mods=$e.mods')
 	defer {
 		if tv.tb.on_change != TextBoxChangeFn(0) {
 			if e.key == .backspace {
@@ -457,6 +494,21 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			tv.cursor_pos++
 			tv.sync_text_lines()
 			tv.cursor_adjust_after_newline()
+			tv.cursor_allways_visible()
+		}
+		.tab {
+			// println("tab multi")
+			if !tv.tb.ui.window.unlocked_focus() {
+				if tv.is_sel_active() {
+					tv.do_indent(e.mods == .shift)
+				} else {
+					tv.insert('  ')
+					tv.cursor_pos += 2
+				}
+				tv.sync_text_lines()
+				tv.cursor_adjust_after_newline()
+				tv.cursor_allways_visible()
+			}
 		}
 		.backspace {
 			tv.tb.ui.show_cursor = true
@@ -484,39 +536,152 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 				// Delete just one character
 				tv.delete_prev_char()
 			}
+			tv.cursor_allways_visible()
 		}
 		.delete {
 			tv.tb.ui.show_cursor = true
 			tv.delete_cur_char()
+			tv.cursor_allways_visible()
 		}
-		.left {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-			tv.move_cursor(.left)
-		}
-		.right {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.right)
-		}
-		.up {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.top)
-		}
-		.down {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
-			tv.move_cursor(.bottom)
+		.left, .right, .up, .down {
+			dir := match e.key {
+				.left { Side.left }
+				.right { Side.right }
+				.up { Side.top }
+				else { Side.bottom }
+			}
+			if shift_key(e.mods) {
+				if !tv.is_sel_active() {
+					tv.tb.sel_active = true
+					tv.sel_start = tv.cursor_pos
+					tv.tb.ui.show_cursor = false
+				}
+				tv.move_cursor(dir)
+				tv.sel_end = tv.cursor_pos
+				tv.sync_text_lines()
+			} else {
+				tv.cancel_selection()
+				tv.tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+				tv.move_cursor(dir)
+			}
+			tv.cursor_allways_visible()
 		}
 		.escape {
-			tv.cancel_selection()
-			tv.tb.ui.show_cursor = true
+			if tv.tb.ui.window.unlocked_focus() {
+				// allow to use tab inside textbox
+				Focusable(tv.tb).lock_focus()
+			} else {
+				if !tv.is_sel_active() {
+					Focusable(tv.tb).unlock_focus()
+				}
+				tv.cancel_selection()
+				tv.tb.ui.show_cursor = true
+			}
 		}
-		// .tab {
-		// 	// println('tab')
-		// }
 		else {}
+	}
+}
+
+pub fn (mut tv TextView) do_indent(shift bool) {
+	if tv.is_sel_active() {
+		cursor_pos := tv.cursor_pos
+		for j in tv.tlv.sel_start_j .. (tv.tlv.sel_end_j + 1) {
+			tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j = 0, j
+			tv.sync_text_pos()
+			if shift {
+				if tv.tlv.lines[j][..2] == '  ' {
+					tv.sel_end -= 2
+					tv.delete_cur_char()
+					tv.delete_cur_char()
+				}
+			} else {
+				tv.sel_end += 2
+				tv.insert('  ')
+			}
+		}
+		tv.cursor_pos = cursor_pos
+		tv.sync_text_lines()
+	}
+}
+
+pub fn (mut tv TextView) do_select_all() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.sel_start = 0
+	tv.sel_end = tv.text.runes().len
+	tv.sync_text_lines()
+	tv.tb.ui.show_cursor = false
+	tv.tb.sel_active = true
+	return
+}
+
+pub fn (mut tv TextView) do_copy() {
+	if tv.is_sel_active() {
+		ustr := tv.text.runes()
+		sel_start, sel_end := tv.ordered_pos_selection()
+		tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+	}
+}
+
+pub fn (mut tv TextView) do_paste() {
+	if tv.tb.read_only {
+		return
+	}
+	tv.insert(tv.tb.ui.clipboard.paste())
+}
+
+pub fn (mut tv TextView) do_cut() {
+	if tv.tb.read_only {
+		return
+	}
+	if tv.is_sel_active() {
+		ustr := tv.text.runes()
+		sel_start, sel_end := tv.ordered_pos_selection()
+		tv.tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+		tv.delete_selection()
+	}
+}
+
+pub fn (mut tv TextView) do_zoom_down() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.tb.text_size -= 2
+	if tv.tb.text_size < 8 {
+		tv.tb.text_size = 8
+	}
+	mut tb := tv.tb
+	update_text_size(mut tb)
+	tv.tb.update_line_height()
+	tv.update_lines()
+}
+
+pub fn (mut tv TextView) do_zoom_up() {
+	if tv.tb.read_only && !tv.tb.is_selectable {
+		return
+	}
+	tv.tb.text_size += 2
+	if tv.tb.text_size > 48 {
+		tv.tb.text_size = 48
+	}
+	mut tb := tv.tb
+	update_text_size(mut tb)
+	tv.tb.update_line_height()
+	tv.update_lines()
+}
+
+pub struct LogViewConfig {
+	nb_lines int = 5
+}
+
+pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+	if !tv.tb.has_scrollview {
+		println("Warning: use of task do_logview requires textbox to have 'scrollview: true'")
+		return
+	}
+	if tv.tlv.to + cfg.nb_lines > tv.tlv.lines.len {
+		tv.scroll_y_to_end()
 	}
 }
 
@@ -547,15 +712,23 @@ pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	}
 }
 
-/*
-pub fn (mut tv TextView) is_cursor_at_end() bool {
-	max_offset_y, _ := tv.tb.scrollview.coef_y()
-	println('is_cursor_at_End? $tv.tb.scrollview.offset_y >=  $max_offset_y')
-	return tv.tb.scrollview.offset_y >= max_offset_y
-}*/
+pub fn (mut tv TextView) scroll_x_to_cursor(end bool) {
+	if tv.tb.scrollview.active_x {
+		delta := if end { tv.tb.width - 2 * scrollbar_size } else { 0 }
+		ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
+		ulen := text_width(tv.tb, ustr[..tv.tlv.cursor_pos_i].string())
+		tv.tb.scrollview.set(ulen - delta, .btn_x)
+	}
+}
 
-pub fn (mut tv TextView) cursor_at_end() {
-	// println("here cursor at end")
+pub fn (mut tv TextView) scroll_y_to_cursor(end bool) {
+	if tv.tb.scrollview.active_y {
+		delta := if end { tv.tb.height - tv.tb.line_height / 2 - tv.tb.line_height } else { 0 }
+		tv.tb.scrollview.set(tv.tlv.cursor_pos_j * tv.tb.line_height - delta, .btn_y)
+	}
+}
+
+pub fn (mut tv TextView) scroll_y_to_end() {
 	if tv.tb.scrollview.active_y {
 		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.tb.line_height, .btn_y)
 	}
@@ -564,8 +737,9 @@ pub fn (mut tv TextView) cursor_at_end() {
 fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
 	mut word_wrapped_lines := []string{}
-	for line in lines {
-		ww_lines := tv.word_wrap_line(line)
+	// println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
+	for j, line in lines {
+		ww_lines := if j < tv.tlv.from || j > tv.tlv.to { [line] } else { tv.word_wrap_line(line) }
 		word_wrapped_lines << ww_lines
 	}
 	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')

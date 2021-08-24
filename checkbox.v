@@ -209,14 +209,10 @@ fn (mut cb CheckBox) set_visible(state bool) {
 }
 
 fn (mut cb CheckBox) focus() {
-	// cb.is_focused = true
-	set_focus(cb.ui.window, mut cb)
+	mut f := Focusable(cb)
+	f.set_focus()
 }
 
 fn (mut cb CheckBox) unfocus() {
 	cb.is_focused = false
-}
-
-fn (cb &CheckBox) is_focused() bool {
-	return cb.is_focused
 }

@@ -18,7 +18,6 @@ pub mut:
 	cell_height f32
 	cell_width  f32    = 40
 	parent      Layout = empty_stack
-	is_focused  bool
 	ui          &UI
 	hidden      bool
 }
@@ -158,18 +157,6 @@ fn check_cells(gv Grid) int {
 
 fn (mut gv Grid) set_visible(state bool) {
 	gv.hidden = !state
-}
-
-fn (mut gv Grid) focus() {
-	gv.is_focused = true
-}
-
-fn (mut gv Grid) unfocus() {
-	gv.is_focused = false
-}
-
-fn (gv &Grid) is_focused() bool {
-	return gv.is_focused
 }
 
 fn (mut gv Grid) set_pos(x int, y int) {

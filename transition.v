@@ -136,16 +136,6 @@ fn (mut t Transition) draw() {
 fn (t &Transition) set_visible(state bool) {
 }
 
-fn (t &Transition) focus() {
-}
-
-fn (t &Transition) is_focused() bool {
-	return false
-}
-
-fn (t &Transition) unfocus() {
-}
-
 fn (t &Transition) point_inside(x f64, y f64) bool {
 	return false
 }

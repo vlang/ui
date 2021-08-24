@@ -16,7 +16,7 @@ const (
 
 pub type ClickFn = fn (e MouseEvent, window &Window)
 
-pub type KeyFn = fn (e KeyEvent, func voidptr)
+pub type KeyFn = fn (e KeyEvent, window &Window)
 
 pub type ScrollFn = fn (e ScrollEvent, window &Window)
 
@@ -87,7 +87,7 @@ pub mut:
 	native_message bool
 	// focus stuff
 	do_focus     bool
-	locked_focus bool
+	locked_focus string
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -770,14 +770,16 @@ fn window_key_down(event gg.Event, ui &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := ui.window
 	// C.printf(c'g child=%p\n', child)
+	// println('window_keydown $event')
 	e := KeyEvent{
 		key: Key(event.key_code)
 		mods: KeyMod(event.modifiers)
-		codepoint: 0 // event.char_code
-		// code: code
+		codepoint: event.char_code
+		code: int(event.key_code)
 		// action: action
 		// mods: mod
 	}
+	// TODO: [Ctl]+[Tab] and [Ctl]+[Shift]+[Tab] not captured by sokol
 	if e.key == .tab {
 		if shift_key(e.mods) {
 			window.focus_prev()
@@ -791,8 +793,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 		// Close the child window on Escape
 		window.child_window = &Window(0)
 	}
-	if window.key_down_fn != voidptr(0) {
-		window.key_down_fn(e, window.state)
+	if window.key_down_fn != KeyFn(0) {
+		window.key_down_fn(e, window)
 	}
 	// TODO
 	if true { // action == 2 || action == 1 {
@@ -814,43 +816,17 @@ fn window_key_down(event gg.Event, ui &UI) {
 // fn window_char(glfw_wnd voidptr, codepoint u32) {
 fn window_char(event gg.Event, ui &UI) {
 	// println('keychar char=$event.char_code')
+	// println("window_char: $event")
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
 		mods: KeyMod(event.modifiers)
 	}
-	if window.key_down_fn != voidptr(0) {
-		window.key_down_fn(e, window.state)
+	if window.char_fn != KeyFn(0) {
+		window.char_fn(e, window)
 	}
-	window.eventbus.publish(events.on_key_down, window, e)
-	if window.char_fn != voidptr(0) {
-		window.char_fn(e, window.state)
-	}
-	// window.eventbus.publish(events.on_char, window, e)
+
 	window.eventbus.publish(events.on_char, window, e)
-	/*
-	for child in window.children {
-		is_focused := child.is_focused()
-		if !is_focused {
-			continue
-		}
-		child.key_down()
-	}
-	*/
-}
-
-fn (mut w Window) focus_next() {
-	w.do_focus = false
-	if !set_focus_next(mut w) {
-		set_focus_first(mut w)
-	}
-}
-
-fn (mut w Window) focus_prev() {
-	w.do_focus = false
-	if !set_focus_prev(mut w) {
-		set_focus_last(mut w)
-	}
 }
 
 pub fn (w &Window) set_cursor(cursor Cursor) {
@@ -862,8 +838,6 @@ pub fn (w &Window) close() {
 }
 
 pub fn (mut w Window) refresh() {
-	// println('ui: window.refres()')
-	// w.ui.needs_refresh = true
 	w.ui.gg.refresh_ui()
 	$if macos {
 		C.darwin_window_refresh()
@@ -890,9 +864,6 @@ pub fn (mut w Window) on_scroll(func ScrollFn) {
 
 pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
 	return false
-}
-
-pub fn (w &Window) focus() {
 }
 
 pub fn (w &Window) always_on_top(val bool) {
@@ -1027,13 +998,6 @@ fn (mut window Window) resize(w int, h int) {
 	}
 }
 
-pub fn (window &Window) unfocus_all() {
-	// println('window.unfocus_all()')
-	for mut child in window.children {
-		child.unfocus()
-	}
-}
-
 pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
@@ -1095,14 +1059,13 @@ fn (mut w Window) register_child(child Widget) {
 		}
 	} else if mut child is Label {
 		// println("register Label")
-		if child.id != '' {
+		if child.id == '' {
+			mode := 'lab'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child
-		}
-		$if register ? {
-			if child.id != '' {
-				println('registered $child.id')
-			}
-		} $else {
+		} else {
+			w.widgets[child.id] = child
 		}
 	} else if mut child is ListBox {
 		if child.id == '' {
@@ -1248,6 +1211,16 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
+	} else {
+		if child.id == '' {
+			mode := 'unknown'
+			w.widgets_counts[mode] += 1
+			mut u := child
+			u.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
 	}
 }
 
@@ -1284,6 +1257,7 @@ pub fn (w Window) textbox(id string) &TextBox {
 	if widget is TextBox {
 		return widget
 	} else {
+		panic('widget $id is not a ui.TextBox but a $widget.type_name()')
 		return textbox()
 	}
 }
