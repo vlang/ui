@@ -36,6 +36,7 @@ mut:
 	resource_cache       map[string]gg.Image
 	closed               bool
 	ticks                int
+	fonts				 FontSet
 }
 
 pub enum VerticalAlignment {

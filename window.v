@@ -1252,6 +1252,15 @@ pub fn (w Window) listbox(id string) &ListBox {
 	}
 }
 
+pub fn (w Window) dropdown(id string) &Dropdown {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Dropdown {
+		return widget
+	} else {
+		return dropdown()
+	}
+}
+
 pub fn (w Window) textbox(id string) &TextBox {
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is TextBox {

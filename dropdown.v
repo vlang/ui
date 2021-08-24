@@ -50,6 +50,7 @@ pub struct DropdownConfig {
 	selected_index       int = -1
 	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
+	texts 				 []string
 }
 
 pub struct DropdownItem {
@@ -68,6 +69,11 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 		on_selection_changed: c.on_selection_changed
 		def_text: c.def_text
 		ui: 0
+	}
+	if c.texts.len > 0 {
+		for t in c.texts {
+			dd.add_item(t)
+		}
 	}
 	return dd
 }

@@ -66,6 +66,8 @@ mut:
 	parent Layout = empty_stack
 	// To keep track of original position
 	pos_ map[int]XYPos
+	text_styles		TextStyles
+	text_style_id   string
 }
 
 pub struct CanvasLayoutConfig {

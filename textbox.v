@@ -94,6 +94,7 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	text_styles		TextStyles
 }
 
 [flag]
