@@ -86,8 +86,9 @@ pub mut:
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 struct StackConfig {
@@ -241,7 +242,7 @@ pub fn (mut s Stack) update_layout() {
 	// 6) set position for chilfren
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
-	scrollview_widget_set_orig_size(s)
+	scrollview_widget_set_orig_xy(s)
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
@@ -1051,12 +1052,6 @@ fn (s &Stack) get_ui() &UI {
 	return s.ui
 }
 
-fn (s &Stack) unfocus_all() {
-	for mut child in s.children {
-		child.unfocus()
-	}
-}
-
 fn (s &Stack) get_state() voidptr {
 	parent := s.parent
 	return parent.get_state()
@@ -1073,27 +1068,12 @@ pub fn (mut s Stack) set_visible(state bool) {
 	}
 }
 
-fn (mut s Stack) focus() {
-	// s.is_focused = true
-	// println('')
-}
-
-fn (mut s Stack) unfocus() {
-	s.unfocus_all()
-	// s.is_focused = false
-	// println('')
-}
-
-fn (s &Stack) is_focused() bool {
-	return false // s.is_focused
-}
-
 fn (mut s Stack) resize(width int, height int) {
 	s.init_size()
 	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
-	scrollview_widget_set_orig_size(s)
+	scrollview_widget_set_orig_xy(s)
 }
 
 pub fn (s &Stack) get_children() []Widget {

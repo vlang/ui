@@ -330,8 +330,8 @@ fn (mut r Radio) set_visible(state bool) {
 }
 
 fn (mut r Radio) focus() {
-	// r.is_focused = true
-	set_focus(r.ui.window, mut r)
+	mut f := Focusable(r)
+	f.set_focus()
 }
 
 fn (mut r Radio) unfocus() {
@@ -354,8 +354,4 @@ pub fn (mut r Radio) select_prev_value() {
 	if r.selected_index < 0 {
 		r.selected_index = r.values.len - 1
 	}
-}
-
-fn (r &Radio) is_focused() bool {
-	return r.is_focused
 }

@@ -100,16 +100,6 @@ fn (mut c Canvas) set_visible(state bool) {
 	c.hidden = !state
 }
 
-fn (c &Canvas) focus() {
-}
-
-fn (c &Canvas) is_focused() bool {
-	return false
-}
-
-fn (c &Canvas) unfocus() {
-}
-
 fn (c &Canvas) point_inside(x f64, y f64) bool {
 	return point_inside(c, x, y)
 }

@@ -148,16 +148,6 @@ fn (mut l Label) set_visible(state bool) {
 	l.hidden = !state
 }
 
-fn (l &Label) focus() {
-}
-
-fn (l &Label) is_focused() bool {
-	return false
-}
-
-fn (l &Label) unfocus() {
-}
-
 fn (l &Label) point_inside(x f64, y f64) bool {
 	return false // x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height
 }

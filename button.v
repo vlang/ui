@@ -215,7 +215,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.onclick != ButtonClickFn(0) && b.is_focused() {
+			if b.onclick != ButtonClickFn(0) && b.is_focused {
 				$if btn_onclick ? {
 					println('onclick $b.id')
 				}
@@ -370,16 +370,13 @@ fn (mut b Button) set_visible(state bool) {
 }
 
 fn (mut b Button) focus() {
-	set_focus(b.ui.window, mut b)
+	mut f := Focusable(b)
+	f.set_focus()
 }
 
 fn (mut b Button) unfocus() {
 	b.is_focused = false
 	b.state = .normal
-}
-
-fn (b &Button) is_focused() bool {
-	return b.is_focused
 }
 
 pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {

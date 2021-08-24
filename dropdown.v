@@ -277,18 +277,15 @@ fn (mut dd Dropdown) set_visible(state bool) {
 
 fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
-	set_focus(dd.ui.window, mut dd)
-	dd.ui.window.lock_focus()
-}
-
-fn (dd &Dropdown) is_focused() bool {
-	return dd.is_focused
+	mut f := Focusable(dd)
+	f.set_focus()
+	f.lock_focus()
 }
 
 fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
-	dd.ui.window.unlock_focus()
+	Focusable(dd).unlock_focus()
 }
 
 fn (dd &Dropdown) point_inside(x f64, y f64) bool {

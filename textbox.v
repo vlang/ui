@@ -47,6 +47,7 @@ pub mut:
 	z_index    int
 	parent     Layout = empty_stack
 	is_focused bool
+	is_typing  bool
 	// gg &gg.GG
 	ui &UI = 0
 	// text               string
@@ -70,6 +71,7 @@ pub mut:
 	is_password   bool
 	read_only     bool
 	borderless    bool
+	bg_color      gx.Color
 	fitted_height bool // if true fit height in propose_size
 	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
 	on_char       TextBoxCharFn    = TextBoxCharFn(0)
@@ -89,19 +91,27 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
-mut:
-	is_typing bool
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+}
+
+[flag]
+pub enum TextBoxMode {
+	read_only
+	multiline
+	word_wrap
 }
 
 pub struct TextBoxConfig {
 	id               string
 	width            int
 	height           int = 22
+	read_only        bool
 	is_multiline     bool
 	is_wordwrap      bool
-	is_sync          bool
+	mode             TextBoxMode // to summarize the three previous logical
+	is_sync          bool = true
 	twosided_sel     bool
 	z_index          int
 	min              int
@@ -112,11 +122,11 @@ pub struct TextBoxConfig {
 	max_len          int
 	is_numeric       bool
 	is_password      bool
-	read_only        bool
 	text             &string = voidptr(0)
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
+	bg_color      gx.Color = gx.white
 	borderless    bool
 	fitted_height bool
 	on_key_down   TextBoxKeyDownFn
@@ -128,8 +138,9 @@ pub struct TextBoxConfig {
 	text_cfg           gx.TextCfg
 	text_size          f64
 	// added when user set text after declaration but before init (see colorbox component)
-	text_after bool
-	scrollview bool
+	text_after       bool
+	scrollview       bool = true
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
@@ -145,8 +156,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_numeric: c.is_numeric
 		is_password: c.is_password
 		max_len: c.max_len
-		read_only: c.read_only
 		borderless: c.borderless
+		bg_color: c.bg_color
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -159,16 +170,18 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		is_error: c.is_error
 		text_cfg: c.text_cfg
 		text_size: c.text_size
-		is_multiline: c.is_multiline
-		is_wordwrap: c.is_wordwrap
-		fitted_height: c.fitted_height || c.is_multiline
-		is_sync: c.is_sync
+		read_only: c.read_only || c.mode.has(.read_only)
+		is_multiline: c.is_multiline || c.mode.has(.multiline)
+		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
+		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
+		is_sync: c.is_sync || c.read_only
 		twosided_sel: c.twosided_sel
+		on_scroll_change: c.on_scroll_change
 	}
 	if c.text == 0 && !c.text_after {
 		panic('textbox.text binding is not set')
 	}
-	if c.scrollview {
+	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
 	}
 	return tb
@@ -184,7 +197,6 @@ fn (mut tb TextBox) init(parent Layout) {
 	update_text_size(mut tb)
 	// TODO: Maybe in a method later to allow font size update
 	tb.update_line_height()
-
 	if tb.is_multiline {
 		tb.tv.init(tb)
 	}
@@ -290,9 +302,9 @@ fn (mut tb TextBox) draw() {
 	// draw background
 	if tb.has_scrollview {
 		tb.ui.gg.draw_rect(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
-			tb.scrollview.width, tb.scrollview.height, gx.white)
+			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
 	} else {
-		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, gx.white)
+		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
 		if !tb.borderless {
 			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
@@ -422,28 +434,7 @@ pub fn (mut tb TextBox) delete_selection() {
 	tb.cancel_selection()
 }
 
-// fn (mut tb TextBox) cursor_move(direction Side) {
-// 	match direction {
-// 		.bottom
-// 	}
-// }
-
-fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
-	//  println("tb_char")
-	if tb.hidden {
-		return
-	}
-	if !tb.is_focused {
-		return
-	}
-	if tb.on_char != TextBoxCharFn(0) {
-		tb.on_char(window.state, tb, e.codepoint)
-	}
-}
-
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
-	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
-	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_keydown ? {
 		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
 	}
@@ -454,130 +445,14 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.is_error != voidptr(0) {
-		unsafe {
-			*tb.is_error = false
-		}
-	}
-	if e.key == .tab || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
-		return
-	}
-	tb.is_typing = true
 	if tb.on_key_down != TextBoxKeyDownFn(0) {
 		tb.on_key_down(window.state, tb, e.codepoint)
 	}
-	tb.ui.last_type_time = time.ticks() // TODO perf?
-	// Entering text
+	// println("tb key_down $e.key ${int(e.codepoint)}")
 	if tb.is_multiline {
 		tb.tv.key_down(e)
 	} else {
 		mut text := *tb.text
-		if text.len == 0 {
-			tb.cursor_pos = 0
-		}
-		s := utf32_to_str(e.codepoint)
-		// println("key_down: $s $e.mods")
-		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
-			if tb.read_only {
-				return
-			}
-			if tb.max_len > 0 && text.runes().len >= tb.max_len {
-				return
-			}
-			// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
-			if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
-				|| ((text.runes().len > 0) && (tb.cursor_pos > 0))))) {
-				return
-			}
-			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
-			tb.insert(s)
-			if tb.on_change != TextBoxChangeFn(0) {
-				tb.on_change(*tb.text, window.state)
-			}
-			return
-		} else if e.mods in [.ctrl, .super] {
-			match s {
-				'a' {
-					if tb.read_only && !tb.is_selectable {
-						return
-					}
-					tb.sel_start = 0
-					tb.sel_end = text.runes().len
-					tb.sel_active = true
-				}
-				'c' {
-					if tb.is_sel_active() {
-						ustr := tb.text.runes()
-						sel_start, sel_end := if tb.sel_start < tb.sel_end {
-							tb.sel_start, tb.sel_end
-						} else {
-							tb.sel_end, tb.sel_start
-						}
-						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-					}
-				}
-				'v' {
-					if tb.read_only {
-						return
-					}
-					// println("paste ${tb.ui.clipboard.paste()}")
-					tb.insert(tb.ui.clipboard.paste())
-				}
-				'x' {
-					if tb.read_only {
-						return
-					}
-					if tb.is_sel_active() {
-						ustr := tb.text.runes()
-						sel_start, sel_end := if tb.sel_start < tb.sel_end {
-							tb.sel_start, tb.sel_end
-						} else {
-							tb.sel_end, tb.sel_start
-						}
-						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
-						tb.delete_selection()
-					}
-				}
-				'-' {
-					if tb.read_only && !tb.is_selectable {
-						return
-					}
-					if tb.fitted_height {
-						// TODO: propose_size
-						tb.text_size -= 2
-						if tb.text_size < 8 {
-							tb.text_size = 8
-						}
-						update_text_size(mut tb)
-						tb.update_line_height()
-					}
-				}
-				'=', '+' {
-					if tb.read_only && !tb.is_selectable {
-						return
-					}
-					if tb.fitted_height {
-						tb.text_size += 2
-						if tb.text_size > 48 {
-							tb.text_size = 48
-						}
-						update_text_size(mut tb)
-						tb.update_line_height()
-					}
-				}
-				else {}
-			}
-		}
-		// println(e.key)
-		// println('mods=$e.mods')
-		defer {
-			if tb.on_change != TextBoxChangeFn(0) {
-				if e.key == .backspace {
-					tb.on_change(*tb.text, window.state)
-				}
-			}
-		}
-		// println("tb key_down $e.key ${int(e.codepoint)}")
 		match e.key {
 			.enter {
 				if tb.on_enter != TextBoxEnterFn(0) {
@@ -686,6 +561,146 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
+fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
+	$if tb_char ? {
+		println('tb_char: $tb.id  -> $tb.hidden $tb.is_focused')
+	}
+	if tb.hidden {
+		return
+	}
+	if !tb.is_focused && !tb.read_only {
+		// println('textbox.key_down on an unfocused textbox, this should never happen')
+		return
+	}
+	if tb.is_error != voidptr(0) {
+		unsafe {
+			*tb.is_error = false
+		}
+	}
+	if e.codepoint == 9 || (e.codepoint == 25 && e.mods == .shift) { // .tab used for focus and .invalid
+		// println("tab $tb.id  $e.mods return")
+		return
+	}
+	if tb.on_char != TextBoxCharFn(0) {
+		tb.on_char(window.state, tb, e.codepoint)
+	}
+	tb.ui.last_type_time = time.ticks() // TODO perf?
+	// Entering text
+	if tb.is_multiline {
+		tb.tv.key_char(e)
+	} else {
+		mut text := *tb.text
+		if text.len == 0 {
+			tb.cursor_pos = 0
+		}
+		s := utf32_to_str(e.codepoint)
+		// println("tb_char: $s $e.codepoint $e.mods")
+		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
+			if tb.read_only {
+				return
+			}
+			if tb.max_len > 0 && text.runes().len >= tb.max_len {
+				return
+			}
+			// if (tb.is_numeric && (s.len > 1 || !s[0].is_digit()  ) {
+			if tb.is_numeric && (s.len > 1 || (!s[0].is_digit() && ((s[0] != `-`)
+				|| ((text.runes().len > 0) && (tb.cursor_pos > 0))))) {
+				return
+			}
+			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
+			tb.insert(s)
+			if tb.on_change != TextBoxChangeFn(0) {
+				tb.on_change(*tb.text, window.state)
+			}
+			return
+		} else if e.mods in [.ctrl, .super] {
+			// WORKAROUND to deal with international keyboard
+			match s {
+				'a' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
+					tb.sel_start = 0
+					tb.sel_end = text.runes().len
+					tb.sel_active = true
+				}
+				'c' {
+					if tb.is_sel_active() {
+						ustr := tb.text.runes()
+						sel_start, sel_end := if tb.sel_start < tb.sel_end {
+							tb.sel_start, tb.sel_end
+						} else {
+							tb.sel_end, tb.sel_start
+						}
+						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+					}
+				}
+				'v' {
+					if tb.read_only {
+						return
+					}
+					// println("paste ${tb.ui.clipboard.paste()}")
+					tb.insert(tb.ui.clipboard.paste())
+				}
+				'x' {
+					if tb.read_only {
+						return
+					}
+					if tb.is_sel_active() {
+						ustr := tb.text.runes()
+						sel_start, sel_end := if tb.sel_start < tb.sel_end {
+							tb.sel_start, tb.sel_end
+						} else {
+							tb.sel_end, tb.sel_start
+						}
+						tb.ui.clipboard.copy(ustr[sel_start..sel_end].string())
+						tb.delete_selection()
+					}
+				}
+				'-' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
+					if tb.fitted_height {
+						// TODO: propose_size
+						tb.text_size -= 2
+						if tb.text_size < 8 {
+							tb.text_size = 8
+						}
+						update_text_size(mut tb)
+						tb.update_line_height()
+					}
+				}
+				'=', '+' {
+					if tb.read_only && !tb.is_selectable {
+						return
+					}
+					if tb.fitted_height {
+						tb.text_size += 2
+						if tb.text_size > 48 {
+							tb.text_size = 48
+						}
+						update_text_size(mut tb)
+						tb.update_line_height()
+					}
+				}
+				else {}
+			}
+		}
+		// println(e.key)
+		// println('mods=$e.mods')
+		defer {
+			if tb.on_change != TextBoxChangeFn(0) {
+				if e.key == .backspace {
+					tb.on_change(*tb.text, window.state)
+				}
+			}
+		}
+	}
+}
+
 fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
 	if tb.sel_direction == .right_to_left {
 		tb.sel_start = sel_start_i
@@ -775,10 +790,16 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
+		if tb.is_multiline {
+			Focusable(tb).unlock_focus()
+		}
 		return
 	} else {
 		// println('mouse first $tb.id')
 		tb.focus()
+		if tb.is_multiline {
+			Focusable(tb).lock_focus()
+		}
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y
@@ -856,11 +877,8 @@ fn (mut tb TextBox) set_visible(state bool) {
 }
 
 pub fn (mut tb TextBox) focus() {
-	set_focus(tb.ui.window, mut tb)
-}
-
-fn (tb &TextBox) is_focused() bool {
-	return tb.is_focused
+	mut f := Focusable(tb)
+	f.set_focus()
 }
 
 fn (mut tb TextBox) unfocus() {
@@ -875,8 +893,15 @@ pub fn (mut tb TextBox) hide() {
 }
 
 pub fn (mut tb TextBox) set_text(s string) {
-	// tb.text = s
-	// tb.update()
+	if tb.is_multiline {
+		unsafe {
+			*tb.text = s
+		}
+		tb.tv.update_lines()
+		if tb.read_only {
+			tb.tv.cancel_selection()
+		}
+	}
 }
 
 // pub fn (mut tb TextBox) on_change(func voidptr) {

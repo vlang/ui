@@ -47,8 +47,9 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 [heap]
@@ -437,16 +438,12 @@ fn (mut lb ListBox) set_visible(state bool) {
 }
 
 fn (mut lb ListBox) focus() {
-	// lb.is_focused = true
-	set_focus(lb.ui.window, mut lb)
+	mut f := Focusable(lb)
+	f.set_focus()
 }
 
 fn (mut lb ListBox) unfocus() {
 	lb.is_focused = false
-}
-
-fn (lb &ListBox) is_focused() bool {
-	return lb.is_focused
 }
 
 // Needed for ScrollableWidget

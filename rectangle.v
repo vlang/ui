@@ -155,16 +155,6 @@ fn (mut r Rectangle) set_visible(state bool) {
 	r.hidden = !state
 }
 
-fn (r &Rectangle) focus() {
-}
-
-fn (r &Rectangle) is_focused() bool {
-	return false
-}
-
-fn (r &Rectangle) unfocus() {
-}
-
 fn (r &Rectangle) point_inside(x f64, y f64) bool {
 	return point_inside(r, x, y)
 }
