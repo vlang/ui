@@ -33,7 +33,7 @@ fn main() {
 			placeholder: '0'
 			fitted_height: true
 			// width: 135
-			// text_size: 1.0 / 20
+			text_size: 1.0 / 20
 			read_only: true
 		),
 	]
@@ -44,7 +44,7 @@ fn main() {
 			row_children << ui.button(
 				text: op
 				onclick: btn_click
-				// text_size: 1.0 / 20
+				text_size: 1.0 / 20
 				radius: .25
 				theme: 'blue'
 				hoverable: true

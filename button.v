@@ -59,10 +59,8 @@ pub mut:
 	hoverable   bool
 	to_hover    bool
 	tooltip     TooltipMessage
-	// text styles
-	text_styles TextStyles
-	// text_cfg    gx.TextCfg
-	// text_size   f64
+	text_cfg    gx.TextCfg
+	text_size   f64
 	// theme
 	theme_cfg ColorThemeCfg
 	theme     map[int]gx.Color = map[int]gx.Color{}
@@ -83,11 +81,11 @@ pub struct ButtonConfig {
 	hoverable    bool
 	tooltip      string
 	tooltip_side Side = .top
-	// text_cfg     gx.TextCfg
-	// text_size    f64
-	theme   ColorThemeCfg = 'classic'
-	radius  f64
-	padding f64
+	text_cfg     gx.TextCfg
+	text_size    f64
+	theme        ColorThemeCfg = 'classic'
+	radius       f64
+	padding      f64
 }
 
 pub fn button(c ButtonConfig) &Button {
@@ -105,8 +103,8 @@ pub fn button(c ButtonConfig) &Button {
 		theme_cfg: c.theme
 		onclick: c.onclick
 		on_key_down: c.on_key_down
-		// text_cfg: c.text_cfg
-		// text_size: c.text_size
+		text_cfg: c.text_cfg
+		text_size: c.text_size
 		radius: f32(c.radius)
 		padding: f32(c.padding)
 		ui: 0
@@ -125,9 +123,9 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	// init_text_cfg(mut b)
-	// set_text_cfg_align(mut b, .center)
-	// set_text_cfg_vertical_align(mut b, .middle)
+	init_text_cfg(mut b)
+	set_text_cfg_align(mut b, .center)
+	set_text_cfg_vertical_align(mut b, .middle)
 	b.set_text_size()
 	b.update_theme()
 
@@ -292,8 +290,7 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
 	// println("but prop size: $w, $h => $b.width, $b.height")
-
-	// update_text_size(mut b)
+	update_text_size(mut b)
 	return b.width, b.height
 }
 
@@ -324,7 +321,7 @@ fn (mut b Button) draw() {
 	if b.use_icon {
 		b.ui.gg.draw_image(x, y, width, height, b.image)
 	} else {
-		DrawTextWidget(b).draw_text(bcenter_x, bcenter_y, b.text)
+		draw_text(b, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
 		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
@@ -349,7 +346,7 @@ pub fn (mut b Button) set_text_size() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else {
-		b.text_width, b.text_height = DrawTextWidget(b).text_size(b.text)
+		b.text_width, b.text_height = text_size(b, b.text)
 		// b.text_width = int(f32(b.text_width))
 		// b.text_height = int(f32(b.text_height))
 		b.width = b.text_width + ui.button_horizontal_padding
