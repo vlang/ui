@@ -50,7 +50,7 @@ pub struct DropdownConfig {
 	selected_index       int = -1
 	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
-	texts 				 []string
+	texts                []string
 }
 
 pub struct DropdownItem {

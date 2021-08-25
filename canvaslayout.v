@@ -65,9 +65,9 @@ pub mut:
 mut:
 	parent Layout = empty_stack
 	// To keep track of original position
-	pos_ map[int]XYPos
-	text_styles		TextStyles
-	text_style_id   string
+	pos_          map[int]XYPos
+	text_styles   TextStyles
+	text_style_id string
 }
 
 pub struct CanvasLayoutConfig {
@@ -485,7 +485,13 @@ pub fn (c &CanvasLayout) draw_text_def(x int, y int, text string) {
 }
 
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
-	draw_text(c, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
+	mut dtw := DrawTextWidget(c)
+	dtw.draw_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
+}
+
+pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, text_style_id string) {
+	mut dtw := DrawTextWidget(c)
+	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, text_style_id)
 }
 
 pub fn (c &CanvasLayout) draw_text_with_color(x int, y int, text string, color gx.Color) {

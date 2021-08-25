@@ -1,4 +1,5 @@
 import ui
+import gx
 
 const (
 	win_width  = 250
@@ -23,6 +24,7 @@ fn main() {
 				margin_: .3
 				widths: .4
 				heights: .4
+				bg_color: gx.rgba(255, 0, 0, 20)
 				children: [
 					ui.button(text: 'Add user'),
 				]
