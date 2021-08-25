@@ -126,8 +126,8 @@ mut:
 
 pub struct TextStyles {
 mut:
-	id 		string
-	hash 	map[string]TextStyle
+	id   string
+	hash map[string]TextStyle
 }
 
 pub fn (t &TextStyles) style(id string) TextStyle {
