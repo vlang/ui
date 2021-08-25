@@ -25,8 +25,8 @@ fn main() {
 			ui.row(
 				margin_: 10
 				spacing: 10
-				widths: [ui.compact, ui.compact] // 350.]
-				heights: [ui.compact, ui.compact] // 300.]
+				widths: [ui.compact, ui.compact] // 350.0]
+				heights: [ui.compact, ui.compact] // 300.0]
 				// scrollview: true
 				children: [
 					ui.picture(

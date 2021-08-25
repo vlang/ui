@@ -83,7 +83,7 @@ pub fn (w DrawTextWidget) load_style(ts TextStyle) {
 	fons.vert_metrics(&ascender, &descender, &lh)
 }
 
-pub fn (mut w DrawTextWidget) draw_text(x int, y int, text string) {
+pub fn (w DrawTextWidget) draw_text(x int, y int, text string) {
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
 	C.fonsDrawText(w.ui.gg.ft.fons, x * scale, y * scale, &char(text.str), 0) // TODO: check offsets/alignment
 }

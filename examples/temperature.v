@@ -42,7 +42,7 @@ fn main() {
 				margin: ui.Margin{10, 10, 10, 10}
 				spacing: 10
 				widths: [.2, .3, .2, .3]
-				heights: 20.
+				heights: 20.0
 				children: [ui.label(text: 'Celsius'), app.txt_box_celsius,
 					ui.label(
 					text: 'Fahrenheit'

@@ -441,18 +441,18 @@ fn (mut s Stack) set_cache_sizes() {
 	// size preallocated
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
-	c.width_mass, c.height_mass = 0., 0.
+	c.width_mass, c.height_mass = 0.0, 0.0
 	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
 	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
-	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
+	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
 	for i, mut child in s.children {
-		mut cw := s.widths[i] or { 0. }
-		mut ch := s.heights[i] or { 0. }
+		mut cw := s.widths[i] or { 0.0 }
+		mut ch := s.heights[i] or { 0.0 }
 
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
@@ -999,7 +999,7 @@ fn (s &Stack) margin(side Side) int {
 		.left { s.margins.left }
 	}
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
 		$if margin ? {
 			println('margin($side) = $size * $psize')
@@ -1023,7 +1023,7 @@ fn (s &Stack) margin(side Side) int {
 fn (s &Stack) spacing(i int) int {
 	size := s.spacings[i]
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
 		$if spacing ? {
 			println('spacing($i) = $size * $psize')
@@ -1189,10 +1189,10 @@ pub struct ChildrenConfig {
 mut:
 	// add or remove or migrate
 	at      int  = -1
-	widths  Size = Size(-1.)
-	heights Size = Size(-1.)
+	widths  Size = Size(-1.0)
+	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.
+	spacing  f64   = -1.0
 	spacings []f64 = []f64{}
 	child    Widget
 	children []Widget
@@ -1201,9 +1201,9 @@ mut:
 	to   int = -1
 	// migrate
 	target          &Stack = 0
-	target_widths   Size   = Size(-1.)
-	target_heights  Size   = Size(-1.)
-	target_spacing  f64    = -1.
+	target_widths   Size   = Size(-1.0)
+	target_heights  Size   = Size(-1.0)
+	target_spacing  f64    = -1.0
 	target_spacings []f64  = []f64{}
 }
 
@@ -1307,7 +1307,7 @@ enum ChildUpdateType {
 pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_widths := if mode == .migrate { cfg.target_widths } else { cfg.widths }
 	if cfg_widths is f64 {
-		if cfg_widths == -1. {
+		if cfg_widths == -1.0 {
 			match mode {
 				.add, .migrate {
 					widths := if s.direction == .row { compact } else { stretch }
@@ -1334,7 +1334,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_heights := if mode == .migrate { cfg.target_heights } else { cfg.heights }
 	if cfg_heights is f64 {
-		if cfg_heights == -1. {
+		if cfg_heights == -1.0 {
 			match mode {
 				.add, .migrate {
 					heights := if s.direction == .row { stretch } else { compact }
@@ -1361,7 +1361,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_spacing := if mode == .migrate { cfg.target_spacing } else { cfg.spacing }
 	cfg_spacings := if mode == .migrate { cfg.target_spacings } else { cfg.spacings }
-	if cfg_spacing != -1. || cfg_spacings.len != 0 {
+	if cfg_spacing != -1.0 || cfg_spacings.len != 0 {
 		if s.children.len > 0 {
 			s.spacings = spacings(cfg_spacing, cfg_spacings, s.children.len - 1)
 		}
@@ -1372,7 +1372,7 @@ pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 				if s.children.len <= 1 {
 					s.spacings = []f32{}
 				} else {
-					spacing := if s.spacings.len == 0 { f32(5.) } else { s.spacings[0] }
+					spacing := if s.spacings.len == 0 { f32(5.0) } else { s.spacings[0] }
 					s.spacings = spacings(spacing, cfg_spacings, s.children.len - 1)
 				}
 			}

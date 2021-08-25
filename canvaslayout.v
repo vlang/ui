@@ -41,6 +41,8 @@ pub mut:
 	adj_height       int
 	full_width       int
 	full_height      int
+	// text styles
+	text_styles TextStyles
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
@@ -62,8 +64,7 @@ pub mut:
 mut:
 	parent Layout = empty_stack
 	// To keep track of original position
-	pos_        map[int]XYPos
-	text_styles TextStyles
+	pos_ map[int]XYPos
 }
 
 pub struct CanvasLayoutConfig {
