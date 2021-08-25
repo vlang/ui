@@ -165,7 +165,7 @@ fn update_text_size(mut w DrawText) {
 
 // text_size: f64
 //   0  (default)  => system
-//   16 (or 16.)   => fixed font size
+//   16 (or 16.0)   => fixed font size
 //   .5 (in ]0,1]) => proprtion of height window
 pub fn text_size_as_int(size f64, win_height int) int {
 	return if size > 0 && size < 1 {
@@ -187,66 +187,66 @@ fn point_inside<T>(w &T, x f64, y f64) bool {
 // h, s, l in [0,1]
 pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
 	c := v * s
-	x := c * (1. - math.abs(math.fmod(h * 6., 2.) - 1.))
+	x := c * (1.0 - math.abs(math.fmod(h * 6.0, 2.0) - 1.0))
 	m := v - c
-	mut r, mut g, mut b := 0., 0., 0.
-	h6 := h * 6.
-	if h6 < 1. {
+	mut r, mut g, mut b := 0.0, 0.0, 0.0
+	h6 := h * 6.0
+	if h6 < 1.0 {
 		r, g = c, x
-	} else if h6 < 2. {
+	} else if h6 < 2.0 {
 		r, g = x, c
-	} else if h6 < 3. {
+	} else if h6 < 3.0 {
 		g, b = c, x
-	} else if h6 < 4. {
+	} else if h6 < 4.0 {
 		g, b = x, c
-	} else if h6 < 5. {
+	} else if h6 < 5.0 {
 		r, b = x, c
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(byte((r + m) * 255.), byte((g + m) * 255.), byte((b + m) * 255.))
+	return gx.rgb(byte((r + m) * 255.0), byte((g + m) * 255.0), byte((b + m) * 255.0))
 }
 
 // h, s, l in [0,1]
 pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
-	c := (1. - math.abs(2. * l - 1.)) * s
-	x := c * (1. - math.abs(math.fmod(h * 6., 2.) - 1.))
-	m := l - c / 2.
-	mut r, mut g, mut b := 0., 0., 0.
-	h6 := h * 6.
-	if h6 < 1. {
+	c := (1.0 - math.abs(2.0 * l - 1.0)) * s
+	x := c * (1.0 - math.abs(math.fmod(h * 6.0, 2.0) - 1.0))
+	m := l - c / 2.0
+	mut r, mut g, mut b := 0.0, 0.0, 0.0
+	h6 := h * 6.0
+	if h6 < 1.0 {
 		r, g = c, x
-	} else if h6 < 2. {
+	} else if h6 < 2.0 {
 		r, g = x, c
-	} else if h6 < 3. {
+	} else if h6 < 3.0 {
 		g, b = c, x
-	} else if h6 < 4. {
+	} else if h6 < 4.0 {
 		g, b = x, c
-	} else if h6 < 5. {
+	} else if h6 < 5.0 {
 		r, b = x, c
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(byte((r + m) * 255.), byte((g + m) * 255.), byte((b + m) * 255.))
+	return gx.rgb(byte((r + m) * 255.0), byte((g + m) * 255.0), byte((b + m) * 255.0))
 }
 
 pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
-	r, g, b := f64(col.r) / 255., f64(col.g) / 255., f64(col.b) / 255.
+	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
 	d := v - m
-	mut h, mut s := 0., 0.
+	mut h, mut s := 0.0, 0.0
 	if v == m {
 		h = 0
 	} else if v == r {
 		if g > b {
-			h = ((g - b) / d) / 6.
+			h = ((g - b) / d) / 6.0
 		} else {
-			h = (6. - (g - b) / d) / 6
+			h = (6.0 - (g - b) / d) / 6
 		}
 	} else if v == g {
-		h = ((b - r) / d + 2.) / 6.
+		h = ((b - r) / d + 2.0) / 6.0
 	} else if v == b {
-		h = ((r - g) / d + 4.) / 6.
+		h = ((r - g) / d + 4.0) / 6.0
 	}
 	// println("h: $h")
 	if v != 0 {
@@ -256,27 +256,27 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 }
 
 pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
-	r, g, b := f64(col.r) / 255., f64(col.g) / 255., f64(col.b) / 255.
+	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
 	d := v - m
-	mut h, mut s := 0., 0.
+	mut h, mut s := 0.0, 0.0
 	if v == m {
 		h = 0
 	} else if v == r {
 		if g > b {
-			h = ((g - b) / d) / 6.
+			h = ((g - b) / d) / 6.0
 		} else {
-			h = (6. - (g - b) / d) / 6
+			h = (6.0 - (g - b) / d) / 6
 		}
 	} else if v == g {
-		h = ((b - r) / d + 2.) / 6.
+		h = ((b - r) / d + 2.0) / 6.0
 	} else if v == b {
-		h = ((r - g) / d + 4.) / 6.
+		h = ((r - g) / d + 4.0) / 6.0
 	}
-	l := (v + m) / 2.
+	l := (v + m) / 2.0
 	// println("h: $h")
 	if v != 0 {
-		s = d / (1. - math.abs(2 * l - 1.))
+		s = d / (1.0 - math.abs(2 * l - 1.0))
 	}
 
 	return h, s, l

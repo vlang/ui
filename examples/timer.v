@@ -28,7 +28,7 @@ fn main() {
 			val: 25.0
 			on_value_changed: on_value_changed
 		)
-		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1. / 10)
+		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1.0 / 10)
 		progress_bar: ui.progressbar(height: 20, val: 0, max: 100)
 		window: 0
 	}
@@ -57,8 +57,8 @@ fn main() {
 						spacing: .1
 						margin_: .05
 						heights: [.2, .1, .1]
-						children: [ui.label(text: 'Elapsed Time:', text_size: 1. / 10),
-							ui.label(text: 'Duration:', text_size: 1. / 10),
+						children: [ui.label(text: 'Elapsed Time:', text_size: 1.0 / 10),
+							ui.label(text: 'Duration:', text_size: 1.0 / 10),
 						]
 					),
 						ui.column(

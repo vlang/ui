@@ -77,7 +77,7 @@ fn main() {
 			ui.row(
 				margin_: .02
 				spacing: .02
-				widths: [.3, .64] // 1. == .64 + .3 + .02 + 2 * .02
+				widths: [.3, .64] // 1.0 == .64 + .3 + .02 + 2 * .02
 				children: [
 					ui.column(
 					spacing: 10
