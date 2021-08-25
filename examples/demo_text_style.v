@@ -53,20 +53,20 @@ fn window_init(mut w ui.Window) {
 	c := w.canvas_layout('c')
 	mut dd := w.dropdown('dd')
 	mut dtw := ui.DrawTextWidget(c)
-	dtw.add_style(
+	w.ui.add_style(
 		id: 'brush'
 		font_name: 'brush'
 		size: 24
 	)
 	dd.add_item('brush')
-	dtw.add_style(
+	w.ui.add_style(
 		id: 'arial'
 		font_name: 'arial'
 		size: 30
 		color: gx.blue
 	)
 	dd.add_item('arial')
-	dtw.add_style(
+	w.ui.add_style(
 		id: 'arial-bold'
 		font_name: 'arial-bold'
 		size: 30

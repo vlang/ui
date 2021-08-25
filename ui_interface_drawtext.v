@@ -9,7 +9,6 @@ pub interface DrawTextWidget {
 mut:
 	ui &UI
 	text_styles TextStyles
-	text_style_id string
 }
 
 pub fn (mut w DrawTextWidget) add_font(font_name string, font_path string) {
@@ -38,25 +37,33 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 	println(w.text_styles.hash)
 }
 
-pub fn (w DrawTextWidget) text_style(id string) TextStyle {
-	return w.text_styles.hash[id] or { w.ui.text_styles.hash[id] }
+pub fn (mut w DrawTextWidget) set_style(id string) {
+	w.text_styles.id = id
 }
 
-pub fn (mut w DrawTextWidget) set_style(text_style_id string) {
-	w.text_style_id = text_style_id
+pub fn (w DrawTextWidget) text_style_id() string {
+	return w.text_styles.id
+}
+
+pub fn (w DrawTextWidget) text_style_current() TextStyle {
+	return w.text_style(w.text_style_id())
+}
+
+pub fn (w DrawTextWidget) text_style(id string) TextStyle {
+	return w.text_styles.hash[id] or { w.ui.text_styles[id] }
 }
 
 pub fn (mut w DrawTextWidget) load_current_style() {
-	if w.text_style_id == '' {
-		w.text_style_id = 'default' // at least needs to be defined in ui
+	if w.text_style_id() == '' {
+		w.text_styles.id = 'default' // at least needs to be defined in ui
 	}
-	ts := w.text_style(w.text_style_id)
+	ts := w.text_style_current()
 
 	w.load_style(ts)
 }
 
 pub fn (w DrawTextWidget) load_style(ts TextStyle) {
-	// println("load style $w.text_style_id $ts")
+	// println("load style ${w.text_style_id()} $ts")
 	gg := w.ui.gg
 	fons := gg.ft.fons
 	fons.set_font(w.ui.fonts.hash[ts.font_name])
@@ -119,7 +126,8 @@ mut:
 
 pub struct TextStyles {
 mut:
-	hash map[string]TextStyle
+	id 		string
+	hash 	map[string]TextStyle
 }
 
 pub fn (t &TextStyles) style(id string) TextStyle {
@@ -167,7 +175,7 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 		}
 		id = ts.font_name
 	}
-	ui.text_styles.hash[id] = TextStyle{
+	ui.text_styles[id] = TextStyle{
 		id: id
 		font_name: ts.font_name
 		color: ts.color

@@ -37,8 +37,8 @@ mut:
 	closed               bool
 	ticks                int
 	// text styles and font set
-	text_styles TextStyles
-	fonts       FontSet
+	text_styles 		 map[string]TextStyle
+	fonts       		 FontSet
 }
 
 pub enum VerticalAlignment {

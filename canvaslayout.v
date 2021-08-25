@@ -41,9 +41,6 @@ pub mut:
 	adj_height       int
 	full_width       int
 	full_height      int
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
 	// component state for composable widget
 	component      voidptr
 	component_type string // to save the type of the component
@@ -67,7 +64,6 @@ mut:
 	// To keep track of original position
 	pos_          map[int]XYPos
 	text_styles   TextStyles
-	text_style_id string
 }
 
 pub struct CanvasLayoutConfig {
@@ -92,9 +88,6 @@ pub struct CanvasLayoutConfig {
 	on_char      CanvasLayoutKeyFn  = voidptr(0)
 	full_size_fn CanvasLayoutSizeFn = voidptr(0)
 	children     []Widget
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
 }
 
 pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
@@ -128,8 +121,6 @@ pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
 		key_down_fn: c.on_key_down
 		full_size_fn: c.full_size_fn
 		char_fn: c.on_char
-		text_cfg: c.text_cfg
-		text_size: c.text_size
 	}
 	if c.scrollview {
 		scrollview_add(mut canvas)
@@ -157,11 +148,6 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	} else {
 		scrollview_delegate_parent_scrollview(mut c)
 	}
-
-	if is_empty_text_cfg(c.text_cfg) && c.text_size == 0 {
-		c.text_cfg = c.ui.window.text_cfg
-	}
-	update_text_size(mut c)
 
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -492,10 +478,6 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, text_style_id string) {
 	mut dtw := DrawTextWidget(c)
 	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, text_style_id)
-}
-
-pub fn (c &CanvasLayout) draw_text_with_color(x int, y int, text string, color gx.Color) {
-	draw_text_with_color(c, x + c.x + c.offset_x, y + c.y + c.offset_y, text, color)
 }
 
 pub fn (c &CanvasLayout) draw_rect(x f32, y f32, w f32, h f32, color gx.Color) {
