@@ -59,12 +59,12 @@ fn window_init(mut w ui.Window) {
 		font_root_path = 'C:/windows/fonts'
 	}
 	$if macos {
-		font_root_path = '/System/Library/Fonts'
+		font_root_path = '/System/Library/Fonts/*'
 	}
 	$if linux {
-		font_root_path = '/usr/share/fonts/truetype/'
+		font_root_path = '/usr/share/fonts/truetype/*'
 	}
-	font_paths := os.glob('$font_root_path/*/*.ttf') or { panic(err) }
+	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
 
 	c := w.canvas_layout('c')
 	mut lb := w.listbox('lb')
