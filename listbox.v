@@ -324,6 +324,27 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	}
 }
 
+fn (lb &ListBox) visible_items() (int, int) {
+	mut j1, mut j2 := 0, 0
+	if lb.has_scrollview {
+		j1 = lb.scrollview.offset_y / lb.item_height
+		if j1 < 0 {
+			j1 = 0
+		}
+	}
+
+	if lb.has_scrollview {
+		j2 = (lb.scrollview.offset_y + lb.height) / lb.item_height
+	} else {
+		j2 = lb.height / lb.item_height
+	}
+	jmax := lb.items.len - 1
+	if j2 > jmax {
+		j2 = jmax
+	}
+	return j1, j2
+}
+
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
 	// scrollview_clip(mut lb)
@@ -332,12 +353,15 @@ fn (mut lb ListBox) draw() {
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	// println("draw rect")
+	from, to := lb.visible_items()
 	for inx, item in lb.items {
 		// println("$inx >= $lb.draw_count")
 		if inx >= lb.draw_count && !has_scrollview(lb) {
 			break
 		}
-		lb.draw_item(item, inx == lb.selection)
+		if !has_scrollview(lb) || (inx >= from && inx <= to) {
+			lb.draw_item(item, inx == lb.selection)
+		}
 	}
 	if !lb.draw_lines {
 		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, lb.height + 2, lb.col_border)

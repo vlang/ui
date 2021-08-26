@@ -25,6 +25,7 @@ fn main() {
 					ui.listbox(
 						id: 'lb'
 						draw_lines: true
+						// scrollview: false
 						on_change: lb_change
 					),
 					ui.column(
