@@ -157,6 +157,10 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 				println('font $font_name NOT added ($font_path)')
 			}
 		}
+	} else {
+		$if fontset ? {
+			println('font bytes unreadable')
+		}
 	}
 	$if fontset ? {
 		println('$ui.fonts')
