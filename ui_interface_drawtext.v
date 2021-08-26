@@ -37,28 +37,26 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 	println(w.text_styles.hash)
 }
 
-pub fn (mut w DrawTextWidget) set_style(id string) {
-	w.text_styles.id = id
+pub fn (mut w DrawTextWidget) set_text_style(ts TextStyle) {
+	if ts.id == 'default' {
+		w.text_styles.current = ts
+	} else {
+		ts2 := w.text_styles.hash[ts.id] or { w.ui.text_styles[ts.id] or { ts } }
+		w.text_styles.current = ts2
+	}
 }
 
-pub fn (w DrawTextWidget) text_style_id() string {
-	return w.text_styles.id
+pub fn (w DrawTextWidget) text_style() TextStyle {
+	return w.text_styles.current
 }
 
-pub fn (w DrawTextWidget) text_style_current() TextStyle {
-	return w.text_style(w.text_style_id())
-}
-
-pub fn (w DrawTextWidget) text_style(id string) TextStyle {
+pub fn (w DrawTextWidget) text_style_by_id(id string) TextStyle {
 	return w.text_styles.hash[id] or { w.ui.text_styles[id] }
 }
 
-pub fn (mut w DrawTextWidget) load_current_style() {
-	if w.text_style_id() == '' {
-		w.text_styles.id = 'default' // at least needs to be defined in ui
-	}
-	ts := w.text_style_current()
-
+pub fn (w DrawTextWidget) load_current_style() {
+	ts := w.text_style()
+	// println("current style: $ts")
 	w.load_style(ts)
 }
 
@@ -89,7 +87,7 @@ pub fn (w DrawTextWidget) draw_text(x int, y int, text string) {
 }
 
 pub fn (w DrawTextWidget) draw_styled_text(x int, y int, text string, text_style_id string) {
-	w.load_style(w.text_style(text_style_id))
+	w.load_style(w.text_style_by_id(text_style_id))
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
 	C.fonsDrawText(w.ui.gg.ft.fons, x * scale, y * scale, &char(text.str), 0) // TODO: check offsets/alignment
 }
@@ -114,7 +112,7 @@ pub fn (w DrawTextWidget) text_height(text string) int {
 pub struct TextStyle {
 mut:
 	// text style identifier
-	id string
+	id string = 'default'
 	// fields
 	font_name      string
 	color          gx.Color = gx.black
@@ -126,8 +124,8 @@ mut:
 
 pub struct TextStyles {
 mut:
-	id   string
-	hash map[string]TextStyle
+	current TextStyle
+	hash    map[string]TextStyle
 }
 
 pub fn (t &TextStyles) style(id string) TextStyle {

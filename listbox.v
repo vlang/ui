@@ -379,7 +379,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 		if !lb.has_scrollview && inx >= lb.draw_count {
 			break
 		}
-		println(' $item.id -> ($e.x,$e.y)')
+		// println(' $item.id -> ($e.x,$e.y)')
 		if item.point_inside(e.x, e.y) {
 			if lb.selection != inx {
 				lb.selection = inx
