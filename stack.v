@@ -530,7 +530,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.width_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				cw = 0
@@ -607,7 +607,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.height_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				ch = 0
