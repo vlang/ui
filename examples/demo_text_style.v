@@ -111,7 +111,11 @@ fn lb_change(mut app App, lb &ui.ListBox) {
 	mut dtw := ui.DrawTextWidget(c)
 	fp, id := lb.selected() or { 'classic', '' }
 	// println("$id, $fp")
-	w.ui.add_font(id, fp)
+	$if windows {
+		w.ui.add_font(id, 'C:/windows/fonts/$fp')
+	} $else {
+		w.ui.add_font(id, fp)
+	}
 	dtw.set_text_style(font_name: id, size: 30)
 	// style := dd.selected().text
 	// println('style selected: $style')
