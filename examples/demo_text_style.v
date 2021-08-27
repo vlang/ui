@@ -1,14 +1,15 @@
 module main
 
 import ui
-import gx
+// import gx
 import os
 
 struct App {
 mut:
-	window &ui.Window = 0
-	log    string
-	font   string = 'il était une fois V ....'
+	window    &ui.Window = 0
+	log       string
+	text      string = 'il était une fois V ....'
+	prev_font string
 }
 
 fn main() {
@@ -32,7 +33,7 @@ fn main() {
 						children: [
 							ui.textbox(
 								id: 'font'
-								text: &app.font
+								text: &app.text
 							),
 							ui.canvas_plus(
 								id: 'c'
@@ -67,9 +68,9 @@ fn window_init(mut w ui.Window) {
 	}
 	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
 
-	c := w.canvas_layout('c')
+	// c := w.canvas_layout('c')
 	mut lb := w.listbox('lb')
-	mut dtw := ui.DrawTextWidget(c)
+	// dtw := ui.DrawTextWidget(c)
 	for fp in font_paths {
 		lb.add_item(fp, os.file_name(fp))
 	}
@@ -100,8 +101,8 @@ fn window_init(mut w ui.Window) {
 fn on_draw(c &ui.CanvasLayout, app &App) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_current_style()
-	c.draw_text(10, 10, app.font)
-	w, h := dtw.text_size(app.font)
+	c.draw_text(10, 10, app.text)
+	w, h := dtw.text_size(app.text)
 	c.draw_empty_rect(10, 11, w + 2, h + 2)
 	c.draw_styled_text(10 + w + 10, 10, 'size: ($w, $h)', 'default')
 }
@@ -117,6 +118,9 @@ fn lb_change(mut app App, lb &ui.ListBox) {
 	} $else {
 		w.ui.add_font(id, fp)
 	}
+	// w.ui.free_font(app.prev_font)
+
+	app.prev_font = id
 	dtw.set_text_style(font_name: id, size: 30)
 	// style := dd.selected().text
 	// println('style selected: $style')

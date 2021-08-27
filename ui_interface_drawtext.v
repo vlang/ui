@@ -142,18 +142,21 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
 		println('add font $font_name at $font_path')
 	}
+	// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
+	// (in fons__getGlyph, added becomes 0)
+	C.fonsResetAtlas(ui.gg.ft.fons, 512, 512)
 	bytes := os.read_bytes(font_path) or { []byte{} }
 	// gg := ui.gg
 	// mut f := ui.fonts
 	if bytes.len > 0 {
 		font := C.fonsAddFontMem(ui.gg.ft.fons, c'sans', bytes.data, bytes.len, false)
-		if font > 0 {
+		if font >= 0 {
 			ui.fonts.hash[font_name] = font
-			$if fonset ? {
+			$if fontset ? {
 				println('font $font $font_name added ($font_path)')
 			}
 		} else {
-			$if fonset ? {
+			$if fontset ? {
 				println('font $font_name NOT added ($font_path)')
 			}
 		}
@@ -166,6 +169,20 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		println('$ui.fonts')
 	}
 }
+
+/*
+pub fn (mut ui UI) free_font(font_name string) {
+	if font_name in ui.fonts.hash {
+		idx := ui.fonts.hash[font_name]
+		unsafe {
+			C.fons__freeFont(ui.gg.ft.fons.fonts[idx])
+		}
+		ui.fonts.hash.delete(font_name)
+		$if fontset ? {
+			println("font $font_name ($idx) deleted ")
+		}
+	}
+}*/
 
 // define style to be used with drawtext method
 pub fn (mut ui UI) add_style(ts TextStyle) {
