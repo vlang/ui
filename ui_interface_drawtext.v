@@ -144,12 +144,12 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	}
 	// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
 	// (in fons__getGlyph, added becomes 0)
-	C.fonsResetAtlas(ui.gg.ft.fons, 512, 512)
+	ui.gg.ft.fons.reset_atlas(512, 512)
 	bytes := os.read_bytes(font_path) or { []byte{} }
 	// gg := ui.gg
 	// mut f := ui.fonts
 	if bytes.len > 0 {
-		font := C.fonsAddFontMem(ui.gg.ft.fons, c'sans', bytes.data, bytes.len, false)
+		font := ui.gg.ft.fons.add_font_mem(c'sans', bytes.data, bytes.len, 0)
 		if font >= 0 {
 			ui.fonts.hash[font_name] = font
 			$if fontset ? {
