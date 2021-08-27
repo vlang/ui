@@ -170,20 +170,6 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	}
 }
 
-/*
-pub fn (mut ui UI) free_font(font_name string) {
-	if font_name in ui.fonts.hash {
-		idx := ui.fonts.hash[font_name]
-		unsafe {
-			C.fons__freeFont(ui.gg.ft.fons.fonts[idx])
-		}
-		ui.fonts.hash.delete(font_name)
-		$if fontset ? {
-			println("font $font_name ($idx) deleted ")
-		}
-	}
-}*/
-
 // define style to be used with drawtext method
 pub fn (mut ui UI) add_style(ts TextStyle) {
 	mut id := ts.id

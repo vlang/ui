@@ -118,11 +118,7 @@ fn lb_change(mut app App, lb &ui.ListBox) {
 	} $else {
 		w.ui.add_font(id, fp)
 	}
-	// w.ui.free_font(app.prev_font)
 
 	app.prev_font = id
 	dtw.set_text_style(font_name: id, size: 30)
-	// style := dd.selected().text
-	// println('style selected: $style')
-	// dtw.set_style(style)
 }
