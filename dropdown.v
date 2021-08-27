@@ -272,7 +272,7 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if dd.open {
-		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height)
+		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
 	}
 }
 
