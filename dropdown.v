@@ -241,8 +241,8 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
 		dd.open_drawer()
 	} else if dd.open {
-		th := dd.y + (dd.items.len * dd.dropdown_height)
-		index := ((e.y * dd.items.len) / th) - 1
+		index := int((e.y - dd.y) / dd.dropdown_height) - 1
+		// println("$index : ($e.y - $dd.y) / dd.dropdown_height - 1")
 		dd.selected_index = index
 		if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 			parent := dd.parent
@@ -305,5 +305,6 @@ fn (dd &Dropdown) point_inside(x f64, y f64) bool {
 
 // Returns the currently selected DropdownItem
 pub fn (dd &Dropdown) selected() DropdownItem {
+	println('here $dd.selected_index')
 	return dd.items[dd.selected_index]
 }

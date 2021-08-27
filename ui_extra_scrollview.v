@@ -658,7 +658,7 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-// N.B.: deactivated for TextBox
+// N.B.: deactivated for TextBox and ListBox
 fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
 	if !sv.is_active() || !sv.is_focused || sv.widget is TextBox {
 		return
