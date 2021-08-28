@@ -11,6 +11,8 @@ pub mut:
 	z_index    int
 	offset_x   int
 	offset_y   int
+	width      int
+	height     int
 	hidden     bool   = true
 	layout     Layout = empty_stack
 	is_focused bool
@@ -24,6 +26,8 @@ pub struct SubWindowConfig {
 	id      string
 	x       int
 	y       int
+	width   int
+	height  int
 	z_index int
 	layout  Layout = empty_stack
 }
@@ -33,6 +37,8 @@ pub fn subwindow(c SubWindowConfig) &SubWindow {
 		id: c.id
 		x: c.x
 		y: c.y
+		width: c.width
+		height: c.height
 		z_index: c.z_index
 		layout: c.layout
 	}
@@ -101,9 +107,14 @@ fn (s &SubWindow) point_inside(x f64, y f64) bool {
 pub fn (mut s SubWindow) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
+	if s.layout is Widget {
+		mut w := s.layout as Widget
+		w.set_pos(x, y)
+	}
 }
 
 pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
+	println('prooooo')
 	if s.layout is Widget {
 		mut w := s.layout as Widget
 		return w.propose_size(width, height)

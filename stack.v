@@ -261,8 +261,13 @@ fn (mut s Stack) init_size() {
 	// s.debug_show_sizes("decode before -> ")
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
-		s.real_height = parent_height
-		s.real_width = parent_width
+		if s.parent is SubWindow {
+			s.real_height = s.height
+			s.real_width = s.width
+		} else {
+			s.real_height = parent_height
+			s.real_width = parent_width
+		}
 	}
 	scrollview_update(s)
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
@@ -291,6 +296,7 @@ fn (mut s Stack) set_children_sizes() {
 			wt, ht := c.width_type[i].str(), c.height_type[i].str()
 			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
+		// println("ps $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -705,10 +711,10 @@ pub fn (s &Stack) adj_size() (int, int) {
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	//
-	if s.id == '_msg_dlg_col' {
-		println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
-	}
+	// if s.id == '_msg_dlg_col' {
+	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
+	// }
+	// println("$s.id propose size $w, $h")
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }
@@ -956,6 +962,7 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rounded_rect(s.real_x, s.real_y, s.real_width, s.real_height,
 				radius, s.bg_color)
 		} else {
+			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
@@ -969,7 +976,7 @@ fn (mut s Stack) draw() {
 		s.draw_bb()
 	}
 	for mut child in s.drawing_children {
-		// println("$child.type_name()")
+		// println("$child.type_name() $child.id")
 		child.draw()
 	}
 	// scrollview_draw(s)
