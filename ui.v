@@ -63,37 +63,23 @@ mut:
 	offset_y int
 	hidden bool
 	init(Layout)
-	// key_down(KeyEvent)
+	cleanup()
 	draw()
-	// click(MouseEvent)
-	// mouse_move(MouseEvent)
 	point_inside(x f64, y f64) bool
-	// unfocus()
-	// focus()
-	// is_focused() bool
 	set_pos(x int, y int)
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
 	set_visible(bool)
-	cleanup()
 }
 
-// pub fn iwidget(x Widget) Widget { return x }
 pub interface Layout {
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
-	// on_click(ClickFn)
-	// unfocus_all()
-	// on_mousemove(MouseMoveFn)
 	draw()
 	resize(w int, h int)
 	get_children() []Widget
-}
-
-pub fn ilayout(x Layout) Layout {
-	return x
 }
 
 pub enum MouseAction {

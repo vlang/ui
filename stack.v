@@ -155,12 +155,10 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 	s.init_size()
-
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
-
 	// init for component attached to s when it is the layout of a component
 	if s.component_init != ComponentInitFn(0) {
 		s.component_init(s)

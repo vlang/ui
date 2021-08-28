@@ -1211,6 +1211,24 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
+	} else if mut child is SubWindow {
+		if child.id == '' {
+			mode := 'sw'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
+		if child.layout is Widget {
+			l := child.layout as Widget
+			w.register_child(l)
+		}
 	} else {
 		if child.id == '' {
 			mode := 'unknown'
@@ -1331,6 +1349,15 @@ pub fn (w Window) rectangle(id string) &Rectangle {
 		return widget
 	} else {
 		return rectangle()
+	}
+}
+
+pub fn (w Window) subwindow(id string) &SubWindow {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is SubWindow {
+		return widget
+	} else {
+		return subwindow()
 	}
 }
 
