@@ -22,12 +22,13 @@ pub mut:
 	text_cfg  gx.TextCfg
 	text_size f64
 	component voidptr
+	width     int
+	height    int
+mut:
 	text      string
 	parent    Layout = empty_stack
 	x         int
 	y         int
-	width     int
-	height    int
 	z_index   int
 	items     []MenuItem
 }

@@ -22,6 +22,11 @@ pub mut:
 	text_size f64
 	// component state for composable widget
 	component voidptr
+	ui        &UI
+	text_cfg  gx.TextCfg
+	text_size f64
+	height    int
+	width     int
 mut:
 	x            int
 	y            int

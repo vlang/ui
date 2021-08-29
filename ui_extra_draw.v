@@ -15,9 +15,9 @@ pub fn is_empty_text_cfg(t gx.TextCfg) bool {
 //-----  Generic for performance
 
 // T is Widget with text_cfg field
-fn text_size<T>(w &T, text string) (int, int) {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_size(text)
+fn text_size<T>(widget &T, text string) (int, int) {
+	widget.ui.gg.set_cfg(widget.text_cfg)
+	return widget.ui.gg.text_size(text)
 }
 
 fn text_width<T>(w &T, text string) int {
