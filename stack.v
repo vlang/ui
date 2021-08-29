@@ -1063,6 +1063,7 @@ fn (s &Stack) get_state() voidptr {
 }
 
 fn (s &Stack) point_inside(x f64, y f64) bool {
+	// println("point_inside $s.id ($x, $y) in ($s.x + $s.offset_x + $s.width, $s.y + $s.offset_y + $s.height)")
 	return point_inside(s, x, y)
 }
 

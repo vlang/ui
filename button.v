@@ -140,6 +140,7 @@ fn (mut b Button) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 	subscriber.subscribe_method(events.on_mouse_up, btn_mouse_up, b)
 	subscriber.subscribe_method(events.on_touch_up, btn_mouse_up, b)
+	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -150,6 +151,7 @@ fn (mut b Button) cleanup() {
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_move, b)
+	b.ui.window.evt_mngr.rm_receiver(b, [events.on_mouse_down])
 	unsafe { b.free() }
 }
 
@@ -206,6 +208,9 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.hidden {
 		return
 	}
+	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
+		return
+	}
 	if !b.is_focused {
 		return
 	}
@@ -227,6 +232,9 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {
+		return
+	}
+	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
 		return
 	}
 	if b.point_inside(e.x, e.y) {

@@ -87,6 +87,7 @@ fn (mut dd Dropdown) init(parent Layout) {
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
 	subscriber.subscribe_method(events.on_mouse_down, dd_mouse_down, dd)
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
+	dd.ui.window.evt_mngr.add_receiver(dd, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -96,6 +97,7 @@ fn (mut dd Dropdown) cleanup() {
 	subscriber.unsubscribe_method(events.on_key_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_move, dd)
+	dd.ui.window.evt_mngr.rm_receiver(dd, [events.on_mouse_down])
 	unsafe { dd.free() }
 }
 

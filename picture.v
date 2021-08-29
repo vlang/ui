@@ -78,6 +78,7 @@ fn (mut pic Picture) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, pic_click, pic)
 	subscriber.subscribe_method(events.on_mouse_down, pic_mouse_down, pic)
+	pic.ui.window.evt_mngr.add_receiver(pic, [events.on_mouse_down])
 	/*
 	if pic.image.width > 0 {
 		// .image was set by the user, skip path  TODO
@@ -108,6 +109,10 @@ fn (mut pic Picture) init(parent Layout) {
 
 [manualfree]
 pub fn (mut p Picture) cleanup() {
+	mut subscriber := p.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_click, p)
+	subscriber.unsubscribe_method(events.on_mouse_down, p)
+	p.ui.window.evt_mngr.rm_receiver(p, [events.on_mouse_down])
 	unsafe { p.free() }
 }
 

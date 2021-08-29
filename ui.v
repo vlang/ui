@@ -80,6 +80,7 @@ pub interface Layout {
 	draw()
 	resize(w int, h int)
 	get_children() []Widget
+	update_layout()
 }
 
 pub enum MouseAction {

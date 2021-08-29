@@ -208,6 +208,8 @@ fn (g &Group) get_children() []Widget {
 	return g.children
 }
 
+fn (g &Group) update_layout() {}
+
 fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	mut h := 0
 	mut w := 0

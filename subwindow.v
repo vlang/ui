@@ -5,13 +5,19 @@ import eventbus
 [heap]
 pub struct SubWindow {
 pub mut:
-	id         string
-	x          int
-	y          int
-	z_index    int
-	offset_x   int
-	offset_y   int
-	hidden     bool   = true
+	id       string
+	x        int
+	y        int
+	z_index  int
+	offset_x int
+	offset_y int
+	hidden   bool
+	// dragging
+	drag     bool
+	dragging bool
+	drag_x   int
+	drag_y   int
+	// main unique layout attached to the subwindow
 	layout     Layout = empty_stack
 	is_focused bool
 	parent     Layout = empty_stack
@@ -24,7 +30,9 @@ pub struct SubWindowConfig {
 	x       int
 	y       int
 	z_index int
+	hidden  bool   = true
 	layout  Layout = empty_stack
+	drag    bool   = true
 }
 
 pub fn subwindow(c SubWindowConfig) &SubWindow {
@@ -34,12 +42,22 @@ pub fn subwindow(c SubWindowConfig) &SubWindow {
 		y: c.y
 		z_index: c.z_index
 		layout: c.layout
+		hidden: c.hidden
+		drag: c.drag
 	}
 	return s
 }
 
 fn (mut s SubWindow) init(parent Layout) {
 	s.parent = parent
+	// Subscriber needs here to be before initialization of all its children
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_mouse_down, sw_mouse_down, s)
+	subscriber.subscribe_method(events.on_mouse_move, sw_mouse_move, s)
+	subscriber.subscribe_method(events.on_mouse_up, sw_mouse_up, s)
+	mut ui := s.get_ui()
+	ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
+	// children initialized after so that subcribe_method
 	mut l := s.layout
 	if l is Widget {
 		mut w := l as Widget
@@ -49,10 +67,17 @@ fn (mut s SubWindow) init(parent Layout) {
 		l.set_pos(s.x, s.y)
 		l.update_layout()
 	}
+	s.set_visible(!s.hidden)
 }
 
 [manualfree]
 pub fn (mut s SubWindow) cleanup() {
+	mut subscriber := s.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_mouse_down, s)
+	subscriber.unsubscribe_method(events.on_mouse_move, s)
+	subscriber.unsubscribe_method(events.on_mouse_up, s)
+	mut ui := s.get_ui()
+	ui.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
 	unsafe { s.free() }
 }
 
@@ -81,8 +106,37 @@ pub fn (s &SubWindow) free() {
 	}
 }
 
+fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
+	if s.hidden || !window.is_top_widget(s, events.on_mouse_down) {
+		return
+	}
+	// println("sw $s.id start dragging")
+	s.dragging = true
+	s.drag_x, s.drag_y = s.x - e.x, s.y - e.y
+}
+
+fn sw_mouse_up(mut s SubWindow, e &MouseEvent, window &Window) {
+	if s.hidden {
+		return
+	}
+	s.dragging = false
+}
+
+fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
+	// println('btn_click for window=$window.title')
+	if s.hidden {
+		return
+	}
+	if s.dragging {
+		s.set_pos(s.drag_x + int(e.x), s.drag_y + int(e.y))
+		// println("sw $s.id dragging $s.x, $s.y")
+		s.update_layout()
+		window.update_layout()
+	}
+}
+
 pub fn (mut s SubWindow) update_layout() {
-	// s.layout.update_layout()
+	s.layout.update_layout()
 }
 
 fn (mut s SubWindow) set_adjusted_size(ui &UI) {
@@ -92,6 +146,7 @@ fn (s &SubWindow) point_inside(x f64, y f64) bool {
 	// add possible decoration
 	if s.layout is Widget {
 		mut w := s.layout as Widget
+		// println(" ${w.point_inside(x, y)}")
 		return w.point_inside(x, y)
 	} else {
 		return false
@@ -108,7 +163,6 @@ pub fn (mut s SubWindow) set_pos(x int, y int) {
 }
 
 pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
-	println('prooooo')
 	if s.layout is Widget {
 		mut w := s.layout as Widget
 		return w.propose_size(width, height)

@@ -595,7 +595,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_down(event gg.Event, mut ui UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / ui.gg.scale)
@@ -617,6 +617,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		}
 	}
 	*/
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
