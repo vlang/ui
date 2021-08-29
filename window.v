@@ -88,6 +88,8 @@ pub mut:
 	// focus stuff
 	do_focus     bool
 	locked_focus string
+	// event manager
+	evt_mngr EventMngr
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget

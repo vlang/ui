@@ -1,7 +1,7 @@
-import ui
 import math
 import os
 import gx
+import ui
 
 struct App {
 mut:
