@@ -17,7 +17,6 @@ pub mut:
 	hidden   bool
 	// component state for composable widget
 	component voidptr
-mut:
 	text      string
 	parent    Layout = empty_stack
 	x         int

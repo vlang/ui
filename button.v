@@ -29,23 +29,22 @@ pub struct Button {
 	// init size read-only
 	width_  int
 	height_ int
-mut:
+pub mut:
+	id          string
+	state       ButtonState = ButtonState(1)
+	height      int
+	width       int
+	z_index     int
+	x           int
+	y           int
+	offset_x    int
+	offset_y    int
 	text_width  int
 	text_height int
-pub mut:
-	id         string
-	state      ButtonState = ButtonState(1)
-	height     int
-	width      int
-	z_index    int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	parent     Layout = empty_stack
-	is_focused bool
-	ui         &UI = 0
-	onclick    ButtonClickFn
+	parent      Layout = empty_stack
+	is_focused  bool
+	ui          &UI = 0
+	onclick     ButtonClickFn
 	// TODO: same convention for all callback
 	on_key_down ButtonKeyDownFn = ButtonKeyDownFn(0)
 	text        string

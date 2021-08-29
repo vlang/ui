@@ -11,23 +11,18 @@ pub mut:
 	z_index    int
 	offset_x   int
 	offset_y   int
-	width      int
-	height     int
 	hidden     bool   = true
 	layout     Layout = empty_stack
 	is_focused bool
+	parent     Layout = empty_stack
 	// component state for composable widget
 	component voidptr
-mut:
-	parent Layout = empty_stack
 }
 
 pub struct SubWindowConfig {
 	id      string
 	x       int
 	y       int
-	width   int
-	height  int
 	z_index int
 	layout  Layout = empty_stack
 }
@@ -37,8 +32,6 @@ pub fn subwindow(c SubWindowConfig) &SubWindow {
 		id: c.id
 		x: c.x
 		y: c.y
-		width: c.width
-		height: c.height
 		z_index: c.z_index
 		layout: c.layout
 	}
@@ -53,6 +46,7 @@ fn (mut s SubWindow) init(parent Layout) {
 		w.init(s)
 	}
 	if mut l is Stack {
+		l.set_pos(s.x, s.y)
 		l.update_layout()
 	}
 }

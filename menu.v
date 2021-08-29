@@ -18,8 +18,10 @@ pub mut:
 	offset_x  int
 	offset_y  int
 	hidden    bool
+	ui        &UI
+	text_cfg  gx.TextCfg
+	text_size f64
 	component voidptr
-mut:
 	text      string
 	parent    Layout = empty_stack
 	x         int
@@ -27,10 +29,7 @@ mut:
 	width     int
 	height    int
 	z_index   int
-	ui        &UI
 	items     []MenuItem
-	text_cfg  gx.TextCfg
-	text_size f64
 }
 
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
