@@ -485,7 +485,7 @@ pub fn window(cfg WindowConfig) &Window {
 	return window
 }
 
-pub fn child_window(mut parent_window Window, cfg WindowConfig) &Window {
+pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 	// q := int(parent_window)
 	// println('child_window() parent=$q.hex()')
 	mut window := &Window{

@@ -447,7 +447,7 @@ fn (mut s Stack) set_cache_sizes() {
 	// above all, they would be used when resizing
 	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
-	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
+	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
 	for i, mut child in s.children {
@@ -1192,7 +1192,7 @@ mut:
 	widths  Size = Size(-1.0)
 	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.
+	spacing  f64   = -1.0
 	spacings []f64 = []f64{}
 	child    Widget
 	children []Widget
@@ -1203,7 +1203,7 @@ mut:
 	target          &Stack = 0
 	target_widths   Size   = Size(-1.0)
 	target_heights  Size   = Size(-1.0)
-	target_spacing  f64    = -1.
+	target_spacing  f64    = -1.0
 	target_spacings []f64  = []f64{}
 }
 
