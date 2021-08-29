@@ -25,12 +25,12 @@ pub mut:
 	width     int
 	height    int
 mut:
-	text      string
-	parent    Layout = empty_stack
-	x         int
-	y         int
-	z_index   int
-	items     []MenuItem
+	text    string
+	parent  Layout = empty_stack
+	x       int
+	y       int
+	z_index int
+	items   []MenuItem
 }
 
 pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
