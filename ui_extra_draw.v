@@ -252,6 +252,12 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	if v != 0 {
 		s = d / v
 	}
+
+	// mirror correction
+	if h > 1.0 {
+		h = 2.0 - h
+	}
+
 	return h, s, v
 }
 
