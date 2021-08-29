@@ -19,13 +19,13 @@ pub mut:
 	offset_y  int
 	hidden    bool
 	component voidptr
+	width     int
+	height    int
 mut:
 	text      string
 	parent    Layout = empty_stack
 	x         int
 	y         int
-	width     int
-	height    int
 	z_index   int
 	ui        &UI
 	items     []MenuItem

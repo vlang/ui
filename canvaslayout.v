@@ -62,8 +62,8 @@ pub mut:
 	char_fn          CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
 	full_size_fn     CanvasLayoutSizeFn      = CanvasLayoutSizeFn(0)
 	on_scroll_change ScrollViewChangedFn     = ScrollViewChangedFn(0)
+	parent           Layout = empty_stack
 mut:
-	parent Layout = empty_stack
 	// To keep track of original position
 	pos_ map[int]XYPos
 }

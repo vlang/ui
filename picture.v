@@ -17,6 +17,8 @@ pub mut:
 	hidden   bool
 	// component state for composable widget
 	component voidptr
+	width     int
+	height    int
 mut:
 	text      string
 	parent    Layout = empty_stack
@@ -24,8 +26,6 @@ mut:
 	y         int
 	z_index   int
 	movable   bool
-	width     int
-	height    int
 	path      string
 	ui        &UI
 	image     gg.Image

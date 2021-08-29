@@ -1,5 +1,5 @@
-import ui
 import math
+import ui
 
 const (
 	buttons_per_row = 4

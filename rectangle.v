@@ -16,20 +16,20 @@ pub mut:
 	offset_y int
 	// component state for composable widget
 	component voidptr
+	ui        &UI
+	text_cfg  gx.TextCfg
+	text_size f64
+	height    int
+	width     int
 mut:
 	parent       Layout = empty_stack
 	x            int
 	y            int
 	z_index      int
-	height       int
-	width        int
 	radius       int
 	border       bool
 	border_color gx.Color
-	ui           &UI
 	hidden       bool
-	text_cfg     gx.TextCfg
-	text_size    f64
 }
 
 pub struct RectangleConfig {
