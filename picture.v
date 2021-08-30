@@ -73,6 +73,7 @@ pub fn picture(c PictureConfig) &Picture {
 }
 
 fn (mut pic Picture) init(parent Layout) {
+	pic.parent = parent
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	mut subscriber := parent.get_subscriber()
