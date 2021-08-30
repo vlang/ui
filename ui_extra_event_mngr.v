@@ -11,7 +11,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 	for evt_type in evt_types {
 		// BUG: 'widget in em.receivers[events.on_mouse_down]' is failing
 		// WORKAROUND with id
-		if !(widget.id in em.receivers[evt_type].map(it.id)) {
+		if widget.id !in em.receivers[evt_type].map(it.id) {
 			em.receivers[events.on_mouse_down] << widget
 			$if evt_mngr ? {
 				println('add receiver $widget.id for $evt_type')
