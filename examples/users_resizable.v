@@ -124,7 +124,7 @@ fn main() {
 						ui.row(
 							id: 'btn_row'
 							widths: [.5, .2]
-							heights: 20.
+							heights: 20.0
 							spacing: .3
 							children: [
 								ui.button(
