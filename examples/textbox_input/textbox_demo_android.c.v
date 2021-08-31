@@ -1,19 +1,10 @@
 import ui
-//import gx
 import jni
 import jni.auto
 
 const (
 	pkg = 'io.v.android.ui.VUIActivity'
 )
-
-struct App {
-mut:
-	tb        string
-	soft_input_visible     bool
-	soft_input_buffer      string
-	soft_input_parsed_char string
-}
 
 fn init(window &ui.Window) {
 	// Pass app reference off to Java so we
@@ -22,7 +13,8 @@ fn init(window &ui.Window) {
 	auto.call_static_method(pkg+'.setVAppPointer(long) void',app_ref)
 
 	mut app := &App(window.state)
-	app.show_soft_input()
+	//app.show_soft_input()
+	show_soft_input(mut app)
 }
 
 [export: 'JNI_OnLoad']
@@ -69,55 +61,13 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 	app.tb = app.soft_input_buffer
 }
 
-fn (mut a App) show_soft_input() {
-	$if android {
-		auto.call_static_method(pkg + '.showSoftInput()')
-		auto.call_static_method(pkg + '.setSoftInputBuffer(string)', '')
-		a.soft_input_visible = true
-	}
+fn show_soft_input(mut a App) {
+	auto.call_static_method(pkg + '.showSoftInput()')
+	auto.call_static_method(pkg + '.setSoftInputBuffer(string)', '')
+	a.soft_input_visible = true
 }
 
-fn (mut a App) hide_soft_input() {
-	$if android {
-		auto.call_static_method(pkg + '.hideSoftInput()')
-		a.soft_input_visible = false
-	}
-}
-
-fn main() {
-	mut app := &App{
-		tb: 'Textbox example'
-	}
-
-	c := ui.column(
-		widths: ui.stretch
-		heights: [ui.compact, ui.stretch]
-		margin_: 5
-		spacing: 10
-		children: [
-			ui.row(
-				spacing: 5
-				children: [
-					ui.label(
-						text: 'Text input' //&app.tb
-					)
-				]
-			),
-			ui.textbox(
-				id: 'tb1'
-				mode: .multiline | .word_wrap
-				text: &app.tb
-				//fitted_height: true
-			)
-		]
-	)
-	w := ui.window(
-		state: app
-		width: 500
-		height: 300
-		mode: .resizable
-		on_init: init
-		children: [c]
-	)
-	ui.run(w)
+fn hide_soft_input(mut a App) {
+	auto.call_static_method(pkg + '.hideSoftInput()')
+	a.soft_input_visible = false
 }

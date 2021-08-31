@@ -1,5 +1,5 @@
 Vab {
 	activity_name: 'VUIActivity'
 	package_id: 'io.v.android.ui'
-	package_overrides: '../java'
+	package_overrides: '../android/java'
 }
