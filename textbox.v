@@ -88,13 +88,14 @@ pub mut:
 	text_cfg  gx.TextCfg
 	text_size f64
 	hidden    bool
+	// text styles
+	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
-	text_styles      TextStyles
 }
 
 [flag]

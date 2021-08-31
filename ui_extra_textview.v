@@ -10,6 +10,8 @@ pub mut:
 	cursor_pos int
 	sel_start  int
 	sel_end    int
+	// text style
+	line_height int
 	// synchronised lines for the text (or maybe a part)
 	tlv TextLinesView
 	// textbox
@@ -45,15 +47,17 @@ pub mut:
 pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.tb = tb
 	tv.text = tb.text // delegate text from tb
+	tv.update_line_height()
+	println('line height: $tv.line_height')
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
 }
 
 pub fn (tv &TextView) size() (int, int) {
-	mut w, mut h := 0, textbox_padding_y * 2 + tv.tb.line_height * tv.tlv.lines.len
+	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
-		lw := text_width(tv.tb, line)
+		lw := tv.text_width(line)
 		if lw > w {
 			w = lw
 		}
@@ -134,16 +138,16 @@ fn (mut tv TextView) sync_text_lines() {
 pub fn (mut tv TextView) visible_lines() {
 	mut j1, mut j2 := 0, 0
 	if tv.tb.has_scrollview {
-		j1 = tv.tb.scrollview.offset_y / tv.tb.line_height
+		j1 = tv.tb.scrollview.offset_y / tv.line_height
 		if j1 < 0 {
 			j1 = 0
 		}
 	}
 
 	if tv.tb.has_scrollview {
-		j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.tb.line_height
+		j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.line_height
 	} else {
-		j2 = tv.tb.height / tv.tb.line_height
+		j2 = tv.tb.height / tv.line_height
 	}
 	jmax := (*tv.text).count('\n')
 	if j2 > jmax {
@@ -177,18 +181,21 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
+	mut dtw := DrawTextWidget(tv.tb)
+	dtw.load_current_style()
 	x, mut y := tv.tb.x + textbox_padding_x, tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
-		y += (tv.tlv.from) * tv.tb.line_height
+		y += (tv.tlv.from) * tv.line_height
 	}
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
-		draw_text(tv.tb, x, y, line)
-		y += tv.tb.line_height
+		// draw_text(tv.tb, x, y, line)
+		tv.draw_text(x, y, line)
+		y += tv.line_height
 	}
 
 	// draw cursor
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
-		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.tb.line_height, gx.black) // , gx.Black)
+		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height, gx.black) // , gx.Black)
 	}
 }
 
@@ -200,33 +207,33 @@ fn (mut tv TextView) draw_selection() {
 
 	if tv.tlv.sel_start_j == tv.tlv.sel_end_j {
 		// if on the same line draw the selected background
-		sel_from, sel_width := text_xminmax_from_pos(tv.tb, tv.sel_start_line(), tv.tlv.sel_start_i,
+		sel_from, sel_width := tv.text_xminmax_from_pos(tv.sel_start_line(), tv.tlv.sel_start_i,
 			tv.tlv.sel_end_i)
 		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			tv.tlv.sel_start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+			tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	} else {
 		// otherwise draw all the selected lines one by one after sorting the position
 		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
 		// here the first line
 		mut ustr := tv.line(start_j)
-		mut sel_from, mut sel_width := text_xminmax_from_pos(tv.tb, ustr, start_i, ustr.len)
+		mut sel_from, mut sel_width := tv.text_xminmax_from_pos(ustr, start_i, ustr.len)
 		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			start_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+			start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
 				ustr = tv.line(j)
-				sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, ustr.runes().len)
+				sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, ustr.runes().len)
 				tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
-					textbox_padding_y + j * tv.tb.line_height, sel_width, tv.tb.line_height,
+					textbox_padding_y + j * tv.line_height, sel_width, tv.line_height,
 					selection_color)
 			}
 		}
 		// and finally the last one
 		ustr = tv.line(end_j)
-		sel_from, sel_width = text_xminmax_from_pos(tv.tb, ustr, 0, end_i)
+		sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, end_i)
 		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			end_j * tv.tb.line_height, sel_width, tv.tb.line_height, selection_color)
+			end_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	}
 }
 
@@ -286,12 +293,12 @@ fn (mut tv TextView) start_selection(x int, y int) {
 	if y <= 0 {
 		tv.tlv.cursor_pos_j = 0
 	} else {
-		tv.tlv.cursor_pos_j = y / tv.tb.line_height
+		tv.tlv.cursor_pos_j = y / tv.line_height
 		if tv.tlv.cursor_pos_j > tv.tlv.lines.len - 1 {
 			tv.tlv.cursor_pos_j = tv.tlv.lines.len - 1
 		}
 	}
-	tv.tlv.cursor_pos_i = text_pos_from_x(tv.tb, tv.current_line(), x)
+	tv.tlv.cursor_pos_i = tv.text_pos_from_x(tv.current_line(), x)
 	if tv.tb.dragging {
 		tv.tlv.sel_start_i, tv.tlv.sel_start_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
 		// put sel_end at the sel_start position too to make selection active
@@ -307,12 +314,12 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	if y <= 0 {
 		tv.tlv.sel_end_j = 0
 	} else {
-		tv.tlv.sel_end_j = y / tv.tb.line_height
+		tv.tlv.sel_end_j = y / tv.line_height
 		if tv.tlv.sel_end_j > tv.tlv.lines.len - 1 {
 			tv.tlv.sel_end_j = tv.tlv.lines.len - 1
 		}
 	}
-	tv.tlv.sel_end_i = text_pos_from_x(tv.tb, tv.tlv.lines[tv.tlv.sel_end_j], x)
+	tv.tlv.sel_end_i = tv.text_pos_from_x(tv.tlv.lines[tv.tlv.sel_end_j], x)
 	tv.sync_text_pos()
 	// tv.info()
 	// println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
@@ -322,12 +329,12 @@ pub fn (mut tv TextView) extend_selection(x int, y int) {
 	if y <= 0 {
 		tv.tlv.cursor_pos_j = 0
 	} else {
-		tv.tlv.cursor_pos_j = y / tv.tb.line_height
+		tv.tlv.cursor_pos_j = y / tv.line_height
 		if tv.tlv.cursor_pos_j > tv.tlv.lines.len - 1 {
 			tv.tlv.cursor_pos_j = tv.tlv.lines.len - 1
 		}
 	}
-	tv.tlv.cursor_pos_i = text_pos_from_x(tv.tb, tv.current_line(), x)
+	tv.tlv.cursor_pos_i = tv.text_pos_from_x(tv.current_line(), x)
 	tv.sync_text_pos()
 	if tv.tb.twosided_sel { // extend from both sides
 		// tv.sel_start and tv.sel_end can and have to be sorted
@@ -406,7 +413,7 @@ pub fn (mut tv TextView) cursor_allways_visible() {
 	}
 	// horizontally
 	ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
-	ulen := text_width(tv.tb, ustr[..(tv.tlv.cursor_pos_i)].string())
+	ulen := tv.text_width(ustr[..(tv.tlv.cursor_pos_i)].string())
 	if ulen <= tv.tb.scrollview.offset_x {
 		tv.scroll_x_to_cursor(false)
 	} else if ulen >= tv.tb.scrollview.offset_x + tv.tb.width - scrollbar_size {
@@ -647,13 +654,13 @@ pub fn (mut tv TextView) do_zoom_down() {
 	if tv.tb.read_only && !tv.tb.is_selectable {
 		return
 	}
-	tv.tb.text_size -= 2
-	if tv.tb.text_size < 8 {
-		tv.tb.text_size = 8
+	mut text_size := DrawTextWidget(tv.tb).font_size()
+	text_size -= 2
+	if text_size < 8 {
+		text_size = 8
 	}
-	mut tb := tv.tb
-	update_text_size(mut tb)
-	tv.tb.update_line_height()
+	tv.update_text_style(size: text_size)
+	tv.update_line_height()
 	tv.update_lines()
 }
 
@@ -661,13 +668,13 @@ pub fn (mut tv TextView) do_zoom_up() {
 	if tv.tb.read_only && !tv.tb.is_selectable {
 		return
 	}
-	tv.tb.text_size += 2
-	if tv.tb.text_size > 48 {
-		tv.tb.text_size = 48
+	mut text_size := DrawTextWidget(tv.tb).font_size()
+	text_size += 2
+	if text_size > 48 {
+		text_size = 48
 	}
-	mut tb := tv.tb
-	update_text_size(mut tb)
-	tv.tb.update_line_height()
+	tv.update_text_style(size: text_size)
+	tv.update_line_height()
 	tv.update_lines()
 }
 
@@ -686,7 +693,7 @@ pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
 }
 
 fn (tv &TextView) cursor_y() int {
-	return tv.tb.y + textbox_padding_y + tv.tlv.cursor_pos_j * tv.tb.line_height
+	return tv.tb.y + textbox_padding_y + tv.tlv.cursor_pos_j * tv.line_height
 }
 
 fn (tv &TextView) cursor_x() int {
@@ -694,7 +701,7 @@ fn (tv &TextView) cursor_x() int {
 	mut cursor_x := tv.tb.x + textbox_padding_x
 	if ustr.len > 0 {
 		left := ustr[..tv.tlv.cursor_pos_i].string()
-		cursor_x += text_width(tv.tb, left)
+		cursor_x += tv.text_width(left)
 	}
 	return cursor_x
 }
@@ -706,8 +713,8 @@ fn (tv &TextView) cursor_xy() (int, int) {
 pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	if tv.tb.has_scrollview {
 		if tv.tb.scrollview.active_y
-			&& !tv.tb.scrollview.point_inside(tv.cursor_x(), tv.cursor_y() + tv.tb.line_height, .view) {
-			tv.tb.scrollview.inc(tv.tb.line_height, .btn_y)
+			&& !tv.tb.scrollview.point_inside(tv.cursor_x(), tv.cursor_y() + tv.line_height, .view) {
+			tv.tb.scrollview.inc(tv.line_height, .btn_y)
 		}
 	}
 }
@@ -716,21 +723,21 @@ pub fn (mut tv TextView) scroll_x_to_cursor(end bool) {
 	if tv.tb.scrollview.active_x {
 		delta := if end { tv.tb.width - 2 * scrollbar_size } else { 0 }
 		ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
-		ulen := text_width(tv.tb, ustr[..tv.tlv.cursor_pos_i].string())
+		ulen := tv.text_width(ustr[..tv.tlv.cursor_pos_i].string())
 		tv.tb.scrollview.set(ulen - delta, .btn_x)
 	}
 }
 
 pub fn (mut tv TextView) scroll_y_to_cursor(end bool) {
 	if tv.tb.scrollview.active_y {
-		delta := if end { tv.tb.height - tv.tb.line_height / 2 - tv.tb.line_height } else { 0 }
-		tv.tb.scrollview.set(tv.tlv.cursor_pos_j * tv.tb.line_height - delta, .btn_y)
+		delta := if end { tv.tb.height - tv.line_height / 2 - tv.line_height } else { 0 }
+		tv.tb.scrollview.set(tv.tlv.cursor_pos_j * tv.line_height - delta, .btn_y)
 	}
 }
 
 pub fn (mut tv TextView) scroll_y_to_end() {
 	if tv.tb.scrollview.active_y {
-		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.tb.line_height, .btn_y)
+		tv.tb.scrollview.set((tv.tlv.lines.len) * tv.line_height, .btn_y)
 	}
 }
 
@@ -758,9 +765,9 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 	for i, word in words {
 		if i == 0 { // at least the first
 			line = word
-			line_width = text_width(tv.tb, word)
+			line_width = tv.text_width(word)
 		} else {
-			word_width := text_width(tv.tb, ' ' + word)
+			word_width := tv.text_width(' ' + word)
 			if line_width + word_width < max_line_width {
 				line += ' ' + word
 				line_width += word_width
@@ -831,4 +838,68 @@ fn (tv &TextView) ordered_lines_selection() (int, int, int, int) {
 	} else {
 		tv.tlv.sel_end_i, tv.tlv.sel_start_i, tv.tlv.sel_end_j, tv.tlv.sel_start_j
 	}
+}
+
+pub fn (tv &TextView) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
+	DrawTextWidget(tv.tb).load_current_style()
+	ustr := text.runes()
+	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	if x_max > ustr.len {
+		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		x_max = ustr.len
+	}
+	if x_min < 0 {
+		// println('warning: text_xminmax_from_pos $x_min < 0')
+		x_min = 0
+	}
+	// println("xminmax: ${ustr.len} $x_min $x_max")
+	left := ustr[..x_min].string()
+	right := ustr[x_max..].string()
+	ww, lw, rw := tv.text_width(text), tv.text_width(left), tv.text_width(right)
+	return lw, ww - lw - rw
+}
+
+pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
+	if x <= 0 {
+		return 0
+	}
+	DrawTextWidget(tv.tb).load_current_style()
+	mut prev_width := 0
+	ustr := text.runes()
+	for i in 0 .. ustr.len {
+		width := tv.text_width(ustr[..i].string())
+		width2 := if i < ustr.len { tv.text_width(ustr[..(i + 1)].string()) } else { width }
+		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
+			return i
+		}
+		prev_width = width
+	}
+	return ustr.len
+}
+
+// TextStyles
+fn (tv &TextView) draw_text(x int, y int, text string) {
+	DrawTextWidget(tv.tb).draw_text(x, y, text)
+}
+
+fn (tv &TextView) text_width(text string) int {
+	return DrawTextWidget(tv.tb).text_width(text)
+}
+
+fn (tv &TextView) text_height(text string) int {
+	return DrawTextWidget(tv.tb).text_width(text)
+}
+
+fn (tv &TextView) text_size(text string) (int, int) {
+	return DrawTextWidget(tv.tb).text_size(text)
+}
+
+fn (mut tv TextView) update_line_height() {
+	DrawTextWidget(tv.tb).load_current_style()
+	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
+}
+
+fn (tv &TextView) update_text_style(ts TextStyleConfig) {
+	mut dtw := DrawTextWidget(tv.tb)
+	dtw.update_text_style(ts)
 }

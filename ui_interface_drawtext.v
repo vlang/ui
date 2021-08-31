@@ -4,6 +4,8 @@ import gx
 import os
 import sokol.sgl
 
+const none_ = '_none'
+
 // Rmk: Some sort of replacement of text stuff inside ui_extra_draw.v
 pub interface DrawTextWidget {
 mut:
@@ -37,12 +39,34 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 	println(w.text_styles.hash)
 }
 
+pub fn (w DrawTextWidget) font_size() int {
+	return w.text_style().size
+}
+
 pub fn (mut w DrawTextWidget) set_text_style(ts TextStyle) {
 	if ts.id == 'default' {
 		w.text_styles.current = ts
 	} else {
 		ts2 := w.text_styles.hash[ts.id] or { w.ui.text_styles[ts.id] or { ts } }
 		w.text_styles.current = ts2
+	}
+}
+
+pub fn (mut w DrawTextWidget) update_text_style(ts TextStyleConfig) {
+	mut ts_ := if ts.id in ['default', ui.none_] {
+		&(w.text_styles.current)
+	} else if ts.id in w.text_styles.hash {
+		&(w.text_styles.hash[ts.id])
+	} else if ts.id in w.ui.text_styles {
+		&(w.ui.text_styles[ts.id])
+	} else {
+		&(w.text_styles.current)
+	}
+	unsafe {
+		*ts_ = TextStyle{
+			...(*ts_)
+			size: if ts.size < 0 { ts_.size } else { ts.size }
+		}
 	}
 }
 
@@ -120,6 +144,15 @@ mut:
 	align          gx.HorizontalAlign = .left
 	vertical_align gx.VerticalAlign   = .top
 	mono           bool
+}
+
+struct TextStyleConfig {
+	// text style identifier
+	id string = ui.none_
+	// fields
+	font_name string   = ui.none_
+	color     gx.Color = no_color
+	size      int      = -1
 }
 
 pub struct TextStyles {
