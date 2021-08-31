@@ -41,8 +41,8 @@ pub mut:
 	offset_y    int
 	text_width  int
 	text_height int
-	bg_color    gx.Color
-	parent      Layout = empty_stack
+	bg_color    &gx.Color = 0
+	parent      Layout    = empty_stack
 	is_focused  bool
 	ui          &UI = 0
 	onclick     ButtonClickFn
@@ -83,7 +83,7 @@ pub struct ButtonConfig {
 	tooltip_side Side = .top
 	text_cfg     gx.TextCfg
 	text_size    f64
-	bg_color     gx.Color      = no_color
+	bg_color     &gx.Color     = 0
 	theme        ColorThemeCfg = 'classic'
 	radius       f64
 	padding      f64
@@ -102,7 +102,7 @@ pub fn button(c ButtonConfig) &Button {
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		bg_color: c.bg_color
-		theme_cfg: if c.bg_color == no_color { c.theme } else { no_theme }
+		theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
 		onclick: c.onclick
 		on_key_down: c.on_key_down
 		text_cfg: c.text_cfg
@@ -313,20 +313,24 @@ fn (mut b Button) draw() {
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
 	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
-	if b.theme_cfg != no_theme {
-		b.bg_color = color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
+	bg_color := if b.theme_cfg != no_theme {
+		color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
+	} else if b.bg_color != voidptr(0) {
+		*b.bg_color
+	} else {
+		gx.white
 	}
 	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))
-		b.ui.gg.draw_rounded_rect(x, y, width, height, radius, b.bg_color) // gx.white)
+		b.ui.gg.draw_rounded_rect(x, y, width, height, radius, bg_color) // gx.white)
 		b.ui.gg.draw_empty_rounded_rect(x, y, width, height, radius, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
 			ui.button_border_color
 		})
 	} else {
-		b.ui.gg.draw_rect(x, y, width, height, b.bg_color) // gx.white)
+		b.ui.gg.draw_rect(x, y, width, height, bg_color) // gx.white)
 		b.ui.gg.draw_empty_rect(x, y, width, height, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
