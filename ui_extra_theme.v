@@ -5,6 +5,8 @@ import gx
 // No color is defined when alpha = 0 at least
 pub const no_color = gx.Color{0, 0, 0, 0}
 
+pub const no_theme = ColorThemeCfg('_no_theme_')
+
 enum ColorType {
 	button_normal = 1 // see button.v
 	button_pressed
