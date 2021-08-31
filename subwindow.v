@@ -239,8 +239,8 @@ fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (s &SubWindow) resize(width int, height int) {
-	s.layout.resize(width, height)
+fn (s &SubWindow) resize(w int, h int) {
+	s.layout.resize(w, h)
 }
 
 pub fn (s &SubWindow) get_children() []Widget {

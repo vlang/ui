@@ -133,6 +133,17 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	c.parent = parent
 	ui := parent.get_ui()
 	c.ui = ui
+	// IMPORTANT: Subscriber needs here to be before initialization of all its children
+	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
+	subscriber.subscribe_method(events.on_mouse_down, canvas_layout_mouse_down, c)
+	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
+	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
+	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
+	subscriber.subscribe_method(events.on_key_down, canvas_layout_key_down, c)
+	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
+	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down])
+
 	for mut child in c.children {
 		child.init(c)
 	}
@@ -149,16 +160,6 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	} else {
 		scrollview_delegate_parent_scrollview(mut c)
 	}
-
-	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
-	subscriber.subscribe_method(events.on_mouse_down, canvas_layout_mouse_down, c)
-	subscriber.subscribe_method(events.on_mouse_up, canvas_layout_mouse_up, c)
-	subscriber.subscribe_method(events.on_mouse_move, canvas_layout_mouse_move, c)
-	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
-	subscriber.subscribe_method(events.on_key_down, canvas_layout_key_down, c)
-	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
-	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down])
 }
 
 [manualfree]

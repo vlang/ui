@@ -88,3 +88,7 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 	}
 	return pi.len >= 1 && pi.first().id == widget.id
 }
+
+pub fn (w Window) point_inside_receivers(evt_type string) []string {
+	return w.evt_mngr.point_inside[evt_type].map(it.id)
+}
