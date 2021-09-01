@@ -26,7 +26,7 @@ fn jni_on_load(vm &jni.JavaVM, reserved voidptr) int {
 		// with V's init code is loaded and called.
 		jni.setup_android('io.v.android.ui.VUIActivity')
 	}
-	return C.JNI_VERSION_1_6 // TODO
+	return int(jni.Version.v1_6)
 }
 
 // on_soft_keyboard_input is exported to the Java activity "VUIActivity".
