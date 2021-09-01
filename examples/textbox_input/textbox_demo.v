@@ -6,6 +6,7 @@ mut:
 	soft_input_visible     bool
 	soft_input_buffer      string
 	soft_input_parsed_char string
+	window                 &ui.Window = voidptr(0)
 }
 
 fn main() {
@@ -43,5 +44,6 @@ fn main() {
 		on_init: init
 		children: [c]
 	)
+	app.window = w
 	ui.run(w)
 }

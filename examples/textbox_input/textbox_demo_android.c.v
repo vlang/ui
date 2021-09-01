@@ -59,6 +59,7 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 	app.soft_input_parsed_char = char_literal
 
 	app.tb = app.soft_input_buffer
+	// app.window.needs_refresh = true // NOTE @rcql28 This doesn't refresh the text in the box??!
 }
 
 fn show_soft_input(mut a App) {
