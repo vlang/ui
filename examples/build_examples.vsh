@@ -1,8 +1,7 @@
-
 fn is_v_code_dir(path string) bool {
 	entries := ls(path) or { return false }
 	for entry in entries {
-		if entry.ends_with('.v') && is_file(join_path(path,entry)) {
+		if entry.ends_with('.v') && is_file(join_path(path, entry)) {
 			return true
 		}
 	}
