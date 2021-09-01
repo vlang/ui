@@ -2,7 +2,7 @@ import ui
 
 struct App {
 mut:
-	tb        string
+	tb                     string
 	soft_input_visible     bool
 	soft_input_buffer      string
 	soft_input_parsed_char string
@@ -24,15 +24,15 @@ fn main() {
 				children: [
 					ui.label(
 						text: 'Text input' //&app.tb
-					)
+					),
 				]
 			),
 			ui.textbox(
 				id: 'tb1'
 				mode: .multiline | .word_wrap
 				text: &app.tb
-				//fitted_height: true
-			)
+				// fitted_height: true
+			),
 		]
 	)
 	w := ui.window(

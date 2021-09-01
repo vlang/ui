@@ -11,4 +11,3 @@ fn show_soft_input(mut a App) {
 fn hide_soft_input(mut a App) {
 	// Stub
 }
-

@@ -10,10 +10,10 @@ fn init(window &ui.Window) {
 	// Pass app reference off to Java so we
 	// can get it back in the V callback "on_soft_input"
 	app_ref := i64(window.state)
-	auto.call_static_method(pkg+'.setVAppPointer(long) void',app_ref)
+	auto.call_static_method(pkg + '.setVAppPointer(long) void', app_ref)
 
 	mut app := &App(window.state)
-	//app.show_soft_input()
+	// app.show_soft_input()
 	show_soft_input(mut app)
 }
 
