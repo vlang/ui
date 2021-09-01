@@ -788,22 +788,24 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if tb.hidden {
 		return
 	}
+	$if top_widget_md ? {
+		if tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+			println('tb_md: $tb.id ${tb.ui.window.point_inside_receivers(events.on_mouse_down)}')
+		}
+	}
 	if tb.has_scrollview && tb.scrollview.point_inside(e.x, e.y, .bar) {
 		return
 	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
-		if tb.is_multiline {
-			Focusable(tb).unlock_focus()
-		}
 		return
 	} else {
 		// println('mouse first $tb.id')
 		tb.focus()
-		if tb.is_multiline {
-			Focusable(tb).lock_focus()
-		}
+	}
+	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+		return
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y
