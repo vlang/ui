@@ -63,7 +63,7 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 
 fn show_soft_input(mut a App) {
 	auto.call_static_method(pkg + '.showSoftInput()')
-	auto.call_static_method(pkg + '.setSoftInputBuffer(string)', '')
+	auto.call_static_method(pkg + '.setSoftInputBuffer(string)', a.soft_input_buffer)
 	a.soft_input_visible = true
 }
 
