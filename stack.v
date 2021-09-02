@@ -83,7 +83,6 @@ pub mut:
 	is_root_layout        bool = true
 	// component state for composable widget
 	component      voidptr
-	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
 	has_scrollview   bool
@@ -209,7 +208,6 @@ pub fn (s &Stack) free() {
 		s.drawing_children.free()
 		s.widths.free()
 		s.heights.free()
-		s.component_type.free()
 		// if s.has_scrollview {
 		// 	s.scrollview.free()
 		// }

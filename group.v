@@ -31,8 +31,7 @@ pub mut:
 	adj_width     int
 	hidden        bool
 	// component state for composable widget
-	component      voidptr
-	component_type string // to save the type of the component
+	component voidptr
 }
 
 pub struct GroupConfig {
@@ -92,7 +91,6 @@ pub fn (g &Group) free() {
 		g.id.free()
 		g.title.free()
 		g.children.free()
-		g.component_type.free()
 		free(g)
 	}
 	$if free ? {

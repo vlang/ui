@@ -45,7 +45,6 @@ pub mut:
 	text_styles TextStyles
 	// component state for composable widget
 	component      voidptr
-	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
 	has_scrollview bool

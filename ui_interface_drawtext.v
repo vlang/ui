@@ -8,6 +8,7 @@ const no_string = '_none_'
 
 // Rmk: Some sort of replacement of text stuff inside ui_extra_draw.v
 pub interface DrawTextWidget {
+	id string
 mut:
 	ui &UI
 	text_styles TextStyles
