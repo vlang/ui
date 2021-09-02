@@ -305,7 +305,7 @@ fn gg_init(mut window Window) {
 		window.add_message_dialog()
 	}
 	for mut child in window.children {
-		// println('init $child.type_name()')
+		// println('init $child.id')
 		window.register_child(*child)
 		child.init(window)
 	}

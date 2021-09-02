@@ -172,7 +172,7 @@ fn (mut s SubWindow) point_inside(x f64, y f64) bool {
 	// add possible decoration
 	if s.decoration {
 		w, h := s.size()
-		println('point_inside $s.id $w, $h')
+		// println('point_inside $s.id $w, $h')
 		return x > s.x && x < s.x + w && y > s.y && y < s.y + h
 	} else {
 		if s.layout is Widget {
