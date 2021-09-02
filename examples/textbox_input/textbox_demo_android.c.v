@@ -29,9 +29,10 @@ fn jni_on_load(vm &jni.JavaVM, reserved voidptr) int {
 	return int(jni.Version.v1_6)
 }
 
-// on_soft_keyboard_input is exported to the Java activity "VUIActivity".
-// `app_ptr` is the pointer to the `struct App` instance it needs to be cast back to it's
-// original type since Java has no concept of pointers.
+// on_soft_input is exported to match the name for the native Java activity VUIActivity's method:
+// "public native void onSoftInput(long app, String s, int start, int before, int count);".
+// `app_ptr` is the pointer to the `struct App` instance pointer store in an `i64` (long in Java)
+// it needs to be cast back to it's original type since Java has no concept of pointers.
 // The method is called in Java to notify you that:
 // within `jstr`, the `count` characters beginning at `start` have just replaced old text that had `length` before.
 [export: 'JNICALL Java_io_v_android_ui_VUIActivity_onSoftInput']
