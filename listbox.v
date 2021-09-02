@@ -142,6 +142,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
+	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -149,6 +150,7 @@ fn (mut lb ListBox) cleanup() {
 	mut subscriber := lb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, lb)
 	subscriber.unsubscribe_method(events.on_key_up, lb)
+	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down])
 	unsafe { lb.free() }
 }
 
@@ -214,7 +216,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 	return draw_to
 }
 
-fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
+pub fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 	lb.items << ListItem{
 		x: 0
 		y: lb.item_height * lb.items.len

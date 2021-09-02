@@ -120,6 +120,7 @@ pub fn (s &SubWindow) free() {
 }
 
 fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
+	// println("sw_md: $s.id -> ${window.point_inside_receivers(events.on_mouse_down)}")
 	if s.hidden || !window.is_top_widget(s, events.on_mouse_down) {
 		return
 	}
@@ -171,6 +172,7 @@ fn (mut s SubWindow) point_inside(x f64, y f64) bool {
 	// add possible decoration
 	if s.decoration {
 		w, h := s.size()
+		println('point_inside $s.id $w, $h')
 		return x > s.x && x < s.x + w && y > s.y && y < s.y + h
 	} else {
 		if s.layout is Widget {

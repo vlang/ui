@@ -262,8 +262,8 @@ fn (mut s Stack) init_size() {
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
 		if s.parent is SubWindow {
-			s.real_height = s.height
-			s.real_width = s.width
+			// println("$s.id init_size: $s.width, $s.height ${s.adj_size()}")
+			s.real_width, s.real_height = s.adj_size()
 		} else {
 			s.real_height = parent_height
 			s.real_width = parent_width
