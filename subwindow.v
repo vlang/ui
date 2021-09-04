@@ -61,8 +61,8 @@ pub fn subwindow(c SubWindowConfig) &SubWindow {
 
 fn (mut s SubWindow) init(parent Layout) {
 	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
+	pui := parent.get_ui()
+	s.ui = pui
 	// Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, sw_mouse_down, s)
