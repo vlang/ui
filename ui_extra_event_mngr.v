@@ -56,7 +56,7 @@ fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	mut sw := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if ser ? {
-		println('(Z_INDEX) em.receivers[$evt_type][$s.id]: ')
+		println('(Z_INDEX) em.receivers[$evt_type]: ')
 		for i, ch in em.receivers[evt_type] {
 			id := ch.id()
 			print('($i)[$id -> $ch.z_index] ')
@@ -72,7 +72,7 @@ fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	}
 	em.receivers[evt_type] = sorted.reverse()
 	$if ser ? {
-		println('(SORTED) em.receivers[evt_type][$s.id]: ')
+		println('(SORTED) em.receivers[evt_type]: ')
 		for i, ch in em.receivers[evt_type] {
 			id := ch.id()
 			print('($i)[$id -> $ch.z_index] ')

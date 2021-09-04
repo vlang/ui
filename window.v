@@ -90,6 +90,8 @@ pub mut:
 	locked_focus string
 	// event manager
 	evt_mngr EventMngr
+	// Top subwindows
+	subwindows []&SubWindow
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -308,6 +310,12 @@ fn gg_init(mut window Window) {
 		// println('init $child.id')
 		window.register_child(*child)
 		child.init(window)
+	}
+	// then subwindows
+	for mut sw in window.subwindows {
+		// println('init $child.id')
+		window.register_child(*sw)
+		sw.init(window)
 	}
 	// refresh the layout
 	window.update_layout()
@@ -876,6 +884,11 @@ fn frame(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
+
+	for mut sw in w.subwindows {
+		sw.draw()
+	}
+
 	draw_tooltip(w)
 
 	if w.on_draw != voidptr(0) {

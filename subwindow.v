@@ -4,7 +4,10 @@ import eventbus
 import gx
 
 const (
-	sw_decoration = 20
+	sw_decoration    = 20
+	sw_z_index       = 10000
+	sw_z_index_top   = 1000
+	sw_z_index_child = 100
 )
 
 [heap]
@@ -13,7 +16,7 @@ pub mut:
 	id       string
 	x        int
 	y        int
-	z_index  int
+	z_index  int = ui.sw_z_index
 	offset_x int
 	offset_y int
 	hidden   bool
@@ -37,7 +40,6 @@ pub struct SubWindowConfig {
 	id         string
 	x          int
 	y          int
-	z_index    int
 	hidden     bool   = true
 	layout     Layout = empty_stack
 	drag       bool   = true
@@ -49,7 +51,6 @@ pub fn subwindow(c SubWindowConfig) &SubWindow {
 		id: c.id
 		x: c.x
 		y: c.y
-		z_index: c.z_index
 		layout: c.layout
 		hidden: c.hidden
 		drag: c.drag
@@ -74,6 +75,10 @@ fn (mut s SubWindow) init(parent Layout) {
 		mut w := l as Widget
 		w.init(s)
 	}
+
+	// z_index of all children
+	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+
 	s.set_pos(s.x, s.y)
 	s.update_layout()
 	s.set_visible(!s.hidden)
@@ -121,13 +126,18 @@ pub fn (s &SubWindow) free() {
 
 fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 	// println("sw_md: $s.id -> ${window.point_inside_receivers(events.on_mouse_down)}")
-	if s.hidden || !window.is_top_widget(s, events.on_mouse_down) {
+	if s.hidden {
+		return
+	}
+	if !window.is_top_widget(s, events.on_mouse_down) {
 		return
 	}
 	// println("sw $s.id start dragging")
-	if s.point_inside_bar(e.x, e.y) {
+	if s.decoration && s.point_inside_bar(e.x, e.y) {
+		s.as_top_subwindow()
 		s.dragging = true
 		s.drag_x, s.drag_y = s.x - e.x, s.y - e.y
+		// println("drag down: $s.drag_x, $s.drag_y")
 	}
 }
 
@@ -147,7 +157,7 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 		s.set_pos(s.drag_x + int(e.x), s.drag_y + int(e.y))
 		// println("sw $s.id dragging $s.x, $s.y")
 		s.update_layout()
-		window.update_layout()
+		// window.update_layout()
 	}
 }
 
@@ -173,7 +183,7 @@ fn (mut s SubWindow) point_inside(x f64, y f64) bool {
 	if s.decoration {
 		w, h := s.size()
 		// println('point_inside $s.id $w, $h')
-		return x > s.x && x < s.x + w && y > s.y && y < s.y + h
+		return x > s.x && x < s.x + w && y > s.y && y < s.y + h + ui.sw_decoration
 	} else {
 		if s.layout is Widget {
 			mut w := s.layout as Widget
@@ -252,4 +262,40 @@ pub fn (s &SubWindow) get_children() []Widget {
 	} else {
 		return []
 	}
+}
+
+fn (mut s SubWindow) set_children_z_index(z_inc int) {
+	s.layout.update_children_z_index(z_inc)
+	s.ui.window.evt_mngr.sorted_receivers(events.on_mouse_down)
+}
+
+fn (mut s SubWindow) is_top_subwindow() bool {
+	return s.ui.window.subwindows.map(it.id).first() == s.id
+}
+
+fn (mut s SubWindow) as_top_subwindow() {
+	mut sws := []&SubWindow{}
+	for sw in s.ui.window.subwindows {
+		if sw.id != s.id {
+			sws << sw
+		}
+	}
+	sws << s
+	mut win := s.ui.window
+	win.subwindows = sws
+	// println("sws: ${win.subwindows.map(it.id)}")
+	for mut sw in sws {
+		sw.update_z_index(sw.id == s.id)
+	}
+}
+
+fn (mut s SubWindow) update_z_index(top bool) {
+	s.set_children_z_index(-s.z_index - ui.sw_z_index_child)
+	s.z_index = ui.sw_z_index
+	if top {
+		s.z_index += ui.sw_z_index_top
+	}
+	// println("z_index: ${s.z_index + sw_z_index_child}")
+	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+	s.update_layout()
 }

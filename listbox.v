@@ -393,6 +393,9 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	if lb.hidden {
 		return
 	}
+	if !lb.ui.window.is_top_widget(lb, events.on_mouse_down) {
+		return
+	}
 	if e.action != .up {
 		return
 	}

@@ -198,6 +198,9 @@ pub fn (c &CanvasLayout) free() {
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
+		return
+	}
 	c.is_focused = c.point_inside(e.x, e.y)
 	if c.is_focused && c.click_fn != voidptr(0) {
 		c.is_focused
@@ -213,6 +216,9 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 }
 
 fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
+		return
+	}
 	if c.point_inside(e.x, e.y) && c.mouse_down_fn != voidptr(0) {
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x

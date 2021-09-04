@@ -48,7 +48,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.tb = tb
 	tv.text = tb.text // delegate text from tb
 	tv.update_line_height()
-	println('line height: $tv.line_height')
+	// println('line height: $tv.line_height')
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
