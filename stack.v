@@ -7,7 +7,7 @@ import eventbus
 import gx
 
 const (
-	empty_stack = stack()
+	empty_stack = stack(id: '_empty_stack_')
 )
 
 enum Direction {

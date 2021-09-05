@@ -73,6 +73,7 @@ mut:
 }
 
 pub interface Layout {
+	id string
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)

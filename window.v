@@ -28,6 +28,7 @@ pub type WindowFn = fn (window &Window)
 
 [heap]
 pub struct Window {
+	id string = '_window_'
 pub mut:
 	// pub:
 	ui &UI = voidptr(0)
@@ -1432,9 +1433,11 @@ pub fn (w &Window) child(from ...int) Widget {
 // ask for an update to restructure the whole children tree from root layout
 pub fn (w &Window) update_layout() {
 	// update root_layout
-	mut s := w.root_layout
-	if mut s is Stack {
-		s.update_layout()
+	if w.root_layout.id != empty_stack.id {
+		mut s := w.root_layout
+		if mut s is Stack {
+			s.update_layout()
+		}
 	}
 }
 
