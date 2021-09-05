@@ -55,6 +55,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 }
 
 pub fn (tv &TextView) size() (int, int) {
+	tv.load_current_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
 		lw := tv.text_width(line)
@@ -181,8 +182,7 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	mut dtw := DrawTextWidget(tv.tb)
-	dtw.load_current_style()
+	tv.load_current_style()
 	x, mut y := tv.tb.x + textbox_padding_x, tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from) * tv.line_height
@@ -841,7 +841,7 @@ fn (tv &TextView) ordered_lines_selection() (int, int, int, int) {
 }
 
 pub fn (tv &TextView) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	DrawTextWidget(tv.tb).load_current_style()
+	tv.load_current_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
@@ -863,7 +863,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	DrawTextWidget(tv.tb).load_current_style()
+	tv.load_current_style()
 	mut prev_width := 0
 	ustr := text.runes()
 	for i in 0 .. ustr.len {
@@ -895,11 +895,16 @@ fn (tv &TextView) text_size(text string) (int, int) {
 }
 
 fn (mut tv TextView) update_line_height() {
-	DrawTextWidget(tv.tb).load_current_style()
+	tv.load_current_style()
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
 fn (tv &TextView) update_text_style(ts TextStyleConfig) {
 	mut dtw := DrawTextWidget(tv.tb)
 	dtw.update_text_style(ts)
+}
+
+// Not called automatically as it is in gg
+fn (tv &TextView) load_current_style() {
+	DrawTextWidget(tv.tb).load_current_style()
 }
