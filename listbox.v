@@ -41,6 +41,8 @@ pub mut:
 	text_cfg  gx.TextCfg
 	text_size f64
 	hidden    bool
+	// files droped
+	files_droped bool
 	// guess adjusted width
 	adj_width  int
 	adj_height int
@@ -84,6 +86,8 @@ mut:
 	selection  int  = -1
 	scrollview bool = true
 	items      map[string]string
+	// files droped
+	files_droped bool
 }
 
 // Keys of the items map are IDs of the elements, values are text
@@ -104,6 +108,7 @@ pub fn listbox(c ListBoxConfig) &ListBox {
 		text_offset_y: c.text_offset_y
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		files_droped: c.files_droped
 		id: c.id
 		ui: 0
 	}
@@ -143,6 +148,11 @@ fn (mut lb ListBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
 	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down])
+	// println("lb $lb.files_droped")
+	if lb.files_droped {
+		subscriber.subscribe_method(events.on_files_droped, on_files_droped, lb)
+		// lb.ui.window.evt_mngr.add_receiver(lb, [events.on_files_droped])
+	}
 }
 
 [manualfree]
@@ -151,6 +161,11 @@ fn (mut lb ListBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_click, lb)
 	subscriber.unsubscribe_method(events.on_key_up, lb)
 	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down])
+	if lb.files_droped {
+		subscriber.unsubscribe_method(events.on_files_droped, lb)
+		// lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_files_droped])
+	}
+
 	unsafe { lb.free() }
 }
 
@@ -198,11 +213,15 @@ fn (mut lb ListBox) init_items() {
 	}
 }
 
-pub fn (mut list ListBox) add_item(id string, text string) {
-	list.append_item(id, text, list.get_draw_to(text))
+pub fn (mut lb ListBox) add_item(id string, text string) {
+	lb.append_item(id, text, lb.get_draw_to(text))
+	lb.update_adj_size()
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {
+	if lb.has_scrollview {
+		return 0
+	}
 	width := text_width(lb, text)
 	real_w := lb.width + ui._text_offset_x * 2
 	mut draw_to := text.len
@@ -315,14 +334,15 @@ pub fn (mut lb ListBox) clear() {
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
+	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	lb.ui.gg.draw_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-		lb.width, lb.item_height, col)
+		width, lb.item_height, col)
 	lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-		li.draw_text)
+		if lb.has_scrollview { li.text } else { li.draw_text })
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		lb.ui.gg.draw_empty_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-			lb.width, lb.item_height, lb.col_border)
+			width, lb.item_height, lb.col_border)
 	}
 }
 
@@ -351,18 +371,25 @@ fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb)
-
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
 	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
 	// println("draw rect")
 	from, to := lb.visible_items()
-	for inx, item in lb.items {
-		// println("$inx >= $lb.draw_count")
-		if inx >= lb.draw_count && !has_scrollview(lb) {
-			break
-		}
-		if !has_scrollview(lb) || (inx >= from && inx <= to) {
-			lb.draw_item(item, inx == lb.selection)
+	if lb.items.len == 0 {
+		draw_text_with_color(lb, lb.x + ui._text_offset_x, lb.y + lb.text_offset_y, if lb.files_droped {
+			'Empty listbox. Drop files here ...'
+		} else {
+			'Empty listbox'
+		})
+	} else {
+		for inx, item in lb.items {
+			// println("$inx >= $lb.draw_count")
+			if inx >= lb.draw_count && !has_scrollview(lb) {
+				break
+			}
+			if !has_scrollview(lb) || (inx >= from && inx <= to) {
+				lb.draw_item(item, inx == lb.selection)
+			}
 		}
 	}
 	if !lb.draw_lines {
@@ -419,6 +446,27 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 			break
 		}
 	}
+}
+
+fn on_files_droped(mut lb ListBox, e &MouseEvent, window &Window) {
+	// println("on_files_droped")
+	if lb.hidden {
+		return
+	}
+	// println("on files: inside ${lb.point_inside(e.x, e.y)}")
+	if !lb.point_inside(e.x, e.y) {
+		return
+	}
+	// println("${lb.ui.window.point_inside_receivers(events.on_files_droped)}")
+	// if !lb.ui.window.is_top_widget(lb, events.on_files_droped) {
+	// 	return
+	// }
+	num_dropped := get_num_dropped_files()
+	for i in 0 .. num_dropped {
+		path := get_dropped_file_path(i)
+		lb.add_item(path, path.clone())
+	}
+	lb.ui.window.update_layout()
 }
 
 // Up and Down keys work on the list when it's is_focused
@@ -491,7 +539,20 @@ fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_height == 0 {
 		lb.adj_height = lb.items.len * lb.item_height
 	}
+	// println("lb adj: ($lb.adj_width, $lb.adj_height) size: ($lb.width, $lb.height)")
 	return lb.adj_width, lb.adj_height
+}
+
+fn (mut lb ListBox) update_adj_size() {
+	mut width := 0
+	for item in lb.items {
+		width = text_width(lb, item.text) + ui._text_offset_x * 2
+		// println('$item.text -> $width')
+		if width > lb.adj_width {
+			lb.adj_width = width
+		}
+	}
+	lb.adj_height = lb.items.len * lb.item_height
 }
 
 fn (mut lb ListBox) init_size() {

@@ -48,6 +48,7 @@ pub mut:
 	click_fn          ClickFn
 	mouse_down_fn     ClickFn
 	mouse_up_fn       ClickFn
+	files_droped_fn   ClickFn
 	mouse_move_fn     MouseMoveFn
 	scroll_fn         ScrollFn
 	key_down_fn       KeyFn
@@ -111,6 +112,7 @@ pub:
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
+	on_files_droped       ClickFn
 	on_key_down           KeyFn
 	on_char               KeyFn
 	on_scroll             ScrollFn
@@ -133,6 +135,10 @@ pub:
 	lines int = 10
 	// message
 	native_message bool = true
+	// drag & drop
+	enable_dragndrop             bool = true
+	max_dropped_files            int  = 5
+	max_dropped_file_path_length int  = 2048
 }
 
 /*
@@ -195,6 +201,9 @@ fn on_event(e &gg.Event, mut window Window) {
 				time: time.now()
 			}
 			window_touch_tap_and_swipe(e, window.ui)
+		}
+		.files_droped {
+			window_files_droped(e, mut window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -402,6 +411,7 @@ pub fn window(cfg WindowConfig) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
+		files_droped_fn: cfg.on_files_droped
 		resizable: resizable
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
@@ -446,6 +456,10 @@ pub fn window(cfg WindowConfig) &Window {
 		// window_state: ui
 		native_rendering: cfg.native_rendering
 		ui_mode: !cfg.immediate
+		// drag & drop
+		enable_dragndrop: cfg.enable_dragndrop
+		max_dropped_files: cfg.max_dropped_files
+		max_dropped_file_path_length: cfg.max_dropped_file_path_length
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -664,6 +678,27 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		// window.eventbus.unsubscribe()
 	} else {
 		window.eventbus.publish(events.on_mouse_up, window, e)
+	}
+}
+
+fn window_files_droped(event gg.Event, mut ui UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .down
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
+		window.files_droped_fn(e, window)
+	}
+	// window.evt_mngr.point_inside_receivers(e, events.on_files_droped)
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_files_droped, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_files_droped, window, e)
 	}
 }
 
