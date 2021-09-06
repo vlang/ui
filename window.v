@@ -291,8 +291,12 @@ fn on_event(e &gg.Event, mut window Window) {
 					}
 					time: time.now()
 				}
-				// println("touch move: ${window.touch.move} $window.touch.button")
-				window_touch_move(e, window.ui)
+				if e.num_touches > 1 {
+					window_touch_scroll(e, window.ui)
+				} else {
+					// println("touch move: ${window.touch.move} $window.touch.button")
+					window_touch_move(e, window.ui)
+				}
 			}
 		}
 		else {}
@@ -703,6 +707,23 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 	} else {
 		window.eventbus.publish(events.on_files_droped, window, e)
 	}
+}
+
+fn window_touch_scroll(event gg.Event, ui &UI) {
+	window := ui.window
+	// println('title =$window.title')
+	s, m := window.touch.start, window.touch.move
+	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
+	e := ScrollEvent{
+		mouse_x: f64(m.pos.x)
+		mouse_y: f64(m.pos.y)
+		x: f64(adx)
+		y: f64(ady)
+	}
+	if window.scroll_fn != voidptr(0) {
+		window.scroll_fn(e, window)
+	}
+	window.eventbus.publish(events.on_scroll, window, e)
 }
 
 fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
