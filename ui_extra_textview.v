@@ -788,10 +788,16 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 pub fn (tv &TextView) text_pos_at(i int, j int) int {
 	mut pos := 0
 	lines := tv.tlv.lines
-	for k in 0 .. j {
+	jj := if j >= lines.len { lines.len } else { j }
+	for k in 0 .. jj {
 		pos += lines[k].runes().len + 1 // +1 for \n or space
 	}
 	pos += i
+	// if pos < 0 {
+	// 	pos = 0
+	// } else if pos > tv.text.len - 1 {
+	// 	pos = tv.text.len - 1
+	// }
 	// println('text_lines_pos_at: ($i, $j) -> $pos ')
 	return pos
 }

@@ -738,12 +738,13 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 }
 
 fn window_touch_down(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .down
 		x: window.touch.start.pos.x
 		y: window.touch.start.pos.y
 	}
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
 	if window.mouse_down_fn != voidptr(0) {
 		window.mouse_down_fn(e, window)
 	}

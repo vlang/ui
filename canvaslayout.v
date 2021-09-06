@@ -141,6 +141,11 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	subscriber.subscribe_method(events.on_scroll, canvas_layout_scroll, c)
 	subscriber.subscribe_method(events.on_key_down, canvas_layout_key_down, c)
 	subscriber.subscribe_method(events.on_char, canvas_layout_char, c)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, canvas_layout_mouse_down, c)
+		subscriber.subscribe_method(events.on_touch_up, canvas_layout_mouse_up, c)
+		subscriber.subscribe_method(events.on_touch_move, canvas_layout_mouse_move, c)
+	}
 	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down])
 
 	for mut child in c.children {
@@ -171,6 +176,11 @@ pub fn (mut c CanvasLayout) cleanup() {
 	subscriber.unsubscribe_method(events.on_scroll, c)
 	subscriber.unsubscribe_method(events.on_key_down, c)
 	subscriber.unsubscribe_method(events.on_char, c)
+	$if android {
+		subscriber.unsubscribe_method(events.on_touch_down, c)
+		subscriber.unsubscribe_method(events.on_touch_up, c)
+		subscriber.unsubscribe_method(events.on_touch_move, c)
+	}
 	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down])
 	for mut child in c.children {
 		child.cleanup()

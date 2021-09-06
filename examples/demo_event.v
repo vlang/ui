@@ -24,6 +24,26 @@ fn main() {
 			s := utf32_to_str(e.codepoint)
 			tb.set_text('${*tb.text} \nchar: <$s>\n$e')
 		}
+		on_mouse_down: fn (e ui.MouseEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('mouse_down:\n$e')
+		}
+		on_mouse_up: fn (e ui.MouseEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('mouse_up:\n$e')
+		}
+		on_mouse_move: fn (e ui.MouseMoveEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('mouse_move:\n$e')
+		}
+		on_scroll: fn (e ui.ScrollEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('mouse_scroll\n$e')
+		}
+		on_resize: fn (w int, h int, win &ui.Window) {
+			mut tb := win.textbox('info')
+			tb.set_text('resize:\n ($w, $h)')
+		}
 		children: [
 			ui.row(
 				widths: ui.stretch

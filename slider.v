@@ -297,19 +297,6 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
-fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
-	if s.hidden {
-		return
-	}
-	if s.entering && s.point_inside_thumb(e.x, e.y) {
-		// println('slider touch move DRAGGING')
-		s.dragging = true
-	}
-	if s.dragging {
-		s.change_value(int(e.x), int(e.y))
-	}
-}
-
 fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
 	if s.hidden {
 		return
@@ -336,6 +323,19 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 		}
 	} else {
 		s.dragging = false
+	}
+	if s.dragging {
+		s.change_value(int(e.x), int(e.y))
+	}
+}
+
+fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	if s.entering && s.point_inside_thumb(e.x, e.y) {
+		// println('slider touch move DRAGGING')
+		s.dragging = true
 	}
 	if s.dragging {
 		s.change_value(int(e.x), int(e.y))

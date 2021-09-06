@@ -291,7 +291,7 @@ fn (mut sv ScrollView) init(parent Layout) {
 	$if android {
 		subscriber.subscribe_method(events.on_touch_down, scrollview_mouse_down, sv)
 		subscriber.subscribe_method(events.on_touch_up, scrollview_mouse_up, sv)
-		subscriber.subscribe_method(events.on_touch_move, scrollview_touch_move, sv)
+		subscriber.subscribe_method(events.on_touch_move, scrollview_mouse_move, sv)
 	}
 }
 
@@ -597,12 +597,12 @@ fn scrollview_click(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn scrollview_touch_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
-	if !sv.is_active() {
-		return
-	}
-	// TODO
-}
+// fn scrollview_touch_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
+// 	if !sv.is_active() {
+// 		return
+// 	}
+// 	// TODO
+// }
 
 fn scrollview_mouse_down(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 	if !sv.is_active() {
