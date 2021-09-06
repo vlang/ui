@@ -49,6 +49,7 @@ pub mut:
 	mouse_down_fn     ClickFn
 	mouse_up_fn       ClickFn
 	files_droped_fn   ClickFn
+	swipe_fn          ClickFn
 	mouse_move_fn     MouseMoveFn
 	scroll_fn         ScrollFn
 	key_down_fn       KeyFn
@@ -113,6 +114,7 @@ pub:
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
 	on_files_droped       ClickFn
+	on_swipe              ClickFn
 	on_key_down           KeyFn
 	on_char               KeyFn
 	on_scroll             ScrollFn
@@ -412,6 +414,7 @@ pub fn window(cfg WindowConfig) &Window {
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
 		files_droped_fn: cfg.on_files_droped
+		swipe_fn: cfg.on_swipe
 		resizable: resizable
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
@@ -734,7 +737,23 @@ fn window_touch_tap(event gg.Event, ui &UI) {
 }
 
 fn window_touch_swipe(event gg.Event, ui &UI) {
-	// window := ui.window
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.swipe_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.swipe_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_swipe, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_swipe, window, e)
+	}
 }
 
 fn window_touch_down(event gg.Event, ui &UI) {

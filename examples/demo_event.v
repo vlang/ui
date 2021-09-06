@@ -36,6 +36,10 @@ fn main() {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_move:\n$e')
 		}
+		on_swipe: fn (e ui.MouseEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('swipe:\n$e')
+		}
 		on_scroll: fn (e ui.ScrollEvent, w &ui.Window) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_scroll\n$e')

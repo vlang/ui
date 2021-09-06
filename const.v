@@ -7,6 +7,7 @@ pub:
 	on_mouse_down   string = 'on_mouse_down'
 	on_mouse_up     string = 'on_mouse_up'
 	on_files_droped string = 'on_files_droped'
+	on_swipe        string = 'on_swipe'
 	on_touch_move   string = 'on_touch_move'
 	on_touch_down   string = 'on_touch_down'
 	on_touch_up     string = 'on_touch_up'
