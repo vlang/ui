@@ -519,9 +519,6 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			.left {
-				// if tb.sel(e.mods, e.key) {
-				// 	return
-				// }
 				if shift_key(e.mods) {
 					if !tb.is_sel_active() {
 						tb.sel_active = true
