@@ -710,16 +710,17 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 }
 
 fn window_touch_scroll(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	// println('title =$window.title')
 	s, m := window.touch.start, window.touch.move
 	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
 	e := ScrollEvent{
 		mouse_x: f64(m.pos.x)
 		mouse_y: f64(m.pos.y)
-		x: f64(adx)
-		y: f64(ady)
+		x: f64(adx) / 30.0
+		y: f64(ady) / 30.0
 	}
+	window.touch.start = window.touch.move
 	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)
 	}

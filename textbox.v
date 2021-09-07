@@ -519,26 +519,50 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			.left {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-				tb.cursor_pos--
-				if tb.cursor_pos < 0 {
-					tb.cursor_pos = 0
+				// if tb.sel(e.mods, e.key) {
+				// 	return
+				// }
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = tb.cursor_pos
+						tb.ui.show_cursor = false
+					}
+					tb.cursor_pos--
+					if tb.cursor_pos < 0 {
+						tb.cursor_pos = 0
+					}
+					tb.sel_end = tb.cursor_pos
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+					tb.cursor_pos--
+					if tb.cursor_pos < 0 {
+						tb.cursor_pos = 0
+					}
 				}
 			}
 			.right {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true
-				tb.cursor_pos++
-				text_len := text.runes().len
-				if tb.cursor_pos > text_len {
-					tb.cursor_pos = text_len
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = tb.cursor_pos
+						tb.ui.show_cursor = false
+					}
+					tb.cursor_pos++
+					ustr := tb.text.runes()
+					if tb.cursor_pos > ustr.len {
+						tb.cursor_pos = ustr.len
+					}
+					tb.sel_end = tb.cursor_pos
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true
+					tb.cursor_pos++
+					text_len := text.runes().len
+					if tb.cursor_pos > text_len {
+						tb.cursor_pos = text_len
+					}
 				}
 				// println("right: $tb.cursor_posj")
 			}
@@ -715,65 +739,65 @@ fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
 	}
 }
 
-fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
-	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
-	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
-	text := *tb.text
-	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
-		mut i := tb.cursor_pos
-		if sel_start_i > 0 {
-			i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
-		} else if sel_start_i == 0 && sel_end_i > 0 {
-			i = 0
-		} else {
-			tb.sel_direction = if key == .left {
-				SelectionDirection.right_to_left
-			} else {
-				SelectionDirection.left_to_right
-			}
-		}
-		sel_end_i = tb.cursor_pos
-		for {
-			if key == .left && i > 0 {
-				i--
-			} else if key == .right && i < tb.text.len {
-				i++
-			}
-			if i == 0 {
-				sel_start_i = 0
-				break
-			} else if i == text.len {
-				sel_start_i = tb.text.len
-				break
-			} else if text[i].is_space() {
-				sel_start_i = if tb.sel_direction == .right_to_left { i + 1 } else { i }
-				break
-			}
-		}
-		tb.set_sel(sel_start_i, sel_end_i, key)
-		return true
-	}
-	if mods == .shift {
-		if (tb.sel_direction == .right_to_left && sel_start_i == 0 && sel_end_i > 0)
-			|| (tb.sel_direction == .left_to_right && sel_end_i == tb.text.len) {
-			return true
-		}
-		if sel_start_i <= 0 {
-			sel_end_i = tb.cursor_pos
-			sel_start_i = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
-			tb.sel_direction = if key == .left {
-				SelectionDirection.right_to_left
-			} else {
-				SelectionDirection.left_to_right
-			}
-		} else {
-			sel_start_i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
-		}
-		tb.set_sel(sel_start_i, sel_end_i, key)
-		return true
-	}
-	return false
-}
+// fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
+// 	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
+// 	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
+// 	text := *tb.text
+// 	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
+// 		mut i := tb.cursor_pos
+// 		if sel_start_i > 0 {
+// 			i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
+// 		} else if sel_start_i == 0 && sel_end_i > 0 {
+// 			i = 0
+// 		} else {
+// 			tb.sel_direction = if key == .left {
+// 				SelectionDirection.right_to_left
+// 			} else {
+// 				SelectionDirection.left_to_right
+// 			}
+// 		}
+// 		sel_end_i = tb.cursor_pos
+// 		for {
+// 			if key == .left && i > 0 {
+// 				i--
+// 			} else if key == .right && i < tb.text.len {
+// 				i++
+// 			}
+// 			if i == 0 {
+// 				sel_start_i = 0
+// 				break
+// 			} else if i == text.len {
+// 				sel_start_i = tb.text.len
+// 				break
+// 			} else if text[i].is_space() {
+// 				sel_start_i = if tb.sel_direction == .right_to_left { i + 1 } else { i }
+// 				break
+// 			}
+// 		}
+// 		tb.set_sel(sel_start_i, sel_end_i, key)
+// 		return true
+// 	}
+// 	if mods == .shift {
+// 		if (tb.sel_direction == .right_to_left && sel_start_i == 0 && sel_end_i > 0)
+// 			|| (tb.sel_direction == .left_to_right && sel_end_i == tb.text.len) {
+// 			return true
+// 		}
+// 		if sel_start_i <= 0 {
+// 			sel_end_i = tb.cursor_pos
+// 			sel_start_i = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
+// 			tb.sel_direction = if key == .left {
+// 				SelectionDirection.right_to_left
+// 			} else {
+// 				SelectionDirection.left_to_right
+// 			}
+// 		} else {
+// 			sel_start_i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
+// 		}
+// 		tb.set_sel(sel_start_i, sel_end_i, key)
+// 		return true
+// 	}
+// 	return false
+// }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
 	if tb.has_scrollview {
