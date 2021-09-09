@@ -100,7 +100,7 @@ struct Rect {
 	height int
 }
 */
-[kwargs]
+[params]
 pub struct TextBoxConfig {
 	id               string
 	width            int

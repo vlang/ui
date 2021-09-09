@@ -86,7 +86,7 @@ pub mut:
 	scrollview     &ScrollView = 0
 }
 
-[kwargs]
+[params]
 struct StackConfig {
 	id                   string
 	width                int // To remove soon

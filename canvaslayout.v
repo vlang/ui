@@ -64,7 +64,7 @@ mut:
 	pos_ map[int]XYPos
 }
 
-[kwargs]
+[params]
 pub struct CanvasLayoutConfig {
 	id            string
 	width         int

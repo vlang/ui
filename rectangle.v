@@ -32,7 +32,7 @@ mut:
 	text_size    f64
 }
 
-[kwargs]
+[params]
 pub struct RectangleConfig {
 	id           string
 	text         string
