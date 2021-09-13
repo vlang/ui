@@ -5,6 +5,10 @@ module ui
 
 import gx
 
+const (
+	radio_focus_color = gx.rgb(50, 50, 50)
+)
+
 /*
 enum RadioState {
 	normal
@@ -37,7 +41,7 @@ pub mut:
 	offset_x   int
 	offset_y   int
 	z_index    int
-	parent     Layout
+	parent     Layout = empty_stack
 	is_focused bool
 	is_checked bool
 	ui         &UI
@@ -103,12 +107,14 @@ fn (mut r Radio) init(parent Layout) {
 	}
 	init_text_cfg(mut r)
 	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
 [manualfree]
 pub fn (mut r Radio) cleanup() {
 	mut subscriber := r.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_key_down, r)
 	subscriber.unsubscribe_method(events.on_click, r)
 	unsafe { r.free() }
 }
@@ -129,6 +135,30 @@ pub fn (r &Radio) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
+	$if radio_keydown ? {
+		println('radio_keydown: $r.id  -> $r.hidden $r.is_focused')
+	}
+	if r.hidden {
+		return
+	}
+	if !r.is_focused {
+		return
+	}
+	// default behavior like click for space and enter
+	match e.key {
+		.enter, .space, .right, .down {
+			r.select_next_value()
+		}
+		.left, .up {
+			r.select_prev_value()
+		}
+		else {}
 	}
 }
 
@@ -252,7 +282,11 @@ fn (mut r Radio) draw() {
 	offset_start(mut r)
 	if r.title != '' {
 		// Border
-		r.ui.gg.draw_empty_rect(r.x, r.y, r.real_width, r.real_height, gx.gray)
+		r.ui.gg.draw_empty_rect(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
+			ui.radio_focus_color
+		} else {
+			gx.gray
+		})
 		// Title
 		r.ui.gg.draw_rect(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 			10, default_window_color)
@@ -297,8 +331,8 @@ fn (mut r Radio) set_visible(state bool) {
 }
 
 fn (mut r Radio) focus() {
-	// r.is_focused = true
-	set_focus(r.ui.window, mut r)
+	mut f := Focusable(r)
+	f.set_focus()
 }
 
 fn (mut r Radio) unfocus() {
@@ -309,6 +343,16 @@ pub fn (r &Radio) selected_value() string {
 	return r.values[r.selected_index]
 }
 
-fn (r &Radio) is_focused() bool {
-	return r.is_focused
+pub fn (mut r Radio) select_next_value() {
+	r.selected_index++
+	if r.selected_index >= r.values.len {
+		r.selected_index = 0
+	}
+}
+
+pub fn (mut r Radio) select_prev_value() {
+	r.selected_index--
+	if r.selected_index < 0 {
+		r.selected_index = r.values.len - 1
+	}
 }

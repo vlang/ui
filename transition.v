@@ -19,7 +19,7 @@ mut:
 	duration         i64
 	animating        bool
 	easing           EasingFunction
-	parent           Layout
+	parent           Layout = empty_stack
 	start_value      int
 	last_draw_target int
 	ui               &UI = voidptr(0)
@@ -134,16 +134,6 @@ fn (mut t Transition) draw() {
 }
 
 fn (t &Transition) set_visible(state bool) {
-}
-
-fn (t &Transition) focus() {
-}
-
-fn (t &Transition) is_focused() bool {
-	return false
-}
-
-fn (t &Transition) unfocus() {
 }
 
 fn (t &Transition) point_inside(x f64, y f64) bool {

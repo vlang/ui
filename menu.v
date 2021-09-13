@@ -19,13 +19,13 @@ pub mut:
 	offset_y  int
 	hidden    bool
 	component voidptr
-mut:
-	text      string
-	parent    Layout
-	x         int
-	y         int
 	width     int
 	height    int
+mut:
+	text      string
+	parent    Layout = empty_stack
+	x         int
+	y         int
 	z_index   int
 	ui        &UI
 	items     []MenuItem
@@ -160,16 +160,6 @@ pub fn (mut m Menu) add_item(text string, action MenuItemFn) {
 
 fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
-}
-
-fn (m &Menu) focus() {
-}
-
-fn (m &Menu) is_focused() bool {
-	return false
-}
-
-fn (m &Menu) unfocus() {
 }
 
 fn (m &Menu) point_inside(x f64, y f64) bool {

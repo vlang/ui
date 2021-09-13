@@ -15,21 +15,20 @@ const (
 [heap]
 pub struct ProgressBar {
 pub mut:
-	id         string
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	parent     Layout
-	ui         &UI
-	val        int
-	min        int
-	max        int
-	is_focused bool
-	hidden     bool
+	id       string
+	height   int
+	width    int
+	x        int
+	y        int
+	offset_x int
+	offset_y int
+	z_index  int
+	parent   Layout = empty_stack
+	ui       &UI
+	val      int
+	min      int
+	max      int
+	hidden   bool
 	// component state for composable widget
 	component voidptr
 }
@@ -124,14 +123,4 @@ fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
 
 fn (mut pb ProgressBar) set_visible(state bool) {
 	pb.hidden = !state
-}
-
-fn (pb &ProgressBar) focus() {
-}
-
-fn (pb &ProgressBar) is_focused() bool {
-	return pb.is_focused
-}
-
-fn (pb &ProgressBar) unfocus() {
 }

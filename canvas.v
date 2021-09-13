@@ -23,7 +23,7 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 mut:
-	parent  Layout
+	parent  Layout      = empty_stack
 	draw_fn DrawFn      = voidptr(0)
 	gg      &gg.Context = 0
 }
@@ -98,16 +98,6 @@ fn (mut c Canvas) draw() {
 
 fn (mut c Canvas) set_visible(state bool) {
 	c.hidden = !state
-}
-
-fn (c &Canvas) focus() {
-}
-
-fn (c &Canvas) is_focused() bool {
-	return false
-}
-
-fn (c &Canvas) unfocus() {
 }
 
 fn (c &Canvas) point_inside(x f64, y f64) bool {

@@ -9,27 +9,27 @@ import gg
 [heap]
 pub struct Rectangle {
 pub mut:
+	id       string
 	color    gx.Color
 	text     string
 	offset_x int
 	offset_y int
 	// component state for composable widget
 	component voidptr
+	ui        &UI
+	text_cfg  gx.TextCfg
+	text_size f64
+	height    int
+	width     int
 mut:
-	id           string
-	parent       Layout
+	parent       Layout = empty_stack
 	x            int
 	y            int
 	z_index      int
-	height       int
-	width        int
 	radius       int
 	border       bool
 	border_color gx.Color
-	ui           &UI
 	hidden       bool
-	text_cfg     gx.TextCfg
-	text_size    f64
 }
 
 [params]
@@ -154,16 +154,6 @@ fn (mut r Rectangle) draw() {
 
 fn (mut r Rectangle) set_visible(state bool) {
 	r.hidden = !state
-}
-
-fn (r &Rectangle) focus() {
-}
-
-fn (r &Rectangle) is_focused() bool {
-	return false
-}
-
-fn (r &Rectangle) unfocus() {
 }
 
 fn (r &Rectangle) point_inside(x f64, y f64) bool {

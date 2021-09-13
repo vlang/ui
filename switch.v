@@ -11,37 +11,42 @@ const (
 	sw_dot_size       = 16
 	sw_open_bg_color  = gx.rgb(19, 206, 102)
 	sw_close_bg_color = gx.rgb(220, 223, 230)
+	sw_focus_bg_color = gx.rgb(50, 50, 50)
 )
 
-type SwitchClickFn = fn (arg_1 voidptr, arg_2 voidptr)
+type SwitchClickFn = fn (voidptr, &Switch)
+
+type SwitchKeyDownFn = fn (voidptr, &Switch, u32)
 
 [heap]
 pub struct Switch {
 pub mut:
-	id         string
-	idx        int
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	parent     Layout
-	is_focused bool
-	open       bool
-	ui         &UI
-	onclick    SwitchClickFn
-	hidden     bool
+	id          string
+	idx         int
+	height      int
+	width       int
+	x           int
+	y           int
+	offset_x    int
+	offset_y    int
+	z_index     int
+	parent      Layout = empty_stack
+	is_focused  bool
+	open        bool
+	ui          &UI
+	onclick     SwitchClickFn
+	on_key_down SwitchKeyDownFn
+	hidden      bool
 	// component state for composable widget
 	component voidptr
 }
 
 pub struct SwitchConfig {
-	id      string
-	z_index int
-	onclick SwitchClickFn
-	open    bool
+	id          string
+	z_index     int
+	onclick     SwitchClickFn
+	on_key_down SwitchKeyDownFn
+	open        bool
 }
 
 pub fn switcher(c SwitchConfig) &Switch {
@@ -52,6 +57,7 @@ pub fn switcher(c SwitchConfig) &Switch {
 		z_index: c.z_index
 		open: c.open
 		onclick: c.onclick
+		on_key_down: c.on_key_down
 		ui: 0
 	}
 	return s
@@ -62,12 +68,14 @@ fn (mut s Switch) init(parent Layout) {
 	ui := parent.get_ui()
 	s.ui = ui
 	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
 	subscriber.subscribe_method(events.on_click, sw_click, s)
 }
 
 [manualfree]
 pub fn (mut s Switch) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_key_down, s)
 	subscriber.unsubscribe_method(events.on_click, s)
 	unsafe { s.free() }
 }
@@ -111,6 +119,9 @@ fn (mut s Switch) draw() {
 		s.ui.gg.draw_rect(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
 			gx.white)
 	}
+	if s.is_focused {
+		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
+	}
 	$if bb ? {
 		draw_bb(mut s, s.ui)
 	}
@@ -119,6 +130,32 @@ fn (mut s Switch) draw() {
 
 fn (s &Switch) point_inside(x f64, y f64) bool {
 	return point_inside(s, x, y)
+}
+
+fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
+	$if sw_keydown ? {
+		println('sw_keydown: $s.id  -> $s.hidden $s.is_focused')
+	}
+	if s.hidden {
+		return
+	}
+	if !s.is_focused {
+		return
+	}
+	if s.on_key_down != SwitchKeyDownFn(0) {
+		s.on_key_down(window.state, s, e.codepoint)
+	} else {
+		// default behavior like click for space and enter
+		if e.key in [.enter, .space] {
+			// println("sw key as a click")
+			s.open = !s.open
+			if s.onclick != SwitchClickFn(0) {
+				s.onclick(window.state, s)
+			}
+		}
+	}
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
@@ -131,7 +168,7 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 	// <===== mouse position test added
 	if int(e.action) == 0 {
 		s.open = !s.open
-		if s.onclick != voidptr(0) {
+		if s.onclick != SwitchClickFn(0) {
 			s.onclick(w.state, s)
 		}
 	}
@@ -142,14 +179,10 @@ fn (mut s Switch) set_visible(state bool) {
 }
 
 fn (mut s Switch) focus() {
-	// s.is_focused = true
-	set_focus(s.ui.window, mut s)
+	mut f := Focusable(s)
+	f.set_focus()
 }
 
 fn (mut s Switch) unfocus() {
 	s.is_focused = false
-}
-
-fn (s &Switch) is_focused() bool {
-	return s.is_focused
 }

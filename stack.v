@@ -6,6 +6,10 @@ module ui
 import eventbus
 import gx
 
+const (
+	empty_stack = stack()
+)
+
 enum Direction {
 	row
 	column
@@ -48,7 +52,7 @@ pub mut:
 	width                int
 	height               int
 	z_index              int
-	parent               Layout
+	parent               Layout = ui.empty_stack
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
@@ -82,8 +86,9 @@ pub mut:
 	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview   bool
+	scrollview       &ScrollView = 0
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 [params]
@@ -238,7 +243,7 @@ pub fn (mut s Stack) update_layout() {
 	// 6) set position for chilfren
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
-	scrollview_widget_set_orig_size(s)
+	scrollview_widget_set_orig_xy(s)
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
@@ -437,18 +442,18 @@ fn (mut s Stack) set_cache_sizes() {
 	// size preallocated
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
-	c.width_mass, c.height_mass = 0., 0.
+	c.width_mass, c.height_mass = 0.0, 0.0
 	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
 	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
-	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
+	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
 	for i, mut child in s.children {
-		mut cw := s.widths[i] or { 0. }
-		mut ch := s.heights[i] or { 0. }
+		mut cw := s.widths[i] or { 0.0 }
+		mut ch := s.heights[i] or { 0.0 }
 
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
@@ -526,7 +531,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.width_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				cw = 0
@@ -603,7 +608,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.height_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				ch = 0
@@ -995,7 +1000,7 @@ fn (s &Stack) margin(side Side) int {
 		.left { s.margins.left }
 	}
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
 		$if margin ? {
 			println('margin($side) = $size * $psize')
@@ -1019,7 +1024,7 @@ fn (s &Stack) margin(side Side) int {
 fn (s &Stack) spacing(i int) int {
 	size := s.spacings[i]
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
 		$if spacing ? {
 			println('spacing($i) = $size * $psize')
@@ -1048,12 +1053,6 @@ fn (s &Stack) get_ui() &UI {
 	return s.ui
 }
 
-fn (s &Stack) unfocus_all() {
-	for mut child in s.children {
-		child.unfocus()
-	}
-}
-
 fn (s &Stack) get_state() voidptr {
 	parent := s.parent
 	return parent.get_state()
@@ -1070,27 +1069,12 @@ pub fn (mut s Stack) set_visible(state bool) {
 	}
 }
 
-fn (mut s Stack) focus() {
-	// s.is_focused = true
-	// println('')
-}
-
-fn (mut s Stack) unfocus() {
-	s.unfocus_all()
-	// s.is_focused = false
-	// println('')
-}
-
-fn (s &Stack) is_focused() bool {
-	return false // s.is_focused
-}
-
 fn (mut s Stack) resize(width int, height int) {
 	s.init_size()
 	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
-	scrollview_widget_set_orig_size(s)
+	scrollview_widget_set_orig_xy(s)
 }
 
 pub fn (s &Stack) get_children() []Widget {
@@ -1206,10 +1190,10 @@ pub struct ChildrenConfig {
 mut:
 	// add or remove or migrate
 	at      int  = -1
-	widths  Size = Size(-1.)
-	heights Size = Size(-1.)
+	widths  Size = Size(-1.0)
+	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.
+	spacing  f64   = -1.0
 	spacings []f64 = []f64{}
 	child    Widget
 	children []Widget
@@ -1218,9 +1202,9 @@ mut:
 	to   int = -1
 	// migrate
 	target          &Stack = 0
-	target_widths   Size   = Size(-1.)
-	target_heights  Size   = Size(-1.)
-	target_spacing  f64    = -1.
+	target_widths   Size   = Size(-1.0)
+	target_heights  Size   = Size(-1.0)
+	target_spacing  f64    = -1.0
 	target_spacings []f64  = []f64{}
 }
 
@@ -1324,7 +1308,7 @@ enum ChildUpdateType {
 pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_widths := if mode == .migrate { cfg.target_widths } else { cfg.widths }
 	if cfg_widths is f64 {
-		if cfg_widths == -1. {
+		if cfg_widths == -1.0 {
 			match mode {
 				.add, .migrate {
 					widths := if s.direction == .row { compact } else { stretch }
@@ -1351,7 +1335,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_heights := if mode == .migrate { cfg.target_heights } else { cfg.heights }
 	if cfg_heights is f64 {
-		if cfg_heights == -1. {
+		if cfg_heights == -1.0 {
 			match mode {
 				.add, .migrate {
 					heights := if s.direction == .row { stretch } else { compact }
@@ -1378,7 +1362,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_spacing := if mode == .migrate { cfg.target_spacing } else { cfg.spacing }
 	cfg_spacings := if mode == .migrate { cfg.target_spacings } else { cfg.spacings }
-	if cfg_spacing != -1. || cfg_spacings.len != 0 {
+	if cfg_spacing != -1.0 || cfg_spacings.len != 0 {
 		if s.children.len > 0 {
 			s.spacings = spacings(cfg_spacing, cfg_spacings, s.children.len - 1)
 		}
@@ -1389,7 +1373,7 @@ pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 				if s.children.len <= 1 {
 					s.spacings = []f32{}
 				} else {
-					spacing := if s.spacings.len == 0 { f32(5.) } else { s.spacings[0] }
+					spacing := if s.spacings.len == 0 { f32(5.0) } else { s.spacings[0] }
 					s.spacings = spacings(spacing, cfg_spacings, s.children.len - 1)
 				}
 			}
@@ -1459,7 +1443,7 @@ fn (mut s Stack) register_child(child Widget) {
 
 pub fn (s &Stack) child_index_by_id(id string) int {
 	for i, child in s.children {
-		if widget_id(child) == id {
+		if child.id() == id {
 			return i
 		}
 	}

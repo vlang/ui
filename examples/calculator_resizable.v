@@ -31,9 +31,9 @@ fn main() {
 		ui.textbox(
 			text: &app.text
 			placeholder: '0'
-			multilines: true
+			fitted_height: true
 			// width: 135
-			text_size: 1. / 20
+			text_size: 1.0 / 20
 			read_only: true
 		),
 	]
@@ -44,7 +44,7 @@ fn main() {
 			row_children << ui.button(
 				text: op
 				onclick: btn_click
-				text_size: 1. / 20
+				text_size: 1.0 / 20
 				radius: .25
 				theme: 'blue'
 				hoverable: true
@@ -68,7 +68,7 @@ fn main() {
 			ui.column(
 				margin_: 10
 				spacing: .02
-				heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30., ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+				heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30.0, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 				bg_color: gx.rgb(240, 180, 130)
 				children: children
 			),

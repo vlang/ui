@@ -19,7 +19,7 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
-	parent        Layout
+	parent        Layout = empty_stack
 	ui            &UI
 	children      []Widget
 	margin_left   int = 5
@@ -180,25 +180,8 @@ fn (mut g Group) set_visible(state bool) {
 	g.hidden = !state
 }
 
-fn (mut g Group) focus() {
-}
-
-fn (mut g Group) unfocus() {
-	g.unfocus_all()
-}
-
-fn (g &Group) is_focused() bool {
-	return false
-}
-
 fn (g &Group) get_ui() &UI {
 	return g.ui
-}
-
-fn (g &Group) unfocus_all() {
-	for mut child in g.children {
-		child.unfocus()
-	}
 }
 
 fn (g &Group) resize(width int, height int) {

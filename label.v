@@ -10,7 +10,7 @@ pub struct Label {
 pub mut:
 	id         string
 	text       string
-	parent     Layout
+	parent     Layout = empty_stack
 	x          int
 	y          int
 	offset_x   int
@@ -147,16 +147,6 @@ fn (mut l Label) draw() {
 
 fn (mut l Label) set_visible(state bool) {
 	l.hidden = !state
-}
-
-fn (l &Label) focus() {
-}
-
-fn (l &Label) is_focused() bool {
-	return false
-}
-
-fn (l &Label) unfocus() {
 }
 
 fn (l &Label) point_inside(x f64, y f64) bool {

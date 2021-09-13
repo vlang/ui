@@ -30,7 +30,7 @@ pub mut:
 	offset_x             int
 	offset_y             int
 	z_index              int
-	parent               Layout
+	parent               Layout = empty_stack
 	ui                   &UI
 	val                  f32
 	min                  int
@@ -367,14 +367,8 @@ fn (mut s Slider) set_visible(state bool) {
 }
 
 fn (mut s Slider) focus() {
-	// parent := s.parent
-	// parent.unfocus_all()
-	// s.is_focused = true
-	set_focus(s.ui.window, mut s)
-}
-
-fn (s &Slider) is_focused() bool {
-	return s.is_focused
+	mut f := Focusable(s)
+	f.set_focus()
 }
 
 fn (mut s Slider) unfocus() {
@@ -401,7 +395,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	$if android {
-		tol := 20.
+		tol := 20.0
 		if s.orientation == .horizontal {
 			t_x := pos - f32(s.thumb_width) / 2 - tol
 			t_y := middle - tol

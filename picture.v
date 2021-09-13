@@ -17,15 +17,15 @@ pub mut:
 	hidden   bool
 	// component state for composable widget
 	component voidptr
+	width     int
+	height    int
 mut:
 	text      string
-	parent    Layout
+	parent    Layout = empty_stack
 	x         int
 	y         int
 	z_index   int
 	movable   bool
-	width     int
-	height    int
 	path      string
 	ui        &UI
 	image     gg.Image
@@ -171,16 +171,6 @@ fn (mut pic Picture) draw() {
 
 fn (mut pic Picture) set_visible(state bool) {
 	pic.hidden = !state
-}
-
-fn (pic &Picture) focus() {
-}
-
-fn (pic &Picture) is_focused() bool {
-	return false
-}
-
-fn (pic &Picture) unfocus() {
 }
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {

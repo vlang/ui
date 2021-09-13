@@ -80,7 +80,7 @@ fn main() {
 					ui.row(
 					margin: ui.Margin{50, 115, 30, 30}
 					spacing: 100
-					heights: 20.
+					heights: 20.0
 					children: [app.hor_textbox, app.vert_textbox]
 				),
 					ui.row(

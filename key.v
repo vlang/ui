@@ -29,11 +29,15 @@ pub enum KeyMod {
 	ctrl = 2
 }
 */
+
+// BitMask
+
+[flag]
 pub enum KeyMod {
-	shift = 1 // (1<<0)
-	ctrl = 2 // (1<<1)
-	alt = 4 // (1<<2)
-	super = 8 // (1<<3)
+	shift //= 1 // (1<<0)
+	ctrl //= 2 // (1<<1)
+	alt //= 4 // (1<<2)
+	super //= 8 // (1<<3)
 }
 
 pub enum KeyState {

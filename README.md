@@ -11,38 +11,36 @@
 
 
 ```v
-ui.window({
+ui.window(
     width: 600
     height: 400
     title: 'V UI Demo'
-}, [
-    ui.row({
-        margin: {
-            top: 10
-            left: 10
-            right: 10
-            bottom: 10
-        }
-    }, [
-        ui.column({
-            width: 200
-            spacing: 13
-        }, [
-            ui.textbox({
-                max_len: 20
-                width: 200
-                placeholder: 'First name'
-                text: &app.first_name
-            }),
-            ui.textbox({
-                max_len: 50
-                width: 200
-                placeholder: 'Last name'
-                text: &app.last_name
-            }),
-        ]),
-    ]),
-])
+    children: [
+		ui.row(
+			margin: ui.Margin{10, 10, 10, 10}
+			children: [
+				ui.column(
+					width: 200
+					spacing: 13
+					children: [
+						ui.textbox(
+							max_len: 20
+							width: 200
+							placeholder: 'First name'
+							text: &app.first_name
+						),
+						ui.textbox(
+							max_len: 50
+							width: 200
+							placeholder: 'Last name'
+							text: &app.last_name
+						)
+					]
+				)
+			]
+		)
+	]
+)
 ````
 
 ### Installation
@@ -64,7 +62,7 @@ v run ...
 **This is pre-alpha software.**
 
 V UI is a cross-platform UI toolkit written in [the V programming language](https://github.com/vlang/v)
-for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM). V UI
+for Windows, macOS, Linux, Android, and soon iOS and the web (JS/WASM). V UI
 uses native widgets on Windows and macOS, on all other platforms the widgets
 are drawn by V UI. Right now only the non-native widgets are available.
 

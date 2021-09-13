@@ -7,7 +7,7 @@ import gx
 
 const (
 	check_mark_size = 14
-	cb_border_color = gx.rgb(76, 145, 244)
+	cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
 	cb_image        = u32(0)
 )
 
@@ -19,7 +19,7 @@ enum CheckBoxState {
 */
 type CheckChangedFn = fn (voidptr, bool)
 
-type CheckBowClickFn = fn (voidptr, voidptr)
+type CheckBowClickFn = fn (&CheckBox, voidptr)
 
 [heap]
 pub struct CheckBox {
@@ -33,7 +33,7 @@ pub mut:
 	offset_x         int
 	offset_y         int
 	z_index          int
-	parent           Layout
+	parent           Layout = empty_stack
 	is_focused       bool
 	checked          bool
 	ui               &UI
@@ -54,7 +54,6 @@ pub struct CheckBoxConfig {
 	x                int
 	y                int
 	z_index          int
-	parent           Layout
 	text             string
 	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
@@ -87,12 +86,14 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
 	init_text_cfg(mut cb)
 	mut subscriber := parent.get_subscriber()
+	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
 [manualfree]
 pub fn (mut cb CheckBox) cleanup() {
 	mut subscriber := cb.parent.get_subscriber()
+	subscriber.unsubscribe_method(events.on_key_down, cb)
 	subscriber.unsubscribe_method(events.on_click, cb)
 	unsafe { cb.free() }
 }
@@ -108,6 +109,31 @@ pub fn (cb &CheckBox) free() {
 	}
 }
 
+fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
+	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
+	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
+	$if cb_keydown ? {
+		println('cb_keydown: $cb.id  -> $cb.hidden $cb.is_focused')
+	}
+	if cb.hidden {
+		return
+	}
+	if !cb.is_focused {
+		return
+	}
+	// default behavior like click for space and enter
+	if e.key in [.enter, .space] {
+		cb.checked = !cb.checked
+		// println("checked: $cb.checked")
+		if cb.on_check_changed != CheckChangedFn(0) {
+			cb.on_check_changed(window.state, cb.checked)
+		}
+		if cb.on_click != CheckBowClickFn(0) {
+			cb.on_click(cb, window.state)
+		}
+	}
+}
+
 fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	if cb.hidden {
 		return
@@ -115,10 +141,10 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
-		if cb.on_check_changed != voidptr(0) {
+		if cb.on_check_changed != CheckChangedFn(0) {
 			cb.on_check_changed(window.state, cb.checked)
 		}
-		if cb.on_click != voidptr(0) {
+		if cb.on_click != CheckBowClickFn(0) {
 			cb.on_click(cb, window.state)
 		}
 	}
@@ -144,12 +170,14 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 fn (mut cb CheckBox) draw() {
 	offset_start(mut cb)
 	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
-	// cb.ui.gg.draw_empty_rect(cb.x, cb.y, check_mark_size, check_mark_size, cb_border_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
+	if cb.is_focused {
+		cb.ui.gg.draw_empty_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
+	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
+		// cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2
@@ -182,14 +210,10 @@ fn (mut cb CheckBox) set_visible(state bool) {
 }
 
 fn (mut cb CheckBox) focus() {
-	// cb.is_focused = true
-	set_focus(cb.ui.window, mut cb)
+	mut f := Focusable(cb)
+	f.set_focus()
 }
 
 fn (mut cb CheckBox) unfocus() {
 	cb.is_focused = false
-}
-
-fn (cb &CheckBox) is_focused() bool {
-	return cb.is_focused
 }

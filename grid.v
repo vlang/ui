@@ -16,9 +16,8 @@ pub mut:
 	width       int
 	z_index     int
 	cell_height f32
-	cell_width  f32 = 40
-	parent      Layout
-	is_focused  bool
+	cell_width  f32    = 40
+	parent      Layout = empty_stack
 	ui          &UI
 	hidden      bool
 }
@@ -33,7 +32,7 @@ pub struct GridConfig {
 }
 
 pub fn grid(c GridConfig) &Grid {
-	mut gv := &Grid{
+	gv := &Grid{
 		width: c.width
 		height: c.height
 		z_index: c.z_index
@@ -158,18 +157,6 @@ fn check_cells(gv Grid) int {
 
 fn (mut gv Grid) set_visible(state bool) {
 	gv.hidden = !state
-}
-
-fn (mut gv Grid) focus() {
-	gv.is_focused = true
-}
-
-fn (mut gv Grid) unfocus() {
-	gv.is_focused = false
-}
-
-fn (gv &Grid) is_focused() bool {
-	return gv.is_focused
 }
 
 fn (mut gv Grid) set_pos(x int, y int) {
