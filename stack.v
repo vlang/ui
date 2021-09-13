@@ -91,6 +91,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
+[params]
 struct StackConfig {
 	id                   string
 	width                int // To remove soon

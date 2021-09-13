@@ -103,6 +103,7 @@ pub enum TextBoxMode {
 	word_wrap
 }
 
+[params]
 pub struct TextBoxConfig {
 	id               string
 	width            int

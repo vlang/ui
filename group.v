@@ -35,6 +35,7 @@ pub mut:
 	component_type string // to save the type of the component
 }
 
+[params]
 pub struct GroupConfig {
 pub mut:
 	id       string
