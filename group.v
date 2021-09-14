@@ -34,6 +34,7 @@ pub mut:
 	component voidptr
 }
 
+[params]
 pub struct GroupConfig {
 pub mut:
 	id       string

@@ -32,6 +32,7 @@ mut:
 	hidden       bool
 }
 
+[params]
 pub struct RectangleConfig {
 	id           string
 	text         string

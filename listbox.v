@@ -65,6 +65,7 @@ mut:
 	draw_text string
 }
 
+[params]
 pub struct ListBoxConfig {
 mut:
 	x             int

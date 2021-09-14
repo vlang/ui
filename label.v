@@ -28,6 +28,7 @@ pub mut:
 	component voidptr
 }
 
+[params]
 pub struct LabelConfig {
 	id        string
 	width     int

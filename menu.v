@@ -42,6 +42,7 @@ pub mut:
 	text string
 }
 
+[params]
 pub struct MenuConfig {
 	id        string
 	width     int = 150

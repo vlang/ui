@@ -27,8 +27,8 @@ fn main() {
 						onclick: fn (a voidptr, b voidptr) {
 							// println("onclick open")
 							webview.new_window(
-								url: 'https://vlang.io'
-								title: 'The V programming language'
+								url: 'https://github.com/revosw/ui/tree/master'
+								title: 'hello'
 							)
 						}
 					),
