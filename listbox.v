@@ -381,7 +381,7 @@ fn (mut lb ListBox) draw() {
 			'Empty listbox. Drop files here ...'
 		} else {
 			'Empty listbox'
-		})
+		}, gx.gray)
 	} else {
 		for inx, item in lb.items {
 			// println("$inx >= $lb.draw_count")

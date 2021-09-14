@@ -39,6 +39,7 @@ pub mut:
 	component voidptr
 }
 
+[params]
 pub struct DropdownConfig {
 	id                   string
 	def_text             string

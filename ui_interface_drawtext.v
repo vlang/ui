@@ -133,7 +133,7 @@ pub fn (w DrawTextWidget) text_height(text string) int {
 
 // Several structures related to DrawTextWidget interface
 
-// TextStyle is similar to gg.TextCfg (main difference: font_name and text_style_id)
+// TextStyle is similar to gg.TextCfg (main difference: font_name and id)
 // Also, thanks to text_style_id, it can be used as an OptionConfig
 pub struct TextStyle {
 pub mut:

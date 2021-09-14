@@ -36,6 +36,7 @@ pub mut:
 	component voidptr
 }
 
+[params]
 pub struct SubWindowConfig {
 	id         string
 	x          int
