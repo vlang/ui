@@ -1190,6 +1190,7 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 }
 
 //**** ChildrenConfig *****
+[params]
 pub struct ChildrenConfig {
 mut:
 	// add or remove or migrate
@@ -1197,9 +1198,9 @@ mut:
 	widths  Size = Size(-1.0)
 	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.0
-	spacings []f64 = []f64{}
-	child    Widget
+	spacing  f64    = -1.0
+	spacings []f64  = []f64{}
+	child    Widget = ui.empty_stack
 	children []Widget
 	// move or migrate
 	from int = -1
