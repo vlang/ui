@@ -678,6 +678,7 @@ pub fn (mut tv TextView) do_zoom_up() {
 	tv.update_lines()
 }
 
+[params]
 pub struct LogViewConfig {
 	nb_lines int = 5
 }
