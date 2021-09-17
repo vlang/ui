@@ -308,6 +308,7 @@ pub fn (mut lb ListBox) remove_item(id string) {
 	for i in 0 .. lb.items.len {
 		if lb.items[i].id == id {
 			lb.remove_inx(i)
+			lb.update_adj_size()
 			break
 		}
 	}
@@ -554,6 +555,7 @@ fn (mut lb ListBox) update_adj_size() {
 		}
 	}
 	lb.adj_height = lb.items.len * lb.item_height
+	scrollview_update(lb)
 }
 
 fn (mut lb ListBox) init_size() {
