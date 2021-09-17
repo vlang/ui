@@ -52,6 +52,7 @@ pub mut:
 	ui &UI = 0
 	// text               string
 	text        &string = voidptr(0)
+	text_       string // This is the internal string content when not provided by the user
 	max_len     int
 	line_height int
 	cursor_pos  int
@@ -140,10 +141,8 @@ pub struct TextBoxConfig {
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
-	// added when user set text after declaration but before init (see colorbox component)
-	text_after       bool
-	scrollview       bool = true
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	scrollview         bool = true
+	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
@@ -181,8 +180,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		twosided_sel: c.twosided_sel
 		on_scroll_change: c.on_scroll_change
 	}
-	if c.text == 0 && !c.text_after {
-		panic('textbox.text binding is not set')
+	if tb.text == 0 {
+		tb.text = &tb.text_
 	}
 	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
