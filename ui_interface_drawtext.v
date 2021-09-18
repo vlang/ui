@@ -225,3 +225,30 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 		mono: ts.mono
 	}
 }
+
+pub fn font_path_list() []string {
+	mut font_root_path := ''
+	$if windows {
+		font_root_path = 'C:/windows/fonts'
+	}
+	$if macos {
+		font_root_path = '/System/Library/Fonts/*'
+	}
+	$if linux {
+		font_root_path = '/usr/share/fonts/truetype/*'
+	}
+	$if android {
+		font_root_path = '/system/fonts/*'
+	}
+	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
+	return font_paths
+}
+
+// font_path differs depending on os
+pub fn (mut w Window) add_font(id string, font_path string) {
+	$if windows {
+		w.ui.add_font(id, 'C:/windows/fonts/$font_path')
+	} $else {
+		w.ui.add_font(id, font_path)
+	}
+}
