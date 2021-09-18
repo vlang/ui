@@ -57,6 +57,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 pub fn (tv &TextView) size() (int, int) {
 	tv.load_current_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
+	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to")
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
 		lw := tv.text_width(line)
 		if lw > w {
@@ -150,7 +151,8 @@ pub fn (mut tv TextView) visible_lines() {
 	} else {
 		j2 = tv.tb.height / tv.line_height
 	}
-	jmax := (*tv.text).count('\n')
+	jmax := tv.tlv.lines.len - 1
+	// println("j2 $j2 $jmax")
 	if j2 > jmax {
 		j2 = jmax
 	}
@@ -158,13 +160,14 @@ pub fn (mut tv TextView) visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
-	if tv.tb.has_scrollview {
-		tv.visible_lines()
-	}
 	if tv.is_wordwrap() {
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
+	}
+	// TO BE DONE AFTER newly created tv.tlv.lines
+	if tv.tb.has_scrollview {
+		tv.visible_lines()
 	}
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
@@ -188,6 +191,7 @@ fn (mut tv TextView) draw_textlines() {
 		y += (tv.tlv.from) * tv.line_height
 	}
 	for line in tv.tlv.lines[tv.tlv.from..(tv.tlv.to + 1)] {
+		// println(line)
 		// draw_text(tv.tb, x, y, line)
 		tv.draw_text(x, y, line)
 		y += tv.line_height
