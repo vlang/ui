@@ -373,8 +373,13 @@ fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb)
-	// println("draw $lb.x, $lb.y, $lb.width $lb.height")
-	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, lb.height, lb.col_bkgrnd)
+	height := if lb.has_scrollview && lb.adj_height > lb.height {
+		lb.adj_height + lb.text_offset_y
+	} else {
+		lb.height
+	}
+	// println("draw $lb.x, $lb.y, $lb.width $lb.height $height")
+	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -395,7 +400,7 @@ fn (mut lb ListBox) draw() {
 		}
 	}
 	if !lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, lb.height + 2, lb.col_border)
+		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
 	}
 
 	// scrollview_draw(lb)
