@@ -129,11 +129,11 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.ui = ui
 
 	init_text_cfg(mut lb)
+	lb.draw_count = lb.height / lb.item_height
+	lb.text_offset_y = (lb.item_height - text_height(lb, 'W')) / 2
 	if lb.text_offset_y < 0 {
 		lb.text_offset_y = 0
 	}
-	lb.draw_count = lb.height / lb.item_height
-	lb.text_offset_y = (lb.item_height - text_height(lb, 'W')) / 2
 
 	// update lb.width and lb.height to adjusted sizes when initialized to 0
 	lb.init_size()
@@ -334,11 +334,11 @@ pub fn (mut lb ListBox) clear() {
 }
 
 fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
-	// println("linrssss draw ${li.draw_text} ${li.x + lb.offset_x}, ${li.y + lb.offset_y}, $lb.width, $lb.item_height")
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
+	// println("linrssss draw ${li.draw_text} $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height")
 	lb.ui.gg.draw_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-		width, lb.item_height, col)
+		width - 2 * ui._text_offset_x, lb.item_height, col)
 	lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 		if lb.has_scrollview { li.text } else { li.draw_text })
 	if lb.draw_lines {
@@ -381,7 +381,7 @@ fn (mut lb ListBox) draw() {
 		draw_text_with_color(lb, lb.x + ui._text_offset_x, lb.y + lb.text_offset_y, if lb.files_droped {
 			'Empty listbox. Drop files here ...'
 		} else {
-			'Empty listbox'
+			''
 		}, gx.gray)
 	} else {
 		for inx, item in lb.items {
@@ -539,7 +539,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		// println("adj_width: $lb.adj_width")
 	}
 	if lb.adj_height == 0 {
-		lb.adj_height = lb.items.len * lb.item_height
+		lb.adj_height = lb.items.len * lb.item_height + 2 * lb.text_offset_y
 	}
 	// println("lb adj: ($lb.adj_width, $lb.adj_height) size: ($lb.width, $lb.height)")
 	return lb.adj_width, lb.adj_height
