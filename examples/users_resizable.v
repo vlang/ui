@@ -138,8 +138,7 @@ fn main() {
 									text: '?'
 									onclick: btn_help_click
 									radius: .3
-								),
-							]
+								)]
 						),
 						ui.row(
 							spacing: .05
@@ -181,8 +180,7 @@ fn main() {
 								path: logo
 							),
 						]
-					),
-				]
+					)]
 			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},

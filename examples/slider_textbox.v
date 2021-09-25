@@ -88,8 +88,7 @@ fn main() {
 						margin: ui.Margin{100, 30, 30, 30}
 						spacing: 30
 						children: [app.hor_slider, app.vert_slider]
-					),
-				]
+					)]
 			),
 		]
 	)

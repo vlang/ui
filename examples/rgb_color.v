@@ -165,8 +165,7 @@ fn main() {
 						spacing: .3
 						widths: 30.0
 						children: [app.r_label, app.g_label, app.b_label]
-					),
-				]
+					)]
 			),
 		]
 	)

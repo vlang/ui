@@ -171,8 +171,7 @@ fn main() {
 								path: logo
 							),
 						]
-					),
-				]
+					)]
 			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},
