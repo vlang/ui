@@ -148,6 +148,7 @@ pub mut:
 	mono           bool
 }
 
+[params]
 pub struct TextStyleConfig {
 	// text style identifier
 	id string = ui.no_string
