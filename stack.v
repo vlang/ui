@@ -7,7 +7,7 @@ import eventbus
 import gx
 
 const (
-	empty_stack = stack()
+	empty_stack = stack(id: '_empty_stack_')
 )
 
 enum Direction {
@@ -83,7 +83,6 @@ pub mut:
 	is_root_layout        bool = true
 	// component state for composable widget
 	component      voidptr
-	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
 	has_scrollview   bool
@@ -156,12 +155,10 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 	s.init_size()
-
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
-
 	// init for component attached to s when it is the layout of a component
 	if s.component_init != ComponentInitFn(0) {
 		s.component_init(s)
@@ -212,7 +209,6 @@ pub fn (s &Stack) free() {
 		s.drawing_children.free()
 		s.widths.free()
 		s.heights.free()
-		s.component_type.free()
 		// if s.has_scrollview {
 		// 	s.scrollview.free()
 		// }
@@ -264,8 +260,13 @@ fn (mut s Stack) init_size() {
 	// s.debug_show_sizes("decode before -> ")
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
-		s.real_height = parent_height
-		s.real_width = parent_width
+		if s.parent is SubWindow {
+			// println("$s.id init_size: $s.width, $s.height ${s.adj_size()}")
+			s.real_width, s.real_height = s.adj_size()
+		} else {
+			s.real_height = parent_height
+			s.real_width = parent_width
+		}
 	}
 	scrollview_update(s)
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
@@ -294,6 +295,7 @@ fn (mut s Stack) set_children_sizes() {
 			wt, ht := c.width_type[i].str(), c.height_type[i].str()
 			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
+		// println("ps $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -708,10 +710,10 @@ pub fn (s &Stack) adj_size() (int, int) {
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	//
-	if s.id == '_msg_dlg_col' {
-		println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
-	}
+	// if s.id == '_msg_dlg_col' {
+	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
+	// }
+	// println("$s.id propose size $w, $h")
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }
@@ -959,6 +961,7 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rounded_rect(s.real_x, s.real_y, s.real_width, s.real_height,
 				radius, s.bg_color)
 		} else {
+			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
@@ -972,7 +975,7 @@ fn (mut s Stack) draw() {
 		s.draw_bb()
 	}
 	for mut child in s.drawing_children {
-		// println("$child.type_name()")
+		// println("$child.type_name() $child.id")
 		child.draw()
 	}
 	// scrollview_draw(s)
@@ -1059,6 +1062,7 @@ fn (s &Stack) get_state() voidptr {
 }
 
 fn (s &Stack) point_inside(x f64, y f64) bool {
+	// println("point_inside $s.id ($x, $y) in ($s.x + $s.offset_x + $s.width, $s.y + $s.offset_y + $s.height)")
 	return point_inside(s, x, y)
 }
 
@@ -1186,6 +1190,7 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 }
 
 //**** ChildrenConfig *****
+[params]
 pub struct ChildrenConfig {
 mut:
 	// add or remove or migrate
@@ -1193,9 +1198,9 @@ mut:
 	widths  Size = Size(-1.0)
 	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.0
-	spacings []f64 = []f64{}
-	child    Widget
+	spacing  f64    = -1.0
+	spacings []f64  = []f64{}
+	child    Widget = ui.empty_stack
 	children []Widget
 	// move or migrate
 	from int = -1

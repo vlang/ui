@@ -29,23 +29,23 @@ pub struct Button {
 	// init size read-only
 	width_  int
 	height_ int
-mut:
+pub mut:
+	id          string
+	state       ButtonState = ButtonState(1)
+	height      int
+	width       int
+	z_index     int
+	x           int
+	y           int
+	offset_x    int
+	offset_y    int
 	text_width  int
 	text_height int
-pub mut:
-	id         string
-	state      ButtonState = ButtonState(1)
-	height     int
-	width      int
-	z_index    int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	parent     Layout = empty_stack
-	is_focused bool
-	ui         &UI = 0
-	onclick    ButtonClickFn
+	bg_color    &gx.Color = 0
+	parent      Layout    = empty_stack
+	is_focused  bool
+	ui          &UI = 0
+	onclick     ButtonClickFn
 	// TODO: same convention for all callback
 	on_key_down ButtonKeyDownFn = ButtonKeyDownFn(0)
 	text        string
@@ -84,6 +84,7 @@ pub struct ButtonConfig {
 	tooltip_side Side = .top
 	text_cfg     gx.TextCfg
 	text_size    f64
+	bg_color     &gx.Color     = 0
 	theme        ColorThemeCfg = 'classic'
 	radius       f64
 	padding      f64
@@ -101,7 +102,8 @@ pub fn button(c ButtonConfig) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		theme_cfg: c.theme
+		bg_color: c.bg_color
+		theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
 		onclick: c.onclick
 		on_key_down: c.on_key_down
 		text_cfg: c.text_cfg
@@ -142,6 +144,7 @@ fn (mut b Button) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 	subscriber.subscribe_method(events.on_mouse_up, btn_mouse_up, b)
 	subscriber.subscribe_method(events.on_touch_up, btn_mouse_up, b)
+	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -152,6 +155,7 @@ fn (mut b Button) cleanup() {
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_move, b)
+	b.ui.window.evt_mngr.rm_receiver(b, [events.on_mouse_down])
 	unsafe { b.free() }
 }
 
@@ -208,6 +212,12 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if b.hidden {
 		return
 	}
+	$if wpir ? {
+		println('btn click: $b.id ${b.ui.window.point_inside_receivers(events.on_mouse_down)}')
+	}
+	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
+		return
+	}
 	if !b.is_focused {
 		return
 	}
@@ -229,6 +239,9 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {
+		return
+	}
+	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
 		return
 	}
 	if b.point_inside(e.x, e.y) {
@@ -301,7 +314,13 @@ fn (mut b Button) draw() {
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
 	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
-	bg_color := color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
+	bg_color := if b.theme_cfg != no_theme {
+		color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
+	} else if b.bg_color != voidptr(0) {
+		*b.bg_color
+	} else {
+		gx.white
+	}
 	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))

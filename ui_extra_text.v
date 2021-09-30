@@ -225,7 +225,7 @@ mut:
 	ui       &UI      = 0
 }
 
-struct TooltipMessage {
+pub struct TooltipMessage {
 	text string
 	side Side = .right
 }

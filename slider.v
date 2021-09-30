@@ -110,6 +110,7 @@ fn (mut s Slider) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
 	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
 	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
 	$if android {
 		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
 		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
@@ -130,6 +131,7 @@ pub fn (mut s Slider) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_up, s)
 		subscriber.unsubscribe_method(events.on_touch_move, s)
 	}
+	s.ui.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
 	unsafe { s.free() }
 }
 
@@ -295,19 +297,6 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
-fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
-	if s.hidden {
-		return
-	}
-	if s.entering && s.point_inside_thumb(e.x, e.y) {
-		// println('slider touch move DRAGGING')
-		s.dragging = true
-	}
-	if s.dragging {
-		s.change_value(int(e.x), int(e.y))
-	}
-}
-
 fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
 	if s.hidden {
 		return
@@ -334,6 +323,19 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 		}
 	} else {
 		s.dragging = false
+	}
+	if s.dragging {
+		s.change_value(int(e.x), int(e.y))
+	}
+}
+
+fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+	if s.hidden {
+		return
+	}
+	if s.entering && s.point_inside_thumb(e.x, e.y) {
+		// println('slider touch move DRAGGING')
+		s.dragging = true
 	}
 	if s.dragging {
 		s.change_value(int(e.x), int(e.y))

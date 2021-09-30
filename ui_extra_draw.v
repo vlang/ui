@@ -252,6 +252,12 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	if v != 0 {
 		s = d / v
 	}
+
+	// mirror correction
+	if h > 1.0 {
+		h = 2.0 - h
+	}
+
 	return h, s, v
 }
 
@@ -342,13 +348,13 @@ pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &byte) {
 	C.sg_update_image(sg_img, &tmp_sbc)
 }
 
-pub fn (c &CanvasLayout) draw_texture(w int, h int, simg C.sg_image) {
+pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 	ctx := c.ui.gg
 	cx, cy := c.x + c.offset_x, c.y + c.offset_y
-	u0 := f32(cx / w)
-	v0 := f32(cy / h)
-	u1 := f32((cx + c.width) / w)
-	v1 := f32((cy + c.height) / h)
+	u0 := f32(0.0)
+	v0 := f32(0.0)
+	u1 := f32(1.0)
+	v1 := f32(1.0)
 	x0 := f32(cx * ctx.scale)
 	y0 := f32(cy * ctx.scale)
 	x1 := f32((cx + c.width) * ctx.scale)

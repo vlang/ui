@@ -23,16 +23,3 @@ pub fn component_connect(comp voidptr, children ...ComponentChild) {
 		child.component = comp
 	}
 }
-
-// Only layouts can contain component type since they are sort of parent component
-pub fn (s &Stack) component_type() string {
-	return s.component_type
-}
-
-pub fn (s &Group) component_type() string {
-	return s.component_type
-}
-
-pub fn (s &CanvasLayout) component_type() string {
-	return s.component_type
-}

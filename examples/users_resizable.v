@@ -138,8 +138,7 @@ fn main() {
 									text: '?'
 									onclick: btn_help_click
 									radius: .3
-								),
-							]
+								)]
 						),
 						ui.row(
 							spacing: .05
@@ -173,7 +172,7 @@ fn main() {
 								width: 400
 								height: 275
 								on_draw: draw
-								text_size: 20
+								// text_size: 20
 							),
 							ui.picture(
 								width: 100
@@ -181,8 +180,7 @@ fn main() {
 								path: logo
 							),
 						]
-					),
-				]
+					)]
 			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},
@@ -251,6 +249,6 @@ fn draw(c &ui.CanvasLayout, app &State) {
 		c.draw_text(marginx + 5, y + 5, user.first_name)
 		c.draw_text(marginx + 5 + cell_width, y + 5, user.last_name)
 		c.draw_text(marginx + 5 + cell_width * 2, y + 5, user.age.str())
-		c.draw_text_with_color(marginx + 5 + cell_width * 3, y + 5, user.country, gx.blue)
+		c.draw_text(marginx + 5 + cell_width * 3, y + 5, user.country)
 	}
 }

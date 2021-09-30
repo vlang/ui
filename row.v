@@ -5,6 +5,7 @@ module ui
 
 import gx
 
+[params]
 pub struct RowConfig {
 pub:
 	id        string

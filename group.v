@@ -31,8 +31,7 @@ pub mut:
 	adj_width     int
 	hidden        bool
 	// component state for composable widget
-	component      voidptr
-	component_type string // to save the type of the component
+	component voidptr
 }
 
 [params]
@@ -93,7 +92,6 @@ pub fn (g &Group) free() {
 		g.id.free()
 		g.title.free()
 		g.children.free()
-		g.component_type.free()
 		free(g)
 	}
 	$if free ? {
@@ -208,6 +206,8 @@ fn (g &Group) size() (int, int) {
 fn (g &Group) get_children() []Widget {
 	return g.children
 }
+
+fn (g &Group) update_layout() {}
 
 fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	mut h := 0
