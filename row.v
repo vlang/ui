@@ -5,6 +5,7 @@ module ui
 
 import gx
 
+[params]
 pub struct RowConfig {
 pub:
 	id        string
@@ -12,7 +13,7 @@ pub:
 	height    int
 	alignment VerticalAlignment
 	spacing   f64
-	spacings  []f64 = []f64{} // Size = Size(0.) // Spacing = Spacing(0) // int
+	spacings  []f64 = []f64{} // Size = Size(0.0) // Spacing = Spacing(0) // int
 	stretch   bool
 	margin_   f64
 	margin    Margin

@@ -52,6 +52,7 @@ pub mut:
 	ui &UI = 0
 	// text               string
 	text        &string = voidptr(0)
+	text_       string // This is the internal string content when not provided by the user
 	max_len     int
 	line_height int
 	cursor_pos  int
@@ -88,6 +89,8 @@ pub mut:
 	text_cfg  gx.TextCfg
 	text_size f64
 	hidden    bool
+	// text styles
+	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -103,6 +106,7 @@ pub enum TextBoxMode {
 	word_wrap
 }
 
+[params]
 pub struct TextBoxConfig {
 	id               string
 	width            int
@@ -137,10 +141,8 @@ pub struct TextBoxConfig {
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
-	// added when user set text after declaration but before init (see colorbox component)
-	text_after       bool
-	scrollview       bool = true
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	scrollview         bool = true
+	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxConfig) &TextBox {
@@ -178,8 +180,8 @@ pub fn textbox(c TextBoxConfig) &TextBox {
 		twosided_sel: c.twosided_sel
 		on_scroll_change: c.on_scroll_change
 	}
-	if c.text == 0 && !c.text_after {
-		panic('textbox.text binding is not set')
+	if tb.text == 0 {
+		tb.text = &tb.text_
 	}
 	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
@@ -213,6 +215,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_down, tb_mouse_down, tb)
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
+	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -225,6 +228,7 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_down, tb)
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
+	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down])
 	unsafe { tb.free() }
 }
 
@@ -515,26 +519,47 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			.left {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
-				tb.cursor_pos--
-				if tb.cursor_pos < 0 {
-					tb.cursor_pos = 0
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = tb.cursor_pos
+						tb.ui.show_cursor = false
+					}
+					tb.cursor_pos--
+					if tb.cursor_pos < 0 {
+						tb.cursor_pos = 0
+					}
+					tb.sel_end = tb.cursor_pos
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
+					tb.cursor_pos--
+					if tb.cursor_pos < 0 {
+						tb.cursor_pos = 0
+					}
 				}
 			}
 			.right {
-				if tb.sel(e.mods, e.key) {
-					return
-				}
-				tb.cancel_selection()
-				tb.ui.show_cursor = true
-				tb.cursor_pos++
-				text_len := text.runes().len
-				if tb.cursor_pos > text_len {
-					tb.cursor_pos = text_len
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = tb.cursor_pos
+						tb.ui.show_cursor = false
+					}
+					tb.cursor_pos++
+					ustr := tb.text.runes()
+					if tb.cursor_pos > ustr.len {
+						tb.cursor_pos = ustr.len
+					}
+					tb.sel_end = tb.cursor_pos
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true
+					tb.cursor_pos++
+					text_len := text.runes().len
+					if tb.cursor_pos > text_len {
+						tb.cursor_pos = text_len
+					}
 				}
 				// println("right: $tb.cursor_posj")
 			}
@@ -711,65 +736,65 @@ fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
 	}
 }
 
-fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
-	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
-	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
-	text := *tb.text
-	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
-		mut i := tb.cursor_pos
-		if sel_start_i > 0 {
-			i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
-		} else if sel_start_i == 0 && sel_end_i > 0 {
-			i = 0
-		} else {
-			tb.sel_direction = if key == .left {
-				SelectionDirection.right_to_left
-			} else {
-				SelectionDirection.left_to_right
-			}
-		}
-		sel_end_i = tb.cursor_pos
-		for {
-			if key == .left && i > 0 {
-				i--
-			} else if key == .right && i < tb.text.len {
-				i++
-			}
-			if i == 0 {
-				sel_start_i = 0
-				break
-			} else if i == text.len {
-				sel_start_i = tb.text.len
-				break
-			} else if text[i].is_space() {
-				sel_start_i = if tb.sel_direction == .right_to_left { i + 1 } else { i }
-				break
-			}
-		}
-		tb.set_sel(sel_start_i, sel_end_i, key)
-		return true
-	}
-	if mods == .shift {
-		if (tb.sel_direction == .right_to_left && sel_start_i == 0 && sel_end_i > 0)
-			|| (tb.sel_direction == .left_to_right && sel_end_i == tb.text.len) {
-			return true
-		}
-		if sel_start_i <= 0 {
-			sel_end_i = tb.cursor_pos
-			sel_start_i = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
-			tb.sel_direction = if key == .left {
-				SelectionDirection.right_to_left
-			} else {
-				SelectionDirection.left_to_right
-			}
-		} else {
-			sel_start_i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
-		}
-		tb.set_sel(sel_start_i, sel_end_i, key)
-		return true
-	}
-	return false
-}
+// fn (mut tb TextBox) sel(mods KeyMod, key Key) bool {
+// 	mut sel_start_i := if tb.sel_direction == .right_to_left { tb.sel_start } else { tb.sel_end }
+// 	mut sel_end_i := if tb.sel_direction == .right_to_left { tb.sel_end } else { tb.sel_start }
+// 	text := *tb.text
+// 	if int(mods) == int(KeyMod.shift) + int(KeyMod.ctrl) {
+// 		mut i := tb.cursor_pos
+// 		if sel_start_i > 0 {
+// 			i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
+// 		} else if sel_start_i == 0 && sel_end_i > 0 {
+// 			i = 0
+// 		} else {
+// 			tb.sel_direction = if key == .left {
+// 				SelectionDirection.right_to_left
+// 			} else {
+// 				SelectionDirection.left_to_right
+// 			}
+// 		}
+// 		sel_end_i = tb.cursor_pos
+// 		for {
+// 			if key == .left && i > 0 {
+// 				i--
+// 			} else if key == .right && i < tb.text.len {
+// 				i++
+// 			}
+// 			if i == 0 {
+// 				sel_start_i = 0
+// 				break
+// 			} else if i == text.len {
+// 				sel_start_i = tb.text.len
+// 				break
+// 			} else if text[i].is_space() {
+// 				sel_start_i = if tb.sel_direction == .right_to_left { i + 1 } else { i }
+// 				break
+// 			}
+// 		}
+// 		tb.set_sel(sel_start_i, sel_end_i, key)
+// 		return true
+// 	}
+// 	if mods == .shift {
+// 		if (tb.sel_direction == .right_to_left && sel_start_i == 0 && sel_end_i > 0)
+// 			|| (tb.sel_direction == .left_to_right && sel_end_i == tb.text.len) {
+// 			return true
+// 		}
+// 		if sel_start_i <= 0 {
+// 			sel_end_i = tb.cursor_pos
+// 			sel_start_i = if key == .left { tb.cursor_pos - 1 } else { tb.cursor_pos + 1 }
+// 			tb.sel_direction = if key == .left {
+// 				SelectionDirection.right_to_left
+// 			} else {
+// 				SelectionDirection.left_to_right
+// 			}
+// 		} else {
+// 			sel_start_i = if key == .left { sel_start_i - 1 } else { sel_start_i + 1 }
+// 		}
+// 		tb.set_sel(sel_start_i, sel_end_i, key)
+// 		return true
+// 	}
+// 	return false
+// }
 
 fn (tb &TextBox) point_inside(x f64, y f64) bool {
 	if tb.has_scrollview {
@@ -784,22 +809,24 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	if tb.hidden {
 		return
 	}
+	$if top_widget_md ? {
+		if tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+			println('tb_md: $tb.id ${tb.ui.window.point_inside_receivers(events.on_mouse_down)}')
+		}
+	}
 	if tb.has_scrollview && tb.scrollview.point_inside(e.x, e.y, .bar) {
 		return
 	}
 	if !tb.point_inside(e.x, e.y) {
 		tb.dragging = false
 		tb.unfocus()
-		if tb.is_multiline {
-			Focusable(tb).unlock_focus()
-		}
 		return
 	} else {
 		// println('mouse first $tb.id')
 		tb.focus()
-		if tb.is_multiline {
-			Focusable(tb).lock_focus()
-		}
+	}
+	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+		return
 	}
 	// Calculate cursor position
 	x, y := e.x - tb.x - ui.textbox_padding_x, e.y - tb.y - ui.textbox_padding_y

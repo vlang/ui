@@ -5,12 +5,13 @@ module ui
 
 import gx
 
+[params]
 pub struct ColumnConfig {
 	id        string
 	width     int // To remove soon
 	height    int // To remove soon
 	alignment HorizontalAlignment
-	spacing   f64 // Size = Size(0.) // Spacing = Spacing(0) // int
+	spacing   f64 // Size = Size(0.0) // Spacing = Spacing(0) // int
 	spacings  []f64 = []f64{}
 	stretch   bool // to remove ui.stretch doing the job from parent
 	margin    Margin

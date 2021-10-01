@@ -1,0 +1,3 @@
+webview/windows/* linguist-vendored
+*.v linguist-language=V
+*.mod linguist-language=V

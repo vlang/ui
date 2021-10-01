@@ -7,7 +7,7 @@ import eventbus
 import gx
 
 const (
-	empty_stack = stack()
+	empty_stack = stack(id: '_empty_stack_')
 )
 
 enum Direction {
@@ -83,7 +83,6 @@ pub mut:
 	is_root_layout        bool = true
 	// component state for composable widget
 	component      voidptr
-	component_type string // to save the type of the component
 	component_init ComponentInitFn
 	// scrollview
 	has_scrollview   bool
@@ -91,6 +90,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
+[params]
 struct StackConfig {
 	id                   string
 	width                int // To remove soon
@@ -155,12 +155,10 @@ fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 	s.init_size()
-
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
-
 	// init for component attached to s when it is the layout of a component
 	if s.component_init != ComponentInitFn(0) {
 		s.component_init(s)
@@ -211,7 +209,6 @@ pub fn (s &Stack) free() {
 		s.drawing_children.free()
 		s.widths.free()
 		s.heights.free()
-		s.component_type.free()
 		// if s.has_scrollview {
 		// 	s.scrollview.free()
 		// }
@@ -263,8 +260,13 @@ fn (mut s Stack) init_size() {
 	// s.debug_show_sizes("decode before -> ")
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
-		s.real_height = parent_height
-		s.real_width = parent_width
+		if s.parent is SubWindow {
+			// println("$s.id init_size: $s.width, $s.height ${s.adj_size()}")
+			s.real_width, s.real_height = s.adj_size()
+		} else {
+			s.real_height = parent_height
+			s.real_width = parent_width
+		}
 	}
 	scrollview_update(s)
 	s.height = s.real_height - s.margin(.top) - s.margin(.bottom)
@@ -293,6 +295,7 @@ fn (mut s Stack) set_children_sizes() {
 			wt, ht := c.width_type[i].str(), c.height_type[i].str()
 			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
+		// println("ps $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -441,18 +444,18 @@ fn (mut s Stack) set_cache_sizes() {
 	// size preallocated
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
-	c.width_mass, c.height_mass = 0., 0.
+	c.width_mass, c.height_mass = 0.0, 0.0
 	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
 	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
-	c.weight_widths, c.weight_heights = [0.].repeat(len), [0.].repeat(len)
+	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
 	for i, mut child in s.children {
-		mut cw := s.widths[i] or { 0. }
-		mut ch := s.heights[i] or { 0. }
+		mut cw := s.widths[i] or { 0.0 }
+		mut ch := s.heights[i] or { 0.0 }
 
 		// adjusted (natural size) child size
 		mut adj_child_width, mut adj_child_height := child.size()
@@ -530,7 +533,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_width = c.fixed_widths[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.width_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				cw = 0
@@ -607,7 +610,7 @@ fn (mut s Stack) set_cache_sizes() {
 					c.min_height = c.fixed_heights[i]
 				}
 			}
-		} else { // with stretch == -10000. it's impossible to have stretch * weight >= -1
+		} else { // with stretch == -10000.0 it's impossible to have stretch * weight >= -1
 			c.height_type[i] = .stretch
 			if child.z_index == z_index_hidden {
 				ch = 0
@@ -707,10 +710,10 @@ pub fn (s &Stack) adj_size() (int, int) {
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	//
-	if s.id == '_msg_dlg_col' {
-		println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
-	}
+	// if s.id == '_msg_dlg_col' {
+	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
+	// }
+	// println("$s.id propose size $w, $h")
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }
@@ -958,6 +961,7 @@ fn (mut s Stack) draw() {
 			s.ui.gg.draw_rounded_rect(s.real_x, s.real_y, s.real_width, s.real_height,
 				radius, s.bg_color)
 		} else {
+			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
@@ -971,7 +975,7 @@ fn (mut s Stack) draw() {
 		s.draw_bb()
 	}
 	for mut child in s.drawing_children {
-		// println("$child.type_name()")
+		// println("$child.type_name() $child.id")
 		child.draw()
 	}
 	// scrollview_draw(s)
@@ -999,7 +1003,7 @@ fn (s &Stack) margin(side Side) int {
 		.left { s.margins.left }
 	}
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
 		$if margin ? {
 			println('margin($side) = $size * $psize')
@@ -1023,7 +1027,7 @@ fn (s &Stack) margin(side Side) int {
 fn (s &Stack) spacing(i int) int {
 	size := s.spacings[i]
 	mut isize := int(size)
-	if 0. < size && size < 1. {
+	if 0.0 < size && size < 1.0 {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
 		$if spacing ? {
 			println('spacing($i) = $size * $psize')
@@ -1058,6 +1062,7 @@ fn (s &Stack) get_state() voidptr {
 }
 
 fn (s &Stack) point_inside(x f64, y f64) bool {
+	// println("point_inside $s.id ($x, $y) in ($s.x + $s.offset_x + $s.width, $s.y + $s.offset_y + $s.height)")
 	return point_inside(s, x, y)
 }
 
@@ -1185,25 +1190,26 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 }
 
 //**** ChildrenConfig *****
+[params]
 pub struct ChildrenConfig {
 mut:
 	// add or remove or migrate
 	at      int  = -1
-	widths  Size = Size(-1.)
-	heights Size = Size(-1.)
+	widths  Size = Size(-1.0)
+	heights Size = Size(-1.0)
 	// add or move or migrate
-	spacing  f64   = -1.
-	spacings []f64 = []f64{}
-	child    Widget
+	spacing  f64    = -1.0
+	spacings []f64  = []f64{}
+	child    Widget = ui.empty_stack
 	children []Widget
 	// move or migrate
 	from int = -1
 	to   int = -1
 	// migrate
 	target          &Stack = 0
-	target_widths   Size   = Size(-1.)
-	target_heights  Size   = Size(-1.)
-	target_spacing  f64    = -1.
+	target_widths   Size   = Size(-1.0)
+	target_heights  Size   = Size(-1.0)
+	target_spacing  f64    = -1.0
 	target_spacings []f64  = []f64{}
 }
 
@@ -1307,7 +1313,7 @@ enum ChildUpdateType {
 pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_widths := if mode == .migrate { cfg.target_widths } else { cfg.widths }
 	if cfg_widths is f64 {
-		if cfg_widths == -1. {
+		if cfg_widths == -1.0 {
 			match mode {
 				.add, .migrate {
 					widths := if s.direction == .row { compact } else { stretch }
@@ -1334,7 +1340,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_heights := if mode == .migrate { cfg.target_heights } else { cfg.heights }
 	if cfg_heights is f64 {
-		if cfg_heights == -1. {
+		if cfg_heights == -1.0 {
 			match mode {
 				.add, .migrate {
 					heights := if s.direction == .row { stretch } else { compact }
@@ -1361,7 +1367,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 	cfg_spacing := if mode == .migrate { cfg.target_spacing } else { cfg.spacing }
 	cfg_spacings := if mode == .migrate { cfg.target_spacings } else { cfg.spacings }
-	if cfg_spacing != -1. || cfg_spacings.len != 0 {
+	if cfg_spacing != -1.0 || cfg_spacings.len != 0 {
 		if s.children.len > 0 {
 			s.spacings = spacings(cfg_spacing, cfg_spacings, s.children.len - 1)
 		}
@@ -1372,7 +1378,7 @@ pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
 				if s.children.len <= 1 {
 					s.spacings = []f32{}
 				} else {
-					spacing := if s.spacings.len == 0 { f32(5.) } else { s.spacings[0] }
+					spacing := if s.spacings.len == 0 { f32(5.0) } else { s.spacings[0] }
 					s.spacings = spacings(spacing, cfg_spacings, s.children.len - 1)
 				}
 			}

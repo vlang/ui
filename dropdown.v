@@ -39,6 +39,7 @@ pub mut:
 	component voidptr
 }
 
+[params]
 pub struct DropdownConfig {
 	id                   string
 	def_text             string
@@ -50,6 +51,7 @@ pub struct DropdownConfig {
 	selected_index       int = -1
 	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
+	texts                []string
 }
 
 pub struct DropdownItem {
@@ -69,6 +71,11 @@ pub fn dropdown(c DropdownConfig) &Dropdown {
 		def_text: c.def_text
 		ui: 0
 	}
+	if c.texts.len > 0 {
+		for t in c.texts {
+			dd.add_item(t)
+		}
+	}
 	return dd
 }
 
@@ -81,6 +88,11 @@ fn (mut dd Dropdown) init(parent Layout) {
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
 	subscriber.subscribe_method(events.on_mouse_down, dd_mouse_down, dd)
 	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
+	$if android {
+		subscriber.subscribe_method(events.on_touch_down, dd_mouse_down, dd)
+		subscriber.subscribe_method(events.on_touch_move, dd_mouse_move, dd)
+	}
+	dd.ui.window.evt_mngr.add_receiver(dd, [events.on_mouse_down])
 }
 
 [manualfree]
@@ -90,6 +102,11 @@ fn (mut dd Dropdown) cleanup() {
 	subscriber.unsubscribe_method(events.on_key_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_down, dd)
 	subscriber.unsubscribe_method(events.on_mouse_move, dd)
+	$if android {
+		subscriber.unsubscribe_method(events.on_touch_down, dd)
+		subscriber.unsubscribe_method(events.on_touch_move, dd)
+	}
+	dd.ui.window.evt_mngr.rm_receiver(dd, [events.on_mouse_down])
 	unsafe { dd.free() }
 }
 
@@ -232,11 +249,12 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 
 	offset_start(mut dd)
-	if e.y >= dd.y && e.y <= dd.y + dd.dropdown_height && e.x >= dd.x && e.x <= dd.x + dd.width {
+	if e.y >= dd.y + dd.offset_y && e.y <= dd.y + dd.offset_y + dd.dropdown_height
+		&& e.x >= dd.x + dd.offset_x && e.x <= dd.x + dd.offset_x + dd.width {
 		dd.open_drawer()
 	} else if dd.open {
-		th := dd.y + (dd.items.len * dd.dropdown_height)
-		index := ((e.y * dd.items.len) / th) - 1
+		index := int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
+		// println("$index : ($e.y - $dd.y) / dd.dropdown_height - 1")
 		dd.selected_index = index
 		if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
 			parent := dd.parent
@@ -265,9 +283,7 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		return
 	}
 	if dd.open {
-		th := dd.y + (dd.items.len * dd.dropdown_height)
-		index := ((e.y * dd.items.len) / th) - 1
-		dd.hover_index = index
+		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
 	}
 }
 

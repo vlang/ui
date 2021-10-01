@@ -76,7 +76,7 @@ fn main() {
 		children: [
 			ui.row(
 				margin: ui.Margin{10, 10, 10, 10}
-				widths: [200., ui.stretch]
+				widths: [200.0, ui.stretch]
 				spacing: 30
 				children: [
 					ui.column(
@@ -157,7 +157,7 @@ fn main() {
 						]
 						heights: [
 							ui.stretch,
-							100.,
+							100.0,
 						]
 						children: [
 							ui.canvas(
@@ -171,8 +171,7 @@ fn main() {
 								path: logo
 							),
 						]
-					),
-				]
+					)]
 			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},

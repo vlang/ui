@@ -48,6 +48,8 @@ pub mut:
 	click_fn          ClickFn
 	mouse_down_fn     ClickFn
 	mouse_up_fn       ClickFn
+	files_droped_fn   ClickFn
+	swipe_fn          ClickFn
 	mouse_move_fn     MouseMoveFn
 	scroll_fn         ScrollFn
 	key_down_fn       KeyFn
@@ -88,6 +90,10 @@ pub mut:
 	// focus stuff
 	do_focus     bool
 	locked_focus string
+	// event manager
+	evt_mngr EventMngr
+	// Top subwindows
+	subwindows []&SubWindow
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -107,6 +113,8 @@ pub:
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
+	on_files_droped       ClickFn
+	on_swipe              ClickFn
 	on_key_down           KeyFn
 	on_char               KeyFn
 	on_scroll             ScrollFn
@@ -129,6 +137,10 @@ pub:
 	lines int = 10
 	// message
 	native_message bool = true
+	// drag & drop
+	enable_dragndrop             bool = true
+	max_dropped_files            int  = 5
+	max_dropped_file_path_length int  = 2048
 }
 
 /*
@@ -191,6 +203,9 @@ fn on_event(e &gg.Event, mut window Window) {
 				time: time.now()
 			}
 			window_touch_tap_and_swipe(e, window.ui)
+		}
+		.files_droped {
+			window_files_droped(e, mut window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -276,8 +291,12 @@ fn on_event(e &gg.Event, mut window Window) {
 					}
 					time: time.now()
 				}
-				// println("touch move: ${window.touch.move} $window.touch.button")
-				window_touch_move(e, window.ui)
+				if e.num_touches > 1 {
+					window_touch_scroll(e, window.ui)
+				} else {
+					// println("touch move: ${window.touch.move} $window.touch.button")
+					window_touch_move(e, window.ui)
+				}
 			}
 		}
 		else {}
@@ -303,9 +322,15 @@ fn gg_init(mut window Window) {
 		window.add_message_dialog()
 	}
 	for mut child in window.children {
-		// println('init $child.type_name()')
+		// println('init $child.id')
 		window.register_child(*child)
 		child.init(window)
+	}
+	// then subwindows
+	for mut sw in window.subwindows {
+		// println('init $child.id')
+		window.register_child(*sw)
+		sw.init(window)
 	}
 	// refresh the layout
 	window.update_layout()
@@ -392,6 +417,8 @@ pub fn window(cfg WindowConfig) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
+		files_droped_fn: cfg.on_files_droped
+		swipe_fn: cfg.on_swipe
 		resizable: resizable
 		mode: cfg.mode
 		resize_fn: cfg.on_resize
@@ -407,13 +434,6 @@ pub fn window(cfg WindowConfig) &Window {
 
 	// register default color themes
 	window.register_default_color_themes()
-
-	mut font_path := ''
-	$if android {
-		font_path = 'fonts/RobotoMono-Regular.ttf'
-	} $else {
-		font_path = if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
-	}
 
 	gcontext := gg.new_context(
 		width: width
@@ -433,7 +453,7 @@ pub fn window(cfg WindowConfig) &Window {
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
-		font_path: font_path
+		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
 		cleanup_fn: gg_cleanup
@@ -443,6 +463,10 @@ pub fn window(cfg WindowConfig) &Window {
 		// window_state: ui
 		native_rendering: cfg.native_rendering
 		ui_mode: !cfg.immediate
+		// drag & drop
+		enable_dragndrop: cfg.enable_dragndrop
+		max_dropped_files: cfg.max_dropped_files
+		max_dropped_file_path_length: cfg.max_dropped_file_path_length
 	)
 	// wsize := gcontext.window.get_window_size()
 	// fsize := gcontext.window.get_framebuffer_size()
@@ -485,7 +509,7 @@ pub fn window(cfg WindowConfig) &Window {
 	return window
 }
 
-pub fn child_window(mut parent_window Window, cfg WindowConfig) &Window {
+pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 	// q := int(parent_window)
 	// println('child_window() parent=$q.hex()')
 	mut window := &Window{
@@ -593,7 +617,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_down(event gg.Event, mut ui UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / ui.gg.scale)
@@ -615,6 +639,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		}
 	}
 	*/
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
@@ -663,6 +688,45 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	}
 }
 
+fn window_files_droped(event gg.Event, mut ui UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .down
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
+		window.files_droped_fn(e, window)
+	}
+	// window.evt_mngr.point_inside_receivers(e, events.on_files_droped)
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_files_droped, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_files_droped, window, e)
+	}
+}
+
+fn window_touch_scroll(event gg.Event, ui &UI) {
+	mut window := ui.window
+	// println('title =$window.title')
+	s, m := window.touch.start, window.touch.move
+	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
+	e := ScrollEvent{
+		mouse_x: f64(m.pos.x)
+		mouse_y: f64(m.pos.y)
+		x: f64(adx) / 30.0
+		y: f64(ady) / 30.0
+	}
+	window.touch.start = window.touch.move
+	if window.scroll_fn != voidptr(0) {
+		window.scroll_fn(e, window)
+	}
+	window.eventbus.publish(events.on_scroll, window, e)
+}
+
 fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
 	window := ui.window
 	s, e := window.touch.start, window.touch.end
@@ -695,16 +759,33 @@ fn window_touch_tap(event gg.Event, ui &UI) {
 }
 
 fn window_touch_swipe(event gg.Event, ui &UI) {
-	// window := ui.window
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.swipe_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.swipe_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_swipe, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_swipe, window, e)
+	}
 }
 
 fn window_touch_down(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	e := MouseEvent{
 		action: .down
 		x: window.touch.start.pos.x
 		y: window.touch.start.pos.y
 	}
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
 	if window.mouse_down_fn != voidptr(0) {
 		window.mouse_down_fn(e, window)
 	}
@@ -880,6 +961,11 @@ fn frame(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
+
+	for mut sw in w.subwindows {
+		sw.draw()
+	}
+
 	draw_tooltip(w)
 
 	if w.on_draw != voidptr(0) {
@@ -1211,6 +1297,24 @@ fn (mut w Window) register_child(child Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
+	} else if mut child is SubWindow {
+		if child.id == '' {
+			mode := 'sw'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered $child.id')
+			}
+		}
+		if child.layout is Widget {
+			l := child.layout as Widget
+			w.register_child(l)
+		}
 	} else {
 		if child.id == '' {
 			mode := 'unknown'
@@ -1249,6 +1353,15 @@ pub fn (w Window) listbox(id string) &ListBox {
 		return widget
 	} else {
 		return listbox()
+	}
+}
+
+pub fn (w Window) dropdown(id string) &Dropdown {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Dropdown {
+		return widget
+	} else {
+		return dropdown()
 	}
 }
 
@@ -1325,6 +1438,15 @@ pub fn (w Window) rectangle(id string) &Rectangle {
 	}
 }
 
+pub fn (w Window) subwindow(id string) &SubWindow {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is SubWindow {
+		return widget
+	} else {
+		return subwindow()
+	}
+}
+
 // extract child widget in the children tree by indexes
 pub fn (w &Window) child(from ...int) Widget {
 	if from.len > 0 {
@@ -1389,7 +1511,9 @@ pub fn (w &Window) update_layout() {
 	// update root_layout
 	mut s := w.root_layout
 	if mut s is Stack {
-		s.update_layout()
+		if s.id != empty_stack.id {
+			s.update_layout()
+		}
 	}
 }
 

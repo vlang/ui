@@ -9,29 +9,30 @@ import gg
 [heap]
 pub struct Rectangle {
 pub mut:
-	id       string
-	color    gx.Color
-	text     string
-	offset_x int
-	offset_y int
+	id        string
+	color     gx.Color
+	text      string
+	offset_x  int
+	offset_y  int
+	height    int
+	width     int
+	ui        &UI
+	parent    Layout = empty_stack
+	text_cfg  gx.TextCfg
+	text_size f64
 	// component state for composable widget
 	component voidptr
 mut:
-	parent       Layout = empty_stack
 	x            int
 	y            int
 	z_index      int
-	height       int
-	width        int
 	radius       int
 	border       bool
 	border_color gx.Color
-	ui           &UI
 	hidden       bool
-	text_cfg     gx.TextCfg
-	text_size    f64
 }
 
+[params]
 pub struct RectangleConfig {
 	id           string
 	text         string

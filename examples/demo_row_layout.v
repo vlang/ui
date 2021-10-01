@@ -19,8 +19,8 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.sizes = {
-		'100':            100.
-		'20':             20.
+		'100':            100.0
+		'20':             20.0
 		'.3':             .3
 		'ui.stretch':     ui.stretch
 		'1.5*ui.stretch': 1.5 * ui.stretch
@@ -204,8 +204,7 @@ fn main() {
 								text: 'Button 2'
 							),
 						]
-					),
-				]
+					)]
 			),
 		]
 	)

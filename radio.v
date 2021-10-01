@@ -56,6 +56,7 @@ pub mut:
 	on_click RadioClickFn
 }
 
+[params]
 pub struct RadioConfig {
 	id       string
 	on_click RadioClickFn

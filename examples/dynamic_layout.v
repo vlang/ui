@@ -52,8 +52,7 @@ fn main() {
 						children: [
 							ui.button(text: 'Button'),
 						]
-					),
-				]
+					)]
 			),
 		]
 	)
