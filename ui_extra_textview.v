@@ -152,6 +152,10 @@ pub fn (mut tv TextView) visible_lines() {
 		j2 = tv.tb.height / tv.line_height
 	}
 	jmax := tv.tlv.lines.len - 1
+	// println("j1 $j1 $jmax")
+	if j1 > jmax {
+		j1 = jmax
+	}
 	// println("j2 $j2 $jmax")
 	if j2 > jmax {
 		j2 = jmax
@@ -751,7 +755,7 @@ fn (mut tv TextView) word_wrap_text() {
 	mut word_wrapped_lines := []string{}
 	// println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
 	for j, line in lines {
-		ww_lines := if j < tv.tlv.from || j > tv.tlv.to { [line] } else { tv.word_wrap_line(line) }
+		ww_lines := tv.word_wrap_line(line)
 		word_wrapped_lines << ww_lines
 	}
 	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
