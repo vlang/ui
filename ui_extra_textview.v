@@ -754,7 +754,7 @@ fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
 	mut word_wrapped_lines := []string{}
 	// println('word_wrap_text: $tv.tlv.from -> $tv.tlv.to')
-	for j, line in lines {
+	for line in lines {
 		ww_lines := tv.word_wrap_line(line)
 		word_wrapped_lines << ww_lines
 	}
