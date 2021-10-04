@@ -22,6 +22,10 @@ fn main() {
 		height: 600
 		title: 'V UI: Scrollview'
 		mode: .resizable
+		// on_init: fn(win &ui.Window) {
+		// 	mut tb := win.textbox('info')
+		// 	tb.tv.test_textwidth("abcdefghijklmnrputwxyz &éèdzefzefzef")
+		// }
 		children: [
 			ui.row(
 				widths: ui.stretch
