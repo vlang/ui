@@ -130,7 +130,7 @@ pub fn (w DrawTextWidget) text_width(text string) int {
 pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 	ctx := w.ui.gg
 	adv := C.fonsTextBounds(ctx.ft.fons, 0, 0, &char(text.str), 0, 0)
-	return  adv / ctx.scale
+	return adv / ctx.scale
 }
 
 pub fn (w DrawTextWidget) text_height(text string) int {

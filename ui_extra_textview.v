@@ -34,18 +34,18 @@ In the process to make lines only dealing with visible lines:
 */
 struct TextLinesView {
 pub mut:
-	lines        []string
-	from_i       []int
-	to_i         []int
-	from_j       int
-	to_j         int
+	lines                 []string
+	from_i                []int
+	to_i                  []int
+	from_j                int
+	to_j                  int
 	refresh_visible_lines bool
-	cursor_pos_i int
-	cursor_pos_j int
-	sel_start_j  int
-	sel_start_i  int
-	sel_end_i    int
-	sel_end_j    int
+	cursor_pos_i          int
+	cursor_pos_j          int
+	sel_start_j           int
+	sel_start_i           int
+	sel_end_i             int
+	sel_end_j             int
 }
 
 pub fn (mut tv TextView) init(tb &TextBox) {
@@ -181,7 +181,8 @@ fn (mut tv TextView) update_all_visible_lines() {
 		tv.tlv.to_i.clear()
 		for j in tv.tlv.from_j .. tv.tlv.to_j + 1 {
 			tv.tlv.from_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x)
-			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x + tv.tb.width)
+			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x +
+				tv.tb.width)
 		}
 		// refresh_visible_lines done
 		tv.tlv.refresh_visible_lines = false
@@ -238,15 +239,16 @@ fn (mut tv TextView) draw_textlines() {
 }
 
 pub fn (mut tv TextView) draw_visible_line(i int, y int, text string) {
-	if i == tv.tlv.from_i.len { 
+	if i == tv.tlv.from_i.len {
 		// println("draw_visible_line $i $tv.tlv.from_i.len")
 		tv.refresh_visible_lines()
-		tv.visible_lines() 
+		tv.visible_lines()
 	}
 	imin, imax := tv.tlv.from_i[i], tv.tlv.to_i[i]
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_text(tv.tb.x + textbox_padding_x + tv.text_width(ustr[0 .. imin].string()), y, ustr[imin .. imax].string())
+	tv.draw_text(tv.tb.x + textbox_padding_x + tv.text_width(ustr[0..imin].string()),
+		y, ustr[imin..imax].string())
 }
 
 fn (mut tv TextView) draw_selection() {
@@ -933,8 +935,8 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
-		width_cur = tv.text_width_additive(ustr[i .. (i + 1)].string())
-		width2 := if i < ustr.len { width + width_cur} else { width }
+		width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		width2 := if i < ustr.len { width + width_cur } else { width }
 		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
 			return i
 		}
@@ -943,7 +945,8 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	return ustr.len
 }
 
-/* THIS OLD VERSION LASTS VERY LONG
+/*
+THIS OLD VERSION LASTS VERY LONG
 pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
@@ -1006,9 +1009,9 @@ pub fn (tv &TextView) test_textwidth(text string) {
 	ustr := text.runes()
 	mut width := 0.0
 	for i in 0 .. ustr.len {
-		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i .. (i + 1)].string())
+		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i..(i + 1)].string())
 		width += tmp
-		tmp2, _ := tv.text_size(ustr[.. i + 1].string())
-		println("$i) ${ustr[i .. (i + 1)].string()} ($tmp) ${ustr[.. i + 1].string()} ${width + 1.0} == ${tmp2}")
+		tmp2, _ := tv.text_size(ustr[..i + 1].string())
+		println('$i) ${ustr[i..(i + 1)].string()} ($tmp) ${ustr[..i + 1].string()} ${width + 1.0} == $tmp2')
 	}
-} 
+}
