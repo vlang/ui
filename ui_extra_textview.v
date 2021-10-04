@@ -85,6 +85,7 @@ pub fn (mut tv TextView) is_wordwrap() bool {
 pub fn (mut tv TextView) set_wordwrap(state bool) {
 	tv.tb.is_wordwrap = state
 	tv.sync_text_pos()
+	tv.refresh_visible_lines()
 	tv.update_lines()
 	tv.sync_text_lines()
 }
