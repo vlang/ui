@@ -567,12 +567,12 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
 		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
 		if sv.active_x {
-			sv.offset_x += int(e.x * ui.scrollview_delta_mouse)
+			sv.offset_x -= int(e.x * ui.scrollview_delta_mouse)
 			sv.change_value(.btn_x)
 		}
 
 		if sv.active_y {
-			sv.offset_y += int(e.y * ui.scrollview_delta_mouse)
+			sv.offset_y -= int(e.y * ui.scrollview_delta_mouse)
 			sv.change_value(.btn_y)
 		}
 	}
