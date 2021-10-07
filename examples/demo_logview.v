@@ -43,7 +43,7 @@ fn wait_complete(mut app App, mut tb ui.TextBox) {
 	for task in 0 .. 10000 {
 		app.log += 'processing ... task $task complete\n'
 		time.sleep(500 * time.millisecond)
-		tb.tv.do_logview(ui.LogViewConfig {})
+		tb.tv.do_logview(ui.LogViewConfig{})
 	}
 }
 
