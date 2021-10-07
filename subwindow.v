@@ -252,7 +252,7 @@ fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (s &SubWindow) resize(w int, h int) {
+fn (mut s SubWindow) resize(w int, h int) {
 	s.layout.resize(w, h)
 }
 
