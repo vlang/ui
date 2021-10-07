@@ -928,6 +928,7 @@ pub fn (mut tb TextBox) set_text(s string) {
 		if tb.read_only {
 			tb.tv.cancel_selection()
 		}
+		scrollview_reset(mut tb)
 	}
 }
 
