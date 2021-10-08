@@ -921,6 +921,8 @@ pub fn (mut tb TextBox) hide() {
 
 pub fn (mut tb TextBox) set_text(s string) {
 	if tb.is_multiline {
+		active_x := tb.scrollview.active_x
+		active_y := tb.scrollview.active_y
 		unsafe {
 			*tb.text = s
 		}
@@ -928,7 +930,9 @@ pub fn (mut tb TextBox) set_text(s string) {
 		if tb.read_only {
 			tb.tv.cancel_selection()
 		}
-		scrollview_reset(mut tb)
+		if (active_x && !tb.scrollview.active_x) || (active_y && !tb.scrollview.active_y) {
+			scrollview_reset(mut tb)
+		}
 	}
 }
 
