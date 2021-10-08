@@ -201,25 +201,11 @@ pub fn scrollview_reset<T>(mut w T) {
 	svx, svy := sv.orig_xy()
 	if !sv.active_x {
 		sv.offset_x = 0
-		w.x = svx - sv.offset_x
+		w.x = svx
 	}
 	if !sv.active_y {
 		sv.offset_y = 0
-		w.y = svy - sv.offset_y
-	}
-	w.set_children_pos()
-}
-
-pub fn scrollview_reinit<T>(mut w T) {
-	mut sv := w.scrollview
-	svx, svy := sv.orig_xy()
-	if sv.active_x {
-		w.x = svx - sv.offset_x
-		sv.offset_x = 0
-	}
-	if sv.active_y {
-		w.y = svy - sv.offset_y
-		sv.offset_y = 0
+		w.y = svy
 	}
 	w.set_children_pos()
 }
