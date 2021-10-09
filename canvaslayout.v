@@ -358,11 +358,11 @@ pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.set_children_pos()
 }
 
-fn (mut c CanvasLayout) adj_size() (int, int) {
+fn (c CanvasLayout) adj_size() (int, int) {
 	return c.adj_width, c.adj_height
 }
 
-pub fn (mut c CanvasLayout) size() (int, int) {
+pub fn (c CanvasLayout) size() (int, int) {
 	return c.width, c.height
 }
 

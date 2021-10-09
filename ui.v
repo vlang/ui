@@ -77,9 +77,10 @@ pub interface Layout {
 	get_state() voidptr
 	size() (int, int)
 	get_subscriber() &eventbus.Subscriber
+	get_children() []Widget
+mut:
 	draw()
 	resize(w int, h int)
-	get_children() []Widget
 	update_layout()
 }
 
