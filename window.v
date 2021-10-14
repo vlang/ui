@@ -98,6 +98,8 @@ pub mut:
 	immediate          bool
 	children_immediate []Widget
 	needs_refresh      bool = true
+	// ui settings
+	settings SettingsUI
 }
 
 pub struct WindowConfig {
