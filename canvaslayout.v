@@ -342,7 +342,7 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	c.adj_height = h
 }
 
-fn (c &CanvasLayout) set_children_pos() {
+fn (mut c CanvasLayout) set_children_pos() {
 	for i, mut child in c.children {
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
 		if mut child is Stack {
