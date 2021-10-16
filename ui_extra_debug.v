@@ -30,7 +30,7 @@ fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
 }
 
 // Debug function
-fn (s &Stack) debug_show_cache(depth int, txt string) {
+fn (mut s Stack) debug_show_cache(depth int, txt string) {
 	if depth == 0 {
 		println('Show cache $s.id =>')
 	}
@@ -71,7 +71,7 @@ fn (s &Stack) debug_show_size(t string) {
 	println(' ($s.width, $s.height)')
 }
 
-fn (s &Stack) debug_show_sizes(t string) {
+fn (mut s Stack) debug_show_sizes(t string) {
 	parent := s.parent
 	sw, sh := s.size()
 	print('${t}Stack ${typeof(s).name}')

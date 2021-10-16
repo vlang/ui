@@ -315,7 +315,7 @@ pub fn (mut w Window) append_tooltip(child Widget, tooltip TooltipMessage) {
 	w.tooltips << tooltip
 }
 
-pub fn (w &Window) update_tooltip(e &MouseMoveEvent) {
+pub fn (mut w Window) update_tooltip(e &MouseMoveEvent) {
 	for i, mut child in w.widgets_tooltip {
 		id := child.id()
 		if !child.hidden {
