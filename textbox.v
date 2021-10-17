@@ -440,7 +440,8 @@ pub fn (mut tb TextBox) delete_selection() {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	$if tb_keydown ? {
-		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
+		println('tb_keydown id:$tb.id  -> hidden:$tb.hidden focused:$tb.is_focused')
+		println(e)
 	}
 	if tb.hidden {
 		return
