@@ -20,7 +20,7 @@ enum ButtonState {
 	pressed = 2
 }
 
-type ButtonClickFn = fn (voidptr, &Button) // userptr, btn
+type ButtonClickFn = fn (voidptr, &Button) // state, btn
 
 type ButtonKeyDownFn = fn (voidptr, &Button, u32)
 
