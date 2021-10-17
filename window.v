@@ -530,10 +530,13 @@ pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 		children: cfg.children
 		click_fn: cfg.on_click
 	}
+	window.widgets = &parent_window.widgets
+	window.widgets_counts = &parent_window.widgets_counts
 	parent_window.child_window = window
 	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
+		window.register_child(*child)
 		child.init(parent_window)
 	}
 	// window.set_cursor()
@@ -876,6 +879,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 	}
 	if e.key == .escape && window.child_window != 0 {
 		// Close the child window on Escape
+		for mut child in window.child_window.children {
+			// println('cleanup ${child.id()}')
+			child.cleanup()
+		}
 		window.child_window = &Window(0)
 	}
 	if window.key_down_fn != KeyFn(0) {
