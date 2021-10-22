@@ -213,8 +213,10 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_char, tb_char, tb)
 	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
 	subscriber.subscribe_method(events.on_mouse_down, tb_mouse_down, tb)
+	subscriber.subscribe_method(events.on_touch_down, tb_mouse_down, tb)
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
+	subscriber.subscribe_method(events.on_touch_up, tb_mouse_up, tb)
 	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down])
 }
 
@@ -226,8 +228,10 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_char, tb)
 	// subscriber.unsubscribe_method(events.on_key_up, tb)
 	subscriber.unsubscribe_method(events.on_mouse_down, tb)
+	subscriber.unsubscribe_method(events.on_touch_down, tb)
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
+	subscriber.unsubscribe_method(events.on_touch_up, tb)
 	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down])
 	unsafe { tb.free() }
 }
