@@ -17,7 +17,7 @@ fn main() {
 		height: 600
 		title: 'V UI Settings'
 		state: app
-		mode: .max_size
+		mode: .resizable
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
 		//}

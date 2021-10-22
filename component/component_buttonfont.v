@@ -56,8 +56,8 @@ fn button_font_click(a voidptr, mut b ui.Button) {
 	fb := component_button_font(b)
 	// println('fb_click $fb.dtw.id')
 	fontchooser_connect(b.ui.window, fb.dtw)
-	fontchooser_visible(b.ui.window)
-	mut s := b.ui.window.subwindow(fontchooser_id)
+	fontchooser_subwindow_visible(b.ui.window)
+	mut s := b.ui.window.subwindow(fontchooser_subwindow_id)
 	if s.x == 0 && s.y == 0 {
 		w, h := b.size()
 		s.set_pos(b.x + w / 2, b.y + h / 2)
