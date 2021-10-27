@@ -219,7 +219,7 @@ pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
 	}
 }
 
-pub fn (mut s SubWindow) size() (int, int) {
+pub fn (s SubWindow) size() (int, int) {
 	w, mut h := s.layout.size()
 	if s.decoration {
 		h += ui.sw_decoration
@@ -252,7 +252,7 @@ fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (s &SubWindow) resize(w int, h int) {
+fn (mut s SubWindow) resize(w int, h int) {
 	s.layout.resize(w, h)
 }
 

@@ -30,16 +30,15 @@ pub type WindowFn = fn (window &Window)
 pub struct Window {
 pub mut:
 	// pub:
-	ui &UI = voidptr(0)
-	// glfw_obj      &glfw.Window = voidptr(0)
-	children          []Widget
-	child_window      &Window = voidptr(0)
-	parent_window     &Window = voidptr(0)
-	has_textbox       bool // for initial focus
-	tab_index         int
-	just_tabbed       bool
-	state             voidptr
-	draw_fn           DrawFn
+	ui            &UI = voidptr(0)
+	children      []Widget
+	child_window  &Window = voidptr(0)
+	parent_window &Window = voidptr(0)
+	has_textbox   bool // for initial focus
+	tab_index     int
+	just_tabbed   bool
+	state         voidptr
+	// draw_fn           DrawFn
 	title             string
 	mx                f64
 	my                f64
@@ -98,17 +97,19 @@ pub mut:
 	immediate          bool
 	children_immediate []Widget
 	needs_refresh      bool = true
+	// ui settings
+	settings SettingsUI
 }
 
 pub struct WindowConfig {
 pub:
-	width                 int
-	height                int
-	font_path             string
-	title                 string
-	always_on_top         bool
-	state                 voidptr
-	draw_fn               DrawFn
+	width         int
+	height        int
+	font_path     string
+	title         string
+	always_on_top bool
+	state         voidptr
+	// draw_fn               DrawFn
 	bg_color              gx.Color = ui.default_window_color
 	on_click              ClickFn
 	on_mouse_down         ClickFn
@@ -309,6 +310,7 @@ fn on_event(e &gg.Event, mut window Window) {
 }
 
 fn gg_init(mut window Window) {
+	window.load_settings()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
 	w := int(f32(window_size.width) / window.dpi_scale)
@@ -400,7 +402,7 @@ pub fn window(cfg WindowConfig) &Window {
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
-		draw_fn: cfg.draw_fn
+		// draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
 		width: width
@@ -511,14 +513,16 @@ pub fn window(cfg WindowConfig) &Window {
 
 pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 	// q := int(parent_window)
-	// println('child_window() parent=$q.hex()')
+	// println('child_window() q=$q.hex() parent={parent_window:p} ${cfg.on_draw:p}')
+
 	mut window := &Window{
 		parent_window: parent_window
 		// state: parent_window.state
 		state: cfg.state
 		ui: parent_window.ui
 		// glfw_obj: parent_window.ui.gg.window
-		draw_fn: cfg.draw_fn
+		// draw_fn: cfg.draw_fn
+		on_draw: cfg.on_draw
 		title: cfg.title
 		bg_color: cfg.bg_color
 		width: cfg.width
@@ -526,10 +530,13 @@ pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 		children: cfg.children
 		click_fn: cfg.on_click
 	}
+	window.widgets = &parent_window.widgets
+	window.widgets_counts = &parent_window.widgets_counts
 	parent_window.child_window = window
 	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
+		window.register_child(*child)
 		child.init(parent_window)
 	}
 	// window.set_cursor()
@@ -872,6 +879,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 	}
 	if e.key == .escape && window.child_window != 0 {
 		// Close the child window on Escape
+		for mut child in window.child_window.children {
+			// println('cleanup ${child.id()}')
+			child.cleanup()
+		}
 		window.child_window = &Window(0)
 	}
 	if window.key_down_fn != KeyFn(0) {
@@ -928,8 +939,10 @@ pub fn (mut w Window) refresh() {
 pub fn (w &Window) onmousedown(cb voidptr) {
 }
 
+/*
 pub fn (w &Window) onkeydown(cb voidptr) {
 }
+*/
 
 pub fn (mut w Window) on_click(func ClickFn) {
 	w.click_fn = func
@@ -971,6 +984,12 @@ fn frame(mut w Window) {
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
 	}
+	/*
+	if w.child_window.on_draw != voidptr(0) {
+		println('have child on_draw()')
+		w.child_window.on_draw(w.child_window)
+	}
+	*/
 
 	w.ui.gg.end()
 }
@@ -1074,7 +1093,7 @@ pub fn (w &Window) size() (int, int) {
 	return w.width, w.height
 }
 
-fn (mut window Window) resize(w int, h int) {
+pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
 	window.ui.gg.resize(w, h)
 	for mut child in window.children {

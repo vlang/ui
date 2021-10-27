@@ -213,8 +213,10 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_char, tb_char, tb)
 	// subscriber.subscribe_method(events.on_key_up, tb_key_up, tb)
 	subscriber.subscribe_method(events.on_mouse_down, tb_mouse_down, tb)
+	subscriber.subscribe_method(events.on_touch_down, tb_mouse_down, tb)
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
+	subscriber.subscribe_method(events.on_touch_up, tb_mouse_up, tb)
 	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down])
 }
 
@@ -226,8 +228,10 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_char, tb)
 	// subscriber.unsubscribe_method(events.on_key_up, tb)
 	subscriber.unsubscribe_method(events.on_mouse_down, tb)
+	subscriber.unsubscribe_method(events.on_touch_down, tb)
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
+	subscriber.unsubscribe_method(events.on_touch_up, tb)
 	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down])
 	unsafe { tb.free() }
 }
@@ -440,7 +444,8 @@ pub fn (mut tb TextBox) delete_selection() {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	$if tb_keydown ? {
-		println('tb_keydown: $tb.id  -> $tb.hidden $tb.is_focused')
+		println('tb_keydown id:$tb.id  -> hidden:$tb.hidden focused:$tb.is_focused')
+		println(e)
 	}
 	if tb.hidden {
 		return
@@ -921,12 +926,17 @@ pub fn (mut tb TextBox) hide() {
 
 pub fn (mut tb TextBox) set_text(s string) {
 	if tb.is_multiline {
+		active_x := tb.scrollview.active_x
+		active_y := tb.scrollview.active_y
 		unsafe {
 			*tb.text = s
 		}
 		tb.tv.update_lines()
 		if tb.read_only {
 			tb.tv.cancel_selection()
+		}
+		if (active_x && !tb.scrollview.active_x) || (active_y && !tb.scrollview.active_y) {
+			scrollview_reset(mut tb)
 		}
 	}
 }

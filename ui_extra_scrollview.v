@@ -16,7 +16,7 @@ const (
 	scrollbar_button_color         = gx.rgb(150, 150, 150)
 	scrollbar_focused_button_color = gx.rgb(100, 100, 100)
 	scrollview_delta_key           = 5
-	scrollview_delta_mouse         = 10
+	// scrollview_delta_mouse         = 10
 	null_scrollview                = &ScrollView(0)
 )
 
@@ -87,23 +87,6 @@ pub fn scrollview(w Widget) (bool, &ScrollView) {
 	}
 	return false, &ScrollView(0)
 }
-
-// pub fn scrollview(w Widget) ?&ScrollView {
-// 	if w is Stack {
-// 		if w.has_scrollview {
-// 			return w.scrollview
-// 		}
-// 	} else if w is CanvasLayout {
-// 		if w.has_scrollview {
-// 			return w.scrollview
-// 		}
-// 	} else if w is ListBox {
-// 		if w.has_scrollview {
-// 			return w.scrollview
-// 		}
-// 	}
-// 	return none
-// }
 
 pub fn has_scrollview(w ScrollableWidget) bool {
 	return w.has_scrollview
@@ -218,11 +201,11 @@ pub fn scrollview_reset<T>(mut w T) {
 	svx, svy := sv.orig_xy()
 	if !sv.active_x {
 		sv.offset_x = 0
-		w.x = svx - sv.offset_x
+		w.x = svx
 	}
 	if !sv.active_y {
 		sv.offset_y = 0
-		w.y = svy - sv.offset_y
+		w.y = svy
 	}
 	w.set_children_pos()
 }
@@ -269,6 +252,8 @@ pub mut:
 	// scissor
 	scissor_rect gg.Rect
 	parent       Layout
+	// delta mouse
+	delta_mouse int = 10
 }
 
 fn (mut sv ScrollView) init(parent Layout) {
@@ -567,12 +552,12 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
 		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
 		if sv.active_x {
-			sv.offset_x += int(e.x * ui.scrollview_delta_mouse)
+			sv.offset_x -= int(e.x * sv.delta_mouse)
 			sv.change_value(.btn_x)
 		}
 
 		if sv.active_y {
-			sv.offset_y += int(e.y * ui.scrollview_delta_mouse)
+			sv.offset_y -= int(e.y * sv.delta_mouse)
 			sv.change_value(.btn_y)
 		}
 	}
