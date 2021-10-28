@@ -28,7 +28,7 @@ fn main() {
 				margin_: 5
 				widths: ui.stretch
 				children: [
-					ui.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
+					uic.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
 					ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
 					ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
 				]
