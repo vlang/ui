@@ -31,6 +31,7 @@ fn main() {
 }
 
 fn btn_click(mut app App, btn &ui.Button) {
+	println('create child_window')
 	app.window.child_window(
 		children: [
 			ui.column(
@@ -41,6 +42,7 @@ fn btn_click(mut app App, btn &ui.Button) {
 			),
 		]
 	)
+	println('created child_window')
 }
 
 fn btn_greet_click(mut app App, btn &ui.Button) {

@@ -83,10 +83,18 @@ fn (mut em EventMngr) sorted_receivers(evt_type string) {
 
 pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 	pi := w.evt_mngr.point_inside[evt_type]
-	$if evt_mngr ? {
-		println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)}')
+	if w.child_window != 0 {
+		pi2 := pi.filter(Layout(w.child_window).has_child_id(it.id))
+		$if evt_mngr ? {
+			println('is_top_widget $widget.id ? ${pi2.len >= 1 && pi2.first().id == widget.id}  with pi2 = ${pi2.map(it.id)}')
+		}
+		return pi2.len >= 1 && pi2.first().id == widget.id
+	} else {
+		$if evt_mngr ? {
+			println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)}')
+		}
+		return pi.len >= 1 && pi.first().id == widget.id
 	}
-	return pi.len >= 1 && pi.first().id == widget.id
 }
 
 pub fn (w Window) point_inside_receivers(evt_type string) []string {

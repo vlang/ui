@@ -533,10 +533,11 @@ pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
 	window.widgets = &parent_window.widgets
 	window.widgets_counts = &parent_window.widgets_counts
 	parent_window.child_window = window
+	window.evt_mngr = &parent_window.evt_mngr
 	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
-		window.register_child(*child)
+		parent_window.register_child(*child)
 		child.init(parent_window)
 	}
 	// window.set_cursor()
