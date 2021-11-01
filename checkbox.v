@@ -49,7 +49,7 @@ pub mut:
 }
 
 [params]
-pub struct CheckBoxConfig {
+pub struct CheckBoxParams {
 	id               string
 	x                int
 	y                int
@@ -63,7 +63,7 @@ pub struct CheckBoxConfig {
 	text_size        f64
 }
 
-pub fn checkbox(c CheckBoxConfig) &CheckBox {
+pub fn checkbox(c CheckBoxParams) &CheckBox {
 	mut cb := &CheckBox{
 		id: c.id
 		height: ui.check_mark_size + 5 // TODO

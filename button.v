@@ -69,7 +69,7 @@ pub mut:
 }
 
 [params]
-pub struct ButtonConfig {
+pub struct ButtonParams {
 	id           string
 	text         string
 	icon_path    string
@@ -90,7 +90,7 @@ pub struct ButtonConfig {
 	padding      f64
 }
 
-pub fn button(c ButtonConfig) &Button {
+pub fn button(c ButtonParams) &Button {
 	mut b := &Button{
 		id: c.id
 		width_: c.width

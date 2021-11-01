@@ -22,7 +22,8 @@ pub mut:
 	hidden      bool
 }
 
-pub struct GridConfig {
+[params]
+pub struct GridParams {
 	header      []string
 	body        [][]string
 	height      int = 200
@@ -31,7 +32,7 @@ pub struct GridConfig {
 	cell_height f32 = 25
 }
 
-pub fn grid(c GridConfig) &Grid {
+pub fn grid(c GridParams) &Grid {
 	gv := &Grid{
 		width: c.width
 		height: c.height

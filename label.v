@@ -29,7 +29,7 @@ pub mut:
 }
 
 [params]
-pub struct LabelConfig {
+pub struct LabelParams {
 	id        string
 	width     int
 	height    int
@@ -39,7 +39,7 @@ pub struct LabelConfig {
 	text_size f64
 }
 
-pub fn label(c LabelConfig) &Label {
+pub fn label(c LabelParams) &Label {
 	lbl := &Label{
 		id: c.id
 		text: c.text

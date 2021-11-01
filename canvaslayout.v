@@ -67,7 +67,7 @@ mut:
 }
 
 [params]
-pub struct CanvasLayoutConfig {
+pub struct CanvasLayoutParams {
 	id            string
 	width         int
 	height        int
@@ -91,7 +91,7 @@ pub struct CanvasLayoutConfig {
 	children     []Widget
 }
 
-pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
+pub fn canvas_layout(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := canvas_plus(c)
 	canvas.children = c.children
 	// Saves the original position of children
@@ -104,7 +104,7 @@ pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
 
 // canvas_plus returns a canvas_layout but without layout
 // it can be viewed as a extended canvas
-pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
+pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := &CanvasLayout{
 		id: c.id
 		width: c.width

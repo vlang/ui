@@ -57,7 +57,7 @@ pub mut:
 }
 
 [params]
-pub struct RadioConfig {
+pub struct RadioParams {
 	id       string
 	on_click RadioClickFn
 	values   []string
@@ -71,7 +71,7 @@ pub struct RadioConfig {
 	compact    bool
 }
 
-pub fn radio(c RadioConfig) &Radio {
+pub fn radio(c RadioParams) &Radio {
 	mut r := &Radio{
 		id: c.id
 		height: 20

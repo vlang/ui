@@ -53,7 +53,7 @@ pub fn (mut w DrawTextWidget) set_text_style(ts TextStyle) {
 	w.text_styles.current = ts2
 }
 
-pub fn (mut w DrawTextWidget) update_text_style(ts TextStyleConfig) {
+pub fn (mut w DrawTextWidget) update_text_style(ts TextStyleParams) {
 	mut ts_ := if ts.id == ui.no_string {
 		&(w.text_styles.current)
 	} else if ts.id in w.text_styles.hash {
@@ -156,7 +156,7 @@ pub mut:
 }
 
 [params]
-pub struct TextStyleConfig {
+pub struct TextStyleParams {
 	// text style identifier
 	id string = ui.no_string
 	// fields

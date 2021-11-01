@@ -11,7 +11,7 @@ pub mut:
 }
 
 [params]
-pub struct ButtonFontConfig {
+pub struct ButtonFontParams {
 	id           string
 	dtw          ui.DrawTextWidget = ui.canvas_plus()
 	text         string
@@ -25,7 +25,7 @@ pub struct ButtonFontConfig {
 	bg_color     &gx.Color = 0
 }
 
-pub fn button_font(c ButtonFontConfig) &ui.Button {
+pub fn button_font(c ButtonFontParams) &ui.Button {
 	b := &ui.Button{
 		id: c.id
 		text: c.text

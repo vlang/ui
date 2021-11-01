@@ -37,7 +37,7 @@ pub mut:
 }
 
 [params]
-pub struct SubWindowConfig {
+pub struct SubWindowParams {
 	id         string
 	x          int
 	y          int
@@ -47,7 +47,7 @@ pub struct SubWindowConfig {
 	decoration bool   = true
 }
 
-pub fn subwindow(c SubWindowConfig) &SubWindow {
+pub fn subwindow(c SubWindowParams) &SubWindow {
 	mut s := &SubWindow{
 		id: c.id
 		x: c.x

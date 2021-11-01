@@ -18,13 +18,13 @@ pub mut:
 }
 
 [params]
-pub struct FontChooserConfig {
+pub struct FontChooserParams {
 	id         string = component.fontchooser_lb_id
 	draw_lines bool   = true
 	dtw        ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
 }
 
-pub fn fontchooser(c FontChooserConfig) &ui.Stack {
+pub fn fontchooser(c FontChooserParams) &ui.Stack {
 	mut lb := ui.listbox(
 		id: c.id
 		scrollview: true

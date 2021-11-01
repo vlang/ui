@@ -107,7 +107,7 @@ pub enum TextBoxMode {
 }
 
 [params]
-pub struct TextBoxConfig {
+pub struct TextBoxParams {
 	id               string
 	width            int
 	height           int = 22
@@ -145,7 +145,7 @@ pub struct TextBoxConfig {
 	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-pub fn textbox(c TextBoxConfig) &TextBox {
+pub fn textbox(c TextBoxParams) &TextBox {
 	mut tb := &TextBox{
 		id: c.id
 		height: c.height

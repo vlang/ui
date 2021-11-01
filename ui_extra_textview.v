@@ -735,11 +735,11 @@ pub fn (mut tv TextView) do_zoom_up() {
 }
 
 [params]
-pub struct LogViewConfig {
+pub struct LogViewParams {
 	nb_lines int = 5
 }
 
-pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	if !tv.tb.has_scrollview {
 		println("Warning: use of task do_logview requires textbox to have 'scrollview: true'")
 		return
@@ -994,7 +994,7 @@ fn (mut tv TextView) update_line_height() {
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
-fn (tv &TextView) update_text_style(ts TextStyleConfig) {
+fn (tv &TextView) update_text_style(ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
 	dtw.update_text_style(ts)
 }

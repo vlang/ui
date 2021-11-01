@@ -48,7 +48,8 @@ pub mut:
 	component voidptr
 }
 
-pub struct SliderConfig {
+[params]
+pub struct SliderParams {
 	id                   string
 	width                int
 	height               int
@@ -65,7 +66,7 @@ pub struct SliderConfig {
 	entering             bool
 }
 
-pub fn slider(c SliderConfig) &Slider {
+pub fn slider(c SliderParams) &Slider {
 	mut s := &Slider{
 		id: c.id
 		height: c.height

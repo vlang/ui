@@ -31,7 +31,7 @@ pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color) {
 }
 
 [params]
-pub struct ButtonColorConfig {
+pub struct ButtonColorParams {
 	id           string
 	text         string
 	height       int
@@ -44,7 +44,7 @@ pub struct ButtonColorConfig {
 	bg_color     &gx.Color
 }
 
-pub fn button_color(c ButtonColorConfig) &ui.Button {
+pub fn button_color(c ButtonColorParams) &ui.Button {
 	b := &ui.Button{
 		id: c.id
 		width_: c.width

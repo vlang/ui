@@ -66,7 +66,7 @@ mut:
 }
 
 [params]
-pub struct ListBoxConfig {
+pub struct ListBoxParams {
 mut:
 	x             int
 	y             int
@@ -92,7 +92,7 @@ mut:
 }
 
 // Keys of the items map are IDs of the elements, values are text
-pub fn listbox(c ListBoxConfig) &ListBox {
+pub fn listbox(c ListBoxParams) &ListBox {
 	mut list := &ListBox{
 		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
 		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }

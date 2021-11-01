@@ -40,7 +40,7 @@ pub mut:
 }
 
 [params]
-pub struct DropdownConfig {
+pub struct DropdownParams {
 	id                   string
 	def_text             string
 	x                    int
@@ -59,7 +59,7 @@ pub:
 	text string
 }
 
-pub fn dropdown(c DropdownConfig) &Dropdown {
+pub fn dropdown(c DropdownParams) &Dropdown {
 	mut dd := &Dropdown{
 		id: c.id
 		width: c.width

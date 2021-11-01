@@ -33,7 +33,8 @@ pub mut:
 	component voidptr
 }
 
-pub struct ProgressBarConfig {
+[params]
+pub struct ProgressBarParams {
 	id      string
 	width   int
 	height  int = 16
@@ -43,7 +44,7 @@ pub struct ProgressBarConfig {
 	val     int
 }
 
-pub fn progressbar(c ProgressBarConfig) &ProgressBar {
+pub fn progressbar(c ProgressBarParams) &ProgressBar {
 	mut pb := &ProgressBar{
 		id: c.id
 		height: c.height
