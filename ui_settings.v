@@ -5,7 +5,7 @@ import json
 import gx
 
 const (
-	settings_path = os.join_path(os.getenv('HOME'), '.vui', 'settings.json')
+	settings_path = os.join_path(os.home_dir(), '.vui', 'settings.json')
 )
 
 // Structure to save UI configuration
