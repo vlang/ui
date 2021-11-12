@@ -715,7 +715,7 @@ pub fn (mut tv TextView) do_zoom_down() {
 	if text_size < 8 {
 		text_size = 8
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
@@ -729,7 +729,7 @@ pub fn (mut tv TextView) do_zoom_up() {
 	if text_size > 48 {
 		text_size = 48
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
@@ -994,9 +994,9 @@ fn (mut tv TextView) update_line_height() {
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
-fn (tv &TextView) update_text_style(ts TextStyleParams) {
+fn (tv &TextView) update_style(ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
-	dtw.update_text_style(ts)
+	dtw.update_style(ts)
 }
 
 // Not called automatically as it is in gg

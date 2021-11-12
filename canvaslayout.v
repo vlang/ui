@@ -496,9 +496,9 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 	dtw.draw_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
-pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, text_style_id string) {
+pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, style_id string) {
 	mut dtw := DrawTextWidget(c)
-	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, text_style_id)
+	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, style_id)
 }
 
 pub fn (c &CanvasLayout) draw_rect(x f32, y f32, w f32, h f32, color gx.Color) {

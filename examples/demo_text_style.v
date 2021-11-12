@@ -118,5 +118,5 @@ fn lb_change(mut app App, lb &ui.ListBox) {
 	}
 
 	app.prev_font = id
-	dtw.update_text_style(font_name: id, size: 30)
+	dtw.update_style(font_name: id, size: 30)
 }

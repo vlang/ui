@@ -73,5 +73,5 @@ fn fontchooser_lb_change(a voidptr, lb &ui.ListBox) {
 	// println("$id, $fp")
 	w.add_font(id, fp)
 
-	dtw.update_text_style(font_name: id)
+	dtw.update_style(font_name: id)
 }

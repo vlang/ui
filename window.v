@@ -312,6 +312,7 @@ fn on_event(e &gg.Event, mut window Window) {
 
 fn gg_init(mut window Window) {
 	window.load_settings()
+	window.init_styles()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
 	w := int(f32(window_size.width) / window.dpi_scale)
