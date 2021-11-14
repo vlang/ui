@@ -21,9 +21,11 @@ pub mut:
 	adj_width  int
 	adj_height int
 	ui         &UI
-	text_cfg   gx.TextCfg
-	text_size  f64
-	hidden     bool
+	// text styles
+	text_styles TextStyles
+	text_size   f64
+	text_cfg    gx.TextCfg
+	hidden      bool
 	// component state for composable widget
 	component voidptr
 }
@@ -56,16 +58,7 @@ pub fn label(c LabelParams) &Label {
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
-	if is_empty_text_cfg(l.text_cfg) {
-		l.text_cfg = l.ui.window.text_cfg
-	}
-	if l.text_size > 0 {
-		_, win_height := l.ui.window.size()
-		l.text_cfg = gx.TextCfg{
-			...l.text_cfg
-			size: text_size_as_int(l.text_size, win_height)
-		}
-	}
+	l.init_style()
 	l.init_size()
 }
 
@@ -86,6 +79,19 @@ pub fn (l &Label) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut l Label) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(l.text_cfg) {
+			l.text_cfg = l.ui.window.text_cfg
+		}
+		update_text_size(mut l)
+	} $else {
+		mut dtw := DrawTextWidget(l)
+		dtw.init_style()
+		dtw.update_text_size(l.text_size)
 	}
 }
 
@@ -131,7 +137,13 @@ fn (mut l Label) draw() {
 		// Draw the text at l.x and l.y + line height * current line
 		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
 		// l.draw_text(l.x, l.y + (height * i), split)
-		draw_text(l, l.x, l.y + (height * i), split)
+		$if nodtw ? {
+			draw_text(l, l.x, l.y + (height * i), split)
+		} $else {
+			dtw := DrawTextWidget(l)
+			dtw.load_style()
+			dtw.draw_text(l.x, l.y + (height * i), split)
+		}
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
 			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')

@@ -98,11 +98,11 @@ fn window_init(mut w ui.Window) {
 
 fn on_draw(c &ui.CanvasLayout, app &App) {
 	mut dtw := ui.DrawTextWidget(c)
-	dtw.load_current_style()
+	dtw.load_style()
 	c.draw_text(10, 10, app.text)
 	w, h := dtw.text_size(app.text)
 	c.draw_empty_rect(10, 11, w + 2, h + 2, gx.black)
-	c.draw_styled_text(10 + w + 10, 10, 'size: ($w, $h)', 'default')
+	c.draw_styled_text(10 + w + 10, 10, 'size: ($w, $h)', id: 'default', color: gx.red)
 }
 
 fn lb_change(mut app App, lb &ui.ListBox) {
