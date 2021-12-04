@@ -4,6 +4,7 @@ import gx
 import gg
 import os
 import sokol.sgl
+import sokol.sfons
 
 const no_string = '_none_'
 
@@ -96,12 +97,12 @@ pub fn (w DrawTextWidget) load_style(ts TextStyle) {
 	scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
 	size := if ts.mono { ts.size - 2 } else { ts.size }
 	fons.set_size(scale * f32(size))
-	C.fonsSetAlign(gg.ft.fons, int(ts.align) | int(ts.vertical_align))
-	color := C.sfons_rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
+	gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
+	color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
 	if ts.color.a != 255 {
 		sgl.load_pipeline(gg.timage_pip)
 	}
-	C.fonsSetColor(gg.ft.fons, color)
+	gg.ft.fons.set_color(color)
 	ascender := f32(0.0)
 	descender := f32(0.0)
 	lh := f32(0.0)
@@ -110,13 +111,13 @@ pub fn (w DrawTextWidget) load_style(ts TextStyle) {
 
 pub fn (w DrawTextWidget) draw_text(x int, y int, text string) {
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
-	C.fonsDrawText(w.ui.gg.ft.fons, x * scale, y * scale, &char(text.str), 0) // TODO: check offsets/alignment
+	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, &char(text.str), &char(0)) // TODO: check offsets/alignment
 }
 
 pub fn (w DrawTextWidget) draw_styled_text(x int, y int, text string, text_style_id string) {
 	w.load_style(w.text_style_by_id(text_style_id))
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
-	C.fonsDrawText(w.ui.gg.ft.fons, x * scale, y * scale, &char(text.str), 0) // TODO: check offsets/alignment
+	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, &char(text.str), &char(0)) // TODO: check offsets/alignment
 }
 
 // TODO: renamed text_size soon
@@ -130,7 +131,7 @@ pub fn (w DrawTextWidget) text_width(text string) int {
 
 pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 	ctx := w.ui.gg
-	adv := C.fonsTextBounds(ctx.ft.fons, 0, 0, &char(text.str), 0, 0)
+	adv := ctx.ft.fons.text_bounds(0, 0, &char(text.str), &char(0), &f32(0))
 	return adv / ctx.scale
 }
 
@@ -192,7 +193,7 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	// gg := ui.gg
 	// mut f := ui.fonts
 	if bytes.len > 0 {
-		font := ui.gg.ft.fons.add_font_mem(c'sans', bytes.data, bytes.len, 0)
+		font := ui.gg.ft.fons.add_font_mem(c'sans', bytes.data, bytes.len, false)
 		if font >= 0 {
 			ui.fonts.hash[font_name] = font
 			$if fontset ? {
