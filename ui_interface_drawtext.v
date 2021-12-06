@@ -111,13 +111,13 @@ pub fn (w DrawTextWidget) load_style(ts TextStyle) {
 
 pub fn (w DrawTextWidget) draw_text(x int, y int, text string) {
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
-	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, &char(text.str), &char(0)) // TODO: check offsets/alignment
+	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, text) // TODO: check offsets/alignment
 }
 
 pub fn (w DrawTextWidget) draw_styled_text(x int, y int, text string, text_style_id string) {
 	w.load_style(w.text_style_by_id(text_style_id))
 	scale := if w.ui.gg.ft.scale == 0 { f32(1) } else { w.ui.gg.ft.scale }
-	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, &char(text.str), &char(0)) // TODO: check offsets/alignment
+	w.ui.gg.ft.fons.draw_text(x * scale, y * scale, text) // TODO: check offsets/alignment
 }
 
 // TODO: renamed text_size soon
@@ -131,7 +131,7 @@ pub fn (w DrawTextWidget) text_width(text string) int {
 
 pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 	ctx := w.ui.gg
-	adv := ctx.ft.fons.text_bounds(0, 0, &char(text.str), &char(0), &f32(0))
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 	return adv / ctx.scale
 }
 
@@ -193,7 +193,7 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	// gg := ui.gg
 	// mut f := ui.fonts
 	if bytes.len > 0 {
-		font := ui.gg.ft.fons.add_font_mem(c'sans', bytes.data, bytes.len, false)
+		font := ui.gg.ft.fons.add_font_mem('sans', bytes, false)
 		if font >= 0 {
 			ui.fonts.hash[font_name] = font
 			$if fontset ? {
