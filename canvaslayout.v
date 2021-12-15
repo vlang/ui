@@ -523,13 +523,13 @@ pub fn (c &CanvasLayout) draw_circle(x f32, y f32, r f32, color gx.Color) {
 	c.ui.gg.draw_circle(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
 }
 
-pub fn (c &CanvasLayout) draw_arc_line(x f32, y f32, r int, start_angle f32, arc_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_line(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
+pub fn (c &CanvasLayout) draw_empty_slice(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_empty_slice(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
 		arc_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_arc(x f32, y f32, r int, start_angle f32, arc_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle, arc_angle,
+pub fn (c &CanvasLayout) draw_slice(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_slice(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle, arc_angle,
 		segments, color)
 }
 
