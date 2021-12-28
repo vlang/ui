@@ -433,9 +433,9 @@ fn (mut c CanvasLayout) draw() {
 		}
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
-			c.draw_rounded_rect(0, 0, w, h, radius, c.bg_color)
+			c.draw_rounded_rect_filled(0, 0, w, h, radius, c.bg_color)
 		} else {
-			c.draw_rect(0, 0, w, h, c.bg_color)
+			c.draw_rect_filled(0, 0, w, h, c.bg_color)
 		}
 	}
 
@@ -501,17 +501,17 @@ pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, text_style_
 	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, text_style_id)
 }
 
-pub fn (c &CanvasLayout) draw_rect(x f32, y f32, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
+pub fn (c &CanvasLayout) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
+	c.ui.gg.draw_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
 }
 
-pub fn (c &CanvasLayout) draw_triangle(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	c.ui.gg.draw_triangle(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
+pub fn (c &CanvasLayout) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
+	c.ui.gg.draw_triangle_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
 		y2 + c.y + c.offset_y, x3 + c.x + c.offset_x, y3 + c.y + c.offset_y, color)
 }
 
-pub fn (c &CanvasLayout) draw_empty_rect(x f32, y f32, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_empty_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
+pub fn (c &CanvasLayout) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
+	c.ui.gg.draw_rect_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
 }
 
 pub fn (c &CanvasLayout) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {
@@ -519,17 +519,17 @@ pub fn (c &CanvasLayout) draw_circle_line(x f32, y f32, r int, segments int, col
 		color)
 }
 
-pub fn (c &CanvasLayout) draw_circle(x f32, y f32, r f32, color gx.Color) {
-	c.ui.gg.draw_circle(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
+pub fn (c &CanvasLayout) draw_circle_filled(x f32, y f32, r f32, color gx.Color) {
+	c.ui.gg.draw_circle_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
 }
 
-pub fn (c &CanvasLayout) draw_empty_slice(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_empty_slice(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
+pub fn (c &CanvasLayout) draw_slice_empty(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_slice_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
 		arc_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_slice(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle, arc_angle,
+pub fn (c &CanvasLayout) draw_slice_filled(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_slice_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle, arc_angle,
 		segments, color)
 }
 
@@ -538,14 +538,14 @@ pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color)
 		y2 + c.y + c.offset_y, color)
 }
 
-pub fn (c &CanvasLayout) draw_rounded_rect(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, rad, color)
+	c.ui.gg.draw_rounded_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, rad, color)
 }
 
-pub fn (c &CanvasLayout) draw_empty_rounded_rect(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {
+pub fn (c &CanvasLayout) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_empty_rounded_rect(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
+	c.ui.gg.draw_rounded_rect_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
 		rad, border_color)
 }
 
