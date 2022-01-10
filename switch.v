@@ -112,8 +112,8 @@ fn (mut s Switch) draw() {
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
 		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
-		s.ui.gg.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding, ui.sw_dot_size,
-			ui.sw_dot_size, gx.white)
+		s.ui.gg.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding,
+			ui.sw_dot_size, ui.sw_dot_size, gx.white)
 	} else {
 		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
 		s.ui.gg.draw_rect_filled(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,

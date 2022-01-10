@@ -962,7 +962,8 @@ fn (mut s Stack) draw() {
 				radius, s.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			s.ui.gg.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
+			s.ui.gg.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
+				s.bg_color)
 		}
 	}
 	// if scrollview_clip(mut s) {

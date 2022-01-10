@@ -529,8 +529,8 @@ pub fn (c &CanvasLayout) draw_slice_empty(x f32, y f32, r f32, start_angle f32, 
 }
 
 pub fn (c &CanvasLayout) draw_slice_filled(x f32, y f32, r f32, start_angle f32, arc_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle, arc_angle,
-		segments, color)
+	c.ui.gg.draw_slice_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
+		arc_angle, segments, color)
 }
 
 pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color) {
@@ -540,7 +540,8 @@ pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color)
 
 pub fn (c &CanvasLayout) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, rad, color)
+	c.ui.gg.draw_rounded_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
+		rad, color)
 }
 
 pub fn (c &CanvasLayout) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {

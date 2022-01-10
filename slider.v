@@ -168,11 +168,11 @@ fn (s &Slider) draw_thumb() {
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
-		s.ui.gg.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			ui.thumb_color)
+		s.ui.gg.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
+			s.thumb_height, ui.thumb_color)
 	} else {
-		s.ui.gg.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			ui.thumb_color)
+		s.ui.gg.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
+			s.thumb_height, ui.thumb_color)
 	}
 }
 
