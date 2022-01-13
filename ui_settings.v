@@ -1,6 +1,5 @@
 module ui
 
-import os
 // import json
 import gx
 
