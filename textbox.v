@@ -267,13 +267,13 @@ fn (mut tb TextBox) init_style() {
 fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {
 		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
-		gg.draw_empty_rect(x, y, width, height, color)
-		// gg.draw_empty_rect(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
+		gg.draw_rect_empty(x, y, width, height, color)
+		// gg.draw_rect_empty(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
+		gg.draw_rect_empty(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
 	} else {
-		gg.draw_empty_rect(x, y, width, height, ui.text_border_accentuated_color)
-		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
+		gg.draw_rect_empty(x, y, width, height, ui.text_border_accentuated_color)
+		gg.draw_rect_empty(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
 	}
 }
 
@@ -321,10 +321,10 @@ fn (mut tb TextBox) draw() {
 	scrollview_draw_begin(mut tb)
 	// draw background
 	if tb.has_scrollview {
-		tb.ui.gg.draw_rect(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
+		tb.ui.gg.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
 			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
 	} else {
-		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
+		tb.ui.gg.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
 		if !tb.borderless {
 			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
@@ -410,7 +410,7 @@ fn (mut tb TextBox) draw() {
 				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+			tb.ui.gg.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
 				gx.black) // , gx.Black)
 		}
 	}
@@ -436,7 +436,7 @@ fn (mut tb TextBox) draw_selection() {
 	}
 	sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
 	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
-	tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
+	tb.ui.gg.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
 		sel_width, tb.line_height, ui.selection_color)
 }
 

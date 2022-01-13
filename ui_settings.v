@@ -1,12 +1,11 @@
 module ui
 
-import os
-import json
+// import json
 import gx
 
-const (
-	settings_path = os.join_path(os.home_dir(), '.vui', 'settings.json')
-)
+// const (
+// settings_path = os.join_path(os.home_dir(), '.vui', 'settings.json')
+// )
 
 // Structure to save UI configuration
 struct SettingsUI {
@@ -106,26 +105,27 @@ pub fn (mut c SettingsUI) colors_for(val []gx.Color, k ...string) {
 }
 
 pub fn load_settings(path string) ?SettingsUI {
-	raw := os.read_file(path) ?
-	settings := json.decode(SettingsUI, raw) ?
-	return settings
+	// raw := os.read_file(path) ?
+	// settings := json.decode(SettingsUI, raw) ?
+	// return settings
+	return none
 }
 
 pub fn save_settings(path string, s SettingsUI) ? {
-	settings := json.encode_pretty(s)
-	os.write_file(path, settings) ?
+	// settings := json.encode_pretty(s)
+	// os.write_file(path, settings) ?
 }
 
 pub fn (mut w Window) load_settings() {
-	if !os.exists(ui.settings_path) {
-		w.save_settings()
-	}
-	w.settings = load_settings(ui.settings_path) or { panic(err) }
+	// if !os.exists(ui.settings_path) {
+	// 	w.save_settings()
+	// }
+	// w.settings = load_settings(ui.settings_path) or { panic(err) }
 }
 
 pub fn (mut w Window) save_settings() {
-	if !os.exists(ui.settings_path) {
-		os.mkdir_all(os.dir(ui.settings_path)) or { panic(err) }
-	}
-	save_settings(ui.settings_path, w.settings) or { panic(err) }
+	// if !os.exists(ui.settings_path) {
+	// 	os.mkdir_all(os.dir(ui.settings_path)) or { panic(err) }
+	// }
+	// save_settings(ui.settings_path, w.settings) or { panic(err) }
 }

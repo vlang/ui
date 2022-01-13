@@ -190,15 +190,15 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 
 fn (mut cb CheckBox) draw() {
 	offset_start(mut cb)
-	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
+	cb.ui.gg.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {
-		cb.ui.gg.draw_empty_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
+		cb.ui.gg.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		// cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
+		// cb.ui.gg.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2

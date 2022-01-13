@@ -958,11 +958,12 @@ fn (mut s Stack) draw() {
 	if s.bg_color != no_color {
 		if s.bg_radius > 0 {
 			radius := relative_size(s.bg_radius, s.real_width, s.real_height)
-			s.ui.gg.draw_rounded_rect(s.real_x, s.real_y, s.real_width, s.real_height,
+			s.ui.gg.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
 				radius, s.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			s.ui.gg.draw_rect(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
+			s.ui.gg.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
+				s.bg_color)
 		}
 	}
 	// if scrollview_clip(mut s) {
@@ -983,13 +984,13 @@ fn (mut s Stack) draw() {
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack
-		s.ui.gg.draw_empty_rect(s.x - text_height / 2, s.y - text_height / 2, s.real_width +
+		s.ui.gg.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width +
 			text_height, s.real_height + int(f32(text_height) * .75), gx.black)
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3
 		ty := s.y - int(f32(text_height) * 1.25)
-		s.ui.gg.draw_rect(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
-		s.ui.gg.draw_empty_rect(tx, ty, text_width + 5, text_height, gx.black)
+		s.ui.gg.draw_rect_filled(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
+		s.ui.gg.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
 		s.ui.gg.draw_text_def(tx, ty - 2, s.title)
 	}
 	offset_end(mut s)

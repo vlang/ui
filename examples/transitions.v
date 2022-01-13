@@ -65,7 +65,7 @@ fn btn_toggle_click(mut app App, button &ui.Button) {
 		app.y_transition.set_value(&app.picture.offset_y)
 	}
 	w, h := app.window.size()
-	match (app.state) {
+	match app.state {
 		0 {
 			app.x_transition.target_value = 32
 			app.y_transition.target_value = 32

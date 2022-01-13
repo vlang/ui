@@ -87,8 +87,8 @@ fn (mut gv Grid) draw() {
 	mut text_width := 0
 	mut text_height := 0
 	// Outer border
-	gv.ui.gg.draw_rect(x, y, gv.width, gv.height, gx.white)
-	gv.ui.gg.draw_empty_rect(x, y, cell_width * header.len, cell_height, gx.gray)
+	gv.ui.gg.draw_rect_filled(x, y, gv.width, gv.height, gx.white)
+	gv.ui.gg.draw_rect_empty(x, y, cell_width * header.len, cell_height, gx.gray)
 	for i, c in header {
 		// Vertical separators
 		if i != 0 {
@@ -103,7 +103,7 @@ fn (mut gv Grid) draw() {
 	}
 	y += int(cell_height) * if gv.header.len == 0 { 0 } else { 1 }
 	for ir, b_c in body {
-		gv.ui.gg.draw_empty_rect(x, y + (cell_height * ir), cell_width * gv.body[0].len,
+		gv.ui.gg.draw_rect_empty(x, y + (cell_height * ir), cell_width * gv.body[0].len,
 			cell_height, gx.gray)
 		for i, c in b_c {
 			// Vertical separators

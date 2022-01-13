@@ -106,12 +106,12 @@ pub fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 fn (mut pb ProgressBar) draw() {
 	offset_start(mut pb)
 	// Draw the gray background
-	pb.ui.gg.draw_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)
-	pb.ui.gg.draw_empty_rect(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_border_color)
+	pb.ui.gg.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)
+	pb.ui.gg.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_border_color)
 	// Draw the value
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
-	pb.ui.gg.draw_empty_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
-	pb.ui.gg.draw_rect(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
+	pb.ui.gg.draw_rect_empty(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
+	pb.ui.gg.draw_rect_filled(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
 	$if bb ? {
 		draw_bb(mut pb, pb.ui)
 	}
