@@ -37,6 +37,6 @@ fn main() {
 		]
 	)
 	app.window = window
-	println(font.system_path())
+	println(font.default())
 	ui.run(window)
 }
