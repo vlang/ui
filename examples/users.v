@@ -227,11 +227,11 @@ fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { // x_offset int, y_of
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset
-	gg.draw_rect(x - 20, 0, w + 120, h + 120, gx.white)
+	gg.draw_rect_filled(x - 20, 0, w + 120, h + 120, gx.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
 		// Outer border
-		gg.draw_empty_rect(x, y, table_width, cell_height, gx.gray)
+		gg.draw_rect_empty(x, y, table_width, cell_height, gx.gray)
 		// Vertical separators
 		gg.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
 		gg.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)

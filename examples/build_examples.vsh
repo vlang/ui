@@ -22,7 +22,7 @@ for entry in entries {
 		}
 	}
 	println(entry)
-	ret := system('v -w $examples_dir/$entry')
+	ret := system('v $examples_dir/$entry')
 	if ret != 0 {
 		err++
 	}
