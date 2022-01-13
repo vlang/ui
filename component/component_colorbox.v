@@ -3,14 +3,17 @@ module component
 import ui
 import gx
 
-pub const (
-	cb_sp       = 3
-	cb_hsv_col  = 30
-	cb_nc       = 2
-	cb_nr       = 3
-	cb_cv_hsv_w = (cb_hsv_col + cb_sp) * cb_nc + cb_sp
-	cb_cv_hsv_h = (cb_hsv_col + cb_sp) * cb_nr + cb_sp
-)
+pub const cb_sp = 3
+
+pub const cb_hsv_col = 30
+
+pub const cb_nc = 2
+
+pub const cb_nr = 3
+
+pub const cb_cv_hsv_w = (cb_hsv_col + cb_sp) * cb_nc + cb_sp
+
+pub const cb_cv_hsv_h = (cb_hsv_col + cb_sp) * cb_nr + cb_sp
 
 type RgbToHsv = fn (col gx.Color) (f64, f64, f64)
 
