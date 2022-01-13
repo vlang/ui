@@ -104,7 +104,7 @@ fn (mut s SubWindow) draw() {
 	// possibly add window decoration
 	if s.decoration {
 		w, _ := s.size()
-		s.ui.gg.draw_rounded_rect(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
+		s.ui.gg.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
 	}
 	s.layout.draw()
 

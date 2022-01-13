@@ -324,15 +324,15 @@ fn (mut b Button) draw() {
 	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))
-		b.ui.gg.draw_rounded_rect(x, y, width, height, radius, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rounded_rect(x, y, width, height, radius, if b.is_focused {
+		b.ui.gg.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
+		b.ui.gg.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
 			ui.button_border_color
 		})
 	} else {
-		b.ui.gg.draw_rect(x, y, width, height, bg_color) // gx.white)
-		b.ui.gg.draw_empty_rect(x, y, width, height, if b.is_focused {
+		b.ui.gg.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
+		b.ui.gg.draw_rect_empty(x, y, width, height, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
 			ui.button_border_color

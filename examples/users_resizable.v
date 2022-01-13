@@ -236,12 +236,12 @@ fn btn_add_click(mut app State, x voidptr) {
 
 fn draw(c &ui.CanvasLayout, app &State) {
 	w, h := c.width, c.height
-	c.draw_rect(0, 0, w, h, gx.white)
+	c.draw_rect_filled(0, 0, w, h, gx.white)
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height
 		// Outer border
-		c.draw_empty_rect(marginx, y, table_width, cell_height, gx.gray)
+		c.draw_rect_empty(marginx, y, table_width, cell_height, gx.gray)
 		// Vertical separators
 		c.draw_line(cell_width, y, cell_width, y + cell_height, gx.gray)
 		c.draw_line(cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)

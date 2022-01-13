@@ -337,13 +337,13 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	// println("linrssss draw ${li.draw_text} $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height")
-	lb.ui.gg.draw_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+	lb.ui.gg.draw_rect_filled(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 		width - 2 * ui._text_offset_x, lb.item_height, col)
 	lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 		if lb.has_scrollview { li.text } else { li.draw_text })
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		lb.ui.gg.draw_empty_rect(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+		lb.ui.gg.draw_rect_empty(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 			width, lb.item_height, lb.col_border)
 	}
 }
@@ -379,7 +379,7 @@ fn (mut lb ListBox) draw() {
 		lb.height
 	}
 	// println("draw $lb.x, $lb.y, $lb.width $lb.height $height")
-	lb.ui.gg.draw_rect(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
+	lb.ui.gg.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -400,7 +400,7 @@ fn (mut lb ListBox) draw() {
 		}
 	}
 	if !lb.draw_lines {
-		lb.ui.gg.draw_empty_rect(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
+		lb.ui.gg.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
 	}
 
 	// scrollview_draw(lb)

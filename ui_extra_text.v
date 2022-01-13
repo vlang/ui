@@ -303,8 +303,8 @@ fn draw_tooltip(win Window) {
 		// TODO:  add triangle to connect the rectangle
 		// win.ui.gg.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
 		// gx.yellow)
-		win.ui.gg.draw_rounded_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
-			.3, win.tooltip.bg_color)
+		win.ui.gg.draw_rounded_rect_filled(win.tooltip.x, win.tooltip.y, win.tooltip.width,
+			win.tooltip.height, .3, win.tooltip.bg_color)
 		draw_text_lines(win.tooltip, win.tooltip.x + ui.tooltip_margin, win.tooltip.y,
 			win.tooltip.lines)
 	}

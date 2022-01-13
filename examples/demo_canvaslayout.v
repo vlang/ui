@@ -160,7 +160,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 
 fn draw(c &ui.CanvasLayout, app voidptr) {
 	w, h := c.full_width, c.full_height
-	c.draw_rect(0, 0, w, h, gx.white)
+	c.draw_rect_filled(0, 0, w, h, gx.white)
 }
 
 fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
