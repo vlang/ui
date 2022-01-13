@@ -3,6 +3,7 @@ module ui
 import gx
 import gg
 import os
+import os.font
 import sokol.sgl
 import sokol.sfons
 
@@ -321,7 +322,7 @@ pub fn (mut w Window) add_font(id string, font_path string) {
 }
 
 pub fn (mut w Window) init_styles() {
-	w.ui.add_font('system', gg.system_font_path())
+	w.ui.add_font('system', font.default())
 	// init default style
 	w.ui.add_style(id: '_default_')
 }
