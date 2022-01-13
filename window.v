@@ -8,6 +8,7 @@ import clipboard
 import eventbus
 import time
 import math
+import os.font
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -455,7 +456,7 @@ pub fn window(cfg WindowConfig) &Window {
 		// native_frame_fn: native_frame
 		event_fn: on_event
 		user_data: window
-		font_path: if cfg.font_path == '' { gg.system_font_path() } else { cfg.font_path }
+		font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
 		custom_bold_font_path: cfg.custom_bold_font_path
 		init_fn: gg_init
 		cleanup_fn: gg_cleanup
