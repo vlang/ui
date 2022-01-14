@@ -39,16 +39,18 @@ jobs:
           # mesa-common-dev, mesa-utils : For headless rendering
           # freeglut3-dev            : Fixes graphic apps compilation with tcc
           # fonts-inconsolata        : A fixed font, instead of relying on the system font selection.
-          sudo apt-get install xvfb imagemagick openimageio-tools mesa-common-dev mesa-utils libxcursor-dev libxi-dev freeglut3-dev fonts-inconsolata
+          sudo apt-get install xvfb imagemagick openimageio-tools mesa-common-dev mesa-utils mesa-utils-extra libxcursor-dev libxi-dev freeglut3-dev fonts-inconsolata
           wget https://raw.githubusercontent.com/tremby/imgur.sh/c98345d/imgur.sh
           chmod +x ./imgur.sh
           git clone https://github.com/Larpon/ui-regression-images ui-regression-images
 
-      - name: Show ui-regression-images and ui versions
+      - name: Show environment and repo versions
         run: |
-          ls -lart $VUI_FONT
+          echo "VUI_FONT: $VUI_FONT"
+          echo "LIBGL_ALWAYS_SOFTWARE: $LIBGL_ALWAYS_SOFTWARE"
           echo "ui-regression-images commit: $(git -C ui-regression-images/ rev-list HEAD -n1)"
           echo "vlib/ui commit: $(git -C vlib/ui/ rev-list HEAD -n1)"
+          ls -lart $VUI_FONT
 
       - name: Sample and compare
         id: compare
@@ -60,5 +62,12 @@ jobs:
       - name: Upload regression to imgur
         if: steps.compare.outcome != 'success'
         run: |
+          echo "Fail image:"
           ./imgur.sh /tmp/fail.png
+          echo "Regression image:"
+          ./imgur.sh ./ui-regression-images/examples/demo_radio_25.png
+          echo "Produced image:"
+          ./imgur.sh ./ui-sample_images/examples/demo_radio_25.png          
+          echo "diff.tif image:"
+          ./imgur.sh /tmp/diff.tif
           exit 1
