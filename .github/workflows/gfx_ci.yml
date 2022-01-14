@@ -65,12 +65,12 @@ jobs:
         run: |
           echo "Fail image:"
           ./imgur.sh /tmp/fail.png
-          echo "Regression image:"
-          ./imgur.sh ./ui-regression-images/examples/demo_radio_25.png
-          echo "Produced image:"
-          ./imgur.sh ./ui-sample_images/examples/demo_radio_25.png          
           echo "diff.tif image:"
           ./imgur.sh /tmp/diff.tif
-          echo "Regression image hash: $(md5sum ./ui-regression-images/examples/demo_radio_25.png)"
-          echo "Produced   image hash: $(md5sum ./ui-sample_images/examples/demo_radio_25.png)"
+          ## echo "Regression image:"
+          ## ./imgur.sh ./ui-regression-images/examples/demo_radio_25.png
+          ## echo "Produced image:"
+          ## ./imgur.sh ./ui-sample_images/examples/demo_radio_25.png          
+          ## echo "Regression image hash: $(md5sum ./ui-regression-images/examples/demo_radio_25.png)"
+          ## echo "Produced   image hash: $(md5sum ./ui-sample_images/examples/demo_radio_25.png)"
           exit 1
