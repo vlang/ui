@@ -15,6 +15,7 @@ jobs:
     env:
       VFLAGS: -cc tcc
       DISPLAY: :99
+      VUI_FONT: /usr/share/fonts/truetype/inconsolata/Inconsolata.otf
     steps:
       - name: Checkout V
         uses: actions/checkout@v2
@@ -34,9 +35,10 @@ jobs:
           # libxcursor-dev libxi-dev : V gfx deps
           # mesa-common-dev          : For headless rendering
           # freeglut3-dev            : Fixes graphic apps compilation with tcc
-          sudo apt-get install imagemagick openimageio-tools mesa-common-dev libxcursor-dev libxi-dev freeglut3-dev
+          sudo apt-get install imagemagick openimageio-tools mesa-common-dev libxcursor-dev libxi-dev freeglut3-dev fonts-inconsolata
           wget https://raw.githubusercontent.com/tremby/imgur.sh/c98345d/imgur.sh
           chmod +x ./imgur.sh
+          ls -lart $VUI_FONT
 
       - uses: openrndr/setup-opengl@v1.1
       - uses: actions/checkout@v2
