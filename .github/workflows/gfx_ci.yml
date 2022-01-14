@@ -43,9 +43,9 @@ jobs:
           wget https://raw.githubusercontent.com/tremby/imgur.sh/c98345d/imgur.sh
           chmod +x ./imgur.sh
           git clone https://github.com/Larpon/ui-regression-images ui-regression-images
-          
-      - name: Show ui-regression-images and ui versions:
-        run: |          
+
+      - name: Show ui-regression-images and ui versions
+        run: |
           ls -lart $VUI_FONT
           echo "ui-regression-images commit: $(git -C ui-regression-images/ rev-list HEAD -n1)"
           echo "vlib/ui commit: $(git -C vlib/ui/ rev-list HEAD -n1)"
