@@ -85,12 +85,12 @@ pub mut:
 	is_error           &bool = voidptr(0)
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
 	// text styles
 	text_styles TextStyles
+	// related to text drawing
+	text_size f64
+	text_cfg  gx.TextCfg // TO REMOVE SOON
+	hidden    bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -107,7 +107,7 @@ pub enum TextBoxMode {
 }
 
 [params]
-pub struct TextBoxConfig {
+pub struct TextBoxParams {
 	id               string
 	width            int
 	height           int = 22
@@ -145,7 +145,7 @@ pub struct TextBoxConfig {
 	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-pub fn textbox(c TextBoxConfig) &TextBox {
+pub fn textbox(c TextBoxParams) &TextBox {
 	mut tb := &TextBox{
 		id: c.id
 		height: c.height
@@ -193,10 +193,9 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
-		tb.text_cfg = tb.ui.window.text_cfg
+	tb.init_style()
+	{
 	}
-	update_text_size(mut tb)
 	// TODO: Maybe in a method later to allow font size update
 	tb.update_line_height()
 	if tb.is_multiline {
@@ -248,6 +247,19 @@ pub fn (tb &TextBox) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut tb TextBox) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
+			tb.text_cfg = tb.ui.window.text_cfg
+		}
+		update_text_size(mut tb)
+	} $else {
+		mut dtw := DrawTextWidget(tb)
+		dtw.init_style()
+		dtw.update_text_size(tb.text_size)
 	}
 }
 
@@ -321,6 +333,7 @@ fn (mut tb TextBox) draw() {
 	if tb.is_multiline {
 		tb.tv.draw_textlines()
 	} else {
+		dtw := DrawTextWidget(tb)
 		text := *(tb.text)
 		text_len := text.runes().len
 		mut placeholder := tb.placeholder
@@ -333,10 +346,13 @@ fn (mut tb TextBox) draw() {
 
 		// Placeholder
 		if text == '' && placeholder != '' {
-			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder, tb.placeholder_cfg)
-			// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder)
-			draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
-				gx.gray)
+			$if nodtw ? {
+				draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
+					gx.gray)
+			} $else {
+				dtw.draw_styled_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
+					color: gx.gray)
+			}
 		}
 		// Text
 		else {
@@ -356,12 +372,24 @@ fn (mut tb TextBox) draw() {
 					// 	break
 					// }
 				}
-				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				$if nodtw ? {
+					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				} $else {
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				}
 			} else {
 				if tb.is_password {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					$if nodtw ? {
+						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					} $else {
+						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					}
 				} else {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
+					$if nodtw ? {
+						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
+					} $else {
+						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+					}
 				}
 			}
 		}

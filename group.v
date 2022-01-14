@@ -35,7 +35,7 @@ pub mut:
 }
 
 [params]
-pub struct GroupConfig {
+pub struct GroupParams {
 pub mut:
 	id       string
 	title    string
@@ -47,7 +47,7 @@ pub mut:
 	children []Widget
 }
 
-pub fn group(c GroupConfig) &Group {
+pub fn group(c GroupParams) &Group {
 	mut g := &Group{
 		id: c.id
 		title: c.title

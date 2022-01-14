@@ -28,7 +28,8 @@ mut:
 	gg      &gg.Context = 0
 }
 
-pub struct CanvasConfig {
+[params]
+pub struct CanvasParams {
 	id      string
 	width   int
 	height  int
@@ -37,7 +38,7 @@ pub struct CanvasConfig {
 	draw_fn DrawFn = voidptr(0)
 }
 
-pub fn canvas(c CanvasConfig) &Canvas {
+pub fn canvas(c CanvasParams) &Canvas {
 	mut canvas := &Canvas{
 		id: c.id
 		width: c.width

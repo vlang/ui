@@ -10,39 +10,48 @@ on:
 
 jobs:
   ui-regressions:
-    runs-on: ubuntu-18.04
-    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       VFLAGS: -cc tcc
       DISPLAY: :99
+      LIBGL_ALWAYS_SOFTWARE: 1
+      VUI_FONT: /usr/share/fonts/truetype/inconsolata/Inconsolata.otf
     steps:
       - name: Checkout V
         uses: actions/checkout@v2
         with:
           repository: vlang/v
+
       - name: Checkout V UI
         uses: actions/checkout@v2
         with:
           path: vlib/ui
+
       - name: Build V
-        run: make -j4
+        run: make
 
       - name: Setup dependencies
         run: |
-          # xvfb                     : xvfb (installed by openrndr/setup-opengl@v1.1)
+          # xvfb                     : xvfb
           # openimageio-tools        : idiff
           # libxcursor-dev libxi-dev : V gfx deps
-          # mesa-common-dev          : For headless rendering
+          # mesa-common-dev, mesa-utils : For headless rendering
           # freeglut3-dev            : Fixes graphic apps compilation with tcc
-          sudo apt-get install imagemagick openimageio-tools mesa-common-dev libxcursor-dev libxi-dev freeglut3-dev
+          # fonts-inconsolata        : A fixed font, instead of relying on the system font selection.
+          # coreutils                : md5sum
+          sudo apt-get install xvfb imagemagick openimageio-tools mesa-common-dev mesa-utils mesa-utils-extra libxcursor-dev libxi-dev freeglut3-dev fonts-inconsolata coreutils
           wget https://raw.githubusercontent.com/tremby/imgur.sh/c98345d/imgur.sh
           chmod +x ./imgur.sh
+          git clone https://github.com/Larpon/ui-regression-images ui-regression-images
 
-      - uses: openrndr/setup-opengl@v1.1
-      - uses: actions/checkout@v2
-        with:
-          repository: Larpon/ui-regression-images
-          path: ui-regression-images
+      - name: Show environment and repo versions
+        run: |
+          echo "VUI_FONT: $VUI_FONT"
+          echo "LIBGL_ALWAYS_SOFTWARE: $LIBGL_ALWAYS_SOFTWARE"
+          echo "ui-regression-images commit: $(git -C ui-regression-images/ rev-list HEAD -n1)"
+          echo "vlib/ui commit: $(git -C vlib/ui/ rev-list HEAD -n1)"
+          ls -lart $VUI_FONT
 
       - name: Sample and compare
         id: compare
@@ -54,5 +63,14 @@ jobs:
       - name: Upload regression to imgur
         if: steps.compare.outcome != 'success'
         run: |
+          echo "Fail image:"
           ./imgur.sh /tmp/fail.png
+          echo "diff.tif image:"
+          ./imgur.sh /tmp/diff.tif
+          ## echo "Regression image:"
+          ## ./imgur.sh ./ui-regression-images/examples/demo_radio_25.png
+          ## echo "Produced image:"
+          ## ./imgur.sh ./ui-sample_images/examples/demo_radio_25.png          
+          ## echo "Regression image hash: $(md5sum ./ui-regression-images/examples/demo_radio_25.png)"
+          ## echo "Produced   image hash: $(md5sum ./ui-sample_images/examples/demo_radio_25.png)"
           exit 1

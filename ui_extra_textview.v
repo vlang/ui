@@ -60,7 +60,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 }
 
 pub fn (tv &TextView) size() (int, int) {
-	tv.load_current_style()
+	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
 	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
 	for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
@@ -222,7 +222,7 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	tv.load_current_style()
+	tv.load_style()
 	mut y := tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
@@ -717,7 +717,7 @@ pub fn (mut tv TextView) do_zoom_down() {
 	if text_size < 8 {
 		text_size = 8
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
@@ -731,17 +731,17 @@ pub fn (mut tv TextView) do_zoom_up() {
 	if text_size > 48 {
 		text_size = 48
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
 
 [params]
-pub struct LogViewConfig {
+pub struct LogViewParams {
 	nb_lines int = 5
 }
 
-pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	if !tv.tb.has_scrollview {
 		println("Warning: use of task do_logview requires textbox to have 'scrollview: true'")
 		return
@@ -906,7 +906,7 @@ fn (tv &TextView) ordered_lines_selection() (int, int, int, int) {
 }
 
 pub fn (tv &TextView) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	tv.load_current_style()
+	tv.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
@@ -928,7 +928,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	tv.load_current_style()
+	tv.load_style()
 	mut prev_width := 0.0
 	ustr := text.runes()
 	mut width, mut width_cur := 0.0, 0.0
@@ -974,6 +974,10 @@ fn (tv &TextView) draw_text(x int, y int, text string) {
 	DrawTextWidget(tv.tb).draw_text(x, y, text)
 }
 
+fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
+	DrawTextWidget(tv.tb).draw_styled_text(x, y, text, ts)
+}
+
 fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(text)
 }
@@ -992,18 +996,18 @@ fn (tv &TextView) text_size(text string) (int, int) {
 }
 
 fn (mut tv TextView) update_line_height() {
-	tv.load_current_style()
+	tv.load_style()
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
-fn (tv &TextView) update_text_style(ts TextStyleConfig) {
+fn (tv &TextView) update_style(ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
-	dtw.update_text_style(ts)
+	dtw.update_style(ts)
 }
 
 // Not called automatically as it is in gg
-fn (tv &TextView) load_current_style() {
-	DrawTextWidget(tv.tb).load_current_style()
+fn (tv &TextView) load_style() {
+	DrawTextWidget(tv.tb).load_style()
 }
 
 // that's weird text_width is not additive function

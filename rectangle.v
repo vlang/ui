@@ -33,7 +33,7 @@ mut:
 }
 
 [params]
-pub struct RectangleConfig {
+pub struct RectangleParams {
 	id           string
 	text         string
 	height       int
@@ -53,7 +53,7 @@ pub struct RectangleConfig {
 	text_size f64
 }
 
-pub fn rectangle(c RectangleConfig) &Rectangle {
+pub fn rectangle(c RectangleParams) &Rectangle {
 	rect := &Rectangle{
 		id: c.id
 		text: c.text
@@ -74,7 +74,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 }
 
 // Workaround to have a spacing notably
-pub fn spacing(c RectangleConfig) &Rectangle {
+pub fn spacing(c RectangleParams) &Rectangle {
 	mut rect := &Rectangle{
 		color: c.color
 		ui: 0
