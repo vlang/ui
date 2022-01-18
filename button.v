@@ -59,8 +59,10 @@ pub mut:
 	hoverable   bool
 	to_hover    bool
 	tooltip     TooltipMessage
-	text_cfg    gx.TextCfg
+	// text styles
+	text_styles TextStyles
 	text_size   f64
+	text_cfg    gx.TextCfg
 	// theme
 	theme_cfg ColorThemeCfg
 	theme     map[int]gx.Color = map[int]gx.Color{}
@@ -69,7 +71,7 @@ pub mut:
 }
 
 [params]
-pub struct ButtonConfig {
+pub struct ButtonParams {
 	id           string
 	text         string
 	icon_path    string
@@ -90,7 +92,7 @@ pub struct ButtonConfig {
 	padding      f64
 }
 
-pub fn button(c ButtonConfig) &Button {
+pub fn button(c ButtonParams) &Button {
 	mut b := &Button{
 		id: c.id
 		width_: c.width
@@ -126,12 +128,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	init_text_cfg(mut b)
-	set_text_cfg_align(mut b, .center)
-	set_text_cfg_vertical_align(mut b, .middle)
-	b.set_text_size()
-	b.update_theme()
-
+	b.init_style()
 	if b.tooltip.text != '' {
 		mut win := ui.window
 		win.append_tooltip(b, b.tooltip)
@@ -180,6 +177,29 @@ pub fn (b &Button) free() {
 	$if free ? {
 		println(' -> freed')
 	}
+}
+
+fn (mut b Button) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(b.text_cfg) {
+			b.text_cfg = b.ui.window.text_cfg
+		}
+		if b.text_size > 0 {
+			_, win_height := b.ui.window.size()
+			b.text_cfg = gx.TextCfg{
+				...b.text_cfg
+				size: text_size_as_int(b.text_size, win_height)
+			}
+		}
+		set_text_cfg_align(mut b, .center)
+		set_text_cfg_vertical_align(mut b, .middle)
+	} $else {
+		mut dtw := DrawTextWidget(b)
+		dtw.init_style(align: .center, vertical_align: .middle)
+		dtw.update_text_size(b.text_size)
+	}
+	b.set_text_size()
+	b.update_theme()
 }
 
 fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
@@ -341,7 +361,13 @@ fn (mut b Button) draw() {
 	if b.use_icon {
 		b.ui.gg.draw_image(x, y, width, height, b.image)
 	} else {
-		draw_text(b, bcenter_x, bcenter_y, b.text)
+		$if nodtw ? {
+			draw_text(b, bcenter_x, bcenter_y, b.text)
+		} $else {
+			dtw := DrawTextWidget(b)
+			dtw.load_style()
+			dtw.draw_text(bcenter_x, bcenter_y, b.text)
+		}
 	}
 	$if tbb ? {
 		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')

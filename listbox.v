@@ -37,10 +37,11 @@ pub mut:
 	item_height   int      = ui._item_height
 	text_offset_y int      = ui._text_offset_y
 	id            string
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
+	// text styles
+	text_styles TextStyles
+	text_size   f64
+	text_cfg    gx.TextCfg
+	hidden      bool
 	// files droped
 	files_droped bool
 	// guess adjusted width
@@ -66,7 +67,7 @@ mut:
 }
 
 [params]
-pub struct ListBoxConfig {
+pub struct ListBoxParams {
 mut:
 	x             int
 	y             int
@@ -92,7 +93,7 @@ mut:
 }
 
 // Keys of the items map are IDs of the elements, values are text
-pub fn listbox(c ListBoxConfig) &ListBox {
+pub fn listbox(c ListBoxParams) &ListBox {
 	mut list := &ListBox{
 		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
 		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }
@@ -127,8 +128,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.parent = parent
 	ui := parent.get_ui()
 	lb.ui = ui
-
-	init_text_cfg(mut lb)
+	lb.init_style()
 	lb.draw_count = lb.height / lb.item_height
 	lb.text_offset_y = (lb.item_height - text_height(lb, 'W')) / 2
 	if lb.text_offset_y < 0 {
@@ -201,6 +201,25 @@ fn (item &ListItem) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut lb ListBox) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(lb.text_cfg) {
+			lb.text_cfg = lb.ui.window.text_cfg
+		}
+		if lb.text_size > 0 {
+			_, win_height := lb.ui.window.size()
+			lb.text_cfg = gx.TextCfg{
+				...lb.text_cfg
+				size: text_size_as_int(lb.text_size, win_height)
+			}
+		}
+	} $else {
+		mut dtw := DrawTextWidget(lb)
+		dtw.init_style()
+		dtw.update_text_size(lb.text_size)
 	}
 }
 
@@ -339,8 +358,13 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	// println("linrssss draw ${li.draw_text} $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height")
 	lb.ui.gg.draw_rect_filled(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
 		width - 2 * ui._text_offset_x, lb.item_height, col)
-	lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-		if lb.has_scrollview { li.text } else { li.draw_text })
+	$if nodtw ? {
+		lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+			if lb.has_scrollview { li.text } else { li.draw_text })
+	} $else {
+		DrawTextWidget(lb).draw_text(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
+			if lb.has_scrollview { li.text } else { li.draw_text })
+	}
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		lb.ui.gg.draw_rect_empty(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
@@ -371,6 +395,7 @@ fn (lb &ListBox) visible_items() (int, int) {
 
 fn (mut lb ListBox) draw() {
 	offset_start(mut lb)
+	DrawTextWidget(lb).load_style()
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb)
 	height := if lb.has_scrollview && lb.adj_height > lb.height {
@@ -383,11 +408,15 @@ fn (mut lb ListBox) draw() {
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
-		draw_text_with_color(lb, lb.x + ui._text_offset_x, lb.y + lb.text_offset_y, if lb.files_droped {
-			'Empty listbox. Drop files here ...'
-		} else {
-			''
-		}, gx.gray)
+		$if nodtw ? {
+			draw_text_with_color(lb, lb.x + ui._text_offset_x, lb.y + lb.text_offset_y,
+				if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
+				gx.gray)
+		} $else {
+			DrawTextWidget(lb).draw_styled_text(lb.x + ui._text_offset_x, lb.y + lb.text_offset_y,
+				if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
+				color: gx.gray)
+		}
 	} else {
 		for inx, item in lb.items {
 			// println("$inx >= $lb.draw_count")

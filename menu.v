@@ -43,7 +43,7 @@ pub mut:
 }
 
 [params]
-pub struct MenuConfig {
+pub struct MenuParams {
 	id        string
 	width     int = 150
 	z_index   int
@@ -53,7 +53,7 @@ pub struct MenuConfig {
 	items     []MenuItem
 }
 
-pub fn menu(c MenuConfig) &Menu {
+pub fn menu(c MenuParams) &Menu {
 	return &Menu{
 		id: c.id
 		text: c.text

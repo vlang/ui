@@ -67,7 +67,7 @@ mut:
 }
 
 [params]
-pub struct CanvasLayoutConfig {
+pub struct CanvasLayoutParams {
 	id            string
 	width         int
 	height        int
@@ -91,7 +91,7 @@ pub struct CanvasLayoutConfig {
 	children     []Widget
 }
 
-pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
+pub fn canvas_layout(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := canvas_plus(c)
 	canvas.children = c.children
 	// Saves the original position of children
@@ -104,7 +104,7 @@ pub fn canvas_layout(c CanvasLayoutConfig) &CanvasLayout {
 
 // canvas_plus returns a canvas_layout but without layout
 // it can be viewed as a extended canvas
-pub fn canvas_plus(c CanvasLayoutConfig) &CanvasLayout {
+pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := &CanvasLayout{
 		id: c.id
 		width: c.width
@@ -496,9 +496,9 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 	dtw.draw_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
-pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, text_style_id string) {
+pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(c)
-	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, text_style_id)
+	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
 }
 
 pub fn (c &CanvasLayout) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {

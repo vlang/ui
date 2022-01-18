@@ -91,7 +91,7 @@ pub mut:
 }
 
 [params]
-struct StackConfig {
+struct StackParams {
 	id                   string
 	width                int // To remove soon
 	height               int // To remove soon
@@ -115,7 +115,7 @@ struct StackConfig {
 	children              []Widget
 }
 
-fn stack(c StackConfig) &Stack {
+fn stack(c StackParams) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
 		id: c.id
@@ -1190,9 +1190,9 @@ fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 	return hor_align, ver_align
 }
 
-//**** ChildrenConfig *****
+//**** ChildrenParams *****
 [params]
-pub struct ChildrenConfig {
+pub struct ChildrenParams {
 mut:
 	// add or remove or migrate
 	at      int  = -1
@@ -1214,7 +1214,7 @@ mut:
 	target_spacings []f64  = []f64{}
 }
 
-pub fn (mut s Stack) add(cfg_ ChildrenConfig) {
+pub fn (mut s Stack) add(cfg_ ChildrenParams) {
 	mut cfg := cfg_
 	pos := if cfg.at == -1 { s.children.len } else { cfg.at }
 	if 0 <= pos && pos <= s.children.len {
@@ -1237,7 +1237,7 @@ pub fn (mut s Stack) add(cfg_ ChildrenConfig) {
 	}
 }
 
-pub fn (mut s Stack) remove(cfg ChildrenConfig) {
+pub fn (mut s Stack) remove(cfg ChildrenParams) {
 	pos := if cfg.at == -1 { s.children.len - 1 } else { cfg.at }
 	if 0 <= pos && pos < s.children.len {
 		// mut children := []Widget{}
@@ -1262,7 +1262,7 @@ pub fn (mut s Stack) remove(cfg ChildrenConfig) {
 	}
 }
 
-pub fn (mut s Stack) move(cfg ChildrenConfig) {
+pub fn (mut s Stack) move(cfg ChildrenParams) {
 	if cfg.target == 0 {
 		// move (inside same stack s)
 		from_pos := if cfg.from == -1 { s.children.len - 1 } else { cfg.from }
@@ -1311,7 +1311,7 @@ enum ChildUpdateType {
 	migrate
 }
 
-pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
+pub fn (mut s Stack) update_widths(cfg ChildrenParams, mode ChildUpdateType) {
 	cfg_widths := if mode == .migrate { cfg.target_widths } else { cfg.widths }
 	if cfg_widths is f64 {
 		if cfg_widths == -1.0 {
@@ -1338,7 +1338,7 @@ pub fn (mut s Stack) update_widths(cfg ChildrenConfig, mode ChildUpdateType) {
 	}
 }
 
-pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
+pub fn (mut s Stack) update_heights(cfg ChildrenParams, mode ChildUpdateType) {
 	cfg_heights := if mode == .migrate { cfg.target_heights } else { cfg.heights }
 	if cfg_heights is f64 {
 		if cfg_heights == -1.0 {
@@ -1365,7 +1365,7 @@ pub fn (mut s Stack) update_heights(cfg ChildrenConfig, mode ChildUpdateType) {
 	}
 }
 
-pub fn (mut s Stack) update_spacings(cfg ChildrenConfig, mode ChildUpdateType) {
+pub fn (mut s Stack) update_spacings(cfg ChildrenParams, mode ChildUpdateType) {
 	cfg_spacing := if mode == .migrate { cfg.target_spacing } else { cfg.spacing }
 	cfg_spacings := if mode == .migrate { cfg.target_spacings } else { cfg.spacings }
 	if cfg_spacing != -1.0 || cfg_spacings.len != 0 {

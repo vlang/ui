@@ -34,7 +34,8 @@ mut:
 	tooltip   TooltipMessage
 }
 
-pub struct PictureConfig {
+[params]
+pub struct PictureParams {
 	id           string
 	path         string
 	width        int
@@ -49,7 +50,7 @@ pub struct PictureConfig {
 	tooltip_side Side = .top
 }
 
-pub fn picture(c PictureConfig) &Picture {
+pub fn picture(c PictureParams) &Picture {
 	if !os.exists(c.path) {
 		eprintln('V UI: picture file "$c.path" not found')
 	}

@@ -116,7 +116,8 @@ pub mut:
 	settings SettingsUI
 }
 
-pub struct WindowConfig {
+[params]
+pub struct WindowParams {
 pub:
 	width         int
 	height        int
@@ -319,6 +320,7 @@ fn on_event(e &gg.Event, mut window Window) {
 
 fn gg_init(mut window Window) {
 	window.load_settings()
+	window.init_styles()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
 	w := int(f32(window_size.width) / window.dpi_scale)
@@ -359,7 +361,7 @@ fn gg_cleanup(mut window Window) {
 	unsafe { window.free() }
 }
 
-pub fn window(cfg WindowConfig) &Window {
+pub fn window(cfg WindowParams) &Window {
 	/*
 	println('window()')
 	defer {
@@ -491,7 +493,7 @@ pub fn window(cfg WindowConfig) &Window {
 	return window
 }
 
-pub fn (mut parent_window Window) child_window(cfg WindowConfig) &Window {
+pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	// q := int(parent_window)
 	// println('child_window() q=$q.hex() parent={parent_window:p} ${cfg.on_draw:p}')
 

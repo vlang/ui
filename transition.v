@@ -30,7 +30,8 @@ pub mut:
 	animated_value &int
 }
 
-pub struct TransitionConfig {
+[params]
+pub struct TransitionParams {
 	z_index        int
 	duration       int
 	animated_value &int = 0
@@ -38,7 +39,7 @@ pub struct TransitionConfig {
 	ref            &Transition = voidptr(0)
 }
 
-pub fn transition(c TransitionConfig) &Transition {
+pub fn transition(c TransitionParams) &Transition {
 	mut transition := &Transition{
 		last_draw_time: time.ticks()
 		started_time: 0

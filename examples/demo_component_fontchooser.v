@@ -18,7 +18,7 @@ fn main() {
 		bg_color: gx.yellow
 	)
 	mut dtw := ui.DrawTextWidget(tb)
-	dtw.update_text_style(size: 30)
+	dtw.update_style(size: 30)
 	mut window := ui.window(
 		state: app
 		mode: .resizable

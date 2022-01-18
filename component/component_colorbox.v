@@ -62,14 +62,14 @@ pub mut:
 }
 
 [params]
-pub struct ColorBoxConfig {
+pub struct ColorBoxParams {
 	id    string
 	light bool
 	hsl   bool
 	drag  bool
 }
 
-pub fn colorbox(c ColorBoxConfig) &ui.Stack {
+pub fn colorbox(c ColorBoxParams) &ui.Stack {
 	mut cv_h := ui.canvas_plus(
 		width: 30
 		height: 256

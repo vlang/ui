@@ -6,7 +6,7 @@ module ui
 import gx
 
 [params]
-pub struct RowConfig {
+pub struct RowParams {
 pub:
 	id        string
 	width     int
@@ -29,7 +29,7 @@ pub:
 	children   []Widget
 }
 
-pub fn row(c RowConfig) &Stack {
+pub fn row(c RowParams) &Stack {
 	return stack(
 		id: c.id
 		height: c.height

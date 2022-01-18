@@ -41,7 +41,8 @@ pub mut:
 	component voidptr
 }
 
-pub struct SwitchConfig {
+[params]
+pub struct SwitchParams {
 	id          string
 	z_index     int
 	onclick     SwitchClickFn
@@ -49,7 +50,7 @@ pub struct SwitchConfig {
 	open        bool
 }
 
-pub fn switcher(c SwitchConfig) &Switch {
+pub fn switcher(c SwitchParams) &Switch {
 	mut s := &Switch{
 		id: c.id
 		height: ui.sw_height

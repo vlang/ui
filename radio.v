@@ -45,11 +45,13 @@ pub mut:
 	is_focused bool
 	is_checked bool
 	ui         &UI
-	text_cfg   gx.TextCfg
-	text_size  f64
-	hidden     bool
-	horizontal bool
-	compact    bool
+	// text styles
+	text_styles TextStyles
+	text_size   f64
+	text_cfg    gx.TextCfg
+	hidden      bool
+	horizontal  bool
+	compact     bool
 	// component state for composable widget
 	component voidptr
 	// selected_value string
@@ -57,7 +59,7 @@ pub mut:
 }
 
 [params]
-pub struct RadioConfig {
+pub struct RadioParams {
 	id       string
 	on_click RadioClickFn
 	values   []string
@@ -71,7 +73,7 @@ pub struct RadioConfig {
 	compact    bool
 }
 
-pub fn radio(c RadioConfig) &Radio {
+pub fn radio(c RadioParams) &Radio {
 	mut r := &Radio{
 		id: c.id
 		height: 20
@@ -105,7 +107,7 @@ fn (mut r Radio) init(parent Layout) {
 	if r.width == 0 {
 		r.set_size_from_values()
 	}
-	init_text_cfg(mut r)
+	r.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
 	subscriber.subscribe_method(events.on_click, radio_click, r)
@@ -135,6 +137,25 @@ pub fn (r &Radio) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut r Radio) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(r.text_cfg) {
+			r.text_cfg = r.ui.window.text_cfg
+		}
+		if r.text_size > 0 {
+			_, win_height := r.ui.window.size()
+			r.text_cfg = gx.TextCfg{
+				...r.text_cfg
+				size: text_size_as_int(r.text_size, win_height)
+			}
+		}
+	} $else {
+		mut dtw := DrawTextWidget(r)
+		dtw.init_style()
+		dtw.update_text_size(r.text_size)
 	}
 }
 
@@ -280,6 +301,7 @@ pub fn (mut r Radio) update_size() {
 
 fn (mut r Radio) draw() {
 	offset_start(mut r)
+	dtw := DrawTextWidget(r)
 	if r.title != '' {
 		// Border
 		r.ui.gg.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
@@ -290,9 +312,12 @@ fn (mut r Radio) draw() {
 		// Title
 		r.ui.gg.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 			10, default_window_color)
-		// r.ui.gg.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title, r.text_cfg.as_text_cfg())
-		// r.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
-		draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+		$if nodtw ? {
+			draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
+		} $else {
+			dtw.load_style()
+			dtw.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
+		}
 	}
 	// Values
 	dy := if r.title == '' { 0 } else { 15 }
@@ -311,9 +336,12 @@ fn (mut r Radio) draw() {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		// r.ui.gg.draw_text(r.x + check_mark_size + 10, y, val, r.text_cfg.as_text_cfg())
-		// r.draw_text(r.x + check_mark_size + 10, y, val)
-		draw_text(r, x + check_mark_size + 5, y, val)
+		$if nodtw ? {
+			draw_text(r, x + check_mark_size + 5, y, val)
+		} $else {
+			dtw.load_style()
+			dtw.draw_text(x + check_mark_size + 5, y, val)
+		}
 	}
 	$if bb ? {
 		draw_bb(mut r, r.ui)
