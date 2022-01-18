@@ -161,8 +161,8 @@ fn (mut l Label) set_visible(state bool) {
 	l.hidden = !state
 }
 
-fn (l &Label) point_inside(x f64, y f64) bool {
-	return false // x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height
+pub fn (l &Label) point_inside(x f64, y f64) bool {
+	return x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height
 }
 
 pub fn (mut l Label) set_text(s string) {
