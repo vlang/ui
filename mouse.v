@@ -49,7 +49,6 @@ pub enum Cursor {
 	ibeam
 }
 
-
 // Inspiration from 2048 game
 
 struct Pos {
@@ -70,4 +69,3 @@ mut:
 	pos  Pos
 	time time.Time
 }
-

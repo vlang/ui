@@ -9,7 +9,7 @@ import os
 import clipboard
 
 const (
-	version = '0.0.4'
+	version           = '0.0.4'
 	cursor_show_delay = 100 // ms
 )
 

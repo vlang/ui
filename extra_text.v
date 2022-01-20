@@ -261,7 +261,9 @@ pub fn start_tooltip(mut w Widget, id string, msg TooltipMessage, wui &UI) {
 	if !win.tooltip.active { // only once
 		// println("start tooltip $win.tooltip.id: $msg")
 		if win.tooltip.ui == 0 {
-			unsafe{ win.tooltip.ui = wui }
+			unsafe {
+				win.tooltip.ui = wui
+			}
 		}
 
 		win.tooltip.lines = word_wrap_text_to_lines(msg.text, 70)
