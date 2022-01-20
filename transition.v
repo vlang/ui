@@ -4,6 +4,7 @@
 module ui
 
 import time
+import math
 
 [heap]
 pub struct Transition {
@@ -18,7 +19,7 @@ mut:
 	started_time     i64
 	duration         i64
 	animating        bool
-	easing           EasingFunction
+	easing           math.EasingFunction
 	parent           Layout = empty_stack
 	start_value      int
 	last_draw_target int
@@ -35,7 +36,7 @@ pub struct TransitionParams {
 	z_index        int
 	duration       int
 	animated_value &int = 0
-	easing         EasingFunction
+	easing         math.EasingFunction
 	ref            &Transition = voidptr(0)
 }
 

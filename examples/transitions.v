@@ -1,5 +1,6 @@
 import ui
 import os
+import math
 
 const (
 	win_width                = 500
@@ -25,8 +26,8 @@ fn main() {
 	mut app := &App{
 		state: 0
 		window: 0
-		x_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_cubic))
-		y_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_quart))
+		x_transition: ui.transition(duration: 750, easing: math.easing(.ease_in_out_cubic))
+		y_transition: ui.transition(duration: 750, easing: math.easing(.ease_in_out_quart))
 		picture: ui.picture(
 			width: picture_width_and_height
 			height: picture_width_and_height
