@@ -1560,3 +1560,30 @@ pub fn (w &Window) free() {
 		println('window -> freed')
 	}
 }
+
+pub fn (w &Window) is_registred(widget &Widget) bool {
+	return widget.id in w.widgets
+}
+
+//---- Window focusable methods
+
+pub fn (w &Window) unlocked_focus() bool {
+	$if focus ? {
+		println('locked focus = <$w.locked_focus>')
+	}
+	return w.locked_focus == ''
+}
+
+fn (mut w Window) focus_next() {
+	w.do_focus = false
+	if !Layout(w).set_focus_next() {
+		Layout(w).set_focus_first()
+	}
+}
+
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !Layout(w).set_focus_prev() {
+		Layout(w).set_focus_last()
+	}
+}

@@ -7,13 +7,9 @@ import time
 import gg
 import os
 import clipboard
-import eventbus
 
 const (
 	version = '0.0.4'
-)
-
-const (
 	cursor_show_delay = 100 // ms
 )
 
@@ -39,93 +35,6 @@ mut:
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
-}
-
-pub enum VerticalAlignment {
-	top = 0
-	center
-	bottom
-}
-
-pub enum HorizontalAlignment {
-	left = 0
-	center
-	right
-}
-
-pub interface Widget {
-mut:
-	id string
-	x int
-	y int
-	z_index int
-	offset_x int
-	offset_y int
-	hidden bool
-	init(Layout)
-	cleanup()
-	draw()
-	point_inside(x f64, y f64) bool
-	set_pos(x int, y int)
-	propose_size(w int, h int) (int, int)
-	size() (int, int)
-	set_visible(bool)
-}
-
-pub interface Layout {
-	get_ui() &UI
-	get_state() voidptr
-	size() (int, int)
-	get_subscriber() &eventbus.Subscriber
-	get_children() []Widget
-mut:
-	draw()
-	resize(w int, h int)
-	update_layout()
-}
-
-pub enum MouseAction {
-	up
-	down
-}
-
-// MouseButton is same to sapp.MouseButton
-pub enum MouseButton {
-	invalid = 256
-	left = 0
-	right = 1
-	middle = 2
-}
-
-pub struct MouseEvent {
-pub:
-	x      int
-	y      int
-	button MouseButton
-	action MouseAction
-	mods   KeyMod
-}
-
-pub struct ScrollEvent {
-pub:
-	x       f64
-	y       f64
-	mouse_x f64
-	mouse_y f64
-}
-
-pub struct MouseMoveEvent {
-pub:
-	x            f64
-	y            f64
-	mouse_button int
-	// TODO enum
-}
-
-pub enum Cursor {
-	hand
-	arrow
-	ibeam
 }
 
 fn (mut gui UI) idle_loop() {
@@ -164,6 +73,37 @@ fn (mut gui UI) idle_loop() {
 				return
 			}
 		}
+	}
+}
+
+fn (mut gui UI) load_icos() {
+	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
+	$if macos {
+		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
+			bytes_darwin_circle_png.len)
+	} $else {
+		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
+	}
+	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
+	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
+		bytes_selected_radio_png.len)
+}
+
+[unsafe]
+pub fn (gui &UI) free() {
+	unsafe {
+		// gg             &gg.Context = voidptr(0)
+		// window         &Window     = voidptr(0)
+		// clipboard      &clipboard.Clipboard
+		// cb_image             gg.Image
+		// circle_image         gg.Image
+		// radio_image          gg.Image
+		// selected_radio_image gg.Image
+		// down_arrow           gg.Image
+		gui.resource_cache.free()
+	}
+	$if free ? {
+		println('\tui -> freed')
 	}
 }
 
@@ -212,19 +152,6 @@ pub fn run(window &Window) {
 	time.sleep(20 * time.millisecond)
 }
 
-fn (mut gui UI) load_icos() {
-	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
-	$if macos {
-		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
-			bytes_darwin_circle_png.len)
-	} $else {
-		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
-	}
-	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
-	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
-		bytes_selected_radio_png.len)
-}
-
 pub fn open_url(url string) {
 	if !url.starts_with('https://') && !url.starts_with('http://') {
 		return
@@ -242,22 +169,4 @@ pub fn open_url(url string) {
 
 pub fn confirm(s string) bool {
 	return false
-}
-
-[unsafe]
-pub fn (gui &UI) free() {
-	unsafe {
-		// gg             &gg.Context = voidptr(0)
-		// window         &Window     = voidptr(0)
-		// clipboard      &clipboard.Clipboard
-		// cb_image             gg.Image
-		// circle_image         gg.Image
-		// radio_image          gg.Image
-		// selected_radio_image gg.Image
-		// down_arrow           gg.Image
-		gui.resource_cache.free()
-	}
-	$if free ? {
-		println('\tui -> freed')
-	}
 }
