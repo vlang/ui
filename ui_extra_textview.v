@@ -60,7 +60,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 }
 
 pub fn (tv &TextView) size() (int, int) {
-	tv.load_current_style()
+	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
 	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
 	for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
@@ -222,7 +222,7 @@ fn (mut tv TextView) draw_textlines() {
 	tv.draw_selection()
 
 	// draw only visible text lines
-	tv.load_current_style()
+	tv.load_style()
 	mut y := tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
@@ -234,7 +234,8 @@ fn (mut tv TextView) draw_textlines() {
 
 	// draw cursor
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
-		tv.tb.ui.gg.draw_rect(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height, gx.black) // , gx.Black)
+		tv.tb.ui.gg.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height,
+			gx.black) // , gx.Black)
 	}
 }
 
@@ -261,22 +262,23 @@ fn (mut tv TextView) draw_selection() {
 		// if on the same line draw the selected background
 		sel_from, sel_width := tv.text_xminmax_from_pos(tv.sel_start_line(), tv.tlv.sel_start_i,
 			tv.tlv.sel_end_i)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height, selection_color)
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+			textbox_padding_y + tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height,
+			selection_color)
 	} else {
 		// otherwise draw all the selected lines one by one after sorting the position
 		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
 		// here the first line
 		mut ustr := tv.line(start_j)
 		mut sel_from, mut sel_width := tv.text_xminmax_from_pos(ustr, start_i, ustr.len)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			start_j * tv.line_height, sel_width, tv.line_height, selection_color)
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+			textbox_padding_y + start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
 				ustr = tv.line(j)
 				sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, ustr.runes().len)
-				tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+				tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
 					textbox_padding_y + j * tv.line_height, sel_width, tv.line_height,
 					selection_color)
 			}
@@ -284,8 +286,8 @@ fn (mut tv TextView) draw_selection() {
 		// and finally the last one
 		ustr = tv.line(end_j)
 		sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, end_i)
-		tv.tb.ui.gg.draw_rect(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y + textbox_padding_y +
-			end_j * tv.line_height, sel_width, tv.line_height, selection_color)
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+			textbox_padding_y + end_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	}
 }
 
@@ -715,7 +717,7 @@ pub fn (mut tv TextView) do_zoom_down() {
 	if text_size < 8 {
 		text_size = 8
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
@@ -729,17 +731,17 @@ pub fn (mut tv TextView) do_zoom_up() {
 	if text_size > 48 {
 		text_size = 48
 	}
-	tv.update_text_style(size: text_size)
+	tv.update_style(size: text_size)
 	tv.update_line_height()
 	tv.update_lines()
 }
 
 [params]
-pub struct LogViewConfig {
+pub struct LogViewParams {
 	nb_lines int = 5
 }
 
-pub fn (mut tv TextView) do_logview(cfg LogViewConfig) {
+pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	if !tv.tb.has_scrollview {
 		println("Warning: use of task do_logview requires textbox to have 'scrollview: true'")
 		return
@@ -904,7 +906,7 @@ fn (tv &TextView) ordered_lines_selection() (int, int, int, int) {
 }
 
 pub fn (tv &TextView) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	tv.load_current_style()
+	tv.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
@@ -926,7 +928,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	tv.load_current_style()
+	tv.load_style()
 	mut prev_width := 0.0
 	ustr := text.runes()
 	mut width, mut width_cur := 0.0, 0.0
@@ -972,6 +974,10 @@ fn (tv &TextView) draw_text(x int, y int, text string) {
 	DrawTextWidget(tv.tb).draw_text(x, y, text)
 }
 
+fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
+	DrawTextWidget(tv.tb).draw_styled_text(x, y, text, ts)
+}
+
 fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(text)
 }
@@ -990,18 +996,18 @@ fn (tv &TextView) text_size(text string) (int, int) {
 }
 
 fn (mut tv TextView) update_line_height() {
-	tv.load_current_style()
+	tv.load_style()
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
-fn (tv &TextView) update_text_style(ts TextStyleConfig) {
+fn (tv &TextView) update_style(ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
-	dtw.update_text_style(ts)
+	dtw.update_style(ts)
 }
 
 // Not called automatically as it is in gg
-fn (tv &TextView) load_current_style() {
-	DrawTextWidget(tv.tb).load_current_style()
+fn (tv &TextView) load_style() {
+	DrawTextWidget(tv.tb).load_style()
 }
 
 // that's weird text_width is not additive function

@@ -40,7 +40,7 @@ pub mut:
 }
 
 [params]
-pub struct DropdownConfig {
+pub struct DropdownParams {
 	id                   string
 	def_text             string
 	x                    int
@@ -59,7 +59,7 @@ pub:
 	text string
 }
 
-pub fn dropdown(c DropdownConfig) &Dropdown {
+pub fn dropdown(c DropdownParams) &Dropdown {
 	mut dd := &Dropdown{
 		id: c.id
 		width: c.width
@@ -148,8 +148,8 @@ fn (mut dd Dropdown) draw() {
 	offset_start(mut dd)
 	gg := dd.ui.gg
 	// draw the main dropdown
-	gg.draw_rect(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
-	gg.draw_empty_rect(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
+	gg.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
+	gg.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
 		ui.dropdown_focus_color
 	} else {
 		ui.dropdown_border_color
@@ -169,9 +169,9 @@ fn (dd &Dropdown) draw_open() {
 	// draw the drawer
 	if dd.open {
 		gg := dd.ui.gg
-		gg.draw_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+		gg.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			ui.dropdown_drawer_color)
-		gg.draw_empty_rect(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+		gg.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			ui.dropdown_border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
@@ -180,9 +180,9 @@ fn (dd &Dropdown) draw_open() {
 			} else {
 				ui.dropdown_drawer_color
 			}
-			gg.draw_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+			gg.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
-			gg.draw_empty_rect(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+			gg.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				ui.dropdown_border_color)
 			gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 		}

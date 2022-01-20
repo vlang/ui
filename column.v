@@ -6,7 +6,7 @@ module ui
 import gx
 
 [params]
-pub struct ColumnConfig {
+pub struct ColumnParams {
 	id        string
 	width     int // To remove soon
 	height    int // To remove soon
@@ -28,7 +28,7 @@ pub struct ColumnConfig {
 	children   []Widget
 }
 
-pub fn column(c ColumnConfig) &Stack {
+pub fn column(c ColumnParams) &Stack {
 	return stack(
 		id: c.id
 		height: c.height

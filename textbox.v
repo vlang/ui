@@ -85,12 +85,12 @@ pub mut:
 	is_error           &bool = voidptr(0)
 	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
 	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
-	// related to text drawing
-	text_cfg  gx.TextCfg
-	text_size f64
-	hidden    bool
 	// text styles
 	text_styles TextStyles
+	// related to text drawing
+	text_size f64
+	text_cfg  gx.TextCfg // TO REMOVE SOON
+	hidden    bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -107,7 +107,7 @@ pub enum TextBoxMode {
 }
 
 [params]
-pub struct TextBoxConfig {
+pub struct TextBoxParams {
 	id               string
 	width            int
 	height           int = 22
@@ -145,7 +145,7 @@ pub struct TextBoxConfig {
 	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-pub fn textbox(c TextBoxConfig) &TextBox {
+pub fn textbox(c TextBoxParams) &TextBox {
 	mut tb := &TextBox{
 		id: c.id
 		height: c.height
@@ -193,10 +193,9 @@ fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
-		tb.text_cfg = tb.ui.window.text_cfg
+	tb.init_style()
+	{
 	}
-	update_text_size(mut tb)
 	// TODO: Maybe in a method later to allow font size update
 	tb.update_line_height()
 	if tb.is_multiline {
@@ -251,17 +250,30 @@ pub fn (tb &TextBox) free() {
 	}
 }
 
+fn (mut tb TextBox) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
+			tb.text_cfg = tb.ui.window.text_cfg
+		}
+		update_text_size(mut tb)
+	} $else {
+		mut dtw := DrawTextWidget(tb)
+		dtw.init_style()
+		dtw.update_text_size(tb.text_size)
+	}
+}
+
 // fn (tb &TextBox) draw_inner_border() {
 fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {
 		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
-		gg.draw_empty_rect(x, y, width, height, color)
-		// gg.draw_empty_rect(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
+		gg.draw_rect_empty(x, y, width, height, color)
+		// gg.draw_rect_empty(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
 		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_empty_rect(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
+		gg.draw_rect_empty(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
 	} else {
-		gg.draw_empty_rect(x, y, width, height, ui.text_border_accentuated_color)
-		gg.draw_empty_rect(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
+		gg.draw_rect_empty(x, y, width, height, ui.text_border_accentuated_color)
+		gg.draw_rect_empty(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
 	}
 }
 
@@ -309,10 +321,10 @@ fn (mut tb TextBox) draw() {
 	scrollview_draw_begin(mut tb)
 	// draw background
 	if tb.has_scrollview {
-		tb.ui.gg.draw_rect(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
+		tb.ui.gg.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
 			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
 	} else {
-		tb.ui.gg.draw_rect(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
+		tb.ui.gg.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
 		if !tb.borderless {
 			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
@@ -321,6 +333,7 @@ fn (mut tb TextBox) draw() {
 	if tb.is_multiline {
 		tb.tv.draw_textlines()
 	} else {
+		dtw := DrawTextWidget(tb)
 		text := *(tb.text)
 		text_len := text.runes().len
 		mut placeholder := tb.placeholder
@@ -333,10 +346,13 @@ fn (mut tb TextBox) draw() {
 
 		// Placeholder
 		if text == '' && placeholder != '' {
-			// tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder, tb.placeholder_cfg)
-			// tb.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder)
-			draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
-				gx.gray)
+			$if nodtw ? {
+				draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
+					gx.gray)
+			} $else {
+				dtw.draw_styled_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
+					color: gx.gray)
+			}
 		}
 		// Text
 		else {
@@ -356,12 +372,24 @@ fn (mut tb TextBox) draw() {
 					// 	break
 					// }
 				}
-				draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				$if nodtw ? {
+					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				} $else {
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				}
 			} else {
 				if tb.is_password {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					$if nodtw ? {
+						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					} $else {
+						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					}
 				} else {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
+					$if nodtw ? {
+						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
+					} $else {
+						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+					}
 				}
 			}
 		}
@@ -382,7 +410,7 @@ fn (mut tb TextBox) draw() {
 				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			tb.ui.gg.draw_rect(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+			tb.ui.gg.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
 				gx.black) // , gx.Black)
 		}
 	}
@@ -408,7 +436,7 @@ fn (mut tb TextBox) draw_selection() {
 	}
 	sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
 	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
-	tb.ui.gg.draw_rect(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
+	tb.ui.gg.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
 		sel_width, tb.line_height, ui.selection_color)
 }
 

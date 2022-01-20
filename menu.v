@@ -43,7 +43,7 @@ pub mut:
 }
 
 [params]
-pub struct MenuConfig {
+pub struct MenuParams {
 	id        string
 	width     int = 150
 	z_index   int
@@ -53,7 +53,7 @@ pub struct MenuConfig {
 	items     []MenuItem
 }
 
-pub fn menu(c MenuConfig) &Menu {
+pub fn menu(c MenuParams) &Menu {
 	return &Menu{
 		id: c.id
 		text: c.text
@@ -143,8 +143,8 @@ fn (mut m Menu) draw() {
 		return
 	}
 	gg := m.ui.gg
-	gg.draw_rect(m.x, m.y, m.width, m.height, ui.menu_color)
-	gg.draw_empty_rect(m.x, m.y, m.width, m.height, ui.menu_border_color)
+	gg.draw_rect_filled(m.x, m.y, m.width, m.height, ui.menu_color)
+	gg.draw_rect_empty(m.x, m.y, m.width, m.height, ui.menu_border_color)
 	for i, item in m.items {
 		m.ui.gg.draw_text_def(m.x + 10, m.y + i * ui.menu_height + 10, item.text)
 	}

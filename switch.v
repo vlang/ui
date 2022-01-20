@@ -41,7 +41,8 @@ pub mut:
 	component voidptr
 }
 
-pub struct SwitchConfig {
+[params]
+pub struct SwitchParams {
 	id          string
 	z_index     int
 	onclick     SwitchClickFn
@@ -49,7 +50,7 @@ pub struct SwitchConfig {
 	open        bool
 }
 
-pub fn switcher(c SwitchConfig) &Switch {
+pub fn switcher(c SwitchParams) &Switch {
 	mut s := &Switch{
 		id: c.id
 		height: ui.sw_height
@@ -111,16 +112,16 @@ fn (mut s Switch) draw() {
 	offset_start(mut s)
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
-		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
-		s.ui.gg.draw_rect(s.x - padding + s.width - ui.sw_dot_size, s.y + padding, ui.sw_dot_size,
-			ui.sw_dot_size, gx.white)
+		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
+		s.ui.gg.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding,
+			ui.sw_dot_size, ui.sw_dot_size, gx.white)
 	} else {
-		s.ui.gg.draw_rect(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
-		s.ui.gg.draw_rect(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
+		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
+		s.ui.gg.draw_rect_filled(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
 			gx.white)
 	}
 	if s.is_focused {
-		s.ui.gg.draw_empty_rect(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
+		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
 	}
 	$if bb ? {
 		draw_bb(mut s, s.ui)

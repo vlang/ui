@@ -2,6 +2,7 @@ import ui
 import gx
 import gg
 import ui.component as uic
+import os.font
 
 struct App {
 mut:
@@ -36,6 +37,6 @@ fn main() {
 		]
 	)
 	app.window = window
-	println(gg.system_font_path())
+	println(font.default())
 	ui.run(window)
 }

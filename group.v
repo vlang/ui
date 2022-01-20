@@ -35,7 +35,7 @@ pub mut:
 }
 
 [params]
-pub struct GroupConfig {
+pub struct GroupParams {
 pub mut:
 	id       string
 	title    string
@@ -47,7 +47,7 @@ pub mut:
 	children []Widget
 }
 
-pub fn group(c GroupConfig) &Group {
+pub fn group(c GroupParams) &Group {
 	mut g := &Group{
 		id: c.id
 		title: c.title
@@ -152,7 +152,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 fn (mut g Group) draw() {
 	offset_start(mut g)
 	// Border
-	g.ui.gg.draw_empty_rect(g.x, g.y, g.width, g.height, gx.gray)
+	g.ui.gg.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.gg.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {
@@ -162,7 +162,7 @@ fn (mut g Group) draw() {
 		text_width = g.ui.gg.text_width(title)
 	}
 	// Title
-	g.ui.gg.draw_rect(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
+	g.ui.gg.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
 	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
 	for mut child in g.children {
 		child.draw()

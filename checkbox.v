@@ -41,15 +41,17 @@ pub mut:
 	on_check_changed CheckChangedFn
 	text             string
 	disabled         bool
-	text_cfg         gx.TextCfg
-	text_size        f64
-	hidden           bool
+	// text styles
+	text_styles TextStyles
+	text_size   f64
+	text_cfg    gx.TextCfg
+	hidden      bool
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
-pub struct CheckBoxConfig {
+pub struct CheckBoxParams {
 	id               string
 	x                int
 	y                int
@@ -63,7 +65,7 @@ pub struct CheckBoxConfig {
 	text_size        f64
 }
 
-pub fn checkbox(c CheckBoxConfig) &CheckBox {
+pub fn checkbox(c CheckBoxParams) &CheckBox {
 	mut cb := &CheckBox{
 		id: c.id
 		height: ui.check_mark_size + 5 // TODO
@@ -84,7 +86,7 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
-	init_text_cfg(mut cb)
+	cb.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
@@ -106,6 +108,25 @@ pub fn (cb &CheckBox) free() {
 	unsafe { free(cb) }
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut cb CheckBox) init_style() {
+	$if nodtw ? {
+		if is_empty_text_cfg(cb.text_cfg) {
+			cb.text_cfg = cb.ui.window.text_cfg
+		}
+		if cb.text_size > 0 {
+			_, win_height := cb.ui.window.size()
+			cb.text_cfg = gx.TextCfg{
+				...cb.text_cfg
+				size: text_size_as_int(cb.text_size, win_height)
+			}
+		}
+	} $else {
+		mut dtw := DrawTextWidget(cb)
+		dtw.init_style()
+		dtw.update_text_size(cb.text_size)
 	}
 }
 
@@ -169,15 +190,15 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 
 fn (mut cb CheckBox) draw() {
 	offset_start(mut cb)
-	cb.ui.gg.draw_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
+	cb.ui.gg.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {
-		cb.ui.gg.draw_empty_rect(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
+		cb.ui.gg.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		// cb.ui.gg.draw_rect(cb.x + 3, cb.y + 3, 2, 2, gx.black)
+		// cb.ui.gg.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2
@@ -191,7 +212,13 @@ fn (mut cb CheckBox) draw() {
 		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
+	$if nodtw ? {
+		cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
+	} $else {
+		dtw := DrawTextWidget(cb)
+		dtw.load_style()
+		dtw.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text)
+	}
 	$if bb ? {
 		draw_bb(mut cb, cb.ui)
 	}

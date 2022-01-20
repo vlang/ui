@@ -37,7 +37,7 @@ pub mut:
 }
 
 [params]
-pub struct SubWindowConfig {
+pub struct SubWindowParams {
 	id         string
 	x          int
 	y          int
@@ -47,7 +47,7 @@ pub struct SubWindowConfig {
 	decoration bool   = true
 }
 
-pub fn subwindow(c SubWindowConfig) &SubWindow {
+pub fn subwindow(c SubWindowParams) &SubWindow {
 	mut s := &SubWindow{
 		id: c.id
 		x: c.x
@@ -104,7 +104,7 @@ fn (mut s SubWindow) draw() {
 	// possibly add window decoration
 	if s.decoration {
 		w, _ := s.size()
-		s.ui.gg.draw_rounded_rect(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
+		s.ui.gg.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
 	}
 	s.layout.draw()
 

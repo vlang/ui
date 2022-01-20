@@ -33,7 +33,7 @@ mut:
 }
 
 [params]
-pub struct RectangleConfig {
+pub struct RectangleParams {
 	id           string
 	text         string
 	height       int
@@ -53,7 +53,7 @@ pub struct RectangleConfig {
 	text_size f64
 }
 
-pub fn rectangle(c RectangleConfig) &Rectangle {
+pub fn rectangle(c RectangleParams) &Rectangle {
 	rect := &Rectangle{
 		id: c.id
 		text: c.text
@@ -74,7 +74,7 @@ pub fn rectangle(c RectangleConfig) &Rectangle {
 }
 
 // Workaround to have a spacing notably
-pub fn spacing(c RectangleConfig) &Rectangle {
+pub fn spacing(c RectangleParams) &Rectangle {
 	mut rect := &Rectangle{
 		color: c.color
 		ui: 0
@@ -126,14 +126,14 @@ pub fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 fn (mut r Rectangle) draw() {
 	offset_start(mut r)
 	if r.radius > 0 {
-		r.ui.gg.draw_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.color)
+		r.ui.gg.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
 		if r.border {
-			r.ui.gg.draw_empty_rounded_rect(r.x, r.y, r.width, r.height, r.radius, r.border_color)
+			r.ui.gg.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
 		}
 	} else {
-		r.ui.gg.draw_rect(r.x, r.y, r.width, r.height, r.color)
+		r.ui.gg.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
 		if r.border {
-			r.ui.gg.draw_empty_rect(r.x, r.y, r.width, r.height, r.border_color)
+			r.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
 		}
 	}
 	// Display rectangle text
