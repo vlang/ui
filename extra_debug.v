@@ -3,13 +3,13 @@ module ui
 import gx
 
 // Draw bounding box for Stack
-fn (s &Stack) draw_bb() {
+fn debug_draw_bb_stack(s &Stack) {
 	mut col := gx.red
 	if s.direction == .row {
 		col = gx.green
 	}
 	w, h := s.size()
-	println('draw_bb [$s.direction] w, h = s.size()')
+	println('debug_draw_bb_stack [$s.direction] w, h = s.size()')
 	println('  in: (s.x($s.x) - s.margin(.left)(${s.margin(.left)}), s.y($s.y) - s.margin(.top)(${s.margin(.top)}), w($w), h($h))')
 	println(' out: (s.x($s.x), s.y($s.y), w($w) - s.margin(.left)(${s.margin(.left)}) - s.margin(.right)(${s.margin(.right)}), h($h) - s.margin(.top)(${s.margin(.top)}) - s.margin(.bottom)(${s.margin(.bottom)})')
 	s.ui.gg.draw_rect_empty(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
@@ -17,20 +17,20 @@ fn (s &Stack) draw_bb() {
 		col)
 }
 
-fn draw_bb(mut wi Widget, ui &UI) {
+fn debug_draw_bb_widget(mut wi Widget, ui &UI) {
 	col := gx.black
 	w, h := wi.size()
 	println('bb: $wi.type_name() ($wi.x, $wi.y ,$w, $h)')
 	ui.gg.draw_rect_empty(wi.x, wi.y, w, h, col)
 }
 
-fn draw_text_bb(x int, y int, w int, h int, ui &UI) {
+fn debug_draw_bb_text(x int, y int, w int, h int, ui &UI) {
 	col := gx.gray
 	ui.gg.draw_rect_empty(x, y, w, h, col)
 }
 
 // Debug function
-fn (mut s Stack) debug_show_cache(depth int, txt string) {
+fn debug_show_cache(mut s Stack, depth int, txt string) {
 	if depth == 0 {
 		println('Show cache $s.id =>')
 	}
@@ -57,7 +57,7 @@ fn (mut s Stack) debug_show_cache(depth int, txt string) {
 			mut tmp := '$tab      ($depth-$i) Stack $child.id :'
 			tmp += '\n$tab      fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight: (${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})'
 			tmp += '\n$tab      size: (${widths[i]},${heights[i]})'
-			child.debug_show_cache(depth + 1, tmp)
+			debug_show_cache(mut child, depth + 1, tmp)
 		} else {
 			w, h := child.size()
 			println('$tab      ($depth-$i) Widget $name size($w, $h) fixed(${s.cache.fixed_widths[i]},${s.cache.fixed_heights[i]}) weight(${s.cache.weight_widths[i]},${s.cache.weight_heights[i]})')
@@ -65,13 +65,13 @@ fn (mut s Stack) debug_show_cache(depth int, txt string) {
 	}
 }
 
-fn (s &Stack) debug_show_size(t string) {
+fn debug_show_size(s &Stack, t string) {
 	print('${t}size of Stack ${typeof(s).name}')
 	C.printf(c' %p: ', s)
 	println(' ($s.width, $s.height)')
 }
 
-fn (mut s Stack) debug_show_sizes(t string) {
+fn debug_show_sizes(mut s Stack, t string) {
 	parent := s.parent
 	sw, sh := s.size()
 	print('${t}Stack ${typeof(s).name}')
@@ -92,7 +92,7 @@ fn (mut s Stack) debug_show_sizes(t string) {
 	}
 }
 
-fn (s &Stack) debug_set_children_sizes(widths []int, heights []int, c CachedSizes) {
+fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes) {
 	println('scs: pos: ($s.x, $s.y) real: ($s.real_width, $s.real_height)')
 	mut total := 0
 	if s.direction == .row {

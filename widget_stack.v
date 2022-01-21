@@ -227,7 +227,7 @@ pub fn (mut s Stack) update_layout() {
 	// 2) set cache sizes
 	s.set_cache_sizes()
 	$if cache ? {
-		s.debug_show_cache(0, '')
+		debug_show_cache(mut s, 0, '')
 	}
 	// 3) set all the sizes (could be updated possibly for resizing)
 	s.set_children_sizes()
@@ -257,7 +257,7 @@ fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
 	// println('parent size: ($parent_width, $parent_height)')
-	// s.debug_show_sizes("decode before -> ")
+	// debug_show_sizes(mut s, "decode before -> ")
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
 		if s.parent is SubWindow {
@@ -304,7 +304,7 @@ fn (mut s Stack) set_children_sizes() {
 	}
 	// Only for debug stuff
 	$if scs ? {
-		s.debug_set_children_sizes(widths, heights, c)
+		debug_set_children_sizes(s, widths, heights, c)
 	}
 }
 
@@ -973,7 +973,7 @@ fn (mut s Stack) draw() {
 	scrollview_draw_begin(mut s)
 
 	$if bb ? {
-		s.draw_bb()
+		debug_draw_bb_stack(s)
 	}
 	for mut child in s.drawing_children {
 		// println("$child.type_name() $child.id")

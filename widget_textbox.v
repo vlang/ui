@@ -415,7 +415,7 @@ fn (mut tb TextBox) draw() {
 		}
 	}
 	$if bb ? {
-		draw_bb(mut tb, tb.ui)
+		debug_draw_bb_widget(mut tb, tb.ui)
 	}
 	scrollview_draw_end(tb)
 	offset_end(mut tb)
