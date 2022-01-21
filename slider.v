@@ -236,7 +236,7 @@ fn (mut s Slider) draw() {
 	// Draw the thumb
 	s.draw_thumb()
 	$if bb ? {
-		draw_bb(mut s, s.ui)
+		debug_draw_bb_widget(mut s, s.ui)
 	}
 	offset_end(mut s)
 }

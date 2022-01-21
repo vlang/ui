@@ -124,7 +124,7 @@ fn (mut s Switch) draw() {
 		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
 	}
 	$if bb ? {
-		draw_bb(mut s, s.ui)
+		debug_draw_bb_widget(mut s, s.ui)
 	}
 	offset_end(mut s)
 }

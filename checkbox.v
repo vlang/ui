@@ -212,7 +212,7 @@ fn (mut cb CheckBox) draw() {
 		dtw.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text)
 	}
 	$if bb ? {
-		draw_bb(mut cb, cb.ui)
+		debug_draw_bb_widget(mut cb, cb.ui)
 	}
 	offset_end(mut cb)
 }
