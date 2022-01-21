@@ -1,4 +1,19 @@
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
+// Use of this source code is governed by a GPL license
+// that can be found in the LICENSE file.
 module ui
+
+pub enum VerticalAlignment {
+	top = 0
+	center
+	bottom
+}
+
+pub enum HorizontalAlignment {
+	left = 0
+	center
+	right
+}
 
 pub struct HorizontalAlignments {
 	left   []int
