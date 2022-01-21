@@ -9,12 +9,12 @@ pub interface Layout {
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
-	get_subscriber() &eventbus.Subscriber
 	get_children() []Widget
+	get_subscriber() &eventbus.Subscriber
 mut:
-	draw()
 	resize(w int, h int)
 	update_layout()
+	draw()
 }
 
 fn (l &Layout) update_children_z_index(z_inc int) {

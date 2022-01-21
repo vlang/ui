@@ -33,17 +33,17 @@ const (
 	default_font_size    = 13
 )
 
-pub type ClickFn = fn (e MouseEvent, window &Window)
-
-pub type KeyFn = fn (e KeyEvent, window &Window)
-
-pub type ScrollFn = fn (e ScrollEvent, window &Window)
-
-pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
+pub type WindowFn = fn (window &Window)
 
 pub type ResizeFn = fn (w int, h int, window &Window)
 
-pub type WindowFn = fn (window &Window)
+pub type KeyFn = fn (e KeyEvent, window &Window)
+
+pub type ClickFn = fn (e MouseEvent, window &Window)
+
+pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
+
+pub type ScrollFn = fn (e ScrollEvent, window &Window)
 
 [heap]
 pub struct Window {
@@ -158,207 +158,6 @@ pub:
 	enable_dragndrop             bool = true
 	max_dropped_files            int  = 5
 	max_dropped_file_path_length int  = 2048
-}
-
-fn on_event(e &gg.Event, mut window Window) {
-	/*
-	if false && e.typ != .mouse_move {
-		print('window.on_event() $e.typ ') // code=$e.char_code')
-		if C.sapp_mouse_locked() {
-			println('locked')
-		} else {
-			println('unlocked')
-		}
-	}
-	*/
-	// window.ui.needs_refresh = true
-	// window.refresh()
-	$if macos {
-		if window.ui.gg.native_rendering {
-			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
-				C.darwin_window_refresh()
-			} else {
-				C.darwin_window_refresh()
-			}
-		}
-	}
-	window.ui.ticks = 0
-	// window.ui.ticks_since_refresh = 0
-	// println("on_event: $e.typ")
-	match e.typ {
-		.mouse_down {
-			// println("mouse down")
-			window_mouse_down(e, mut window.ui)
-			// IMPORTANT: No more need since inside window_handle_tap:
-			//  window_click(e, window.ui)
-			// touch like
-			window.touch.start = Touch{
-				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
-				}
-				time: time.now()
-			}
-		}
-		.mouse_up {
-			// println('mouseup')
-			window_mouse_up(e, mut window.ui)
-			// NOT THERE since already done
-			// touch-like
-			window.touch.end = Touch{
-				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
-				}
-				time: time.now()
-			}
-			window_touch_tap_and_swipe(e, window.ui)
-		}
-		.files_droped {
-			window_files_droped(e, mut window.ui)
-		}
-		.key_down {
-			// println('key down')
-			window_key_down(e, window.ui)
-		}
-		.char {
-			// println('char')
-			window_char(e, window.ui)
-		}
-		.mouse_scroll {
-			window_scroll(e, window.ui)
-		}
-		.mouse_move {
-			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
-			window_mouse_move(e, window.ui)
-		}
-		.resized {
-			window_resize(e, window.ui)
-		}
-		.iconified {
-			if window.iconified_fn != voidptr(0) {
-				window.iconified_fn(window)
-			}
-		}
-		.restored {
-			if window.restored_fn != voidptr(0) {
-				window.restored_fn(window)
-			}
-		}
-		.quit_requested {
-			if window.quit_requested_fn != voidptr(0) {
-				window.quit_requested_fn(window)
-			}
-		}
-		.suspended {
-			if window.suspended_fn != voidptr(0) {
-				window.suspended_fn(window)
-			}
-		}
-		.resumed {
-			if window.resumed_fn != voidptr(0) {
-				window.resumed_fn(window)
-			}
-		}
-		.touches_began {
-			if e.num_touches > 0 {
-				t := e.touches[0]
-				window.touch.start = Touch{
-					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
-					}
-					time: time.now()
-				}
-				window.touch.button = 0
-				window_touch_down(e, window.ui)
-				// println("touch BEGIN: ${window.touch.start} $e")
-			}
-		}
-		.touches_ended {
-			if e.num_touches > 0 {
-				t := e.touches[0]
-				window.touch.end = Touch{
-					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
-					}
-					time: time.now()
-				}
-				window.touch.button = -1
-				// println("touch END: ${window.touch.end} $window.touch.button")
-				window_touch_up(e, window.ui)
-				window_touch_tap_and_swipe(e, window.ui)
-			}
-		}
-		.touches_moved {
-			if e.num_touches > 0 {
-				t := e.touches[0]
-				window.touch.move = Touch{
-					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
-					}
-					time: time.now()
-				}
-				if e.num_touches > 1 {
-					window_touch_scroll(e, window.ui)
-				} else {
-					// println("touch move: ${window.touch.move} $window.touch.button")
-					window_touch_move(e, window.ui)
-				}
-			}
-		}
-		else {}
-	}
-	/*
-	if e.typ == .key_down {
-		game.key_down(e.key_code)
-	}
-	*/
-}
-
-fn gg_init(mut window Window) {
-	window.load_settings()
-	window.init_styles()
-	window.dpi_scale = gg.dpi_scale()
-	window_size := gg.window_size_real_pixels()
-	w := int(f32(window_size.width) / window.dpi_scale)
-	h := int(f32(window_size.height) / window.dpi_scale)
-	window.width, window.height = w, h
-	window.orig_width, window.orig_height = w, h
-	// println('gg_init: $w, $h')
-
-	// This add experimental ui message system
-	if !window.native_message {
-		window.add_message_dialog()
-	}
-	for mut child in window.children {
-		// println('init $child.id')
-		window.register_child(*child)
-		child.init(window)
-	}
-	// then subwindows
-	for mut sw in window.subwindows {
-		// println('init $child.id')
-		window.register_child(*sw)
-		sw.init(window)
-	}
-	// refresh the layout
-	window.update_layout()
-	if window.on_init != voidptr(0) {
-		window.on_init(window)
-	}
-}
-
-[manualfree]
-fn gg_cleanup(mut window Window) {
-	// All the ckeanup goes here
-	for mut child in window.children {
-		// println('cleanup ${child.id()}')
-		child.cleanup()
-	}
-	unsafe { window.free() }
 }
 
 pub fn window(cfg WindowParams) &Window {
@@ -526,379 +325,49 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	return window
 }
 
-fn window_resize(event gg.Event, ui &UI) {
-	mut window := ui.window
-	$if resize ? {
-		println('window resize ($event.window_width ,$event.window_height)')
-	}
-	if !window.resizable {
-		return
-	}
+//----
 
-	window.resize(event.window_width, event.window_height)
-	window.eventbus.publish(events.on_resize, window, voidptr(0))
+fn gg_init(mut window Window) {
+	window.load_settings()
+	window.init_styles()
+	window.dpi_scale = gg.dpi_scale()
+	window_size := gg.window_size_real_pixels()
+	w := int(f32(window_size.width) / window.dpi_scale)
+	h := int(f32(window_size.height) / window.dpi_scale)
+	window.width, window.height = w, h
+	window.orig_width, window.orig_height = w, h
+	// println('gg_init: $w, $h')
 
-	if window.resize_fn != voidptr(0) {
-		window.resize_fn(event.window_width, event.window_height, window)
+	// This add experimental ui message system
+	if !window.native_message {
+		window.add_message_dialog()
+	}
+	for mut child in window.children {
+		// println('init $child.id')
+		window.register_child(*child)
+		child.init(window)
+	}
+	// then subwindows
+	for mut sw in window.subwindows {
+		// println('init $child.id')
+		window.register_child(*sw)
+		sw.init(window)
+	}
+	// refresh the layout
+	window.update_layout()
+	if window.on_init != voidptr(0) {
+		window.on_init(window)
 	}
 }
 
-fn window_mouse_move(event gg.Event, ui &UI) {
-	mut window := ui.window
-	e := MouseMoveEvent{
-		x: event.mouse_x / ui.gg.scale
-		y: event.mouse_y / ui.gg.scale
-		mouse_button: int(event.mouse_button)
+[manualfree]
+fn gg_cleanup(mut window Window) {
+	// All the ckeanup goes here
+	for mut child in window.children {
+		// println('cleanup ${child.id()}')
+		child.cleanup()
 	}
-	if window.dragger.activated {
-		$if drag ? {
-			println('drag child ($e.x, $e.y)')
-		}
-		drag_child(mut window, e.x, e.y)
-	}
-
-	if window.mouse_move_fn != voidptr(0) {
-		window.mouse_move_fn(e, window)
-	}
-
-	window.update_tooltip(e)
-
-	window.eventbus.publish(events.on_mouse_move, window, e)
-}
-
-fn window_scroll(event gg.Event, ui &UI) {
-	window := ui.window
-	// println('title =$window.title')
-	e := ScrollEvent{
-		mouse_x: event.mouse_x / ui.gg.scale
-		mouse_y: event.mouse_y / ui.gg.scale
-		x: event.scroll_x / ui.gg.scale
-		y: event.scroll_y / ui.gg.scale
-	}
-	if window.scroll_fn != voidptr(0) {
-		window.scroll_fn(e, window)
-	}
-	window.eventbus.publish(events.on_scroll, window, e)
-}
-
-fn window_mouse_down(event gg.Event, mut ui UI) {
-	mut window := ui.window
-	e := MouseEvent{
-		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
-		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
-	}
-	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = true
-	}
-	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
-		window.mouse_down_fn(e, window)
-	}
-	/*
-	for child in window.children {
-		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
-		if inside {
-			child.click(e)
-		}
-	}
-	*/
-	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
-	} else {
-		window.eventbus.publish(events.on_mouse_down, window, e)
-	}
-}
-
-fn window_mouse_up(event gg.Event, mut ui UI) {
-	mut window := ui.window
-	e := MouseEvent{
-		action: .up
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
-		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
-	}
-	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = false
-	}
-
-	if window.dragger.activated {
-		$if drag ? {
-			println('drag child ($e.x, $e.y)')
-		}
-		drop_child(mut window)
-	}
-
-	if window.child_window == 0 && window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
-		window.mouse_up_fn(e, window)
-	}
-	/*
-	for child in window.children {
-		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
-		if inside {
-			child.click(e)
-		}
-	}
-	*/
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
-		// window.eventbus.unsubscribe()
-	} else {
-		window.eventbus.publish(events.on_mouse_up, window, e)
-	}
-}
-
-fn window_files_droped(event gg.Event, mut ui UI) {
-	mut window := ui.window
-	e := MouseEvent{
-		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
-		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
-	}
-	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
-		window.files_droped_fn(e, window)
-	}
-	// window.evt_mngr.point_inside_receivers(e, events.on_files_droped)
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_files_droped, window.child_window, e)
-	} else {
-		window.eventbus.publish(events.on_files_droped, window, e)
-	}
-}
-
-fn window_touch_scroll(event gg.Event, ui &UI) {
-	mut window := ui.window
-	// println('title =$window.title')
-	s, m := window.touch.start, window.touch.move
-	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
-	e := ScrollEvent{
-		mouse_x: f64(m.pos.x)
-		mouse_y: f64(m.pos.y)
-		x: f64(adx) / 30.0
-		y: f64(ady) / 30.0
-	}
-	window.touch.start = window.touch.move
-	if window.scroll_fn != voidptr(0) {
-		window.scroll_fn(e, window)
-	}
-	window.eventbus.publish(events.on_scroll, window, e)
-}
-
-fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
-	window := ui.window
-	s, e := window.touch.start, window.touch.end
-	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
-	if math.max(adx, ady) < 10 {
-		window_touch_tap(event, ui)
-	} else {
-		window_touch_swipe(event, ui)
-	}
-}
-
-fn window_touch_tap(event gg.Event, ui &UI) {
-	window := ui.window
-	e := MouseEvent{
-		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
-		// button: MouseButton(event.mouse_button)
-		// mods: KeyMod(event.modifiers)
-	}
-	if window.click_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
-		window.click_fn(e, window)
-	}
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_click, window.child_window, e)
-	} else {
-		window.eventbus.publish(events.on_click, window, e)
-	}
-}
-
-fn window_touch_swipe(event gg.Event, ui &UI) {
-	window := ui.window
-	e := MouseEvent{
-		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
-		// button: MouseButton(event.mouse_button)
-		// mods: KeyMod(event.modifiers)
-	}
-	if window.swipe_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
-		window.swipe_fn(e, window)
-	}
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_swipe, window.child_window, e)
-	} else {
-		window.eventbus.publish(events.on_swipe, window, e)
-	}
-}
-
-fn window_touch_down(event gg.Event, ui &UI) {
-	mut window := ui.window
-	e := MouseEvent{
-		action: .down
-		x: window.touch.start.pos.x
-		y: window.touch.start.pos.y
-	}
-	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
-	if window.mouse_down_fn != voidptr(0) {
-		window.mouse_down_fn(e, window)
-	}
-	window.eventbus.publish(events.on_touch_down, window, e)
-}
-
-fn window_touch_up(event gg.Event, ui &UI) {
-	window := ui.window
-	e := MouseEvent{
-		action: .up
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
-	}
-	if window.mouse_up_fn != voidptr(0) {
-		window.mouse_up_fn(e, window)
-	}
-	window.eventbus.publish(events.on_touch_up, window, e)
-}
-
-fn window_touch_move(event gg.Event, ui &UI) {
-	window := ui.window
-	e := MouseMoveEvent{
-		x: f64(window.touch.move.pos.x)
-		y: f64(window.touch.move.pos.y)
-		mouse_button: window.touch.button
-	}
-	if window.mouse_move_fn != voidptr(0) {
-		window.mouse_move_fn(e, window)
-	}
-	window.eventbus.publish(events.on_touch_move, window, e)
-}
-
-fn window_click(event gg.Event, ui &UI) {
-	window := ui.window
-	// println("typ $event.typ")
-	e := MouseEvent{
-		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
-		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
-	}
-	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
-		window.click_fn(e, window)
-	}
-	/*
-	for child in window.children {
-		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
-		if inside {
-			child.click(e)
-		}
-	}
-	*/
-	if window.child_window != 0 {
-		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_click, window.child_window, e)
-	} else {
-		window.eventbus.publish(events.on_click, window, e)
-	}
-}
-
-fn window_key_down(event gg.Event, ui &UI) {
-	// println('keydown char=$event.char_code')
-	mut window := ui.window
-	// C.printf(c'g child=%p\n', child)
-	// println('window_keydown $event')
-	e := KeyEvent{
-		key: Key(event.key_code)
-		mods: KeyMod(event.modifiers)
-		codepoint: event.char_code
-		code: int(event.key_code)
-		// action: action
-		// mods: mod
-	}
-	// TODO: [Ctl]+[Tab] and [Ctl]+[Shift]+[Tab] not captured by sokol
-	if e.key == .tab {
-		if shift_key(e.mods) {
-			window.focus_prev()
-		} else {
-			window.focus_next()
-		}
-	} else if e.key == .escape {
-		println('escape')
-	}
-	if e.key == .escape && window.child_window != 0 {
-		// Close the child window on Escape
-		for mut child in window.child_window.children {
-			// println('cleanup ${child.id()}')
-			child.cleanup()
-		}
-		window.child_window = &Window(0)
-	}
-	if window.key_down_fn != KeyFn(0) {
-		window.key_down_fn(e, window)
-	}
-	// TODO
-	if true { // action == 2 || action == 1 {
-		window.eventbus.publish(events.on_key_down, window, e)
-	} else {
-		window.eventbus.publish(events.on_key_up, window, e)
-	}
-	/*
-	for child in window.children {
-		is_focused := child.is_focused()
-		if !is_focused {
-			continue
-		}
-		child.key_down()
-	}
-	*/
-}
-
-fn window_char(event gg.Event, ui &UI) {
-	// println('keychar char=$event.char_code')
-	// println("window_char: $event")
-	window := ui.window
-	e := KeyEvent{
-		codepoint: event.char_code
-		mods: KeyMod(event.modifiers)
-	}
-	if window.char_fn != KeyFn(0) {
-		window.char_fn(e, window)
-	}
-
-	window.eventbus.publish(events.on_char, window, e)
-}
-
-pub fn (mut w Window) refresh() {
-	w.ui.gg.refresh_ui()
-	$if macos {
-		C.darwin_window_refresh()
-	}
-}
-
-pub fn (mut w Window) on_click(func ClickFn) {
-	w.click_fn = func
-}
-
-pub fn (mut w Window) on_mousemove(func MouseMoveFn) {
-	w.mouse_move_fn = func
-}
-
-pub fn (mut w Window) on_scroll(func ScrollFn) {
-	w.scroll_fn = func
-}
-
-pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
-	return false
+	unsafe { window.free() }
 }
 
 fn frame(mut w Window) {
@@ -981,6 +450,520 @@ fn native_frame(mut w Window) {
 	// w.ui.needs_refresh = false
 }
 
+//----
+
+fn on_event(e &gg.Event, mut window Window) {
+	/*
+	if false && e.typ != .mouse_move {
+		print('window.on_event() $e.typ ') // code=$e.char_code')
+		if C.sapp_mouse_locked() {
+			println('locked')
+		} else {
+			println('unlocked')
+		}
+	}
+	*/
+	// window.ui.needs_refresh = true
+	// window.refresh()
+	$if macos {
+		if window.ui.gg.native_rendering {
+			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
+				C.darwin_window_refresh()
+			} else {
+				C.darwin_window_refresh()
+			}
+		}
+	}
+	window.ui.ticks = 0
+	// window.ui.ticks_since_refresh = 0
+	// println("on_event: $e.typ")
+	match e.typ {
+		.mouse_down {
+			// println("mouse down")
+			window_mouse_down(e, mut window.ui)
+			// IMPORTANT: No more need since inside window_handle_tap:
+			//  window_click(e, window.ui)
+			// touch like
+			window.touch.start = Touch{
+				pos: Pos{
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+		}
+		.mouse_up {
+			// println('mouseup')
+			window_mouse_up(e, mut window.ui)
+			// NOT THERE since already done
+			// touch-like
+			window.touch.end = Touch{
+				pos: Pos{
+					x: int(e.mouse_x / window.ui.gg.scale)
+					y: int(e.mouse_y / window.ui.gg.scale)
+				}
+				time: time.now()
+			}
+			window_touch_tap_and_swipe(e, window.ui)
+		}
+		.files_droped {
+			window_files_droped(e, mut window.ui)
+		}
+		.key_down {
+			// println('key down')
+			window_key_down(e, window.ui)
+		}
+		.char {
+			// println('char')
+			window_char(e, window.ui)
+		}
+		.mouse_scroll {
+			window_scroll(e, window.ui)
+		}
+		.mouse_move {
+			// println('mod=$e.modifiers $e.num_touches $e.key_repeat $e.mouse_button')
+			window_mouse_move(e, window.ui)
+		}
+		.resized {
+			window_resize(e, window.ui)
+		}
+		.iconified {
+			if window.iconified_fn != voidptr(0) {
+				window.iconified_fn(window)
+			}
+		}
+		.restored {
+			if window.restored_fn != voidptr(0) {
+				window.restored_fn(window)
+			}
+		}
+		.quit_requested {
+			if window.quit_requested_fn != voidptr(0) {
+				window.quit_requested_fn(window)
+			}
+		}
+		.suspended {
+			if window.suspended_fn != voidptr(0) {
+				window.suspended_fn(window)
+			}
+		}
+		.resumed {
+			if window.resumed_fn != voidptr(0) {
+				window.resumed_fn(window)
+			}
+		}
+		.touches_began {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.start = Touch{
+					pos: Pos{
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				window.touch.button = 0
+				window_touch_down(e, window.ui)
+				// println("touch BEGIN: ${window.touch.start} $e")
+			}
+		}
+		.touches_ended {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.end = Touch{
+					pos: Pos{
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				window.touch.button = -1
+				// println("touch END: ${window.touch.end} $window.touch.button")
+				window_touch_up(e, window.ui)
+				window_touch_tap_and_swipe(e, window.ui)
+			}
+		}
+		.touches_moved {
+			if e.num_touches > 0 {
+				t := e.touches[0]
+				window.touch.move = Touch{
+					pos: Pos{
+						x: int(t.pos_x / window.ui.gg.scale)
+						y: int(t.pos_y / window.ui.gg.scale)
+					}
+					time: time.now()
+				}
+				if e.num_touches > 1 {
+					window_touch_scroll(e, window.ui)
+				} else {
+					// println("touch move: ${window.touch.move} $window.touch.button")
+					window_touch_move(e, window.ui)
+				}
+			}
+		}
+		else {}
+	}
+	/*
+	if e.typ == .key_down {
+		game.key_down(e.key_code)
+	}
+	*/
+}
+
+fn window_resize(event gg.Event, ui &UI) {
+	mut window := ui.window
+	$if resize ? {
+		println('window resize ($event.window_width ,$event.window_height)')
+	}
+	if !window.resizable {
+		return
+	}
+
+	window.resize(event.window_width, event.window_height)
+	window.eventbus.publish(events.on_resize, window, voidptr(0))
+
+	if window.resize_fn != voidptr(0) {
+		window.resize_fn(event.window_width, event.window_height, window)
+	}
+}
+
+fn window_key_down(event gg.Event, ui &UI) {
+	// println('keydown char=$event.char_code')
+	mut window := ui.window
+	// C.printf(c'g child=%p\n', child)
+	// println('window_keydown $event')
+	e := KeyEvent{
+		key: Key(event.key_code)
+		mods: KeyMod(event.modifiers)
+		codepoint: event.char_code
+		code: int(event.key_code)
+		// action: action
+		// mods: mod
+	}
+	// TODO: [Ctl]+[Tab] and [Ctl]+[Shift]+[Tab] not captured by sokol
+	if e.key == .tab {
+		if shift_key(e.mods) {
+			window.focus_prev()
+		} else {
+			window.focus_next()
+		}
+	} else if e.key == .escape {
+		println('escape')
+	}
+	if e.key == .escape && window.child_window != 0 {
+		// Close the child window on Escape
+		for mut child in window.child_window.children {
+			// println('cleanup ${child.id()}')
+			child.cleanup()
+		}
+		window.child_window = &Window(0)
+	}
+	if window.key_down_fn != KeyFn(0) {
+		window.key_down_fn(e, window)
+	}
+	// TODO
+	if true { // action == 2 || action == 1 {
+		window.eventbus.publish(events.on_key_down, window, e)
+	} else {
+		window.eventbus.publish(events.on_key_up, window, e)
+	}
+	/*
+	for child in window.children {
+		is_focused := child.is_focused()
+		if !is_focused {
+			continue
+		}
+		child.key_down()
+	}
+	*/
+}
+
+fn window_char(event gg.Event, ui &UI) {
+	// println('keychar char=$event.char_code')
+	// println("window_char: $event")
+	window := ui.window
+	e := KeyEvent{
+		codepoint: event.char_code
+		mods: KeyMod(event.modifiers)
+	}
+	if window.char_fn != KeyFn(0) {
+		window.char_fn(e, window)
+	}
+
+	window.eventbus.publish(events.on_char, window, e)
+}
+
+fn window_mouse_down(event gg.Event, mut ui UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .down
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = true
+	}
+	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
+		window.mouse_down_fn(e, window)
+	}
+	/*
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
+		}
+	}
+	*/
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_mouse_down, window, e)
+	}
+}
+
+fn window_mouse_move(event gg.Event, ui &UI) {
+	mut window := ui.window
+	e := MouseMoveEvent{
+		x: event.mouse_x / ui.gg.scale
+		y: event.mouse_y / ui.gg.scale
+		mouse_button: int(event.mouse_button)
+	}
+	if window.dragger.activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+		}
+		drag_child(mut window, e.x, e.y)
+	}
+
+	if window.mouse_move_fn != voidptr(0) {
+		window.mouse_move_fn(e, window)
+	}
+
+	window.update_tooltip(e)
+
+	window.eventbus.publish(events.on_mouse_move, window, e)
+}
+
+fn window_mouse_up(event gg.Event, mut ui UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .up
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = false
+	}
+
+	if window.dragger.activated {
+		$if drag ? {
+			println('drag child ($e.x, $e.y)')
+		}
+		drop_child(mut window)
+	}
+
+	if window.child_window == 0 && window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
+		window.mouse_up_fn(e, window)
+	}
+	/*
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
+		}
+	}
+	*/
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
+		// window.eventbus.unsubscribe()
+	} else {
+		window.eventbus.publish(events.on_mouse_up, window, e)
+	}
+}
+
+fn window_click(event gg.Event, ui &UI) {
+	window := ui.window
+	// println("typ $event.typ")
+	e := MouseEvent{
+		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if window.click_fn != voidptr(0) { // && action == voidptr(0) {
+		window.click_fn(e, window)
+	}
+	/*
+	for child in window.children {
+		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
+		if inside {
+			child.click(e)
+		}
+	}
+	*/
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_click, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_click, window, e)
+	}
+}
+
+fn window_scroll(event gg.Event, ui &UI) {
+	window := ui.window
+	// println('title =$window.title')
+	e := ScrollEvent{
+		mouse_x: event.mouse_x / ui.gg.scale
+		mouse_y: event.mouse_y / ui.gg.scale
+		x: event.scroll_x / ui.gg.scale
+		y: event.scroll_y / ui.gg.scale
+	}
+	if window.scroll_fn != voidptr(0) {
+		window.scroll_fn(e, window)
+	}
+	window.eventbus.publish(events.on_scroll, window, e)
+}
+
+fn window_touch_down(event gg.Event, ui &UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .down
+		x: window.touch.start.pos.x
+		y: window.touch.start.pos.y
+	}
+	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
+	if window.mouse_down_fn != voidptr(0) {
+		window.mouse_down_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_down, window, e)
+}
+
+fn window_touch_move(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseMoveEvent{
+		x: f64(window.touch.move.pos.x)
+		y: f64(window.touch.move.pos.y)
+		mouse_button: window.touch.button
+	}
+	if window.mouse_move_fn != voidptr(0) {
+		window.mouse_move_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_move, window, e)
+}
+
+fn window_touch_up(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: .up
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+	}
+	if window.mouse_up_fn != voidptr(0) {
+		window.mouse_up_fn(e, window)
+	}
+	window.eventbus.publish(events.on_touch_up, window, e)
+}
+
+fn window_touch_tap(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.click_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.click_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_click, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_click, window, e)
+	}
+}
+
+fn window_touch_scroll(event gg.Event, ui &UI) {
+	mut window := ui.window
+	// println('title =$window.title')
+	s, m := window.touch.start, window.touch.move
+	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
+	e := ScrollEvent{
+		mouse_x: f64(m.pos.x)
+		mouse_y: f64(m.pos.y)
+		x: f64(adx) / 30.0
+		y: f64(ady) / 30.0
+	}
+	window.touch.start = window.touch.move
+	if window.scroll_fn != voidptr(0) {
+		window.scroll_fn(e, window)
+	}
+	window.eventbus.publish(events.on_scroll, window, e)
+}
+
+fn window_touch_swipe(event gg.Event, ui &UI) {
+	window := ui.window
+	e := MouseEvent{
+		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		x: window.touch.end.pos.x
+		y: window.touch.end.pos.y
+		// button: MouseButton(event.mouse_button)
+		// mods: KeyMod(event.modifiers)
+	}
+	if window.swipe_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.swipe_fn(e, window)
+	}
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_swipe, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_swipe, window, e)
+	}
+}
+
+fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
+	window := ui.window
+	s, e := window.touch.start, window.touch.end
+	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
+	if math.max(adx, ady) < 10 {
+		window_touch_tap(event, ui)
+	} else {
+		window_touch_swipe(event, ui)
+	}
+}
+
+fn window_files_droped(event gg.Event, mut ui UI) {
+	mut window := ui.window
+	e := MouseEvent{
+		action: .down
+		x: int(event.mouse_x / ui.gg.scale)
+		y: int(event.mouse_y / ui.gg.scale)
+		button: MouseButton(event.mouse_button)
+		mods: KeyMod(event.modifiers)
+	}
+	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
+		window.files_droped_fn(e, window)
+	}
+	// window.evt_mngr.point_inside_receivers(e, events.on_files_droped)
+	if window.child_window != 0 {
+		// If there's a child window, use it, so that the widget receives correct user pointer
+		window.eventbus.publish(events.on_files_droped, window.child_window, e)
+	} else {
+		window.eventbus.publish(events.on_files_droped, window, e)
+	}
+}
+
+//----
+
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
 	/*
@@ -995,7 +978,115 @@ pub fn (mut w Window) set_title(title string) {
 	C.sapp_set_window_title(title.str)
 }
 
-// Layout Interface Methods
+pub fn (mut w Window) refresh() {
+	w.ui.gg.refresh_ui()
+	$if macos {
+		C.darwin_window_refresh()
+	}
+}
+
+pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
+	return false
+}
+
+pub fn (mut w Window) on_click(func ClickFn) {
+	w.click_fn = func
+}
+
+pub fn (mut w Window) on_mousemove(func MouseMoveFn) {
+	w.mouse_move_fn = func
+}
+
+pub fn (mut w Window) on_scroll(func ScrollFn) {
+	w.scroll_fn = func
+}
+
+// extract child widget in the children tree by indexes
+pub fn (w &Window) child(from ...int) Widget {
+	if from.len > 0 {
+		mut children := w.root_layout.get_children()
+		for i, ind in from {
+			if i < from.len - 1 {
+				if ind >= 0 && ind < children.len {
+					widget := children[ind]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					} else if widget is CanvasLayout {
+						children = widget.children
+					} else {
+						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+						root := w.root_layout
+						if root is Stack {
+							return root
+						}
+					}
+				} else if i == -1 {
+					widget := children[children.len - 1]
+					if widget is Stack {
+						children = widget.children
+					} else if widget is Group {
+						children = widget.children
+					}
+				} else {
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					root := w.root_layout
+					if root is Stack {
+						return root
+					}
+				}
+			} else {
+				if ind >= 0 && ind < children.len {
+					return children[ind]
+				} else if ind == -1 {
+					return children[children.len - 1]
+				} else {
+					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+				}
+			}
+		}
+	}
+	// by default returns root_layout
+	// expected when `from` is empty
+	root := w.root_layout
+	if root is Stack {
+		return root
+	} else {
+		// required but never goes here
+		return &Stack{
+			ui: 0
+		}
+	}
+}
+
+pub fn (w &Window) is_registred(widget &Widget) bool {
+	return widget.id in w.widgets
+}
+
+[unsafe]
+pub fn (w &Window) free() {
+	$if free ? {
+		println('window $w.title')
+	}
+	unsafe {
+		w.ui.free()
+		w.children.free()
+		w.title.free()
+		// w.eventbus.free()
+		w.color_themes.free()
+		w.widgets.free()
+		w.widgets_counts.free()
+		w.tooltip.free()
+		free(w)
+	}
+	$if free ? {
+		println('window -> freed')
+	}
+}
+
+//----  Layout Interface Methods
+
 pub fn (w &Window) get_ui() &UI {
 	return w.ui
 }
@@ -1004,12 +1095,16 @@ pub fn (w &Window) get_state() voidptr {
 	return w.state
 }
 
-pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
-	return w.eventbus.subscriber
-}
-
 pub fn (w &Window) size() (int, int) {
 	return w.width, w.height
+}
+
+pub fn (w &Window) get_children() []Widget {
+	return w.children
+}
+
+pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
+	return w.eventbus.subscriber
 }
 
 pub fn (mut window Window) resize(w int, h int) {
@@ -1022,9 +1117,53 @@ pub fn (mut window Window) resize(w int, h int) {
 	}
 }
 
-pub fn (w &Window) get_children() []Widget {
-	return w.children
+// ask for an update to restructure the whole children tree from root layout
+pub fn (w &Window) update_layout() {
+	// update root_layout
+	mut s := w.root_layout
+	if mut s is Stack {
+		if s.id != empty_stack.id {
+			s.update_layout()
+		}
+	}
 }
+
+fn (w &Window) draw() {}
+
+//---- Window focusable methods
+
+pub fn (w &Window) unlocked_focus() bool {
+	$if focus ? {
+		println('locked focus = <$w.locked_focus>')
+	}
+	return w.locked_focus == ''
+}
+
+fn (mut w Window) focus_next() {
+	w.do_focus = false
+	if !Layout(w).set_focus_next() {
+		Layout(w).set_focus_first()
+	}
+}
+
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !Layout(w).set_focus_prev() {
+		Layout(w).set_focus_last()
+	}
+}
+
+//---- unused
+
+pub fn (w &Window) always_on_top(val bool) {}
+
+pub fn (w &Window) set_cursor(cursor Cursor) {}
+
+pub fn (w &Window) onmousedown(cb voidptr) {}
+
+pub fn (w &Window) close() {}
+
+//---- child widgets
 
 // Experimental: attempt to register child to get it by id from window
 // RMK: If id is accepted by community, put `id` inside interface Widget
@@ -1384,130 +1523,3 @@ pub fn (w Window) subwindow(id string) &SubWindow {
 		return subwindow()
 	}
 }
-
-// extract child widget in the children tree by indexes
-pub fn (w &Window) child(from ...int) Widget {
-	if from.len > 0 {
-		mut children := w.root_layout.get_children()
-		for i, ind in from {
-			if i < from.len - 1 {
-				if ind >= 0 && ind < children.len {
-					widget := children[ind]
-					if widget is Stack {
-						children = widget.children
-					} else if widget is Group {
-						children = widget.children
-					} else if widget is CanvasLayout {
-						children = widget.children
-					} else {
-						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
-						root := w.root_layout
-						if root is Stack {
-							return root
-						}
-					}
-				} else if i == -1 {
-					widget := children[children.len - 1]
-					if widget is Stack {
-						children = widget.children
-					} else if widget is Group {
-						children = widget.children
-					}
-				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
-					root := w.root_layout
-					if root is Stack {
-						return root
-					}
-				}
-			} else {
-				if ind >= 0 && ind < children.len {
-					return children[ind]
-				} else if ind == -1 {
-					return children[children.len - 1]
-				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
-				}
-			}
-		}
-	}
-	// by default returns root_layout
-	// expected when `from` is empty
-	root := w.root_layout
-	if root is Stack {
-		return root
-	} else {
-		// required but never goes here
-		return &Stack{
-			ui: 0
-		}
-	}
-}
-
-// ask for an update to restructure the whole children tree from root layout
-pub fn (w &Window) update_layout() {
-	// update root_layout
-	mut s := w.root_layout
-	if mut s is Stack {
-		if s.id != empty_stack.id {
-			s.update_layout()
-		}
-	}
-}
-
-[unsafe]
-pub fn (w &Window) free() {
-	$if free ? {
-		println('window $w.title')
-	}
-	unsafe {
-		w.ui.free()
-		w.children.free()
-		w.title.free()
-		// w.eventbus.free()
-		w.color_themes.free()
-		w.widgets.free()
-		w.widgets_counts.free()
-		w.tooltip.free()
-		free(w)
-	}
-	$if free ? {
-		println('window -> freed')
-	}
-}
-
-pub fn (w &Window) is_registred(widget &Widget) bool {
-	return widget.id in w.widgets
-}
-
-//---- Window focusable methods
-
-pub fn (w &Window) unlocked_focus() bool {
-	$if focus ? {
-		println('locked focus = <$w.locked_focus>')
-	}
-	return w.locked_focus == ''
-}
-
-fn (mut w Window) focus_next() {
-	w.do_focus = false
-	if !Layout(w).set_focus_next() {
-		Layout(w).set_focus_first()
-	}
-}
-
-fn (mut w Window) focus_prev() {
-	w.do_focus = false
-	if !Layout(w).set_focus_prev() {
-		Layout(w).set_focus_last()
-	}
-}
-pub fn (w &Window) always_on_top(val bool) {}
-
-fn (w &Window) draw() {}
-
-pub fn (w &Window) set_cursor(cursor Cursor) {}
-
-pub fn (w &Window) onmousedown(cb voidptr) {}
-
-pub fn (w &Window) close() {}
