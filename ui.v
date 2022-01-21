@@ -60,25 +60,25 @@ mut:
 	offset_y int
 	hidden bool
 	init(Layout)
-	cleanup()
-	draw()
-	point_inside(x f64, y f64) bool
 	set_pos(x int, y int)
-	propose_size(w int, h int) (int, int)
 	size() (int, int)
+	propose_size(w int, h int) (int, int)
+	point_inside(x f64, y f64) bool
 	set_visible(bool)
+	draw()
+	cleanup()
 }
 
 pub interface Layout {
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
-	get_subscriber() &eventbus.Subscriber
 	get_children() []Widget
+	get_subscriber() &eventbus.Subscriber
 mut:
-	draw()
 	resize(w int, h int)
 	update_layout()
+	draw()
 }
 
 pub enum MouseAction {
