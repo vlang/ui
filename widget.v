@@ -13,13 +13,13 @@ mut:
 	offset_y int
 	hidden bool
 	init(Layout)
-	cleanup()
-	draw()
-	point_inside(x f64, y f64) bool
 	set_pos(x int, y int)
 	propose_size(w int, h int) (int, int)
 	size() (int, int)
+	point_inside(x f64, y f64) bool
 	set_visible(bool)
+	draw()
+	cleanup()
 }
 
 pub fn (w &Widget) get_depth() int {
