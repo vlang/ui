@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license that can be found in the LICENSE file.
 module ui
 
@@ -9,6 +9,24 @@ import eventbus
 import time
 import math
 import os.font
+
+fn C.sapp_mouse_locked() bool
+
+// fn C.sapp_macos_get_window() voidptr
+fn C.sapp_set_window_title(&char)
+
+// #define cls objc_getClass
+// #define sel sel_getUid
+#define objc_msg ((id (*)(id, SEL, ...))objc_msgSend)
+#define objc_cls_msg ((id (*)(Class, SEL, ...))objc_msgSend)
+
+fn C.objc_msg()
+
+fn C.objc_cls_msg()
+
+fn C.sel_getUid()
+
+fn C.objc_getClass()
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -31,18 +49,14 @@ pub type WindowFn = fn (window &Window)
 pub struct Window {
 pub mut:
 	// pub:
-	ui            &UI = voidptr(0)
-	children      []Widget
-	child_window  &Window = voidptr(0)
-	parent_window &Window = voidptr(0)
-	has_textbox   bool // for initial focus
-	tab_index     int
-	just_tabbed   bool
-	state         voidptr
-	// draw_fn           DrawFn
+	ui                &UI = voidptr(0)
+	children          []Widget
+	child_window      &Window = voidptr(0)
+	parent_window     &Window = voidptr(0)
+	has_textbox       bool // for initial focus
+	just_tabbed       bool
+	state             voidptr
 	title             string
-	mx                f64
-	my                f64
 	width             int
 	height            int
 	click_fn          ClickFn
@@ -145,13 +159,6 @@ pub:
 	max_dropped_files            int  = 5
 	max_dropped_file_path_length int  = 2048
 }
-
-/*
-pub fn window2(cfg WindowParams) &Window {
-	return window(cfg, cfg.children)
-}
-*/
-fn C.sapp_mouse_locked() bool
 
 fn on_event(e &gg.Event, mut window Window) {
 	/*
@@ -405,7 +412,6 @@ pub fn window(cfg WindowParams) &Window {
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
-		// draw_fn: cfg.draw_fn
 		title: cfg.title
 		bg_color: cfg.bg_color
 		width: width
@@ -473,41 +479,14 @@ pub fn window(cfg WindowParams) &Window {
 		max_dropped_files: cfg.max_dropped_files
 		max_dropped_file_path_length: cfg.max_dropped_file_path_length
 	)
-	// wsize := gcontext.window.get_window_size()
-	// fsize := gcontext.window.get_framebuffer_size()
-	// scale := 2 //if wsize.width == fsize.width { 1 } else { 2 } // detect high dpi displays
+
 	mut ui_ctx := &UI{
 		gg: gcontext
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_icos()
-	/*
-	ui_ctx.gg.window.set_user_ptr(ui_ctx)
-	ui_ctx.gg.window.onkeydown(window_key_down)
-	ui_ctx.gg.window.onchar(window_char)
-	ui_ctx.gg.window.onmousemove(window_mouse_move)
-	ui_ctx.gg.window.on_click(window_click)
-	ui_ctx.gg.window.on_resize(window_resize)
-	ui_ctx.gg.window.on_scroll(window_scroll)
-	*/
 	window.ui = ui_ctx
 
-	/*
-	mut window := &Window{
-		state: cfg.state
-		ui: ui_ctx
-		//glfw_obj: ui_ctx.gg.window
-		draw_fn: cfg.draw_fn
-		title: cfg.title
-		bg_color: cfg.bg_color
-		width: cfg.width
-		height: cfg.height
-		children: children
-		click_fn: cfg.on_click
-		key_down_fn: cfg.on_key_down
-		scroll_fn: cfg.on_scroll
-	}
-	*/
 	// q := int(window)
 	// println('created window $q.hex()')
 
@@ -547,31 +526,6 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	return window
 }
 
-/*
-fn window_mouse_move(glfw_wnd voidptr, x, y f64) {
-	ui := &UI(glfw.get_window_user_pointer(glfw_wnd))
-	mut window := ui.window
-	x0,y0 := glfw.get_cursor_pos(glfw_wnd)
-	window.mx = int(x0)
-	window.my = int(y0)
-	e := MouseEvent{
-		x: int(x0)
-		y: int(y0)
-	}
-	/* if window.mouse_move_fn != 0 {
-		window.mouse_move_fn(e, &ui.window)
-	}
-	for child in window.children {
-		inside := child.point_inside(x, y) // TODO if ... doesn't work with interface calls
-		if inside {
-			child.mouse_move(e)
-		}
-	} */
-
-	window.eventbus.publish(events.on_mouse_move, &window, e)
-}
-*/
-// fn window_resize(glfw_wnd voidptr, width int, height int) {
 fn window_resize(event gg.Event, ui &UI) {
 	mut window := ui.window
 	$if resize ? {
@@ -909,7 +863,6 @@ fn window_key_down(event gg.Event, ui &UI) {
 	*/
 }
 
-// fn window_char(glfw_wnd voidptr, codepoint u32) {
 fn window_char(event gg.Event, ui &UI) {
 	// println('keychar char=$event.char_code')
 	// println("window_char: $event")
@@ -925,28 +878,12 @@ fn window_char(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_char, window, e)
 }
 
-pub fn (w &Window) set_cursor(cursor Cursor) {
-	// glfw.set_cursor(.ibeam)
-	// w.glfw_obj.set_cursor(.ibeam)
-}
-
-pub fn (w &Window) close() {
-}
-
 pub fn (mut w Window) refresh() {
 	w.ui.gg.refresh_ui()
 	$if macos {
 		C.darwin_window_refresh()
 	}
 }
-
-pub fn (w &Window) onmousedown(cb voidptr) {
-}
-
-/*
-pub fn (w &Window) onkeydown(cb voidptr) {
-}
-*/
 
 pub fn (mut w Window) on_click(func ClickFn) {
 	w.click_fn = func
@@ -962,12 +899,6 @@ pub fn (mut w Window) on_scroll(func ScrollFn) {
 
 pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
 	return false
-}
-
-pub fn (w &Window) always_on_top(val bool) {
-}
-
-fn (w &Window) draw() {
 }
 
 fn frame(mut w Window) {
@@ -1049,22 +980,6 @@ fn native_frame(mut w Window) {
 	//}
 	// w.ui.needs_refresh = false
 }
-
-// fn C.sapp_macos_get_window() voidptr
-fn C.sapp_set_window_title(&char)
-
-// #define cls objc_getClass
-// #define sel sel_getUid
-#define objc_msg ((id (*)(id, SEL, ...))objc_msgSend)
-#define objc_cls_msg ((id (*)(Class, SEL, ...))objc_msgSend)
-
-fn C.objc_msg()
-
-fn C.objc_cls_msg()
-
-fn C.sel_getUid()
-
-fn C.objc_getClass()
 
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
@@ -1560,3 +1475,39 @@ pub fn (w &Window) free() {
 		println('window -> freed')
 	}
 }
+
+pub fn (w &Window) is_registred(widget &Widget) bool {
+	return widget.id in w.widgets
+}
+
+//---- Window focusable methods
+
+pub fn (w &Window) unlocked_focus() bool {
+	$if focus ? {
+		println('locked focus = <$w.locked_focus>')
+	}
+	return w.locked_focus == ''
+}
+
+fn (mut w Window) focus_next() {
+	w.do_focus = false
+	if !Layout(w).set_focus_next() {
+		Layout(w).set_focus_first()
+	}
+}
+
+fn (mut w Window) focus_prev() {
+	w.do_focus = false
+	if !Layout(w).set_focus_prev() {
+		Layout(w).set_focus_last()
+	}
+}
+pub fn (w &Window) always_on_top(val bool) {}
+
+fn (w &Window) draw() {}
+
+pub fn (w &Window) set_cursor(cursor Cursor) {}
+
+pub fn (w &Window) onmousedown(cb voidptr) {}
+
+pub fn (w &Window) close() {}

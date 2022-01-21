@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Leah Lundqvist. All rights reserved.
+// Copyright (c) 2020-2022 Leah Lundqvist. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -125,7 +125,6 @@ fn (mut t Transition) draw() {
 		}
 		// Update the target value and request a redraw
 		(*t.animated_value) = mapped
-		// t.ui.redraw_requested = true
 		t.ui.window.refresh()
 		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value
