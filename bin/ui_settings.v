@@ -13,7 +13,7 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	window := ui.window(
+	mut window := ui.window(
 		width: 800
 		height: 600
 		title: 'V UI Settings'
@@ -23,20 +23,21 @@ fn main() {
 		// println('key down')
 		//}
 		children: [
-			ui.row(
-				alignment: .center
+			ui.column(
+				// alignment: .center
 				spacing: 5
 				margin_: 5
 				widths: ui.stretch
+				heights: 25.0
 				children: [
-					uic.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
-					ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
-					ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
+					uic.setting_font(id: "color", text: "toto"),
+					uic.setting_font(id: "color2", text: "toto2")
 				]
 			),
 		]
 	)
 	app.window = window
+	uic.fontchooser_subwindow_add(mut window)
 	println(font.default())
 	ui.run(window)
 }
