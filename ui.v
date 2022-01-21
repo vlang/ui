@@ -18,18 +18,15 @@ pub mut:
 	gg             &gg.Context = voidptr(0)
 	window         &Window     = voidptr(0)
 	show_cursor    bool
-	last_type_time i64
+	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
 mut:
-	// just_typed           bool
-	cb_image             gg.Image
-	circle_image         gg.Image
-	radio_image          gg.Image
-	selected_radio_image gg.Image
-	down_arrow           gg.Image
-	redraw_requested     bool
-	resource_cache       map[string]gg.Image
+	cb_image             gg.Image // used only in checkbox.v
+	circle_image         gg.Image // used in radio.v but no use, in idle_loop()
+	selected_radio_image gg.Image // used only in radio.v
+	down_arrow           gg.Image // used only in dropdown.v
+	resource_cache       map[string]gg.Image // used only in picture.v
 	closed               bool
 	ticks                int
 	// text styles and font set
@@ -112,38 +109,6 @@ pub fn run(window &Window) {
 	gui.window = window
 	go gui.idle_loop()
 	gui.gg.run()
-	/*
-	for !window.glfw_obj.should_close() {
-		if window.child_window != 0 {
-			//gg.clear(gx.rgb(230,230,230))
-			if window.child_window.draw_fn != voidptr(0) {
-				window.child_window.draw_fn(window.child_window.state)
-			}
-			for child in window.child_window.children {
-				child.draw()
-			}
-		}
-		else {
-			//gg.clear(window.bg_color)
-			// The user can define a custom drawing function for the entire window (advanced mode)
-			if window.draw_fn != voidptr(0) {
-				window.draw_fn(window.state)
-			}
-			// Render all widgets, including Canvas
-			for child in window.children {
-				child.draw()
-			}
-		}
-		// Triggers a re-render in case any function requests it.
-		// Transitions & animations, for example.
-		if gui.redraw_requested {
-			gui.redraw_requested = false
-			//glfw.post_empty_event()
-		}
-		gui.gg.render()
-	}
-	gui.window.glfw_obj.destroy()
-	*/
 	gui.closed = true
 
 	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
