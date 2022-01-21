@@ -30,8 +30,8 @@ fn main() {
 				widths: ui.stretch
 				heights: 25.0
 				children: [
-					uic.setting_font(id: "color", text: "toto"),
-					uic.setting_font(id: "color2", text: "toto2")
+					uic.setting_font(id: 'color', text: 'toto'),
+					uic.setting_font(id: 'color2', text: 'toto2'),
 				]
 			),
 		]

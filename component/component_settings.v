@@ -28,7 +28,7 @@ pub struct SettingFontParams {
 pub fn setting_font(s SettingFontParams) &ui.Stack {
 	lb_param := ui.label(text: s.text)
 	lb_font := ui.label(text: s.id)
-	btn_font := button_font(text: "font", dtw: lb_font)
+	btn_font := button_font(text: 'font', dtw: lb_font)
 	layout := ui.row(
 		widths: [100.0, 100, 20]
 		heights: 20.0

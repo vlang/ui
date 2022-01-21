@@ -15,7 +15,6 @@ pub fn grid_layout() { // &GridLayout {
 }
 
 fn (gl GridLayout) draw() {
-
 }
 
 interface GridColumn {
@@ -28,11 +27,11 @@ interface GridColumn {
 struct GridTextBox {
 	grid_layout &GridLayout
 mut:
-	tb 			&ui.TextBox
-	data		[]string
+	tb   &ui.TextBox
+	data []string
 }
 
-pub fn grid_textbox() {//&GridTextBox {
+pub fn grid_textbox() { //&GridTextBox {
 }
 
 // Dropdown GridColumn
@@ -40,12 +39,11 @@ pub fn grid_textbox() {//&GridTextBox {
 struct GridDropDown {
 	grid_layout &GridLayout
 mut:
-	dd 			&ui.Dropdown
-	data		[]int
+	dd   &ui.Dropdown
+	data []int
 }
 
-pub fn grid_dropdown() {// &GridDropDown {
-
+pub fn grid_dropdown() { // &GridDropDown {
 }
 
 // CheckBox GridColumn
@@ -53,9 +51,9 @@ pub fn grid_dropdown() {// &GridDropDown {
 struct GridCheckBox {
 	grid_layout &GridLayout
 mut:
-	cb 			&ui.CheckBox
-	data 		[]bool
+	cb   &ui.CheckBox
+	data []bool
 }
 
-pub fn grid_checkbox() {//&GridCheckBox {
+pub fn grid_checkbox() { //&GridCheckBox {
 }
