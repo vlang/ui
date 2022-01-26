@@ -1502,6 +1502,7 @@ fn (mut w Window) focus_prev() {
 		Layout(w).set_focus_last()
 	}
 }
+
 pub fn (w &Window) always_on_top(val bool) {}
 
 fn (w &Window) draw() {}
