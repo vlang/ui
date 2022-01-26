@@ -564,7 +564,7 @@ pub fn (c &CanvasLayout) draw_circle_line(x f32, y f32, r int, segments int, col
 }
 
 pub fn (c &CanvasLayout) draw_circle_empty(x f32, y f32, r f32, color gx.Color) {
-	c.ui.gg.draw_circle_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
+	c.ui.gg.draw_circle_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
 }
 
 pub fn (c &CanvasLayout) draw_circle_filled(x f32, y f32, r f32, color gx.Color) {
