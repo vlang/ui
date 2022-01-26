@@ -586,11 +586,13 @@ pub fn (c &CanvasLayout) draw_slice_filled(x f32, y f32, r f32, start_angle f32,
 // ---- arc
 
 pub fn (c &CanvasLayout) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius, thickness, start_angle, end_angle, segments, color)
+	c.ui.gg.draw_arc_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius, thickness,
+		start_angle, end_angle, segments, color)
 }
 
 pub fn (c &CanvasLayout) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius, thickness, start_angle, end_angle, segments, color)
+	c.ui.gg.draw_arc_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius,
+		thickness, start_angle, end_angle, segments, color)
 }
 
 // ---- line
@@ -607,4 +609,3 @@ pub fn (c &CanvasLayout) draw_convex_poly(points []f32, color gx.Color) {
 
 pub fn (c &CanvasLayout) draw_empty_poly(points []f32, color gx.Color) {
 }
-
