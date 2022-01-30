@@ -18,9 +18,7 @@ pub:
 	on_resize       string = 'on_resize'
 }
 
-pub const (
-	events = EventNames{}
-)
+pub const events = EventNames{}
 
 // Managing mouse (down) events for widgets
 struct EventMngr {
@@ -34,7 +32,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 		// BUG: 'widget in em.receivers[events.on_mouse_down]' is failing
 		// WORKAROUND with id
 		if widget.id !in em.receivers[evt_type].map(it.id) {
-			em.receivers[events.on_mouse_down] << widget
+			em.receivers[ui.events.on_mouse_down] << widget
 			$if evt_mngr ? {
 				println('add receiver $widget.id for $evt_type')
 			}
