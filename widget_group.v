@@ -101,7 +101,7 @@ pub fn (g &Group) free() {
 
 fn (mut g Group) decode_size(parent Layout) {
 	parent_width, parent_height := parent.size()
-	// s.debug_show_sizes("decode before -> ")
+	// debug_show_sizes(mut s, "decode before -> ")
 	// if parent is Window {
 	// 	// Default: like stretch = strue
 	// 	s.height = parent_height - s.margin.top - s.margin.right
@@ -116,7 +116,7 @@ fn (mut g Group) decode_size(parent Layout) {
 	g.height = relative_size_from_parent(g.height, parent_height)
 	// }
 	println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
-	// s.debug_show_size("decode after -> ")
+	// debug_show_size(s, "decode after -> ")
 }
 
 fn (mut g Group) set_pos(x int, y int) {
