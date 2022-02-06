@@ -61,9 +61,9 @@ pub fn (mut em EventMngr) point_inside_receivers(e MouseEvent, evt_type string) 
 	for mut w in em.receivers[evt_type] {
 		$if evt_mngr ? {
 			println('point_inside_receivers: $w.id !$w.hidden && ${w.point_inside(e.x,
-				e.y)}')
+				e.y)} $w.has_parent_deactivated()')
 		}
-		if !w.hidden && w.point_inside(e.x, e.y) {
+		if !w.hidden && w.point_inside(e.x, e.y) && !w.has_parent_deactivated() {
 			em.point_inside[evt_type] << w
 		}
 	}

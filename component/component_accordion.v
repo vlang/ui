@@ -91,6 +91,7 @@ fn accordion_draw(c &ui.CanvasLayout, state voidptr) {
 
 fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	mut acc := component_accordion(c)
+	// println("accordion clicked $c.id")
 	acc.selected[c.id] = !acc.selected[c.id]
 	if acc.selected[c.id] {
 		acc.activate(c.id)
