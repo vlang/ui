@@ -147,6 +147,7 @@ fn stack(c StackParams) &Stack {
 	if c.scrollview {
 		scrollview_add(mut s)
 	}
+	println('stack: $s.spacings.len')
 	return s
 }
 
@@ -818,7 +819,7 @@ fn (mut s Stack) set_children_pos() {
 	}
 	// z_index < ui.z_index_ hidden => hidden and without positionning
 	mut children := s.children.filter(it.z_index > z_index_hidden)
-
+	println('tttt $children.len $s.spacings.len $s.widths.len')
 	for i, mut child in children {
 		child_width, child_height := child.size()
 		s.set_child_pos(child, i, x, y)
@@ -838,6 +839,7 @@ fn (mut s Stack) set_children_pos() {
 				println('$.column $i): child_height=$child_height y => $y')
 			}
 			y += child_height
+			println('spacing($i) $s.spacings.len')
 			if i < s.children.len - 1 {
 				y += s.spacing(i)
 			}
