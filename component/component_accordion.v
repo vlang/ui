@@ -14,6 +14,7 @@ pub mut:
 	titles     map[string]string
 	selected   map[string]bool
 	views      map[string]int
+	z_index    map[string]int
 	text_color gx.Color
 	text_size  int
 	// To become a component of a parent component
@@ -36,6 +37,7 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		id: c.id + component.accordion_layout_id
 		widths: [ui.stretch].repeat(c.children.len * 2)
 		heights: [30.0, ui.compact].repeat(c.children.len)
+		bg_color: gx.white
 	)
 	mut acc := &Accordion{
 		layout: layout
@@ -56,13 +58,16 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		children << title_cp
 		children << c.children[i]
 		acc.titles[title_id] = title
-		println('$i $title_id ${acc.titles[title_id]}')
-		acc.selected[title_id] = true
+		// println('$i $title_id ${acc.titles[title_id]}')
+		acc.selected[title_id] = false
 		acc.views[title_id] = i * 2 + 1
+		acc.z_index[title_id] = c.children[i].z_index // save original z_index of child
 	}
 	layout.children = children
 	layout.spacings = [f32(5)].repeat(children.len - 1)
-	println('here $layout.children.len $acc.titles.len')
+	// println('here $layout.children.len $acc.titles.len')
+	// init component
+	layout.component_init = accordion_init
 	return layout
 }
 
@@ -86,9 +91,26 @@ fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	mut acc := component_accordion(c)
 	acc.selected[c.id] = !acc.selected[c.id]
 	if acc.selected[c.id] {
-		acc.layout.set_children_depth(0, acc.views[c.id])
+		acc.activate(c.id)
 	} else {
-		acc.layout.set_children_depth(ui.z_index_hidden, acc.views[c.id])
+		acc.deactivate(c.id)
 	}
 	c.ui.window.update_layout()
+}
+
+fn (mut acc Accordion) activate(id string) {
+	acc.layout.set_children_depth(acc.z_index[id], acc.views[id])
+}
+
+fn (mut acc Accordion) deactivate(id string) {
+	acc.layout.set_children_depth(ui.z_index_hidden, acc.views[id])
+}
+
+fn accordion_init(layout &ui.Stack) {
+	mut acc := component_accordion(layout)
+	for id in acc.titles.keys() {
+		acc.selected[id] = false
+		acc.deactivate(id)
+	}
+	layout.ui.window.update_layout()
 }

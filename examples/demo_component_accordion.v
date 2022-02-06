@@ -3,17 +3,43 @@ import ui.component as uic
 import gx
 
 const (
-	win_width  = 30 + 256 + 4 * 10 + uic.cb_cv_hsv_w
-	win_height = 376
+	win_width  = 800
+	win_height = 600
 )
 
 struct App {
 mut:
 	window &ui.Window
+	// group
+	first_ipsum  string
+	second_ipsum string
+	full_name    string
+	// slider
+	hor_slider  &ui.Slider
+	vert_slider &ui.Slider
 }
 
 fn main() {
-	c := ui.column(
+	mut app := &App{
+		hor_slider: ui.slider(
+			width: 200
+			height: 20
+			orientation: .horizontal
+			max: 100
+			val: 0
+			on_value_changed: on_hor_value_changed
+		)
+		vert_slider: ui.slider(
+			width: 20
+			height: 200
+			orientation: .vertical
+			max: 100
+			val: 0
+			on_value_changed: on_vert_value_changed
+		)
+		window: 0
+	}
+	cr := ui.column(
 		widths: ui.stretch
 		margin_: 5
 		spacing: 10
@@ -63,9 +89,82 @@ fn main() {
 			),
 		]
 	)
-	mut app := &App{
-		window: 0
-	}
+	cdd := ui.column(
+		margin_: 5
+		widths: ui.compact
+		children: [
+			ui.dropdown(
+				width: 140
+				def_text: 'Select an option'
+				on_selection_changed: dd_change
+				items: [
+					ui.DropdownItem{
+						text: 'Delete all users'
+					},
+					ui.DropdownItem{
+						text: 'Export users'
+					},
+					ui.DropdownItem{
+						text: 'Exit'
+					},
+				]
+			),
+			ui.rectangle(
+				height: 100
+				width: 250
+				color: gx.rgb(100, 255, 100)
+			),
+		]
+	)
+	rg := ui.row(
+		spacing: 20
+		children: [
+			ui.group(
+				title: 'First group'
+				children: [
+					ui.textbox(
+						max_len: 20
+						width: 200
+						placeholder: 'Lorem ipsum'
+						text: &app.first_ipsum
+					),
+					ui.textbox(
+						max_len: 20
+						width: 200
+						placeholder: 'dolor sit amet'
+						text: &app.second_ipsum
+					),
+					ui.button(
+						text: 'More ipsum!'
+						onclick: fn (a voidptr, b voidptr) {
+							ui.open_url('https://lipsum.com/feed/html')
+						}
+					),
+				]
+			),
+			ui.group(
+				title: 'Second group'
+				children: [
+					ui.textbox(
+						max_len: 20
+						width: 200
+						placeholder: 'Full name'
+						text: &app.full_name
+					),
+					ui.checkbox(checked: true, text: 'Do you like V?'),
+					ui.button(text: 'Submit'),
+				]
+			),
+		]
+	)
+	rs := ui.row(
+		alignment: .center
+		widths: [.1, .9]
+		heights: [.9, .1]
+		margin: ui.Margin{25, 25, 25, 25}
+		spacing: 10
+		children: [app.vert_slider, app.hor_slider]
+	)
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
 		color: gx.red
@@ -83,27 +182,10 @@ fn main() {
 		native_message: false
 		children: [
 			uic.accordion(
-				id: 'toto'
-				titles: ['toto', 'tata', 'titi']
-				children: [c,
-					ui.rectangle(
-					text: 'Here a simple ui rectangle2 '
-					color: gx.blue
-					text_cfg: gx.TextCfg{
-						color: gx.red
-						align: gx.align_left
-						size: 30
-					}
-				),
-					ui.rectangle(
-						text: 'Here a simple ui rectangle3 '
-						color: gx.yellow
-						text_cfg: gx.TextCfg{
-							color: gx.orange
-							align: gx.align_left
-							size: 30
-						}
-					)]
+				id: 'demo'
+				text_color: gx.blue
+				titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
+				children: [rect, cr, rs, rg, cdd]
 			),
 		]
 	)
@@ -119,4 +201,16 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	mut rh2 := switcher.ui.window.radio('rh2')
 	rh2.compact = !rh2.compact
 	switcher.ui.window.update_layout()
+}
+
+fn dd_change(mut app App, dd &ui.Dropdown) {
+	println(dd.selected().text)
+}
+
+fn on_hor_value_changed(mut app App, slider &ui.Slider) {
+	app.hor_slider.val = app.hor_slider.val
+}
+
+fn on_vert_value_changed(mut app App, slider &ui.Slider) {
+	app.vert_slider.val = app.vert_slider.val
 }
