@@ -938,9 +938,13 @@ pub fn (mut s Stack) set_children_depth(z_index int, children ...int) {
 pub fn (mut s Stack) set_drawing_children() {
 	for mut child in s.children {
 		if mut child is Stack {
-			child.set_drawing_children()
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		} else if mut child is CanvasLayout {
-			child.set_drawing_children()
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
