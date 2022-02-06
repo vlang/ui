@@ -17,6 +17,7 @@ pub mut:
 	z_index    map[string]int
 	text_color gx.Color
 	text_size  int
+	bg_color   gx.Color
 	// To become a component of a parent component
 	component voidptr
 }
@@ -28,6 +29,7 @@ pub struct AccordionParams {
 	children   []ui.Widget
 	text_color gx.Color = gx.black
 	text_size  int      = 24
+	bg_color   gx.Color = gx.white
 }
 
 pub fn accordion(c AccordionParams) &ui.Stack {
@@ -37,7 +39,7 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		id: c.id + component.accordion_layout_id
 		widths: [ui.stretch].repeat(c.children.len * 2)
 		heights: [30.0, ui.compact].repeat(c.children.len)
-		bg_color: gx.white
+		bg_color: c.bg_color
 	)
 	mut acc := &Accordion{
 		layout: layout
