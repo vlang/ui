@@ -147,12 +147,12 @@ fn (mut l Label) draw() {
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
 			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')
-			println('draw_text_bb(l.x($l.x), l.y($l.y) + (height($height) * i($i)), w($w), h($h), l.ui)')
-			draw_text_bb(l.x, l.y + (height * i), w, h, l.ui)
+			println('debug_draw_bb_text(l.x($l.x), l.y($l.y) + (height($height) * i($i)), w($w), h($h), l.ui)')
+			debug_draw_bb_text(l.x, l.y + (height * i), w, h, l.ui)
 		}
 	}
 	$if bb ? {
-		draw_bb(mut l, l.ui)
+		debug_draw_bb_widget(mut l, l.ui)
 	}
 	offset_end(mut l)
 }

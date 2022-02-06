@@ -344,7 +344,7 @@ fn (mut r Radio) draw() {
 		}
 	}
 	$if bb ? {
-		draw_bb(mut r, r.ui)
+		debug_draw_bb_widget(mut r, r.ui)
 	}
 	offset_end(mut r)
 }
