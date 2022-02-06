@@ -18,9 +18,7 @@ pub:
 	on_resize       string = 'on_resize'
 }
 
-pub const (
-	events = EventNames{}
-)
+pub const events = EventNames{}
 
 // Managing mouse (down) events for widgets
 struct EventMngr {
