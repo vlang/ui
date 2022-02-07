@@ -33,8 +33,8 @@ pub struct AccordionParams {
 }
 
 pub fn accordion(c AccordionParams) &ui.Stack {
-	if c.children.len != c.titles.len {
-	}
+	// if c.children.len != c.titles.len {
+	// }
 	mut layout := ui.column(
 		id: c.id + component.accordion_layout_id
 		widths: [ui.stretch].repeat(c.children.len * 2)
