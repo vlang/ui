@@ -30,15 +30,22 @@ pub struct AccordionParams {
 	text_color gx.Color = gx.black
 	text_size  int      = 24
 	bg_color   gx.Color = gx.white
+	heights    []f64    = [30.0, ui.compact]
 }
 
 pub fn accordion(c AccordionParams) &ui.Stack {
 	// if c.children.len != c.titles.len {
 	// }
+	mut heights := [0.0]
+	if c.heights.len == 2 {
+		heights = c.heights.repeat(c.children.len)
+	} else {
+		heights = c.heights
+	}
 	mut layout := ui.column(
 		id: c.id + component.accordion_layout_id
 		widths: [ui.stretch].repeat(c.children.len * 2)
-		heights: [30.0, ui.compact].repeat(c.children.len)
+		heights: heights
 		bg_color: c.bg_color
 	)
 	mut acc := &Accordion{
