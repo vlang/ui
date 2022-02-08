@@ -12,6 +12,7 @@ mut:
 	offset_x int
 	offset_y int
 	hidden bool
+	parent Layout
 	init(Layout)
 	set_pos(x int, y int)
 	propose_size(w int, h int) (int, int)
@@ -33,4 +34,21 @@ pub fn (mut w Widget) set_depth(z_index int) {
 
 pub fn (child &Widget) id() string {
 	return child.id
+}
+
+// Find if there is recursively a parent deactivated (i.e. z_index <= ui.z_index_hidden)
+// used in accordion component
+pub fn (w &Widget) has_parent_deactivated() bool {
+	p := w.parent
+	if p is Stack {
+		// println("hpd $w.id: $p.z_index")
+		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+	} else if p is CanvasLayout {
+		// println("hpd $w.id: $p.z_index")
+		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+	} else if p is Group {
+		// println("hpd $w.id: $p.z_index")
+		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+	}
+	return false
 }
