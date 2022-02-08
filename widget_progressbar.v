@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -113,7 +113,7 @@ fn (mut pb ProgressBar) draw() {
 	pb.ui.gg.draw_rect_empty(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
 	pb.ui.gg.draw_rect_filled(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
 	$if bb ? {
-		draw_bb(mut pb, pb.ui)
+		debug_draw_bb_widget(mut pb, pb.ui)
 	}
 	offset_end(mut pb)
 }

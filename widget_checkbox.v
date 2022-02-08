@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -8,15 +8,8 @@ import gx
 const (
 	check_mark_size = 14
 	cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
-	cb_image        = u32(0)
 )
 
-/*
-enum CheckBoxState {
-	normal
-	check
-}
-*/
 type CheckChangedFn = fn (voidptr, bool)
 
 type CheckBowClickFn = fn (&CheckBox, voidptr)
@@ -24,8 +17,7 @@ type CheckBowClickFn = fn (&CheckBox, voidptr)
 [heap]
 pub struct CheckBox {
 pub mut:
-	id string
-	// state      CheckBoxState
+	id               string
 	height           int
 	width            int
 	x                int
@@ -220,7 +212,7 @@ fn (mut cb CheckBox) draw() {
 		dtw.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text)
 	}
 	$if bb ? {
-		draw_bb(mut cb, cb.ui)
+		debug_draw_bb_widget(mut cb, cb.ui)
 	}
 	offset_end(mut cb)
 }

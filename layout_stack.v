@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -227,7 +227,7 @@ pub fn (mut s Stack) update_layout() {
 	// 2) set cache sizes
 	s.set_cache_sizes()
 	$if cache ? {
-		s.debug_show_cache(0, '')
+		debug_show_cache(mut s, 0, '')
 	}
 	// 3) set all the sizes (could be updated possibly for resizing)
 	s.set_children_sizes()
@@ -257,7 +257,7 @@ fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
 	// println('parent size: ($parent_width, $parent_height)')
-	// s.debug_show_sizes("decode before -> ")
+	// debug_show_sizes(mut s, "decode before -> ")
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
 		if s.parent is SubWindow {
@@ -304,7 +304,7 @@ fn (mut s Stack) set_children_sizes() {
 	}
 	// Only for debug stuff
 	$if scs ? {
-		s.debug_set_children_sizes(widths, heights, c)
+		debug_set_children_sizes(s, widths, heights, c)
 	}
 }
 
@@ -818,7 +818,6 @@ fn (mut s Stack) set_children_pos() {
 	}
 	// z_index < ui.z_index_ hidden => hidden and without positionning
 	mut children := s.children.filter(it.z_index > z_index_hidden)
-
 	for i, mut child in children {
 		child_width, child_height := child.size()
 		s.set_child_pos(child, i, x, y)
@@ -936,9 +935,13 @@ pub fn (mut s Stack) set_children_depth(z_index int, children ...int) {
 pub fn (mut s Stack) set_drawing_children() {
 	for mut child in s.children {
 		if mut child is Stack {
-			child.set_drawing_children()
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		} else if mut child is CanvasLayout {
-			child.set_drawing_children()
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
@@ -973,7 +976,7 @@ fn (mut s Stack) draw() {
 	scrollview_draw_begin(mut s)
 
 	$if bb ? {
-		s.draw_bb()
+		debug_draw_bb_stack(s)
 	}
 	for mut child in s.drawing_children {
 		// println("$child.type_name() $child.id")

@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -7,13 +7,9 @@ import time
 import gg
 import os
 import clipboard
-import eventbus
 
 const (
-	version = '0.0.4'
-)
-
-const (
+	version           = '0.0.4'
 	cursor_show_delay = 100 // ms
 )
 
@@ -22,110 +18,20 @@ pub mut:
 	gg             &gg.Context = voidptr(0)
 	window         &Window     = voidptr(0)
 	show_cursor    bool
-	last_type_time i64
+	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
 mut:
-	// just_typed           bool
-	cb_image             gg.Image
-	circle_image         gg.Image
-	radio_image          gg.Image
-	selected_radio_image gg.Image
-	down_arrow           gg.Image
-	redraw_requested     bool
-	resource_cache       map[string]gg.Image
+	cb_image             gg.Image // used only in checkbox.v
+	circle_image         gg.Image // used in radio.v but no use, in idle_loop()
+	selected_radio_image gg.Image // used only in radio.v
+	down_arrow           gg.Image // used only in dropdown.v
+	resource_cache       map[string]gg.Image // used only in picture.v
 	closed               bool
 	ticks                int
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
-}
-
-pub enum VerticalAlignment {
-	top = 0
-	center
-	bottom
-}
-
-pub enum HorizontalAlignment {
-	left = 0
-	center
-	right
-}
-
-pub interface Widget {
-mut:
-	id string
-	x int
-	y int
-	z_index int
-	offset_x int
-	offset_y int
-	hidden bool
-	init(Layout)
-	cleanup()
-	draw()
-	point_inside(x f64, y f64) bool
-	set_pos(x int, y int)
-	propose_size(w int, h int) (int, int)
-	size() (int, int)
-	set_visible(bool)
-}
-
-pub interface Layout {
-	get_ui() &UI
-	get_state() voidptr
-	size() (int, int)
-	get_subscriber() &eventbus.Subscriber
-	get_children() []Widget
-mut:
-	draw()
-	resize(w int, h int)
-	update_layout()
-}
-
-pub enum MouseAction {
-	up
-	down
-}
-
-// MouseButton is same to sapp.MouseButton
-pub enum MouseButton {
-	invalid = 256
-	left = 0
-	right = 1
-	middle = 2
-}
-
-pub struct MouseEvent {
-pub:
-	x      int
-	y      int
-	button MouseButton
-	action MouseAction
-	mods   KeyMod
-}
-
-pub struct ScrollEvent {
-pub:
-	x       f64
-	y       f64
-	mouse_x f64
-	mouse_y f64
-}
-
-pub struct MouseMoveEvent {
-pub:
-	x            f64
-	y            f64
-	mouse_button int
-	// TODO enum
-}
-
-pub enum Cursor {
-	hand
-	arrow
-	ibeam
 }
 
 fn (mut gui UI) idle_loop() {
@@ -167,51 +73,6 @@ fn (mut gui UI) idle_loop() {
 	}
 }
 
-pub fn run(window &Window) {
-	mut gui := window.ui
-	gui.window = window
-	go gui.idle_loop()
-	gui.gg.run()
-	/*
-	for !window.glfw_obj.should_close() {
-		if window.child_window != 0 {
-			//gg.clear(gx.rgb(230,230,230))
-			if window.child_window.draw_fn != voidptr(0) {
-				window.child_window.draw_fn(window.child_window.state)
-			}
-			for child in window.child_window.children {
-				child.draw()
-			}
-		}
-		else {
-			//gg.clear(window.bg_color)
-			// The user can define a custom drawing function for the entire window (advanced mode)
-			if window.draw_fn != voidptr(0) {
-				window.draw_fn(window.state)
-			}
-			// Render all widgets, including Canvas
-			for child in window.children {
-				child.draw()
-			}
-		}
-		// Triggers a re-render in case any function requests it.
-		// Transitions & animations, for example.
-		if gui.redraw_requested {
-			gui.redraw_requested = false
-			//glfw.post_empty_event()
-		}
-		gui.gg.render()
-	}
-	gui.window.glfw_obj.destroy()
-	*/
-	gui.closed = true
-
-	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
-	// waiting 2x this time should be enough to ensure the gui.loop
-	// thread will exit before us, without using a waitgroup here too
-	time.sleep(20 * time.millisecond)
-}
-
 fn (mut gui UI) load_icos() {
 	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
 	$if macos {
@@ -223,6 +84,37 @@ fn (mut gui UI) load_icos() {
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
 	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
 		bytes_selected_radio_png.len)
+}
+
+[unsafe]
+pub fn (gui &UI) free() {
+	unsafe {
+		// gg             &gg.Context = voidptr(0)
+		// window         &Window     = voidptr(0)
+		// clipboard      &clipboard.Clipboard
+		// cb_image             gg.Image
+		// circle_image         gg.Image
+		// radio_image          gg.Image
+		// selected_radio_image gg.Image
+		// down_arrow           gg.Image
+		gui.resource_cache.free()
+	}
+	$if free ? {
+		println('\tui -> freed')
+	}
+}
+
+pub fn run(window &Window) {
+	mut gui := window.ui
+	gui.window = window
+	go gui.idle_loop()
+	gui.gg.run()
+	gui.closed = true
+
+	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
+	// waiting 2x this time should be enough to ensure the gui.loop
+	// thread will exit before us, without using a waitgroup here too
+	time.sleep(20 * time.millisecond)
 }
 
 pub fn open_url(url string) {
@@ -242,22 +134,4 @@ pub fn open_url(url string) {
 
 pub fn confirm(s string) bool {
 	return false
-}
-
-[unsafe]
-pub fn (gui &UI) free() {
-	unsafe {
-		// gg             &gg.Context = voidptr(0)
-		// window         &Window     = voidptr(0)
-		// clipboard      &clipboard.Clipboard
-		// cb_image             gg.Image
-		// circle_image         gg.Image
-		// radio_image          gg.Image
-		// selected_radio_image gg.Image
-		// down_arrow           gg.Image
-		gui.resource_cache.free()
-	}
-	$if free ? {
-		println('\tui -> freed')
-	}
 }

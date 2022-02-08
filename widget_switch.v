@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -124,7 +124,7 @@ fn (mut s Switch) draw() {
 		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
 	}
 	$if bb ? {
-		draw_bb(mut s, s.ui)
+		debug_draw_bb_widget(mut s, s.ui)
 	}
 	offset_end(mut s)
 }

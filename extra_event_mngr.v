@@ -1,5 +1,25 @@
 module ui
 
+struct EventNames {
+pub:
+	on_click        string = 'on_click'
+	on_mouse_move   string = 'on_mouse_move'
+	on_mouse_down   string = 'on_mouse_down'
+	on_mouse_up     string = 'on_mouse_up'
+	on_files_droped string = 'on_files_droped'
+	on_swipe        string = 'on_swipe'
+	on_touch_move   string = 'on_touch_move'
+	on_touch_down   string = 'on_touch_down'
+	on_touch_up     string = 'on_touch_up'
+	on_key_down     string = 'on_key_down'
+	on_char         string = 'on_char'
+	on_key_up       string = 'on_key_up'
+	on_scroll       string = 'on_scroll'
+	on_resize       string = 'on_resize'
+}
+
+pub const events = EventNames{}
+
 // Managing mouse (down) events for widgets
 struct EventMngr {
 mut:
@@ -12,7 +32,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 		// BUG: 'widget in em.receivers[events.on_mouse_down]' is failing
 		// WORKAROUND with id
 		if widget.id !in em.receivers[evt_type].map(it.id) {
-			em.receivers[events.on_mouse_down] << widget
+			em.receivers[ui.events.on_mouse_down] << widget
 			$if evt_mngr ? {
 				println('add receiver $widget.id for $evt_type')
 			}
@@ -41,9 +61,9 @@ pub fn (mut em EventMngr) point_inside_receivers(e MouseEvent, evt_type string) 
 	for mut w in em.receivers[evt_type] {
 		$if evt_mngr ? {
 			println('point_inside_receivers: $w.id !$w.hidden && ${w.point_inside(e.x,
-				e.y)}')
+				e.y)} $w.has_parent_deactivated()')
 		}
-		if !w.hidden && w.point_inside(e.x, e.y) {
+		if !w.hidden && w.point_inside(e.x, e.y) && !w.has_parent_deactivated() {
 			em.point_inside[evt_type] << w
 		}
 	}

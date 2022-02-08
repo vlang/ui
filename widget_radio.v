@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 Alexander Medvednikov. All rights reserved.
+// Copyright (c) 2020-2022 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by a GPL license
 // that can be found in the LICENSE file.
 module ui
@@ -344,7 +344,7 @@ fn (mut r Radio) draw() {
 		}
 	}
 	$if bb ? {
-		draw_bb(mut r, r.ui)
+		debug_draw_bb_widget(mut r, r.ui)
 	}
 	offset_end(mut r)
 }
