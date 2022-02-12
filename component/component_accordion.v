@@ -54,7 +54,6 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		text_size: c.text_size
 	}
 	ui.component_connect(acc, layout)
-	mut children := []ui.Widget{}
 	mut title_id := ''
 	for i, title in c.titles {
 		title_id = c.id + '_$i'
@@ -64,16 +63,15 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 			on_click: accordion_click
 		)
 		ui.component_connect(acc, title_cp)
-		children << title_cp
-		children << c.children[i]
+		layout.children << title_cp
+		layout.children << c.children[i]
 		acc.titles[title_id] = title
 		// println('$i $title_id ${acc.titles[title_id]}')
 		acc.selected[title_id] = false
 		acc.views[title_id] = i * 2 + 1
 		acc.z_index[title_id] = c.children[i].z_index // save original z_index of child
 	}
-	layout.children = children
-	layout.spacings = [f32(5)].repeat(children.len - 1)
+	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
 	// println('here $layout.children.len $acc.titles.len')
 	// init component
 	layout.component_init = accordion_init
