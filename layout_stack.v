@@ -732,48 +732,51 @@ fn (s &Stack) free_size() (int, int) {
 	return w, h
 }
 
-fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
+fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in s.children {
-		mut child_width, mut child_height := 0, 0
-		if mut child is Stack {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, force, ui)
+		if child.z_index > z_index_hidden { // taking into account only visible widgets
+			mut child_width, mut child_height := 0, 0
+			if mut child is Stack {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(i + 1, force, gui)
+				}
+				child_width, child_height = child.adj_width + child.margin(.left) +
+					child.margin(.right), child.adj_height + child.margin(.top) +
+					child.margin(.bottom)
+				$if adj_size ? {
+					println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+					println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+				} $else {
+				} // because of a bug mixing $if and else
+			} else if mut child is Group {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(i + 1, gui)
+				}
+				child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
+					child.adj_height + child.margin_top + child.margin_bottom
+			} else if mut child is CanvasLayout {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(gui)
+				}
+				child_width, child_height = child.adj_width, child.adj_height
+			} else {
+				child_width, child_height = child.size()
+				$if adj_size ? {
+					println('Stack child size $child.type_name(): ($child_width, $child_height) ')
+				}
 			}
-			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
-				child.adj_height + child.margin(.top) + child.margin(.bottom)
-			$if adj_size ? {
-				println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
-				println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
-			} $else {
-			} // because of a bug mixing $if and else
-		} else if mut child is Group {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, ui)
-			}
-			child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
-				child.adj_height + child.margin_top + child.margin_bottom
-		} else if mut child is CanvasLayout {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(ui)
-			}
-			child_width, child_height = child.adj_width, child.adj_height
-		} else {
-			child_width, child_height = child.size()
-			$if adj_size ? {
-				println('Stack child size $child.type_name(): ($child_width, $child_height) ')
-			}
-		}
-		if s.direction == .column {
-			h += child_height // height of vertical stack means adding children's height
-			if child_width > w { // width of vertical stack means greatest children's width
-				w = child_width
-			}
-		} else {
-			w += child_width // width of horizontal stack means adding children's width
-			if child_height > h { // height of horizontal stack means greatest children's height
-				h = child_height
+			if s.direction == .column {
+				h += child_height // height of vertical stack means adding children's height
+				if child_width > w { // width of vertical stack means greatest children's width
+					w = child_width
+				}
+			} else {
+				w += child_width // width of horizontal stack means adding children's width
+				if child_height > h { // height of horizontal stack means greatest children's height
+					h = child_height
+				}
 			}
 		}
 	}
@@ -949,7 +952,6 @@ pub fn (mut s Stack) set_drawing_children() {
 		}
 	}
 	s.drawing_children = s.children.filter(!it.hidden && it.z_index > z_index_hidden)
-	// s.drawing_children.sort(a.z_index < b.z_index)
 	s.sorted_drawing_children()
 }
 

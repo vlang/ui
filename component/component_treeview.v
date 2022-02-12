@@ -92,7 +92,7 @@ pub struct TreeViewParams {
 
 pub fn treeview(c TreeViewParams) &ui.Stack {
 	mut layout := ui.column(
-		id: c.id + accordion_layout_id
+		id: c.id + component.treeview_layout_id
 		widths: [ui.stretch]
 		heights: [ui.compact]
 		bg_color: c.bg_color

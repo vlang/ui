@@ -35,13 +35,20 @@ fn main() {
 								title: 'tttytyty1'
 								items: [
 									uic.TreeItem('file: tutu2'),
-									'ytytyy2',
+									'file: ytytyy2',
 								]
 							},
 						]
 					},
 					uic.Tree{
 						title: 'toto2'
+						items: [
+							uic.TreeItem('file: ftftyty1'),
+							'file: hgyfyf1111',
+						]
+					},
+					uic.Tree{
+						title: 'toto3'
 						items: [
 							uic.TreeItem('file: ftftyty1'),
 							'file: hgyfyf1111',

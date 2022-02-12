@@ -306,7 +306,7 @@ pub fn (mut c CanvasLayout) update_layout() {
 	c.set_drawing_children()
 }
 
-fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
+fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	// println('set_adj $c.full_width $c.full_height')
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
@@ -320,13 +320,15 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
-		child_width, child_height := child.size()
+		if child.z_index > ui.z_index_hidden { // taking into account only visible widgets
+			child_width, child_height := child.size()
 
-		if child.x + child_width > w {
-			w = child.x + child_width
-		}
-		if child.y + child_height > h {
-			h = child.y + child_height
+			if child.x + child_width > w {
+				w = child.x + child_width
+			}
+			if child.y + child_height > h {
+				h = child.y + child_height
+			}
 		}
 		// println("${child.type_name()} -> ($child.x + $child_width, $child.y + $child_height) -> ($w, $h)")
 	}
