@@ -59,9 +59,14 @@ fn main() {
 					'folder': 'tata'
 					'file':   'toto'
 				}
+				on_click: treeview_onclick
 			),
 		]
 	)
 	app.window = window
 	ui.run(window)
+}
+
+fn treeview_onclick(selected string, mut tv uic.TreeView) {
+	println('$selected selected with title: ${tv.titles[selected]}!')
 }

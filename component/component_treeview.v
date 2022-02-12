@@ -58,6 +58,8 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 	return l
 }
 
+type TreeViewClickFn = fn (selected string, mut tv TreeView)
+
 [heap]
 struct TreeView {
 pub mut:
@@ -76,6 +78,8 @@ pub mut:
 	containers map[string]&ui.Stack
 	views      map[string]string
 	z_index    map[string]int
+	// event
+	on_click TreeViewClickFn
 	// To become a component of a parent component
 	component voidptr
 }
@@ -85,9 +89,10 @@ pub struct TreeViewParams {
 	id         string
 	trees      []Tree
 	icons      map[string]string
-	text_color gx.Color = gx.black
-	text_size  int      = 24
-	bg_color   gx.Color = gx.white
+	text_color gx.Color        = gx.black
+	text_size  int             = 24
+	bg_color   gx.Color        = gx.white
+	on_click   TreeViewClickFn = TreeViewClickFn(0)
 }
 
 pub fn treeview(c TreeViewParams) &ui.Stack {
@@ -103,6 +108,7 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 		trees: c.trees
 		text_color: c.text_color
 		text_size: c.text_size
+		on_click: c.on_click
 	}
 	for i, mut tree in tv.trees {
 		layout.children << tree.create_layout(mut tv, mut layout, 'root$i', 0)
@@ -142,7 +148,9 @@ fn treeview_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 		} else {
 			tv.deactivate(c.id)
 		}
-	} else {
+	}
+	if tv.on_click != TreeViewClickFn(0) {
+		tv.on_click(c.id, mut tv)
 	}
 	c.ui.window.update_layout()
 }
