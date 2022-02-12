@@ -320,7 +320,7 @@ fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
-		if child.z_index > ui.z_index_hidden { // taking into account only visible widgets
+		if child.z_index > z_index_hidden { // taking into account only visible widgets
 			child_width, child_height := child.size()
 
 			if child.x + child_width > w {
