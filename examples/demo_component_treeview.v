@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-// import gx
+import gx
 
 const (
 	win_width  = 800
@@ -22,8 +22,12 @@ fn main() {
 		title: 'V UI: TreeView'
 		state: app
 		native_message: false
+		mode: .resizable
 		children: [
-			uic.treeview(
+			ui.column(
+				scrollview: true
+				heights: ui.compact
+			children: [uic.treeview(
 				id: 'demo'
 				trees: [
 					uic.Tree{
@@ -54,13 +58,16 @@ fn main() {
 							'file: hgyfyf1111',
 						]
 					},
+					uic.treedir("/Users/rcqls/GitHub/ui")
 				]
 				icons: {
 					'folder': 'tata'
 					'file':   'toto'
 				}
+				text_color: gx.blue
 				on_click: treeview_onclick
-			),
+			)]
+			)
 		]
 	)
 	app.window = window

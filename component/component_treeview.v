@@ -2,6 +2,7 @@ module component
 
 import ui
 import gx
+import os
 
 const (
 	treeview_layout_id = '_cvl_treeview'
@@ -169,4 +170,18 @@ fn treeview_init(layout &ui.Stack) {
 	// mut tv := component_treeview(layout)
 
 	// layout.ui.window.update_layout()
+}
+
+pub fn treedir(path string) &Tree {
+	mut files := os.ls(path) or {[]}
+	files.sort()
+	t := &Tree{
+		title: path
+		items: files.map(if os.is_dir(it) {
+			TreeItem(treedir(it))
+		} else {
+			TreeItem("file: $it")
+		})
+	}
+	return t
 }
