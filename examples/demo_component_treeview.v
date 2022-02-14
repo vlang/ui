@@ -27,47 +27,49 @@ fn main() {
 			ui.column(
 				scrollview: true
 				heights: ui.compact
-			children: [uic.treeview(
-				id: 'demo'
-				trees: [
-					uic.Tree{
-						title: 'toto1'
-						items: [
-							uic.TreeItem('file: ftftyty1'),
-							'file: hgyfyf1',
+				children: [
+					uic.treeview(
+						id: 'demo'
+						trees: [
 							uic.Tree{
-								title: 'tttytyty1'
+								title: 'toto1'
 								items: [
-									uic.TreeItem('file: tutu2'),
-									'file: ytytyy2',
+									uic.TreeItem('file: ftftyty1'),
+									'file: hgyfyf1',
+									uic.Tree{
+										title: 'tttytyty1'
+										items: [
+											uic.TreeItem('file: tutu2'),
+											'file: ytytyy2',
+										]
+									},
 								]
 							},
+							uic.Tree{
+								title: 'toto2'
+								items: [
+									uic.TreeItem('file: ftftyty1'),
+									'file: hgyfyf1111',
+								]
+							},
+							uic.Tree{
+								title: 'toto3'
+								items: [
+									uic.TreeItem('file: ftftyty1'),
+									'file: hgyfyf1111',
+								]
+							},
+							uic.treedir('/Users/rcqls/GitHub/ui'),
 						]
-					},
-					uic.Tree{
-						title: 'toto2'
-						items: [
-							uic.TreeItem('file: ftftyty1'),
-							'file: hgyfyf1111',
-						]
-					},
-					uic.Tree{
-						title: 'toto3'
-						items: [
-							uic.TreeItem('file: ftftyty1'),
-							'file: hgyfyf1111',
-						]
-					},
-					uic.treedir("/Users/rcqls/GitHub/ui")
+						icons: {
+							'folder': 'tata'
+							'file':   'toto'
+						}
+						text_color: gx.blue
+						on_click: treeview_onclick
+					),
 				]
-				icons: {
-					'folder': 'tata'
-					'file':   'toto'
-				}
-				text_color: gx.blue
-				on_click: treeview_onclick
-			)]
-			)
+			),
 		]
 	)
 	app.window = window

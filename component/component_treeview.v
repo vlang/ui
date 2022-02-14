@@ -173,15 +173,11 @@ fn treeview_init(layout &ui.Stack) {
 }
 
 pub fn treedir(path string) &Tree {
-	mut files := os.ls(path) or {[]}
+	mut files := os.ls(path) or { [] }
 	files.sort()
 	t := &Tree{
 		title: path
-		items: files.map(if os.is_dir(it) {
-			TreeItem(treedir(it))
-		} else {
-			TreeItem("file: $it")
-		})
+		items: files.map(if os.is_dir(it) { TreeItem(treedir(it)) } else { TreeItem('file: $it') })
 	}
 	return t
 }
