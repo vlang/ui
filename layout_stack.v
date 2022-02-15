@@ -253,7 +253,11 @@ pub fn (mut s Stack) update_layout() {
 	}
 }
 
-pub fn (mut s Stack) update_drawing_children() {
+pub fn (mut s Stack) update_layout_but_pos() {
+	s.set_adjusted_size(0, true, s.ui)
+	s.set_cache_sizes()
+	s.set_children_sizes()
+	// N.B.: s.update_pos() removed!
 	s.set_drawing_children()
 	s.set_children_pos()
 }

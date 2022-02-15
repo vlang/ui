@@ -1128,6 +1128,16 @@ pub fn (w &Window) update_layout() {
 	}
 }
 
+pub fn (w &Window) update_layout_but_pos() {
+	// update root_layout
+	mut s := w.root_layout
+	if mut s is Stack {
+		if s.id != empty_stack.id {
+			s.update_layout_but_pos()
+		}
+	}
+}
+
 fn (w &Window) draw() {}
 
 //---- Window focusable methods
