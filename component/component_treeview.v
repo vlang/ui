@@ -38,6 +38,7 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 	tv.z_index[root_id] = layout.z_index
 	for i, item in t.items {
 		treeitem_id := root_id + ':$i'
+		tv.parents[treeitem_id] = root_id
 		if item is string {
 			tmp := item.split(':')
 			tv.titles[treeitem_id] = tmp[1..].join(':').trim_space()
@@ -59,7 +60,7 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 	return l
 }
 
-type TreeViewClickFn = fn (selected string, mut tv TreeView)
+type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeView)
 
 [heap]
 struct TreeView {
@@ -73,6 +74,7 @@ pub mut:
 	bg_color   gx.Color
 	// related to items
 	titles     map[string]string
+	parents    map[string]string
 	types      map[string]string
 	levels     map[string]int
 	selected   map[string]bool
@@ -151,13 +153,26 @@ fn treeview_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 		}
 	}
 	if tv.on_click != TreeViewClickFn(0) {
-		tv.on_click(c.id, mut tv)
+		tv.on_click(c, mut tv)
 	}
-	// Line below fails to work (because click with scrollview):
-	// c.ui.window.update_layout()
-	// Line below instead:
-	//
 	tv.layout.update_layout_but_pos()
+}
+
+// methods
+
+pub fn (tv &TreeView) full_title(id string) string {
+	mut res := []string{}
+	mut cid := id
+	for {
+		if cid in tv.parents {
+			pid := tv.parents[cid]
+			res << tv.titles[cid]
+			cid = pid
+		} else {
+			break
+		}
+	}
+	return res.reverse().join('/')
 }
 
 fn (mut tv TreeView) activate(id string) {
@@ -176,10 +191,10 @@ fn treeview_init(layout &ui.Stack) {
 	// layout.ui.window.update_layout()
 }
 
-pub fn treedir(path string) &Tree {
+pub fn treedir(path string) Tree {
 	mut files := os.ls(path) or { [] }
 	files.sort()
-	t := &Tree{
+	t := Tree{
 		title: path
 		items: files.map(if os.is_dir(it) { TreeItem(treedir(it)) } else { TreeItem('file: $it') })
 	}

@@ -59,7 +59,6 @@ fn main() {
 									'file: hgyfyf1111',
 								]
 							},
-							uic.treedir('/Users/rcqls/GitHub/ui'),
 						]
 						icons: {
 							'folder': 'tata'
@@ -76,6 +75,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn treeview_onclick(selected string, mut tv uic.TreeView) {
+fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
+	selected := c.id
 	println('$selected selected with title: ${tv.titles[selected]}!')
 }
