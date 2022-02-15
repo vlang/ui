@@ -153,7 +153,10 @@ fn treeview_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	if tv.on_click != TreeViewClickFn(0) {
 		tv.on_click(c.id, mut tv)
 	}
-	c.ui.window.update_layout()
+	// Line below fails to work (because click with scrollview):
+	// c.ui.window.update_layout()
+	// Line below instead:
+	tv.layout.update_drawing_children()
 }
 
 fn (mut tv TreeView) activate(id string) {

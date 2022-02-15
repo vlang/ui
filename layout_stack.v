@@ -253,6 +253,11 @@ pub fn (mut s Stack) update_layout() {
 	}
 }
 
+pub fn (mut s Stack) update_drawing_children() {
+	s.set_drawing_children()
+	s.set_children_pos()
+}
+
 fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
@@ -813,7 +818,7 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 	s.update_pos()
 }
 
-fn (mut s Stack) set_children_pos() {
+pub fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
 	$if scp ? {
