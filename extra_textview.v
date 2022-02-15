@@ -249,7 +249,7 @@ pub fn (mut tv TextView) draw_visible_line(i int, y int, text string) {
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
 	tv.draw_text(tv.tb.x + textbox_padding_x + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string())
+		y, ustr[imin..imax].string().replace('\t', ' '.repeat(4)))
 }
 
 fn (mut tv TextView) draw_selection() {

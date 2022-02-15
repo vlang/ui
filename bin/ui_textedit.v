@@ -68,6 +68,5 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	println('$selected selected with title: ${tv.titles[selected]}!')
 	mut app := &App(c.ui.window.state)
 	file := tv.full_title(selected)
-	app.text = (os.read_file(file) or { '' }).replace('\t', ' '.repeat(4))
-	println('selected=$selected text=<$app.text>')
+	app.text = os.read_file(file) or { '' }
 }
