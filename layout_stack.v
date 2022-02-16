@@ -820,7 +820,7 @@ fn (mut s Stack) set_children_pos() {
 	mut children := s.children.filter(it.z_index > z_index_hidden)
 	for i, mut child in children {
 		child_width, child_height := child.size()
-		s.set_child_pos(child, i, x, y)
+		s.set_child_pos(mut child, i, x, y)
 		if s.direction == .row {
 			$if scp ? {
 				println('$.row $i): child_width=$child_width x => $x')
