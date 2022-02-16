@@ -249,7 +249,7 @@ pub fn (mut tv TextView) draw_visible_line(i int, y int, text string) {
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
 	tv.draw_text(tv.tb.x + textbox_padding_x + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string().replace('\t', ' '.repeat(4)))
+		y, tv.fix_tab_char(ustr[imin..imax].string()))
 }
 
 fn (mut tv TextView) draw_selection() {
@@ -759,7 +759,7 @@ fn (tv &TextView) cursor_x() int {
 	ustr := tv.current_line().runes()
 	mut cursor_x := tv.tb.x + textbox_padding_x
 	if ustr.len > 0 {
-		left := ustr[..tv.tlv.cursor_pos_i].string()
+		left := tv.fix_tab_char(ustr[..tv.tlv.cursor_pos_i].string())
 		cursor_x += tv.text_width(left)
 	}
 	return cursor_x
@@ -767,6 +767,10 @@ fn (tv &TextView) cursor_x() int {
 
 fn (tv &TextView) cursor_xy() (int, int) {
 	return tv.cursor_x(), tv.cursor_y()
+}
+
+fn (tv &TextView) fix_tab_char(txt string) string {
+	return txt.replace('\t', ' '.repeat(3))
 }
 
 pub fn (mut tv TextView) cursor_adjust_after_newline() {

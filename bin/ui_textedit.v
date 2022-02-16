@@ -49,7 +49,7 @@ fn main() {
 					]
 				),
 					ui.textbox(
-						mode: .multiline | .word_wrap
+						mode: .multiline
 						id: 'edit'
 						height: 200
 						text: &app.text
