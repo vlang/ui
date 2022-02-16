@@ -257,7 +257,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 }
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
-	// println('btn_click for window=$window.title')
+	// println('btn_mouse_down for window=$window.title')
 	if b.hidden {
 		return
 	}
@@ -417,7 +417,7 @@ fn (mut b Button) set_visible(state bool) {
 
 fn (mut b Button) focus() {
 	mut f := Focusable(b)
-	f.set_focus()
+	f.force_focus()
 }
 
 fn (mut b Button) unfocus() {

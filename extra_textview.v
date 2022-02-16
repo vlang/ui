@@ -233,6 +233,7 @@ fn (mut tv TextView) draw_textlines() {
 	}
 
 	// draw cursor
+	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
 		tv.tb.ui.gg.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height,
 			gx.black) // , gx.Black)
@@ -769,10 +770,6 @@ fn (tv &TextView) cursor_xy() (int, int) {
 	return tv.cursor_x(), tv.cursor_y()
 }
 
-fn (tv &TextView) fix_tab_char(txt string) string {
-	return txt.replace('\t', ' '.repeat(4))
-}
-
 pub fn (mut tv TextView) cursor_adjust_after_newline() {
 	if tv.tb.has_scrollview {
 		if tv.tb.scrollview.active_y
@@ -972,6 +969,11 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	return ustr.len
 }
 */
+
+// Fix tabulation
+fn (tv &TextView) fix_tab_char(txt string) string {
+	return txt.replace('\t', ' '.repeat(4))
+}
 
 // TextStyles
 fn (tv &TextView) draw_text(x int, y int, text string) {

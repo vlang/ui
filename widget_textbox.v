@@ -855,7 +855,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.unfocus()
 		return
 	} else {
-		// println('mouse first $tb.id')
+		// println('mouse second $tb.id')
 		tb.focus()
 	}
 	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
@@ -938,7 +938,7 @@ fn (mut tb TextBox) set_visible(state bool) {
 
 pub fn (mut tb TextBox) focus() {
 	mut f := Focusable(tb)
-	f.set_focus()
+	f.force_focus()
 }
 
 fn (mut tb TextBox) unfocus() {
