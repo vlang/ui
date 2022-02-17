@@ -52,3 +52,8 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 	}
 	return false
 }
+
+pub fn (mut w Widget) bounds() (int, int, int, int) {
+	sw, sh := w.size()
+	return w.x, w.y, sw, sh
+}

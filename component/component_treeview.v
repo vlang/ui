@@ -175,9 +175,11 @@ pub fn (tv &TreeView) full_title(id string) string {
 			res << tv.titles[cid]
 			cid = pid
 		} else {
+			res << tv.titles[cid]
 			break
 		}
 	}
+	println(res)
 	return res.reverse().join('/')
 }
 
@@ -192,23 +194,30 @@ fn (mut tv TreeView) deactivate(id string) {
 }
 
 fn treeview_init(layout &ui.Stack) {
-	// mut tv := component_treeview(layout)
-
-	// layout.ui.window.update_layout()
+	mut tv := component_treeview(layout)
+	// tv.deactivate_all()
+	layout.ui.window.update_layout()
 }
 
 pub fn treedir(path string, fpath string) Tree {
-	mut files := os.ls(path) or { [] }
+	mut files := os.ls(fpath) or { [] }
 	files.sort()
-	println(path)
-	println(files)
+	// println(fpath)
+	// println(files)
 	t := Tree{
 		title: path
-		items: files.map(if os.is_dir(os.join_path(path, it)) {
-			TreeItem(treedir(it, os.join_path(path, it)))
+		items: files.map(if os.is_dir(os.join_path(fpath, it)) {
+			TreeItem(treedir(it, os.join_path(fpath, it)))
 		} else {
 			TreeItem('file: $it')
 		})
 	}
 	return t
+}
+
+fn (mut tv TreeView) deactivate_all() {
+	for id in tv.titles.keys() {
+		tv.selected[id] = false
+		tv.deactivate(id)
+	}
 }
