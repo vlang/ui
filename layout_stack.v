@@ -183,7 +183,7 @@ fn (mut s Stack) init(parent Layout) {
 }
 
 [manualfree]
-fn (mut s Stack) cleanup() {
+pub fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
 	}

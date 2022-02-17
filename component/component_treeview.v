@@ -56,7 +56,9 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 			l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
 		}
 	}
-	l.spacings = [f32(5)].repeat(l.children.len - 1)
+	if l.children.len > 0 {
+		l.spacings = [f32(5)].repeat(l.children.len - 1)
+	}
 	return l
 }
 
@@ -160,6 +162,10 @@ fn treeview_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 
 // methods
 
+pub fn (mut tv TreeView) cleanup_layout() {
+	tv.layout.cleanup()
+}
+
 pub fn (tv &TreeView) full_title(id string) string {
 	mut res := []string{}
 	mut cid := id
@@ -191,12 +197,18 @@ fn treeview_init(layout &ui.Stack) {
 	// layout.ui.window.update_layout()
 }
 
-pub fn treedir(path string) Tree {
+pub fn treedir(path string, fpath string) Tree {
 	mut files := os.ls(path) or { [] }
 	files.sort()
+	println(path)
+	println(files)
 	t := Tree{
 		title: path
-		items: files.map(if os.is_dir(it) { TreeItem(treedir(it)) } else { TreeItem('file: $it') })
+		items: files.map(if os.is_dir(os.join_path(path, it)) {
+			TreeItem(treedir(it, os.join_path(path, it)))
+		} else {
+			TreeItem('file: $it')
+		})
 	}
 	return t
 }
