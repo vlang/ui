@@ -72,6 +72,7 @@ fn main() {
 					ui.textbox(
 						mode: .multiline
 						id: 'edit'
+						z_index: 20
 						height: 200
 						text: &app.text
 						text_size: 24
@@ -90,6 +91,9 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	app.file = tv.full_title(selected)
 	app.text = os.read_file(app.file) or { '' }
 	app.window.set_title('V UI TextEdit: ${tv.titles[selected]}')
+	mut tvcol := app.window.stack('tvcol')
+	tvcol.update_layout_but_pos()
+	ui.scrollview_update(tvcol)
 }
 
 fn btn_open_click(a voidptr, b &ui.Button) {

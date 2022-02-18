@@ -20,11 +20,13 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 	tv.titles[root_id] = t.title
 	tv.levels[root_id] = level
 	tv.types[root_id] = 'root'
+	tv.root_ids << root_id
 	mut w := ui.canvas_plus(
 		id: root_id
 		on_draw: treeview_draw
 		on_click: treeview_click
 		height: 30
+		width: 1000
 	)
 	layout.children << w
 	ui.component_connect(tv, w)
@@ -49,11 +51,14 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 				on_draw: treeview_draw
 				on_click: treeview_click
 				height: 30
+				width: 1000
 			)
 			l.children << w
 			ui.component_connect(tv, w)
 		} else if mut item is Tree {
+			// if level < 2 {
 			l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+			// }
 		}
 	}
 	if l.children.len > 0 {
@@ -83,6 +88,7 @@ pub mut:
 	containers map[string]&ui.Stack
 	views      map[string]string
 	z_index    map[string]int
+	root_ids   []string
 	// event
 	on_click TreeViewClickFn
 	// To become a component of a parent component
@@ -179,29 +185,35 @@ pub fn (tv &TreeView) full_title(id string) string {
 			break
 		}
 	}
-	println(res)
+	// println(res)
 	return res.reverse().join('/')
 }
 
 fn (mut tv TreeView) activate(id string) {
-	mut l := tv.containers[id]
-	l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
+	if id in tv.containers {
+		mut l := tv.containers[id]
+		l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
+	}
 }
 
 fn (mut tv TreeView) deactivate(id string) {
-	mut l := tv.containers[id]
-	l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
+	if id in tv.containers {
+		mut l := tv.containers[id]
+		l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
+	}
 }
 
 fn treeview_init(layout &ui.Stack) {
 	mut tv := component_treeview(layout)
-	// tv.deactivate_all()
-	layout.ui.window.update_layout()
+	//
+	tv.deactivate_all()
+	// layout.ui.window.update_layout()
 }
 
 pub fn treedir(path string, fpath string) Tree {
 	mut files := os.ls(fpath) or { [] }
 	files.sort()
+	files = files.filter(it !in ['.git', '.github'])
 	// println(fpath)
 	// println(files)
 	t := Tree{
@@ -216,8 +228,13 @@ pub fn treedir(path string, fpath string) Tree {
 }
 
 fn (mut tv TreeView) deactivate_all() {
-	for id in tv.titles.keys() {
-		tv.selected[id] = false
-		tv.deactivate(id)
+	for id in tv.root_ids.reverse() {
+		if tv.types[id] == 'root' {
+			// println("dea all $id ${tv.titles[id]}")
+			tv.selected[id] = false
+			tv.deactivate(id)
+			tv.layout.update_layout_but_pos()
+		}
 	}
+	println('deac all')
 }
