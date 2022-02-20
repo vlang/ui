@@ -15,8 +15,11 @@ pub struct Tree {
 	items []TreeItem
 }
 
-fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root string, level int) &ui.Stack {
+fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string, level int) &ui.Stack {
 	root_id := tv.id + '_' + id_root
+	tv.root_trees[root_id] = t
+	tv.root_created[root_id] = false
+	tv.id_root[root_id] = id_root
 	tv.titles[root_id] = t.title
 	tv.levels[root_id] = level
 	tv.types[root_id] = 'root'
@@ -36,8 +39,13 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 	)
 	tv.containers[root_id] = layout
 	tv.views[root_id] = l.id
-	tv.selected[root_id] = true
+	tv.selected[root_id] = !tv.incr_mode
 	tv.z_index[root_id] = layout.z_index
+	return l
+}
+
+fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root string, level int) {
+	root_id := tv.id + '_' + id_root
 	for i, item in t.items {
 		treeitem_id := root_id + ':$i'
 		tv.parents[treeitem_id] = root_id
@@ -46,7 +54,7 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 			tv.titles[treeitem_id] = tmp[1..].join(':').trim_space()
 			tv.types[treeitem_id] = tmp[0].trim_space()
 			tv.levels[treeitem_id] = level + 1
-			w = ui.canvas_plus(
+			w := ui.canvas_plus(
 				id: treeitem_id
 				on_draw: treeview_draw
 				on_click: treeview_click
@@ -56,14 +64,21 @@ fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root stri
 			l.children << w
 			ui.component_connect(tv, w)
 		} else if mut item is Tree {
-			// if level < 2 {
-			l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
-			// }
+			if tv.incr_mode {
+				l.children << item.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+			} else {
+				l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+			}
 		}
 	}
 	if l.children.len > 0 {
 		l.spacings = [f32(5)].repeat(l.children.len - 1)
 	}
+}
+
+fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root string, level int) &ui.Stack {
+	mut l := t.create_root(mut tv, mut layout, id_root, level)
+	t.add_root_children(mut tv, mut l, id_root, level)
 	return l
 }
 
@@ -80,15 +95,21 @@ pub mut:
 	text_size  int
 	bg_color   gx.Color
 	// related to items
-	titles     map[string]string
-	parents    map[string]string
-	types      map[string]string
-	levels     map[string]int
-	selected   map[string]bool
-	containers map[string]&ui.Stack
-	views      map[string]string
-	z_index    map[string]int
-	root_ids   []string
+	titles   map[string]string
+	parents  map[string]string
+	types    map[string]string
+	levels   map[string]int
+	selected map[string]bool
+	// related to roots
+	root_trees   map[string]Tree
+	root_created map[string]bool
+	id_root      map[string]string
+	containers   map[string]&ui.Stack
+	views        map[string]string
+	// others
+	z_index   map[string]int
+	root_ids  []string
+	incr_mode bool
 	// event
 	on_click TreeViewClickFn
 	// To become a component of a parent component
@@ -100,8 +121,9 @@ pub struct TreeViewParams {
 	id         string
 	trees      []Tree
 	icons      map[string]string
-	text_color gx.Color        = gx.black
-	text_size  int             = 24
+	text_color gx.Color = gx.black
+	text_size  int      = 24
+	incr_mode  bool
 	bg_color   gx.Color        = gx.white
 	on_click   TreeViewClickFn = TreeViewClickFn(0)
 }
@@ -119,10 +141,15 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 		trees: c.trees
 		text_color: c.text_color
 		text_size: c.text_size
+		incr_mode: c.incr_mode
 		on_click: c.on_click
 	}
 	for i, mut tree in tv.trees {
-		layout.children << tree.create_layout(mut tv, mut layout, 'root$i', 0)
+		if tv.incr_mode {
+			layout.children << tree.create_root(mut tv, mut layout, 'root$i', 0)
+		} else {
+			layout.children << tree.create_layout(mut tv, mut layout, 'root$i', 0)
+		}
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
 	ui.component_connect(tv, layout)
@@ -149,21 +176,49 @@ fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
 	c.draw_styled_text(16 + dx, 4, tv.titles[c.id], color: tv.text_color, size: tv.text_size)
 }
 
-fn treeview_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	mut tv := component_treeview(c)
 	// println("${c.id} clicked")
 	if tv.types[c.id] == 'root' {
 		tv.selected[c.id] = !tv.selected[c.id]
+		if tv.incr_mode && !tv.root_created[c.id] {
+			tv.root_created[c.id] = true // no more to create
+			mut t := tv.root_trees[c.id]
+			mut l := c.ui.window.stack(tv.views[c.id])
+			// println("treeview_click incr_mode $l.id")
+			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
+			// needs init for children
+			for mut child in l.children {
+				// println("add child $child.id to $l.id")
+				c.ui.window.register_child(*child)
+				child.init(l)
+			}
+			// l.heights = [f32(30)].repeat(l.children.len)
+			// println("$l.id heights $l.heights")
+			// l.update_layout_but_pos()
+			tv.layout.update_layout()
+		}
+		// else {
+		// println("normal: $c.id selected ${tv.selected[c.id]}")
 		if tv.selected[c.id] {
 			tv.activate(c.id)
 		} else {
 			tv.deactivate(c.id)
 		}
+		tv.layout.update_layout_but_pos()
+		// mut  p := tv.layout.parent
+		// if mut p is ui.Stack {
+		// 	p.update_layout_but_pos()
+		// }
+		//}
 	}
 	if tv.on_click != TreeViewClickFn(0) {
 		tv.on_click(c, mut tv)
 	}
-	tv.layout.update_layout_but_pos()
+
+	$if tree_debug ? {
+		ui.Layout(tv.layout).show_children_tree(0)
+	}
 }
 
 // methods
@@ -206,7 +261,9 @@ fn (mut tv TreeView) deactivate(id string) {
 fn treeview_init(layout &ui.Stack) {
 	mut tv := component_treeview(layout)
 	//
-	tv.deactivate_all()
+	if !tv.incr_mode {
+		tv.deactivate_all()
+	}
 	// layout.ui.window.update_layout()
 }
 

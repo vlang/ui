@@ -6,7 +6,7 @@ module ui
 import eventbus
 import gx
 
-const (
+pub const (
 	empty_stack = stack(id: '_empty_stack_')
 )
 
@@ -150,7 +150,7 @@ fn stack(c StackParams) &Stack {
 	return s
 }
 
-fn (mut s Stack) init(parent Layout) {
+pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
 	s.ui = ui
@@ -255,6 +255,10 @@ pub fn (mut s Stack) update_layout() {
 
 pub fn (mut s Stack) update_layout_but_pos() {
 	s.set_adjusted_size(0, true, s.ui)
+	// s.real_width, s.real_height = s.adj_size()
+	// if s.real_width < 0 { s.real_width = 0 }
+	// if s.real_height < 0 { s.real_height = 0 }
+	// println("update_layout_but_pos ($s.id $s.real_width, $s.real_height)")
 	s.set_cache_sizes()
 	s.set_children_sizes()
 	// N.B.: s.update_pos() removed!
@@ -304,7 +308,7 @@ fn (mut s Stack) set_children_sizes() {
 			wt, ht := c.width_type[i].str(), c.height_type[i].str()
 			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
-		// println("ps $child.id $w, $h")
+		// println("porpose_size $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -475,12 +479,16 @@ fn (mut s Stack) set_cache_sizes() {
 
 		// fix compact when child has size 0
 		if adj_child_width == 0 && cw == compact {
-			s.widths[i] = stretch
-			cw = stretch
+			if child !is Layout {
+				s.widths[i] = stretch
+				cw = stretch
+			}
 		}
 		if adj_child_height == 0 && ch == compact {
-			s.heights[i] = stretch
-			ch = stretch
+			if child !is Layout {
+				s.heights[i] = stretch
+				ch = stretch
+			}
 		}
 
 		// cw as child width with type f64
@@ -854,6 +862,8 @@ pub fn (mut s Stack) set_children_pos() {
 			}
 		}
 		if mut child is Stack {
+			child.set_children_pos()
+		} else if mut child is CanvasLayout {
 			child.set_children_pos()
 		}
 	}

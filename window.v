@@ -1177,7 +1177,7 @@ pub fn (w &Window) close() {}
 
 // Experimental: attempt to register child to get it by id from window
 // RMK: If id is accepted by community, put `id` inside interface Widget
-fn (mut w Window) register_child(child Widget) {
+pub fn (mut w Window) register_child(child Widget) {
 	if mut child is Button {
 		// println("register Button")
 		if child.id == '' {

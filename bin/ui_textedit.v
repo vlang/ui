@@ -99,14 +99,15 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 fn btn_open_click(a voidptr, b &ui.Button) {
 	println('open')
 	mut l := b.ui.window.stack('tvcol')
-	// mut tv := uic.component_treeview(b.ui.window.stack('tv'))
-	// tv.cleanup_layout()
-	l.remove(at: 0)
-	dir := '/Users/rcqls/vlang'
-	l.add(
-		at: 0
-		child: treeview_dir(dir)
-	)
+	// // mut tv := uic.component_treeview(b.ui.window.stack('tv'))
+	// // tv.cleanup_layout()
+	// l.remove(at: 0)
+	// dir := '/Users/rcqls/vlang'
+	// l.add(
+	// 	at: 0
+	// 	child: treeview_dir(dir)
+	// )
+	ui.Layout(l).show_children_tree(0)
 }
 
 fn btn_save_click(a voidptr, b &ui.Button) {
@@ -134,6 +135,7 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 fn treeview_dir(dir string) &ui.Stack {
 	return uic.treeview(
 		id: 'tv'
+		incr_mode: true
 		trees: [
 			uic.treedir(dir, dir),
 		]

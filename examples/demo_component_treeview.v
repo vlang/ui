@@ -30,6 +30,7 @@ fn main() {
 				children: [
 					uic.treeview(
 						id: 'demo'
+						incr_mode: true
 						trees: [
 							uic.Tree{
 								title: 'toto1'
@@ -55,8 +56,8 @@ fn main() {
 							uic.Tree{
 								title: 'toto3'
 								items: [
-									uic.TreeItem('file: ftftyty1'),
-									'file: hgyfyf1111',
+									uic.TreeItem('file: ftftyty2'),
+									'file: hgyfyf2222',
 								]
 							},
 						]
