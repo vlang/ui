@@ -116,6 +116,10 @@ pub mut:
 	text_color gx.Color
 	text_size  int
 	bg_color   gx.Color
+	// selection
+	sel_id       string
+	old_sel_id   string
+	bg_sel_color gx.Color
 	// related to items
 	titles   map[string]string
 	parents  map[string]string
@@ -132,6 +136,7 @@ pub mut:
 	z_index   map[string]int
 	root_ids  []string
 	incr_mode bool
+	indent    int
 	// event
 	on_click TreeViewClickFn
 	// To become a component of a parent component
@@ -142,14 +147,16 @@ pub mut:
 
 [params]
 pub struct TreeViewParams {
-	id         string
-	trees      []Tree
-	icons      map[string]string
-	text_color gx.Color = gx.black
-	text_size  int      = 24
-	incr_mode  bool
-	bg_color   gx.Color        = gx.white
-	on_click   TreeViewClickFn = TreeViewClickFn(0)
+	id           string
+	trees        []Tree
+	icons        map[string]string
+	text_color   gx.Color = gx.black
+	text_size    int      = 24
+	incr_mode    bool
+	bg_color     gx.Color        = gx.white
+	bg_sel_color gx.Color        = gx.light_gray
+	on_click     TreeViewClickFn = TreeViewClickFn(0)
+	indent       int = 10
 }
 
 pub fn treeview(c TreeViewParams) &ui.Stack {
@@ -166,7 +173,10 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 		text_color: c.text_color
 		text_size: c.text_size
 		incr_mode: c.incr_mode
+		indent: c.indent
 		on_click: c.on_click
+		bg_color: c.bg_color
+		bg_sel_color: c.bg_sel_color
 	}
 	for i, mut tree in tv.trees {
 		if tv.incr_mode {
@@ -189,6 +199,7 @@ pub struct TreeViewDirParams {
 	text_color gx.Color        = gx.black
 	text_size  int             = 24
 	incr_mode  bool            = true
+	indent     int             = 10
 	bg_color   gx.Color        = gx.hex(0xfcf4e4ff)
 	on_click   TreeViewClickFn = TreeViewClickFn(0)
 }
@@ -205,6 +216,7 @@ pub fn treeview_dir(p TreeViewDirParams) &ui.Stack {
 		text_color: p.text_color
 		bg_color: p.bg_color
 		on_click: p.on_click
+		indent: p.indent
 	)
 }
 
@@ -224,7 +236,7 @@ fn treeview_init(layout &ui.Stack) {
 
 fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
 	tv := component_treeview(c)
-	dx := 20 * tv.levels[c.id]
+	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
 		if tv.selected[c.id] {
 			c.draw_triangle_filled(5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
@@ -238,6 +250,8 @@ fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
 
 fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	mut tv := component_treeview(c)
+	tv.old_sel_id = tv.sel_id
+	tv.sel_id = c.id
 	// println("${c.id} clicked")
 	if tv.types[c.id] == 'root' {
 		tv.selected[c.id] = !tv.selected[c.id]
@@ -261,8 +275,22 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 		}
 		tv.layout.update_layout_but_pos()
 	}
+	if tv.sel_id != '' {
+		c.bg_color = tv.bg_sel_color
+		if tv.old_sel_id != '' {
+			mut old_sel_c := c.ui.window.canvas_layout(tv.old_sel_id)
+			old_sel_c.bg_color = tv.bg_color
+		}
+	}
 	if tv.on_click != TreeViewClickFn(0) {
 		tv.on_click(c, mut tv)
+	}
+
+	// To update scrollview
+	mut tvcol := tv.layout.parent
+	if mut tvcol is ui.Stack {
+		tvcol.update_layout_but_pos()
+		ui.scrollview_update(tvcol)
 	}
 
 	$if tree_debug ? {

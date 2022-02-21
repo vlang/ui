@@ -19,7 +19,7 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	dir := os.args[1] or { '.' }
+	dir := os.args[1] or { os.real_path('.') }
 	window := ui.window(
 		width: win_width
 		height: win_height
@@ -45,6 +45,7 @@ fn main() {
 						children: [
 							ui.button(
 								tooltip: 'New File'
+								tooltip_side: .right
 								text: 'New'
 								onclick: btn_new_click
 								radius: .3
@@ -52,6 +53,7 @@ fn main() {
 							),
 							ui.button(
 								tooltip: 'Open Folder'
+								tooltip_side: .right
 								text: 'Open'
 								onclick: btn_open_click
 								radius: .3
@@ -59,6 +61,7 @@ fn main() {
 							),
 							ui.button(
 								tooltip: 'Save File'
+								tooltip_side: .right
 								text: 'Save'
 								onclick: btn_save_click
 								radius: .3
@@ -102,9 +105,6 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	app.file = tv.full_title(selected)
 	app.text = os.read_file(app.file) or { '' }
 	app.window.set_title('V UI TextEdit: ${tv.titles[selected]}')
-	mut tvcol := app.window.stack('tvcol')
-	tvcol.update_layout_but_pos()
-	ui.scrollview_update(tvcol)
 }
 
 fn btn_new_click(a voidptr, b &ui.Button) {
