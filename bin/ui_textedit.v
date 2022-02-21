@@ -72,7 +72,11 @@ fn main() {
 							heights: ui.compact
 							bg_color: gx.hex(0xfcf4e4ff)
 							children: [
-								treeview_dir(dir),
+								uic.treeview_dir(
+									id: 'tv'
+									trees: [dir]
+									on_click: treeview_onclick
+								),
 							]
 						)]
 				),
@@ -148,20 +152,3 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 
 // fn init(win &ui.Window) {
 // }
-
-fn treeview_dir(dir string) &ui.Stack {
-	return uic.treeview(
-		id: 'tv'
-		incr_mode: true
-		trees: [
-			uic.treedir(dir, dir, true),
-		]
-		icons: {
-			'folder': 'tata'
-			'file':   'toto'
-		}
-		text_color: gx.gray
-		bg_color: gx.hex(0xfcf4e4ff)
-		on_click: treeview_onclick
-	)
-}

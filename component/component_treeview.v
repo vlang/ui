@@ -138,6 +138,8 @@ pub mut:
 	component voidptr
 }
 
+// constructors
+
 [params]
 pub struct TreeViewParams {
 	id         string
@@ -179,18 +181,45 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 	return layout
 }
 
+[params]
+pub struct TreeViewDirParams {
+	id         string = 'tvd'
+	trees      []string
+	icons      map[string]string
+	text_color gx.Color        = gx.black
+	text_size  int             = 24
+	incr_mode  bool            = true
+	bg_color   gx.Color        = gx.hex(0xfcf4e4ff)
+	on_click   TreeViewClickFn = TreeViewClickFn(0)
+}
+
+pub fn treeview_dir(p TreeViewDirParams) &ui.Stack {
+	return treeview(
+		id: p.id
+		incr_mode: p.incr_mode
+		trees: p.trees.map(treedir(it, it, p.incr_mode))
+		icons: {
+			'folder': 'tata' // later
+			'file':   'toto' // later
+		}
+		text_color: p.text_color
+		bg_color: p.bg_color
+		on_click: p.on_click
+	)
+}
+
 // component access
 pub fn component_treeview(w ui.ComponentChild) &TreeView {
 	return &TreeView(w.component)
 }
 
+// callbacks
+
 fn treeview_init(layout &ui.Stack) {
 	mut tv := component_treeview(layout)
-	//
 	if !tv.incr_mode {
 		tv.deactivate_all()
 	}
-	// layout.ui.window.update_layout()
 }
 
 fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
@@ -213,10 +242,9 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	if tv.types[c.id] == 'root' {
 		tv.selected[c.id] = !tv.selected[c.id]
 		if tv.incr_mode && !tv.root_created[c.id] {
-			tv.root_created[c.id] = true // no more to create
+			tv.root_created[c.id] = true // no more need to recreate it once created
 			mut t := tv.root_trees[c.id]
 			mut l := c.ui.window.stack(tv.views[c.id])
-			// println("treeview_click incr_mode $l.id")
 			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
 			// needs init for children
 			for mut child in l.children {
@@ -224,24 +252,14 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 				c.ui.window.register_child(*child)
 				child.init(l)
 			}
-			// l.heights = [f32(30)].repeat(l.children.len)
-			// println("$l.id heights $l.heights")
-			// l.update_layout_but_pos()
 			tv.layout.update_layout()
 		}
-		// else {
-		// println("normal: $c.id selected ${tv.selected[c.id]}")
 		if tv.selected[c.id] {
 			tv.activate(c.id)
 		} else {
 			tv.deactivate(c.id)
 		}
 		tv.layout.update_layout_but_pos()
-		// mut  p := tv.layout.parent
-		// if mut p is ui.Stack {
-		// 	p.update_layout_but_pos()
-		// }
-		//}
 	}
 	if tv.on_click != TreeViewClickFn(0) {
 		tv.on_click(c, mut tv)
