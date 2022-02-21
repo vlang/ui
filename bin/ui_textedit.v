@@ -44,6 +44,13 @@ fn main() {
 						bg_color: gx.black
 						children: [
 							ui.button(
+								tooltip: 'New File'
+								text: 'New'
+								onclick: btn_new_click
+								radius: .3
+								z_index: 10
+							),
+							ui.button(
 								tooltip: 'Open Folder'
 								text: 'Open'
 								onclick: btn_open_click
@@ -96,9 +103,9 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	ui.scrollview_update(tvcol)
 }
 
-fn btn_open_click(a voidptr, b &ui.Button) {
-	println('open')
-	mut l := b.ui.window.stack('tvcol')
+fn btn_new_click(a voidptr, b &ui.Button) {
+	println('new')
+	// mut l := b.ui.window.stack('tvcol')
 	// // mut tv := uic.component_treeview(b.ui.window.stack('tv'))
 	// // tv.cleanup_layout()
 	// l.remove(at: 0)
@@ -107,7 +114,17 @@ fn btn_open_click(a voidptr, b &ui.Button) {
 	// 	at: 0
 	// 	child: treeview_dir(dir)
 	// )
-	ui.Layout(l).show_children_tree(0)
+}
+
+fn btn_open_click(a voidptr, b &ui.Button) {
+	println('open')
+	// mut l := b.ui.window.stack('tvcol')
+	// l.remove(at: 0)
+	// dir := '/Users/rcqls/vlang'
+	// l.add(
+	// 	at: 0
+	// 	child: treeview_dir(dir)
+	// )
 }
 
 fn btn_save_click(a voidptr, b &ui.Button) {
@@ -137,7 +154,7 @@ fn treeview_dir(dir string) &ui.Stack {
 		id: 'tv'
 		incr_mode: true
 		trees: [
-			uic.treedir(dir, dir),
+			uic.treedir(dir, dir, true),
 		]
 		icons: {
 			'folder': 'tata'

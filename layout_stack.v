@@ -479,13 +479,13 @@ fn (mut s Stack) set_cache_sizes() {
 
 		// fix compact when child has size 0
 		if adj_child_width == 0 && cw == compact {
-			if child !is Layout {
+			if child !is Stack {
 				s.widths[i] = stretch
 				cw = stretch
 			}
 		}
 		if adj_child_height == 0 && ch == compact {
-			if child !is Layout {
+			if child !is Stack {
 				s.heights[i] = stretch
 				ch = stretch
 			}

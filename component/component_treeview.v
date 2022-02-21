@@ -6,11 +6,14 @@ import os
 
 const (
 	treeview_layout_id = '_cvl_treeview'
+	tree_sep           = ':'
+	root_sep           = '_|||_'
 )
 
 type TreeItem = Tree | string
 
 pub struct Tree {
+mut:
 	title string
 	items []TreeItem
 }
@@ -47,27 +50,46 @@ fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string
 fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root string, level int) {
 	root_id := tv.id + '_' + id_root
 	for i, item in t.items {
-		treeitem_id := root_id + ':$i'
+		treeitem_id := root_id + '$component.tree_sep$i'
 		tv.parents[treeitem_id] = root_id
+		mut to_expand := ''
 		if item is string {
-			tmp := item.split(':')
-			tv.titles[treeitem_id] = tmp[1..].join(':').trim_space()
-			tv.types[treeitem_id] = tmp[0].trim_space()
-			tv.levels[treeitem_id] = level + 1
-			w := ui.canvas_plus(
-				id: treeitem_id
-				on_draw: treeview_draw
-				on_click: treeview_click
-				height: 30
-				width: 1000
-			)
-			l.children << w
-			ui.component_connect(tv, w)
-		} else if mut item is Tree {
-			if tv.incr_mode {
-				l.children << item.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+			tmp := item.split(component.tree_sep)
+			if tmp[0].trim_space() == 'root' {
+				to_expand = tmp[1..].join(component.tree_sep).trim_space()
 			} else {
-				l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+				tv.types[treeitem_id] = tmp[0].trim_space()
+				tv.titles[treeitem_id] = tmp[1..].join(component.tree_sep).trim_space()
+				tv.levels[treeitem_id] = level + 1
+				w := ui.canvas_plus(
+					id: treeitem_id
+					on_draw: treeview_draw
+					on_click: treeview_click
+					height: 30
+					width: 1000
+				)
+				l.children << w
+				ui.component_connect(tv, w)
+			}
+		} else {
+			to_expand = 'tree'
+		}
+		if to_expand != '' {
+			if mut item is Tree {
+				if tv.incr_mode {
+					l.children << item.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+				} else {
+					l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+				}
+			} else {
+				// finalize the incr_mode tree
+				tmp := to_expand.split(component.root_sep)
+				path := tmp[0].trim_space()
+				fpath := tmp[1..].join(component.root_sep).trim_space()
+				// update tree
+				mut new_tree := treedir(path, fpath, true)
+				t.items[i] = TreeItem(new_tree)
+				l.children << new_tree.create_root(mut tv, mut l, id_root + ':$i', level + 1)
 			}
 		}
 	}
@@ -160,6 +182,15 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 // component access
 pub fn component_treeview(w ui.ComponentChild) &TreeView {
 	return &TreeView(w.component)
+}
+
+fn treeview_init(layout &ui.Stack) {
+	mut tv := component_treeview(layout)
+	//
+	if !tv.incr_mode {
+		tv.deactivate_all()
+	}
+	// layout.ui.window.update_layout()
 }
 
 fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
@@ -258,32 +289,6 @@ fn (mut tv TreeView) deactivate(id string) {
 	}
 }
 
-fn treeview_init(layout &ui.Stack) {
-	mut tv := component_treeview(layout)
-	//
-	if !tv.incr_mode {
-		tv.deactivate_all()
-	}
-	// layout.ui.window.update_layout()
-}
-
-pub fn treedir(path string, fpath string) Tree {
-	mut files := os.ls(fpath) or { [] }
-	files.sort()
-	files = files.filter(it !in ['.git', '.github'])
-	// println(fpath)
-	// println(files)
-	t := Tree{
-		title: path
-		items: files.map(if os.is_dir(os.join_path(fpath, it)) {
-			TreeItem(treedir(it, os.join_path(fpath, it)))
-		} else {
-			TreeItem('file: $it')
-		})
-	}
-	return t
-}
-
 fn (mut tv TreeView) deactivate_all() {
 	for id in tv.root_ids.reverse() {
 		if tv.types[id] == 'root' {
@@ -294,4 +299,27 @@ fn (mut tv TreeView) deactivate_all() {
 		}
 	}
 	println('deac all')
+}
+
+// tools
+
+pub fn treedir(path string, fpath string, incr_mode bool) Tree {
+	mut files := os.ls(fpath) or { [] }
+	files.sort()
+	files = files.filter(it !in ['.git', '.github'])
+	// println(fpath)
+	// println(files)
+	t := Tree{
+		title: path
+		items: files.map(if os.is_dir(os.join_path(fpath, it)) {
+			if incr_mode {
+				TreeItem('root: $it$component.root_sep${os.join_path(fpath, it)}')
+			} else {
+				TreeItem(treedir(it, os.join_path(fpath, it), false))
+			}
+		} else {
+			TreeItem('file: $it')
+		})
+	}
+	return t
 }
