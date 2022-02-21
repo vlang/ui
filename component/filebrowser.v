@@ -4,6 +4,10 @@ import gx
 import ui
 import os
 
+const (
+	filebrowser_subwindow_id = '_sw_filebrowser'
+)
+
 [heap]
 struct FileBrowser {
 pub mut:
@@ -25,6 +29,8 @@ pub struct FileBrowserParams {
 	height          int
 	width           int
 	z_index         int
+	folder_only     bool
+	filter_types    []string
 	bg_color        gx.Color = gx.white
 	on_click_ok     ui.ButtonClickFn
 	on_click_cancel ui.ButtonClickFn
@@ -46,6 +52,8 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 	tv_layout := treeview_dir(
 		id: '${p.id}_tvd'
 		trees: [p.dir, '/']
+		folder_only: p.folder_only
+		filter_types: p.filter_types
 	)
 	mut layout := ui.column(
 		heights: [ui.stretch, 40]
@@ -82,4 +90,20 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 // component access
 pub fn component_filebrowser(w ui.ComponentChild) &FileBrowser {
 	return &FileBrowser(w.component)
+}
+
+pub fn (fb &FileBrowser) selected_full_title() string {
+	tv := fb.tv
+	return tv.selected_full_title()
+}
+
+// Subwindow
+pub fn filebrowser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
+	// only once
+	if !ui.Layout(w).has_child_id(component.filebrowser_subwindow_id) {
+		w.subwindows << ui.subwindow(
+			id: component.filebrowser_subwindow_id
+			layout: filebrowser()
+		)
+	}
 }

@@ -1,6 +1,6 @@
+// Same as demo_component_filebrowser with folder_only: true
 import ui
 import ui.component as uic
-// import gx
 
 const (
 	win_width  = 800
@@ -28,6 +28,7 @@ fn main() {
 				id: 'fb'
 				on_click_ok: on_click_ok
 				on_click_cancel: on_click_cancel
+				folder_only: true
 			),
 		]
 	)

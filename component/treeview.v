@@ -59,17 +59,19 @@ fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root strin
 				to_expand = tmp[1..].join(component.tree_sep).trim_space()
 			} else {
 				tv.types[treeitem_id] = tmp[0].trim_space()
-				tv.titles[treeitem_id] = tmp[1..].join(component.tree_sep).trim_space()
-				tv.levels[treeitem_id] = level + 1
-				w := ui.canvas_plus(
-					id: treeitem_id
-					on_draw: treeview_draw
-					on_click: treeview_click
-					height: 30
-					width: 1000
-				)
-				l.children << w
-				ui.component_connect(tv, w)
+				if tv.filter_types.len == 0 && tv.types[treeitem_id] !in tv.filter_types {
+					tv.titles[treeitem_id] = tmp[1..].join(component.tree_sep).trim_space()
+					tv.levels[treeitem_id] = level + 1
+					w := ui.canvas_plus(
+						id: treeitem_id
+						on_draw: treeview_draw
+						on_click: treeview_click
+						height: 30
+						width: 1000
+					)
+					l.children << w
+					ui.component_connect(tv, w)
+				}
 			}
 		} else {
 			to_expand = 'tree'
@@ -133,10 +135,11 @@ pub mut:
 	containers   map[string]&ui.Stack
 	views        map[string]string
 	// others
-	z_index   map[string]int
-	root_ids  []string
-	incr_mode bool
-	indent    int
+	z_index      map[string]int
+	root_ids     []string
+	filter_types []string
+	incr_mode    bool
+	indent       int
 	// event
 	on_click TreeViewClickFn
 	// To become a component of a parent component
@@ -157,6 +160,7 @@ pub struct TreeViewParams {
 	bg_sel_color gx.Color        = gx.light_gray
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 	indent       int = 10
+	filter_types []string
 }
 
 pub fn treeview(c TreeViewParams) &ui.Stack {
@@ -174,6 +178,7 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 		text_size: c.text_size
 		incr_mode: c.incr_mode
 		indent: c.indent
+		filter_types: c.filter_types
 		on_click: c.on_click
 		bg_color: c.bg_color
 		bg_sel_color: c.bg_sel_color
@@ -193,15 +198,17 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 
 [params]
 pub struct TreeViewDirParams {
-	id         string = 'tvd'
-	trees      []string
-	icons      map[string]string
-	text_color gx.Color        = gx.black
-	text_size  int             = 24
-	incr_mode  bool            = true
-	indent     int             = 10
-	bg_color   gx.Color        = gx.hex(0xfcf4e4ff)
-	on_click   TreeViewClickFn = TreeViewClickFn(0)
+	id           string = 'tvd'
+	trees        []string
+	icons        map[string]string
+	text_color   gx.Color = gx.black
+	text_size    int      = 24
+	incr_mode    bool     = true
+	indent       int      = 10
+	folder_only  bool
+	filter_types []string
+	bg_color     gx.Color        = gx.hex(0xfcf4e4ff)
+	on_click     TreeViewClickFn = TreeViewClickFn(0)
 }
 
 pub fn treeview_dir(p TreeViewDirParams) &ui.Stack {
@@ -210,13 +217,14 @@ pub fn treeview_dir(p TreeViewDirParams) &ui.Stack {
 		incr_mode: p.incr_mode
 		trees: p.trees.map(treedir(it, it, p.incr_mode))
 		icons: {
-			'folder': 'tata' // later
-			'file':   'toto' // later
+			'root': 'tata' // later
+			'file': 'toto' // later
 		}
 		text_color: p.text_color
 		bg_color: p.bg_color
 		on_click: p.on_click
 		indent: p.indent
+		filter_types: if p.folder_only { ['root'] } else { p.filter_types }
 	)
 }
 
@@ -344,7 +352,10 @@ fn (mut tv TreeView) deactivate_all() {
 			tv.layout.update_layout_but_pos()
 		}
 	}
-	println('deac all')
+}
+
+pub fn (tv &TreeView) selected_full_title() string {
+	return tv.full_title(tv.sel_id)
 }
 
 // tools
