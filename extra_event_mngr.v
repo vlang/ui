@@ -107,7 +107,7 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 		pi = pi.filter(Layout(w.child_window).has_child_id(it.id))
 	}
 	$if evt_mngr ? {
-		println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)}')
+		println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
 	}
 	return pi.len >= 1 && pi.first().id == widget.id
 }

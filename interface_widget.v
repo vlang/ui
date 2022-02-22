@@ -57,3 +57,20 @@ pub fn (mut w Widget) bounds() (int, int, int, int) {
 	sw, sh := w.size()
 	return w.x, w.y, sw, sh
 }
+
+pub fn (w Widget) subwindow_parent() (bool, Layout) {
+	mut p := w.parent
+	for {
+		if p is Window {
+			break
+		}
+		if p is SubWindow {
+			return true, p
+		}
+		if p is Widget {
+			wp := p as Widget
+			p = wp.parent
+		}
+	}
+	return false, Layout(empty_stack)
+}

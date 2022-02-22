@@ -47,6 +47,7 @@ pub type ScrollFn = fn (e ScrollEvent, window &Window)
 
 [heap]
 pub struct Window {
+	id string = '_window_'
 pub mut:
 	// pub:
 	ui                &UI = voidptr(0)

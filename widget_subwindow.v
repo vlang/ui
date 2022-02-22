@@ -3,7 +3,7 @@ module ui
 import eventbus
 import gx
 
-const (
+pub const (
 	sw_decoration    = 20
 	sw_z_index       = 10000
 	sw_z_index_top   = 1000
@@ -13,14 +13,15 @@ const (
 [heap]
 pub struct SubWindow {
 pub mut:
-	id       string
-	x        int
-	y        int
-	z_index  int = ui.sw_z_index
-	offset_x int
-	offset_y int
-	hidden   bool
-	ui       &UI = 0
+	id                    string
+	x                     int
+	y                     int
+	z_index               int = ui.sw_z_index
+	z_index_children_orig []int
+	offset_x              int
+	offset_y              int
+	hidden                bool
+	ui                    &UI = 0
 	// dragging
 	drag     bool
 	dragging bool
@@ -130,9 +131,9 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 	if s.hidden {
 		return
 	}
-	if !window.is_top_widget(s, events.on_mouse_down) {
-		return
-	}
+	// if !window.is_top_widget(s, events.on_mouse_down) {
+	// 	return
+	// }
 	// println("sw $s.id start dragging")
 	if s.decoration && s.point_inside_bar(e.x, e.y) {
 		s.as_top_subwindow()
@@ -266,7 +267,7 @@ pub fn (s &SubWindow) get_children() []Widget {
 }
 
 fn (mut s SubWindow) set_children_z_index(z_inc int) {
-	s.layout.update_children_z_index(z_inc)
+	s.layout.incr_children_z_index(z_inc)
 	s.ui.window.evt_mngr.sorted_receivers(events.on_mouse_down)
 }
 
@@ -275,6 +276,10 @@ fn (mut s SubWindow) is_top_subwindow() bool {
 }
 
 fn (mut s SubWindow) as_top_subwindow() {
+	$if atsw ? {
+		println('as top subw $s.id')
+		Layout(s).show_children_tree(0)
+	}
 	mut sws := []&SubWindow{}
 	for sw in s.ui.window.subwindows {
 		if sw.id != s.id {
@@ -284,18 +289,25 @@ fn (mut s SubWindow) as_top_subwindow() {
 	sws << s
 	mut win := s.ui.window
 	win.subwindows = sws
-	// println("sws: ${win.subwindows.map(it.id)}")
+	// println("atp sws: ${win.subwindows.map(it.id)}")
 	for mut sw in sws {
 		sw.update_z_index(sw.id == s.id)
+	}
+	$if atsw ? {
+		println('atp end')
+		Layout(s).show_children_tree(0)
 	}
 }
 
 fn (mut s SubWindow) update_z_index(top bool) {
+	// reset first the children
 	s.set_children_z_index(-s.z_index - ui.sw_z_index_child)
+	// inc z_index
 	s.z_index = ui.sw_z_index
 	if top {
 		s.z_index += ui.sw_z_index_top
 	}
+	// propagate to children
 	// println("z_index: ${s.z_index + sw_z_index_child}")
 	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
 	s.update_layout()

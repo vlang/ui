@@ -10,9 +10,10 @@ const (
 
 struct App {
 mut:
-	window &ui.Window
-	text   string
-	file   string
+	window         &ui.Window
+	text           string
+	file           string
+	folder_to_open string
 }
 
 fn main() {
@@ -96,7 +97,16 @@ fn main() {
 		]
 	)
 	app.window = window
-	uic.filebrowser_subwindow_add(mut window)
+	uic.filebrowser_subwindow_add(mut window,
+		folder_only: true
+		width: 400
+		height: 300
+		x: 50
+		y: 50
+		bg_color: gx.white
+		on_click_ok: btn_open_ok
+		on_click_cancel: btn_open_cancel
+	)
 	ui.run(window)
 }
 
@@ -122,15 +132,8 @@ fn btn_new_click(a voidptr, b &ui.Button) {
 }
 
 fn btn_open_click(a voidptr, b &ui.Button) {
-	println('open')
+	// println('open')
 	uic.filebrowser_subwindow_visible(b.ui.window)
-	// mut l := b.ui.window.stack('tvcol')
-	// l.remove(at: 0)
-	// dir := '/Users/rcqls/vlang'
-	// l.add(
-	// 	at: 0
-	// 	child: treeview_dir(dir)
-	// )
 }
 
 fn btn_save_click(a voidptr, b &ui.Button) {
@@ -141,6 +144,29 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 	// println(tb.text)
 	os.write_file(app.file, tb.text) or {}
 	b.ui.window.root_layout.unfocus_all()
+}
+
+fn btn_open_ok(mut app App, b &ui.Button) {
+	println('ok')
+	uic.filebrowser_subwindow_close(b.ui.window)
+	fb := uic.component_filebrowser(b)
+	app.folder_to_open = fb.selected_full_title()
+	mut l := b.ui.window.stack('tvcol')
+	l.remove(at: 0)
+	l.add(
+		at: 0
+		child: uic.treeview_dir(
+			id: 'tv'
+			trees: [app.folder_to_open]
+			on_click: treeview_onclick
+		)
+	)
+}
+
+fn btn_open_cancel(mut app App, b &ui.Button) {
+	println('cancel')
+	uic.filebrowser_subwindow_close(b.ui.window)
+	app.folder_to_open = ''
 }
 
 // fn on_char(e ui.KeyEvent, w &ui.Window) {

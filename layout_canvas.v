@@ -209,6 +209,11 @@ pub fn (c &CanvasLayout) free() {
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	$if itp ? {
+		if c.point_inside(e.x, e.y) {
+			println('clc $c.id $c.z_index')
+		}
+	}
 	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
 		return
 	}

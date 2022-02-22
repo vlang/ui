@@ -41,12 +41,14 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 		id: '${p.id}_btn_cancel'
 		text: p.text_cancel
 		radius: 5
+		z_index: 100
 		onclick: p.on_click_cancel
 	)
 	btn_ok := ui.button(
 		id: '${p.id}_btn_ok'
 		text: p.text_ok
 		radius: 5
+		z_index: 100
 		onclick: p.on_click_ok
 	)
 	tv_layout := treeview_dir(
@@ -100,12 +102,21 @@ pub fn (fb &FileBrowser) selected_full_title() string {
 }
 
 // Subwindow
-pub fn filebrowser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
+[params]
+pub struct FileBrowserSubWindowParams {
+	FileBrowserParams
+	x int
+	y int
+}
+
+pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
 	// only once
 	if !ui.Layout(w).has_child_id(component.filebrowser_subwindow_id) {
 		w.subwindows << ui.subwindow(
 			id: component.filebrowser_subwindow_id
-			layout: filebrowser(width: 400, height: 300, bg_color: gx.white)
+			x: p.x
+			y: p.y
+			layout: filebrowser(p.FileBrowserParams)
 		)
 	}
 }
@@ -113,5 +124,11 @@ pub fn filebrowser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change u
 pub fn filebrowser_subwindow_visible(w &ui.Window) {
 	mut s := w.subwindow(component.filebrowser_subwindow_id)
 	s.set_visible(s.hidden)
+	s.update_layout()
+}
+
+pub fn filebrowser_subwindow_close(w &ui.Window) {
+	mut s := w.subwindow(component.filebrowser_subwindow_id)
+	s.set_visible(false)
 	s.update_layout()
 }

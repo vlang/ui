@@ -269,10 +269,16 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 			mut l := c.ui.window.stack(tv.views[c.id])
 			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
 			// needs init for children
+			is_swp, swp := ui.Widget(l).subwindow_parent()
 			for mut child in l.children {
 				// println("add child $child.id to $l.id")
 				c.ui.window.register_child(*child)
 				child.init(l)
+				if is_swp {
+					if swp is ui.SubWindow {
+						ui.Layout(l).set_children_z_index(swp.z_index + ui.sw_z_index_child)
+					}
+				}
 			}
 			tv.layout.update_layout()
 		}
