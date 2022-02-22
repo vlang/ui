@@ -211,7 +211,7 @@ pub struct TreeViewDirParams {
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 }
 
-pub fn treeview_dir(p TreeViewDirParams) &ui.Stack {
+pub fn dirtreeview(p TreeViewDirParams) &ui.Stack {
 	return treeview(
 		id: p.id
 		incr_mode: p.incr_mode
@@ -364,7 +364,32 @@ pub fn (tv &TreeView) selected_full_title() string {
 	return tv.full_title(tv.sel_id)
 }
 
+pub fn (mut tv TreeView) open(folder string) {
+	mut l := tv.layout
+	l2 := l.parent
+	if l2 is ui.Stack {
+		l.remove(at: 0)
+		l.add(
+			at: 0
+			child: dirtreeview(
+				id: tv.id
+				trees: [folder]
+				on_click: tv.on_click
+			)
+		)
+	}
+}
+
 // tools
+
+pub fn treeview_layout_id(id string) string {
+	return id + component.treeview_layout_id
+}
+
+pub fn treeview_by_id(w &ui.Window, id string) &TreeView {
+	tv_layout := w.stack(treeview_layout_id(id))
+	return component_treeview(tv_layout)
+}
 
 pub fn treedir(path string, fpath string, incr_mode bool) Tree {
 	mut files := os.ls(fpath) or { [] }

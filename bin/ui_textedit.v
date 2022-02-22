@@ -76,8 +76,8 @@ fn main() {
 							heights: ui.compact
 							bg_color: gx.hex(0xfcf4e4ff)
 							children: [
-								uic.treeview_dir(
-									id: 'tv'
+								uic.dirtreeview(
+									id: 'dtv'
 									trees: [dir]
 									on_click: treeview_onclick
 								),
@@ -98,6 +98,7 @@ fn main() {
 	)
 	app.window = window
 	uic.filebrowser_subwindow_add(mut window,
+		id: 'fb'
 		folder_only: true
 		width: 400
 		height: 300
@@ -106,6 +107,17 @@ fn main() {
 		bg_color: gx.white
 		on_click_ok: btn_open_ok
 		on_click_cancel: btn_open_cancel
+	)
+	uic.newfilebrowser_subwindow_add(mut window,
+		id: 'nfb'
+		folder_only: true
+		width: 400
+		height: 300
+		x: 50
+		y: 50
+		bg_color: gx.white
+		on_click_ok: btn_new_ok
+		on_click_cancel: btn_new_cancel
 	)
 	ui.run(window)
 }
@@ -120,6 +132,7 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 
 fn btn_new_click(a voidptr, b &ui.Button) {
 	println('new')
+	uic.newfilebrowser_subwindow_visible(b.ui.window)
 	// mut l := b.ui.window.stack('tvcol')
 	// // mut tv := uic.component_treeview(b.ui.window.stack('tv'))
 	// // tv.cleanup_layout()
@@ -147,25 +160,40 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 }
 
 fn btn_open_ok(mut app App, b &ui.Button) {
-	println('ok')
+	// println('ok')
 	uic.filebrowser_subwindow_close(b.ui.window)
 	fb := uic.component_filebrowser(b)
 	app.folder_to_open = fb.selected_full_title()
-	mut l := b.ui.window.stack('tvcol')
-	l.remove(at: 0)
-	l.add(
-		at: 0
-		child: uic.treeview_dir(
-			id: 'tv'
-			trees: [app.folder_to_open]
-			on_click: treeview_onclick
-		)
-	)
+	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
+	dtv.open(app.folder_to_open)
 }
 
 fn btn_open_cancel(mut app App, b &ui.Button) {
-	println('cancel')
+	// println('cancel')
 	uic.filebrowser_subwindow_close(b.ui.window)
+	app.folder_to_open = ''
+}
+
+fn btn_new_ok(mut app App, b &ui.Button) {
+	println('ok')
+	uic.newfilebrowser_subwindow_close(b.ui.window)
+	fb := uic.component_filebrowser(b)
+	app.folder_to_open = fb.selected_full_title()
+	// mut l := b.ui.window.stack('tvcol')
+	// l.remove(at: 0)
+	// l.add(
+	// 	at: 0
+	// 	child: uic.treeview_dir(
+	// 		id: 'tv'
+	// 		trees: [app.folder_to_open]
+	// 		on_click: treeview_onclick
+	// 	)
+	// )
+}
+
+fn btn_new_cancel(mut app App, b &ui.Button) {
+	println('cancel')
+	uic.newfilebrowser_subwindow_close(b.ui.window)
 	app.folder_to_open = ''
 }
 
