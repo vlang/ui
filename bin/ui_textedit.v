@@ -20,7 +20,7 @@ fn main() {
 		window: 0
 	}
 	dir := os.args[1] or { os.real_path('.') }
-	window := ui.window(
+	mut window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'V UI TextEdit: $dir'
@@ -96,6 +96,7 @@ fn main() {
 		]
 	)
 	app.window = window
+	uic.filebrowser_subwindow_add(mut window)
 	ui.run(window)
 }
 
@@ -122,6 +123,7 @@ fn btn_new_click(a voidptr, b &ui.Button) {
 
 fn btn_open_click(a voidptr, b &ui.Button) {
 	println('open')
+	uic.filebrowser_subwindow_visible(b.ui.window)
 	// mut l := b.ui.window.stack('tvcol')
 	// l.remove(at: 0)
 	// dir := '/Users/rcqls/vlang'

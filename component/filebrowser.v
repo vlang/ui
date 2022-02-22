@@ -26,12 +26,12 @@ pub struct FileBrowserParams {
 	dir             string = os.expand_tilde_to_home('~')
 	text_ok         string = 'Ok'
 	text_cancel     string = 'Cancel'
-	height          int
-	width           int
+	height          int    = int(ui.compact)
+	width           int    = int(ui.compact)
 	z_index         int
 	folder_only     bool
 	filter_types    []string
-	bg_color        gx.Color = gx.white
+	bg_color        gx.Color = gx.hex(0xfcf4e4ff)
 	on_click_ok     ui.ButtonClickFn
 	on_click_cancel ui.ButtonClickFn
 }
@@ -54,15 +54,18 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 		trees: [p.dir, '/']
 		folder_only: p.folder_only
 		filter_types: p.filter_types
+		bg_color: ui.no_color
 	)
 	mut layout := ui.column(
+		width: p.width
+		height: p.height
 		heights: [ui.stretch, 40]
 		children: [
 			ui.column(
 				id: '${p.id}_tvd_col'
 				scrollview: true
-				heights: ui.compact
-				bg_color: gx.hex(0xfcf4e4ff)
+				// heights: ui.compact
+				bg_color: p.bg_color
 				children: [tv_layout]
 			),
 			ui.row(
@@ -71,8 +74,7 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 				heights: 30.0
 				margin_: 5
 				bg_color: gx.black
-				children: [ui.spacing(color: p.bg_color), btn_cancel, ui.spacing(color: p.bg_color),
-					btn_ok, ui.spacing(color: p.bg_color)]
+				children: [ui.spacing(), btn_cancel, ui.spacing(), btn_ok, ui.spacing()]
 			),
 		]
 	)
@@ -103,7 +105,13 @@ pub fn filebrowser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change u
 	if !ui.Layout(w).has_child_id(component.filebrowser_subwindow_id) {
 		w.subwindows << ui.subwindow(
 			id: component.filebrowser_subwindow_id
-			layout: filebrowser()
+			layout: filebrowser(width: 400, height: 300, bg_color: gx.white)
 		)
 	}
+}
+
+pub fn filebrowser_subwindow_visible(w &ui.Window) {
+	mut s := w.subwindow(component.filebrowser_subwindow_id)
+	s.set_visible(s.hidden)
+	s.update_layout()
 }
