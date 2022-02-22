@@ -365,11 +365,12 @@ pub fn (tv &TreeView) selected_full_title() string {
 }
 
 pub fn (mut tv TreeView) open(folder string) {
+	tv.deactivate_all()
 	mut l := tv.layout
-	l2 := l.parent
-	if l2 is ui.Stack {
-		l.remove(at: 0)
-		l.add(
+	mut l2 := l.parent
+	if mut l2 is ui.Stack {
+		l2.remove(at: 0)
+		l2.add(
 			at: 0
 			child: dirtreeview(
 				id: tv.id
