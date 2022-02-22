@@ -35,7 +35,10 @@ fn main() {
 				widths: [ui.stretch, ui.stretch * 2]
 				children: [
 					ui.column(
-					heights: [40.0, ui.stretch]
+					heights: [40.0, 30.0, ui.stretch]
+					spacing: 5
+					margin_: 3
+					bg_color: gx.black
 					children: [
 						ui.row(
 						widths: ui.stretch
@@ -70,6 +73,16 @@ fn main() {
 							),
 						]
 					),
+						uic.hideable(
+							id: 'htb'
+							layout: ui.column(
+								id: 'htbl'
+								heights: 30.0
+								children: [
+									ui.textbox(id: 'tb', z_index: 10),
+								]
+							)
+						),
 						ui.column(
 							id: 'tvcol'
 							scrollview: true
@@ -108,17 +121,17 @@ fn main() {
 		on_click_ok: btn_open_ok
 		on_click_cancel: btn_open_cancel
 	)
-	uic.newfilebrowser_subwindow_add(mut window,
-		id: 'nfb'
-		folder_only: true
-		width: 400
-		height: 300
-		x: 50
-		y: 50
-		bg_color: gx.white
-		on_click_ok: btn_new_ok
-		on_click_cancel: btn_new_cancel
-	)
+	// uic.newfilebrowser_subwindow_add(mut window,
+	// 	id: 'nfb'
+	// 	folder_only: true
+	// 	width: 400
+	// 	height: 300
+	// 	x: 50
+	// 	y: 50
+	// 	bg_color: gx.white
+	// 	on_click_ok: btn_new_ok
+	// 	on_click_cancel: btn_new_cancel
+	// )
 	ui.run(window)
 }
 
@@ -132,7 +145,10 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 
 fn btn_new_click(a voidptr, b &ui.Button) {
 	println('new')
-	uic.newfilebrowser_subwindow_visible(b.ui.window)
+	// uic.newfilebrowser_subwindow_visible(b.ui.window)
+	l := b.ui.window.stack('htbl')
+	mut h := uic.component_hideable(l)
+	h.toggle()
 	// mut l := b.ui.window.stack('tvcol')
 	// // mut tv := uic.component_treeview(b.ui.window.stack('tv'))
 	// // tv.cleanup_layout()
@@ -207,4 +223,5 @@ fn btn_new_cancel(mut app App, b &ui.Button) {
 // }
 
 // fn init(win &ui.Window) {
+
 // }

@@ -53,11 +53,13 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 	return false
 }
 
+// returns the bounds of a Widget
 pub fn (mut w Widget) bounds() (int, int, int, int) {
 	sw, sh := w.size()
 	return w.x, w.y, sw, sh
 }
 
+// Is this a Widget from SubWindow? And if yes, return it too as a Layout
 pub fn (w Widget) subwindow_parent() (bool, Layout) {
 	mut p := w.parent
 	for {
