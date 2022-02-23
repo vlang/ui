@@ -151,3 +151,21 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 		println(' $s.real_width == ${s.margin(.left) + total + s.margin(.right)} = ${s.margin(.left)} + $total + ${s.margin(.right)} ')
 	}
 }
+
+
+pub fn (l Layout) show_children_tree(level int) {
+	if level == 0 {
+		println('_'.repeat(80))
+		if l is Stack {
+			println('${' '.repeat(level)} root Stack $l.id $l.size()')
+		}
+	}
+	for i, mut child in l.get_children() {
+		println('${' '.repeat(level)} $level:$i -> $child.id ($child.type_name()) ($child.x, $child.y) $child.size() z_index: $child.z_index')
+		if child is Layout {
+			c := child as Layout
+			c.show_children_tree(level + 1)
+		}
+	}
+}
+
