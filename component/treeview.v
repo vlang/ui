@@ -287,7 +287,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 		} else {
 			tv.deactivate(c.id)
 		}
-		tv.layout.update_layout_but_pos()
+		tv.layout.update_layout_without_pos()
 	}
 	if tv.sel_id != '' {
 		c.bg_color = tv.bg_sel_color
@@ -303,7 +303,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	// To update scrollview
 	mut tvcol := tv.layout.parent
 	if mut tvcol is ui.Stack {
-		tvcol.update_layout_but_pos()
+		tvcol.update_layout_without_pos()
 		ui.scrollview_update(tvcol)
 	}
 
@@ -355,7 +355,7 @@ fn (mut tv TreeView) deactivate_all() {
 			// println("dea all $id ${tv.titles[id]}")
 			tv.selected[id] = false
 			tv.deactivate(id)
-			tv.layout.update_layout_but_pos()
+			tv.layout.update_layout_without_pos()
 		}
 	}
 }

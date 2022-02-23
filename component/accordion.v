@@ -103,7 +103,7 @@ fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	} else {
 		acc.deactivate(c.id)
 	}
-	c.ui.window.update_layout_but_pos()
+	c.ui.window.update_layout_without_pos()
 }
 
 fn (mut acc Accordion) activate(id string) {
