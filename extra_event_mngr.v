@@ -58,6 +58,7 @@ pub fn (mut em EventMngr) rm_receiver(widget Widget, evt_types []string) {
 pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_type string) {
 	// TODO first sort mouse_down_receivers by order, z_index and hidden
 	em.point_inside[evt_type].clear()
+	em.sorted_receivers(evt_type)
 	for mut w in em.receivers[evt_type] {
 		$if evt_mngr_mouse ? {
 			println('point_inside_receivers: $w.id !$w.hidden && ${w.point_inside(e.x,
@@ -76,6 +77,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 	// TODO first sort scroll_receivers by order, z_index and hidden
 	evt_type := ui.events.on_scroll
 	em.point_inside[evt_type].clear()
+	em.sorted_receivers(evt_type)
 	$if evt_mngr_scroll ? {
 		println('em.receivers[on_scroll] = ${em.receivers[evt_type].map(it.id)}')
 	}
@@ -98,7 +100,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 		}
 	}
 	$if evt_mngr_scroll ? {
-		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)}')
+		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
 	}
 }
 
