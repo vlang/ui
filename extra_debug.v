@@ -152,7 +152,6 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 	}
 }
 
-
 pub fn (l Layout) show_children_tree(level int) {
 	if level == 0 {
 		println('_'.repeat(80))
@@ -168,4 +167,3 @@ pub fn (l Layout) show_children_tree(level int) {
 		}
 	}
 }
-
