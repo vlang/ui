@@ -72,7 +72,9 @@ pub fn (w Widget) subwindow_parent() (bool, Layout) {
 		if p is Widget {
 			wp := p as Widget
 			p = wp.parent
+			continue
 		}
+		break
 	}
 	return false, Layout(empty_stack)
 }
