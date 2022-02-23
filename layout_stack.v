@@ -6,7 +6,7 @@ module ui
 import eventbus
 import gx
 
-const (
+pub const (
 	empty_stack = stack(id: '_empty_stack_')
 )
 
@@ -150,7 +150,7 @@ fn stack(c StackParams) &Stack {
 	return s
 }
 
-fn (mut s Stack) init(parent Layout) {
+pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
 	s.ui = ui
@@ -177,13 +177,14 @@ fn (mut s Stack) init(parent Layout) {
 
 	if has_scrollview(s) {
 		s.scrollview.init(parent)
+		s.ui.window.evt_mngr.add_receiver(s, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut s)
 	}
 }
 
 [manualfree]
-fn (mut s Stack) cleanup() {
+pub fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
 	}
@@ -253,6 +254,19 @@ pub fn (mut s Stack) update_layout() {
 	}
 }
 
+pub fn (mut s Stack) update_layout_but_pos() {
+	s.set_adjusted_size(0, true, s.ui)
+	// s.real_width, s.real_height = s.adj_size()
+	// if s.real_width < 0 { s.real_width = 0 }
+	// if s.real_height < 0 { s.real_height = 0 }
+	// println("update_layout_but_pos ($s.id $s.real_width, $s.real_height)")
+	s.set_cache_sizes()
+	s.set_children_sizes()
+	// N.B.: s.update_pos() removed!
+	s.set_drawing_children()
+	s.set_children_pos()
+}
+
 fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
@@ -295,7 +309,7 @@ fn (mut s Stack) set_children_sizes() {
 			wt, ht := c.width_type[i].str(), c.height_type[i].str()
 			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
 		}
-		// println("ps $child.id $w, $h")
+		// println("porpose_size $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -466,12 +480,16 @@ fn (mut s Stack) set_cache_sizes() {
 
 		// fix compact when child has size 0
 		if adj_child_width == 0 && cw == compact {
-			s.widths[i] = stretch
-			cw = stretch
+			if child !is Stack {
+				s.widths[i] = stretch
+				cw = stretch
+			}
 		}
 		if adj_child_height == 0 && ch == compact {
-			s.heights[i] = stretch
-			ch = stretch
+			if child !is Stack {
+				s.heights[i] = stretch
+				ch = stretch
+			}
 		}
 
 		// cw as child width with type f64
@@ -732,48 +750,51 @@ fn (s &Stack) free_size() (int, int) {
 	return w, h
 }
 
-fn (mut s Stack) set_adjusted_size(i int, force bool, ui &UI) {
+fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
 	for mut child in s.children {
-		mut child_width, mut child_height := 0, 0
-		if mut child is Stack {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, force, ui)
+		if child.z_index > z_index_hidden { // taking into account only visible widgets
+			mut child_width, mut child_height := 0, 0
+			if mut child is Stack {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(i + 1, force, gui)
+				}
+				child_width, child_height = child.adj_width + child.margin(.left) +
+					child.margin(.right), child.adj_height + child.margin(.top) +
+					child.margin(.bottom)
+				$if adj_size ? {
+					println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+					println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+				} $else {
+				} // because of a bug mixing $if and else
+			} else if mut child is Group {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(i + 1, gui)
+				}
+				child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
+					child.adj_height + child.margin_top + child.margin_bottom
+			} else if mut child is CanvasLayout {
+				if force || child.adj_width == 0 {
+					child.set_adjusted_size(gui)
+				}
+				child_width, child_height = child.adj_width, child.adj_height
+			} else {
+				child_width, child_height = child.size()
+				$if adj_size ? {
+					println('Stack child size $child.type_name(): ($child_width, $child_height) ')
+				}
 			}
-			child_width, child_height = child.adj_width + child.margin(.left) + child.margin(.right),
-				child.adj_height + child.margin(.top) + child.margin(.bottom)
-			$if adj_size ? {
-				println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
-				println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
-			} $else {
-			} // because of a bug mixing $if and else
-		} else if mut child is Group {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(i + 1, ui)
-			}
-			child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
-				child.adj_height + child.margin_top + child.margin_bottom
-		} else if mut child is CanvasLayout {
-			if force || child.adj_width == 0 {
-				child.set_adjusted_size(ui)
-			}
-			child_width, child_height = child.adj_width, child.adj_height
-		} else {
-			child_width, child_height = child.size()
-			$if adj_size ? {
-				println('Stack child size $child.type_name(): ($child_width, $child_height) ')
-			}
-		}
-		if s.direction == .column {
-			h += child_height // height of vertical stack means adding children's height
-			if child_width > w { // width of vertical stack means greatest children's width
-				w = child_width
-			}
-		} else {
-			w += child_width // width of horizontal stack means adding children's width
-			if child_height > h { // height of horizontal stack means greatest children's height
-				h = child_height
+			if s.direction == .column {
+				h += child_height // height of vertical stack means adding children's height
+				if child_width > w { // width of vertical stack means greatest children's width
+					w = child_width
+				}
+			} else {
+				w += child_width // width of horizontal stack means adding children's width
+				if child_height > h { // height of horizontal stack means greatest children's height
+					h = child_height
+				}
 			}
 		}
 	}
@@ -810,7 +831,7 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 	s.update_pos()
 }
 
-fn (mut s Stack) set_children_pos() {
+pub fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
 	$if scp ? {
@@ -820,7 +841,7 @@ fn (mut s Stack) set_children_pos() {
 	mut children := s.children.filter(it.z_index > z_index_hidden)
 	for i, mut child in children {
 		child_width, child_height := child.size()
-		s.set_child_pos(child, i, x, y)
+		s.set_child_pos(mut child, i, x, y)
 		if s.direction == .row {
 			$if scp ? {
 				println('$.row $i): child_width=$child_width x => $x')
@@ -842,6 +863,8 @@ fn (mut s Stack) set_children_pos() {
 			}
 		}
 		if mut child is Stack {
+			child.set_children_pos()
+		} else if mut child is CanvasLayout {
 			child.set_children_pos()
 		}
 	}
@@ -949,7 +972,6 @@ pub fn (mut s Stack) set_drawing_children() {
 		}
 	}
 	s.drawing_children = s.children.filter(!it.hidden && it.z_index > z_index_hidden)
-	// s.drawing_children.sort(a.z_index < b.z_index)
 	s.sorted_drawing_children()
 }
 

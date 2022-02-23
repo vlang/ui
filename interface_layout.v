@@ -6,6 +6,7 @@ module ui
 import eventbus
 
 pub interface Layout {
+	id string
 	get_ui() &UI
 	get_state() voidptr
 	size() (int, int)
@@ -17,11 +18,22 @@ mut:
 	draw()
 }
 
-fn (l &Layout) update_children_z_index(z_inc int) {
+pub fn (l &Layout) set_children_z_index(z_index int) {
 	for mut child in l.get_children() {
 		if child is Layout {
 			l2 := child as Layout
-			l2.update_children_z_index(z_inc)
+			l2.set_children_z_index(z_index)
+		}
+		child.z_index = z_index
+	}
+}
+
+pub fn (l &Layout) incr_children_z_index(z_inc int) {
+	// println("incr_children_z_index $l.id z_inc=$z_inc")
+	for mut child in l.get_children() {
+		if child is Layout {
+			l2 := child as Layout
+			l2.incr_children_z_index(z_inc)
 		}
 		// println("child $child.id z_index +($z_inc)")
 		child.z_index += z_inc
@@ -181,4 +193,21 @@ pub fn (layout Layout) set_focus_last() bool {
 		}
 	}
 	return doit
+}
+
+// Debug function to explore the tree of children
+pub fn (l Layout) show_children_tree(level int) {
+	if level == 0 {
+		println('_'.repeat(80))
+		if l is Stack {
+			println('${' '.repeat(level)} root Stack $l.id $l.size()')
+		}
+	}
+	for i, mut child in l.get_children() {
+		println('${' '.repeat(level)} $level:$i -> $child.id ($child.type_name()) ($child.x, $child.y) $child.size() z_index: $child.z_index')
+		if child is Layout {
+			c := child as Layout
+			c.show_children_tree(level + 1)
+		}
+	}
 }

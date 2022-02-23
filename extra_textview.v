@@ -233,6 +233,7 @@ fn (mut tv TextView) draw_textlines() {
 	}
 
 	// draw cursor
+	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
 		tv.tb.ui.gg.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height,
 			gx.black) // , gx.Black)
@@ -969,22 +970,27 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 }
 */
 
+// Fix tabulation
+fn (tv &TextView) fix_tab_char(txt string) string {
+	return txt.replace('\t', ' '.repeat(4))
+}
+
 // TextStyles
 fn (tv &TextView) draw_text(x int, y int, text string) {
-	DrawTextWidget(tv.tb).draw_text(x, y, text)
+	DrawTextWidget(tv.tb).draw_text(x, y, tv.fix_tab_char(text))
 }
 
 fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	DrawTextWidget(tv.tb).draw_styled_text(x, y, text, ts)
+	DrawTextWidget(tv.tb).draw_styled_text(x, y, tv.fix_tab_char(text), ts)
 }
 
 fn (tv &TextView) text_width(text string) int {
-	return DrawTextWidget(tv.tb).text_width(text)
+	return DrawTextWidget(tv.tb).text_width(tv.fix_tab_char(text))
 }
 
 // Added to have mostly additive text width function
 fn (tv &TextView) text_width_additive(text string) f64 {
-	return DrawTextWidget(tv.tb).text_width_additive(text)
+	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
 }
 
 fn (tv &TextView) text_height(text string) int {

@@ -216,7 +216,7 @@ fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
 	subscriber.subscribe_method(events.on_touch_up, tb_mouse_up, tb)
-	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down])
+	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_scroll])
 }
 
 [manualfree]
@@ -231,7 +231,7 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
 	subscriber.unsubscribe_method(events.on_touch_up, tb)
-	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down])
+	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down, events.on_scroll])
 	unsafe { tb.free() }
 }
 
@@ -855,7 +855,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		tb.unfocus()
 		return
 	} else {
-		// println('mouse first $tb.id')
+		// println('mouse second $tb.id')
 		tb.focus()
 	}
 	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
@@ -938,7 +938,7 @@ fn (mut tb TextBox) set_visible(state bool) {
 
 pub fn (mut tb TextBox) focus() {
 	mut f := Focusable(tb)
-	f.set_focus()
+	f.force_focus()
 }
 
 fn (mut tb TextBox) unfocus() {

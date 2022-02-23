@@ -48,6 +48,22 @@ pub fn (mut f Focusable) set_focus() {
 	}
 }
 
+// Only one widget can have the focus inside a Window
+pub fn (mut f Focusable) force_focus() {
+	w := f.ui.window
+	if f.is_focused {
+		$if focus ? {
+			println('$f.id already has focus at $w.ui.gg.frame')
+		}
+		return
+	}
+	Layout(w).unfocus_all()
+	f.is_focused = true
+	$if focus2 ? {
+		println('$f.id has focus at $w.ui.gg.frame')
+	}
+}
+
 pub fn (f Focusable) lock_focus() {
 	mut w := f.ui.window
 	$if focus ? {

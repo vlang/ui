@@ -162,6 +162,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	if has_scrollview(c) {
 		c.scrollview.init(parent)
+		c.ui.window.evt_mngr.add_receiver(c, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut c)
 	}
@@ -183,6 +184,9 @@ pub fn (mut c CanvasLayout) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_move, c)
 	}
 	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down])
+	if has_scrollview(c) {
+		c.ui.window.evt_mngr.rm_receiver(c, [events.on_scroll])
+	}
 	for mut child in c.children {
 		child.cleanup()
 	}
@@ -209,6 +213,11 @@ pub fn (c &CanvasLayout) free() {
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	$if itp ? {
+		if c.point_inside(e.x, e.y) {
+			println('clc $c.id $c.z_index')
+		}
+	}
 	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
 		return
 	}
@@ -306,7 +315,7 @@ pub fn (mut c CanvasLayout) update_layout() {
 	c.set_drawing_children()
 }
 
-fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
+fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	// println('set_adj $c.full_width $c.full_height')
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
@@ -320,13 +329,15 @@ fn (mut c CanvasLayout) set_adjusted_size(ui &UI) {
 	}
 	mut w, mut h := 0, 0
 	for mut child in c.children {
-		child_width, child_height := child.size()
+		if child.z_index > z_index_hidden { // taking into account only visible widgets
+			child_width, child_height := child.size()
 
-		if child.x + child_width > w {
-			w = child.x + child_width
-		}
-		if child.y + child_height > h {
-			h = child.y + child_height
+			if child.x + child_width > w {
+				w = child.x + child_width
+			}
+			if child.y + child_height > h {
+				h = child.y + child_height
+			}
 		}
 		// println("${child.type_name()} -> ($child.x + $child_width, $child.y + $child_height) -> ($w, $h)")
 	}
