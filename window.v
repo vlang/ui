@@ -717,7 +717,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		}
 	}
 	*/
-	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
+	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
@@ -819,7 +819,7 @@ fn window_click(event gg.Event, ui &UI) {
 }
 
 fn window_scroll(event gg.Event, ui &UI) {
-	window := ui.window
+	mut window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
 		mouse_x: event.mouse_x / ui.gg.scale
@@ -830,6 +830,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 	if window.scroll_fn != voidptr(0) {
 		window.scroll_fn(e, window)
 	}
+	window.evt_mngr.point_inside_receivers_scroll(e)
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
@@ -840,7 +841,7 @@ fn window_touch_down(event gg.Event, ui &UI) {
 		x: window.touch.start.pos.x
 		y: window.touch.start.pos.y
 	}
-	window.evt_mngr.point_inside_receivers(e, events.on_mouse_down)
+	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
 	if window.mouse_down_fn != voidptr(0) {
 		window.mouse_down_fn(e, window)
 	}
@@ -954,7 +955,7 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
 		window.files_droped_fn(e, window)
 	}
-	// window.evt_mngr.point_inside_receivers(e, events.on_files_droped)
+	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_droped)
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_files_droped, window.child_window, e)

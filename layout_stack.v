@@ -177,6 +177,7 @@ pub fn (mut s Stack) init(parent Layout) {
 
 	if has_scrollview(s) {
 		s.scrollview.init(parent)
+		s.ui.window.evt_mngr.add_receiver(s, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut s)
 	}

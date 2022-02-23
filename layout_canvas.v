@@ -162,6 +162,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	if has_scrollview(c) {
 		c.scrollview.init(parent)
+		c.ui.window.evt_mngr.add_receiver(c, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut c)
 	}
@@ -183,6 +184,9 @@ pub fn (mut c CanvasLayout) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_move, c)
 	}
 	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down])
+	if has_scrollview(c) {
+		c.ui.window.evt_mngr.rm_receiver(c, [events.on_scroll])
+	}
 	for mut child in c.children {
 		child.cleanup()
 	}

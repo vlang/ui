@@ -148,7 +148,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_key_up, on_key_up, lb)
-	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down])
+	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down, events.on_scroll])
 	// println("lb $lb.files_droped")
 	if lb.files_droped {
 		subscriber.subscribe_method(events.on_files_droped, on_files_droped, lb)
@@ -161,7 +161,7 @@ fn (mut lb ListBox) cleanup() {
 	mut subscriber := lb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, lb)
 	subscriber.unsubscribe_method(events.on_key_up, lb)
-	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down])
+	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down, events.on_scroll])
 	if lb.files_droped {
 		subscriber.unsubscribe_method(events.on_files_droped, lb)
 		// lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_files_droped])
