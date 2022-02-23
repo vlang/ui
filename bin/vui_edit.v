@@ -20,11 +20,14 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	dir := os.args[1] or { os.real_path('.') }
+	mut dirs := os.args[1..]
+	if dirs.len == 0 {
+		dirs = [os.real_path('.')]
+	}
 	mut window := ui.window(
 		width: win_width
 		height: win_height
-		title: 'V UI TextEdit: $dir'
+		title: 'V UI TextEdit: ${dirs[0]}'
 		state: app
 		native_message: false
 		mode: .resizable
@@ -104,7 +107,7 @@ fn main() {
 							children: [
 								uic.dirtreeview(
 									id: 'dtv'
-									trees: [dir]
+									trees: dirs
 									on_click: treeview_onclick
 								),
 							]
