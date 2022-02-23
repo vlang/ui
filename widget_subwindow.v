@@ -79,7 +79,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	}
 
 	// z_index of all children
-	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + ui.sw_z_index_child)
 
 	s.set_pos(s.x, s.y)
 	s.update_layout()
@@ -266,8 +266,8 @@ pub fn (s &SubWindow) get_children() []Widget {
 	}
 }
 
-fn (mut s SubWindow) set_children_z_index(z_inc int) {
-	s.layout.incr_children_z_index(z_inc)
+fn (mut s SubWindow) set_children_depth(z_inc int) {
+	s.layout.incr_children_depth(z_inc)
 	s.ui.window.evt_mngr.sorted_receivers(events.on_mouse_down)
 }
 
@@ -291,7 +291,7 @@ fn (mut s SubWindow) as_top_subwindow() {
 	win.subwindows = sws
 	// println("atp sws: ${win.subwindows.map(it.id)}")
 	for mut sw in sws {
-		sw.update_z_index(sw.id == s.id)
+		sw.update_depth(sw.id == s.id)
 	}
 	$if atsw ? {
 		println('atp end')
@@ -299,9 +299,9 @@ fn (mut s SubWindow) as_top_subwindow() {
 	}
 }
 
-fn (mut s SubWindow) update_z_index(top bool) {
+fn (mut s SubWindow) update_depth(top bool) {
 	// reset first the children
-	s.set_children_z_index(-s.z_index - ui.sw_z_index_child)
+	s.set_children_depth(-s.z_index - ui.sw_z_index_child)
 	// inc z_index
 	s.z_index = ui.sw_z_index
 	if top {
@@ -309,6 +309,6 @@ fn (mut s SubWindow) update_z_index(top bool) {
 	}
 	// propagate to children
 	// println("z_index: ${s.z_index + sw_z_index_child}")
-	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + ui.sw_z_index_child)
 	s.update_layout()
 }

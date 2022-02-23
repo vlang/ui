@@ -276,7 +276,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 				child.init(l)
 				if is_swp {
 					if swp is ui.SubWindow {
-						ui.Layout(l).set_children_z_index(swp.z_index + ui.sw_z_index_child)
+						ui.Layout(l).set_children_depth(swp.z_index + ui.sw_z_index_child)
 					}
 				}
 			}
