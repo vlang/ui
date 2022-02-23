@@ -75,11 +75,24 @@ fn main() {
 					),
 						uic.hideable(
 							id: 'htb'
-							layout: ui.column(
+							layout: ui.row(
 								id: 'htbl'
-								heights: 30.0
+								margin_: 3
+								heights: 24.0
+								spacing: 3
+								widths: [
+									ui.stretch,
+									24,
+								]
 								children: [
 									ui.textbox(id: 'tb', z_index: 10),
+									ui.button(
+										id: 'tb_ok'
+										text: 'Ok'
+										z_index: 10
+										radius: 5
+										onclick: btn_new_ok
+									),
 								]
 							)
 						),
@@ -121,17 +134,6 @@ fn main() {
 		on_click_ok: btn_open_ok
 		on_click_cancel: btn_open_cancel
 	)
-	// uic.newfilebrowser_subwindow_add(mut window,
-	// 	id: 'nfb'
-	// 	folder_only: true
-	// 	width: 400
-	// 	height: 300
-	// 	x: 50
-	// 	y: 50
-	// 	bg_color: gx.white
-	// 	on_click_ok: btn_new_ok
-	// 	on_click_cancel: btn_new_cancel
-	// )
 	ui.run(window)
 }
 
@@ -144,20 +146,11 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 }
 
 fn btn_new_click(a voidptr, b &ui.Button) {
-	println('new')
+	// println('new')
 	// uic.newfilebrowser_subwindow_visible(b.ui.window)
 	l := b.ui.window.stack('htbl')
 	mut h := uic.component_hideable(l)
 	h.toggle()
-	// mut l := b.ui.window.stack('tvcol')
-	// // mut tv := uic.component_treeview(b.ui.window.stack('tv'))
-	// // tv.cleanup_layout()
-	// l.remove(at: 0)
-	// dir := '/Users/rcqls/vlang'
-	// l.add(
-	// 	at: 0
-	// 	child: treeview_dir(dir)
-	// )
 }
 
 fn btn_open_click(a voidptr, b &ui.Button) {
@@ -166,7 +159,7 @@ fn btn_open_click(a voidptr, b &ui.Button) {
 }
 
 fn btn_save_click(a voidptr, b &ui.Button) {
-	// println("saveeee")
+	// println("save")
 	tb := b.ui.window.textbox('edit')
 	// println("text: <${*tb.text}>")
 	mut app := &App(b.ui.window.state)
@@ -185,32 +178,30 @@ fn btn_open_ok(mut app App, b &ui.Button) {
 }
 
 fn btn_open_cancel(mut app App, b &ui.Button) {
-	// println('cancel')
+	// println('cancel open')
 	uic.filebrowser_subwindow_close(b.ui.window)
 	app.folder_to_open = ''
 }
 
 fn btn_new_ok(mut app App, b &ui.Button) {
-	println('ok')
-	uic.newfilebrowser_subwindow_close(b.ui.window)
-	fb := uic.component_filebrowser(b)
-	app.folder_to_open = fb.selected_full_title()
-	// mut l := b.ui.window.stack('tvcol')
-	// l.remove(at: 0)
-	// l.add(
-	// 	at: 0
-	// 	child: uic.treeview_dir(
-	// 		id: 'tv'
-	// 		trees: [app.folder_to_open]
-	// 		on_click: treeview_onclick
-	// 	)
-	// )
-}
-
-fn btn_new_cancel(mut app App, b &ui.Button) {
-	println('cancel')
-	uic.newfilebrowser_subwindow_close(b.ui.window)
-	app.folder_to_open = ''
+	// println('ok new')
+	tb := b.ui.window.textbox('tb')
+	l := b.ui.window.stack('htbl')
+	mut h := uic.component_hideable(l)
+	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
+	if dtv.sel_id != '' {
+		sel_path := dtv.selected_full_title()
+		app.folder_to_open = if dtv.types[dtv.sel_id] == 'root' {
+			sel_path
+		} else {
+			os.dir(sel_path)
+		}
+		app.file = os.join_path(app.folder_to_open, *tb.text)
+		// println("open folder: ${app.folder_to_open}, new file: ${app.file}")
+		os.write_file(app.file, '') or {}
+		dtv.open(app.folder_to_open)
+	}
+	h.hide()
 }
 
 // fn on_char(e ui.KeyEvent, w &ui.Window) {
@@ -219,9 +210,7 @@ fn btn_new_cancel(mut app App, b &ui.Button) {
 // 	} else {
 // 		println(e)
 // 	}
-
 // }
 
 // fn init(win &ui.Window) {
-
 // }

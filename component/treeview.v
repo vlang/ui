@@ -366,7 +366,7 @@ pub fn (tv &TreeView) selected_full_title() string {
 
 pub fn (mut tv TreeView) open(folder string) {
 	tv.deactivate_all()
-	mut l := tv.layout
+	l := tv.layout
 	mut l2 := l.parent
 	if mut l2 is ui.Stack {
 		l2.remove(at: 0)
