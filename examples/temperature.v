@@ -20,13 +20,11 @@ fn main() {
 			width: 70
 			on_char: on_char_celsius
 			is_numeric: true
-			text: -1
 		)
 		txt_box_fahrenheit: ui.textbox(
 			width: 70
 			on_char: on_char_fahrenheit
 			is_numeric: true
-			text: -1
 		)
 		window: 0
 	}

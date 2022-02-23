@@ -46,7 +46,6 @@ fn main() {
 			read_only: false
 			is_numeric: true
 			on_char: on_r_char
-			text: -1
 		)
 		g_textbox: ui.textbox(
 			// width: 40
@@ -55,7 +54,6 @@ fn main() {
 			read_only: false
 			is_numeric: true
 			on_char: on_g_char
-			text: -1
 		)
 		b_textbox: ui.textbox(
 			// width: 40
@@ -64,7 +62,6 @@ fn main() {
 			read_only: false
 			is_numeric: true
 			on_char: on_b_char
-			text: -1
 		)
 		r_slider: ui.slider(
 			width: 10
