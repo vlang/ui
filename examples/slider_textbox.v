@@ -53,7 +53,6 @@ fn main() {
 			max_len: 20
 			read_only: false
 			is_numeric: true
-			text: -1
 			on_char: on_char_hor
 		)
 		vert_textbox: ui.textbox(
@@ -62,7 +61,6 @@ fn main() {
 			max_len: 20
 			read_only: false
 			is_numeric: true
-			text: -1
 			on_char: on_char_vert
 		)
 	}
