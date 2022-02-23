@@ -332,7 +332,8 @@ pub fn (tv &TreeView) full_title(id string) string {
 		}
 	}
 	// println(res)
-	return res.reverse().join('/')
+	res = res.reverse()
+	return os.join_path(res[0], ...res[1..])
 }
 
 fn (mut tv TreeView) activate(id string) {
