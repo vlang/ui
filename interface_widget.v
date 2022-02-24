@@ -3,6 +3,8 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gg
+
 pub interface Widget {
 mut:
 	id string
@@ -54,9 +56,9 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 }
 
 // returns the bounds of a Widget
-pub fn (mut w Widget) bounds() (int, int, int, int) {
+pub fn (mut w Widget) bounds() gg.Rect {
 	sw, sh := w.size()
-	return w.x, w.y, sw, sh
+	return gg.Rect{w.x, w.y, sw, sh}
 }
 
 // Is this a Widget from SubWindow? And if yes, return it too as a Layout

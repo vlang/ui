@@ -278,7 +278,7 @@ fn (mut s SubWindow) is_top_subwindow() bool {
 fn (mut s SubWindow) as_top_subwindow() {
 	$if atsw ? {
 		println('as top subw $s.id')
-		Layout(s).show_children_tree(0)
+		Layout(s).debug_show_children_tree(0)
 	}
 	mut sws := []&SubWindow{}
 	for sw in s.ui.window.subwindows {
@@ -295,7 +295,7 @@ fn (mut s SubWindow) as_top_subwindow() {
 	}
 	$if atsw ? {
 		println('atp end')
-		Layout(s).show_children_tree(0)
+		Layout(s).debug_show_children_tree(0)
 	}
 }
 

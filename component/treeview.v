@@ -39,6 +39,7 @@ fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string
 	mut l := ui.column(
 		id: root_id + '_layout'
 		heights: ui.compact
+		widths: ui.stretch
 	)
 	tv.containers[root_id] = layout
 	tv.views[root_id] = l.id

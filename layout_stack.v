@@ -1000,7 +1000,6 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name() $child.id")
 		child.draw()
 	}
-	// scrollview_draw(s)
 	scrollview_draw_end(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
