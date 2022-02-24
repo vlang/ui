@@ -16,8 +16,8 @@ fn main() {
 	}
 	lines := app.tb2m.split('\n')
 	mut s := ''
-	for i, l in lines {
-		s += '($i) $l\n'
+	for l in lines {
+		s += '$l\n'
 	}
 	app.tb2m = s
 	c := ui.column(
