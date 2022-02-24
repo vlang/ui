@@ -20,10 +20,19 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	mut dirs := os.args[1..]
+	mut args := os.args[1..]
+	mut hidden_files := false
+	if args.len > 0 {
+		hidden_files = (args[0] in ['-hidden', '-h', '--hidden'])
+	}
+	if hidden_files {
+		args = args[1..]
+	}
+	mut dirs := args.clone()
 	if dirs.len == 0 {
 		dirs = [os.real_path('.')]
 	}
+	dirs = dirs.map(os.real_path(it))
 	mut window := ui.window(
 		width: win_width
 		height: win_height
@@ -108,6 +117,7 @@ fn main() {
 								uic.dirtreeview(
 									id: 'dtv'
 									trees: dirs
+									hidden_files: hidden_files
 									on_click: treeview_onclick
 								),
 							]
