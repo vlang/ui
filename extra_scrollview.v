@@ -479,7 +479,7 @@ pub fn (mut sv ScrollView) clip() {
 			height: sv.height * gg.dpi_scale()
 		}
 		psr := sv.parent_scissor_rect()
-		scissor_rect := intersection(sr, psr)
+		scissor_rect := intersection_rect(sr, psr)
 		sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
 			int(scissor_rect.height), true)
 		sv.scissor_rect = scissor_rect
