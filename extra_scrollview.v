@@ -40,7 +40,7 @@ enum ScrollViewActive {
 	xy
 }
 
-enum ScrollViewPart {
+pub enum ScrollViewPart {
 	view
 	btn_x
 	btn_y

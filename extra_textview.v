@@ -4,6 +4,10 @@ import gx
 // import time
 // import encoding.utf8
 
+const (
+	textview_margin = 10
+)
+
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 struct TextView {
 pub mut:
@@ -17,6 +21,8 @@ pub mut:
 	tlv TextLinesView
 	// textbox
 	tb &TextBox // needed for textwidth and for is_wordwrap
+	// line_number
+	left_margin int
 }
 
 // Structure to help for drawing text line by line and cursor update between lines
@@ -69,7 +75,7 @@ pub fn (tv &TextView) size() (int, int) {
 			w = lw
 		}
 	}
-	w += textbox_padding_x * 2
+	w += tv.left_margin + ui.textview_margin
 	return w, h
 }
 
@@ -201,8 +207,16 @@ pub fn (mut tv TextView) update_lines() {
 	}
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
+	tv.update_left_margin()
 	if tv.tb.has_scrollview {
 		scrollview_update(tv.tb)
+	}
+}
+
+fn (mut tv TextView) update_left_margin() {
+	tv.left_margin = ui.textview_margin
+	if tv.tb.is_line_number {
+		tv.left_margin += ui.textview_margin + tv.text_width(tv.tlv.lines.len.str())
 	}
 }
 
@@ -229,6 +243,9 @@ fn (mut tv TextView) draw_textlines() {
 	}
 	for i, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
 		tv.draw_visible_line(i, y, line)
+		if tv.tb.is_line_number {
+			tv.draw_line_number(i, y)
+		}
 		y += tv.line_height
 	}
 
@@ -249,8 +266,10 @@ pub fn (mut tv TextView) draw_visible_line(i int, y int, text string) {
 	imin, imax := tv.tlv.from_i[i], tv.tlv.to_i[i]
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_text(tv.tb.x + textbox_padding_x + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string())
+	tv.draw_styled_text(tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
+		y, ustr[imin..imax].string(),
+		color: gx.black
+	)
 }
 
 fn (mut tv TextView) draw_selection() {
@@ -263,7 +282,7 @@ fn (mut tv TextView) draw_selection() {
 		// if on the same line draw the selected background
 		sel_from, sel_width := tv.text_xminmax_from_pos(tv.sel_start_line(), tv.tlv.sel_start_i,
 			tv.tlv.sel_end_i)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
 			textbox_padding_y + tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height,
 			selection_color)
 	} else {
@@ -272,14 +291,14 @@ fn (mut tv TextView) draw_selection() {
 		// here the first line
 		mut ustr := tv.line(start_j)
 		mut sel_from, mut sel_width := tv.text_xminmax_from_pos(ustr, start_i, ustr.len)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
 			textbox_padding_y + start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
 				ustr = tv.line(j)
 				sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, ustr.runes().len)
-				tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+				tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
 					textbox_padding_y + j * tv.line_height, sel_width, tv.line_height,
 					selection_color)
 			}
@@ -287,9 +306,16 @@ fn (mut tv TextView) draw_selection() {
 		// and finally the last one
 		ustr = tv.line(end_j)
 		sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, end_i)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + textbox_padding_x + sel_from, tv.tb.y +
+		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
 			textbox_padding_y + end_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	}
+}
+
+fn (tv &TextView) draw_line_number(i int, y int) {
+	tv.draw_styled_text(tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
+		
+		color: gx.gray
+	)
 }
 
 fn (mut tv TextView) insert(s string) {
@@ -758,7 +784,7 @@ fn (tv &TextView) cursor_y() int {
 
 fn (tv &TextView) cursor_x() int {
 	ustr := tv.current_line().runes()
-	mut cursor_x := tv.tb.x + textbox_padding_x
+	mut cursor_x := tv.tb.x + tv.left_margin
 	if ustr.len > 0 {
 		left := ustr[..tv.tlv.cursor_pos_i].string()
 		cursor_x += tv.text_width(left)
@@ -929,6 +955,10 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
+	mut xx := 0
+	if x >= tv.left_margin {
+		xx = x - tv.left_margin
+	}
 	tv.load_style()
 	mut prev_width := 0.0
 	ustr := text.runes()
@@ -940,7 +970,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// }
 		width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
 		width2 := if i < ustr.len { width + width_cur } else { width }
-		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
+		if (prev_width + width) / 2 <= xx && xx <= (width + width2) / 2 {
 			return i
 		}
 		prev_width = width
