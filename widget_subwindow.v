@@ -139,7 +139,8 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 		s.as_top_subwindow()
 		s.dragging = true
 		s.drag_x, s.drag_y = s.x - e.x, s.y - e.y
-		// println("drag down: $s.drag_x, $s.drag_y")
+		// w, h := s.size()
+		// println("drag down: ($s.drag_x, $s.drag_y) ($s.x, $s.y, ${s.x + w}, ${s.y + h}) }")
 	}
 }
 
@@ -156,10 +157,17 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 		return
 	}
 	if s.dragging {
-		s.set_pos(s.drag_x + int(e.x), s.drag_y + int(e.y))
-		// println("sw $s.id dragging $s.x, $s.y")
-		s.update_layout()
-		// window.update_layout()
+		w, _ := s.size()
+		new_x, new_y := s.drag_x + int(e.x), s.drag_y + int(e.y)
+		// println("($new_x, $new_y)")
+		if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
+			&& new_x + ui.sw_decoration <= s.ui.window.width
+			&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
+			s.set_pos(new_x, new_y)
+			// println("sw $s.id dragging $s.x, $s.y")
+			s.update_layout()
+			// window.update_layout()
+		}
 	}
 }
 
