@@ -172,6 +172,7 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	if !app.no_line_number {
 		tb.is_line_number = tv.types[selected] != 'root'
 	}
+	tb.tv.sh.set_lang(os.file_ext(app.file))
 }
 
 fn btn_new_click(a voidptr, b &ui.Button) {

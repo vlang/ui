@@ -23,6 +23,8 @@ pub mut:
 	tb &TextBox // needed for textwidth and for is_wordwrap
 	// line_number
 	left_margin int
+	// Syntax Highlighter
+	sh &SyntaxHighLighter
 }
 
 // Structure to help for drawing text line by line and cursor update between lines
@@ -63,6 +65,8 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
+	tv.sh = syntaxhighlighter()
+	tv.sh.init(tv)
 }
 
 pub fn (tv &TextView) size() (int, int) {
@@ -241,13 +245,17 @@ fn (mut tv TextView) draw_textlines() {
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
 	}
-	for i, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
-		tv.draw_visible_line(i, y, line)
+	tv.sh.reset_chunks()
+	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
+		tv.draw_visible_line(j, y, line)
 		if tv.tb.is_line_number {
-			tv.draw_line_number(i, y)
+			tv.draw_line_number(j, y)
 		}
+		tv.sh.parse_chunks(j, y, line)
+		// tv.sh.parse_chunks(j, y, line)
 		y += tv.line_height
 	}
+	tv.sh.draw_chunks()
 
 	// draw cursor
 	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
@@ -257,13 +265,13 @@ fn (mut tv TextView) draw_textlines() {
 	}
 }
 
-pub fn (mut tv TextView) draw_visible_line(i int, y int, text string) {
-	if i == tv.tlv.from_i.len {
+pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
+	if j == tv.tlv.from_i.len {
 		// println("draw_visible_line $i $tv.tlv.from_i.len")
 		tv.refresh_visible_lines()
 		tv.visible_lines()
 	}
-	imin, imax := tv.tlv.from_i[i], tv.tlv.to_i[i]
+	imin, imax := tv.tlv.from_i[j], tv.tlv.to_i[j]
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
 	tv.draw_styled_text(tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
