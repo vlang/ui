@@ -14,27 +14,30 @@ mut:
 	text           string
 	file           string
 	folder_to_open string
-	no_line_number bool
+	line_numbers   bool
 }
 
 fn main() {
 	mut app := &App{
 		window: 0
 	}
-	mut args := os.args[1..]
+	// TODO: use a proper parser loop, or even better - the `flag` module
+	mut args := os.args#[1..]
 	mut hidden_files := false
 	if args.len > 0 {
 		hidden_files = (args[0] in ['-H', '--hidden-files'])
 	}
 	if hidden_files {
-		args = args[1..]
+		args = args#[1..]
 	}
-	app.no_line_number = false
+	app.line_numbers = true
 	if args.len > 0 {
-		app.no_line_number = (args[0] in ['-L', '--no-line-number'])
+		if args[0] in ['-L', '--no-line-number'] {
+			app.line_numbers = false
+		}
 	}
-	if app.no_line_number {
-		args = args[1..]
+	if app.line_numbers {
+		args = args#[1..]
 	}
 	mut dirs := args.clone()
 	if dirs.len == 0 {
@@ -132,7 +135,7 @@ fn main() {
 						)]
 				),
 					ui.textbox(
-						mode: .multiline | .no_line_number
+						mode: .multiline
 						id: 'edit'
 						z_index: 20
 						height: 200
@@ -169,7 +172,7 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	ui.scrollview_reset(mut tb)
 	tb.scrollview.set(0, .btn_y)
 	tb.read_only = tv.types[selected] == 'root'
-	if !app.no_line_number {
+	if app.line_numbers {
 		tb.is_line_number = tv.types[selected] != 'root'
 	}
 	tb.tv.sh.set_lang(os.file_ext(app.file))

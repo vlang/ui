@@ -105,7 +105,7 @@ pub enum TextBoxMode {
 	read_only
 	multiline
 	word_wrap
-	no_line_number
+	line_numbers
 }
 
 [params]
@@ -116,6 +116,7 @@ pub struct TextBoxParams {
 	read_only        bool
 	is_multiline     bool
 	is_wordwrap      bool
+	is_line_number   bool
 	mode             TextBoxMode // to summarize the three previous logical
 	is_sync          bool = true
 	twosided_sel     bool
@@ -177,7 +178,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		read_only: c.read_only || c.mode.has(.read_only)
 		is_multiline: c.is_multiline || c.mode.has(.multiline)
 		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
-		is_line_number: !c.mode.has(.no_line_number)
+		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
 		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
 		is_sync: c.is_sync || c.read_only
 		twosided_sel: c.twosided_sel
