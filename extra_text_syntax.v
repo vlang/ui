@@ -85,16 +85,16 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	if j == 0 {
 		sh.is_ml_comment = false
 	}
-	if line.len > 1 && line[0..2] == '/*' {
-		sh.is_ml_comment = line[(line.len - 2)..line.len] != '*/'
+	if l.len > 1 && l[0..2] == '/*' {
+		sh.is_ml_comment = l[(l.len - 2)..l.len] != '*/'
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
 	}
-	if sh.is_ml_comment && !line.contains('*/') {
+	if sh.is_ml_comment && !l.contains('*/') {
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
 	}
-	if sh.is_ml_comment && line.contains('*/') && line[(line.len - 2)..line.len] == '*/' {
+	if sh.is_ml_comment && l.contains('*/') && l[(l.len - 2)..l.len] == '*/' {
 		sh.is_ml_comment = false
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
