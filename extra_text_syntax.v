@@ -63,7 +63,7 @@ fn (mut sh SyntaxHighLighter) load_v() {
 	sh.langs['v'] = {
 		'a_comment': gx.gray
 		'a_keyword': gx.blue
-		'a_string':  gx.red
+		'a_string':  gx.dark_green
 	}
 }
 
@@ -74,37 +74,34 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	// sh.chunks.len = 0 // TODO V should not allow this
 	ustr := line.runes()
 	sh.ustr = ustr
+	// single line comment
+	if (line.len > 1 && line[0..2] == '//') || (line.len > 0 && line[0..1] == '#') {
+		sh.add_chunk(.a_comment, y, 0, ustr.len)
+		return
+	}
+
+	// multilines or single line
+	if j == 0 {
+		sh.is_ml_comment = false
+	}
+	if line.len > 1 && line[0..2] == '/*' {
+		sh.is_ml_comment = line[(line.len - 2)..line.len] != '*/'
+		sh.add_chunk(.a_comment, y, 0, ustr.len)
+		return
+	}
+	if sh.is_ml_comment && !line.contains('*/') {
+		sh.add_chunk(.a_comment, y, 0, ustr.len)
+		return
+	}
+	if sh.is_ml_comment && line.contains('*/') && line[(line.len - 2)..line.len] == '*/' {
+		sh.is_ml_comment = false
+		sh.add_chunk(.a_comment, y, 0, ustr.len)
+		return
+	}
+
+	// other stuff
 	for i := 0; i < ustr.len; i++ {
 		start := i
-		// Comment // #
-		if i > 0 && ustr[i - 1] == `/` && ustr[i] == `/` {
-			sh.add_chunk(.a_comment, y, start - 1, ustr.len)
-			break
-		}
-		if ustr[i] == `#` {
-			sh.add_chunk(.a_comment, y, start, ustr.len)
-			break
-		}
-		// Comment   /*
-		// (unless it's /* ustr */ which is a single line)
-		if i > 0 && ustr[i - 1] == `/` && ustr[i] == `*` && !(ustr[ustr.len - 2] == `*`
-			&& ustr[ustr.len - 1] == `/`) {
-			// All after /* is  a comment
-			sh.add_chunk(.a_comment, y, start, ustr.len)
-			sh.is_ml_comment = true
-			break
-		}
-		if sh.is_ml_comment && !(ustr[ustr.len - 2] == `*` && ustr[ustr.len - 1] == `/`) {
-			sh.add_chunk(.a_comment, y, start, ustr.len)
-			break
-		}
-		// End of /**/
-		if i > 0 && ustr[i - 1] == `*` && ustr[i] == `/` {
-			// All before */ is still a comment
-			sh.add_chunk(.a_comment, y, 0, start + 1)
-			sh.is_ml_comment = false
-			break
-		}
 		// String
 		if ustr[i] == `'` {
 			i++
@@ -126,16 +123,13 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 			}
 			sh.add_chunk(.a_string, y, start, i + 1)
 		}
-		// Key
+		// Keyword
 		for i < ustr.len && is_alpha_underscore(int(ustr[i])) {
 			i++
 		}
 		word := ustr[start..i].string()
-		// println('word="$word"')
 		if word in sh.keys {
-			// println('$word is key')
 			sh.add_chunk(.a_keyword, y, start, i)
-			// println('adding key. len=$sh.chunks.len')
 		}
 	}
 }
@@ -155,12 +149,16 @@ fn (mut sh SyntaxHighLighter) draw_chunks() {
 	if !sh.is_lang_loaded() {
 		return
 	}
+	// println("-".repeat(80))
 	tv := sh.tv
 	syntax := sh.langs[sh.lang]
 	for typ in syntax.keys() {
 		color := syntax[typ]
 		for chunk in sh.chunks[typ] {
-			// println("$typ: $i) $chunk.x, $chunk.y, $chunk.text")
+			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
+			// fix background
+			tv.tb.ui.gg.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text),
+				tv.line_height, tv.tb.bg_color)
 			tv.draw_styled_text(chunk.x, chunk.y, chunk.text, color: color)
 		}
 	}
