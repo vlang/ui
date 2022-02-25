@@ -71,6 +71,9 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	if !sh.is_lang_loaded() {
 		return
 	}
+	if j == 0 {
+		sh.is_ml_comment = false
+	}
 	// sh.chunks.len = 0 // TODO V should not allow this
 	ustr := line.runes()
 	sh.ustr = ustr
@@ -82,9 +85,6 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	}
 
 	// multilines or single line
-	if j == 0 {
-		sh.is_ml_comment = false
-	}
 	if l.starts_with('/*') {
 		sh.is_ml_comment = !l.ends_with('*/')
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
