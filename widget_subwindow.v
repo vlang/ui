@@ -79,7 +79,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	}
 
 	// z_index of all children
-	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + ui.sw_z_index_child)
 
 	s.set_pos(s.x, s.y)
 	s.update_layout()
@@ -139,7 +139,8 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 		s.as_top_subwindow()
 		s.dragging = true
 		s.drag_x, s.drag_y = s.x - e.x, s.y - e.y
-		// println("drag down: $s.drag_x, $s.drag_y")
+		// w, h := s.size()
+		// println("drag down: ($s.drag_x, $s.drag_y) ($s.x, $s.y, ${s.x + w}, ${s.y + h}) }")
 	}
 }
 
@@ -156,10 +157,17 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 		return
 	}
 	if s.dragging {
-		s.set_pos(s.drag_x + int(e.x), s.drag_y + int(e.y))
-		// println("sw $s.id dragging $s.x, $s.y")
-		s.update_layout()
-		// window.update_layout()
+		w, _ := s.size()
+		new_x, new_y := s.drag_x + int(e.x), s.drag_y + int(e.y)
+		// println("($new_x, $new_y)")
+		if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
+			&& new_x + ui.sw_decoration <= s.ui.window.width
+			&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
+			s.set_pos(new_x, new_y)
+			// println("sw $s.id dragging $s.x, $s.y")
+			s.update_layout()
+			// window.update_layout()
+		}
 	}
 }
 
@@ -266,8 +274,8 @@ pub fn (s &SubWindow) get_children() []Widget {
 	}
 }
 
-fn (mut s SubWindow) set_children_z_index(z_inc int) {
-	s.layout.incr_children_z_index(z_inc)
+fn (mut s SubWindow) set_children_depth(z_inc int) {
+	s.layout.incr_children_depth(z_inc)
 	s.ui.window.evt_mngr.sorted_receivers(events.on_mouse_down)
 }
 
@@ -278,7 +286,7 @@ fn (mut s SubWindow) is_top_subwindow() bool {
 fn (mut s SubWindow) as_top_subwindow() {
 	$if atsw ? {
 		println('as top subw $s.id')
-		Layout(s).show_children_tree(0)
+		Layout(s).debug_show_children_tree(0)
 	}
 	mut sws := []&SubWindow{}
 	for sw in s.ui.window.subwindows {
@@ -291,17 +299,17 @@ fn (mut s SubWindow) as_top_subwindow() {
 	win.subwindows = sws
 	// println("atp sws: ${win.subwindows.map(it.id)}")
 	for mut sw in sws {
-		sw.update_z_index(sw.id == s.id)
+		sw.update_depth(sw.id == s.id)
 	}
 	$if atsw ? {
 		println('atp end')
-		Layout(s).show_children_tree(0)
+		Layout(s).debug_show_children_tree(0)
 	}
 }
 
-fn (mut s SubWindow) update_z_index(top bool) {
+fn (mut s SubWindow) update_depth(top bool) {
 	// reset first the children
-	s.set_children_z_index(-s.z_index - ui.sw_z_index_child)
+	s.set_children_depth(-s.z_index - ui.sw_z_index_child)
 	// inc z_index
 	s.z_index = ui.sw_z_index
 	if top {
@@ -309,6 +317,6 @@ fn (mut s SubWindow) update_z_index(top bool) {
 	}
 	// propagate to children
 	// println("z_index: ${s.z_index + sw_z_index_child}")
-	s.set_children_z_index(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + ui.sw_z_index_child)
 	s.update_layout()
 }

@@ -39,6 +39,7 @@ fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string
 	mut l := ui.column(
 		id: root_id + '_layout'
 		heights: ui.compact
+		widths: ui.stretch
 	)
 	tv.containers[root_id] = layout
 	tv.views[root_id] = l.id
@@ -89,7 +90,7 @@ fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root strin
 				path := tmp[0].trim_space()
 				fpath := tmp[1..].join(component.root_sep).trim_space()
 				// update tree
-				mut new_tree := treedir(path, fpath, true)
+				mut new_tree := treedir(path, fpath, true, tv.hidden_files)
 				t.items[i] = TreeItem(new_tree)
 				l.children << new_tree.create_root(mut tv, mut l, id_root + ':$i', level + 1)
 			}
@@ -138,6 +139,7 @@ pub mut:
 	z_index      map[string]int
 	root_ids     []string
 	filter_types []string
+	hidden_files bool
 	incr_mode    bool
 	indent       int
 	// event
@@ -161,6 +163,7 @@ pub struct TreeViewParams {
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 	indent       int = 10
 	filter_types []string
+	hidden_files bool
 }
 
 pub fn treeview(c TreeViewParams) &ui.Stack {
@@ -179,6 +182,7 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 		incr_mode: c.incr_mode
 		indent: c.indent
 		filter_types: c.filter_types
+		hidden_files: c.hidden_files
 		on_click: c.on_click
 		bg_color: c.bg_color
 		bg_sel_color: c.bg_sel_color
@@ -207,6 +211,7 @@ pub struct TreeViewDirParams {
 	indent       int      = 10
 	folder_only  bool
 	filter_types []string
+	hidden_files bool
 	bg_color     gx.Color        = gx.hex(0xfcf4e4ff)
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 }
@@ -215,7 +220,7 @@ pub fn dirtreeview(p TreeViewDirParams) &ui.Stack {
 	return treeview(
 		id: p.id
 		incr_mode: p.incr_mode
-		trees: p.trees.map(treedir(it, it, p.incr_mode))
+		trees: p.trees.map(treedir(it, it, p.incr_mode, p.hidden_files))
 		icons: {
 			'root': 'tata' // later
 			'file': 'toto' // later
@@ -276,7 +281,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 				child.init(l)
 				if is_swp {
 					if swp is ui.SubWindow {
-						ui.Layout(l).set_children_z_index(swp.z_index + ui.sw_z_index_child)
+						ui.Layout(l).set_children_depth(swp.z_index + ui.sw_z_index_child)
 					}
 				}
 			}
@@ -287,7 +292,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 		} else {
 			tv.deactivate(c.id)
 		}
-		tv.layout.update_layout_but_pos()
+		tv.layout.update_layout_without_pos()
 	}
 	if tv.sel_id != '' {
 		c.bg_color = tv.bg_sel_color
@@ -303,7 +308,7 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	// To update scrollview
 	mut tvcol := tv.layout.parent
 	if mut tvcol is ui.Stack {
-		tvcol.update_layout_but_pos()
+		tvcol.update_layout_without_pos()
 		ui.scrollview_update(tvcol)
 	}
 
@@ -332,7 +337,8 @@ pub fn (tv &TreeView) full_title(id string) string {
 		}
 	}
 	// println(res)
-	return res.reverse().join('/')
+	res = res.reverse()
+	return os.join_path(res[0], ...res[1..])
 }
 
 fn (mut tv TreeView) activate(id string) {
@@ -355,7 +361,7 @@ fn (mut tv TreeView) deactivate_all() {
 			// println("dea all $id ${tv.titles[id]}")
 			tv.selected[id] = false
 			tv.deactivate(id)
-			tv.layout.update_layout_but_pos()
+			tv.layout.update_layout_without_pos()
 		}
 	}
 }
@@ -392,10 +398,12 @@ pub fn treeview_by_id(w &ui.Window, id string) &TreeView {
 	return component_treeview(tv_layout)
 }
 
-pub fn treedir(path string, fpath string, incr_mode bool) Tree {
+pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tree {
 	mut files := os.ls(fpath) or { [] }
 	files.sort()
-	files = files.filter(it !in ['.git', '.github'])
+	if !hidden_files {
+		files = files.filter(it[0..1] != '.')
+	}
 	// println(fpath)
 	// println(files)
 	t := Tree{
@@ -404,7 +412,7 @@ pub fn treedir(path string, fpath string, incr_mode bool) Tree {
 			if incr_mode {
 				TreeItem('root: $it$component.root_sep${os.join_path(fpath, it)}')
 			} else {
-				TreeItem(treedir(it, os.join_path(fpath, it), false))
+				TreeItem(treedir(it, os.join_path(fpath, it), false, hidden_files))
 			}
 		} else {
 			TreeItem('file: $it')

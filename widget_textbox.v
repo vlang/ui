@@ -62,11 +62,12 @@ pub mut:
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
 	// multiline mode
-	is_multiline bool
-	tv           TextView
-	is_wordwrap  bool
-	is_sync      bool // if true lines are computed from text when drawing
-	twosided_sel bool // if true extension selection is made from both sides
+	is_multiline   bool
+	tv             TextView
+	is_wordwrap    bool
+	is_line_number bool
+	is_sync        bool // if true lines are computed from text when drawing
+	twosided_sel   bool // if true extension selection is made from both sides
 	// others
 	is_numeric    bool
 	is_password   bool
@@ -104,6 +105,7 @@ pub enum TextBoxMode {
 	read_only
 	multiline
 	word_wrap
+	line_numbers
 }
 
 [params]
@@ -114,6 +116,7 @@ pub struct TextBoxParams {
 	read_only        bool
 	is_multiline     bool
 	is_wordwrap      bool
+	is_line_number   bool
 	mode             TextBoxMode // to summarize the three previous logical
 	is_sync          bool = true
 	twosided_sel     bool
@@ -175,6 +178,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		read_only: c.read_only || c.mode.has(.read_only)
 		is_multiline: c.is_multiline || c.mode.has(.multiline)
 		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
+		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
 		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
 		is_sync: c.is_sync || c.read_only
 		twosided_sel: c.twosided_sel

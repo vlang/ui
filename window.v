@@ -1130,12 +1130,12 @@ pub fn (w &Window) update_layout() {
 	}
 }
 
-pub fn (w &Window) update_layout_but_pos() {
+pub fn (w &Window) update_layout_without_pos() {
 	// update root_layout
 	mut s := w.root_layout
 	if mut s is Stack {
 		if s.id != empty_stack.id {
-			s.update_layout_but_pos()
+			s.update_layout_without_pos()
 		}
 	}
 }

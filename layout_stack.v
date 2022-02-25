@@ -254,12 +254,8 @@ pub fn (mut s Stack) update_layout() {
 	}
 }
 
-pub fn (mut s Stack) update_layout_but_pos() {
+pub fn (mut s Stack) update_layout_without_pos() {
 	s.set_adjusted_size(0, true, s.ui)
-	// s.real_width, s.real_height = s.adj_size()
-	// if s.real_width < 0 { s.real_width = 0 }
-	// if s.real_height < 0 { s.real_height = 0 }
-	// println("update_layout_but_pos ($s.id $s.real_width, $s.real_height)")
 	s.set_cache_sizes()
 	s.set_children_sizes()
 	// N.B.: s.update_pos() removed!
@@ -1004,7 +1000,6 @@ fn (mut s Stack) draw() {
 		// println("$child.type_name() $child.id")
 		child.draw()
 	}
-	// scrollview_draw(s)
 	scrollview_draw_end(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
