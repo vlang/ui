@@ -75,7 +75,8 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	ustr := line.runes()
 	sh.ustr = ustr
 	// single line comment
-	if (line.len > 1 && line[0..2] == '//') || (line.len > 0 && line[0..1] == '#') {
+	l := line.trim_space()
+	if l.starts_with('//') || l.starts_with('#') {
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
 	}
