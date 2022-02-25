@@ -85,8 +85,8 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	if j == 0 {
 		sh.is_ml_comment = false
 	}
-	if l.len > 1 && l[0..2] == '/*' {
-		sh.is_ml_comment = l[(l.len - 2)..l.len] != '*/'
+	if l.starts_with('/*') {
+		sh.is_ml_comment = !l.ends_with('*/')
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
 	}
@@ -94,7 +94,7 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
 	}
-	if sh.is_ml_comment && l.contains('*/') && l[(l.len - 2)..l.len] == '*/' {
+	if sh.is_ml_comment && l.contains('*/') && l.ends_with('*/') {
 		sh.is_ml_comment = false
 		sh.add_chunk(.a_comment, y, 0, ustr.len)
 		return
