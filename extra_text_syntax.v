@@ -1,15 +1,6 @@
 module ui
 
 import gx
-// inspired from ved
-
-// For syntax highlighting
-// enum ChunkKind {
-// 	a_string = 1
-// 	a_comment
-// 	a_keyword
-// 	a_keyword2
-// }
 
 struct Chunk {
 	x    int
@@ -22,13 +13,16 @@ type SyntaxStyle = map[string]gx.Color
 [heap]
 struct SyntaxHighLighter {
 mut:
-	tv           &TextView = 0
-	ustr         []rune
-	chunks       map[string][]Chunk
-	lang         string
-	langs        map[string]SyntaxStyle
-	is_multiline map[string]bool
-	keys         map[string][]string
+	tv               &TextView = 0
+	ustr             []rune
+	chunks           map[string][]Chunk
+	lang             string
+	langs            map[string]SyntaxStyle
+	is_multiline     map[string]bool
+	keywords         map[string][]string
+	singleline       map[string][]string
+	multiline        map[string][][]string
+	between_one_rune map[string][]rune
 	// for loop
 	i     int
 	j     int
@@ -61,22 +55,34 @@ fn (sh &SyntaxHighLighter) is_lang_loaded() bool {
 }
 
 fn (mut sh SyntaxHighLighter) load_v() {
-	keys := 'case shared defer none match pub struct interface in sizeof assert enum import go return module'
-	keys2 := 'fn if for break continue asm unsafe mut is ' +
-		'type const else true else for false use $' + 'if $' + 'else'
-	sh.keys = {
-		'one': keys.split(' ')
-		'two': keys2.split(' ')
+	sh.keywords = {
+		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|byte|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
+		'decl':    'mut|pub|unsafe|default|module|import|const|interface'.split('|')
+		'control': (
+			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
+			'|$' + 'if|$' + 'else').split('|')
+		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|')
+	}
+	sh.singleline = {
+		'comment': ['//', '#']
+	}
+	sh.multiline = {
+		'comment': [['/*', '*/']]
 	}
 	sh.langs = {}
 	sh.langs['v'] = {
-		'a_comment':  gx.gray
-		'a_keyword':  gx.blue
-		'a_keyword2': gx.orange
-		'a_string':   gx.dark_green
+		'comment': gx.gray
+		'keyword': gx.blue
+		'control': gx.orange
+		'decl':    gx.red
+		'types':   gx.purple
+		'string':  gx.dark_green
 	}
 	sh.is_multiline = {
 		'/*': false
+	}
+	sh.between_one_rune = {
+		'string': [`'`, `"`, `\``]
 	}
 }
 
@@ -96,28 +102,37 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	sh.ustr = line.runes()
 	l := line.trim_space()
 	// single line comment
-	if sh.parse_chunk_oneline_comment('a_comment', '//', l) {
-		return
-	}
-	if sh.parse_chunk_oneline_comment('a_comment', '#', l) {
-		return
+	for typ, vals in sh.singleline {
+		for val in vals {
+			if sh.parse_chunk_oneline_comment(typ, val, l) {
+				return
+			}
+		}
 	}
 
 	// multilines or single line
-	if sh.parse_chunk_multiline_comment('a_comment', '/*', '*/', l) {
-		return
+	for typ, vals in sh.multiline {
+		for val in vals {
+			if sh.parse_chunk_multiline_comment(typ, val[0], val[1], l) {
+				return
+			}
+		}
 	}
 
-	// other stuff
+	// loop stuff
 	sh.i = 0
 	for sh.i < sh.ustr.len {
 		sh.start = sh.i
-		// String
-		sh.parse_chunk_between_one_rune('a_string', `'`)
-		sh.parse_chunk_between_one_rune('a_string', `"`)
+		// String or betwwen one same rune
+		for typ, vals in sh.between_one_rune {
+			for val in vals {
+				sh.parse_chunk_between_one_rune(typ, val)
+			}
+		}
 		// Keyword
-		sh.parse_chunk_keyword('a_keyword', 'one')
-		sh.parse_chunk_keyword('a_keyword2', 'two')
+		for keyword, _ in sh.keywords {
+			sh.parse_chunk_keyword(keyword)
+		}
 		sh.i++
 	}
 }
@@ -164,12 +179,12 @@ fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune)
 	}
 }
 
-fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ string, family string) {
+fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ string) {
 	for sh.i < sh.ustr.len && is_alpha_underscore(int(sh.ustr[sh.i])) {
 		sh.i++
 	}
 	word := sh.ustr[sh.start..sh.i].string()
-	if word in sh.keys[family] {
+	if word in sh.keywords[typ] {
 		sh.add_chunk(typ, sh.y, sh.start, sh.i)
 	}
 }
