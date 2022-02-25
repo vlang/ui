@@ -21,13 +21,18 @@ type SyntaxStyle = map[string]gx.Color
 [heap]
 struct SyntaxHighLighter {
 mut:
-	tv            &TextView = 0
-	ustr          []rune
-	chunks        map[string][]Chunk
-	lang          string
-	langs         map[string]SyntaxStyle
-	is_ml_comment bool
-	keys          []string
+	tv           &TextView = 0
+	ustr         []rune
+	chunks       map[string][]Chunk
+	lang         string
+	langs        map[string]SyntaxStyle
+	is_multiline map[string]bool
+	keys         []string
+	// for loop
+	i     int
+	j     int
+	start int
+	y     int
 }
 
 fn syntaxhighlighter() &SyntaxHighLighter {
@@ -37,6 +42,9 @@ fn syntaxhighlighter() &SyntaxHighLighter {
 fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 	sh.load_v()
 	sh.set_lang('')
+	sh.is_multiline = {
+		'/*': false
+	}
 	unsafe {
 		sh.tv = tv
 	}
@@ -71,67 +79,92 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	if !sh.is_lang_loaded() {
 		return
 	}
+
+	sh.j, sh.y = j, y
+
 	if j == 0 {
-		sh.is_ml_comment = false
+		for k, _ in sh.is_multiline {
+			sh.is_multiline[k] = false
+		}
 	}
-	// sh.chunks.len = 0 // TODO V should not allow this
-	ustr := line.runes()
-	sh.ustr = ustr
-	// single line comment
+
+	sh.ustr = line.runes()
 	l := line.trim_space()
-	if l.starts_with('//') || l.starts_with('#') {
-		sh.add_chunk(.a_comment, y, 0, ustr.len)
+	// single line comment
+	if sh.parse_chunk_oneline_comment(.a_comment, '//', l) {
+		return
+	}
+	if sh.parse_chunk_oneline_comment(.a_comment, '#', l) {
 		return
 	}
 
 	// multilines or single line
-	if l.starts_with('/*') {
-		sh.is_ml_comment = !l.ends_with('*/')
-		sh.add_chunk(.a_comment, y, 0, ustr.len)
-		return
-	}
-	if sh.is_ml_comment && !l.contains('*/') {
-		sh.add_chunk(.a_comment, y, 0, ustr.len)
-		return
-	}
-	if sh.is_ml_comment && l.contains('*/') && l.ends_with('*/') {
-		sh.is_ml_comment = false
-		sh.add_chunk(.a_comment, y, 0, ustr.len)
+	if sh.parse_chunk_multiline_comment(.a_comment, '/*', '*/', l) {
 		return
 	}
 
 	// other stuff
-	for i := 0; i < ustr.len; i++ {
-		start := i
+	sh.i = 0
+	for sh.i < sh.ustr.len {
+		sh.start = sh.i
 		// String
-		if ustr[i] == `'` {
-			i++
-			for i < ustr.len - 1 && ustr[i] != `'` {
-				i++
-			}
-			if i >= ustr.len {
-				i = ustr.len - 1
-			}
-			sh.add_chunk(.a_string, y, start, i + 1)
-		}
-		if ustr[i] == `"` {
-			i++
-			for i < ustr.len - 1 && ustr[i] != `"` {
-				i++
-			}
-			if i >= ustr.len {
-				i = ustr.len - 1
-			}
-			sh.add_chunk(.a_string, y, start, i + 1)
-		}
+		sh.parse_chunk_between_one_rune(.a_string, `'`)
+		sh.parse_chunk_between_one_rune(.a_string, `"`)
 		// Keyword
-		for i < ustr.len && is_alpha_underscore(int(ustr[i])) {
-			i++
+		sh.parse_chunk_keyword(.a_keyword)
+		sh.i++
+	}
+}
+
+fn (mut sh SyntaxHighLighter) parse_chunk_oneline_comment(typ ChunkKind, comment_sep string, line_trim string) bool {
+	// single line comment
+	if line_trim.starts_with(comment_sep) {
+		sh.add_chunk(typ, sh.y, 0, sh.ustr.len)
+		return true
+	} else {
+		return false
+	}
+}
+
+fn (mut sh SyntaxHighLighter) parse_chunk_multiline_comment(typ ChunkKind, comment_start string, comment_stop string, line_trim string) bool {
+	if line_trim.starts_with(comment_start) {
+		sh.is_multiline[comment_start] = !line_trim.ends_with(comment_stop)
+		sh.add_chunk(.a_comment, sh.y, 0, sh.ustr.len)
+		return true
+	}
+	if sh.is_multiline[comment_start] && !line_trim.contains(comment_stop) {
+		sh.add_chunk(.a_comment, sh.y, 0, sh.ustr.len)
+		return true
+	}
+	if sh.is_multiline[comment_start] && line_trim.contains(comment_stop)
+		&& line_trim.ends_with(comment_stop) {
+		sh.is_multiline[comment_start] = false
+		sh.add_chunk(typ, sh.y, 0, sh.ustr.len)
+		return true
+	}
+	return false
+}
+
+fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ ChunkKind, sep rune) {
+	if sh.ustr[sh.i] == sep {
+		sh.i++
+		for sh.i < sh.ustr.len - 1 && sh.ustr[sh.i] != sep {
+			sh.i++
 		}
-		word := ustr[start..i].string()
-		if word in sh.keys {
-			sh.add_chunk(.a_keyword, y, start, i)
+		if sh.i >= sh.ustr.len {
+			sh.i = sh.ustr.len - 1
 		}
+		sh.add_chunk(typ, sh.y, sh.start, sh.i + 1)
+	}
+}
+
+fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ ChunkKind) {
+	for sh.i < sh.ustr.len && is_alpha_underscore(int(sh.ustr[sh.i])) {
+		sh.i++
+	}
+	word := sh.ustr[sh.start..sh.i].string()
+	if word in sh.keys {
+		sh.add_chunk(typ, sh.y, sh.start, sh.i)
 	}
 }
 
