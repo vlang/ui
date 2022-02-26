@@ -69,8 +69,8 @@ fn (mut s Switch) init(parent Layout) {
 	ui := parent.get_ui()
 	s.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
-	subscriber.subscribe_method(events.on_click, sw_click, s)
+	subscriber.subscribe_method(events.on_key_down, s, sw_key_down)
+	subscriber.subscribe_method(events.on_click, s, sw_click)
 }
 
 [manualfree]

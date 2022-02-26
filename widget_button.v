@@ -134,13 +134,13 @@ fn (mut b Button) init(parent Layout) {
 		win.append_tooltip(b, b.tooltip)
 	}
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, btn_key_down, b)
-	subscriber.subscribe_method(events.on_mouse_down, btn_mouse_down, b)
-	subscriber.subscribe_method(events.on_click, btn_click, b)
-	subscriber.subscribe_method(events.on_touch_down, btn_mouse_down, b)
-	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
-	subscriber.subscribe_method(events.on_mouse_up, btn_mouse_up, b)
-	subscriber.subscribe_method(events.on_touch_up, btn_mouse_up, b)
+	subscriber.subscribe_method(events.on_key_down, b, btn_key_down)
+	subscriber.subscribe_method(events.on_mouse_down, b, btn_mouse_down)
+	subscriber.subscribe_method(events.on_click, b, btn_click)
+	subscriber.subscribe_method(events.on_touch_down, b, btn_mouse_down)
+	subscriber.subscribe_method(events.on_mouse_move, b, btn_mouse_move)
+	subscriber.subscribe_method(events.on_mouse_up, b, btn_mouse_up)
+	subscriber.subscribe_method(events.on_touch_up, b, btn_mouse_up)
 	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down])
 }
 

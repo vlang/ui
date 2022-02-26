@@ -266,16 +266,16 @@ fn (mut sv ScrollView) init(parent Layout) {
 	sv.scissor_rect = gg.Rect{f32(0), f32(0), f32(size.width), f32(size.height)}
 
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, scrollview_click, sv)
-	subscriber.subscribe_method(events.on_scroll, scrollview_scroll, sv)
-	subscriber.subscribe_method(events.on_key_down, scrollview_key_down, sv)
-	subscriber.subscribe_method(events.on_mouse_down, scrollview_mouse_down, sv)
-	subscriber.subscribe_method(events.on_mouse_up, scrollview_mouse_up, sv)
-	subscriber.subscribe_method(events.on_mouse_move, scrollview_mouse_move, sv)
+	subscriber.subscribe_method(events.on_click, sv, scrollview_click)
+	subscriber.subscribe_method(events.on_scroll, sv, scrollview_scroll)
+	subscriber.subscribe_method(events.on_key_down, sv, scrollview_key_down)
+	subscriber.subscribe_method(events.on_mouse_down, sv, scrollview_mouse_down)
+	subscriber.subscribe_method(events.on_mouse_up, sv, scrollview_mouse_up)
+	subscriber.subscribe_method(events.on_mouse_move, sv, scrollview_mouse_move)
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, scrollview_mouse_down, sv)
-		subscriber.subscribe_method(events.on_touch_up, scrollview_mouse_up, sv)
-		subscriber.subscribe_method(events.on_touch_move, scrollview_mouse_move, sv)
+		subscriber.subscribe_method(events.on_touch_down, sv, scrollview_mouse_down)
+		subscriber.subscribe_method(events.on_touch_up, sv, scrollview_mouse_up)
+		subscriber.subscribe_method(events.on_touch_move, sv, scrollview_mouse_move)
 	}
 }
 

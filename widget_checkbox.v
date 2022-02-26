@@ -80,8 +80,8 @@ fn (mut cb CheckBox) init(parent Layout) {
 	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
 	cb.init_style()
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
-	subscriber.subscribe_method(events.on_click, cb_click, cb)
+	subscriber.subscribe_method(events.on_key_down, cb, cb_key_down)
+	subscriber.subscribe_method(events.on_click, cb, cb_click)
 }
 
 [manualfree]

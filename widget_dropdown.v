@@ -84,13 +84,13 @@ fn (mut dd Dropdown) init(parent Layout) {
 	ui := parent.get_ui()
 	dd.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, dd_click, dd)
-	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
-	subscriber.subscribe_method(events.on_mouse_down, dd_mouse_down, dd)
-	subscriber.subscribe_method(events.on_mouse_move, dd_mouse_move, dd)
+	subscriber.subscribe_method(events.on_click, dd, dd_click)
+	subscriber.subscribe_method(events.on_key_down, dd, dd_key_down)
+	subscriber.subscribe_method(events.on_mouse_down, dd, dd_mouse_down)
+	subscriber.subscribe_method(events.on_mouse_move, dd, dd_mouse_move)
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, dd_mouse_down, dd)
-		subscriber.subscribe_method(events.on_touch_move, dd_mouse_move, dd)
+		subscriber.subscribe_method(events.on_touch_down, dd, dd_mouse_down)
+		subscriber.subscribe_method(events.on_touch_move, dd, dd_mouse_move)
 	}
 	dd.ui.window.evt_mngr.add_receiver(dd, [events.on_mouse_down])
 }

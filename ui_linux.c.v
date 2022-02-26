@@ -63,7 +63,7 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 		]
 	)
 	mut subscriber := message_app.window.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
+	subscriber.subscribe_method(events.on_key_down, message_app, msgbox_on_key_down)
 	run(message_app.window)
 	message_app.waitgroup.done()
 }

@@ -67,9 +67,9 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.ui = pui
 	// Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_mouse_down, sw_mouse_down, s)
-	subscriber.subscribe_method(events.on_mouse_move, sw_mouse_move, s)
-	subscriber.subscribe_method(events.on_mouse_up, sw_mouse_up, s)
+	subscriber.subscribe_method(events.on_mouse_down, s, sw_mouse_down)
+	subscriber.subscribe_method(events.on_mouse_move, s, sw_mouse_move)
+	subscriber.subscribe_method(events.on_mouse_up, s, sw_mouse_up)
 	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
 	// children initialized after so that subcribe_method
 	mut l := s.layout

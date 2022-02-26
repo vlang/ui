@@ -78,8 +78,8 @@ fn (mut pic Picture) init(parent Layout) {
 	mut ui := parent.get_ui()
 	pic.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, pic_click, pic)
-	subscriber.subscribe_method(events.on_mouse_down, pic_mouse_down, pic)
+	subscriber.subscribe_method(events.on_click, pic, pic_click)
+	subscriber.subscribe_method(events.on_mouse_down, pic, pic_mouse_down)
 	pic.ui.window.evt_mngr.add_receiver(pic, [events.on_mouse_down])
 	/*
 	if pic.image.width > 0 {

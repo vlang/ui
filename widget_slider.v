@@ -106,16 +106,16 @@ fn (mut s Slider) init(parent Layout) {
 	ui := parent.get_ui()
 	s.ui = ui
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_click, slider_click, s)
-	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
-	subscriber.subscribe_method(events.on_mouse_down, slider_mouse_down, s)
-	subscriber.subscribe_method(events.on_mouse_up, slider_mouse_up, s)
-	subscriber.subscribe_method(events.on_mouse_move, slider_mouse_move, s)
+	subscriber.subscribe_method(events.on_click, s, slider_click)
+	subscriber.subscribe_method(events.on_key_down, s, slider_key_down)
+	subscriber.subscribe_method(events.on_mouse_down, s, slider_mouse_down)
+	subscriber.subscribe_method(events.on_mouse_up, s, slider_mouse_up)
+	subscriber.subscribe_method(events.on_mouse_move, s, slider_mouse_move)
 	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
 	$if android {
-		subscriber.subscribe_method(events.on_touch_down, slider_mouse_down, s)
-		subscriber.subscribe_method(events.on_touch_up, slider_mouse_up, s)
-		subscriber.subscribe_method(events.on_touch_move, slider_touch_move, s)
+		subscriber.subscribe_method(events.on_touch_down, s, slider_mouse_down)
+		subscriber.subscribe_method(events.on_touch_up, s, slider_mouse_up)
+		subscriber.subscribe_method(events.on_touch_move, s, slider_touch_move)
 	}
 }
 

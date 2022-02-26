@@ -109,8 +109,8 @@ fn (mut r Radio) init(parent Layout) {
 	}
 	r.init_style()
 	mut subscriber := parent.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
-	subscriber.subscribe_method(events.on_click, radio_click, r)
+	subscriber.subscribe_method(events.on_key_down, r, radio_key_down)
+	subscriber.subscribe_method(events.on_click, r, radio_click)
 }
 
 [manualfree]
