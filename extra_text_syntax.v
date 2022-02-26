@@ -26,7 +26,8 @@ mut:
 	chunks           map[string][]Chunk
 	lang             string
 	lang_exts        SyntaxMapStrings
-	langs            map[string]SyntaxStyle
+	style            string = 'default'
+	styles           map[string]SyntaxStyle
 	is_multiline     map[string]SyntaxMapBool
 	keywords         map[string]SyntaxMapStrings
 	singleline       map[string]SyntaxMapStrings
@@ -48,7 +49,7 @@ fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 		sh.tv = tv
 	}
 	// stuff for highlighting features
-	sh.langs = {}
+	sh.styles = {}
 	sh.keywords = {}
 	sh.singleline = {}
 	sh.multiline = {}
@@ -62,6 +63,7 @@ fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 	sh.load_v()
 	sh.load_c()
 	sh.set_lang('')
+	sh.load_default_style()
 }
 
 pub fn (mut sh SyntaxHighLighter) set_lang(ext string) {
@@ -81,6 +83,19 @@ fn (sh &SyntaxHighLighter) is_lang_loaded() bool {
 	return sh.lang != ''
 }
 
+// TODO: load with json or toml file
+fn (mut sh SyntaxHighLighter) load_default_style() {
+	sh.styles['default'] = {
+		'comment': gx.gray
+		'keyword': gx.blue
+		'control': gx.orange
+		'decl':    gx.red
+		'types':   gx.purple
+		'string':  gx.dark_green
+	}
+}
+
+// TODO: load syntax with json or toml file
 fn (mut sh SyntaxHighLighter) load_v() {
 	sh.keywords['v'] = {
 		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|byte|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
@@ -95,14 +110,6 @@ fn (mut sh SyntaxHighLighter) load_v() {
 	}
 	sh.multiline['v'] = {
 		'comment': [['/*', '*/']]
-	}
-	sh.langs['v'] = {
-		'comment': gx.gray
-		'keyword': gx.blue
-		'control': gx.orange
-		'decl':    gx.red
-		'types':   gx.purple
-		'string':  gx.dark_green
 	}
 	sh.between_one_rune['v'] = {
 		'string': [`'`, `"`, `\``]
@@ -126,14 +133,6 @@ fn (mut sh SyntaxHighLighter) load_c() {
 	}
 	sh.multiline['c'] = {
 		'comment': [['/*', '*/']]
-	}
-	sh.langs['c'] = {
-		'comment': gx.gray
-		'keyword': gx.blue
-		'control': gx.orange
-		'decl':    gx.red
-		'types':   gx.purple
-		'string':  gx.dark_green
 	}
 	sh.between_one_rune['c'] = {
 		'string': [`'`, `"`, `\``]
@@ -262,9 +261,9 @@ fn (mut sh SyntaxHighLighter) draw_chunks() {
 	}
 	// println("-".repeat(80))
 	tv := sh.tv
-	syntax := sh.langs[sh.lang]
-	for typ in syntax.keys() {
-		color := syntax[typ]
+	style := sh.styles[sh.style]
+	for typ in style.keys() {
+		color := style[typ]
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
 			// fix background
@@ -280,7 +279,7 @@ fn (mut sh SyntaxHighLighter) reset_chunks() {
 		return
 	}
 	sh.chunks = {}
-	for typ in sh.langs[sh.lang].keys() {
+	for typ in sh.styles[sh.style].keys() {
 		sh.chunks[typ] = []
 	}
 }
