@@ -3,7 +3,6 @@ module ui
 import gx
 import gg
 import sokol.sgl
-import math
 
 // ScrollView exists only when attached to Widget
 // Is it not a widget but attached to a widget.
@@ -41,7 +40,7 @@ enum ScrollViewActive {
 	xy
 }
 
-enum ScrollViewPart {
+pub enum ScrollViewPart {
 	view
 	btn_x
 	btn_y
@@ -480,7 +479,7 @@ pub fn (mut sv ScrollView) clip() {
 			height: sv.height * gg.dpi_scale()
 		}
 		psr := sv.parent_scissor_rect()
-		scissor_rect := intersection(sr, psr)
+		scissor_rect := intersection_rect(sr, psr)
 		sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
 			int(scissor_rect.height), true)
 		sv.scissor_rect = scissor_rect
@@ -691,14 +690,4 @@ pub fn (sv &ScrollView) coef_x() (int, f32) {
 pub fn (sv &ScrollView) coef_y() (int, f32) {
 	max_offset_y := (sv.adj_height - sv.height + 2 * ui.scrollbar_size)
 	return max_offset_y, f32(sv.sb_h - sv.btn_h) / f32(max_offset_y)
-}
-
-fn intersection(r1 gg.Rect, r2 gg.Rect) gg.Rect {
-	// top left and bottom right points
-	tl_x, tl_y := math.max(r1.x, r2.x), math.max(r1.y, r2.y)
-	br_x, br_y := math.min(r1.x + r1.width, r2.x + r2.width), math.min(r1.y + r1.height,
-		r2.y + r2.height)
-	// intersection
-	r := gg.Rect{f32(tl_x), f32(tl_y), f32(br_x - tl_x), f32(br_y - tl_y)}
-	return r
 }

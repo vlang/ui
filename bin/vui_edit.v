@@ -14,17 +14,40 @@ mut:
 	text           string
 	file           string
 	folder_to_open string
+	line_numbers   bool
 }
 
 fn main() {
 	mut app := &App{
 		window: 0
 	}
-	dir := os.args[1] or { os.real_path('.') }
+	// TODO: use a proper parser loop, or even better - the `flag` module
+	mut args := os.args#[1..]
+	mut hidden_files := false
+	if args.len > 0 {
+		hidden_files = (args[0] in ['-H', '--hidden-files'])
+	}
+	if hidden_files {
+		args = args#[1..]
+	}
+	app.line_numbers = true
+	if args.len > 0 {
+		if args[0] in ['-L', '--no-line-number'] {
+			app.line_numbers = false
+		}
+	}
+	if app.line_numbers {
+		args = args#[1..]
+	}
+	mut dirs := args.clone()
+	if dirs.len == 0 {
+		dirs = ['.']
+	}
+	dirs = dirs.map(os.real_path(it))
 	mut window := ui.window(
 		width: win_width
 		height: win_height
-		title: 'V UI TextEdit: $dir'
+		title: 'V UI Edit: ${dirs[0]}'
 		state: app
 		native_message: false
 		mode: .resizable
@@ -104,7 +127,8 @@ fn main() {
 							children: [
 								uic.dirtreeview(
 									id: 'dtv'
-									trees: [dir]
+									trees: dirs
+									hidden_files: hidden_files
 									on_click: treeview_onclick
 								),
 							]
@@ -143,6 +167,15 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	app.file = tv.full_title(selected)
 	app.text = os.read_file(app.file) or { '' }
 	app.window.set_title('V UI TextEdit: ${tv.titles[selected]}')
+	// reinit textbox scrollview
+	mut tb := tv.layout.ui.window.textbox('edit')
+	ui.scrollview_reset(mut tb)
+	tb.scrollview.set(0, .btn_y)
+	tb.read_only = tv.types[selected] == 'root'
+	if app.line_numbers {
+		tb.is_line_number = tv.types[selected] != 'root'
+	}
+	tb.tv.sh.set_lang(os.file_ext(app.file))
 }
 
 fn btn_new_click(a voidptr, b &ui.Button) {
