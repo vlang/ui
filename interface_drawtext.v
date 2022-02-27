@@ -355,5 +355,10 @@ pub fn (mut w Window) init_styles() {
 		w.add_font('fixed_italic', font_path_search('couri.ttf'))
 		w.add_font('fixed_bold_italic', font_path_search('courbi.ttf'))
 	}
-	// TODO: find a fixed font for linux
+	$if linux {
+		w.add_font('fixed', font_path_search('LiberationMono-Regular.ttf'))
+		w.add_font('fixed_bold', font_path_search('LiberationMono-Bold.ttf'))
+		w.add_font('fixed_italic', font_path_search('LiberationMono-Italic.ttf'))
+		w.add_font('fixed_bold_italic', font_path_search('LiberationMono-BoldItalic.ttf'))
+	}
 }
