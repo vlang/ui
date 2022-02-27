@@ -324,9 +324,9 @@ pub fn new_font_searcher() FontSearcher {
 
 pub fn (a FontSearcher) search(word string) string {
 	wl := word.to_lower()
-	for i, fp in a.paths {
-		fpl := a.lpaths[i]
+	for i, fpl in a.lpaths {
 		if fpl.contains(wl) {
+			fp := a.paths[i]
 			return fp
 		}
 	}
