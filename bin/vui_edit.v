@@ -169,8 +169,8 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
 	app.window.set_title('V UI TextEdit: ${tv.titles[selected]}')
 	// reinit textbox scrollview
 	mut tb := tv.layout.ui.window.textbox('edit')
-	ui.scrollview_reset(mut tb)
 	tb.scrollview.set(0, .btn_y)
+	ui.scrollview_reset(mut tb)
 	tb.read_only = tv.types[selected] == 'root'
 	if app.line_numbers {
 		tb.is_line_number = tv.types[selected] != 'root'
