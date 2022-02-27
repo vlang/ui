@@ -110,10 +110,10 @@ fn (mut sh SyntaxHighLighter) load_v() {
 		'decl':    '[,],{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
 			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
-			',$' + 'if,$' + 'else').split(',') 
+			',$' + 'if,$' + 'else').split(',')
 		'keyword': 'fn,module,import,interface,map,assert,sizeof,typeof,__offsetof'.split(',')
 		'symbols': '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
-		'numeric': '0,1,2,3,4,5,6,7,8,9,.'.split(",")
+		'numeric': '0,1,2,3,4,5,6,7,8,9,.'.split(',')
 	}
 	sh.singleline['v'] = {
 		'comment': ['//', '#']
@@ -136,7 +136,7 @@ fn (mut sh SyntaxHighLighter) load_c() {
 		'control': (
 			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
 			'|$' + 'if|$' + 'else').split('|')
-		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|') 
+		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|')
 	}
 	sh.singleline['c'] = {
 		'comment': ['//', '#']
@@ -303,9 +303,11 @@ fn is_whitespace(r byte) bool {
 }
 
 fn is_alpha_underscore(r int) bool {
-	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$` || byte(r) == `:` || byte(r) == `=` || byte(r) == `&` || byte(r) == `<` || byte(r) == `>` || byte(r) == `!`
+	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$` || byte(r) == `:`
+		|| byte(r) == `=` || byte(r) == `&` || byte(r) == `<` || byte(r) == `>` || byte(r) == `!`
 }
 
 fn is_alpha_and_symbols(r int) bool {
-	return is_alpha(byte(r)) || byte(r) in [`_`,`#`,`$`,`:`,`=`,`&`,`<`,`>`,`!`,`|`,`+`,`-`,`[`,`]`,`{`,`}`,`(`,`)`]
+	return is_alpha(byte(r))
+		|| byte(r) in [`_`, `#`, `$`, `:`, `=`, `&`, `<`, `>`, `!`, `|`, `+`, `-`, `[`, `]`, `{`, `}`, `(`, `)`]
 }

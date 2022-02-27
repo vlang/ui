@@ -344,16 +344,16 @@ pub fn (mut w Window) init_styles() {
 	// init default style
 	w.ui.add_style(id: '_default_')
 	$if macos {
-		w.ui.add_font('fixed', font_path_search('courier new.ttf'))
-		w.ui.add_font('fixed_bold', font_path_search('courier new bold.ttf'))
-		w.ui.add_font('fixed_italic', font_path_search('courier new italic.ttf'))
-		w.ui.add_font('fixed_bold_italic', font_path_search('courier new bold italic.ttf'))
+		w.add_font('fixed', font_path_search('courier new.ttf'))
+		w.add_font('fixed_bold', font_path_search('courier new bold.ttf'))
+		w.add_font('fixed_italic', font_path_search('courier new italic.ttf'))
+		w.add_font('fixed_bold_italic', font_path_search('courier new bold italic.ttf'))
 	}
 	$if windows {
-		w.ui.add_font('fixed', font_path_search('cour.ttf'))
-		w.ui.add_font('fixed_bold', font_path_search('courbd.ttf'))
-		w.ui.add_font('fixed_italic', font_path_search('couri.ttf'))
-		w.ui.add_font('fixed_bold_italic', font_path_search('courbi.ttf'))
+		w.add_font('fixed', font_path_search('cour.ttf'))
+		w.add_font('fixed_bold', font_path_search('courbd.ttf'))
+		w.add_font('fixed_italic', font_path_search('couri.ttf'))
+		w.add_font('fixed_bold_italic', font_path_search('courbi.ttf'))
 	}
-	// TODO: find a fixed font for linux 
+	// TODO: find a fixed font for linux
 }

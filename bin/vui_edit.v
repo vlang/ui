@@ -246,6 +246,4 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 // }
 
 fn init(win &ui.Window) {
-	// println(ui.font_path_search("courier new.ttf"))
-	// println(ui.font_path_search("courier new bold italic.ttf"))
 }
