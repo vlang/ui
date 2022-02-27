@@ -308,21 +308,72 @@ pub fn font_path_list() []string {
 	return font_paths
 }
 
+pub struct FontSearcher {
+	paths  []string
+	lpaths []string
+}
+
+pub fn new_font_searcher() FontSearcher {
+	paths := font_path_list()
+	lpaths := paths.map(it.to_lower())
+	return FontSearcher{
+		paths: paths
+		lpaths: lpaths
+	}
+}
+
+pub fn (a FontSearcher) search(word string) string {
+	wl := word.to_lower()
+	for i, fpl in a.lpaths {
+		if fpl.contains(wl) {
+			fp := a.paths[i]
+			return fp
+		}
+	}
+	return font_default()
+}
+
+pub fn font_default() string {
+	return font.default()
+}
+
 // font_path differs depending on os
 pub fn (mut w Window) add_font(id string, font_path string) {
 	$if windows {
 		if os.exists('C:/windows/fonts/$font_path') {
 			w.ui.add_font(id, 'C:/windows/fonts/$font_path')
+			return
 		}
 	} $else {
 		if os.exists(font_path) {
 			w.ui.add_font(id, font_path)
+			return
 		}
 	}
+	w.ui.add_font(id, font_default())
 }
 
 pub fn (mut w Window) init_styles() {
-	w.ui.add_font('system', font.default())
+	w.ui.add_font('system', font_default())
 	// init default style
 	w.ui.add_style(id: '_default_')
+	fs := new_font_searcher()
+	$if macos {
+		w.add_font('fixed', fs.search('courier new.ttf'))
+		w.add_font('fixed_bold', fs.search('courier new bold.ttf'))
+		w.add_font('fixed_italic', fs.search('courier new italic.ttf'))
+		w.add_font('fixed_bold_italic', fs.search('courier new bold italic.ttf'))
+	}
+	$if windows {
+		w.add_font('fixed', fs.search('cour.ttf'))
+		w.add_font('fixed_bold', fs.search('courbd.ttf'))
+		w.add_font('fixed_italic', fs.search('couri.ttf'))
+		w.add_font('fixed_bold_italic', fs.search('courbi.ttf'))
+	}
+	$if linux {
+		w.add_font('fixed', fs.search('LiberationMono-Regular.ttf'))
+		w.add_font('fixed_bold', fs.search('LiberationMono-Bold.ttf'))
+		w.add_font('fixed_italic', fs.search('LiberationMono-Italic.ttf'))
+		w.add_font('fixed_bold_italic', fs.search('LiberationMono-BoldItalic.ttf'))
+	}
 }
