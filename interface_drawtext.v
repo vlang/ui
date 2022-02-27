@@ -308,21 +308,45 @@ pub fn font_path_list() []string {
 	return font_paths
 }
 
+pub fn font_path_search(word string) string {
+	wl := word.to_lower()
+	for fp in font_path_list() {
+		fpl := fp.to_lower()
+		if fpl.contains(wl) {
+			return fp
+		}
+	}
+	return font_default()
+}
+
+pub fn font_default() string {
+	return font.default()
+}
+
 // font_path differs depending on os
 pub fn (mut w Window) add_font(id string, font_path string) {
 	$if windows {
 		if os.exists('C:/windows/fonts/$font_path') {
 			w.ui.add_font(id, 'C:/windows/fonts/$font_path')
+			return
 		}
 	} $else {
 		if os.exists(font_path) {
 			w.ui.add_font(id, font_path)
+			return
 		}
 	}
+	w.ui.add_font(id, font_default())
 }
 
 pub fn (mut w Window) init_styles() {
-	w.ui.add_font('system', font.default())
+	w.ui.add_font('system', font_default())
 	// init default style
 	w.ui.add_style(id: '_default_')
+	$if macos {
+		w.ui.add_font('fixed', font_path_search('courier new.ttf'))
+		w.ui.add_font('fixed_bold', font_path_search('courier new bold.ttf'))
+		w.ui.add_font('fixed_italic', font_path_search('courier new italic.ttf'))
+		w.ui.add_font('fixed_bold_italic', font_path_search('courier new bold italic.ttf'))
+	}
 }

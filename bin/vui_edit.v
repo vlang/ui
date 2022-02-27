@@ -51,7 +51,7 @@ fn main() {
 		state: app
 		native_message: false
 		mode: .resizable
-		// on_init: init
+		on_init: init
 		// on_char: on_char
 		children: [
 			ui.row(
@@ -245,5 +245,7 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 // 	}
 // }
 
-// fn init(win &ui.Window) {
-// }
+fn init(win &ui.Window) {
+	// println(ui.font_path_search("courier new.ttf"))
+	// println(ui.font_path_search("courier new bold italic.ttf"))
+}

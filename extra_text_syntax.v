@@ -8,7 +8,12 @@ struct Chunk {
 	text string
 }
 
-type SyntaxStyle = map[string]gx.Color
+struct SyntaxChunk {
+	color gx.Color
+	font  string
+}
+
+type SyntaxStyle = map[string]SyntaxChunk
 
 type SyntaxMapBool = map[string]bool
 
@@ -64,6 +69,7 @@ fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 	sh.load_c()
 	sh.set_lang('')
 	sh.load_default_style()
+	sh.tv.update_style(font_name: 'fixed', size: 18)
 }
 
 pub fn (mut sh SyntaxHighLighter) set_lang(ext string) {
@@ -86,12 +92,12 @@ fn (sh &SyntaxHighLighter) is_lang_loaded() bool {
 // TODO: load with json or toml file
 fn (mut sh SyntaxHighLighter) load_default_style() {
 	sh.styles['default'] = {
-		'comment': gx.gray
-		'keyword': gx.blue
-		'control': gx.orange
-		'decl':    gx.red
-		'types':   gx.purple
-		'string':  gx.dark_green
+		'comment': SyntaxChunk{gx.gray, 'fixed'}
+		'keyword': SyntaxChunk{gx.blue, 'fixed_bold'}
+		'control': SyntaxChunk{gx.orange, 'fixed_bold'}
+		'decl':    SyntaxChunk{gx.red, 'fixed_bold'}
+		'types':   SyntaxChunk{gx.purple, 'fixed_bold'}
+		'string':  SyntaxChunk{gx.dark_green, 'fixed_italic'}
 	}
 }
 
@@ -263,13 +269,13 @@ fn (mut sh SyntaxHighLighter) draw_chunks() {
 	tv := sh.tv
 	style := sh.styles[sh.style]
 	for typ in style.keys() {
-		color := style[typ]
+		color, font := style[typ].color, style[typ].font
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
 			// fix background
 			tv.tb.ui.gg.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text),
 				tv.line_height, tv.tb.bg_color)
-			tv.draw_styled_text(chunk.x, chunk.y, chunk.text, color: color)
+			tv.draw_styled_text(chunk.x, chunk.y, chunk.text, color: color, font_name: font)
 		}
 	}
 }
