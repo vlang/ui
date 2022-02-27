@@ -93,23 +93,27 @@ fn (sh &SyntaxHighLighter) is_lang_loaded() bool {
 fn (mut sh SyntaxHighLighter) load_default_style() {
 	sh.styles['default'] = {
 		'comment': SyntaxChunk{gx.gray, 'fixed'}
-		'keyword': SyntaxChunk{gx.blue, 'fixed_bold'}
+		'keyword': SyntaxChunk{gx.orange, 'fixed_bold'}
 		'control': SyntaxChunk{gx.orange, 'fixed_bold'}
-		'decl':    SyntaxChunk{gx.red, 'fixed_bold'}
+		'decl':    SyntaxChunk{gx.black, 'fixed_bold'}
 		'types':   SyntaxChunk{gx.purple, 'fixed_bold'}
-		'string':  SyntaxChunk{gx.dark_green, 'fixed_italic'}
+		'string':  SyntaxChunk{gx.dark_green, 'fixed_bold_italic'}
+		'symbols': SyntaxChunk{gx.red, 'fixed_bold'}
+		'numeric': SyntaxChunk{gx.blue, 'fixed_bold'}
 	}
 }
 
 // TODO: load syntax with json or toml file
 fn (mut sh SyntaxHighLighter) load_v() {
 	sh.keywords['v'] = {
-		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|byte|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
-		'decl':    'mut|pub|unsafe|default|module|import|const|interface'.split('|')
+		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,byte,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
+		'decl':    '[,],{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
-			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
-			'|$' + 'if|$' + 'else').split('|')
-		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|')
+			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
+			',$' + 'if,$' + 'else').split(',') 
+		'keyword': 'fn,module,import,interface,map,assert,sizeof,typeof,__offsetof'.split(',')
+		'symbols': '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
+		'numeric': '0,1,2,3,4,5,6,7,8,9,.'.split(",")
 	}
 	sh.singleline['v'] = {
 		'comment': ['//', '#']
@@ -132,7 +136,7 @@ fn (mut sh SyntaxHighLighter) load_c() {
 		'control': (
 			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
 			'|$' + 'if|$' + 'else').split('|')
-		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|')
+		'keyword': 'fn|type|enum|struct|union|interface|map|assert|sizeof|typeof|__offsetof'.split('|') 
 	}
 	sh.singleline['c'] = {
 		'comment': ['//', '#']
@@ -241,7 +245,7 @@ fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune)
 }
 
 fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ string) {
-	for sh.i < sh.ustr.len && is_alpha_underscore(int(sh.ustr[sh.i])) {
+	for sh.i < sh.ustr.len && is_alpha_and_symbols(int(sh.ustr[sh.i])) {
 		sh.i++
 	}
 	word := sh.ustr[sh.start..sh.i].string()
@@ -299,5 +303,9 @@ fn is_whitespace(r byte) bool {
 }
 
 fn is_alpha_underscore(r int) bool {
-	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$`
+	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$` || byte(r) == `:` || byte(r) == `=` || byte(r) == `&` || byte(r) == `<` || byte(r) == `>` || byte(r) == `!`
+}
+
+fn is_alpha_and_symbols(r int) bool {
+	return is_alpha(byte(r)) || byte(r) in [`_`,`#`,`$`,`:`,`=`,`&`,`<`,`>`,`!`,`|`,`+`,`-`,`[`,`]`,`{`,`}`,`(`,`)`]
 }
