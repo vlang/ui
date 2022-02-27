@@ -252,7 +252,7 @@ pub mut:
 	scissor_rect gg.Rect
 	parent       Layout
 	// delta mouse
-	delta_mouse int = 10
+	delta_mouse int = 50
 }
 
 fn (mut sv ScrollView) init(parent Layout) {

@@ -35,12 +35,12 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(text: 'Word wrap'),
-					ui.switcher(open: true, id: 'sw2', onclick: on_switch_click),
-					ui.switcher(open: true, id: 'sw3', onclick: on_switch_click),
+					ui.switcher(open: false, id: 'sw2', onclick: on_switch_click),
+					ui.switcher(open: false, id: 'sw3', onclick: on_switch_click),
 				]
 			),
 			ui.textbox(
-				mode: .multiline | .word_wrap
+				mode: .multiline
 				id: 'tb2m'
 				text: &app.tb2m
 				height: 200
@@ -48,7 +48,7 @@ fn main() {
 				bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
 			),
 			ui.textbox(
-				mode: .read_only | .multiline | .word_wrap
+				mode: .read_only | .multiline
 				id: 'tb3m'
 				text: &app.tb2m
 				height: 200
@@ -74,5 +74,5 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 }
 
 fn on_scroll_change(sw ui.ScrollableWidget) {
-	println('sw cb example: $sw.id has scrollview? $sw.has_scrollview with x: $sw.x and y: $sw.y')
+	// println('sw cb example: $sw.id has scrollview? $sw.has_scrollview with x: $sw.x and y: $sw.y')
 }

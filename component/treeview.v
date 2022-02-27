@@ -402,7 +402,7 @@ pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tre
 	mut files := os.ls(fpath) or { [] }
 	files.sort()
 	if !hidden_files {
-		files = files.filter(it[0..1] != '.')
+		files = files.filter(!it.starts_with('.'))
 	}
 	// println(fpath)
 	// println(files)
