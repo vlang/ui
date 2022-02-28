@@ -168,6 +168,7 @@ fn main() {
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
 		color: gx.red
+		height: 300
 		text_cfg: gx.TextCfg{
 			color: gx.blue
 			align: gx.align_left
@@ -180,6 +181,7 @@ fn main() {
 		title: 'V UI: Accordion'
 		state: app
 		native_message: false
+		mode: .resizable
 		children: [
 			uic.accordion(
 				id: 'demo'
@@ -187,6 +189,7 @@ fn main() {
 				titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
 				children: [rect, cr, rs, rg, cdd]
 				heights: [20.0, ui.compact]
+				scrollview: true
 			),
 		]
 	)

@@ -80,3 +80,13 @@ pub fn (w Widget) subwindow_parent() (bool, Layout) {
 	}
 	return false, Layout(empty_stack)
 }
+
+// used to detect active Stack and CanvasLayout with children (no result of canvas_plus more considered as a real widget)
+pub fn (w Widget) is_layout_with_children() bool {
+	if w is Layout {
+		l := w as Layout
+		return l.get_children().len > 0
+	} else {
+		return false
+	}
+}

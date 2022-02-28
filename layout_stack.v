@@ -5,9 +5,11 @@ module ui
 
 import eventbus
 import gx
+import gg
 
 pub const (
-	empty_stack = stack(id: '_empty_stack_')
+	empty_stack           = stack(id: '_empty_stack_')
+	scrollview_empty_rect = gg.Rect{}
 )
 
 enum Direction {
@@ -88,6 +90,9 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	scrollview_rect  gg.Rect
+	// debug stuff to be removed
+	debug_ids []string
 }
 
 [params]
@@ -146,6 +151,7 @@ fn stack(c StackParams) &Stack {
 	}
 	if c.scrollview {
 		scrollview_add(mut s)
+		// to restrict drawing to visible children
 	}
 	return s
 }
@@ -181,6 +187,8 @@ pub fn (mut s Stack) init(parent Layout) {
 	} else {
 		scrollview_delegate_parent_scrollview(mut s)
 	}
+	swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
+	println('$s.id stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} $swid ($parent.id)')
 }
 
 [manualfree]
@@ -749,6 +757,10 @@ fn (s &Stack) free_size() (int, int) {
 fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
+	// Comment/uncomment
+	$if adj_size ? {
+		s.debug_ids = ['demo_cvl_accordion']
+	}
 	for mut child in s.children {
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
 			mut child_width, mut child_height := 0, 0
@@ -760,8 +772,10 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					child.margin(.right), child.adj_height + child.margin(.top) +
 					child.margin(.bottom)
 				$if adj_size ? {
-					println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
-					println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (stack): child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+						println('                      child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+					}
 				} $else {
 				} // because of a bug mixing $if and else
 			} else if mut child is Group {
@@ -770,15 +784,29 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				}
 				child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 					child.adj_height + child.margin_top + child.margin_bottom
+				$if adj_size ? {
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (group): child($child.id) child_width = $child_width  child_height = $child_height)')
+					}
+				} $else {
+				} // because of a bug mixing $if and else
 			} else if mut child is CanvasLayout {
 				if force || child.adj_width == 0 {
 					child.set_adjusted_size(gui)
 				}
 				child_width, child_height = child.adj_width, child.adj_height
+				$if adj_size ? {
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (cvl): child($child.id) child_width = $child_width  child_height = $child_height)')
+					}
+				} $else {
+				} // because of a bug mixing $if and else
 			} else {
 				child_width, child_height = child.size()
 				$if adj_size ? {
-					println('Stack child size $child.type_name(): ($child_width, $child_height) ')
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (widget): child size $child.type_name(): ($child_width, $child_height) ')
+					}
 				}
 			}
 			if s.direction == .column {
@@ -794,6 +822,11 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 			}
 		}
 	}
+	$if adj_size ? {
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('adj_size ($s.id) (before spacing): ($w, $h)')
+		}
+	}
 	// adding total spacing between children
 	if s.direction == .column {
 		h += s.total_spacing()
@@ -803,7 +836,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	s.adj_width = w
 	s.adj_height = h
 	$if adj_size ? {
-		println('Stack($s.id) adj_size: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height) vs size: ($s.width, $s.height)')
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('adj_size ($s.id) end: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height)')
+		}
 	}
 }
 

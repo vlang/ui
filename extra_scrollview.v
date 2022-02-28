@@ -91,6 +91,10 @@ pub fn has_scrollview(w ScrollableWidget) bool {
 	return w.has_scrollview
 }
 
+pub fn has_scrollview_or_parent_scrollview(w ScrollableWidget) bool {
+	return w.scrollview != 0
+}
+
 pub fn scrollview_is_active(mut w ScrollableWidget) bool {
 	return w.has_scrollview && w.scrollview.is_active()
 }

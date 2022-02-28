@@ -31,6 +31,7 @@ pub struct AccordionParams {
 	text_size  int      = 24
 	bg_color   gx.Color = gx.white
 	heights    []f64    = [30.0, ui.compact]
+	scrollview bool
 }
 
 pub fn accordion(c AccordionParams) &ui.Stack {
@@ -47,6 +48,7 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		widths: [ui.stretch].repeat(c.children.len * 2)
 		heights: heights
 		bg_color: c.bg_color
+		scrollview: c.scrollview
 	)
 	mut acc := &Accordion{
 		layout: layout
@@ -103,7 +105,11 @@ fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	} else {
 		acc.deactivate(c.id)
 	}
-	c.ui.window.update_layout_without_pos()
+	// To update scrollview
+	acc.layout.update_layout_without_pos()
+	ui.scrollview_update(acc.layout)
+	// c.ui.window.update_layout_without_pos()
+	// ui.Layout(acc.layout).debug_show_children_tree(0)
 }
 
 fn (mut acc Accordion) activate(id string) {
