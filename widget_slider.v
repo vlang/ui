@@ -24,6 +24,7 @@ pub mut:
 	width                int // track height
 	thumb_width          int
 	thumb_height         int
+	slider_size          int // fixed size (width) of the slider
 	orientation          Orientation = Orientation.horizontal
 	x                    int
 	y                    int
@@ -53,6 +54,7 @@ pub struct SliderParams {
 	id                   string
 	width                int
 	height               int
+	slider_size          int = 10
 	z_index              int
 	min                  int
 	max                  int
@@ -71,6 +73,7 @@ pub fn slider(c SliderParams) &Slider {
 		id: c.id
 		height: c.height
 		width: c.width
+		slider_size: c.slider_size
 		min: c.min
 		max: c.max
 		val: c.val
@@ -85,13 +88,6 @@ pub fn slider(c SliderParams) &Slider {
 		entering: c.entering
 	}
 	s.set_thumb_size()
-	// if !c.thumb_in_track {
-	// 	s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
-	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
-	// } else {
-	// 	s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
-	// 	s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
-	// }
 
 	if s.min > s.max {
 		tmp := s.max
@@ -150,33 +146,6 @@ pub fn (s &Slider) free() {
 	}
 }
 
-fn (s &Slider) draw_thumb() {
-	axis := if s.orientation == .horizontal { s.x } else { s.y }
-	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
-	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
-	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
-	dim := if s.orientation == .horizontal { s.width } else { s.height }
-	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
-	if s.rev_min_max_pos {
-		pos = -pos + f32(dim)
-	}
-	pos += f32(axis)
-	if pos > axis + dim {
-		pos = f32(dim) + f32(axis)
-	}
-	if pos < axis {
-		pos = f32(axis)
-	}
-	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
-	if s.orientation == .horizontal {
-		s.ui.gg.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
-			s.thumb_height, ui.thumb_color)
-	} else {
-		s.ui.gg.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
-			s.thumb_height, ui.thumb_color)
-	}
-}
-
 pub fn (mut s Slider) set_pos(x int, y int) {
 	s.x = x
 	s.y = y
@@ -193,24 +162,20 @@ fn (mut s Slider) set_thumb_size() {
 }
 
 pub fn (mut s Slider) size() (int, int) {
-	// if s.orientation == .horizontal {
-	// 	return s.width, s.thumb_height
-	// } else {
-	// 	return s.thumb_width, s.height
-	// }
 	return s.width, s.height
 }
 
 pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
-	// TODO: fix
 	$if debug_slider ? {
 		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
 	}
-	// if s.orientation == .horizontal {
-	s.width = w
-	// } else {
-	s.height = h
-	// }
+	if s.orientation == .horizontal {
+		s.width = w
+		s.height = s.slider_size
+	} else {
+		s.height = h
+		s.width = s.slider_size
+	}
 	s.set_thumb_size()
 	return s.size()
 }
@@ -239,6 +204,33 @@ fn (mut s Slider) draw() {
 		debug_draw_bb_widget(mut s, s.ui)
 	}
 	offset_end(mut s)
+}
+
+fn (s &Slider) draw_thumb() {
+	axis := if s.orientation == .horizontal { s.x } else { s.y }
+	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
+	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
+	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
+	if s.rev_min_max_pos {
+		pos = -pos + f32(dim)
+	}
+	pos += f32(axis)
+	if pos > axis + dim {
+		pos = f32(dim) + f32(axis)
+	}
+	if pos < axis {
+		pos = f32(axis)
+	}
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
+	if s.orientation == .horizontal {
+		s.ui.gg.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
+			s.thumb_height, ui.thumb_color)
+	} else {
+		s.ui.gg.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
+			s.thumb_height, ui.thumb_color)
+	}
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
@@ -282,6 +274,56 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 
 fn (s &Slider) point_inside(x f64, y f64) bool {
 	return point_inside(s, x, y)
+}
+
+fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
+	sx, sy := s.x + s.offset_x, s.y + s.offset_y
+	axis := if s.orientation == .horizontal { sx } else { sy }
+	rev_axis := if s.orientation == .horizontal { sy } else { sx }
+	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
+	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
+	dim := if s.orientation == .horizontal { s.width } else { s.height }
+	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
+	if s.rev_min_max_pos {
+		pos = -pos + f32(dim)
+	}
+	pos += f32(axis)
+	if pos > axis + dim {
+		pos = f32(dim) + f32(axis)
+	}
+	if pos < axis {
+		pos = f32(axis)
+	}
+	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
+	$if android {
+		tol := 20.0
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2 - tol
+			t_y := middle - tol
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		} else {
+			t_x := middle - tol
+			t_y := pos - f32(s.thumb_height) / 2 - tol
+			// println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
+			// 	t_y + f32(s.thumb_height)}')
+			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
+				&& y <= t_y + f32(s.thumb_height) + tol * 2
+		}
+	} $else {
+		if s.orientation == .horizontal {
+			t_x := pos - f32(s.thumb_width) / 2
+			t_y := middle
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		} else {
+			t_x := middle
+			t_y := pos - f32(s.thumb_height) / 2
+			// println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
+			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
+				&& y <= t_y + f32(s.thumb_height)
+		}
+	}
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
@@ -376,54 +418,4 @@ fn (mut s Slider) focus() {
 
 fn (mut s Slider) unfocus() {
 	s.is_focused = false
-}
-
-fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
-	sx, sy := s.x + s.offset_x, s.y + s.offset_y
-	axis := if s.orientation == .horizontal { sx } else { sy }
-	rev_axis := if s.orientation == .horizontal { sy } else { sx }
-	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
-	rev_thumb_dim := if s.orientation == .horizontal { s.thumb_height } else { s.thumb_width }
-	dim := if s.orientation == .horizontal { s.width } else { s.height }
-	mut pos := f32(dim) * ((s.val - f32(s.min)) / f32(s.max - s.min))
-	if s.rev_min_max_pos {
-		pos = -pos + f32(dim)
-	}
-	pos += f32(axis)
-	if pos > axis + dim {
-		pos = f32(dim) + f32(axis)
-	}
-	if pos < axis {
-		pos = f32(axis)
-	}
-	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
-	$if android {
-		tol := 20.0
-		if s.orientation == .horizontal {
-			t_x := pos - f32(s.thumb_width) / 2 - tol
-			t_y := middle - tol
-			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
-				&& y <= t_y + f32(s.thumb_height) + tol * 2
-		} else {
-			t_x := middle - tol
-			t_y := pos - f32(s.thumb_height) / 2 - tol
-			// println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
-			// 	t_y + f32(s.thumb_height)}')
-			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
-				&& y <= t_y + f32(s.thumb_height) + tol * 2
-		}
-	} $else {
-		if s.orientation == .horizontal {
-			t_x := pos - f32(s.thumb_width) / 2
-			t_y := middle
-			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
-				&& y <= t_y + f32(s.thumb_height)
-		} else {
-			t_x := middle
-			t_y := pos - f32(s.thumb_height) / 2
-			// println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
-			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
-				&& y <= t_y + f32(s.thumb_height)
-		}
-	}
 }

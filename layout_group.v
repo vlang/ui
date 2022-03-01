@@ -66,7 +66,7 @@ fn (mut g Group) init(parent Layout) {
 	g.parent = parent
 	ui := parent.get_ui()
 	g.ui = ui
-	g.decode_size(parent)
+	g.decode_size()
 	for mut child in g.children {
 		child.init(g)
 	}
@@ -99,8 +99,8 @@ pub fn (g &Group) free() {
 	}
 }
 
-fn (mut g Group) decode_size(parent Layout) {
-	parent_width, parent_height := parent.size()
+fn (mut g Group) decode_size() {
+	parent_width, parent_height := g.parent.size()
 	// debug_show_sizes(mut s, "decode before -> ")
 	// if parent is Window {
 	// 	// Default: like stretch = strue
@@ -140,13 +140,6 @@ fn (mut g Group) calculate_child_positions() {
 			g.height = start_y - wid_h
 		}
 	}
-}
-
-fn (mut g Group) propose_size(w int, h int) (int, int) {
-	g.width = w
-	g.height = h
-	// println('g prop size: ($w, $h)')
-	return g.width, g.height
 }
 
 fn (mut g Group) draw() {
@@ -195,23 +188,8 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (g &Group) adj_size() (int, int) {
-	return g.adj_width, g.adj_height
-}
-
-fn (g &Group) size() (int, int) {
-	return g.width, g.height
-}
-
-fn (g &Group) get_children() []Widget {
-	return g.children
-}
-
-fn (g &Group) update_layout() {}
-
 fn (mut g Group) set_adjusted_size(i int, ui &UI) {
-	mut h := 0
-	mut w := 0
+	mut h, mut w := 0, 0
 	for mut child in g.children {
 		mut child_width, mut child_height := child.size()
 
@@ -227,7 +205,28 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	h += g.spacing * (g.children.len - 1)
 	g.adj_width = w
 	g.adj_height = h
-	$if adj_size ? {
+	$if adj_size_group ? {
 		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
 	}
 }
+
+fn (g &Group) adj_size() (int, int) {
+	return g.adj_width, g.adj_height
+}
+
+fn (mut g Group) propose_size(w int, h int) (int, int) {
+	g.width = w
+	g.height = h
+	// println('g prop size: ($w, $h)')
+	return g.width, g.height
+}
+
+fn (g &Group) size() (int, int) {
+	return g.width, g.height
+}
+
+fn (g &Group) get_children() []Widget {
+	return g.children
+}
+
+fn (g &Group) update_layout() {}

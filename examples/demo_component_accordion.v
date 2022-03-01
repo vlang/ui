@@ -40,6 +40,7 @@ fn main() {
 		window: 0
 	}
 	cr := ui.column(
+		id: 'col_radio'
 		widths: ui.stretch
 		margin_: 5
 		spacing: 10
@@ -90,6 +91,7 @@ fn main() {
 		]
 	)
 	cdd := ui.column(
+		id: 'col_dd'
 		margin_: 5
 		widths: ui.compact
 		children: [
@@ -117,6 +119,9 @@ fn main() {
 		]
 	)
 	rg := ui.row(
+		id: 'row_group'
+		margin_: 10
+		height: 200
 		spacing: 20
 		children: [
 			ui.group(
@@ -158,6 +163,8 @@ fn main() {
 		]
 	)
 	rs := ui.row(
+		id: 'row_slider'
+		height: 200
 		alignment: .center
 		widths: [.1, .9]
 		heights: [.9, .1]
@@ -168,7 +175,7 @@ fn main() {
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
 		color: gx.red
-		height: 300
+		height: 100
 		text_cfg: gx.TextCfg{
 			color: gx.blue
 			align: gx.align_left
