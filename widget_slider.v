@@ -153,11 +153,11 @@ pub fn (mut s Slider) set_pos(x int, y int) {
 
 fn (mut s Slider) set_thumb_size() {
 	if !s.thumb_in_track {
-		s.thumb_height = if s.orientation == .horizontal { s.height + 10 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width + 10 }
+		s.thumb_height = if s.orientation == .horizontal { s.slider_size + 10 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.slider_size + 10 }
 	} else {
-		s.thumb_height = if s.orientation == .horizontal { s.height - 3 } else { 10 }
-		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.width - 3 }
+		s.thumb_height = if s.orientation == .horizontal { s.slider_size - 3 } else { 10 }
+		s.thumb_width = if s.orientation == .horizontal { 10 } else { s.slider_size - 3 }
 	}
 }
 
@@ -169,13 +169,13 @@ pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	$if debug_slider ? {
 		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
 	}
-	if s.orientation == .horizontal {
-		s.width = w
-		s.height = s.slider_size
-	} else {
-		s.height = h
-		s.width = s.slider_size
-	}
+	// if s.orientation == .horizontal {
+	s.width = w
+	// s.height = s.slider_size
+	// } else {
+	s.height = h
+	// s.width = s.slider_size
+	// }
 	s.set_thumb_size()
 	return s.size()
 }
@@ -183,21 +183,26 @@ pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 fn (mut s Slider) draw() {
 	offset_start(mut s)
 	// Draw the track
-	s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.slider_background_color)
+	x, y, w, h := if s.orientation == .horizontal {
+		s.x, s.y + (s.height - s.slider_size) / 2, s.width, s.slider_size
+	} else {
+		s.x + (s.width - s.slider_size) / 2, s.y, s.slider_size, s.height
+	}
+
+	s.ui.gg.draw_rect_filled(x, y, w, h, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			s.ui.gg.draw_line(s.x + 2, s.y + s.height / 2, s.x + s.width - 4, s.y + s.height / 2,
-				gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
 		} else {
-			s.ui.gg.draw_line(s.x + s.width / 2, s.y + 2, s.x + s.width / 2, s.y + s.height - 4,
-				gx.rgb(0, 0, 0))
+			s.ui.gg.draw_line(x + w / 2, y + 2, x + w / 2, y + h - 4, gx.rgb(0, 0, 0))
 		}
 	}
-	if !s.is_focused {
-		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.slider_background_border_color)
+
+	s.ui.gg.draw_rect_empty(x, y, w, h, if s.is_focused {
+		ui.slider_focused_background_border_color
 	} else {
-		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.slider_focused_background_border_color)
-	}
+		ui.slider_background_border_color
+	})
 	// Draw the thumb
 	s.draw_thumb()
 	$if bb ? {

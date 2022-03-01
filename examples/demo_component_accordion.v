@@ -195,7 +195,7 @@ fn main() {
 				text_color: gx.blue
 				titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
 				children: [rect, cr, rs, rg, cdd]
-				heights: [20.0, ui.compact]
+				heights: [30.0, ui.compact]
 				scrollview: true
 			),
 		]
