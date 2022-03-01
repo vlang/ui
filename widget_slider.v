@@ -211,6 +211,7 @@ fn (mut s Slider) draw() {
 	offset_end(mut s)
 }
 
+// TODO to simplify (seems a bit too complex)
 fn (s &Slider) draw_thumb() {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }

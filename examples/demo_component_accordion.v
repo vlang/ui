@@ -173,7 +173,7 @@ fn main() {
 		children: [app.vert_slider, app.hor_slider]
 	)
 	rect := ui.rectangle(
-		text: 'Here a simple ui rectangle '
+		text: 'Here a simple ui rectangle'
 		color: gx.red
 		height: 100
 		text_cfg: gx.TextCfg{

@@ -187,8 +187,10 @@ pub fn (mut s Stack) init(parent Layout) {
 	} else {
 		scrollview_delegate_parent_scrollview(mut s)
 	}
-	swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
-	println('$s.id stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} $swid ($parent.id)')
+	$if sscroll ? {
+		swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
+		println('$s.id stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} $swid ($parent.id)')
+	}
 }
 
 [manualfree]
@@ -774,7 +776,7 @@ pub fn (s &Stack) adj_size() (int, int) {
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	$if sps ? {
-		s.debug_ids = ['row_slider']
+		s.debug_ids = ['row_slider', 'row_group']
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
 			println('propose_size $s.id : ($w, $h) from $s.parent.id')
 		}
