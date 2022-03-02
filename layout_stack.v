@@ -304,13 +304,6 @@ fn (mut s Stack) set_children_sizes() {
 		mut w, mut h := child.size()
 		if child is Stack || child is Group || child is CanvasLayout {
 			w, h = widths[i], heights[i]
-			sw, sh := s.adj_size()
-			if w == 0 {
-				w = sw
-			}
-			if h == 0 {
-				h = sh
-			}
 		} else {
 			if c.width_type[i] in [.fixed, .stretch, .weighted] {
 				w = widths[i]
@@ -1083,28 +1076,27 @@ fn (mut s Stack) draw() {
 			// if s.scrollview != 0 {
 			for i, mut child in s.drawing_children {
 				if is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
-					println('sdraw $s.id scrollview_rect $i) $child.type_name() $child.id clipped')
-					// println("$s.scrollview.scissor_rect ${child.bounds()}")
+					sr := s.scrollview.scissor_rect
+					cr := child.bounds()
+					println('sdraw $s.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
 				}
 			}
 		}
 	}
 	// if Layout(s).has_scrollview_or_parent_scrollview() {
-	// // if s.scrollview != 0 {
-	// 	for i, mut child in s.drawing_children {
-	// 		if is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
-	// 			println("sdraw $s.id scrollview_rect $i) $child.type_name() $child.id clipped")
-	// 			// println("$s.scrollview.scissor_rect ${child.bounds()}")
-	// 		} else {
-	// 			child.draw()
-	// 		}
-	// 	}
-	// } else {
-	for mut child in s.drawing_children {
-		// println("$child.type_name() $child.id")
-		child.draw()
+	if s.scrollview != 0 {
+		for mut child in s.drawing_children {
+			if mut child is Stack
+				|| !is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+				child.draw()
+			}
+		}
+	} else {
+		for mut child in s.drawing_children {
+			// println("$child.type_name() $child.id")
+			child.draw()
+		}
 	}
-	// }
 	scrollview_draw_end(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
