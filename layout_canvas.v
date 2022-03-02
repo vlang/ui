@@ -453,8 +453,31 @@ fn (mut c CanvasLayout) draw() {
 	if c.draw_fn != voidptr(0) {
 		c.draw_fn(c, state)
 	}
-	for mut child in c.drawing_children {
-		child.draw()
+	$if cdraw_scroll ? {
+		if Layout(c).has_scrollview_or_parent_scrollview() {
+			// if c.scrollview != 0 {
+			for i, mut child in c.drawing_children {
+				if child !is Layout
+					&& is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {
+					sr := c.scrollview.scissor_rect
+					cr := child.bounds()
+					println('cdraw $c.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
+				}
+			}
+		}
+	}
+	// if Layout(c).has_scrollview_or_parent_scrollview() {
+	if c.scrollview != 0 {
+		for mut child in c.drawing_children {
+			if mut child is Layout
+				|| !is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {
+				child.draw()
+			}
+		}
+	} else {
+		for mut child in c.drawing_children {
+			child.draw()
+		}
 	}
 
 	// scrollview_draw(c)
@@ -515,6 +538,7 @@ pub fn (c &CanvasLayout) draw_text_def(x int, y int, text string) {
 
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 	mut dtw := DrawTextWidget(c)
+	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
 	dtw.draw_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
@@ -609,6 +633,8 @@ pub fn (c &CanvasLayout) draw_arc_filled(x f32, y f32, inner_radius f32, thickne
 // ---- line
 
 pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color) {
+	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
+	// $y2 + $c.y + $c.offset_y")
 	c.ui.gg.draw_line(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
 		y2 + c.y + c.offset_y, color)
 }

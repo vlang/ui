@@ -1075,7 +1075,8 @@ fn (mut s Stack) draw() {
 		if Layout(s).has_scrollview_or_parent_scrollview() {
 			// if s.scrollview != 0 {
 			for i, mut child in s.drawing_children {
-				if is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+				if mut child !is Layout
+					&& is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
 					sr := s.scrollview.scissor_rect
 					cr := child.bounds()
 					println('sdraw $s.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
@@ -1083,10 +1084,10 @@ fn (mut s Stack) draw() {
 			}
 		}
 	}
-	// if Layout(s).has_scrollview_or_parent_scrollview() {
-	if s.scrollview != 0 {
+	if Layout(s).has_scrollview_or_parent_scrollview() {
+		// if s.scrollview != 0 {
 		for mut child in s.drawing_children {
-			if mut child is Stack
+			if mut child is Layout
 				|| !is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
 				child.draw()
 			}
