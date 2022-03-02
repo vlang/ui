@@ -79,7 +79,7 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 	return dd
 }
 
-fn (mut dd Dropdown) init(parent Layout) {
+pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
@@ -144,7 +144,7 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	return w, dd.dropdown_height
 }
 
-fn (mut dd Dropdown) draw() {
+pub fn (mut dd Dropdown) draw() {
 	offset_start(mut dd)
 	gg := dd.ui.gg
 	// draw the main dropdown

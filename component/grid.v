@@ -2,20 +2,41 @@ module component
 
 import ui
 
-type GridData = []bool | []int | []string
+pub struct Factor {
+	levels []string
+	values []int
+}
+
+type GridData = Factor | []bool | []int | []string
 
 [heap]
 struct Grid {
+mut:
+	id      string
 	layout  &ui.CanvasLayout // In fact a CanvasPlus since no children
-	widgets []GridColumn
+	vars    []GridVar
 	headers []string
+	widths  []int
+	heights []int
+	tb      &ui.TextBox  = 0
+	cb      &ui.CheckBox = 0
+	dd      map[string]&ui.Dropdown
+	// current
+	pos_x int
+	pos_y int
+	// selection
+	sel_x int = -1
+	sel_y int = -1
 	// To become a component of a parent component
 	component voidptr
 }
 
 [params]
 pub struct GridParams {
-	data map[string]GridData
+	id     string
+	vars   map[string]GridData
+	width  int = 100
+	height int = 30
 }
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
@@ -30,21 +51,73 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		on_char: grid_layout_char
 		full_size_fn: grid_layout_full_size
 	)
-	gl := &Grid{
+	mut dd := map[string]&ui.Dropdown{}
+	mut g := &Grid{
+		id: p.id
 		layout: layout
-		headers: p.data.keys()
+		headers: p.vars.keys()
+		tb: ui.textbox()
 	}
-	ui.component_connect(gl, layout)
+	ui.component_connect(g, layout)
+	// mut widgets := []GridVar{}
+	// check vars same length
+	mut n := -1
+	for name, var in p.vars {
+		match var {
+			[]bool {}
+			[]int {}
+			[]string {
+				if n < 0 {
+					n = var.len
+				} else {
+					if n != var.len {
+						panic('vars need to be of same length')
+					}
+				}
+				g.vars << grid_textbox(id: p.id + '_' + name, grid: g, var: var)
+				// ui.component_connect(g, var)
+			}
+			Factor {
+				if n < 0 {
+					n = var.values.len
+				} else {
+					if n != var.values.len {
+						panic('vars need to be of same length')
+					}
+				}
+				dd[name] = ui.dropdown(id: 'dd_' + p.id + '_' + name, texts: var.levels)
+				g.vars << grid_dropdown(id: p.id + '_' + name, grid: g, name: name, var: var)
+			}
+		}
+	}
+	g.widths = [p.width].repeat(p.vars.keys().len)
+	g.heights = [p.height].repeat(n)
+	g.dd = dd.clone()
+	// init component
+	layout.component_init = grid_init
 	return layout
 }
 
 // component access
-pub fn component_grid_layout(w ui.ComponentChild) &Grid {
+pub fn component_grid(w ui.ComponentChild) &Grid {
 	return &Grid(w.component)
 }
 
+fn grid_init(layout &ui.CanvasLayout) {
+	mut g := component_grid(layout)
+	g.tb.init(layout)
+	for _, mut dd in g.dd {
+		dd.init(layout)
+	}
+}
+
 fn grid_layout_draw(c &ui.CanvasLayout, app voidptr) {
-	gl := component_grid_layout(c)
+	mut g := component_grid(c)
+	g.pos_x = 0
+	for j, var in g.vars {
+		var.draw_var(j, mut g)
+		g.pos_x += g.widths[j]
+	}
 }
 
 fn grid_layout_click(e ui.MouseEvent, c &ui.CanvasLayout) {}
@@ -65,43 +138,107 @@ fn grid_layout_full_size(c &ui.CanvasLayout) (int, int) {
 	return 0, 0
 }
 
-interface GridColumn {
-	grid_layout &Grid
-	draw()
+interface GridVar {
+	id string
+	grid &Grid
+	draw_var(j int, mut g Grid)
+	// component voidptr
 }
 
-// TextBox GridColumn
+// TextBox GridVar
 [heap]
 struct GridTextBox {
-	grid_layout &Grid
+	grid &Grid
 mut:
-	tb   &ui.TextBox
-	data []string
+	id  string
+	var []string
 }
 
-pub fn grid_textbox() { //&GridTextBox {
+pub struct GridTextBoxParams {
+	id   string
+	grid &Grid
+	var  []string
 }
 
-// Dropdown GridColumn
+pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
+	return &GridTextBox{
+		grid: p.grid
+		var: p.var
+	}
+}
+
+fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
+	mut tb := g.tb
+	g.pos_y = 0
+	// println("dv $j $gtb.var.len")
+	for i in 0 .. gtb.var.len {
+		// println("$i) $g.pos_x, $g.pos_y")
+		tb.set_pos(g.pos_x, g.pos_y)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
+		tb.propose_size(g.widths[j], g.heights[i])
+		tb.read_only = i != g.sel_x || j != g.sel_y
+		tb.text = &gtb.var[i]
+		tb.draw()
+		g.pos_y += g.heights[i]
+	}
+}
+
+// Dropdown GridVar
 [heap]
-struct GridDropDown {
-	grid_layout &Grid
+struct GridDropdown {
+	grid &Grid
 mut:
-	dd   &ui.Dropdown
-	data []int
+	id   string
+	name string
+	var  Factor
+	// component voidptr
 }
 
-pub fn grid_dropdown() { // &GridDropDown {
+pub struct GridDropdownParams {
+	id   string
+	grid &Grid
+	name string
+	var  Factor
 }
 
-// CheckBox GridColumn
+pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
+	return &GridDropdown{
+		grid: p.grid
+		var: p.var
+		name: p.name
+	}
+}
+
+fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
+	mut dd := g.dd[gdd.name]
+	g.pos_y = 0
+	// println("ddd $j $gdd.var.values.len")
+	for i in 0 .. gdd.var.values.len {
+		// println("$i) $g.pos_x, $g.pos_y")
+		dd.set_pos(g.pos_x, g.pos_y)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
+		dd.propose_size(g.widths[j], g.heights[i])
+		dd.selected_index = gdd.var.values[i]
+		dd.open = false
+		dd.z_index = if i == g.sel_x && j == g.sel_y { 10 } else { 0 }
+		dd.draw()
+		g.pos_y += g.heights[i]
+	}
+}
+
+// CheckBox GridVar
 [heap]
 struct GridCheckBox {
-	grid_layout &Grid
+	grid &Grid
 mut:
-	cb   &ui.CheckBox
-	data []bool
+	id  string
+	cb  &ui.CheckBox
+	var []bool
+	// component voidptr
 }
 
 pub fn grid_checkbox() { //&GridCheckBox {
+}
+
+fn (gtb &GridCheckBox) draw_var(j int, mut g Grid) {
 }

@@ -23,8 +23,19 @@ fn main() {
 		state: app
 		native_message: false
 		mode: .resizable
+		bg_color: gx.white
 		children: [
-			uic.grid(),
+			uic.grid(
+				id: 'grid'
+				vars: {
+					'v1': ['toto', 'titi', 'tata']
+					'v2': ['toti', 'tito', 'tato']
+					'v3': uic.Factor{
+						levels: ['Male', 'Female']
+						values: [0, 0, 1]
+					}
+				}
+			),
 		]
 	)
 	app.window = window

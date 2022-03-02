@@ -193,7 +193,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 	return tb
 }
 
-fn (mut tb TextBox) init(parent Layout) {
+pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
@@ -320,7 +320,7 @@ fn (mut tb TextBox) update_line_height() {
 	tb.line_height = int(f64(text_height(tb, 'W')) * 1.5)
 }
 
-fn (mut tb TextBox) draw() {
+pub fn (mut tb TextBox) draw() {
 	offset_start(mut tb)
 	scrollview_draw_begin(mut tb)
 	// draw background
