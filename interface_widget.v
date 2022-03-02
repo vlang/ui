@@ -61,6 +61,12 @@ pub fn (mut w Widget) bounds() gg.Rect {
 	return gg.Rect{w.x, w.y, sw, sh}
 }
 
+pub fn (mut w Widget) scaled_bounds() gg.Rect {
+	sw, sh := w.size()
+	sc := gg.dpi_scale()
+	return gg.Rect{w.x * sc, w.y * sc, sw * sc, sh * sc}
+}
+
 // Is this a Widget from SubWindow? And if yes, return it too as a Layout
 pub fn (w Widget) subwindow_parent() (bool, Layout) {
 	mut p := w.parent

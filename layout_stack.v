@@ -90,7 +90,6 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
-	scrollview_rect  gg.Rect
 	// debug stuff to be removed
 	debug_ids []string
 }
@@ -174,7 +173,7 @@ pub fn (mut s Stack) init(parent Layout) {
 		ui.window = unsafe { parent }
 		mut window := unsafe { parent }
 		if s.is_root_layout {
-			window.root_layout = s //}
+			window.root_layout = s
 			window.update_layout() // i.e s.update_all_children_recursively(parent)
 		} else {
 			s.update_layout()
@@ -1074,19 +1073,38 @@ fn (mut s Stack) draw() {
 				s.bg_color)
 		}
 	}
-	// if scrollview_clip(mut s) {
-	// 	s.set_children_pos()
-	// 	s.scrollview.children_to_update = false
-	// }
 	scrollview_draw_begin(mut s)
 
 	$if bb ? {
 		debug_draw_bb_stack(s)
 	}
+	$if sdraw_scroll ? {
+		if Layout(s).has_scrollview_or_parent_scrollview() {
+			// if s.scrollview != 0 {
+			for i, mut child in s.drawing_children {
+				if is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+					println('sdraw $s.id scrollview_rect $i) $child.type_name() $child.id clipped')
+					// println("$s.scrollview.scissor_rect ${child.bounds()}")
+				}
+			}
+		}
+	}
+	// if Layout(s).has_scrollview_or_parent_scrollview() {
+	// // if s.scrollview != 0 {
+	// 	for i, mut child in s.drawing_children {
+	// 		if is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+	// 			println("sdraw $s.id scrollview_rect $i) $child.type_name() $child.id clipped")
+	// 			// println("$s.scrollview.scissor_rect ${child.bounds()}")
+	// 		} else {
+	// 			child.draw()
+	// 		}
+	// 	}
+	// } else {
 	for mut child in s.drawing_children {
 		// println("$child.type_name() $child.id")
 		child.draw()
 	}
+	// }
 	scrollview_draw_end(s)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
