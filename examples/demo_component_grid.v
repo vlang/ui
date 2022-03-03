@@ -28,11 +28,15 @@ fn main() {
 			uic.grid(
 				id: 'grid'
 				vars: {
-					'v1': ['toto', 'titi', 'tata']
-					'v2': ['toti', 'tito', 'tato']
-					'v3': uic.Factor{
+					'v1':  ['toto', 'titi', 'tata'].repeat(30)
+					'v2':  ['toti', 'tito', 'tato'].repeat(30)
+					'sex': uic.Factor{
 						levels: ['Male', 'Female']
-						values: [0, 0, 1]
+						values: [0, 0, 1].repeat(30)
+					}
+					'csp': uic.Factor{
+						levels: ['job1', 'job2', 'other']
+						values: [0, 1, 2].repeat(30)
 					}
 				}
 			),

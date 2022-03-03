@@ -34,6 +34,9 @@ type TextBoxChangeFn = fn (string, voidptr)
 
 type TextBoxEnterFn = fn (string, voidptr)
 
+// The two previous one can be changed with
+type TextBoxValidatedFn = fn (&TextBox, voidptr)
+
 [heap]
 pub struct TextBox {
 pub mut:
@@ -84,8 +87,10 @@ pub mut:
 	sel_direction      SelectionDirection
 	border_accentuated bool
 	is_error           &bool = voidptr(0)
-	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
-	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
+	on_change          TextBoxChangeFn    = TextBoxChangeFn(0)
+	on_enter           TextBoxEnterFn     = TextBoxEnterFn(0)
+	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
 	// related to text drawing
@@ -139,8 +144,11 @@ pub struct TextBoxParams {
 	on_key_down   TextBoxKeyDownFn
 	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
-	on_change          voidptr
-	on_enter           voidptr
+	on_change voidptr
+	on_enter  voidptr
+	// TODO replacement of signature later
+	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
@@ -168,6 +176,9 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// on_key_up: c.on_key_up
 		on_change: c.on_change
 		on_enter: c.on_enter
+		// TODO
+		on_changed: c.on_changed
+		on_entered: c.on_entered
 		border_accentuated: c.border_accentuated
 		ui: 0
 		text: c.text
@@ -407,8 +418,11 @@ pub fn (mut tb TextBox) draw() {
 					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
 				} else if skip_idx > 0 {
 					cursor_x += text_width(tb, text[skip_idx..])
-				} else if text_len > 0 {
+				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
+					if tb.cursor_pos > text.runes().len {
+						tb.cursor_pos = text.runes().len
+					}
 					left := text.runes()[..tb.cursor_pos].string()
 					cursor_x += text_width(tb, left)
 				}
@@ -497,8 +511,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		match e.key {
 			.enter {
 				if tb.on_enter != TextBoxEnterFn(0) {
-					println('tb_enter: <${*tb.text}>')
+					// println('tb_enter: <${*tb.text}>')
 					tb.on_enter(*tb.text, window.state)
+				}
+				if tb.on_entered != TextBoxValidatedFn(0) {
+					// println('tb_entered: <${*tb.text}>')
+					tb.on_entered(tb, window.state)
 				}
 			}
 			.backspace {
@@ -675,6 +693,10 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.insert(s)
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
+			}
+			// TODO: Future replacement of the previous one
+			if tb.on_changed != TextBoxValidatedFn(0) {
+				tb.on_changed(tb, window.state)
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {

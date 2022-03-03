@@ -282,12 +282,15 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
 	if dd.open {
 		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
+		$if dd_mm_hover ? {
+			println('dd hover $dd.hover_index int(($e.y - $dd.y - $dd.offset_y) / $dd.dropdown_height) - 1 ')
+		}
 	}
 }
 

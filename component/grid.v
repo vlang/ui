@@ -53,6 +53,7 @@ pub struct GridParams {
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
+		id: p.id + '_layout'
 		on_draw: grid_draw
 		on_click: grid_click
 		on_mouse_down: grid_mouse_down
@@ -69,7 +70,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		id: p.id
 		layout: layout
 		headers: p.vars.keys()
-		tb_string: ui.textbox()
+		tb_string: ui.textbox(id: 'tb_ro_' + p.id)
 	}
 	ui.component_connect(g, layout)
 	// mut widgets := []GridVar{}
@@ -90,11 +91,10 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 					n = var.len
 				} else {
 					if n != var.len {
-						panic('vars need to be of same length')
+						panic('All vars need to be of same length')
 					}
 				}
 				g.vars << grid_textbox(id: p.id + '_' + name, grid: g, var: var)
-				// ui.component_connect(g, var)
 			}
 			Factor {
 				g.types << .dd_factor
@@ -107,17 +107,25 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 				}
 				dd[name] = ui.dropdown(id: 'dd_ro_' + p.id + '_' + name, texts: var.levels)
 				g.vars << grid_dropdown(id: p.id + '_' + name, grid: g, name: name, var: var)
-				dd_sel := ui.dropdown(
+				mut dd_sel := ui.dropdown(
 					id: 'dd_sel_' + p.id + '_' + name
 					texts: var.levels
-					z_index: ui.z_index_hidden
 					on_selection_changed: grid_dd_changed
 				)
+				dd_sel.set_visible(false)
 				layout.children << dd_sel
 				ui.component_connect(g, dd_sel)
 			}
 		}
 	}
+	mut tb_sel := ui.textbox(
+		id: 'tb_sel_' + p.id
+		on_entered: grid_tb_entered
+	)
+	tb_sel.set_visible(false)
+	layout.children << tb_sel
+	ui.component_connect(g, tb_sel)
+
 	g.widths = [p.width].repeat(p.vars.keys().len)
 	g.heights = [p.height].repeat(n)
 	w, h := g.size()
@@ -148,21 +156,20 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	for j, var in g.vars {
 		var.draw_var(j, mut g)
 		g.pos_x += g.widths[j]
+		// println("draw $j")
 	}
+	// println("draw end")
 }
 
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
-	//
-	println('grid_click')
+	// println('grid_click')
 	mut g := component_grid(c)
 	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-	println('selected: $g.sel_i, $g.sel_j')
+	// println('selected: $g.sel_i, $g.sel_j')
 	g.show_selected()
-	println('${g.layout.get_children().map(it.id)}')
-	// selected := i == g.sel_y && j == g.sel_x
-	// dd.open = selected
-	// dd.is_focused = selected
-	// dd.z_index = if selected { 100 } else { 0 }
+	$if grid_click ? {
+		println('${g.layout.get_children().map(it.id)}')
+	}
 }
 
 fn grid_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {}
@@ -181,13 +188,32 @@ fn grid_full_size(c &ui.CanvasLayout) (int, int) {
 	return component_grid(c).size()
 }
 
-fn grid_dd_changed(a voidptr, dd &ui.Dropdown) {
-	println('$dd.id selection changed $dd.selected_index')
+fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
+	mut g := component_grid(tb)
+	mut gtb := g.vars[g.sel_j]
+	if mut gtb is GridTextBox {
+		gtb.var[g.sel_i] = (*tb.text).clone()
+		// println("gtb.var = ${gtb.var}")
+	}
+	unsafe {
+		*tb.text = ''
+	}
+	tb.set_visible(false)
+	tb.z_index = ui.z_index_hidden
+	g.layout.update_layout()
+	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
+}
+
+fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
+	// println('$dd.id selection changed $dd.selected_index')
 	mut g := component_grid(dd)
 	mut gdd := g.vars[g.sel_j]
 	if mut gdd is GridDropdown {
 		gdd.var.values[g.sel_i] = dd.selected_index
 	}
+	dd.set_visible(false)
+	dd.z_index = ui.z_index_hidden
+	g.layout.update_layout()
 }
 
 fn (g &Grid) size() (int, int) {
@@ -198,12 +224,31 @@ fn (mut g Grid) show_selected() {
 	// type
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
-		.tb_string {}
+		.tb_string {
+			id := 'tb_sel_' + g.id
+			// println('tb_sel $id selected')
+			mut tb := g.layout.ui.window.textbox(id)
+			tb.set_visible(true)
+			println('tb $tb.id')
+			tb.z_index = 1000
+			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
+			tb.set_pos(pos_x, pos_y)
+			tb.propose_size(g.widths[g.sel_j], g.heights[g.sel_i])
+			tb.focus()
+			gtb := g.vars[g.sel_j]
+			if gtb is GridTextBox {
+				unsafe {
+					*(tb.text) = gtb.var[g.sel_i]
+				}
+			}
+			tb.bg_color = gx.orange
+			g.layout.update_layout()
+		}
 		.dd_factor {
 			id := 'dd_sel_' + g.id + '_' + name
-			//
-			println('dd_Sel $id selected')
+			// println('dd_sel $id selected')
 			mut dd := g.layout.ui.window.dropdown(id)
+			dd.set_visible(true)
 			dd.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
 			dd.set_pos(pos_x, pos_y)
@@ -288,12 +333,16 @@ fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 	for i in 0 .. gtb.var.len {
 		// println("$i) $g.pos_x, $g.pos_y")
 		tb.set_pos(g.pos_x, g.pos_y)
-		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
+		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.heights[i])
 		tb.is_focused = false
 		tb.read_only = true
 		tb.set_visible(false)
-		tb.text = &gtb.var[i]
+		unsafe {
+			*tb.text = gtb.var[i].clone()
+		}
+		g.layout.update_layout()
+		// println("draw var tb $j: ${g.layout.get_children().map(it.id)}")
 		tb.draw()
 		g.pos_y += g.heights[i]
 	}
