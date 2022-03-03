@@ -213,9 +213,10 @@ pub fn (c &CanvasLayout) free() {
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
-	$if itp ? {
+	$if cl_click ? {
 		if c.point_inside(e.x, e.y) {
-			println('clc $c.id $c.z_index')
+			println('clc $c.id $c.z_index ($e.x, $e.y) ${c.point_inside(e.x, e.y)} ${c.ui.window.is_top_widget(c,
+				events.on_mouse_down)}')
 		}
 	}
 	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
@@ -223,7 +224,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 	c.is_focused = c.point_inside(e.x, e.y)
 	if c.is_focused && c.click_fn != voidptr(0) {
-		c.is_focused
+		// c.is_focused
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
@@ -231,6 +232,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			action: e.action
 			mods: e.mods
 		}
+		println('$c.id $e2.x $e2.y')
 		c.click_fn(e2, c)
 	}
 }
@@ -475,6 +477,9 @@ fn (mut c CanvasLayout) draw() {
 			}
 		}
 	} else {
+		$if cl_draw_children ? {
+			println('draw $c.id: ${c.drawing_children.map(it.id)}')
+		}
 		for mut child in c.drawing_children {
 			child.draw()
 		}

@@ -936,7 +936,7 @@ fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	tb.dragging = false
 }
 
-fn (mut tb TextBox) set_visible(state bool) {
+pub fn (mut tb TextBox) set_visible(state bool) {
 	tb.hidden = !state
 }
 
