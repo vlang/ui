@@ -26,22 +26,23 @@ fn main() {
 		bg_color: gx.white
 		children: [
 			ui.column(
-				scrollview: true
+				// scrollview: true
 				widths: ui.stretch
 				heights: ui.stretch
 				children: [
 					uic.grid(
 						id: 'grid'
+						scrollview: true
 						vars: {
-							'v1':  ['toto', 'titi', 'tata'].repeat(30)
-							'v2':  ['toti', 'tito', 'tato'].repeat(30)
+							'v1':  ['toto', 'titi', 'tata'].repeat(300)
+							'v2':  ['toti', 'tito', 'tato'].repeat(300)
 							'sex': uic.Factor{
 								levels: ['Male', 'Female']
-								values: [0, 0, 1].repeat(30)
+								values: [0, 0, 1].repeat(300)
 							}
 							'csp': uic.Factor{
 								levels: ['job1', 'job2', 'other']
-								values: [0, 1, 2].repeat(30)
+								values: [0, 1, 2].repeat(300)
 							}
 						}
 					),

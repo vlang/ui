@@ -558,6 +558,7 @@ pub fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 }
 
 fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
+	// println("sv srollview ${sv.point_inside(e.mouse_x, e.mouse_y, .view)}")
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
 		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
 		sw := sv.widget
