@@ -16,7 +16,7 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	n := 100
+	n := 100000
 	window := ui.window(
 		width: win_width
 		height: win_height
