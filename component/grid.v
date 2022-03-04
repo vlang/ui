@@ -30,6 +30,7 @@ mut:
 	widths    []int
 	heights   []int
 	nrow      int
+	ncol      int
 	tb_string &ui.TextBox  = 0
 	cb_bool   &ui.CheckBox = 0
 	dd_factor map[string]&ui.Dropdown
@@ -94,6 +95,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 	// mut widgets := []GridVar{}
 	// check vars same length
 	g.nrow = -1
+	g.ncol = p.vars.len
 	for name, var in p.vars {
 		match var {
 			[]bool {
@@ -167,12 +169,21 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
 	mut g := component_grid(c)
 	// g.visible_cells()
-	g.pos_x = g.rowbar_width
-	for j, var in g.vars {
-		var.draw_var(j, mut g)
+	g.pos_x = g.from_x + c.x + c.offset_x
+	// println("$g.rowbar_width == $g.pos_x")
+
+	for j in g.from_j .. g.to_j {
+		g.vars[j].draw_var(j, mut g)
 		g.pos_x += g.widths[j]
 		// println("draw $j")
 	}
+
+	// g.pos_x = g.rowbar_width
+	// for j, var in g.vars {
+	// 	var.draw_var(j, mut g)
+	// 	g.pos_x += g.widths[j]
+	// 	// println("draw $j")
+	// }
 	g.draw_rowbar()
 	g.draw_colbar()
 	ui.scrollview_update(c)
@@ -210,7 +221,7 @@ fn (mut g Grid) draw_rowbar() {
 	tb.read_only = true
 	tb.set_visible(false)
 	g.pos_x = g.layout.x + g.layout.offset_x
-	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
+	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	for i in g.from_i .. g.to_i {
 		tb.set_pos(0, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
@@ -319,7 +330,7 @@ fn (mut g Grid) show_selected() {
 			// println('tb_sel $id selected')
 			mut tb := g.layout.ui.window.textbox(id)
 			tb.set_visible(true)
-			println('tb $tb.id')
+			// println('tb $tb.id')
 			tb.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
 			g.layout.set_child_relative_pos(id, pos_x, pos_y)
@@ -335,8 +346,7 @@ fn (mut g Grid) show_selected() {
 		}
 		.dd_factor {
 			id := 'dd_sel_' + g.id + '_' + name
-			//
-			println('dd_sel $id selected $g.sel_i, $g.sel_j')
+			// println('dd_sel $id selected $g.sel_i, $g.sel_j')
 			mut dd := g.layout.ui.window.dropdown(id)
 			dd.set_visible(true)
 			dd.z_index = 1000
@@ -391,10 +401,10 @@ fn (mut g Grid) visible_cells() {
 	if g.layout.has_scrollview {
 		g.from_i, g.to_i, g.from_y = -1, -1, 0
 		mut cum := g.colbar_height // g.layout.x + g.layout.offset_x
-		for i, w in g.heights {
+		for i, h in g.heights {
 			if g.from_i < 0 && cum > g.layout.scrollview.offset_y {
 				g.from_i = i
-				g.from_y = cum - w
+				g.from_y = cum
 			}
 			if g.from_i >= 0 && g.to_i < 0 && cum > g.layout.scrollview.offset_y + g.layout.height {
 				g.to_i = i + 1
@@ -403,7 +413,7 @@ fn (mut g Grid) visible_cells() {
 				}
 				break
 			}
-			cum += w
+			cum += h
 		}
 		if g.to_i < 0 {
 			g.to_i = g.nrow
@@ -413,28 +423,29 @@ fn (mut g Grid) visible_cells() {
 	}
 	// println("vc $g.from_i, $g.to_i, $g.from_y")
 
-	// 	j1 = g.layout.scrollview.offset_y / tv.line_height
-	// 	if j1 < 0 {
-	// 		j1 = 0
-	// 	}
-	// }
-
-	// if tv.tb.has_scrollview {
-	// 	j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.line_height
-	// } else {
-	// 	j2 = tv.tb.height / tv.line_height
-	// }
-	// jmax := tv.tlv.lines.len - 1
-	// // println("j1 $j1 $jmax")
-	// if j1 > jmax {
-	// 	j1 = jmax
-	// }
-	// // println("j2 $j2 $jmax")
-	// if j2 > jmax {
-	// 	j2 = jmax
-	// }
-	// tv.tlv.from_j, tv.tlv.to_j = j1, j2
-	// tv.update_all_visible_lines()
+	if g.layout.has_scrollview {
+		g.from_j, g.to_j, g.from_x = -1, -1, 0
+		mut cum := g.rowbar_width
+		for j, w in g.widths {
+			if g.from_j < 0 && cum > g.layout.scrollview.offset_x {
+				g.from_j = j
+				g.from_x = cum
+			}
+			if g.from_j >= 0 && g.to_j < 0 && cum > g.layout.scrollview.offset_x + g.layout.width {
+				g.to_j = j + 1
+				if g.to_j > g.ncol {
+					g.to_j = g.ncol
+				}
+				break
+			}
+			cum += w
+		}
+		if g.to_j < 0 {
+			g.to_j = g.ncol
+		}
+	} else {
+		g.from_j, g.to_j, g.from_x = 0, g.ncol, 0
+	}
 }
 
 interface GridVar {
@@ -471,11 +482,11 @@ fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 	tb.is_focused = false
 	tb.read_only = true
 	tb.set_visible(false)
-	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
+	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("dv $j $gtb.var.len")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
-		tb.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
+		tb.set_pos(g.pos_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.heights[i])
 		unsafe {
@@ -517,11 +528,11 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
-	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
+	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("ddd $j $gdd.var.values.len")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
-		dd.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
+		dd.set_pos(g.pos_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
 		dd.propose_size(g.widths[j], g.heights[i])
 		dd.selected_index = gdd.var.values[i]
