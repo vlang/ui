@@ -104,7 +104,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 	}
 }
 
-fn (mut em EventMngr) sorted_receivers(evt_type string) {
+pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	mut sw := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if evt_mngr_sr ? {

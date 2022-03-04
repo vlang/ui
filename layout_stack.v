@@ -178,6 +178,8 @@ pub fn (mut s Stack) init(parent Layout) {
 		} else {
 			s.update_layout()
 		}
+	} else {
+		s.is_root_layout = false
 	}
 
 	if has_scrollview(s) {
@@ -1043,7 +1045,7 @@ pub fn (mut s Stack) set_drawing_children() {
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
-			s.z_index = child.z_index
+			s.z_index = child.z_index - 1
 		}
 	}
 	s.drawing_children = s.children.filter(!it.hidden && it.z_index > z_index_hidden)

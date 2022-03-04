@@ -46,9 +46,8 @@ mut:
 	pos_x int
 	pos_y int
 	// selection
-	sel_lock bool
-	sel_i    int = -1
-	sel_j    int = -1
+	sel_i int = -1
+	sel_j int = -1
 	// from
 	from_x int
 	from_y int
@@ -177,40 +176,45 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	g.draw_rowbar()
 	g.draw_colbar()
 	ui.scrollview_update(c)
-	c.ui.window.update_layout()
 	// println("draw end")
 }
 
 fn (mut g Grid) draw_colbar() {
 	mut tb := g.tb_colbar
+	tb.is_focused = false
+	tb.read_only = true
+	tb.set_visible(false)
 	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
 	g.pos_y = 0
 	for j, var in g.headers {
 		tb.set_pos(g.pos_x, 0)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.colbar_height)
-		tb.is_focused = false
-		tb.read_only = true
-		tb.set_visible(false)
 		unsafe {
 			*tb.text = var.clone()
 		}
 		tb.draw()
 		g.pos_x += g.widths[j]
 	}
+	tb.set_pos(0, 0)
+	tb.propose_size(g.rowbar_width, g.colbar_height)
+	unsafe {
+		*tb.text = ''
+	}
+	tb.draw()
 }
 
 fn (mut g Grid) draw_rowbar() {
 	mut tb := g.tb_rowbar
+	tb.is_focused = false
+	tb.read_only = true
+	tb.set_visible(false)
 	g.pos_x = g.layout.x + g.layout.offset_x
 	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
 	for i in g.from_i .. g.to_i {
 		tb.set_pos(0, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.rowbar_width, g.heights[i])
-		tb.is_focused = false
-		tb.read_only = true
-		tb.set_visible(false)
 		unsafe {
 			*tb.text = '${i + 1}'
 		}
@@ -232,14 +236,11 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	// println('grid_click')
 	mut g := component_grid(c)
-	if !g.sel_lock {
-		g.sel_lock = true
-		g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-		// println('selected: $g.sel_i, $g.sel_j')
-		g.show_selected()
-		$if grid_click ? {
-			println('${g.layout.get_children().map(it.id)}')
-		}
+	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
+	// println('selected: $g.sel_i, $g.sel_j')
+	g.show_selected()
+	$if grid_click ? {
+		println('${g.layout.get_children().map(it.id)}')
 	}
 }
 
@@ -278,7 +279,6 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	unsafe {
 		*tb.text = ''
 	}
-	g.sel_lock = false
 	tb.set_visible(false)
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
@@ -293,7 +293,6 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 		gdd.var.values[g.sel_i] = dd.selected_index
 		// println('$dd.id  selection changed: gdd.var($g.sel_j).values[$g.sel_i] = dd.selected_index $dd.selected_index')
 	}
-	g.sel_lock = false
 	dd.set_visible(false)
 	dd.z_index = ui.z_index_hidden
 	g.layout.update_layout()
@@ -336,13 +335,13 @@ fn (mut g Grid) show_selected() {
 		}
 		.dd_factor {
 			id := 'dd_sel_' + g.id + '_' + name
-			// println('dd_sel $id selected')
+			//
+			println('dd_sel $id selected $g.sel_i, $g.sel_j')
 			mut dd := g.layout.ui.window.dropdown(id)
 			dd.set_visible(true)
 			dd.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
 			g.layout.set_child_relative_pos(id, pos_x, pos_y)
-
 			dd.propose_size(g.widths[g.sel_j], g.heights[g.sel_i])
 			dd.focus()
 			gdd := g.vars[g.sel_j]
@@ -469,6 +468,9 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 
 fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 	mut tb := g.tb_string
+	tb.is_focused = false
+	tb.read_only = true
+	tb.set_visible(false)
 	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
 	// println("dv $j $gtb.var.len")
 	for i in g.from_i .. g.to_i {
@@ -476,9 +478,6 @@ fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 		tb.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.heights[i])
-		tb.is_focused = false
-		tb.read_only = true
-		tb.set_visible(false)
 		unsafe {
 			*tb.text = gtb.var[i].clone()
 		}
@@ -517,6 +516,7 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 
 fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
 	mut dd := g.dd_factor[gdd.name]
+	dd.set_visible(false)
 	g.pos_y = g.from_y + g.colbar_height + g.layout.y + g.layout.offset_y
 	// println("ddd $j $gdd.var.values.len")
 	for i in g.from_i .. g.to_i {
@@ -525,9 +525,6 @@ fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
 		dd.propose_size(g.widths[j], g.heights[i])
 		dd.selected_index = gdd.var.values[i]
-		// dd.is_focused = false
-		// dd.open = false
-		dd.set_visible(false)
 		dd.draw()
 		g.pos_y += g.heights[i]
 	}

@@ -220,7 +220,7 @@ fn (mut c CanvasLayout) init_size() {
 	if c.parent is SubWindow {
 		// println("$s.id init_size: $s.width, $s.height ${s.adj_size()}")
 		c.width, c.height = c.adj_size()
-	} else {
+	} else if c.parent is Window {
 		c.width, c.height = parent.size()
 	}
 	scrollview_update(c)
@@ -249,7 +249,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			action: e.action
 			mods: e.mods
 		}
-		println('$c.id $e2.x $e2.y')
+		// println('$c.id $e2.x $e2.y')
 		c.click_fn(e2, c)
 	}
 }
@@ -443,7 +443,7 @@ fn (mut c CanvasLayout) set_drawing_children() {
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > c.z_index {
-			c.z_index = child.z_index
+			c.z_index = child.z_index - 1
 		}
 	}
 	c.drawing_children = c.children.filter(!it.hidden)
