@@ -38,7 +38,7 @@ mut:
 	// selectors
 	selectors []ui.Widget
 	// sizes
-	rowbar_width  int = 60
+	rowbar_width  int = 80
 	colbar_height int = 30
 	// index for swap of rows
 	index []int
@@ -46,8 +46,9 @@ mut:
 	pos_x int
 	pos_y int
 	// selection
-	sel_i int = -1
-	sel_j int = -1
+	sel_lock bool
+	sel_i    int = -1
+	sel_j    int = -1
 	// from
 	from_x int
 	from_y int
@@ -173,8 +174,8 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 		g.pos_x += g.widths[j]
 		// println("draw $j")
 	}
-	g.draw_colbar()
 	g.draw_rowbar()
+	g.draw_colbar()
 	ui.scrollview_update(c)
 	c.ui.window.update_layout()
 	// println("draw end")
@@ -182,7 +183,7 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 
 fn (mut g Grid) draw_colbar() {
 	mut tb := g.tb_colbar
-	g.pos_x = g.rowbar_width
+	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
 	g.pos_y = 0
 	for j, var in g.headers {
 		tb.set_pos(g.pos_x, 0)
@@ -231,11 +232,14 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	// println('grid_click')
 	mut g := component_grid(c)
-	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-	// println('selected: $g.sel_i, $g.sel_j')
-	g.show_selected()
-	$if grid_click ? {
-		println('${g.layout.get_children().map(it.id)}')
+	if !g.sel_lock {
+		g.sel_lock = true
+		g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
+		// println('selected: $g.sel_i, $g.sel_j')
+		g.show_selected()
+		$if grid_click ? {
+			println('${g.layout.get_children().map(it.id)}')
+		}
 	}
 }
 
@@ -274,6 +278,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	unsafe {
 		*tb.text = ''
 	}
+	g.sel_lock = false
 	tb.set_visible(false)
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
@@ -281,12 +286,14 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 }
 
 fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
-	// println('$dd.id selection changed $dd.selected_index')
+	// println('$dd.id  selection changed $dd.selected_index')
 	mut g := component_grid(dd)
 	mut gdd := g.vars[g.sel_j]
 	if mut gdd is GridDropdown {
 		gdd.var.values[g.sel_i] = dd.selected_index
+		// println('$dd.id  selection changed: gdd.var($g.sel_j).values[$g.sel_i] = dd.selected_index $dd.selected_index')
 	}
+	g.sel_lock = false
 	dd.set_visible(false)
 	dd.z_index = ui.z_index_hidden
 	g.layout.update_layout()
