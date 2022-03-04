@@ -29,31 +29,49 @@ mut:
 	headers   []string
 	widths    []int
 	heights   []int
-	lb_header map[string]&ui.Label
+	nrow      int
 	tb_string &ui.TextBox  = 0
 	cb_bool   &ui.CheckBox = 0
 	dd_factor map[string]&ui.Dropdown
+	tb_colbar &ui.TextBox = 0
+	tb_rowbar &ui.TextBox = 0
+	// selectors
+	selectors []ui.Widget
+	// sizes
+	rowbar_width  int = 60
+	colbar_height int = 30
+	// index for swap of rows
+	index []int
 	// current
 	pos_x int
 	pos_y int
 	// selection
 	sel_i int = -1
 	sel_j int = -1
+	// from
+	from_x int
+	from_y int
+	from_i int
+	to_i   int
+	from_j int
+	to_j   int
 	// To become a component of a parent component
 	component voidptr
 }
 
 [params]
 pub struct GridParams {
-	id     string
-	vars   map[string]GridData
-	width  int = 100
-	height int = 30
+	id         string
+	vars       map[string]GridData
+	width      int = 100
+	height     int = 30
+	scrollview bool
 }
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: p.id + '_layout'
+		scrollview: p.scrollview
 		on_draw: grid_draw
 		on_click: grid_click
 		on_mouse_down: grid_mouse_down
@@ -63,9 +81,9 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		on_key_down: grid_key_down
 		on_char: grid_char
 		full_size_fn: grid_full_size
+		on_scroll_change: grid_scroll_change
 	)
 	mut dd := map[string]&ui.Dropdown{}
-	mut lb := map[string]&ui.Label{}
 	mut g := &Grid{
 		id: p.id
 		layout: layout
@@ -75,9 +93,8 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 	ui.component_connect(g, layout)
 	// mut widgets := []GridVar{}
 	// check vars same length
-	mut n := -1
+	g.nrow = -1
 	for name, var in p.vars {
-		lb[name] = ui.label(id: 'lb_' + p.id + '_' + name, text: name)
 		match var {
 			[]bool {
 				g.types << .cb_bool
@@ -87,24 +104,12 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 			}
 			[]string {
 				g.types << .tb_string
-				if n < 0 {
-					n = var.len
-				} else {
-					if n != var.len {
-						panic('All vars need to be of same length')
-					}
-				}
+				g.set_check_nrow(var.len)
 				g.vars << grid_textbox(id: p.id + '_' + name, grid: g, var: var)
 			}
 			Factor {
 				g.types << .dd_factor
-				if n < 0 {
-					n = var.values.len
-				} else {
-					if n != var.values.len {
-						panic('vars need to be of same length')
-					}
-				}
+				g.set_check_nrow(var.values.len)
 				dd[name] = ui.dropdown(id: 'dd_ro_' + p.id + '_' + name, texts: var.levels)
 				g.vars << grid_dropdown(id: p.id + '_' + name, grid: g, name: name, var: var)
 				mut dd_sel := ui.dropdown(
@@ -114,6 +119,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 				)
 				dd_sel.set_visible(false)
 				layout.children << dd_sel
+				g.selectors << dd_sel
 				ui.component_connect(g, dd_sel)
 			}
 		}
@@ -124,15 +130,18 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 	)
 	tb_sel.set_visible(false)
 	layout.children << tb_sel
+	g.selectors << tb_sel
 	ui.component_connect(g, tb_sel)
 
+	g.tb_colbar = ui.textbox(id: 'tb_colbar_' + p.id, bg_color: gx.light_blue, read_only: true)
+	g.tb_colbar.set_visible(false)
+
+	g.tb_rowbar = ui.textbox(id: 'tb_rowbar_' + p.id, bg_color: gx.light_gray, read_only: true)
+	g.tb_rowbar.set_visible(false)
+
 	g.widths = [p.width].repeat(p.vars.keys().len)
-	g.heights = [p.height].repeat(n)
-	w, h := g.size()
-	layout.propose_size(w, h)
+	g.heights = [p.height].repeat(g.nrow)
 	g.dd_factor = dd.clone()
-	g.lb_header = lb.clone()
-	// init component
 	layout.component_init = grid_init
 	return layout
 }
@@ -142,23 +151,80 @@ pub fn component_grid(w ui.ComponentChild) &Grid {
 	return &Grid(w.component)
 }
 
-fn grid_init(layout &ui.CanvasLayout) {
+fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := component_grid(layout)
 	g.tb_string.init(layout)
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
 	}
+	g.tb_colbar.init(layout)
+	g.tb_rowbar.init(layout)
+	g.visible_cells()
 }
 
 fn grid_draw(c &ui.CanvasLayout, app voidptr) {
+	// println("draw begin")
+	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
 	mut g := component_grid(c)
-	g.pos_x = 0
+	g.pos_x = g.rowbar_width
 	for j, var in g.vars {
 		var.draw_var(j, mut g)
 		g.pos_x += g.widths[j]
 		// println("draw $j")
 	}
+	g.draw_colbar()
+	g.draw_rowbar()
+	ui.scrollview_update(c)
+	c.ui.window.update_layout()
 	// println("draw end")
+}
+
+fn (mut g Grid) draw_colbar() {
+	mut tb := g.tb_colbar
+	g.pos_x = g.rowbar_width
+	g.pos_y = 0
+	for j, var in g.headers {
+		tb.set_pos(g.pos_x, 0)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
+		tb.propose_size(g.widths[j], g.colbar_height)
+		tb.is_focused = false
+		tb.read_only = true
+		tb.set_visible(false)
+		unsafe {
+			*tb.text = var.clone()
+		}
+		tb.draw()
+		g.pos_x += g.widths[j]
+	}
+}
+
+fn (mut g Grid) draw_rowbar() {
+	mut tb := g.tb_rowbar
+	g.pos_x = g.layout.x + g.layout.offset_x
+	g.pos_y = g.colbar_height + g.layout.y + g.layout.offset_y
+	for i in 0 .. g.nrow {
+		tb.set_pos(0, g.pos_y)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
+		tb.propose_size(g.rowbar_width, g.heights[i])
+		tb.is_focused = false
+		tb.read_only = true
+		tb.set_visible(false)
+		unsafe {
+			*tb.text = '${i + 1}'
+		}
+		tb.draw()
+		g.pos_y += g.heights[i]
+	}
+}
+
+fn (mut g Grid) set_check_nrow(var_len int) {
+	if g.nrow < 0 {
+		g.nrow = var_len
+	} else {
+		if g.nrow != var_len {
+			panic('All vars need to be of same length')
+		}
+	}
 }
 
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
@@ -184,8 +250,17 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {}
 
 fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {}
 
-fn grid_full_size(c &ui.CanvasLayout) (int, int) {
-	return component_grid(c).size()
+fn grid_full_size(mut c ui.CanvasLayout) (int, int) {
+	w, h := component_grid(c).size()
+	c.adj_width, c.adj_height = w, h
+	return w, h
+}
+
+fn grid_scroll_change(sw ui.ScrollableWidget) {
+	if sw is ui.CanvasLayout {
+		mut g := component_grid(sw)
+		g.visible_cells()
+	}
 }
 
 fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
@@ -217,10 +292,18 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 }
 
 fn (g &Grid) size() (int, int) {
-	return arrays.sum(g.widths) or { -1 }, arrays.sum(g.heights) or { -1 }
+	return (arrays.sum(g.widths) or { -1 }) + g.rowbar_width, (arrays.sum(g.heights) or { -1 }) +
+		g.colbar_height
 }
 
 fn (mut g Grid) show_selected() {
+	if g.sel_i < 0 || g.sel_j < 0 {
+		return
+	}
+	for mut sel in g.selectors {
+		sel.set_visible(false)
+		sel.set_depth(ui.z_index_hidden)
+	}
 	// type
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
@@ -232,7 +315,7 @@ fn (mut g Grid) show_selected() {
 			println('tb $tb.id')
 			tb.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
-			tb.set_pos(pos_x, pos_y)
+			g.layout.set_child_relative_pos(id, pos_x, pos_y)
 			tb.propose_size(g.widths[g.sel_j], g.heights[g.sel_i])
 			tb.focus()
 			gtb := g.vars[g.sel_j]
@@ -242,7 +325,6 @@ fn (mut g Grid) show_selected() {
 				}
 			}
 			tb.bg_color = gx.orange
-			g.layout.update_layout()
 		}
 		.dd_factor {
 			id := 'dd_sel_' + g.id + '_' + name
@@ -251,7 +333,8 @@ fn (mut g Grid) show_selected() {
 			dd.set_visible(true)
 			dd.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
-			dd.set_pos(pos_x, pos_y)
+			g.layout.set_child_relative_pos(id, pos_x, pos_y)
+
 			dd.propose_size(g.widths[g.sel_j], g.heights[g.sel_i])
 			dd.focus()
 			gdd := g.vars[g.sel_j]
@@ -259,26 +342,26 @@ fn (mut g Grid) show_selected() {
 				dd.selected_index = gdd.var.values[g.sel_i]
 			}
 			dd.bg_color = gx.orange
-			g.layout.update_layout()
 		}
 		else {}
 	}
+	g.layout.update_layout()
 }
 
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
-	mut cum := 0
+	mut cum := g.rowbar_width // g.layout.x + g.layout.offset_x
 	mut sel_i, mut sel_j := -1, -1
 	for j, w in g.widths {
 		cum += w
-		if x < cum {
+		if x > g.rowbar_width && x < cum {
 			sel_j = j
 			break
 		}
 	}
-	cum = 0
+	cum = g.colbar_height // g.layout.y + g.layout.offset_y
 	for i, h in g.heights {
 		cum += h
-		if y < cum {
+		if y > g.colbar_height && y < cum {
 			sel_i = i
 			break
 		}
@@ -287,7 +370,7 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 }
 
 fn (g &Grid) get_pos(i int, j int) (int, int) {
-	mut x, mut y := 0, 0
+	mut x, mut y := g.rowbar_width, g.colbar_height // g.layout.x + g.layout.offset_x, g.layout.y + g.layout.offset_y
 	for k in 0 .. i {
 		y += g.heights[k]
 	}
@@ -295,6 +378,49 @@ fn (g &Grid) get_pos(i int, j int) (int, int) {
 		x += g.widths[k]
 	}
 	return x, y
+}
+
+fn (mut g Grid) visible_cells() {
+	if g.layout.has_scrollview {
+		g.from_i, g.to_i, g.from_y = 0, 0, 0
+		mut cum := g.colbar_height // g.layout.x + g.layout.offset_x
+		for i, w in g.heights {
+			if g.from_i == 0 && cum > g.layout.scrollview.offset_y {
+				g.from_i = i
+				g.from_y = cum
+			}
+			if g.from_i > 0 && g.to_i == 0 && cum > g.layout.scrollview.offset_y + g.layout.height {
+				g.to_i = i + 1
+				break
+			}
+			cum += w
+		}
+	} else {
+		g.from_i, g.to_i, g.from_y = 0, g.nrow, 0
+	}
+
+	// 	j1 = g.layout.scrollview.offset_y / tv.line_height
+	// 	if j1 < 0 {
+	// 		j1 = 0
+	// 	}
+	// }
+
+	// if tv.tb.has_scrollview {
+	// 	j2 = (tv.tb.scrollview.offset_y + tv.tb.height) / tv.line_height
+	// } else {
+	// 	j2 = tv.tb.height / tv.line_height
+	// }
+	// jmax := tv.tlv.lines.len - 1
+	// // println("j1 $j1 $jmax")
+	// if j1 > jmax {
+	// 	j1 = jmax
+	// }
+	// // println("j2 $j2 $jmax")
+	// if j2 > jmax {
+	// 	j2 = jmax
+	// }
+	// tv.tlv.from_j, tv.tlv.to_j = j1, j2
+	// tv.update_all_visible_lines()
 }
 
 interface GridVar {
@@ -328,11 +454,11 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 
 fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 	mut tb := g.tb_string
-	g.pos_y = 0
+	g.pos_y = g.colbar_height + g.layout.y + g.layout.offset_y
 	// println("dv $j $gtb.var.len")
-	for i in 0 .. gtb.var.len {
+	for i in 0 .. g.nrow {
 		// println("$i) $g.pos_x, $g.pos_y")
-		tb.set_pos(g.pos_x, g.pos_y)
+		tb.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.heights[i])
 		tb.is_focused = false
@@ -341,7 +467,7 @@ fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
 		unsafe {
 			*tb.text = gtb.var[i].clone()
 		}
-		g.layout.update_layout()
+		// g.layout.update_layout()
 		// println("draw var tb $j: ${g.layout.get_children().map(it.id)}")
 		tb.draw()
 		g.pos_y += g.heights[i]
@@ -376,11 +502,11 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 
 fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
 	mut dd := g.dd_factor[gdd.name]
-	g.pos_y = 0
+	g.pos_y = g.colbar_height + g.layout.y + g.layout.offset_y
 	// println("ddd $j $gdd.var.values.len")
-	for i in 0 .. gdd.var.values.len {
+	for i in 0 .. g.nrow {
 		// println("$i) $g.pos_x, $g.pos_y")
-		dd.set_pos(g.pos_x, g.pos_y)
+		dd.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
 		dd.propose_size(g.widths[j], g.heights[i])
 		dd.selected_index = gdd.var.values[i]

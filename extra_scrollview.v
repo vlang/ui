@@ -99,6 +99,12 @@ pub fn scrollview_is_active(mut w ScrollableWidget) bool {
 	return w.has_scrollview && w.scrollview.is_active()
 }
 
+pub fn scrollview_need_update(mut w ScrollableWidget) {
+	if w.has_scrollview {
+		w.scrollview.children_to_update = true
+	}
+}
+
 pub fn scrollview_add<T>(mut w T) {
 	mut sv := &ScrollView{
 		parent: w.parent
