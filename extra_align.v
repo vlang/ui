@@ -3,6 +3,8 @@
 // that can be found in the LICENSE file.
 module ui
 
+import math
+
 pub enum VerticalAlignment {
 	top = 0
 	center
@@ -38,4 +40,12 @@ pub struct Alignments {
 	bottom       []int
 	left_bottom  []int
 	left         []int
+}
+
+fn get_align_offset(mut w Widget, aw f64, ah f64) (int, int) {
+	width, height := w.size()
+	parent_width, parent_height := w.parent.size()
+	dw := math.max(parent_width - width, 0.0)
+	dh := math.max(parent_height - height, 0.0)
+	return int(aw * dw), int(ah * dh)
 }

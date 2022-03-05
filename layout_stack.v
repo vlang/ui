@@ -954,58 +954,36 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	$if scp ? {
 		println('set_child_pos: $i) ${typeof(s).name}-$child.type_name()')
 	}
-
-	child_width, child_height := child.size()
-
-	if s.direction == .column {
-		container_width := s.width
-		mut x_offset := 0
-		match s.get_horizontal_alignment(i) {
-			.left {
-				x_offset = 0
-			}
-			.center {
-				if container_width > child_width {
-					x_offset = (container_width - child_width) / 2
-				} else {
-					x_offset = 0
-				}
-			}
-			.right {
-				if container_width > child_width {
-					x_offset = (container_width - child_width)
-				} else {
-					x_offset = 0
-				}
-			}
+	mut aw, mut ah := 0.0, 0.0
+	aw = match s.get_horizontal_alignment(i) {
+		.left {
+			0.0
 		}
-		child.set_pos(x + x_offset, y)
+		.center {
+			0.5
+		}
+		.right {
+			1.0
+		}
+	}
+	ah = match s.get_vertical_alignment(i) {
+		.top {
+			0.0
+		}
+		.center {
+			0.5
+		}
+		.bottom {
+			1.0
+		}
+	}
+	offset_x, offset_y := get_align_offset(mut child, aw, ah)
+
+	if mut child is AdjustableWidget {
+		mut w := child as AdjustableWidget
+		w.set_adjusted_pos(x + offset_x, y + offset_y)
 	} else {
-		container_height := s.height
-		mut y_offset := 0
-		match s.get_vertical_alignment(i) {
-			.top {
-				y_offset = 0
-			}
-			.center {
-				if container_height > child_height {
-					y_offset = (container_height - child_height) / 2
-				} else {
-					y_offset = 0
-				}
-			}
-			.bottom {
-				if container_height > child_height {
-					y_offset = container_height - child_height
-				} else {
-					y_offset = 0
-				}
-			}
-		}
-		$if scp ? {
-			println(' set_pos ($x,$y + $y_offset)')
-		}
-		child.set_pos(x, y + y_offset)
+		child.set_pos(x + offset_x, y + offset_y)
 	}
 }
 
@@ -1234,55 +1212,55 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 	return align
 }
 
-fn (s &Stack) set_child_pos_aligned(mut child Widget, i int, x int, y int) {
-	child_width, child_height := child.size()
-	horizontal_alignment, vertical_alignment := s.get_alignments(i)
-	// set x_offset
-	container_width := s.width
-	mut x_offset := 0
-	match horizontal_alignment {
-		.left {
-			x_offset = 0
-		}
-		.center {
-			if container_width > child_width {
-				x_offset = (container_width - child_width) / 2
-			} else {
-				x_offset = 0
-			}
-		}
-		.right {
-			if container_width > child_width {
-				x_offset = (container_width - child_width)
-			} else {
-				x_offset = 0
-			}
-		}
-	}
-	// set y_offset
-	container_height := s.height
-	mut y_offset := 0
-	match vertical_alignment {
-		.top {
-			y_offset = 0
-		}
-		.center {
-			if container_height > child_height {
-				y_offset = (container_height - child_height) / 2
-			} else {
-				y_offset = 0
-			}
-		}
-		.bottom {
-			if container_height > child_height {
-				y_offset = container_height - child_height
-			} else {
-				y_offset = 0
-			}
-		}
-	}
-	child.set_pos(x + x_offset, y + y_offset)
-}
+// fn (s &Stack) set_child_pos_aligned(mut child Widget, i int, x int, y int) {
+// 	child_width, child_height := child.size()
+// 	horizontal_alignment, vertical_alignment := s.get_alignments(i)
+// 	// set x_offset
+// 	container_width := s.width
+// 	mut x_offset := 0
+// 	match horizontal_alignment {
+// 		.left {
+// 			x_offset = 0
+// 		}
+// 		.center {
+// 			if container_width > child_width {
+// 				x_offset = (container_width - child_width) / 2
+// 			} else {
+// 				x_offset = 0
+// 			}
+// 		}
+// 		.right {
+// 			if container_width > child_width {
+// 				x_offset = (container_width - child_width)
+// 			} else {
+// 				x_offset = 0
+// 			}
+// 		}
+// 	}
+// 	// set y_offset
+// 	container_height := s.height
+// 	mut y_offset := 0
+// 	match vertical_alignment {
+// 		.top {
+// 			y_offset = 0
+// 		}
+// 		.center {
+// 			if container_height > child_height {
+// 				y_offset = (container_height - child_height) / 2
+// 			} else {
+// 				y_offset = 0
+// 			}
+// 		}
+// 		.bottom {
+// 			if container_height > child_height {
+// 				y_offset = container_height - child_height
+// 			} else {
+// 				y_offset = 0
+// 			}
+// 		}
+// 	}
+// 	child.set_pos(x + x_offset, y + y_offset)
+// }
 
 fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
 	mut hor_align := s.horizontal_alignment

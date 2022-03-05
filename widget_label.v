@@ -20,6 +20,7 @@ pub mut:
 	z_index    int
 	adj_width  int
 	adj_height int
+	justify    []f64
 	ui         &UI
 	// text styles
 	text_styles TextStyles
@@ -36,6 +37,7 @@ pub struct LabelParams {
 	width     int
 	height    int
 	z_index   int
+	justify   []f64 = [0.0, 0.0]
 	text      string
 	text_cfg  gx.TextCfg
 	text_size f64
@@ -51,6 +53,7 @@ pub fn label(c LabelParams) &Label {
 		z_index: c.z_index
 		text_size: c.text_size
 		text_cfg: c.text_cfg
+		justify: c.justify
 	}
 	return lbl
 }
@@ -102,10 +105,22 @@ fn (mut l Label) set_pos(x int, y int) {
 
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
-		// println("size $l.text")
-		w, h := text_size(l, l.text)
+		dtw := DrawTextWidget(l)
+		mut w, mut h := 0, 0
+		if l.text.contains('\n') {
+			w, h = dtw.text_size(l.text)
+		} else {
+			for line in l.text.split('\n') {
+				wi, he := dtw.text_size(line)
+				if wi > w {
+					w = wi
+				}
+				h += he
+			}
+		}
+
 		// println("label size: $w, $h ${l.text.split('\n').len}")
-		l.adj_width, l.adj_height = w, h * l.text.split('\n').len
+		l.adj_width, l.adj_height = w, h
 	}
 	return l.adj_width, l.adj_height
 }
