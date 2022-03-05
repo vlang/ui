@@ -382,10 +382,10 @@ pub fn (mut tb TextBox) draw() {
 						continue
 					}
 					// TODO: To fix since it fails when resizing to thin window
-					// if tb.ui.gg.text_width(text[i..]) > tb.width {
-					// 	skip_idx = i + 3
-					// 	break
-					// }
+					if tb.ui.gg.text_width(text[i..]) > tb.width {
+						skip_idx = i + 3
+						break
+					}
 				}
 				$if nodtw ? {
 					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])

@@ -1057,11 +1057,14 @@ fn (tv &TextView) load_style() {
 // that's weird text_width is not additive function
 pub fn (tv &TextView) test_textwidth(text string) {
 	ustr := text.runes()
-	mut width := 0.0
+	mut width, mut width_bad := 0.0, 0.0
+	println('(text_width_additive vs text_width)')
 	for i in 0 .. ustr.len {
 		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i..(i + 1)].string())
 		width += tmp
+		tmp_bad := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
+		width_bad += tmp_bad
 		tmp2, _ := tv.text_size(ustr[..i + 1].string())
-		println('$i) ${ustr[i..(i + 1)].string()} ($tmp) ${ustr[..i + 1].string()} ${width + 1.0} == $tmp2')
+		println('${ustr[..i + 1].string()} -> $i) ${ustr[i..(i + 1)].string()}  ($tmp vs $tmp_bad)  ($width == $tmp2 vs $width_bad == $tmp2)')
 	}
 }
