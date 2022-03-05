@@ -184,6 +184,11 @@ fn point_inside<T>(w &T, x f64, y f64) bool {
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
 }
 
+fn point_inside_adj<T>(w &T, x f64, y f64) bool {
+	wx, wy := w.x + w.offset_x, w.y + w.offset_y
+	return x >= wx && x <= wx + w.adj_width && y >= wy && y <= wy + w.adj_height
+}
+
 // h, s, l in [0,1]
 pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
 	c := v * s

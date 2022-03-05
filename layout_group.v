@@ -32,6 +32,8 @@ pub mut:
 	hidden        bool
 	// component state for composable widget
 	component voidptr
+	// debug stuff to be removed
+	debug_ids []string
 }
 
 [params]
@@ -66,7 +68,7 @@ fn (mut g Group) init(parent Layout) {
 	g.parent = parent
 	ui := parent.get_ui()
 	g.ui = ui
-	g.decode_size(parent)
+	g.decode_size()
 	for mut child in g.children {
 		child.init(g)
 	}
@@ -99,23 +101,13 @@ pub fn (g &Group) free() {
 	}
 }
 
-fn (mut g Group) decode_size(parent Layout) {
-	parent_width, parent_height := parent.size()
-	// debug_show_sizes(mut s, "decode before -> ")
-	// if parent is Window {
-	// 	// Default: like stretch = strue
-	// 	s.height = parent_height - s.margin.top - s.margin.right
-	// 	s.width = parent_width - s.margin.left - s.margin.right
-	// } else
-	// if g.stretch {
-	// 	g.height = parent_height - g.margin_top - g.margin_right
-	// 	g.width = parent_width - g.margin_left - g.margin_right
-	// } else {
+fn (mut g Group) decode_size() {
+	parent_width, parent_height := g.parent.size()
 	// Relative sizes
 	g.width = relative_size_from_parent(g.width, parent_width)
 	g.height = relative_size_from_parent(g.height, parent_height)
 	// }
-	println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
+	// println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
 	// debug_show_size(s, "decode after -> ")
 }
 
@@ -126,32 +118,34 @@ fn (mut g Group) set_pos(x int, y int) {
 }
 
 fn (mut g Group) calculate_child_positions() {
+	$if gccp ? {
+		if g.debug_ids.len == 0 || g.id in g.debug_ids {
+			println('group ccp $g.id size: ($g.width, $g.height)')
+		}
+	}
 	mut widgets := g.children
 	mut start_x := g.x + g.margin_left
 	mut start_y := g.y + g.margin_top
 	for mut widget in widgets {
-		mut wid_w, wid_h := widget.size()
+		_, wid_h := widget.size()
 		widget.set_pos(start_x, start_y)
 		start_y = start_y + wid_h + g.spacing
-		if wid_w > g.width - g.margin_left - g.margin_right {
-			g.width = wid_w + g.margin_left + g.margin_right
-		}
-		if start_y + g.margin_bottom > g.height {
-			g.height = start_y - wid_h
+	}
+	$if gccp ? {
+		if g.debug_ids.len == 0 || g.id in g.debug_ids {
+			println('group ccp2 $g.id size: ($g.width, $g.height)')
 		}
 	}
-}
-
-fn (mut g Group) propose_size(w int, h int) (int, int) {
-	g.width = w
-	g.height = h
-	println('g prop size: ($w, $h)')
-	return g.width, g.height
 }
 
 fn (mut g Group) draw() {
 	offset_start(mut g)
 	// Border
+	$if gdraw ? {
+		if g.debug_ids.len == 0 || g.id in g.debug_ids {
+			println('group $g.id size: ($g.width, $g.height)')
+		}
+	}
 	g.ui.gg.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.gg.text_width(title)
@@ -195,23 +189,8 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (g &Group) adj_size() (int, int) {
-	return g.adj_width, g.adj_height
-}
-
-fn (g &Group) size() (int, int) {
-	return g.width, g.height
-}
-
-fn (g &Group) get_children() []Widget {
-	return g.children
-}
-
-fn (g &Group) update_layout() {}
-
 fn (mut g Group) set_adjusted_size(i int, ui &UI) {
-	mut h := 0
-	mut w := 0
+	mut h, mut w := 0, 0
 	for mut child in g.children {
 		mut child_width, mut child_height := child.size()
 
@@ -227,7 +206,33 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	h += g.spacing * (g.children.len - 1)
 	g.adj_width = w
 	g.adj_height = h
-	$if adj_size ? {
+	$if adj_size_group ? {
 		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
 	}
 }
+
+fn (g &Group) adj_size() (int, int) {
+	return g.adj_width, g.adj_height
+}
+
+fn (mut g Group) propose_size(w int, h int) (int, int) {
+	g.width = w
+	g.height = h
+	// println('g prop size: ($w, $h)')
+	$if gps ? {
+		if g.debug_ids.len == 0 || g.id in g.debug_ids {
+			println('group $g.id propose size: ($g.width, $g.height)')
+		}
+	}
+	return g.width, g.height
+}
+
+fn (g &Group) size() (int, int) {
+	return g.width, g.height
+}
+
+fn (g &Group) get_children() []Widget {
+	return g.children
+}
+
+fn (g &Group) update_layout() {}

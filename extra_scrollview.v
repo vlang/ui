@@ -91,8 +91,18 @@ pub fn has_scrollview(w ScrollableWidget) bool {
 	return w.has_scrollview
 }
 
+pub fn has_scrollview_or_parent_scrollview(w ScrollableWidget) bool {
+	return w.scrollview != 0
+}
+
 pub fn scrollview_is_active(mut w ScrollableWidget) bool {
 	return w.has_scrollview && w.scrollview.is_active()
+}
+
+pub fn scrollview_need_update(mut w ScrollableWidget) {
+	if w.has_scrollview {
+		w.scrollview.children_to_update = true
+	}
 }
 
 pub fn scrollview_add<T>(mut w T) {
@@ -548,6 +558,7 @@ pub fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 }
 
 fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
+	// println("sv srollview ${sv.point_inside(e.mouse_x, e.mouse_y, .view)}")
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
 		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
 		sw := sv.widget

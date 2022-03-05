@@ -195,6 +195,24 @@ pub fn (layout Layout) set_focus_last() bool {
 	return doit
 }
 
+pub fn (l Layout) has_scrollview() bool {
+	if l is ScrollableWidget {
+		sw := l as ScrollableWidget
+		return has_scrollview(sw)
+	} else {
+		return false
+	}
+}
+
+pub fn (l Layout) has_scrollview_or_parent_scrollview() bool {
+	if l is ScrollableWidget {
+		sw := l as ScrollableWidget
+		return has_scrollview_or_parent_scrollview(sw)
+	} else {
+		return false
+	}
+}
+
 // Debug function to explore the tree of children
 pub fn (l Layout) debug_show_children_tree(level int) {
 	if level == 0 {

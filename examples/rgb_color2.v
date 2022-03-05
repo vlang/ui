@@ -2,7 +2,7 @@ import ui
 import gx
 
 const (
-	win_width  = 400
+	win_width  = 350
 	win_height = 565
 	slider_min = 0
 	slider_max = 255
@@ -30,6 +30,8 @@ mut:
 fn main() {
 	mut app := &App{
 		rgb_rectangle: ui.rectangle(
+			// width: 200
+			// height: 100
 			border: true
 			color: gx.Color{
 				r: slider_val
@@ -38,24 +40,32 @@ fn main() {
 			}
 		)
 		r_textbox: ui.textbox(
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_r_char
 		)
 		g_textbox: ui.textbox(
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_g_char
 		)
 		b_textbox: ui.textbox(
+			// width: 40
+			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_b_char
 		)
 		r_slider: ui.slider(
+			width: 16
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -65,6 +75,8 @@ fn main() {
 			on_value_changed: on_r_value_changed
 		)
 		g_slider: ui.slider(
+			width: 16
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -74,6 +86,8 @@ fn main() {
 			on_value_changed: on_g_value_changed
 		)
 		b_slider: ui.slider(
+			width: 16
+			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -89,7 +103,6 @@ fn main() {
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
-	w := 40.0
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -98,6 +111,10 @@ fn main() {
 		mode: .resizable
 		children: [
 			ui.column(
+				margin: ui.Margin{
+					right: .1
+					left: .1
+				}
 				heights: [.1, .2, .1, .5, .1]
 				alignments: ui.HorizontalAlignments{
 					center: [0, 1, 2, 3]
@@ -105,6 +122,7 @@ fn main() {
 				children: [
 					ui.button(
 					text: 'Show rgb color'
+					// width: 70
 					onclick: fn (app &App, b voidptr) {
 						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
 						ui.message_box(txt)
@@ -118,10 +136,11 @@ fn main() {
 							top: 5
 							bottom: 5
 						}
-						spacing: .3
+						// spacing: .3
 						heights: ui.compact
-						widths: w
-						children: [app.r_textbox, app.g_textbox, app.b_textbox]
+						widths: [ui.stretch, 20, ui.stretch, 20, ui.stretch, 20, ui.stretch]
+						children: [ui.spacing(), app.r_textbox, ui.spacing(), app.g_textbox,
+							ui.spacing(), app.b_textbox, ui.spacing()]
 					),
 					ui.row(
 						margin: ui.Margin{
@@ -130,9 +149,10 @@ fn main() {
 							top: 5
 							bottom: 5
 						}
-						spacing: .3
-						widths: w
-						children: [app.r_slider, app.g_slider, app.b_slider]
+						// spacing: .3
+						widths: [ui.stretch, 20, ui.stretch, 20, ui.stretch, 20, ui.stretch]
+						children: [ui.spacing(), app.r_slider, ui.spacing(), app.g_slider,
+							ui.spacing(), app.b_slider, ui.spacing()]
 					),
 					ui.row(
 						margin: ui.Margin{
@@ -141,9 +161,10 @@ fn main() {
 							top: 5
 							bottom: 5
 						}
-						spacing: .3
-						widths: w
-						children: [app.r_label, app.g_label, app.b_label]
+						// spacing: .3
+						widths: [ui.stretch, 20, ui.stretch, 20, ui.stretch, 20, ui.stretch]
+						children: [ui.spacing(), app.r_label, ui.spacing(), app.g_label,
+							ui.spacing(), app.b_label, ui.spacing()]
 					)]
 			),
 		]
