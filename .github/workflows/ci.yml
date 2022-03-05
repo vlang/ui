@@ -59,7 +59,7 @@ jobs:
         with:
           path: vlib/ui
       - name: Build V
-        run: make && symlink
+        run: make && ./v symlink
       - name: Build UI examples
         run: v run vlib/ui/examples/build_examples.vsh
       - name: Build users.v with -prod
