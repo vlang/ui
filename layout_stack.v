@@ -5,9 +5,11 @@ module ui
 
 import eventbus
 import gx
+import gg
 
 pub const (
-	empty_stack = stack(id: '_empty_stack_')
+	empty_stack           = stack(id: '_empty_stack_')
+	scrollview_empty_rect = gg.Rect{}
 )
 
 enum Direction {
@@ -88,6 +90,8 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	// debug stuff to be removed
+	debug_ids []string
 }
 
 [params]
@@ -146,6 +150,7 @@ fn stack(c StackParams) &Stack {
 	}
 	if c.scrollview {
 		scrollview_add(mut s)
+		// to restrict drawing to visible children
 	}
 	return s
 }
@@ -168,11 +173,13 @@ pub fn (mut s Stack) init(parent Layout) {
 		ui.window = unsafe { parent }
 		mut window := unsafe { parent }
 		if s.is_root_layout {
-			window.root_layout = s //}
+			window.root_layout = s
 			window.update_layout() // i.e s.update_all_children_recursively(parent)
 		} else {
 			s.update_layout()
 		}
+	} else {
+		s.is_root_layout = false
 	}
 
 	if has_scrollview(s) {
@@ -180,6 +187,10 @@ pub fn (mut s Stack) init(parent Layout) {
 		s.ui.window.evt_mngr.add_receiver(s, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut s)
+	}
+	$if sscroll ? {
+		swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
+		println('$s.id stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} $swid ($parent.id)')
 	}
 }
 
@@ -287,7 +298,9 @@ fn (mut s Stack) set_children_sizes() {
 	// size of children from
 	c := unsafe { &s.cache }
 	widths, heights := s.children_sizes()
-
+	$if scs ? {
+		s.debug_ids = ['demo_cvl_accordion']
+	}
 	// set children sizes
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
@@ -302,10 +315,11 @@ fn (mut s Stack) set_children_sizes() {
 			}
 		}
 		$if scs ? {
-			wt, ht := c.width_type[i].str(), c.height_type[i].str()
-			println('scs: propose_size $i) $child.type_name() ($wt: $w, $ht:$h)')
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				wt, ht := c.width_type[i].str(), c.height_type[i].str()
+				println('scs ($s.id): propose_size $i) $child.id ($child.type_name()) ($wt: $w, $ht:$h)')
+			}
 		}
-		// println("porpose_size $child.id $w, $h")
 		child.propose_size(w, h)
 
 		if mut child is Stack {
@@ -314,11 +328,13 @@ fn (mut s Stack) set_children_sizes() {
 	}
 	// Only for debug stuff
 	$if scs ? {
-		debug_set_children_sizes(s, widths, heights, c)
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			debug_set_children_sizes(s, widths, heights, c)
+		}
 	}
 }
 
-fn (s &Stack) children_sizes() ([]int, []int) {
+fn (mut s Stack) children_sizes() ([]int, []int) {
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 
 	// free size without margin and spacing
@@ -330,6 +346,8 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 	// free_height -= c.fixed_height
 
 	$if cs ? {
+		s.debug_ids = ['row_slider']
+
 		println('----------------------------------------')
 		println('| First pass: children_size: $s.id s.widths:  $s.widths s.heights:  $s.heights ')
 		println('|    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
@@ -370,6 +388,7 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 				if child.z_index == z_index_hidden {
 					weight = 0
 				}
+				// println("$child.id mch= $weight * $s.real_height")
 				mch[i] = int(weight * f32(s.real_height))
 				if s.direction == .column {
 					free_height -= mch[i]
@@ -386,13 +405,17 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			else {}
 		}
 		$if cs ? {
-			wt, ht := c.width_type[i].str(), c.height_type[i].str()
-			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
-			println('|----------------------------------------')
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				wt, ht := c.width_type[i].str(), c.height_type[i].str()
+				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
+				println('|----------------------------------------')
+			}
 		}
 	}
 	$if cs ? {
-		println('| Second pass:   real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('| Second pass:   real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+		}
 	}
 	for i, child in s.children {
 		match c.width_type[i] {
@@ -420,7 +443,9 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 					weight := c.weight_heights[i] / c.height_mass
 					mch[i] = int(weight * f32(free_height))
 					$if cs ? {
-						println('stretch: $weight (=${c.weight_heights[i]} / $c.height_mass) * $free_height = ${mch[i]}')
+						if s.debug_ids.len == 0 || s.id in s.debug_ids {
+							println('stretch: $weight (=${c.weight_heights[i]} / $c.height_mass) * $free_height = ${mch[i]}')
+						}
 					} $else {
 					}
 				} else {
@@ -437,9 +462,11 @@ fn (s &Stack) children_sizes() ([]int, []int) {
 			}
 		}
 		$if cs ? {
-			wt, ht := c.width_type[i].str(), c.height_type[i].str()
-			println('| $i) $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
-			println('|----------------------------------------')
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				wt, ht := c.width_type[i].str(), c.height_type[i].str()
+				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
+				println('|----------------------------------------')
+			}
 		}
 	}
 	return mcw, mch
@@ -463,6 +490,10 @@ fn (mut s Stack) set_cache_sizes() {
 	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
+	$if scas ? {
+		s.debug_ids = ['demo_cvl_accordion']
+	}
+
 	for i, mut child in s.children {
 		mut cw := s.widths[i] or { 0.0 }
 		mut ch := s.heights[i] or { 0.0 }
@@ -472,6 +503,16 @@ fn (mut s Stack) set_cache_sizes() {
 
 		if mut child is Stack {
 			adj_child_width, adj_child_height = child.adj_size()
+		}
+
+		if mut child is Group {
+			adj_child_width, adj_child_height = child.adj_size()
+		}
+
+		$if scas ? {
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				println('scas ($s.id): $i) adj_child ($child.id) size -> ($adj_child_width, $adj_child_height) cw, ch = $cw, $ch')
+			}
 		}
 
 		// fix compact when child has size 0
@@ -485,6 +526,12 @@ fn (mut s Stack) set_cache_sizes() {
 			if child !is Stack {
 				s.heights[i] = stretch
 				ch = stretch
+			}
+		}
+
+		$if scas ? {
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				println('scas ($s.id): $i) cw, ch = $cw, $ch')
 			}
 		}
 
@@ -610,7 +657,7 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		} else if ch >= -1 {
-			// weight_heights is now  means that the children can have their size updated from the parent
+			// weight_heights now  means that the children can have their size updated from the parent
 			// even reducing their size!!!
 			c.height_type[i] = .weighted_stretch
 			c.weight_heights[i] = -cw
@@ -722,12 +769,19 @@ pub fn (s &Stack) adj_size() (int, int) {
 }
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
+	$if sps ? {
+		s.debug_ids = ['row_slider', 'row_group']
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('propose_size $s.id : ($w, $h) from $s.parent.id')
+		}
+	}
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 	// if s.id == '_msg_dlg_col' {
 	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
 	// }
 	// println("$s.id propose size $w, $h")
+
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }
@@ -749,6 +803,10 @@ fn (s &Stack) free_size() (int, int) {
 fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
+	// Comment/uncomment
+	$if adj_size ? {
+		s.debug_ids = ['row_slider', 'row_group']
+	}
 	for mut child in s.children {
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
 			mut child_width, mut child_height := 0, 0
@@ -760,8 +818,10 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					child.margin(.right), child.adj_height + child.margin(.top) +
 					child.margin(.bottom)
 				$if adj_size ? {
-					println('Stack child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
-					println('Stack child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (stack): child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+						println('                      child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+					}
 				} $else {
 				} // because of a bug mixing $if and else
 			} else if mut child is Group {
@@ -770,15 +830,29 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				}
 				child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 					child.adj_height + child.margin_top + child.margin_bottom
+				$if adj_size ? {
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (group): child($child.id) child_width = $child_width  child_height = $child_height)')
+					}
+				} $else {
+				} // because of a bug mixing $if and else
 			} else if mut child is CanvasLayout {
 				if force || child.adj_width == 0 {
 					child.set_adjusted_size(gui)
 				}
 				child_width, child_height = child.adj_width, child.adj_height
+				$if adj_size ? {
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (cvl): child($child.id) child_width = $child_width  child_height = $child_height)')
+					}
+				} $else {
+				} // because of a bug mixing $if and else
 			} else {
 				child_width, child_height = child.size()
 				$if adj_size ? {
-					println('Stack child size $child.type_name(): ($child_width, $child_height) ')
+					if s.debug_ids.len == 0 || s.id in s.debug_ids {
+						println('adj_size $s.id (widget): child ($child.id) size $child.type_name(): ($child_width, $child_height) ')
+					}
 				}
 			}
 			if s.direction == .column {
@@ -794,6 +868,11 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 			}
 		}
 	}
+	$if adj_size ? {
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('adj_size ($s.id) (before spacing): ($w, $h)')
+		}
+	}
 	// adding total spacing between children
 	if s.direction == .column {
 		h += s.total_spacing()
@@ -803,7 +882,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	s.adj_width = w
 	s.adj_height = h
 	$if adj_size ? {
-		println('Stack($s.id) adj_size: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height) vs size: ($s.width, $s.height)')
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('adj_size ($s.id) end: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height)')
+		}
 	}
 }
 
@@ -964,7 +1045,7 @@ pub fn (mut s Stack) set_drawing_children() {
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
-			s.z_index = child.z_index
+			s.z_index = child.z_index - 1
 		}
 	}
 	s.drawing_children = s.children.filter(!it.hidden && it.z_index > z_index_hidden)
@@ -987,18 +1068,37 @@ fn (mut s Stack) draw() {
 				s.bg_color)
 		}
 	}
-	// if scrollview_clip(mut s) {
-	// 	s.set_children_pos()
-	// 	s.scrollview.children_to_update = false
-	// }
 	scrollview_draw_begin(mut s)
 
 	$if bb ? {
 		debug_draw_bb_stack(s)
 	}
-	for mut child in s.drawing_children {
-		// println("$child.type_name() $child.id")
-		child.draw()
+	$if sdraw_scroll ? {
+		if Layout(s).has_scrollview_or_parent_scrollview() {
+			// if s.scrollview != 0 {
+			for i, mut child in s.drawing_children {
+				if mut child !is Layout
+					&& is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+					sr := s.scrollview.scissor_rect
+					cr := child.bounds()
+					println('sdraw $s.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
+				}
+			}
+		}
+	}
+	if Layout(s).has_scrollview_or_parent_scrollview() {
+		// if s.scrollview != 0 {
+		for mut child in s.drawing_children {
+			if mut child is Layout
+				|| !is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+				child.draw()
+			}
+		}
+	} else {
+		for mut child in s.drawing_children {
+			// println("$child.type_name() $child.id")
+			child.draw()
+		}
 	}
 	scrollview_draw_end(s)
 	if s.title != '' {

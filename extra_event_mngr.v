@@ -104,7 +104,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 	}
 }
 
-fn (mut em EventMngr) sorted_receivers(evt_type string) {
+pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	mut sw := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if evt_mngr_sr ? {
@@ -138,7 +138,7 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 	if w.child_window != 0 {
 		pi = pi.filter(Layout(w.child_window).has_child_id(it.id))
 	}
-	$if evt_mngr_itp ? {
+	$if evt_mngr_itw ? {
 		println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
 	}
 	return pi.len >= 1 && pi.first().id == widget.id

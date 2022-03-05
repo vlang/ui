@@ -34,6 +34,9 @@ type TextBoxChangeFn = fn (string, voidptr)
 
 type TextBoxEnterFn = fn (string, voidptr)
 
+// The two previous one can be changed with
+type TextBoxValidatedFn = fn (&TextBox, voidptr)
+
 [heap]
 pub struct TextBox {
 pub mut:
@@ -84,8 +87,10 @@ pub mut:
 	sel_direction      SelectionDirection
 	border_accentuated bool
 	is_error           &bool = voidptr(0)
-	on_change          TextBoxChangeFn = TextBoxChangeFn(0)
-	on_enter           TextBoxEnterFn  = TextBoxEnterFn(0)
+	on_change          TextBoxChangeFn    = TextBoxChangeFn(0)
+	on_enter           TextBoxEnterFn     = TextBoxEnterFn(0)
+	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
 	// related to text drawing
@@ -139,8 +144,11 @@ pub struct TextBoxParams {
 	on_key_down   TextBoxKeyDownFn
 	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
-	on_change          voidptr
-	on_enter           voidptr
+	on_change voidptr
+	on_enter  voidptr
+	// TODO replacement of signature later
+	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	border_accentuated bool
 	text_cfg           gx.TextCfg
 	text_size          f64
@@ -168,6 +176,9 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// on_key_up: c.on_key_up
 		on_change: c.on_change
 		on_enter: c.on_enter
+		// TODO
+		on_changed: c.on_changed
+		on_entered: c.on_entered
 		border_accentuated: c.border_accentuated
 		ui: 0
 		text: c.text
@@ -193,7 +204,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 	return tb
 }
 
-fn (mut tb TextBox) init(parent Layout) {
+pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
@@ -320,7 +331,7 @@ fn (mut tb TextBox) update_line_height() {
 	tb.line_height = int(f64(text_height(tb, 'W')) * 1.5)
 }
 
-fn (mut tb TextBox) draw() {
+pub fn (mut tb TextBox) draw() {
 	offset_start(mut tb)
 	scrollview_draw_begin(mut tb)
 	// draw background
@@ -339,7 +350,8 @@ fn (mut tb TextBox) draw() {
 	} else {
 		dtw := DrawTextWidget(tb)
 		text := *(tb.text)
-		text_len := text.runes().len
+		ustr := text.runes()
+		text_len := ustr.len
 		mut placeholder := tb.placeholder
 		if tb.placeholder_bind != 0 {
 			placeholder = *(tb.placeholder_bind)
@@ -363,23 +375,14 @@ fn (mut tb TextBox) draw() {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if width > tb.width && !tb.is_password {
-				// Less useful with scrollview
+			if width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
 				tb.ui.gg.set_cfg(tb.text_cfg)
-				for i := text_len - 1; i >= 0; i-- {
-					if i >= text_len {
-						continue
-					}
-					// TODO: To fix since it fails when resizing to thin window
-					// if tb.ui.gg.text_width(text[i..]) > tb.width {
-					// 	skip_idx = i + 3
-					// 	break
-					// }
-				}
-				$if nodtw ? {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
-				} $else {
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				if !tb.is_focused || tb.read_only {
+					skip_idx = tb.skip_index_from_start(ustr, dtw)
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx + 1)].string())
+				} else {
+					skip_idx = tb.skip_index_from_end(ustr, dtw)
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
 				}
 			} else {
 				if tb.is_password {
@@ -407,8 +410,11 @@ fn (mut tb TextBox) draw() {
 					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
 				} else if skip_idx > 0 {
 					cursor_x += text_width(tb, text[skip_idx..])
-				} else if text_len > 0 {
+				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
+					if tb.cursor_pos > text.runes().len {
+						tb.cursor_pos = text.runes().len
+					}
 					left := text.runes()[..tb.cursor_pos].string()
 					cursor_x += text_width(tb, left)
 				}
@@ -423,6 +429,36 @@ fn (mut tb TextBox) draw() {
 	}
 	scrollview_draw_end(tb)
 	offset_end(mut tb)
+}
+
+fn (tb &TextBox) skip_index_from_end(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i := text_len - 1; i >= 0; i-- {
+		if dtw.text_width(ustr[i..].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i + 1
+			if skip_idx >= text_len - 1 {
+				skip_idx = text_len - 1
+			}
+			break
+		}
+	}
+	return skip_idx
+}
+
+fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i in 0 .. text_len {
+		if dtw.text_width(ustr[0..(i + 1)].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i - 1
+			if skip_idx < 0 {
+				skip_idx = 0
+			}
+			break
+		}
+	}
+	return skip_idx
 }
 
 fn (tb &TextBox) is_sel_active() bool {
@@ -497,8 +533,12 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		match e.key {
 			.enter {
 				if tb.on_enter != TextBoxEnterFn(0) {
-					println('tb_enter: <${*tb.text}>')
+					// println('tb_enter: <${*tb.text}>')
 					tb.on_enter(*tb.text, window.state)
+				}
+				if tb.on_entered != TextBoxValidatedFn(0) {
+					// println('tb_entered: <${*tb.text}>')
+					tb.on_entered(tb, window.state)
 				}
 			}
 			.backspace {
@@ -675,6 +715,10 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			tb.insert(s)
 			if tb.on_change != TextBoxChangeFn(0) {
 				tb.on_change(*tb.text, window.state)
+			}
+			// TODO: Future replacement of the previous one
+			if tb.on_changed != TextBoxValidatedFn(0) {
+				tb.on_changed(tb, window.state)
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {
@@ -936,7 +980,7 @@ fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	tb.dragging = false
 }
 
-fn (mut tb TextBox) set_visible(state bool) {
+pub fn (mut tb TextBox) set_visible(state bool) {
 	tb.hidden = !state
 }
 

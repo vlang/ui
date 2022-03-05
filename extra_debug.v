@@ -99,8 +99,8 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 		// sum rule for widths
 		println('SumRule($s.id) left: ${s.margin(.left)} = $s.margins.left * $s.real_width')
 		total += s.margin(.left)
-		for i, _ in s.children {
-			println('+ w[$i]: ${widths[i]} ${c.weight_widths[i]}')
+		for i, child in s.children {
+			println('+ w[$i]: ${widths[i]} ${c.weight_widths[i]} ($child.id)')
 			total += widths[i]
 			if i == s.children.len - 1 {
 				println('+ right: ${s.margin(.right)} = $s.margins.right * $s.real_width')
@@ -126,8 +126,8 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 		// sum rule
 		println('SumRule($s.id)  top: ${s.margin(.top)}')
 		total += s.margin(.top)
-		for i, _ in s.children {
-			println('+ w[$i]: ${heights[i]} ${c.weight_heights[i]}')
+		for i, child in s.children {
+			println('+ w[$i]: ${heights[i]} ${c.weight_heights[i]} ($child.id)')
 			total += heights[i]
 			if i == s.children.len - 1 {
 				println('+ bottom: ${s.margin(.bottom)} $s.margins.bottom')

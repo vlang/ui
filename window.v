@@ -1116,6 +1116,9 @@ pub fn (mut window Window) resize(w int, h int) {
 		if mut child is Stack {
 			child.resize(w, h)
 		}
+		if mut child is CanvasLayout {
+			child.resize(w, h)
+		}
 	}
 }
 

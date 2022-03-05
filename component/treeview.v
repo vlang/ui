@@ -93,6 +93,8 @@ fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root strin
 				mut new_tree := treedir(path, fpath, true, tv.hidden_files)
 				t.items[i] = TreeItem(new_tree)
 				l.children << new_tree.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+				// update scrollview field
+				ui.scrollview_delegate_parent_scrollview(mut l)
 			}
 		}
 	}

@@ -35,6 +35,7 @@ pub mut:
 	is_focused           bool
 	on_selection_changed DropDownSelectionChangedFn
 	hidden               bool
+	bg_color             gx.Color = ui.dropdown_color
 	// component state for composable widget
 	component voidptr
 }
@@ -79,7 +80,7 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 	return dd
 }
 
-fn (mut dd Dropdown) init(parent Layout) {
+pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
@@ -144,11 +145,11 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	return w, dd.dropdown_height
 }
 
-fn (mut dd Dropdown) draw() {
+pub fn (mut dd Dropdown) draw() {
 	offset_start(mut dd)
 	gg := dd.ui.gg
 	// draw the main dropdown
-	gg.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, ui.dropdown_color)
+	gg.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
 	gg.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
 		ui.dropdown_focus_color
 	} else {
@@ -241,6 +242,9 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 }
 
 fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+	$if dd_click ? {
+		println('$dd.id click $dd.hidden $dd.is_focused $dd.z_index')
+	}
 	if dd.hidden {
 		return
 	}
@@ -278,27 +282,30 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn dd_mouse_move(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
 	if dd.open {
 		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
+		$if dd_mm_hover ? {
+			println('dd hover $dd.hover_index int(($e.y - $dd.y - $dd.offset_y) / $dd.dropdown_height) - 1 ')
+		}
 	}
 }
 
-fn (mut dd Dropdown) set_visible(state bool) {
+pub fn (mut dd Dropdown) set_visible(state bool) {
 	dd.hidden = !state
 }
 
-fn (mut dd Dropdown) focus() {
+pub fn (mut dd Dropdown) focus() {
 	// dd.is_focused = true
 	mut f := Focusable(dd)
 	f.set_focus()
 	f.lock_focus()
 }
 
-fn (mut dd Dropdown) unfocus() {
+pub fn (mut dd Dropdown) unfocus() {
 	dd.open = false
 	dd.is_focused = false
 	Focusable(dd).unlock_focus()
