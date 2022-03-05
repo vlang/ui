@@ -13,7 +13,8 @@ fn println_one_of_many(msg string, entry_idx int, entries_len int) {
 }
 
 examples_dir := resource_abs_path('.')
-all_entries := ls(examples_dir) or { return }
+mut all_entries := ls(examples_dir) or { return }
+all_entries.sort()
 mut entries := []string{}
 for entry in all_entries {
 	is_dir_project := (is_dir(entry) && is_v_code_dir(entry))
