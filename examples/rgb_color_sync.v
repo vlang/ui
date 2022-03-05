@@ -2,7 +2,7 @@ import ui
 import gx
 
 const (
-	win_width  = 350
+	win_width  = 400
 	win_height = 565
 	slider_min = 0
 	slider_max = 255
@@ -30,8 +30,6 @@ mut:
 fn main() {
 	mut app := &App{
 		rgb_rectangle: ui.rectangle(
-			// width: 200
-			// height: 100
 			border: true
 			color: gx.Color{
 				r: slider_val
@@ -40,32 +38,24 @@ fn main() {
 			}
 		)
 		r_textbox: ui.textbox(
-			// width: 40
-			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_r_char
 		)
 		g_textbox: ui.textbox(
-			// width: 40
-			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_g_char
 		)
 		b_textbox: ui.textbox(
-			// width: 40
-			// height: 20
 			max_len: 3
 			read_only: false
 			is_numeric: true
 			on_char: on_b_char
 		)
 		r_slider: ui.slider(
-			width: 10
-			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -76,8 +66,6 @@ fn main() {
 			entering: true
 		)
 		g_slider: ui.slider(
-			width: 10
-			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -88,8 +76,6 @@ fn main() {
 			entering: true
 		)
 		b_slider: ui.slider(
-			width: 10
-			// height: 200
 			orientation: .vertical
 			min: slider_min
 			max: slider_max
@@ -106,6 +92,7 @@ fn main() {
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
+	w := 40.0
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -114,10 +101,6 @@ fn main() {
 		mode: .resizable
 		children: [
 			ui.column(
-				// margin: {
-				// 	right: .1
-				// 	left: .1
-				// }
 				heights: [.1, .2, .1, .5, .1]
 				alignments: ui.HorizontalAlignments{
 					center: [0, 1, 2, 3]
@@ -125,7 +108,6 @@ fn main() {
 				children: [
 					ui.button(
 					text: 'Show rgb color'
-					// width: 70
 					onclick: fn (app &App, b voidptr) {
 						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
 						ui.message_box(txt)
@@ -139,10 +121,9 @@ fn main() {
 							top: 5
 							bottom: 5
 						}
-						// alignments: {center: [0,1,2]}
 						spacing: .3
 						heights: ui.compact
-						widths: .1
+						widths: w
 						children: [app.r_textbox, app.g_textbox, app.b_textbox]
 					),
 					ui.row(
@@ -154,7 +135,7 @@ fn main() {
 						}
 						// alignments: {center: [0,1,2]}
 						spacing: .3
-						widths: .1
+						widths: w
 						children: [app.r_slider, app.g_slider, app.b_slider]
 					),
 					ui.row(
@@ -166,7 +147,7 @@ fn main() {
 						}
 						// alignments: {center: [0,1,2]}
 						spacing: .3
-						widths: .1
+						widths: w
 						children: [app.r_label, app.g_label, app.b_label]
 					)]
 			),
