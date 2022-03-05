@@ -44,8 +44,15 @@ pub struct Alignments {
 
 fn get_align_offset(mut w Widget, aw f64, ah f64) (int, int) {
 	width, height := w.size()
-	parent_width, parent_height := w.parent.size()
+	parent := w.parent
+	parent_width, parent_height := if parent is Stack { parent.free_size() } else { parent.size() }
 	dw := math.max(parent_width - width, 0.0)
 	dh := math.max(parent_height - height, 0.0)
+	$if get_align ? {
+		if w.id in [] {
+			println('align: $w.id int($aw * $dw), int($ah * $dh)')
+			println('$width, $height $parent_width, $parent_height')
+		}
+	}
 	return int(aw * dw), int(ah * dh)
 }

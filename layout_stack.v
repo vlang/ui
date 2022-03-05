@@ -805,7 +805,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut w := 0
 	// Comment/uncomment
 	$if adj_size ? {
-		s.debug_ids = ['row_slider', 'row_group']
+		s.debug_ids = []
 	}
 	for mut child in s.children {
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
@@ -900,7 +900,7 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 	if s.real_x != x || s.real_y != y {
 		// could depend on anchor in the future
 		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-		$if pos ? {
+		$if stack_pos ? {
 			println('set_pos($s.id): $($x, $y)')
 		}
 		s.real_x, s.real_y = x, y
@@ -983,6 +983,11 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 		mut w := child as AdjustableWidget
 		w.set_adjusted_pos(x + offset_x, y + offset_y)
 	} else {
+		$if set_child_pos ? {
+			if child.id in [] {
+				println('$child.id: $x + $offset_x, $y + $offset_y')
+			}
+		}
 		child.set_pos(x + offset_x, y + offset_y)
 	}
 }

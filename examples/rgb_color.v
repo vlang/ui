@@ -34,6 +34,7 @@ fn main() {
 	}
 	mut app := &App{
 		rgb_rectangle: ui.rectangle(
+			id: 'rgb_rect'
 			border: true
 			color: gx.Color{
 				r: slider_val
@@ -107,9 +108,13 @@ fn main() {
 			ui.column(
 				margin_: 10
 				spacing: 5
+				alignments: ui.HorizontalAlignments{
+					center: [0, 1, 2, 3]
+				}
 				heights: [ui.stretch, 2 * ui.stretch, ui.stretch, 5 * ui.stretch, ui.stretch]
 				children: [
 					ui.button(
+					id: 'rgb_btn'
 					text: 'Show rgb color'
 					onclick: fn (app &App, b voidptr) {
 						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
@@ -118,6 +123,7 @@ fn main() {
 				),
 					app.rgb_rectangle,
 					ui.row(
+						id: 'row_tb'
 						widths: w
 						children: [ui.spacing(), app.r_textbox, ui.spacing(), app.g_textbox,
 							ui.spacing(), app.b_textbox, ui.spacing()]
