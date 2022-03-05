@@ -238,13 +238,23 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 }
 
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
-	// println('grid_click')
+	// println('grid_click $e.x $e.y')
 	mut g := component_grid(c)
-	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-	// println('selected: $g.sel_i, $g.sel_j')
-	g.show_selected()
-	$if grid_click ? {
-		println('${g.layout.get_children().map(it.id)}')
+	colbar := e.y < g.colbar_height - c.y - c.offset_y
+	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
+	if colbar && rowbar {
+		println('both')
+	} else if colbar {
+		println('colbar')
+	} else if rowbar {
+		println('rowbar')
+	} else {
+		g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
+		// println('selected: $g.sel_i, $g.sel_j')
+		g.show_selected()
+		$if grid_click ? {
+			println('${g.layout.get_children().map(it.id)}')
+		}
 	}
 }
 
@@ -256,9 +266,13 @@ fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {}
 
 fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {}
 
-fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {}
+fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+	println('key_down $e')
+}
 
-fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {}
+fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
+	println('char $e')
+}
 
 fn grid_full_size(mut c ui.CanvasLayout) (int, int) {
 	w, h := component_grid(c).size()
