@@ -195,7 +195,7 @@ fn (mut g Grid) draw_colbar() {
 		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
 		tb.propose_size(g.widths[j], g.colbar_height)
 		unsafe {
-			*tb.text = var.clone()
+			*tb.text = var
 		}
 		tb.draw()
 		g.pos_x += g.widths[j]
