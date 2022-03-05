@@ -350,7 +350,8 @@ pub fn (mut tb TextBox) draw() {
 	} else {
 		dtw := DrawTextWidget(tb)
 		text := *(tb.text)
-		text_len := text.runes().len
+		ustr := text.runes()
+		text_len := ustr.len
 		mut placeholder := tb.placeholder
 		if tb.placeholder_bind != 0 {
 			placeholder = *(tb.placeholder_bind)
@@ -374,23 +375,14 @@ pub fn (mut tb TextBox) draw() {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if width > tb.width && !tb.is_password {
-				// Less useful with scrollview
+			if width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
 				tb.ui.gg.set_cfg(tb.text_cfg)
-				for i := text_len - 1; i >= 0; i-- {
-					if i >= text_len {
-						continue
-					}
-					// TODO: To fix since it fails when resizing to thin window
-					if tb.ui.gg.text_width(text[i..]) > tb.width {
-						skip_idx = i + 3
-						break
-					}
-				}
-				$if nodtw ? {
-					draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
-				} $else {
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text[skip_idx..])
+				if !tb.is_focused || tb.read_only {
+					skip_idx = tb.skip_index_from_start(ustr, dtw)
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx + 1)].string())
+				} else {
+					skip_idx = tb.skip_index_from_end(ustr, dtw)
+					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
 				}
 			} else {
 				if tb.is_password {
@@ -437,6 +429,36 @@ pub fn (mut tb TextBox) draw() {
 	}
 	scrollview_draw_end(tb)
 	offset_end(mut tb)
+}
+
+fn (tb &TextBox) skip_index_from_end(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i := text_len - 1; i >= 0; i-- {
+		if dtw.text_width(ustr[i..].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i + 1
+			if skip_idx >= text_len - 1 {
+				skip_idx = text_len - 1
+			}
+			break
+		}
+	}
+	return skip_idx
+}
+
+fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i in 0 .. text_len {
+		if dtw.text_width(ustr[0..(i + 1)].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i - 1
+			if skip_idx < 0 {
+				skip_idx = 0
+			}
+			break
+		}
+	}
+	return skip_idx
 }
 
 fn (tb &TextBox) is_sel_active() bool {
