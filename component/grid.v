@@ -23,7 +23,7 @@ type GridData = Factor | []bool | []int | []string
 struct Grid {
 mut:
 	id        string
-	layout    &ui.CanvasLayout // In fact a CanvasPlus since no children
+	layout    &ui.CanvasLayout
 	vars      []GridVar
 	types     []GridType
 	headers   []string
@@ -92,7 +92,6 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		tb_string: ui.textbox(id: 'tb_ro_' + p.id)
 	}
 	ui.component_connect(g, layout)
-	// mut widgets := []GridVar{}
 	// check vars same length
 	g.nrow = -1
 	g.ncol = p.vars.len
@@ -173,17 +172,11 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("$g.rowbar_width == $g.pos_x")
 
 	for j in g.from_j .. g.to_j {
-		g.vars[j].draw_var(j, mut g)
+		g.vars[j].draw(j, mut g)
 		g.pos_x += g.widths[j]
 		// println("draw $j")
 	}
 
-	// g.pos_x = g.rowbar_width
-	// for j, var in g.vars {
-	// 	var.draw_var(j, mut g)
-	// 	g.pos_x += g.widths[j]
-	// 	// println("draw $j")
-	// }
 	g.draw_rowbar()
 	g.draw_colbar()
 	ui.scrollview_update(c)
@@ -366,7 +359,7 @@ fn (mut g Grid) show_selected() {
 }
 
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
-	mut cum := g.rowbar_width // g.layout.x + g.layout.offset_x
+	mut cum := g.rowbar_width
 	mut sel_i, mut sel_j := -1, -1
 	for j, w in g.widths {
 		cum += w
@@ -375,7 +368,7 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 			break
 		}
 	}
-	cum = g.colbar_height // g.layout.y + g.layout.offset_y
+	cum = g.colbar_height
 	for i, h in g.heights {
 		cum += h
 		if y > g.colbar_height && y < cum {
@@ -387,7 +380,7 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 }
 
 fn (g &Grid) get_pos(i int, j int) (int, int) {
-	mut x, mut y := g.rowbar_width, g.colbar_height // g.layout.x + g.layout.offset_x, g.layout.y + g.layout.offset_y
+	mut x, mut y := g.rowbar_width, g.colbar_height
 	for k in 0 .. i {
 		y += g.heights[k]
 	}
@@ -451,8 +444,7 @@ fn (mut g Grid) visible_cells() {
 interface GridVar {
 	id string
 	grid &Grid
-	draw_var(j int, mut g Grid)
-	// component voidptr
+	draw(j int, mut g Grid)
 }
 
 // TextBox GridVar
@@ -477,7 +469,7 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 	}
 }
 
-fn (gtb &GridTextBox) draw_var(j int, mut g Grid) {
+fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 	mut tb := g.tb_string
 	tb.is_focused = false
 	tb.read_only = true
@@ -507,7 +499,6 @@ mut:
 	id   string
 	name string
 	var  Factor
-	// component voidptr
 }
 
 pub struct GridDropdownParams {
@@ -525,7 +516,7 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 	}
 }
 
-fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
+fn (gdd &GridDropdown) draw(j int, mut g Grid) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
@@ -541,24 +532,6 @@ fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
 	}
 }
 
-// fn (gdd &GridDropdown) draw_var(j int, mut g Grid) {
-// 	mut dd := g.dd_factor[gdd.name]
-// 	g.pos_y = g.colbar_height + g.layout.y + g.layout.offset_y
-// 	// println("ddd $j $gdd.var.values.len")
-// 	for i in 0 .. g.nrow {
-// 		// println("$i) $g.pos_x, $g.pos_y")
-// 		dd.set_pos(g.pos_x + g.layout.x + g.layout.offset_x, g.pos_y)
-// 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
-// 		dd.propose_size(g.widths[j], g.heights[i])
-// 		dd.selected_index = gdd.var.values[i]
-// 		// dd.is_focused = false
-// 		// dd.open = false
-// 		dd.set_visible(false)
-// 		dd.draw()
-// 		g.pos_y += g.heights[i]
-// 	}
-// }
-
 // CheckBox GridVar
 [heap]
 struct GridCheckBox {
@@ -567,11 +540,10 @@ mut:
 	id  string
 	cb  &ui.CheckBox
 	var []bool
-	// component voidptr
 }
 
 pub fn grid_checkbox() { //&GridCheckBox {
 }
 
-fn (gtb &GridCheckBox) draw_var(j int, mut g Grid) {
+fn (gtb &GridCheckBox) draw(j int, mut g Grid) {
 }
