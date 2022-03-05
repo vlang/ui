@@ -20,7 +20,7 @@ fn main() {
 	window := ui.window(
 		width: win_width
 		height: win_height
-		title: 'V UI: Accordion'
+		title: 'V UI: Grid'
 		state: app
 		native_message: false
 		mode: .resizable
