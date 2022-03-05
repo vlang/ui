@@ -96,13 +96,7 @@ fn main() {
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
-	w := [40.0, ui.stretch, 40, ui.stretch, 40]
-	marg := ui.Margin{
-		right: .1
-		left: .1
-		top: 5
-		bottom: 5
-	}
+	w := [ui.stretch, 40.0, 2 * ui.stretch, 40, 2 * ui.stretch, 40, ui.stretch]
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -124,22 +118,19 @@ fn main() {
 				),
 					app.rgb_rectangle,
 					ui.row(
-						margin: marg
 						widths: w
-						children: [app.r_textbox, ui.spacing(), app.g_textbox, ui.spacing(),
-							app.b_textbox]
+						children: [ui.spacing(), app.r_textbox, ui.spacing(), app.g_textbox,
+							ui.spacing(), app.b_textbox, ui.spacing()]
 					),
 					ui.row(
-						margin: marg
 						widths: w
-						children: [app.r_slider, ui.spacing(), app.g_slider, ui.spacing(),
-							app.b_slider]
+						children: [ui.spacing(), app.r_slider, ui.spacing(), app.g_slider,
+							ui.spacing(), app.b_slider, ui.spacing()]
 					),
 					ui.row(
-						margin: marg
 						widths: w
-						children: [app.r_label, ui.spacing(), app.g_label, ui.spacing(),
-							app.b_label]
+						children: [ui.spacing(), app.r_label, ui.spacing(), app.g_label,
+							ui.spacing(), app.b_label, ui.spacing()]
 					)]
 			),
 		]
