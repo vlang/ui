@@ -241,19 +241,21 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 }
 
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
-	// println('grid_click $e.x $e.y')
+	//
+	println('grid_click $e.x $e.y')
 	mut g := component_grid(c)
+	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
 	colbar := e.y < g.colbar_height - c.y - c.offset_y
 	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
 	if colbar && rowbar {
-		println('both')
+		println('both  ')
 	} else if colbar {
-		println('colbar')
+		println('colbar $g.sel_j')
 	} else if rowbar {
-		println('rowbar')
+		println('rowbar $g.sel_i')
 	} else {
-		g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-		// println('selected: $g.sel_i, $g.sel_j')
+		//
+		println('selected: $g.sel_i, $g.sel_j')
 		g.show_selected()
 		$if grid_click ? {
 			println('${g.layout.get_children().map(it.id)}')
@@ -267,10 +269,34 @@ fn grid_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {}
 
 fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {}
 
-fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {}
+fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+	mut g := component_grid(c)
+	colbar := e.y < g.colbar_height - c.y - c.offset_y
+	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
+	if colbar {
+		// println("move colbar ($e.x, $e.y)")
+	} else if rowbar {
+		// println("move rowbar ($e.x, $e.y)")
+	}
+}
 
 fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
-	println('key_down $e')
+	// println('key_down $e')
+	match e.key {
+		.up {
+			println('up')
+		}
+		.down {
+			println('down')
+		}
+		.left {
+			println('left')
+		}
+		.right {
+			println('right')
+		}
+		else {}
+	}
 }
 
 fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
@@ -376,23 +402,50 @@ fn (mut g Grid) show_selected() {
 }
 
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
-	mut cum := g.rowbar_width
+	// TODO: use visible_cells to detect
 	mut sel_i, mut sel_j := -1, -1
-	for j, w in g.widths {
-		cum += w
-		if x > g.rowbar_width && x < cum {
-			sel_j = j
-			break
+	$if vcells ? {
+		mut cum := g.from_x // g.from_x + g.layout.x + g.layout.offset_x
+		// println("dv $y")
+		for j in g.from_j .. g.to_j {
+			cum += g.widths[j]
+			// println("dv  $y > $g.colbar_height && $y < $cum ")
+			if x > g.from_x && x < cum {
+				sel_j = j
+				break
+			}
+		}
+
+		cum = g.from_y
+		// println("dv $y")
+		for i in g.from_i .. g.to_i {
+			cum += g.heights[i]
+			// println("dv  $y > $g.colbar_height && $y < $cum ")
+			if y > g.from_y && y < cum {
+				sel_i = i
+				break
+			}
+		}
+	} $else {
+		mut cum := g.rowbar_width
+		for j, w in g.widths {
+			cum += w
+			if x > g.rowbar_width && x < cum {
+				sel_j = j
+				break
+			}
+		}
+
+		cum = g.colbar_height
+		for i, h in g.heights {
+			cum += h
+			if y > g.colbar_height && y < cum {
+				sel_i = i
+				break
+			}
 		}
 	}
-	cum = g.colbar_height
-	for i, h in g.heights {
-		cum += h
-		if y > g.colbar_height && y < cum {
-			sel_i = i
-			break
-		}
-	}
+
 	return sel_i, sel_j
 }
 
