@@ -42,7 +42,7 @@ pub struct Alignments {
 	left         []int
 }
 
-fn get_align_offset(mut w Widget, aw f64, ah f64) (int, int) {
+fn get_align_offset_from_parent(mut w Widget, aw f64, ah f64) (int, int) {
 	width, height := w.size()
 	parent := w.parent
 	parent_width, parent_height := if parent is Stack { parent.free_size() } else { parent.size() }
@@ -54,5 +54,11 @@ fn get_align_offset(mut w Widget, aw f64, ah f64) (int, int) {
 			println('$width, $height $parent_width, $parent_height')
 		}
 	}
+	return int(aw * dw), int(ah * dh)
+}
+
+pub fn get_align_offset_from_size(width int, height int, pwidth int, pheight int, aw f64, ah f64) (int, int) {
+	dw := math.max(pwidth - width, 0.0)
+	dh := math.max(pheight - height, 0.0)
 	return int(aw * dw), int(ah * dh)
 }

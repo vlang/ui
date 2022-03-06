@@ -187,6 +187,7 @@ fn (mut g Grid) draw_colbar() {
 	mut tb := g.tb_colbar
 	tb.is_focused = false
 	tb.read_only = true
+	tb.justify = ui.top_center
 	tb.set_visible(false)
 	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
 	g.pos_y = 0
@@ -212,6 +213,7 @@ fn (mut g Grid) draw_rowbar() {
 	mut tb := g.tb_rowbar
 	tb.is_focused = false
 	tb.read_only = true
+	tb.justify = ui.top_right
 	tb.set_visible(false)
 	g.pos_x = g.layout.x + g.layout.offset_x
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y

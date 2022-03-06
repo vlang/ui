@@ -48,6 +48,7 @@ pub mut:
 	offset_x   int
 	offset_y   int
 	z_index    int
+	justify    []f64
 	parent     Layout = empty_stack
 	is_focused bool
 	is_typing  bool
@@ -126,6 +127,7 @@ pub struct TextBoxParams {
 	is_sync          bool = true
 	twosided_sel     bool
 	z_index          int
+	justify          []f64 = top_left
 	min              int
 	max              int
 	val              int
@@ -162,6 +164,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		z_index: c.z_index
+		justify: c.justify
 		// sel_start_i: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
@@ -304,11 +307,12 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		return text_size(tb, tb.text)
+		mut w, mut h := text_size(tb, tb.text)
+		return w + 2 * ui.textbox_padding_x, h + 2 * ui.textbox_padding_y
 	}
 }
 
-pub fn (mut tb TextBox) size() (int, int) {
+pub fn (tb &TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
@@ -395,7 +399,14 @@ pub fn (mut tb TextBox) draw() {
 					$if nodtw ? {
 						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
 					} $else {
-						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+						if tb.justify != top_left {
+							mut aw := AdjustableWidget(tb)
+							dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
+							dtw.draw_text(tb.x + ui.textbox_padding_x + dx, text_y + dy,
+								text)
+						} else {
+							dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+						}
 					}
 				}
 			}

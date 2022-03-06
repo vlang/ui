@@ -382,7 +382,8 @@ fn (mut sv ScrollView) update() {
 	}
 	if sv.active_y {
 		sv.sb_h = sv.height - ui.scrollbar_size
-		sv.btn_h = int(f32(sv.height) / f32(sv.adj_height) * f32(sv.sb_h))
+		sv.btn_h = int(f64(sv.height) / f64(sv.adj_height) * f64(sv.sb_h))
+		// println("update: sv.sb_h=$sv.sb_h sv.btn_h = int(${f32(sv.height)} / ${f32(sv.adj_height)} * ${f32(sv.sb_h)} = $sv.btn_h")
 	}
 }
 
@@ -426,13 +427,13 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy
 			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.sb_h
 		}
-		.btn_x {
-			x_min, y_min = svx + sv.btn_x, svy + sv.height - ui.scrollbar_size
-			x_max, y_max = x_min + sv.btn_w, y_min + ui.scrollbar_size
+		.btn_x { // thanks to draw_rounded_fill_rect the size of the button is at least of width 2 * ui.scrollbar_size / 3 even if sv.btn_w is 0
+			x_min, y_min = svx + sv.btn_x - ui.scrollbar_size / 3, svy + sv.height - ui.scrollbar_size
+			x_max, y_max = x_min + sv.btn_w + 2 * ui.scrollbar_size / 3, y_min + ui.scrollbar_size
 		}
-		.btn_y {
-			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy + sv.btn_y
-			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.btn_h
+		.btn_y { // thanks to draw_rounded_fill_rect the size of the button is at least of height 2 * ui.scrollbar_size / 3 even if sv.btn_h is 0
+			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy + sv.btn_y - ui.scrollbar_size / 3
+			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.btn_h + 2 * ui.scrollbar_size / 3
 		}
 		.bar {
 			return sv.point_inside(x, y, .bar_x) || sv.point_inside(x, y, .bar_y)

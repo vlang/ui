@@ -13,13 +13,17 @@ mut:
 	adj_size() (int, int)
 }
 
-fn (mut w AdjustableWidget) set_adjusted_pos(x int, y int) {
+fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 	width, height := w.size()
 	adj_width, adj_height := w.adj_size()
 	dw := math.max(width - adj_width, 0.0)
 	dh := math.max(height - adj_height, 0.0)
-	aw, ah := w.justify[0], w.justify[1]
-	w.set_pos(int(x + aw * dw), int(y + ah * dh))
+	return int(aw * dw), int(ah * dh)
+}
+
+fn (mut w AdjustableWidget) set_adjusted_pos(x int, y int) {
+	dx, dy := w.get_align_offset(w.justify[0], w.justify[1])
+	w.set_pos(x + dx, y + dy)
 }
 
 pub const (

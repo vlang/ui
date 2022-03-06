@@ -977,7 +977,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 			1.0
 		}
 	}
-	offset_x, offset_y := get_align_offset(mut child, aw, ah)
+	offset_x, offset_y := get_align_offset_from_parent(mut child, aw, ah)
 
 	if mut child is AdjustableWidget {
 		mut w := child as AdjustableWidget
