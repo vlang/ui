@@ -161,6 +161,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 	g.tb_colbar.init(layout)
 	g.tb_rowbar.init(layout)
 	g.visible_cells()
+	ui.lock_scrollview_key(layout)
 }
 
 fn grid_draw(c &ui.CanvasLayout, app voidptr) {

@@ -219,6 +219,16 @@ pub fn scrollview_reset<T>(mut w T) {
 	w.set_children_pos()
 }
 
+pub fn lock_scrollview_key(w ScrollableWidget) {
+	mut sv := w.scrollview
+	sv.key_locked = true
+}
+
+pub fn unlock_scrollview_key(w ScrollableWidget) {
+	mut sv := w.scrollview
+	sv.key_locked = false
+}
+
 [heap]
 pub struct ScrollView {
 pub mut:
@@ -248,6 +258,7 @@ pub mut:
 	children_to_update bool
 	// focus
 	is_focused bool
+	key_locked bool
 	// sizes of widget
 	orig_x     int
 	orig_y     int
@@ -662,7 +673,7 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 
 // N.B.: deactivated for TextBox and ListBox
 fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
-	if !sv.is_active() || !sv.is_focused || sv.widget is TextBox {
+	if !sv.is_active() || !sv.is_focused || sv.key_locked {
 		return
 	}
 	match e.key {

@@ -67,6 +67,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.sync_text_pos()
 	tv.sh = syntaxhighlighter()
 	tv.sh.init(tv)
+	lock_scrollview_key(tv.tb)
 }
 
 pub fn (tv &TextView) size() (int, int) {
