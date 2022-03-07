@@ -44,6 +44,9 @@ mut:
 	// index for swap of rows
 	index []int
 	// current
+	cur_i int
+	cur_j int
+	// position
 	pos_x int
 	pos_y int
 	// selection
@@ -65,7 +68,7 @@ pub struct GridParams {
 	id         string
 	vars       map[string]GridData
 	width      int = 100
-	height     int = 30
+	height     int = 25
 	scrollview bool
 }
 
@@ -164,81 +167,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 	ui.lock_scrollview_key(layout)
 }
 
-fn grid_draw(c &ui.CanvasLayout, app voidptr) {
-	// println("draw begin")
-	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
-	mut g := component_grid(c)
-	// g.visible_cells()
-	g.pos_x = g.from_x + c.x + c.offset_x
-	// println("$g.rowbar_width == $g.pos_x")
-
-	for j in g.from_j .. g.to_j {
-		g.vars[j].draw(j, mut g)
-		g.pos_x += g.widths[j]
-		// println("draw $j")
-	}
-
-	g.draw_rowbar()
-	g.draw_colbar()
-	ui.scrollview_update(c)
-	// println("draw end")
-}
-
-fn (mut g Grid) draw_colbar() {
-	mut tb := g.tb_colbar
-	tb.is_focused = false
-	tb.read_only = true
-	tb.justify = ui.top_center
-	tb.set_visible(false)
-	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
-	g.pos_y = 0
-	for j, var in g.headers {
-		tb.set_pos(g.pos_x, 0)
-		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
-		tb.propose_size(g.widths[j], g.colbar_height)
-		unsafe {
-			*tb.text = var
-		}
-		tb.draw()
-		g.pos_x += g.widths[j]
-	}
-	tb.set_pos(0, 0)
-	tb.propose_size(g.rowbar_width, g.colbar_height)
-	unsafe {
-		*tb.text = ''
-	}
-	tb.draw()
-}
-
-fn (mut g Grid) draw_rowbar() {
-	mut tb := g.tb_rowbar
-	tb.is_focused = false
-	tb.read_only = true
-	tb.justify = ui.top_right
-	tb.set_visible(false)
-	g.pos_x = g.layout.x + g.layout.offset_x
-	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
-	for i in g.from_i .. g.to_i {
-		tb.set_pos(0, g.pos_y)
-		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
-		tb.propose_size(g.rowbar_width, g.heights[i])
-		unsafe {
-			*tb.text = '${i + 1}'
-		}
-		tb.draw()
-		g.pos_y += g.heights[i]
-	}
-}
-
-fn (mut g Grid) set_check_nrow(var_len int) {
-	if g.nrow < 0 {
-		g.nrow = var_len
-	} else {
-		if g.nrow != var_len {
-			panic('All vars need to be of same length')
-		}
-	}
-}
+// callbacks
 
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	//
@@ -345,6 +274,95 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	g.layout.update_layout()
 }
 
+// main actions
+
+fn grid_draw(c &ui.CanvasLayout, app voidptr) {
+	// println("draw begin")
+	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
+	mut g := component_grid(c)
+	// g.visible_cells()
+	g.pos_x = g.from_x + c.x + c.offset_x
+	// println("$g.rowbar_width == $g.pos_x")
+
+	for j in g.from_j .. g.to_j {
+		g.vars[j].draw(j, mut g)
+		g.pos_x += g.widths[j]
+		// println("draw $j")
+	}
+
+	g.draw_rowbar()
+	g.draw_colbar()
+
+	g.draw_current()
+
+	ui.scrollview_update(c)
+	// println("draw end")
+}
+
+// methods
+
+fn (mut g Grid) draw_current() {
+	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
+	g.layout.draw_rect_empty(pos_x - 1, pos_y - 1, g.widths[g.cur_j] + 2, g.heights[g.cur_i] + 2,
+		gx.red)
+}
+
+fn (mut g Grid) draw_colbar() {
+	mut tb := g.tb_colbar
+	tb.is_focused = false
+	tb.read_only = true
+	tb.justify = ui.top_center
+	tb.set_visible(false)
+	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
+	g.pos_y = 0
+	for j, var in g.headers {
+		tb.set_pos(g.pos_x, 0)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
+		tb.propose_size(g.widths[j], g.colbar_height)
+		unsafe {
+			*tb.text = var
+		}
+		tb.draw()
+		g.pos_x += g.widths[j]
+	}
+	tb.set_pos(0, 0)
+	tb.propose_size(g.rowbar_width, g.colbar_height)
+	unsafe {
+		*tb.text = ''
+	}
+	tb.draw()
+}
+
+fn (mut g Grid) draw_rowbar() {
+	mut tb := g.tb_rowbar
+	tb.is_focused = false
+	tb.read_only = true
+	tb.justify = ui.top_right
+	tb.set_visible(false)
+	g.pos_x = g.layout.x + g.layout.offset_x
+	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+	for i in g.from_i .. g.to_i {
+		tb.set_pos(0, g.pos_y)
+		// println("$i) ${g.widths[j]}, ${g.heights[i]} ${gtb.var[i]}")
+		tb.propose_size(g.rowbar_width, g.heights[i])
+		unsafe {
+			*tb.text = '${i + 1}'
+		}
+		tb.draw()
+		g.pos_y += g.heights[i]
+	}
+}
+
+fn (mut g Grid) set_check_nrow(var_len int) {
+	if g.nrow < 0 {
+		g.nrow = var_len
+	} else {
+		if g.nrow != var_len {
+			panic('All vars need to be of same length')
+		}
+	}
+}
+
 fn (g &Grid) size() (int, int) {
 	return (arrays.sum(g.widths) or { -1 }) + g.rowbar_width, (arrays.sum(g.heights) or { -1 }) +
 		g.colbar_height
@@ -358,6 +376,7 @@ fn (mut g Grid) show_selected() {
 		sel.set_visible(false)
 		sel.set_depth(ui.z_index_hidden)
 	}
+	g.cur_i, g.cur_j = g.sel_i, g.sel_j
 	// type
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
@@ -404,8 +423,26 @@ fn (mut g Grid) show_selected() {
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 	// TODO: use visible_cells to detect
 	mut sel_i, mut sel_j := -1, -1
-	$if vcells ? {
-		mut cum := g.from_x // g.from_x + g.layout.x + g.layout.offset_x
+	$if gip_old ? {
+		mut cum := g.rowbar_width
+		for j, w in g.widths {
+			cum += w
+			if x > g.rowbar_width && x < cum {
+				sel_j = j
+				break
+			}
+		}
+
+		cum = g.colbar_height
+		for i, h in g.heights {
+			cum += h
+			if y > g.colbar_height && y < cum {
+				sel_i = i
+				break
+			}
+		}
+	} $else {
+		mut cum := g.from_x
 		// println("dv $y")
 		for j in g.from_j .. g.to_j {
 			cum += g.widths[j]
@@ -422,24 +459,6 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 			cum += g.heights[i]
 			// println("dv  $y > $g.colbar_height && $y < $cum ")
 			if y > g.from_y && y < cum {
-				sel_i = i
-				break
-			}
-		}
-	} $else {
-		mut cum := g.rowbar_width
-		for j, w in g.widths {
-			cum += w
-			if x > g.rowbar_width && x < cum {
-				sel_j = j
-				break
-			}
-		}
-
-		cum = g.colbar_height
-		for i, h in g.heights {
-			cum += h
-			if y > g.colbar_height && y < cum {
 				sel_i = i
 				break
 			}
@@ -510,6 +529,8 @@ fn (mut g Grid) visible_cells() {
 		g.from_j, g.to_j, g.from_x = 0, g.ncol, 0
 	}
 }
+
+// GridVar interface and its "instances"
 
 interface GridVar {
 	id string
