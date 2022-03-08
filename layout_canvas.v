@@ -51,6 +51,7 @@ pub mut:
 	scrollview     &ScrollView = 0
 	// callbacks
 	draw_fn          CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
+	post_draw_fn     CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
 	click_fn         CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
 	mouse_down_fn    CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
 	mouse_up_fn      CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
@@ -79,6 +80,7 @@ pub struct CanvasLayoutParams {
 	bg_radius     f64
 	scrollview    bool
 	on_draw       CanvasLayoutDrawFn      = voidptr(0)
+	on_post_draw  CanvasLayoutDrawFn      = voidptr(0)
 	on_click      CanvasLayoutMouseFn     = voidptr(0)
 	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
 	on_mouse_up   CanvasLayoutMouseFn     = voidptr(0)
@@ -116,6 +118,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		bg_radius: f32(c.bg_radius)
 		bg_color: c.bg_color
 		draw_fn: c.on_draw
+		post_draw_fn: c.on_post_draw
 		click_fn: c.on_click
 		mouse_move_fn: c.on_mouse_move
 		mouse_down_fn: c.on_mouse_down
@@ -509,6 +512,10 @@ fn (mut c CanvasLayout) draw() {
 		for mut child in c.drawing_children {
 			child.draw()
 		}
+	}
+
+	if c.post_draw_fn != voidptr(0) {
+		c.post_draw_fn(c, state)
 	}
 
 	// scrollview_draw(c)

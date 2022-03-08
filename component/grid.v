@@ -40,7 +40,8 @@ mut:
 	selectors []ui.Widget
 	// sizes
 	rowbar_width  int = 80
-	colbar_height int = 30
+	colbar_height int = 25
+	header_size   int = 3
 	// index for swap of rows
 	index []int
 	// current
@@ -77,6 +78,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		id: p.id + '_layout'
 		scrollview: p.scrollview
 		on_draw: grid_draw
+		on_post_draw: grid_post_draw
 		on_click: grid_click
 		on_mouse_down: grid_mouse_down
 		on_mouse_up: grid_mouse_up
@@ -196,7 +198,8 @@ fn grid_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {}
 
 fn grid_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {}
 
-fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {}
+fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
+}
 
 fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	mut g := component_grid(c)
@@ -290,10 +293,25 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 		// println("draw $j")
 	}
 
+	// g.draw_rowbar()
+	// g.draw_colbar()
+
+	g.draw_current()
+
+	//
+	ui.scrollview_update(c)
+	// println("draw end")
+}
+
+fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
+	// println("draw begin")
+	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
+	mut g := component_grid(c)
+
 	g.draw_rowbar()
 	g.draw_colbar()
 
-	g.draw_current()
+	// g.draw_current()
 
 	ui.scrollview_update(c)
 	// println("draw end")
@@ -303,7 +321,15 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 
 fn (mut g Grid) draw_current() {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
-	g.layout.draw_rect_empty(pos_x - 1, pos_y - 1, g.widths[g.cur_j] + 2, g.heights[g.cur_i] + 2,
+	// for k in 1..4 {
+	// 	g.layout.draw_rect_empty(pos_x - k, pos_y - k, g.widths[g.cur_j] + 2 * k, g.heights[g.cur_i] + 2 * k,
+	// 	gx.red)
+	// }
+	g.layout.draw_rect_filled(pos_x - 3, pos_y - 3, g.widths[g.cur_j] + 2 * 3, 3, gx.red)
+	g.layout.draw_rect_filled(pos_x - 3, pos_y + g.heights[g.cur_i], g.widths[g.cur_j] + 2 * 3,
+		3, gx.red)
+	g.layout.draw_rect_filled(pos_x - 3, pos_y - 3, 3, g.heights[g.cur_i] + 2 * 3, gx.red)
+	g.layout.draw_rect_filled(pos_x + g.widths[g.cur_j], pos_y, 3, g.heights[g.cur_i] + 2 * 3,
 		gx.red)
 }
 
@@ -313,7 +339,7 @@ fn (mut g Grid) draw_colbar() {
 	tb.read_only = true
 	tb.justify = ui.top_center
 	tb.set_visible(false)
-	g.pos_x = g.rowbar_width + g.layout.x + g.layout.offset_x
+	g.pos_x = g.rowbar_width + g.header_size + g.layout.x + g.layout.offset_x
 	g.pos_y = 0
 	for j, var in g.headers {
 		tb.set_pos(g.pos_x, 0)
@@ -469,7 +495,7 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 }
 
 fn (g &Grid) get_pos(i int, j int) (int, int) {
-	mut x, mut y := g.rowbar_width, g.colbar_height
+	mut x, mut y := g.rowbar_width + g.header_size, g.colbar_height + g.header_size
 	for k in 0 .. i {
 		y += g.heights[k]
 	}
@@ -482,7 +508,7 @@ fn (g &Grid) get_pos(i int, j int) (int, int) {
 fn (mut g Grid) visible_cells() {
 	if g.layout.has_scrollview {
 		g.from_i, g.to_i, g.from_y = -1, -1, 0
-		mut cum := g.colbar_height // g.layout.x + g.layout.offset_x
+		mut cum := g.colbar_height + g.header_size // g.layout.x + g.layout.offset_x
 		for i, h in g.heights {
 			if g.from_i < 0 && cum > g.layout.scrollview.offset_y {
 				g.from_i = i
@@ -507,7 +533,7 @@ fn (mut g Grid) visible_cells() {
 
 	if g.layout.has_scrollview {
 		g.from_j, g.to_j, g.from_x = -1, -1, 0
-		mut cum := g.rowbar_width
+		mut cum := g.rowbar_width + g.header_size
 		for j, w in g.widths {
 			if g.from_j < 0 && cum > g.layout.scrollview.offset_x {
 				g.from_j = j

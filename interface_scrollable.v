@@ -146,11 +146,41 @@ pub fn scrollview_widget_set_orig_xy(w Widget) {
 			scrollview_set_orig_xy(w)
 		}
 	}
+
+	// TODO: DOES NOT WORK
+	// if w is ScrollableWidget {
+	// 	mut sw := w as ScrollableWidget
+	// 	sw.set_orig_xy()
+	// }
+	// if w is Stack {
+	// 	for child in w.children {
+	// 		scrollview_widget_set_orig_xy(child)
+	// 	}
+	// } else if w is CanvasLayout {
+	// 	for child in w.children {
+	// 		scrollview_widget_set_orig_xy(child)
+	// 	}
+	// }
 }
+
+// pub fn (mut sw ScrollableWidget) set_orig_xy() {
+// 	mut sv := sw.scrollview
+// 	if sv != 0 {
+// 		sv.orig_x, sv.orig_y = sw.x, sw.y
+// 		sv.offset_x, sv.offset_y = 0, 0
+// 		if sv.active_x {
+// 			sv.change_value(.btn_x)
+// 		}
+// 		if sv.active_y {
+// 			sv.change_value(.btn_y)
+// 		}
+// 	}
+// }
 
 pub fn scrollview_set_orig_xy<T>(w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
+		// rest values
 		sv.orig_x, sv.orig_y = w.x, w.y
 		sv.offset_x, sv.offset_y = 0, 0
 		if sv.active_x {
@@ -160,6 +190,80 @@ pub fn scrollview_set_orig_xy<T>(w &T) {
 			sv.change_value(.btn_y)
 		}
 		// println('set orig size $.id: ($w.x, $w.y)')
+	}
+}
+
+pub fn scrollview_widget_save_prev(w Widget) {
+	if w is Stack {
+		if has_scrollview(w) {
+			scrollview_save_prev(w)
+		}
+		for child in w.children {
+			scrollview_widget_save_prev(child)
+		}
+	} else if w is CanvasLayout {
+		if has_scrollview(w) {
+			scrollview_save_prev(w)
+		}
+		for child in w.children {
+			scrollview_widget_save_prev(child)
+		}
+	} else if w is ListBox {
+		if has_scrollview(w) {
+			scrollview_save_prev(w)
+		}
+	} else if w is TextBox {
+		if has_scrollview(w) {
+			scrollview_save_prev(w)
+		}
+	}
+}
+
+pub fn scrollview_save_prev<T>(w &T) {
+	if has_scrollview(w) {
+		mut sv := w.scrollview
+		// Save prev values
+		sv.prev_orig_x, sv.prev_orig_y, sv.prev_offset_x, sv.prev_offset_y = sv.orig_x, sv.orig_y, sv.offset_x, sv.offset_y
+	}
+}
+
+pub fn scrollview_widget_load_prev(w Widget) {
+	if w is Stack {
+		if has_scrollview(w) {
+			scrollview_load_prev(w)
+		}
+		for child in w.children {
+			scrollview_widget_load_prev(child)
+		}
+	} else if w is CanvasLayout {
+		if has_scrollview(w) {
+			scrollview_load_prev(w)
+		}
+		for child in w.children {
+			scrollview_widget_load_prev(child)
+		}
+	} else if w is ListBox {
+		if has_scrollview(w) {
+			scrollview_load_prev(w)
+		}
+	} else if w is TextBox {
+		if has_scrollview(w) {
+			scrollview_load_prev(w)
+		}
+	}
+}
+
+pub fn scrollview_load_prev<T>(w &T) {
+	if has_scrollview(w) {
+		mut sv := w.scrollview
+		// Save prev values
+		sv.orig_x, sv.orig_y, sv.offset_x, sv.offset_y = sv.prev_orig_x, sv.prev_orig_y, sv.prev_offset_x, sv.prev_offset_y
+		if sv.active_x {
+			sv.change_value(.btn_x)
+		}
+		if sv.active_y {
+			sv.change_value(.btn_y)
+		}
 	}
 }
 
@@ -177,6 +281,33 @@ pub fn scrollview_update<T>(w &T) {
 		mut sw := w.scrollview
 		sw.update()
 	}
+}
+
+pub fn scrollview_widget_update(w Widget) {
+	if w is Stack {
+		if has_scrollview(w) {
+			scrollview_update(w)
+		}
+		for child in w.children {
+			scrollview_widget_update(child)
+		}
+	}
+	// } else if w is CanvasLayout {
+	// 	if has_scrollview(w) {
+	// 		scrollview_set_orig_xy(w)
+	// 	}
+	// 	for child in w.children {
+	// 		scrollview_widget_set_orig_xy(child)
+	// 	}
+	// } else if w is ListBox {
+	// 	if has_scrollview(w) {
+	// 		scrollview_set_orig_xy(w)
+	// 	}
+	// } else if w is TextBox {
+	// 	if has_scrollview(w) {
+	// 		scrollview_set_orig_xy(w)
+	// 	}
+	// }
 }
 
 pub fn scrollview_draw_begin<T>(mut w T) {
@@ -274,6 +405,11 @@ pub mut:
 	parent       Layout
 	// delta mouse
 	delta_mouse int = 50
+	// saved scrollview
+	prev_orig_x   int
+	prev_orig_y   int
+	prev_offset_x int
+	prev_offset_y int
 }
 
 fn (mut sv ScrollView) init(parent Layout) {
@@ -381,7 +517,8 @@ fn (sv &ScrollView) parent_scissor_rect() gg.Rect {
 fn (mut sv ScrollView) update() {
 	sv.width, sv.height = sv.widget.size()
 	sv.adj_width, sv.adj_height = sv.widget.adj_size()
-	sv.active_x, sv.active_y = sv.adj_width > sv.width, sv.adj_height > sv.height
+	sv.active_x, sv.active_y = sv.adj_width > sv.width || sv.offset_x > 0,
+		sv.adj_height > sv.height || sv.offset_y > 0
 
 	$if svu ? {
 		println('scroll $sv.widget.id: ($sv.active_x = $sv.width < $sv.adj_width, $sv.active_y = $sv.height < $sv.adj_height)')
