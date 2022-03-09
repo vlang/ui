@@ -1178,22 +1178,13 @@ pub fn (mut s Stack) set_visible(state bool) {
 }
 
 fn (mut s Stack) resize(width int, height int) {
-	$if scroll_dev ? {
-		scrollview_widget_save_prev(s)
-		s.init_size()
-		s.update_pos()
-		s.set_children_sizes()
-		s.set_children_pos()
-		scrollview_widget_set_orig_xy(s)
-		scrollview_widget_load_prev(s)
-		// scrollview_widget_update(s)
-	} $else {
-		s.init_size()
-		s.update_pos()
-		s.set_children_sizes()
-		s.set_children_pos()
-		scrollview_widget_set_orig_xy(s)
-	}
+	scrollview_widget_save_offset(s)
+	s.init_size()
+	s.update_pos()
+	s.set_children_sizes()
+	s.set_children_pos()
+	scrollview_widget_restore_offset(s)
+	// println("RESIZE: $width, $height")
 }
 
 pub fn (s &Stack) get_children() []Widget {

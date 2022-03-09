@@ -12,7 +12,7 @@ fn main() {
 	mut app := &App{}
 	mut s := ''
 	for i in 0 .. 100 {
-		s += 'line ($i)'.repeat(20)
+		s += 'line ($i)'.repeat(5)
 		s += '\n'
 	}
 	app.text = s
@@ -58,8 +58,9 @@ fn on_scroll_change(sw ui.ScrollableWidget) {
 	mut tb := sw.ui.window.textbox('info')
 	mut s := ''
 	sv := sw.scrollview
+	ox, oy := sv.orig_xy()
 	s += 'textbox $sw.id has scrollview? $sw.has_scrollview'
-	s += '\nat ($sw.x, $sw.y)'
+	s += '\nat ($sw.x, $sw.y) orig: ($ox, $oy)'
 	s += '\nwith scrollview offset: ($sv.offset_x, $sv.offset_y)'
 	s += '\nwith btn: ($sv.btn_x, $sv.btn_y)'
 	tb.set_text(s)

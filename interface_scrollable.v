@@ -3,6 +3,7 @@ module ui
 import gx
 import gg
 import sokol.sgl
+import math
 
 // ScrollView exists only when attached to Widget
 // Is it not a widget but attached to a widget.
@@ -193,77 +194,82 @@ pub fn scrollview_set_orig_xy<T>(w &T) {
 	}
 }
 
-pub fn scrollview_widget_save_prev(w Widget) {
+pub fn scrollview_widget_save_offset(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
-			scrollview_save_prev(w)
+			scrollview_save_offset(w)
 		}
 		for child in w.children {
-			scrollview_widget_save_prev(child)
+			scrollview_widget_save_offset(child)
 		}
 	} else if w is CanvasLayout {
 		if has_scrollview(w) {
-			scrollview_save_prev(w)
+			scrollview_save_offset(w)
 		}
 		for child in w.children {
-			scrollview_widget_save_prev(child)
+			scrollview_widget_save_offset(child)
 		}
 	} else if w is ListBox {
 		if has_scrollview(w) {
-			scrollview_save_prev(w)
+			scrollview_save_offset(w)
 		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
-			scrollview_save_prev(w)
+			scrollview_save_offset(w)
 		}
 	}
 }
 
-pub fn scrollview_save_prev<T>(w &T) {
+pub fn scrollview_save_offset<T>(w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// Save prev values
-		sv.prev_orig_x, sv.prev_orig_y, sv.prev_offset_x, sv.prev_offset_y = sv.orig_x, sv.orig_y, sv.offset_x, sv.offset_y
+		sv.prev_offset_x, sv.prev_offset_y = sv.offset_x, sv.offset_y
+		// println("save offset: $sv.offset_x, $sv.offset_y")
 	}
 }
 
-pub fn scrollview_widget_load_prev(w Widget) {
+pub fn scrollview_widget_restore_offset(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
-			scrollview_load_prev(w)
+			scrollview_restore_offset(w)
 		}
 		for child in w.children {
-			scrollview_widget_load_prev(child)
+			scrollview_widget_restore_offset(child)
 		}
 	} else if w is CanvasLayout {
 		if has_scrollview(w) {
-			scrollview_load_prev(w)
+			scrollview_restore_offset(w)
 		}
 		for child in w.children {
-			scrollview_widget_load_prev(child)
+			scrollview_widget_restore_offset(child)
 		}
 	} else if w is ListBox {
 		if has_scrollview(w) {
-			scrollview_load_prev(w)
+			scrollview_restore_offset(w)
 		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
-			scrollview_load_prev(w)
+			scrollview_restore_offset(w)
 		}
 	}
 }
 
-pub fn scrollview_load_prev<T>(w &T) {
+pub fn scrollview_restore_offset<T>(w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
-		// Save prev values
-		sv.orig_x, sv.orig_y, sv.offset_x, sv.offset_y = sv.prev_orig_x, sv.prev_orig_y, sv.prev_offset_x, sv.prev_offset_y
+		sv.orig_x, sv.orig_y = w.x, w.y
+		// Load prev offset
+		sv.offset_x, sv.offset_y = math.max(sv.prev_offset_x, 0), math.max(sv.prev_offset_y,
+			0)
+		// println("restore offset: $sv.offset_x, $sv.offset_y")
 		if sv.active_x {
 			sv.change_value(.btn_x)
 		}
 		if sv.active_y {
 			sv.change_value(.btn_y)
 		}
+		// println("restore2 offset: $sv.offset_x, $sv.offset_y")
 	}
 }
 
@@ -406,8 +412,6 @@ pub mut:
 	// delta mouse
 	delta_mouse int = 50
 	// saved scrollview
-	prev_orig_x   int
-	prev_orig_y   int
 	prev_offset_x int
 	prev_offset_y int
 }
@@ -600,7 +604,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 			sv.offset_x = 0
 		}
 		max_offset_x, a_x := sv.coef_x()
-		if sv.offset_x > max_offset_x {
+		if sv.offset_x > max_offset_x && max_offset_x > 0 {
 			sv.offset_x = max_offset_x
 		}
 		sv.btn_x = int(f32(sv.offset_x) * a_x)
@@ -609,7 +613,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 			sv.offset_y = 0
 		}
 		max_offset_y, a_y := sv.coef_y()
-		if sv.offset_y > max_offset_y {
+		if sv.offset_y > max_offset_y && max_offset_y > 0 {
 			sv.offset_y = max_offset_y
 		}
 		sv.btn_y = int(f32(sv.offset_y) * a_y)
