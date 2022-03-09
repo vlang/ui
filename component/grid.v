@@ -214,18 +214,43 @@ fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 
 fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	// println('key_down $e')
+	mut g := component_grid(c)
 	match e.key {
 		.up {
-			println('up')
+			// println('up')
+			if g.cur_i > 0 {
+				g.cur_i -= 1
+			}
 		}
 		.down {
-			println('down')
+			// println('down')
+			if g.cur_i < g.nrow - 1 {
+				g.cur_i += 1
+			}
 		}
 		.left {
-			println('left')
+			// println('left')
+			g.cur_j -= 1
+			if g.cur_j == -1 {
+				if g.cur_i == 0 {
+					g.cur_j += 1 // revert
+				} else {
+					g.cur_i -= 1
+					g.cur_j = g.ncol - 1
+				}
+			}
 		}
 		.right {
-			println('right')
+			// println('right')
+			g.cur_j += 1
+			if g.cur_j == g.ncol {
+				if g.cur_i == g.nrow - 1 {
+					g.cur_j -= 1 // revert
+				} else {
+					g.cur_i += 1
+					g.cur_j = 0
+				}
+			}
 		}
 		else {}
 	}
@@ -308,10 +333,14 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
 	mut g := component_grid(c)
 
+	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
+	g.layout.draw_rect_filled(-g.layout.x - g.layout.offset_x, -g.layout.y - g.layout.offset_y,
+		g.rowbar_width + g.header_size, g.colbar_height, gx.white)
+	g.layout.draw_rect_filled(-g.layout.x - g.layout.offset_x, -g.layout.y - g.layout.offset_y,
+		g.rowbar_width, g.colbar_height + g.header_size, gx.white)
+
 	g.draw_rowbar()
 	g.draw_colbar()
-
-	// g.draw_current()
 
 	ui.scrollview_update(c)
 	// println("draw end")
@@ -321,10 +350,6 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 
 fn (mut g Grid) draw_current() {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
-	// for k in 1..4 {
-	// 	g.layout.draw_rect_empty(pos_x - k, pos_y - k, g.widths[g.cur_j] + 2 * k, g.heights[g.cur_i] + 2 * k,
-	// 	gx.red)
-	// }
 	g.layout.draw_rect_filled(pos_x - 3, pos_y - 3, g.widths[g.cur_j] + 2 * 3, 3, gx.red)
 	g.layout.draw_rect_filled(pos_x - 3, pos_y + g.heights[g.cur_i], g.widths[g.cur_j] + 2 * 3,
 		3, gx.red)
