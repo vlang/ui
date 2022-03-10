@@ -79,6 +79,7 @@ pub struct CanvasLayoutParams {
 	bg_color      gx.Color = no_color
 	bg_radius     f64
 	scrollview    bool
+	is_focused    bool
 	on_draw       CanvasLayoutDrawFn      = voidptr(0)
 	on_post_draw  CanvasLayoutDrawFn      = voidptr(0)
 	on_click      CanvasLayoutMouseFn     = voidptr(0)
@@ -117,6 +118,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		z_index: c.z_index
 		bg_radius: f32(c.bg_radius)
 		bg_color: c.bg_color
+		is_focused: c.is_focused
 		draw_fn: c.on_draw
 		post_draw_fn: c.on_post_draw
 		click_fn: c.on_click

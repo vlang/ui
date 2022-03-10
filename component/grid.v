@@ -3,6 +3,7 @@ module component
 import ui
 import arrays
 import gx
+import math
 
 pub struct Factor {
 mut:
@@ -71,12 +72,14 @@ pub struct GridParams {
 	width      int = 100
 	height     int = 25
 	scrollview bool
+	is_focused bool
 }
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: p.id + '_layout'
 		scrollview: p.scrollview
+		is_focused: p.is_focused
 		on_draw: grid_draw
 		on_post_draw: grid_post_draw
 		on_click: grid_click
@@ -213,7 +216,9 @@ fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 }
 
 fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
-	// println('key_down $e')
+	$if grid_key ? {
+		println('key_down $e')
+	}
 	mut g := component_grid(c)
 	match e.key {
 		.up {
@@ -252,12 +257,46 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 				}
 			}
 		}
+		.page_up {
+			g.cur_i = math.max(g.cur_i - g.to_i + g.from_i + 2, 0)
+			g.cur_allways_visible()
+		}
+		.page_down {
+			g.cur_i = math.min(g.cur_i + g.to_i - g.from_i - 2, g.nrow - 1)
+			g.cur_allways_visible()
+		}
+		.home {
+			g.cur_i, g.cur_j = 0, 0
+			g.cur_allways_visible()
+		}
+		.end {
+			g.cur_i, g.cur_j = g.nrow - 1, g.ncol - 1
+			g.cur_allways_visible()
+		}
 		else {}
 	}
+	g.cur_allways_visible()
 }
 
 fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
-	println('char $e')
+	mut g := component_grid(c)
+	s := utf32_to_str(e.codepoint)
+	$if grid_char ? {
+		println('char $e $s')
+	}
+	if ui.ctl_key(e.mods) {
+		match e.codepoint {
+			1 {
+				g.cur_i, g.cur_j = 0, 0
+				g.cur_allways_visible()
+			}
+			5 {
+				g.cur_i, g.cur_j = g.nrow - 1, g.ncol - 1
+				g.cur_allways_visible()
+			}
+			else {}
+		}
+	}
 }
 
 fn grid_full_size(mut c ui.CanvasLayout) (int, int) {
@@ -321,7 +360,7 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	// g.draw_rowbar()
 	// g.draw_colbar()
 
-	g.draw_current()
+	// g.draw_current()
 
 	//
 	ui.scrollview_update(c)
@@ -332,6 +371,8 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("draw begin")
 	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
 	mut g := component_grid(c)
+
+	g.draw_current()
 
 	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
 	g.layout.draw_rect_filled(-g.layout.x - g.layout.offset_x, -g.layout.y - g.layout.offset_y,
@@ -349,13 +390,14 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 // methods
 
 fn (mut g Grid) draw_current() {
+	l := 3
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
-	g.layout.draw_rect_filled(pos_x - 3, pos_y - 3, g.widths[g.cur_j] + 2 * 3, 3, gx.red)
-	g.layout.draw_rect_filled(pos_x - 3, pos_y + g.heights[g.cur_i], g.widths[g.cur_j] + 2 * 3,
-		3, gx.red)
-	g.layout.draw_rect_filled(pos_x - 3, pos_y - 3, 3, g.heights[g.cur_i] + 2 * 3, gx.red)
-	g.layout.draw_rect_filled(pos_x + g.widths[g.cur_j], pos_y, 3, g.heights[g.cur_i] + 2 * 3,
-		gx.red)
+	w, h := g.widths[g.cur_j], g.heights[g.cur_i]
+
+	g.layout.draw_rect_filled(pos_x - l, pos_y - l, w + 2 * l, l, gx.red)
+	g.layout.draw_rect_filled(pos_x - l, pos_y + h, w + 2 * l, 3, gx.red)
+	g.layout.draw_rect_filled(pos_x - l, pos_y - l, l, h + 2 * l, gx.red)
+	g.layout.draw_rect_filled(pos_x + w, pos_y - l, l, h + 2 * l, gx.red)
 }
 
 fn (mut g Grid) draw_colbar() {
@@ -533,7 +575,7 @@ fn (g &Grid) get_pos(i int, j int) (int, int) {
 fn (mut g Grid) visible_cells() {
 	if g.layout.has_scrollview {
 		g.from_i, g.to_i, g.from_y = -1, -1, 0
-		mut cum := g.colbar_height + g.header_size // g.layout.x + g.layout.offset_x
+		mut cum := g.colbar_height + g.header_size
 		for i, h in g.heights {
 			if g.from_i < 0 && cum > g.layout.scrollview.offset_y {
 				g.from_i = i
@@ -578,6 +620,61 @@ fn (mut g Grid) visible_cells() {
 		}
 	} else {
 		g.from_j, g.to_j, g.from_x = 0, g.ncol, 0
+	}
+}
+
+pub fn (mut g Grid) cur_allways_visible() {
+	if !ui.has_scrollview(g.layout) {
+		return
+	}
+	// vertically
+	x, y := g.get_pos(g.cur_i, g.cur_j)
+	if y < g.layout.scrollview.offset_y + g.heights[g.cur_i] {
+		// println("scroll y begin $g.cur_i")
+		g.scroll_y_to_cur(false)
+	} else if y > g.layout.scrollview.offset_y + g.layout.height - g.heights[g.cur_i] {
+		// println("scroll y end $g.cur_i")
+		g.scroll_y_to_cur(true)
+	}
+	// horizontally
+	if x < g.layout.scrollview.offset_x + g.widths[g.cur_j] {
+		// println("scroll x begin $g.cur_j")
+		g.scroll_x_to_cur(false)
+	} else if x > g.layout.scrollview.offset_x + g.layout.width - g.widths[g.cur_j] {
+		// println("scroll x end $g.cur_j")
+		g.scroll_x_to_cur(true)
+	}
+}
+
+pub fn (mut g Grid) scroll_x_to_cur(end bool) {
+	if g.layout.scrollview.active_x {
+		delta := if end {
+			-g.layout.width + g.widths[math.min(g.cur_j - 1, g.ncol - 1)] + g.header_size
+		} else {
+			-g.widths[math.max(g.cur_j - 1, 0)] - g.header_size
+		}
+		x, _ := g.get_pos(g.cur_i, g.cur_j)
+		g.layout.scrollview.set(x + delta, .btn_x)
+	}
+}
+
+pub fn (mut g Grid) scroll_y_to_cur(end bool) {
+	if g.layout.scrollview.active_y {
+		delta := if end {
+			-g.layout.height + g.heights[math.min(g.cur_i - 1, g.nrow - 1)] + g.header_size
+		} else {
+			-g.heights[math.max(g.cur_i - 1, 0)] - g.header_size
+		}
+		_, y := g.get_pos(g.cur_i, g.cur_j)
+		g.layout.scrollview.set(y + delta, .btn_y)
+	}
+}
+
+pub fn (mut g Grid) scroll_y_to_end() {
+	if g.layout.scrollview.active_y {
+		_, y := g.get_pos(g.nrow - 1, g.ncol - 1)
+		g.layout.scrollview.set(y + g.heights[g.nrow - 1] + g.header_size - g.layout.height,
+			.btn_y)
 	}
 }
 

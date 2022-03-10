@@ -29,6 +29,7 @@ fn main() {
 			uic.grid(
 				id: 'grid'
 				scrollview: true
+				is_focused: true
 				vars: {
 					'v1':  ['toto', 'titi', 'tata'].repeat(n)
 					'v2':  ['toti', 'tito', 'tato'].repeat(n)
