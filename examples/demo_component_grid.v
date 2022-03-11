@@ -3,7 +3,7 @@ import ui.component as uic
 import gx
 
 const (
-	win_width  = 800
+	win_width  = 600
 	win_height = 600
 )
 

@@ -197,6 +197,7 @@ fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 		println('both  ')
 	} else if colbar {
 		println('colbar $g.sel_j')
+		g.colbar_selected()
 	} else if rowbar {
 		println('rowbar $g.sel_i')
 	} else {
@@ -233,6 +234,11 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	}
 	mut g := component_grid(c)
 	if g.is_selected() {
+		if e.key == .escape {
+			println('here')
+			g.unselect()
+			g.layout.update_layout()
+		}
 		return
 	}
 	match e.key {
@@ -388,12 +394,6 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 
 	g.draw_current()
 
-	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
-	g.layout.draw_rect_filled(-g.layout.x - g.layout.offset_x, -g.layout.y - g.layout.offset_y,
-		g.rowbar_width + g.header_size, g.colbar_height, gx.white)
-	g.layout.draw_rect_filled(-g.layout.x - g.layout.offset_x, -g.layout.y - g.layout.offset_y,
-		g.rowbar_width, g.colbar_height + g.header_size, gx.white)
-
 	g.draw_rowbar()
 	g.draw_colbar()
 
@@ -408,7 +408,7 @@ fn (mut g Grid) draw_current() {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
 
-	println('current: $pos_x, $pos_y, $w, $h, $l')
+	// println('current: $pos_x, $pos_y, $w, $h, $l')
 	g.layout.draw_rect_filled(pos_x - l, pos_y - l, w + 2 * l, l, gx.red)
 	g.layout.draw_rect_filled(pos_x - l, pos_y + h, w + 2 * l, 3, gx.red)
 	g.layout.draw_rect_filled(pos_x - l, pos_y - l, l, h + 2 * l, gx.red)
@@ -422,18 +422,27 @@ fn (mut g Grid) draw_colbar() {
 	tb.justify = ui.top_center
 	tb.set_visible(false)
 	g.pos_x = g.rowbar_width + g.header_size + g.layout.x + g.layout.offset_x
-	g.pos_y = 0
+	g.pos_x, g.pos_y = g.layout.abs_pos(0, 0)
+	// println("$g.from_y $g.layout.y $g.layout.offset_y ${g.layout.scrollview.orig_xy()}")
+
+	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
+	g.layout.ui.gg.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width + g.header_size,
+		g.colbar_height, gx.white)
+	g.layout.ui.gg.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width, g.colbar_height +
+		g.header_size, gx.white)
+
+	mut pos_x := g.pos_x + g.rowbar_width + g.header_size
 	for j, var in g.headers {
-		tb.set_pos(g.pos_x, 0)
-		// println("$i) ${g.widths[j]}, ${g.height(i]} ${gtb.var[i)}")
+		tb.set_pos(pos_x, g.pos_y)
+		// println("$j) $g.pos_x, $g.pos_y, ${g.widths[j]} ${var}")
 		tb.propose_size(g.widths[j], g.colbar_height)
 		unsafe {
 			*tb.text = var
 		}
 		tb.draw()
-		g.pos_x += g.widths[j]
+		pos_x += g.widths[j]
 	}
-	tb.set_pos(0, 0)
+	tb.set_pos(g.pos_x, g.pos_y)
 	tb.propose_size(g.rowbar_width, g.colbar_height)
 	unsafe {
 		*tb.text = ''
@@ -482,14 +491,21 @@ fn (g &Grid) is_selected() bool {
 	return g.selectors.any(!it.hidden)
 }
 
-fn (mut g Grid) show_selected() {
-	if g.sel_i < 0 || g.sel_j < 0 {
-		return
-	}
+fn (mut g Grid) unselect() {
 	for mut sel in g.selectors {
 		sel.set_visible(false)
 		sel.set_depth(ui.z_index_hidden)
 	}
+}
+
+fn (mut g Grid) colbar_selected() {
+}
+
+fn (mut g Grid) show_selected() {
+	if g.sel_i < 0 || g.sel_j < 0 {
+		return
+	}
+	g.unselect()
 	g.cur_i, g.cur_j = g.sel_i, g.sel_j
 	// type
 	name := g.headers[g.sel_j]

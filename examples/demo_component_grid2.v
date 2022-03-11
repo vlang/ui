@@ -30,11 +30,12 @@ fn main() {
 				widths: ui.stretch
 				heights: ui.stretch
 				children: [
+					ui.rectangle(color: gx.red),
 					uic.grid(
 						id: 'grid'
 						scrollview: true
 						is_focused: true
-						fixed_height: false
+						// fixed_height: false
 						vars: {
 							'v1':  ['toto', 'titi', 'tata'].repeat(300)
 							'v2':  ['toti', 'tito', 'tato'].repeat(300)
