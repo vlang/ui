@@ -232,6 +232,9 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 		println('key_down $e')
 	}
 	mut g := component_grid(c)
+	if g.is_selected() {
+		return
+	}
 	match e.key {
 		.up {
 			// println('up')
@@ -405,6 +408,7 @@ fn (mut g Grid) draw_current() {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
 
+	println('current: $pos_x, $pos_y, $w, $h, $l')
 	g.layout.draw_rect_filled(pos_x - l, pos_y - l, w + 2 * l, l, gx.red)
 	g.layout.draw_rect_filled(pos_x - l, pos_y + h, w + 2 * l, 3, gx.red)
 	g.layout.draw_rect_filled(pos_x - l, pos_y - l, l, h + 2 * l, gx.red)
@@ -472,6 +476,10 @@ fn (g &Grid) size() (int, int) {
 	h := g.colbar_height + 2 * g.header_size + if g.cell_height > 0 { g.cell_height * g.nrow } else { arrays.sum(g.heights) or {
 			-1} }
 	return w, h
+}
+
+fn (g &Grid) is_selected() bool {
+	return g.selectors.any(!it.hidden)
 }
 
 fn (mut g Grid) show_selected() {

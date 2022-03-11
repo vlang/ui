@@ -594,94 +594,101 @@ pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyl
 
 // ---- triangle
 
-pub fn (c &CanvasLayout) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	c.ui.gg.draw_triangle_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
-		y2 + c.y + c.offset_y, x3 + c.x + c.offset_x, y3 + c.y + c.offset_y, color)
+pub fn (c &CanvasLayout) draw_triangle_empty(x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+	c.ui.gg.draw_triangle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		f32(x2 + c.x + c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x),
+		f32(y3 + c.y + c.offset_y), color)
 }
 
-pub fn (c &CanvasLayout) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	c.ui.gg.draw_triangle_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
-		y2 + c.y + c.offset_y, x3 + c.x + c.offset_x, y3 + c.y + c.offset_y, color)
+pub fn (c &CanvasLayout) draw_triangle_filled(x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+	c.ui.gg.draw_triangle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		f32(x2 + c.x + c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x),
+		f32(y3 + c.y + c.offset_y), color)
 }
 
 // ---- square
 
-pub fn (c &CanvasLayout) draw_square_empty(x f32, y f32, s f32, color gx.Color) {
-	c.draw_rect_empty(x, y, s, s, color)
+pub fn (c &CanvasLayout) draw_square_empty(x f64, y f64, s f32, color gx.Color) {
+	c.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
 }
 
-pub fn (c &CanvasLayout) draw_square_filled(x f32, y f32, s f32, color gx.Color) {
-	c.draw_rect_filled(x, y, s, s, color)
+pub fn (c &CanvasLayout) draw_square_filled(x f64, y f64, s f32, color gx.Color) {
+	c.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
 }
 
 // ---- rectangle
 
-pub fn (c &CanvasLayout) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_rect_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
+pub fn (c &CanvasLayout) draw_rect_empty(x f64, y f64, w f32, h f32, color gx.Color) {
+	c.ui.gg.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h,
+		color)
 }
 
-pub fn (c &CanvasLayout) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h, color)
+pub fn (c &CanvasLayout) draw_rect_filled(x f64, y f64, w f32, h f32, color gx.Color) {
+	println('')
+	c.ui.gg.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
+		h, color)
 }
 
-pub fn (c &CanvasLayout) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_rounded_rect_filled(x f64, y f64, w f32, h f32, radius f32, color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
-		rad, color)
+	c.ui.gg.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		w, h, rad, color)
 }
 
-pub fn (c &CanvasLayout) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {
+pub fn (c &CanvasLayout) draw_rounded_rect_empty(x f64, y f64, w f32, h f32, radius f32, border_color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, w, h,
-		rad, border_color)
+	c.ui.gg.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		w, h, rad, border_color)
 }
 
 // ---- circle
 
-pub fn (c &CanvasLayout) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {
-	c.ui.gg.draw_circle_line(x + c.x + c.offset_x, y + c.y + c.offset_y, r, segments,
+pub fn (c &CanvasLayout) draw_circle_line(x f64, y f64, r int, segments int, color gx.Color) {
+	c.ui.gg.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
+		segments, color)
+}
+
+pub fn (c &CanvasLayout) draw_circle_empty(x f64, y f64, r f32, color gx.Color) {
+	c.ui.gg.draw_circle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
 		color)
 }
 
-pub fn (c &CanvasLayout) draw_circle_empty(x f32, y f32, r f32, color gx.Color) {
-	c.ui.gg.draw_circle_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
-}
-
-pub fn (c &CanvasLayout) draw_circle_filled(x f32, y f32, r f32, color gx.Color) {
-	c.ui.gg.draw_circle_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, color)
+pub fn (c &CanvasLayout) draw_circle_filled(x f64, y f64, r f32, color gx.Color) {
+	c.ui.gg.draw_circle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
+		color)
 }
 
 // ---- slice
 
-pub fn (c &CanvasLayout) draw_slice_empty(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
-		end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_slice_empty(x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_slice_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
+		start_angle, end_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_slice_filled(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, r, start_angle,
-		end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_slice_filled(x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_slice_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
+		start_angle, end_angle, segments, color)
 }
 
 // ---- arc
 
-pub fn (c &CanvasLayout) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_empty(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius, thickness,
-		start_angle, end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_arc_empty(x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
+		thickness, start_angle, end_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_filled(x + c.x + c.offset_x, y + c.y + c.offset_y, inner_radius,
+pub fn (c &CanvasLayout) draw_arc_filled(x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	c.ui.gg.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
 		thickness, start_angle, end_angle, segments, color)
 }
 
 // ---- line
 
-pub fn (c &CanvasLayout) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_line(x f64, y f64, x2 f64, y2 f64, color gx.Color) {
 	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
 	// $y2 + $c.y + $c.offset_y")
-	c.ui.gg.draw_line(x + c.x + c.offset_x, y + c.y + c.offset_y, x2 + c.x + c.offset_x,
-		y2 + c.y + c.offset_y, color)
+	c.ui.gg.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
+		c.offset_x), f32(y2 + c.y + c.offset_y), color)
 }
 
 // ---- polygon
