@@ -20,8 +20,8 @@ fn (gd GridVar) ranked_data() []RankedData {
 	return rd
 }
 
-pub fn (gd GridVar) idx_sort() { //([]int, map[int]int) {
-	mut m := map[int]int{}
+pub fn (gd GridVar) idx_sorted() []int { //([]int, map[int]int) {
+	// mut m := map[int]int{}
 
 	mut arr := gd.ranked_data()
 	arr.sort_with_compare(fn (a &RankedData, b &RankedData) int {
@@ -50,8 +50,9 @@ pub fn (gd GridVar) idx_sort() { //([]int, map[int]int) {
 			}
 		}
 	})
-	for i, rv in arr {
-		m[rv.i] = i
-	}
-	// return m
+	// for i, rv in arr {
+	// 	m[rv.i] = i
+	// }
+	sa := arr.map(it.i)
+	return sa //, m
 }
