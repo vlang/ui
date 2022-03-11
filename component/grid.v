@@ -191,10 +191,12 @@ fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	println('grid_click $e.x $e.y')
 	mut g := component_grid(c)
 	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
-	colbar := e.y < g.colbar_height - c.y - c.offset_y
-	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
+	rx, ry := g.layout.abs_pos(g.rowbar_width, g.colbar_height)
+	ex, ey := g.layout.orig_pos(e.x, e.y)
+	colbar := ey < ry
+	rowbar := ex < rx
 	if colbar && rowbar {
-		println('both  ')
+		println('both')
 	} else if colbar {
 		println('colbar $g.sel_j')
 		g.colbar_selected()
@@ -421,9 +423,9 @@ fn (mut g Grid) draw_colbar() {
 	tb.read_only = true
 	tb.justify = ui.top_center
 	tb.set_visible(false)
-	g.pos_x = g.rowbar_width + g.header_size + g.layout.x + g.layout.offset_x
+
+	// Need absolute position because fixed position when scrolling
 	g.pos_x, g.pos_y = g.layout.abs_pos(0, 0)
-	// println("$g.from_y $g.layout.y $g.layout.offset_y ${g.layout.scrollview.orig_xy()}")
 
 	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
 	g.layout.ui.gg.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width + g.header_size,
@@ -456,10 +458,10 @@ fn (mut g Grid) draw_rowbar() {
 	tb.read_only = true
 	tb.justify = ui.top_right
 	tb.set_visible(false)
-	g.pos_x = g.layout.x + g.layout.offset_x
+	g.pos_x, _ = g.layout.abs_pos(0, 0)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	for i in g.from_i .. g.to_i {
-		tb.set_pos(0, g.pos_y)
+		tb.set_pos(g.pos_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.height(i]} ${gtb.var[i)}")
 		tb.propose_size(g.rowbar_width, g.height(i))
 		unsafe {
@@ -481,7 +483,7 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 }
 
 fn (g &Grid) size() (int, int) {
-	w := g.rowbar_width + g.header_size + (arrays.sum(g.widths) or { -1 })
+	w := ui.scrollbar_size + g.rowbar_width + g.header_size + (arrays.sum(g.widths) or { -1 })
 	h := g.colbar_height + 2 * g.header_size + if g.cell_height > 0 { g.cell_height * g.nrow } else { arrays.sum(g.heights) or {
 			-1} }
 	return w, h

@@ -25,13 +25,15 @@ fn main() {
 		mode: .resizable
 		bg_color: gx.white
 		children: [
-			ui.column(
-				// scrollview: true
-				widths: ui.stretch
-				heights: ui.stretch
-				children: [
-					ui.rectangle(color: gx.red),
-					uic.grid(
+			ui.row(
+				widths: [ui.stretch, 3 * ui.stretch]
+				children: [ui.rectangle(color: gx.red),
+					ui.column(
+					// scrollview: true
+					widths: ui.stretch
+					heights: [ui.stretch, 3 * ui.stretch]
+					children: [ui.rectangle(color: gx.red),
+						uic.grid(
 						id: 'grid'
 						scrollview: true
 						is_focused: true
@@ -48,8 +50,8 @@ fn main() {
 								values: [0, 1, 2].repeat(300)
 							}
 						}
-					),
-				]
+					)]
+				)]
 			),
 		]
 	)

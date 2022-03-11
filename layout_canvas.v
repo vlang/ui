@@ -573,6 +573,10 @@ pub fn (c &CanvasLayout) child_index_by_id(id string) int {
 	return -1
 }
 
+pub fn (c &CanvasLayout) orig_pos(x f64, y f64) (int, int) {
+	return int(x + c.x + c.offset_x), int(y + c.y + c.offset_y)
+}
+
 pub fn (c &CanvasLayout) abs_pos(x f64, y f64) (int, int) {
 	cx, cy := if has_scrollview(c) { c.scrollview.orig_xy() } else { c.x, c.y }
 	return int(x + cx + c.offset_x), int(y + cy + c.offset_y)

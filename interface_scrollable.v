@@ -8,7 +8,7 @@ import sokol.sgl
 // Is it not a widget but attached to a widget.
 // A ScrollableWidget would have a field scrollview
 
-const (
+pub const (
 	scrollbar_size                 = 10
 	scroolbar_thumb_color          = gx.rgb(87, 153, 245)
 	scrollbar_background_color     = gx.rgb(219, 219, 219)
