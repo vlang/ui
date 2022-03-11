@@ -44,7 +44,7 @@ mut:
 	colbar_height int = 25
 	header_size   int = 3
 	// index for swap of rows
-	index []int
+	index map[int]int
 	// current
 	cur_i int
 	cur_j int
@@ -61,6 +61,8 @@ mut:
 	to_i   int
 	from_j int
 	to_j   int
+	// // visible info
+	// vheights []int
 	// To become a component of a parent component
 	component voidptr
 }
@@ -347,7 +349,6 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("draw begin")
 	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
 	mut g := component_grid(c)
-	// g.visible_cells()
 	g.pos_x = g.from_x + c.x + c.offset_x
 	// println("$g.rowbar_width == $g.pos_x")
 
@@ -513,8 +514,13 @@ fn (mut g Grid) show_selected() {
 	g.layout.update_layout()
 }
 
+// depending on g.index
+
+// pub fn (g &Grid) index(i int) int {
+// 	return if g.index.len == 0 {i} else {g.index[i]}
+// }
+
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
-	// TODO: use visible_cells to detect
 	mut sel_i, mut sel_j := -1, -1
 	$if gip_old ? {
 		mut cum := g.rowbar_width
@@ -621,7 +627,16 @@ fn (mut g Grid) visible_cells() {
 	} else {
 		g.from_j, g.to_j, g.from_x = 0, g.ncol, 0
 	}
+	// g.update_visible()
 }
+
+// fn (mut g Grid) update_visible() {
+// 	// once detected g.from_i and g.to_i
+// 	g.vheights = g.heights[g.from_i..g.to_i]
+// 	for j in g.from_j .. g.to_j {
+// 		g.vars[j].update_visible()
+// 	}
+// }
 
 pub fn (mut g Grid) cur_allways_visible() {
 	if !ui.has_scrollview(g.layout) {
@@ -683,7 +698,10 @@ pub fn (mut g Grid) scroll_y_to_end() {
 interface GridVar {
 	id string
 	grid &Grid
+	data() []DataType
 	draw(j int, mut g Grid)
+	// mut:
+	// 	update_visible()
 }
 
 // TextBox GridVar
@@ -693,6 +711,7 @@ struct GridTextBox {
 mut:
 	id  string
 	var []string
+	// vvar []string // visible var
 }
 
 pub struct GridTextBoxParams {
@@ -708,6 +727,15 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 	}
 }
 
+fn (gtb &GridTextBox) data() []DataType {
+	return gtb.var.map(DataType(it))
+}
+
+// fn (mut gtb GridTextBox) update_visible() {
+// 	g := gtb.grid
+// 	gtb.vvar = gtb.var[g.from_i..g.to_i]
+// }
+
 fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 	mut tb := g.tb_string
 	tb.is_focused = false
@@ -715,6 +743,19 @@ fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 	tb.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("dv $j $gtb.var.len")
+	// $if grid_vis ? {
+	// 	for i, v in gtb.vvar {
+	// 		tb.set_pos(g.pos_x, g.pos_y)
+	// 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
+	// 		tb.propose_size(g.widths[j], g.vheights[i])
+	// 		unsafe {
+	// 			*tb.text = v
+	// 		}
+	// 		// g.layout.update_layo
+	// 		tb.draw()
+	// 		g.pos_y += g.vheights[i]
+	// 	}
+	// } $else {
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		tb.set_pos(g.pos_x, g.pos_y)
@@ -728,6 +769,7 @@ fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 		tb.draw()
 		g.pos_y += g.heights[i]
 	}
+	// }
 }
 
 // Dropdown GridVar
@@ -738,6 +780,7 @@ mut:
 	id   string
 	name string
 	var  Factor
+	// vvar []int // visible var
 }
 
 pub struct GridDropdownParams {
@@ -755,11 +798,30 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 	}
 }
 
+fn (gdd &GridDropdown) data() []DataType {
+	return gdd.var.values.map(DataType(it))
+}
+
+// fn (mut gdd GridDropdown) update_visible() {
+// 	g := gdd.grid
+// 	gdd.vvar = gdd.var.values[g.from_i..g.to_i]
+// }
+
 fn (gdd &GridDropdown) draw(j int, mut g Grid) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("ddd $j $gdd.var.values.len")
+	// $if grid_vis ? {
+	// 	for i, v in gdd.vvar {
+	// 		dd.set_pos(g.pos_x, g.pos_y)
+	// 		// println("$i) ${g.widths[j]}, ${g.heights[i]}")
+	// 		dd.propose_size(g.widths[j], g.vheights[i])
+	// 		dd.selected_index = v
+	// 		dd.draw()
+	// 		g.pos_y += g.vheights[i]
+	// 	}
+	// } $else {
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		dd.set_pos(g.pos_x, g.pos_y)
@@ -769,6 +831,7 @@ fn (gdd &GridDropdown) draw(j int, mut g Grid) {
 		dd.draw()
 		g.pos_y += g.heights[i]
 	}
+	// }
 }
 
 // CheckBox GridVar
