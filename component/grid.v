@@ -47,7 +47,7 @@ mut:
 	cell_height int // when > 0 all cells have same height to speed up visible_cells
 	min_height  int
 	// index for swap of rows
-	index map[int]int
+	index []int
 	// current
 	cur_i int
 	cur_j int
@@ -153,13 +153,13 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 	g.tb_rowbar.set_visible(false)
 
 	g.widths = [p.width].repeat(p.vars.keys().len)
-
+	g.index = [1,2,3]
 	if p.fixed_height {
 		// g.heights.len == 0
 		g.cell_height = p.height
 	} else {
 		// g.cell_height == 0
-		g.heights = [p.height].repeat(g.nrow)
+		g.heights = [p.height].repeat(g.nrow())
 	}
 	g.min_height = p.height
 	g.dd_factor = dd.clone()
@@ -252,7 +252,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 		}
 		.down {
 			// println('down')
-			if g.cur_i < g.nrow - 1 {
+			if g.cur_i < g.nrow() - 1 {
 				g.cur_i += 1
 			}
 		}
@@ -272,7 +272,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			// println('right')
 			g.cur_j += 1
 			if g.cur_j == g.ncol {
-				if g.cur_i == g.nrow - 1 {
+				if g.cur_i == g.nrow() - 1 {
 					g.cur_j -= 1 // revert
 				} else {
 					g.cur_i += 1
@@ -285,7 +285,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			g.cur_allways_visible()
 		}
 		.page_down {
-			g.cur_i = math.min(g.cur_i + g.to_i - g.from_i - 2, g.nrow - 1)
+			g.cur_i = math.min(g.cur_i + g.to_i - g.from_i - 2, g.nrow() - 1)
 			g.cur_allways_visible()
 		}
 		.home {
@@ -293,7 +293,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			g.cur_allways_visible()
 		}
 		.end {
-			g.cur_i, g.cur_j = g.nrow - 1, g.ncol - 1
+			g.cur_i, g.cur_j = g.nrow() - 1, g.ncol - 1
 			g.cur_allways_visible()
 		}
 		else {}
@@ -314,7 +314,7 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 				g.cur_allways_visible()
 			}
 			5 {
-				g.cur_i, g.cur_j = g.nrow - 1, g.ncol - 1
+				g.cur_i, g.cur_j = g.nrow() - 1, g.ncol - 1
 				g.cur_allways_visible()
 			}
 			else {}
@@ -367,8 +367,8 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 // main actions
 
 fn grid_draw(c &ui.CanvasLayout, app voidptr) {
-	// println("draw begin")
-	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
+	// 
+	println("draw begin")
 	mut g := component_grid(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
 	// println("$g.rowbar_width == $g.pos_x")
@@ -376,7 +376,8 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	for j in g.from_j .. g.to_j {
 		g.vars[j].draw(j, mut g)
 		g.pos_x += g.widths[j]
-		// println("draw $j")
+		// 
+		println("draw $j")
 	}
 
 	// g.draw_rowbar()
@@ -386,12 +387,13 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 
 	//
 	ui.scrollview_update(c)
-	// println("draw end")
+	// 
+	println("draw end")
 }
 
 fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
-	// println("draw begin")
-	// println("grid size: $w, $h ${ui.has_scrollview(c)}")
+	// 
+	println("post draw begin")
 	mut g := component_grid(c)
 
 	g.draw_current()
@@ -400,10 +402,27 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 	g.draw_colbar()
 
 	ui.scrollview_update(c)
-	// println("draw end")
+	// 
+	println("post draw end")
 }
 
 // methods
+
+fn (g &Grid) ind(i int) int {
+	return if g.index.len > 0 {
+		g.index[i]
+	} else {
+		i
+	}
+}
+
+fn (g &Grid) nrow() int {
+	return if g.index.len > 0 {
+		g.index.len
+	} else {
+		g.nrow
+	}
+}
 
 fn (mut g Grid) draw_current() {
 	l := 3
@@ -465,7 +484,7 @@ fn (mut g Grid) draw_rowbar() {
 		// println("$i) ${g.widths[j]}, ${g.height(i]} ${gtb.var[i)}")
 		tb.propose_size(g.rowbar_width, g.height(i))
 		unsafe {
-			*tb.text = '${i + 1}'
+			*tb.text = '${g.ind(i) + 1}'
 		}
 		tb.draw()
 		g.pos_y += g.height(i)
@@ -484,7 +503,7 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 
 fn (g &Grid) size() (int, int) {
 	w := ui.scrollbar_size + g.rowbar_width + g.header_size + (arrays.sum(g.widths) or { -1 })
-	h := g.colbar_height + 2 * g.header_size + if g.cell_height > 0 { g.cell_height * g.nrow } else { arrays.sum(g.heights) or {
+	h := g.colbar_height + 2 * g.header_size + if g.cell_height > 0 { g.cell_height * g.nrow() } else { arrays.sum(g.heights) or {
 			-1} }
 	return w, h
 }
@@ -554,10 +573,6 @@ fn (mut g Grid) show_selected() {
 
 // depending on g.index
 
-// pub fn (g &Grid) index(i int) int {
-// 	return if g.index.len == 0 {i} else {g.index[i]}
-// }
-
 fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 	mut sel_i, mut sel_j := -1, -1
 	$if gip_old ? {
@@ -617,7 +632,7 @@ fn (g &Grid) get_pos(i int, j int) (int, int) {
 }
 
 fn (g &Grid) height(i int) int {
-	return if g.cell_height > 0 { g.cell_height } else { g.heights[i] }
+	return if g.cell_height > 0 { g.cell_height } else { g.heights[g.ind(i)] }
 }
 
 fn (mut g Grid) visible_cells() {
@@ -627,7 +642,8 @@ fn (mut g Grid) visible_cells() {
 		} else {
 			g.from_i, g.to_i, g.from_y = -1, -1, 0
 			mut cum := g.colbar_height + g.header_size
-			for i, h in g.heights {
+			heights := g.heights.map(g.ind(it))
+			for i, h in heights {
 				if g.from_i < 0 && cum > g.layout.scrollview.offset_y {
 					g.from_i = i
 					g.from_y = cum
@@ -635,19 +651,19 @@ fn (mut g Grid) visible_cells() {
 				if g.from_i >= 0 && g.to_i < 0
 					&& cum > g.layout.scrollview.offset_y + g.layout.height {
 					g.to_i = i + 1
-					if g.to_i > g.nrow {
-						g.to_i = g.nrow
+					if g.to_i > g.nrow() {
+						g.to_i = g.nrow()
 					}
 					break
 				}
 				cum += h
 			}
 			if g.to_i < 0 {
-				g.to_i = g.nrow
+				g.to_i = g.nrow()
 			}
 		}
 	} else {
-		g.from_i, g.to_i, g.from_y = 0, g.nrow, 0
+		g.from_i, g.to_i, g.from_y = 0, g.nrow(), 0
 	}
 	// println("vc $g.from_i, $g.to_i, $g.from_y")
 
@@ -678,9 +694,9 @@ fn (mut g Grid) visible_cells() {
 
 pub fn (mut g Grid) visible_fixed_cells() {
 	g.from_i = math.min(math.max((g.layout.scrollview.offset_y - g.colbar_height - g.header_size) / g.cell_height,
-		0), g.nrow - 1)
+		0), g.nrow() - 1)
 	g.to_i = math.min((g.layout.scrollview.offset_y +
-		g.layout.height - g.colbar_height - g.header_size) / g.cell_height, g.nrow - 1) + 1
+		g.layout.height - g.colbar_height - g.header_size) / g.cell_height, g.nrow() - 1) + 1
 	g.from_y = g.from_i * g.cell_height + g.colbar_height + g.header_size
 	// println("vfc $g.from_i, $g.to_i")
 }
@@ -723,7 +739,7 @@ pub fn (mut g Grid) scroll_x_to_cur(end bool) {
 pub fn (mut g Grid) scroll_y_to_cur(end bool) {
 	if g.layout.scrollview.active_y {
 		delta := if end {
-			-g.layout.height + g.height(math.min(g.cur_i - 1, g.nrow - 1)) + g.header_size
+			-g.layout.height + g.height(math.min(g.cur_i - 1, g.nrow() - 1)) + g.header_size
 		} else {
 			-g.height(math.max(g.cur_i - 1, 0)) - g.header_size
 		}
@@ -735,7 +751,7 @@ pub fn (mut g Grid) scroll_y_to_cur(end bool) {
 pub fn (mut g Grid) scroll_y_to_end() {
 	if g.layout.scrollview.active_y {
 		_, y := g.get_pos(g.nrow - 1, g.ncol - 1)
-		g.layout.scrollview.set(y + g.height(g.nrow - 1) + g.header_size - g.layout.height,
+		g.layout.scrollview.set(y + g.height(g.nrow() - 1) + g.header_size - g.layout.height,
 			.btn_y)
 	}
 }
@@ -781,13 +797,17 @@ fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 	tb.read_only = true
 	tb.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+	// println("from_i=$g.from_i to_i=$g.to_i")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		tb.set_pos(g.pos_x, g.pos_y)
-		// println("$i) ${g.widths[j]}, ${g.height(i]} ${gtb.var[i)}")
+		// println("$i) ${g.widths[j]}")
+		// println("${g.height(i)}")
+		// println("${g.ind(i)}")
+		// println("${gtb.var[g.ind(i)]}")
 		tb.propose_size(g.widths[j], g.height(i))
 		unsafe {
-			*tb.text = gtb.var[i].clone()
+			*tb.text = gtb.var[g.ind(i)].clone()
 		}
 		// g.layout.update_layout()
 		// println("draw var tb $j: ${g.layout.get_children().map(it.id)}")
@@ -835,7 +855,7 @@ fn (gdd &GridDropdown) draw(j int, mut g Grid) {
 		dd.set_pos(g.pos_x, g.pos_y)
 		// println("$i) ${g.widths[j]}, ${g.height(i)}")
 		dd.propose_size(g.widths[j], g.height(i))
-		dd.selected_index = gdd.var.values[i]
+		dd.selected_index = gdd.var.values[g.ind(i)]
 		dd.draw()
 		g.pos_y += g.height(i)
 	}
