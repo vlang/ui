@@ -30,7 +30,6 @@ fn main() {
 				id: 'grid'
 				scrollview: true
 				is_focused: true
-				fixed_height: true
 				vars: {
 					'v1':   ['toto', 'titi', 'tata'].repeat(n)
 					'v2':   ['toti', 'tito', 'tato'].repeat(n)

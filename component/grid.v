@@ -76,7 +76,7 @@ pub struct GridParams {
 	height       int = 25
 	scrollview   bool
 	is_focused   bool
-	fixed_height bool
+	fixed_height bool = true
 }
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
