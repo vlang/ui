@@ -749,7 +749,6 @@ interface GridVar {
 	id string
 	grid &Grid
 	compare(a int, b int) int
-	data() []DataType
 	draw(j int, mut g Grid)
 }
 
@@ -773,10 +772,6 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 		grid: p.grid
 		var: p.var
 	}
-}
-
-fn (gtb &GridTextBox) data() []DataType {
-	return gtb.var.map(DataType(it))
 }
 
 fn (gtb &GridTextBox) compare(a int, b int) int {
@@ -847,10 +842,6 @@ fn (gdd &GridDropdown) compare(a int, b int) int {
 	} else {
 		return 0
 	}
-}
-
-fn (gdd &GridDropdown) data() []DataType {
-	return gdd.var.values.map(DataType(it))
 }
 
 fn (gdd &GridDropdown) draw(j int, mut g Grid) {
