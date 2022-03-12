@@ -63,5 +63,5 @@ fn main() {
 fn win_init(w &ui.Window) {
 	l := w.canvas_layout('grid_layout')
 	mut g := uic.component_grid(l)
-	g.init_ranked_grid_data([2, 0], [1, 2])
+	g.init_ranked_grid_data([2, 0], [1, -1])
 }

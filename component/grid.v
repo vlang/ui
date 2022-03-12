@@ -339,7 +339,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := component_grid(tb)
 	mut gtb := g.vars[g.sel_j]
 	if mut gtb is GridTextBox {
-		gtb.var[g.sel_i] = (*tb.text).clone()
+		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
 		// println("gtb.var = ${gtb.var}")
 	}
 	unsafe {
@@ -356,7 +356,7 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	mut g := component_grid(dd)
 	mut gdd := g.vars[g.sel_j]
 	if mut gdd is GridDropdown {
-		gdd.var.values[g.sel_i] = dd.selected_index
+		gdd.var.values[g.ind(g.sel_i)] = dd.selected_index
 		// println('$dd.id  selection changed: gdd.var($g.sel_j).values[$g.sel_i] = dd.selected_index $dd.selected_index')
 	}
 	dd.set_visible(false)
@@ -532,7 +532,7 @@ fn (mut g Grid) show_selected() {
 			gtb := g.vars[g.sel_j]
 			if gtb is GridTextBox {
 				unsafe {
-					*(tb.text) = gtb.var[g.sel_i]
+					*(tb.text) = gtb.var[g.ind(g.sel_i)]
 				}
 			}
 			tb.bg_color = gx.orange
@@ -549,7 +549,7 @@ fn (mut g Grid) show_selected() {
 			dd.focus()
 			gdd := g.vars[g.sel_j]
 			if gdd is GridDropdown {
-				dd.selected_index = gdd.var.values[g.sel_i]
+				dd.selected_index = gdd.var.values[g.ind(g.sel_i)]
 			}
 			dd.bg_color = gx.orange
 		}
@@ -908,8 +908,8 @@ pub fn (mut g Grid) init_ranked_grid_data(vars []int, orders []int) {
 }
 
 fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
-	for j in rgd_vars_ {
-		comp := rgd_grid_.vars[j].compare(a, b)
+	for i, j in rgd_vars_ {
+		comp := rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
 		if comp != 0 {
 			return comp
 		}
