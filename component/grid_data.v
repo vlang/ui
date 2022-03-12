@@ -1,6 +1,7 @@
 module component
 
 // TODO: put outside if useful if vlib?
+// (mut g Grid) sort_perm(["v1","v2"], [1, -1])
 
 type DataType = int | string
 
@@ -10,12 +11,13 @@ struct RankedData {
 mut:
 	i   int
 	val DataType
+	g   &Grid // to have it when comparing
 }
 
 fn (gd GridVar) ranked_data() []RankedData {
 	mut rd := []RankedData{}
 	for i, v in gd.data() {
-		rd << RankedData{i, v}
+		rd << RankedData{i, v, gd.grid}
 	}
 	return rd
 }

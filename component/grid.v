@@ -153,7 +153,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 	g.tb_rowbar.set_visible(false)
 
 	g.widths = [p.width].repeat(p.vars.keys().len)
-	g.index = [1,2,3]
+	// g.index = []int{len: g.nrow, init: it}.reverse()
 	if p.fixed_height {
 		// g.heights.len == 0
 		g.cell_height = p.height
@@ -367,8 +367,7 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 // main actions
 
 fn grid_draw(c &ui.CanvasLayout, app voidptr) {
-	// 
-	println("draw begin")
+	// println("draw begin")
 	mut g := component_grid(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
 	// println("$g.rowbar_width == $g.pos_x")
@@ -376,8 +375,7 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	for j in g.from_j .. g.to_j {
 		g.vars[j].draw(j, mut g)
 		g.pos_x += g.widths[j]
-		// 
-		println("draw $j")
+		// println("draw $j")
 	}
 
 	// g.draw_rowbar()
@@ -387,13 +385,11 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 
 	//
 	ui.scrollview_update(c)
-	// 
-	println("draw end")
+	// println("draw end")
 }
 
 fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
-	// 
-	println("post draw begin")
+	// println("post draw begin")
 	mut g := component_grid(c)
 
 	g.draw_current()
@@ -402,26 +398,17 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 	g.draw_colbar()
 
 	ui.scrollview_update(c)
-	// 
-	println("post draw end")
+	// println("post draw end")
 }
 
 // methods
 
 fn (g &Grid) ind(i int) int {
-	return if g.index.len > 0 {
-		g.index[i]
-	} else {
-		i
-	}
+	return if g.index.len > 0 { g.index[i] } else { i }
 }
 
 fn (g &Grid) nrow() int {
-	return if g.index.len > 0 {
-		g.index.len
-	} else {
-		g.nrow
-	}
+	return if g.index.len > 0 { g.index.len } else { g.nrow }
 }
 
 fn (mut g Grid) draw_current() {
@@ -761,6 +748,7 @@ pub fn (mut g Grid) scroll_y_to_end() {
 interface GridVar {
 	id string
 	grid &Grid
+	compare(a int, b int) int
 	data() []DataType
 	draw(j int, mut g Grid)
 }
@@ -789,6 +777,16 @@ pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 
 fn (gtb &GridTextBox) data() []DataType {
 	return gtb.var.map(DataType(it))
+}
+
+fn (gtb &GridTextBox) compare(a int, b int) int {
+	if gtb.var[a] < gtb.var[b] {
+		return -1
+	} else if gtb.var[a] > gtb.var[b] {
+		return 1
+	} else {
+		return 0
+	}
 }
 
 fn (gtb &GridTextBox) draw(j int, mut g Grid) {
@@ -841,6 +839,16 @@ pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 	}
 }
 
+fn (gdd &GridDropdown) compare(a int, b int) int {
+	if gdd.var.values[a] < gdd.var.values[b] {
+		return -1
+	} else if gdd.var.values[a] > gdd.var.values[b] {
+		return 1
+	} else {
+		return 0
+	}
+}
+
 fn (gdd &GridDropdown) data() []DataType {
 	return gdd.var.values.map(DataType(it))
 }
@@ -875,4 +883,45 @@ pub fn grid_checkbox() { //&GridCheckBox {
 }
 
 fn (gtb &GridCheckBox) draw(j int, mut g Grid) {
+}
+
+// compare
+
+__global (
+	rgd_vars_   []int // all vars
+	rgd_orders_ []int // all orders
+	rgd_grid_   &Grid // the current grid
+)
+
+// struct RankedGridData {
+// 	i   int
+// }
+
+type RankedGridData = int
+
+// fn (g &Grid) ranked_grid_data() []RankedGridData {
+// 	mut rgd := []RankedGridData{}
+// 	for i in 0..g.nrow() {
+// 		rgd << &RankedGridData{i}
+// 	}
+// 	return rgd
+// }
+
+pub fn (mut g Grid) init_ranked_grid_data(vars []int, orders []int) {
+	rgd_vars_ = vars.clone()
+	rgd_orders_ = orders.clone()
+	rgd_grid_ = g
+	mut rgd := []int{len: g.nrow(), init: it}
+	rgd.sort_with_compare(compare_grid_data)
+	g.index = rgd
+}
+
+fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
+	for j in rgd_vars_ {
+		comp := rgd_grid_.vars[j].compare(a, b)
+		if comp != 0 {
+			return comp
+		}
+	}
+	return 0
 }

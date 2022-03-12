@@ -25,6 +25,7 @@ fn main() {
 		native_message: false
 		mode: .resizable
 		bg_color: gx.white
+		on_init: win_init
 		children: [
 			uic.grid(
 				id: 'grid'
@@ -57,4 +58,10 @@ fn main() {
 	)
 	app.window = window
 	ui.run(window)
+}
+
+fn win_init(w &ui.Window) {
+	l := w.canvas_layout('grid_layout')
+	mut g := uic.component_grid(l)
+	g.init_ranked_grid_data([2, 0], [1, 2])
 }
