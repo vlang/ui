@@ -58,6 +58,7 @@ fn main() {
 								text: 'Theme'
 								width: 100
 								theme: 'red'
+								z_index: 10
 								movable: true
 								onclick: fn (a voidptr, b voidptr) {
 									ui.message_box('Built with V UI')
@@ -87,6 +88,7 @@ fn main() {
 							ui.at(10, 100, ui.listbox(
 								width: 100
 								height: 140
+								z_index: 10
 								on_change: lb_change
 								// scrollview: false
 								draw_lines: true
@@ -124,6 +126,7 @@ fn main() {
 							)),
 							ui.at(150, 80, ui.button(
 								text: 'hide/show menu'
+								z_index: 10
 								onclick: fn (a voidptr, b &ui.Button) {
 									mut menu := b.ui.window.menu('menu')
 									menu.hidden = !menu.hidden

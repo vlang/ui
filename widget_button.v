@@ -257,7 +257,10 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 }
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
-	// println('btn_mouse_down for window=$window.title')
+	$if btn_md ? {
+		println('btn_mouse_down $b.id movable $b.movable top_widget ${b.ui.window.is_top_widget(b,
+			events.on_mouse_down)}')
+	}
 	if b.hidden {
 		return
 	}
@@ -305,9 +308,10 @@ pub fn (mut b Button) set_pos(x int, y int) {
 	b.y = y
 }
 
-pub fn (mut b Button) size() (int, int) {
+pub fn (b &Button) size() (int, int) {
 	if b.width == 0 || b.height == 0 {
-		b.set_text_size()
+		mut b2 := b
+		b2.set_text_size()
 	}
 	return b.width, b.height
 }

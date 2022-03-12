@@ -62,6 +62,9 @@ struct ListItem {
 mut:
 	x         int
 	y         int
+	offset_x  int
+	offset_y  int
+	z_index   int
 	text      string
 	draw_text string
 }
@@ -356,19 +359,23 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 	col := if selected { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	// println("linrssss draw ${li.draw_text} $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height")
-	lb.ui.gg.draw_rect_filled(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-		width - 2 * ui._text_offset_x, lb.item_height, col)
+	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
 	$if nodtw ? {
-		lb.ui.gg.draw_text_def(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-			if lb.has_scrollview { li.text } else { li.draw_text })
+		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
 	} $else {
-		DrawTextWidget(lb).draw_text(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-			if lb.has_scrollview { li.text } else { li.draw_text })
+		DrawTextWidget(lb).draw_text(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y +
+			li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+			li.text
+		} else {
+			li.draw_text
+		})
 	}
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		lb.ui.gg.draw_rect_empty(li.x + lb.x + ui._text_offset_x, li.y + lb.y + lb.text_offset_y,
-			width, lb.item_height, lb.col_border)
+		lb.ui.gg.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, width, lb.item_height, lb.col_border)
 	}
 }
 
@@ -447,7 +454,8 @@ fn (lb &ListBox) point_inside(x f64, y f64) bool {
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
-	lix, liy := li.x + li.list.x + li.list.offset_x, li.y + li.list.y + li.list.offset_y
+	lix, liy := li.x + li.offset_x + li.list.x + li.list.offset_x, li.y + li.offset_y + li.list.y +
+		li.list.offset_y
 	return x >= lix && x <= lix + li.list.width && y >= liy && y <= liy + li.list.item_height
 }
 
@@ -599,6 +607,11 @@ fn (mut lb ListBox) init_size() {
 	if lb.height == 0 {
 		_, lb.height = lb.adj_size()
 	}
+}
+
+pub fn (li &ListItem) size() (int, int) {
+	// println("lb size: $lb.width, $lb.height")
+	return li.list.width, li.list.item_height
 }
 
 pub fn (lb &ListBox) size() (int, int) {

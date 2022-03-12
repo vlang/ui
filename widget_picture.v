@@ -161,7 +161,7 @@ pub fn (mut pic Picture) set_pos(x int, y int) {
 	pic.y = y
 }
 
-pub fn (mut pic Picture) size() (int, int) {
+pub fn (pic &Picture) size() (int, int) {
 	return pic.width, pic.height
 }
 
