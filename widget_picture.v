@@ -151,7 +151,7 @@ fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 	if pic.point_inside(e.x, e.y) {
 		if pic.movable {
-			drag_register(pic, pic.ui, e)
+			drag_register(pic, e)
 		}
 	}
 }
@@ -182,4 +182,9 @@ fn (mut pic Picture) set_visible(state bool) {
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {
 	return point_inside(pic, x, y)
+}
+
+// method implemented in Draggable
+fn (pic &Picture) get_window() &Window {
+	return pic.ui.window
 }

@@ -8,10 +8,16 @@ interface Draggable {
 	x int
 	y int
 	size() (int, int)
+	get_window() &Window
 mut:
 	offset_x int
 	offset_y int
 	z_index int
+}
+
+pub fn (w Draggable) active() bool {
+	d := w.get_window().dragger
+	return w == d.widget
 }
 
 pub fn (w Draggable) bounds() gg.Rect {
@@ -23,6 +29,10 @@ pub fn (w Draggable) scaled_bounds() gg.Rect {
 	sw, sh := w.size()
 	sc := gg.dpi_scale()
 	return gg.Rect{w.x * sc, w.y * sc, sw * sc, sh * sc}
+}
+
+pub fn (w Draggable) inside(b gg.Rect) bool {
+	return inside_rect(w.bounds(), b)
 }
 
 //** Drag stuff ***//
@@ -43,12 +53,12 @@ NB: would like external mechanism only depending on point_inside methods of Widg
 shift key (or other) to activate possible dragging
 */
 
-fn drag_register(w Draggable, ui &UI, e &MouseEvent) {
+fn drag_register(w Draggable, e &MouseEvent) bool {
 	if shift_key(e.mods) {
 		$if drag ? {
 			println('drag ${typeof(w).name}')
 		}
-		mut window := ui.window
+		mut window := w.get_window()
 		if window.dragger.activated {
 			if w.z_index > window.dragger.widget.z_index {
 				window.dragger.widget = w
@@ -69,7 +79,9 @@ fn drag_register(w Draggable, ui &UI, e &MouseEvent) {
 			window.dragger.pos_y = e.y
 			window.dragger.time = time.now()
 		}
+		return true
 	}
+	return false
 }
 
 fn drag_child(mut window Window, x f64, y f64) {

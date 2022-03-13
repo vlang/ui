@@ -1560,3 +1560,8 @@ pub fn (s &Stack) child_index_by_id(id string) int {
 	}
 	return -1
 }
+
+// method implemented in Draggable
+fn (s &Stack) get_window() &Window {
+	return s.ui.window
+}

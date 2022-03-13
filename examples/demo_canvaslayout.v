@@ -104,6 +104,21 @@ fn main() {
 									'red3':     'Red3'
 								}
 							)),
+							ui.at(200, 220, ui.listbox(
+								width: 100
+								height: 100
+								z_index: 10
+								on_change: lb_change
+								scrollview: false
+								selectable: false
+								ordered: true
+								draw_lines: true
+								items: {
+									'classic': 'Classic'
+									'blue':    'Blue'
+									'red':     'Red'
+								}
+							)),
 							ui.at(150, 100, ui.menu(
 								id: 'menu'
 								text: 'Menu'

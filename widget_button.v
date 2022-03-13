@@ -47,18 +47,19 @@ pub mut:
 	ui          &UI = 0
 	onclick     ButtonClickFn
 	// TODO: same convention for all callback
-	on_key_down ButtonKeyDownFn = ButtonKeyDownFn(0)
-	text        string
-	icon_path   string
-	image       gg.Image
-	use_icon    bool
-	padding     f32
-	radius      f32
-	hidden      bool
-	movable     bool // drag, transition or anything allowing offset yo be updated
-	hoverable   bool
-	to_hover    bool
-	tooltip     TooltipMessage
+	on_key_down  ButtonKeyDownFn = ButtonKeyDownFn(0)
+	text         string
+	icon_path    string
+	image        gg.Image
+	use_icon     bool
+	padding      f32
+	radius       f32
+	hidden       bool
+	movable      bool // drag, transition or anything allowing offset yo be updated
+	just_dragged bool
+	hoverable    bool
+	to_hover     bool
+	tooltip      TooltipMessage
 	// text styles
 	text_styles TextStyles
 	text_size   f64
@@ -228,7 +229,10 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 }
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
-	// println('btn_click for window=$window.title')
+	$if btn_click ? {
+		println('btn_click $b.id movable $b.movable top_widget ${b.ui.window.is_top_widget(b,
+			events.on_mouse_down)}')
+	}
 	if b.hidden {
 		return
 	}
@@ -239,6 +243,11 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 		return
 	}
 	if !b.is_focused {
+		return
+	}
+	// unclickable if dragged
+	if b.just_dragged {
+		b.just_dragged = false
 		return
 	}
 	if b.point_inside(e.x, e.y) {
@@ -270,14 +279,18 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	if b.point_inside(e.x, e.y) {
 		b.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if b.movable {
-			drag_register(b, b.ui, e)
+			b.just_dragged = drag_register(b, e)
 		}
-		b.state = .pressed
+		if !b.just_dragged {
+			b.state = .pressed
+		}
 	}
 }
 
 fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
-	// println('btn_click for window=$window.title')
+	$if btn_mu ? {
+		println('btn_mu $b.id')
+	}
 	if b.hidden {
 		return
 	}
@@ -435,4 +448,9 @@ pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
 
 pub fn (mut b Button) update_theme() {
 	update_colors_from(mut b.theme, theme(b), [1, 2, 3])
+}
+
+// method implemented in Draggable
+fn (b &Button) get_window() &Window {
+	return b.ui.window
 }

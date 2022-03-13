@@ -27,3 +27,8 @@ pub fn union_rect(r1 gg.Rect, r2 gg.Rect) gg.Rect {
 	r := gg.Rect{f32(tl_x), f32(tl_y), f32(br_x - tl_x), f32(br_y - tl_y)}
 	return r
 }
+
+pub fn inside_rect(r gg.Rect, c gg.Rect) bool { // c for container
+	return r.x >= c.x && r.y >= c.y && r.x + r.width <= c.x + c.width
+		&& r.y + r.height <= c.y + c.height
+}
