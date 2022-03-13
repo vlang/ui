@@ -5,12 +5,13 @@ import gx
 type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
 
 const (
-	_item_height     = 20
-	_col_list_bkgrnd = gx.white
-	_col_item_select = gx.light_blue
-	_col_border      = gx.gray
-	_text_offset_y   = 3
-	_text_offset_x   = 5
+	_item_height      = 20
+	_col_list_bkgrnd  = gx.white
+	_col_item_select  = gx.light_blue
+	_col_item_disable = gx.light_gray
+	_col_border       = gx.gray
+	_text_offset_y    = 3
+	_text_offset_x    = 5
 )
 
 [heap]
@@ -28,12 +29,14 @@ pub mut:
 	items         []&ListItem = []&ListItem{}
 	selection     int = -1
 	selectable    bool
+	multi         bool
 	draw_count    int
 	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
 	is_focused    bool
 	draw_lines    bool
 	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
 	col_selected  gx.Color = ui._col_item_select
+	col_disabled  gx.Color = ui._col_item_disable
 	col_border    gx.Color = ui._col_border
 	item_height   int      = ui._item_height
 	text_offset_y int      = ui._text_offset_y
@@ -81,6 +84,7 @@ mut:
 	text_size  f64
 	selection  int  = -1
 	selectable bool = true
+	multi      bool
 	scrollview bool = true
 	items      map[string]string
 	// files droped
@@ -99,6 +103,7 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		z_index: c.z_index
 		selection: c.selection
 		selectable: c.selectable
+		multi: c.multi
 		on_change: c.on_change
 		draw_lines: c.draw_lines
 		col_bkgrnd: c.col_bkgrnd
@@ -307,6 +312,40 @@ pub fn (lb &ListBox) is_selected() bool {
 	return true
 }
 
+pub fn (lb &ListBox) is_item_selected(inx int) bool {
+	return lb.selectable && if lb.multi {
+		lb.items[inx].selected && !lb.items[inx].disabled
+	} else {
+		inx == lb.selection
+	}
+}
+
+pub fn (mut lb ListBox) set_item_selected(inx int, enable_mode bool) bool {
+	if lb.multi {
+		if enable_mode {
+			lb.items[inx].disabled = !lb.items[inx].disabled
+			return true
+		} else {
+			if !lb.items[inx].disabled {
+				lb.items[inx].selected = !lb.items[inx].selected
+				return true
+			}
+			return false
+		}
+	} else {
+		if inx != lb.selection {
+			lb.selection = inx
+			return true
+		} else {
+			return false
+		}
+	}
+}
+
+pub fn (lb &ListBox) is_enabled_item(inx int) bool {
+	return !lb.items[inx].disabled
+}
+
 pub fn (lb &ListBox) ids() []string {
 	mut res := []string{}
 	for _, item in lb.items {
@@ -367,13 +406,7 @@ pub fn (mut lb ListBox) clear() {
 }
 
 fn (lb &ListBox) selected_item(y int) int {
-	mut j := 0
-	if lb.has_scrollview {
-		j = -1 // TODO later
-	} else {
-		j = (y - lb.y) / lb.item_height
-	}
-	return j
+	return (y - lb.y) / lb.item_height
 }
 
 fn (lb &ListBox) visible_items() (int, int) {
@@ -431,12 +464,12 @@ fn (mut lb ListBox) draw() {
 			}
 			if !has_scrollview(lb) || (inx >= from && inx <= to) {
 				if lb.dragged_item != inx {
-					lb.draw_item(item, inx == lb.selection)
+					lb.draw_item(item, inx)
 				}
 			}
 		}
 		if lb.dragged_item >= 0 && lb.dragged_item < lb.items.len {
-			lb.draw_item(lb.items[lb.dragged_item], lb.dragged_item == lb.selection)
+			lb.draw_item(lb.items[lb.dragged_item], lb.dragged_item)
 		}
 	}
 	if !lb.draw_lines {
@@ -448,8 +481,8 @@ fn (mut lb ListBox) draw() {
 	offset_end(mut lb)
 }
 
-fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
-	col := if selected && lb.selectable { lb.col_selected } else { lb.col_bkgrnd }
+fn (mut lb ListBox) draw_item(li ListItem, inx int) {
+	col := if lb.is_item_selected(inx) { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if lb_draw_item ? {
 		println('draw item  $li.draw_text $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
@@ -460,12 +493,14 @@ fn (mut lb ListBox) draw_item(li ListItem, selected bool) {
 		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
 			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
 	} $else {
-		DrawTextWidget(lb).draw_text(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y +
-			li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+		DrawTextWidget(lb).draw_styled_text(li.x + li.offset_x + lb.x + ui._text_offset_x,
+			li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 			li.text
 		} else {
 			li.draw_text
-		})
+		},
+			color: if lb.is_enabled_item(inx) { gx.black } else { lb.col_disabled }
+		)
 	}
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
@@ -521,20 +556,34 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 		return
 	}
 	lb.focus()
-	for inx, item in lb.items {
-		if !lb.has_scrollview && inx >= lb.draw_count {
-			break
-		}
-		// println(' $item.id -> ($e.x,$e.y)')
-		if item.point_inside(e.x, e.y) {
-			if lb.selection != inx {
-				lb.selection = inx
-				if lb.on_change != ListBoxSelectionChangedFn(0) {
-					lb.on_change(window.state, lb)
-				}
+	$if dd_change_old ? {
+		for inx, item in lb.items {
+			if !lb.has_scrollview && inx >= lb.draw_count {
+				break
 			}
-			break
+			// println(' $item.id -> ($e.x,$e.y)')
+			if item.point_inside(e.x, e.y) {
+				if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
+					if lb.on_change != ListBoxSelectionChangedFn(0) {
+						lb.on_change(window.state, lb)
+					}
+				}
+				break
+			}
 		}
+	} $else {
+		inx := lb.selected_item(e.y)
+		if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
+			if lb.on_change != ListBoxSelectionChangedFn(0) {
+				lb.on_change(window.state, lb)
+			}
+		}
+	}
+}
+
+pub fn (lb &ListBox) send_change() {
+	if lb.on_change != ListBoxSelectionChangedFn(0) {
+		lb.on_change(0, lb)
 	}
 }
 
@@ -571,6 +620,7 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 		lb.items[lb.dragged_item].x, lb.items[lb.dragged_item].y = 0, lb.dragged_item * lb.item_height
 		lb.items[lb.dragged_item].offset_x, lb.items[lb.dragged_item].offset_y = 0, 0
 		lb.dragged_item = -1
+		lb.send_change()
 	}
 	// b.state = .normal
 }
@@ -755,8 +805,11 @@ mut:
 	offset_x  int
 	offset_y  int
 	z_index   int
-	text      string
 	draw_text string
+pub mut:
+	text     string
+	disabled bool
+	selected bool
 }
 
 [unsafe]

@@ -703,6 +703,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
+	ui.keymods = KeyMod(event.modifiers)
 	if int(event.mouse_button) < 3 {
 		ui.btn_down[int(event.mouse_button)] = true
 	}

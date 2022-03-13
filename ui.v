@@ -21,6 +21,7 @@ pub mut:
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
+	keymods        KeyMod
 mut:
 	cb_image             gg.Image // used only in checkbox.v
 	circle_image         gg.Image // used in radio.v but no use, in idle_loop()

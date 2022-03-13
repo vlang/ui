@@ -108,10 +108,11 @@ fn main() {
 								width: 100
 								height: 100
 								z_index: 10
-								on_change: lb_change
+								on_change: lb_change_multi
 								scrollview: false
-								selectable: false
+								// selectable: false
 								ordered: true
+								multi: true
 								draw_lines: true
 								items: {
 									'classic': 'Classic'
@@ -174,6 +175,10 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 	mut b := win.button('b_thm')
 	b.set_theme(id)
 	b.update_theme()
+}
+
+fn lb_change_multi(app voidptr, lb &ui.ListBox) {
+	println(lb.items.map('$it.text: $it.selected $it.disabled'))
 }
 
 fn draw(c &ui.CanvasLayout, app voidptr) {
