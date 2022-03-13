@@ -1508,14 +1508,14 @@ pub fn (s &Stack) child(from ...int) Widget {
 			if i < from.len - 1 {
 				if ind >= 0 && ind < children.len {
 					widget := children[ind]
-					if mut widget is Stack {
+					if widget is Stack {
 						children = widget.children
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 					}
 				} else if i == -1 {
 					widget := children[children.len - 1]
-					if mut widget is Stack {
+					if widget is Stack {
 						children = widget.children
 					}
 				} else {
