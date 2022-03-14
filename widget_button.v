@@ -57,6 +57,7 @@ pub mut:
 	hidden       bool
 	movable      bool // drag, transition or anything allowing offset yo be updated
 	just_dragged bool
+	drag_type 	string = "btn"
 	hoverable    bool
 	to_hover     bool
 	tooltip      TooltipMessage
@@ -453,4 +454,8 @@ pub fn (mut b Button) update_theme() {
 // method implemented in Draggable
 fn (b &Button) get_window() &Window {
 	return b.ui.window
+}
+
+fn (b &Button) drag_type() string {
+	return b.drag_type
 }

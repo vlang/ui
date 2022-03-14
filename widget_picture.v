@@ -26,6 +26,7 @@ mut:
 	y         int
 	z_index   int
 	movable   bool
+	drag_type 	string = "pic"
 	path      string
 	ui        &UI
 	image     gg.Image
@@ -187,4 +188,8 @@ fn (pic &Picture) point_inside(x f64, y f64) bool {
 // method implemented in Draggable
 fn (pic &Picture) get_window() &Window {
 	return pic.ui.window
+}
+
+fn (pic &Picture) drag_type() string {
+	return pic.drag_type
 }

@@ -5,10 +5,12 @@ import sokol.sapp
 import gg
 
 interface Draggable {
+	id string
 	x int
 	y int
 	size() (int, int)
 	get_window() &Window
+	drag_type() string
 mut:
 	offset_x int
 	offset_y int
@@ -39,8 +41,9 @@ pub fn (w Draggable) inside(b gg.Rect) bool {
 
 struct Dragger {
 pub mut:
+	typ		  string	 
 	activated bool
-	widget    Draggable = empty_stack
+	widget    Draggable = button()
 	start_x   f64
 	start_y   f64
 	pos_x     f64

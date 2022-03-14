@@ -52,6 +52,9 @@ pub mut:
 	ordered      bool
 	dragged_item int = -1
 	just_dragged bool
+	// drag drop types
+	drag_type 	string = "lb"
+	drop_types []string
 	// guess adjusted width
 	adj_width  int
 	adj_height int
@@ -406,7 +409,12 @@ pub fn (mut lb ListBox) clear() {
 }
 
 fn (lb &ListBox) selected_item(y int) int {
-	return (y - lb.y) / lb.item_height
+	inx := (y - lb.y) / lb.item_height
+	return if inx < 0 || inx >= lb.items.len {
+		-1
+	} else {
+		inx
+	}
 }
 
 fn (lb &ListBox) visible_items() (int, int) {
@@ -571,7 +579,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 		}
 	} $else {
 		inx := lb.selected_item(e.y)
-		if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
+		if inx >= 0 && lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
 			lb.call_on_change()
 		}
 	}
@@ -597,10 +605,12 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
 		lb.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if lb.ordered {
 			dragged_item := lb.selected_item(e.y)
-			di := lb.items[dragged_item]
-			lb.just_dragged = drag_register(di, e)
-			if lb.just_dragged {
-				lb.dragged_item = dragged_item
+			if dragged_item >= 0 {
+				di := lb.items[dragged_item]
+				lb.just_dragged = drag_register(di, e)
+				if lb.just_dragged {
+					lb.dragged_item = dragged_item
+				}
 			}
 		}
 		// lb.state = .pressed
@@ -631,7 +641,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 		if lb.dragged_item >= 0 {
 			// println("hereee $lb.dragged_item")
 			j := lb.selected_item(int(e.y))
-			if j >= 0 && j < lb.items.len && (j == lb.dragged_item - 1 || j == lb.dragged_item + 1) {
+			if j >= 0 && (j == lb.dragged_item - 1 || j == lb.dragged_item + 1) {
 				// println('herrrreee $lb.dragged_item $j')
 				lb.move_inx_by(lb.dragged_item, j - lb.dragged_item)
 				lb.dragged_item = j
@@ -839,4 +849,8 @@ pub fn (li &ListItem) size() (int, int) {
 // method implemented in Draggable
 fn (li &ListItem) get_window() &Window {
 	return li.list.ui.window
+}
+
+fn (li &ListItem) drag_type() string {
+	return li.list.drag_type
 }
