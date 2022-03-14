@@ -53,9 +53,9 @@ pub mut:
 	ordered      bool
 	dragged_item int = -1
 	just_dragged bool
-	// drag drop types
-	drag_type  string = 'lb'
-	drop_types []string
+	// drag drop types for compatibility
+	drag_type  string   = 'lb'
+	drop_types []string = ['lb']
 	// guess adjusted width
 	adj_width  int
 	adj_height int
@@ -316,11 +316,23 @@ pub fn (lb &ListBox) is_selected() bool {
 	return true
 }
 
-pub fn (lb &ListBox) is_item_selected(inx int) bool {
+pub fn (lb &ListBox) is_item_selected_by_inx(inx int) bool {
 	return lb.selectable && if lb.multi {
 		lb.items[inx].selected && !lb.items[inx].disabled
 	} else {
 		inx == lb.selection
+	}
+}
+
+pub fn (lb &ListBox) is_item_selected(li &ListItem) bool {
+	return lb.selectable && if lb.multi {
+		li.selected && !li.disabled
+	} else {
+		if lb.selection < 0 {
+			false
+		} else {
+			li == lb.items[lb.selection]
+		}
 	}
 }
 
@@ -346,8 +358,8 @@ pub fn (mut lb ListBox) set_item_selected(inx int, enable_mode bool) bool {
 	}
 }
 
-pub fn (lb &ListBox) is_enabled_item(inx int) bool {
-	return !lb.items[inx].disabled
+pub fn (lb &ListBox) is_item_enabled_by_inx(inx int) bool {
+	return lb.items[inx].is_enabled()
 }
 
 pub fn (lb &ListBox) ids() []string {
@@ -469,12 +481,12 @@ fn (mut lb ListBox) draw() {
 			}
 			if !has_scrollview(lb) || (inx >= from && inx <= to) {
 				if lb.dragged_item != inx {
-					lb.draw_item(item, inx)
+					item.draw()
 				}
 			}
 		}
 		if lb.dragged_item >= 0 && lb.dragged_item < lb.items.len {
-			lb.draw_item(lb.items[lb.dragged_item], lb.dragged_item)
+			lb.items[lb.dragged_item].draw()
 		}
 	}
 	if !lb.draw_lines {
@@ -484,34 +496,6 @@ fn (mut lb ListBox) draw() {
 	// scrollview_draw(lb)
 	scrollview_draw_end(lb)
 	offset_end(mut lb)
-}
-
-fn (mut lb ListBox) draw_item(li ListItem, inx int) {
-	col := if lb.is_item_selected(inx) { lb.col_selected } else { lb.col_bkgrnd }
-	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
-	$if lb_draw_item ? {
-		println('draw item  $li.draw_text $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
-	}
-	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
-	$if nodtw ? {
-		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
-	} $else {
-		DrawTextWidget(lb).draw_styled_text(li.x + li.offset_x + lb.x + ui._text_offset_x,
-			li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
-			li.text
-		} else {
-			li.draw_text
-		},
-			color: if lb.is_enabled_item(inx) { gx.black } else { lb.col_disabled }
-		)
-	}
-	if lb.draw_lines {
-		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		lb.ui.gg.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
-	}
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {
@@ -859,4 +843,41 @@ fn (li &ListItem) drag_bounds() gg.Rect {
 	w, h := li.size()
 	return gg.Rect{li.x + li.offset_x + li.list.x + li.list.offset_x, li.y + li.offset_y +
 		li.list.y + li.list.offset_y, w, h}
+}
+
+pub fn (li &ListItem) is_selected() bool {
+	return li.list.is_item_selected(li)
+}
+
+pub fn (li &ListItem) is_enabled() bool {
+	return !li.disabled
+}
+
+fn (li &ListItem) draw() {
+	lb := li.list
+	col := if li.is_selected() { lb.col_selected } else { lb.col_bkgrnd }
+	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
+	$if li_draw ? {
+		println('draw item  $li.draw_text $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
+	}
+	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
+	$if nodtw ? {
+		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
+	} $else {
+		DrawTextWidget(lb).draw_styled_text(li.x + li.offset_x + lb.x + ui._text_offset_x,
+			li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+			li.text
+		} else {
+			li.draw_text
+		},
+			color: if li.is_enabled() { gx.black } else { lb.col_disabled }
+		)
+	}
+	if lb.draw_lines {
+		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
+		lb.ui.gg.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
+	}
 }

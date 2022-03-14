@@ -121,7 +121,7 @@ fn drag_child(mut window Window, x f64, y f64) {
 	}
 }
 
-fn drop_child(mut window Window) {
+fn drag_child_dropped(mut window Window) {
 	$if drag ? {
 		w := window.dragger.widget
 		println('drop $w.type_name()')
@@ -130,24 +130,48 @@ fn drop_child(mut window Window) {
 	window.dragger.activated = false
 }
 
-fn dragger_inside_dropzone(mut d Widget) bool {
+// DropZone
+
+interface DropZone {
+	ui &UI
+	size() (int, int)
+mut:
+	x int
+	y int
+	drop_types []string
+}
+
+pub fn (dz DropZone) bounds() gg.Rect {
+	w, h := dz.size()
+	return gg.Rect{dz.x, dz.y, w, h}
+}
+
+pub fn (dz DropZone) drop_types() []string {
+	return dz.drop_types
+}
+
+pub fn (mut dz DropZone) set_drop_types(dt []string) {
+	dz.drop_types = dt
+}
+
+// Interaction Between Dragger and DropZone
+
+fn dragger_inside_dropzone(mut d DropZone) bool {
 	dragger := d.ui.window.dragger
 	if dragger.activated {
 		mut w := dragger.widget
-		return w.inside(d.bounds())
+		return w.inside(d.bounds()) && w.drag_type() in d.drop_types
 	} else {
 		return false
 	}
 }
 
-fn dragger_intersect_dropzone(mut d Widget) bool {
+fn dragger_intersect_dropzone(mut d DropZone) bool {
 	dragger := d.ui.window.dragger
 	if dragger.activated {
 		mut w := dragger.widget
-		return w.intersect(d.bounds())
+		return w.intersect(d.bounds()) && w.drag_type() in d.drop_types
 	} else {
 		return false
 	}
 }
-
-// pub fn drop_register
