@@ -57,7 +57,7 @@ pub mut:
 	hidden       bool
 	movable      bool // drag, transition or anything allowing offset yo be updated
 	just_dragged bool
-	drag_type 	string = "btn"
+	drag_type    string = 'btn'
 	hoverable    bool
 	to_hover     bool
 	tooltip      TooltipMessage

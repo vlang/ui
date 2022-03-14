@@ -41,7 +41,7 @@ pub fn (w Draggable) inside(b gg.Rect) bool {
 
 struct Dragger {
 pub mut:
-	typ		  string	 
+	typ       string
 	activated bool
 	widget    Draggable = button()
 	start_x   f64

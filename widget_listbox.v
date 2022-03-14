@@ -53,7 +53,7 @@ pub mut:
 	dragged_item int = -1
 	just_dragged bool
 	// drag drop types
-	drag_type 	string = "lb"
+	drag_type  string = 'lb'
 	drop_types []string
 	// guess adjusted width
 	adj_width  int
@@ -410,11 +410,7 @@ pub fn (mut lb ListBox) clear() {
 
 fn (lb &ListBox) selected_item(y int) int {
 	inx := (y - lb.y) / lb.item_height
-	return if inx < 0 || inx >= lb.items.len {
-		-1
-	} else {
-		inx
-	}
+	return if inx < 0 || inx >= lb.items.len { -1 } else { inx }
 }
 
 fn (lb &ListBox) visible_items() (int, int) {

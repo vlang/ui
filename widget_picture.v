@@ -26,7 +26,7 @@ mut:
 	y         int
 	z_index   int
 	movable   bool
-	drag_type 	string = "pic"
+	drag_type string = 'pic'
 	path      string
 	ui        &UI
 	image     gg.Image
