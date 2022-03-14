@@ -564,9 +564,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 			// println(' $item.id -> ($e.x,$e.y)')
 			if item.point_inside(e.x, e.y) {
 				if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
-					if lb.on_change != ListBoxSelectionChangedFn(0) {
-						lb.on_change(window.state, lb)
-					}
+					lb.call_on_change()
 				}
 				break
 			}
@@ -574,16 +572,14 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	} $else {
 		inx := lb.selected_item(e.y)
 		if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
-			if lb.on_change != ListBoxSelectionChangedFn(0) {
-				lb.on_change(window.state, lb)
-			}
+			lb.call_on_change()
 		}
 	}
 }
 
-pub fn (lb &ListBox) send_change() {
+pub fn (lb &ListBox) call_on_change() {
 	if lb.on_change != ListBoxSelectionChangedFn(0) {
-		lb.on_change(0, lb)
+		lb.on_change(lb.ui.window.state, lb)
 	}
 }
 
@@ -617,10 +613,11 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 		return
 	}
 	if lb.dragged_item >= 0 {
+		// reinit dragged item
 		lb.items[lb.dragged_item].x, lb.items[lb.dragged_item].y = 0, lb.dragged_item * lb.item_height
 		lb.items[lb.dragged_item].offset_x, lb.items[lb.dragged_item].offset_y = 0, 0
 		lb.dragged_item = -1
-		lb.send_change()
+		lb.call_on_change()
 	}
 	// b.state = .normal
 }
