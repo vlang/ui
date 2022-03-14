@@ -6,6 +6,7 @@ module ui
 import gg
 
 pub interface Widget {
+	ui &UI
 mut:
 	id string
 	x int

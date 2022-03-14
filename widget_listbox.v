@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import gg
 
 type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
 
@@ -634,6 +635,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 		return
 	}
 	if lb.point_inside(e.x, e.y) {
+		// println("$lb.id $lb.dragged_item ${dragger_inside_dropzone(mut lb)}")
 		if lb.dragged_item >= 0 {
 			// println("hereee $lb.dragged_item")
 			j := lb.selected_item(int(e.y))
@@ -642,6 +644,8 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 				lb.move_inx_by(lb.dragged_item, j - lb.dragged_item)
 				lb.dragged_item = j
 			}
+		} else if dragger_intersect_dropzone(mut lb) {
+			println('couocu $lb.id <$lb.ui.window.dragger.widget.id>')
 		}
 	}
 
@@ -849,4 +853,10 @@ fn (li &ListItem) get_window() &Window {
 
 fn (li &ListItem) drag_type() string {
 	return li.list.drag_type
+}
+
+fn (li &ListItem) drag_bounds() gg.Rect {
+	w, h := li.size()
+	return gg.Rect{li.x + li.offset_x + li.list.x + li.list.offset_x, li.y + li.offset_y +
+		li.list.y + li.list.offset_y, w, h}
 }

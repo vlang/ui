@@ -459,3 +459,8 @@ fn (b &Button) get_window() &Window {
 fn (b &Button) drag_type() string {
 	return b.drag_type
 }
+
+fn (b &Button) drag_bounds() gg.Rect {
+	w, h := b.size()
+	return gg.Rect{b.x + b.offset_x, b.y + b.offset_y, w, h}
+}

@@ -193,3 +193,7 @@ fn (pic &Picture) get_window() &Window {
 fn (pic &Picture) drag_type() string {
 	return pic.drag_type
 }
+
+fn (pic &Picture) drag_bounds() gg.Rect {
+	return gg.Rect{pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height}
+}

@@ -11,6 +11,7 @@ interface Draggable {
 	size() (int, int)
 	get_window() &Window
 	drag_type() string
+	drag_bounds() gg.Rect
 mut:
 	offset_x int
 	offset_y int
@@ -37,6 +38,11 @@ pub fn (w Draggable) inside(b gg.Rect) bool {
 	return inside_rect(w.bounds(), b)
 }
 
+pub fn (w Draggable) intersect(b gg.Rect) bool {
+	// println("${w.bounds()} inter $b")
+	return !is_empty_intersection(w.drag_bounds(), b)
+}
+
 //** Drag stuff ***//
 
 struct Dragger {
@@ -56,17 +62,17 @@ NB: would like external mechanism only depending on point_inside methods of Widg
 shift key (or other) to activate possible dragging
 */
 
-fn drag_register(w Draggable, e &MouseEvent) bool {
+fn drag_register(d Draggable, e &MouseEvent) bool {
 	if shift_key(e.mods) {
 		$if drag ? {
 			println('drag ${typeof(w).name}')
 		}
-		mut window := w.get_window()
+		mut window := d.get_window()
 		if window.dragger.activated {
-			if w.z_index > window.dragger.widget.z_index {
-				window.dragger.widget = w
-				window.dragger.start_x = e.x - w.offset_x
-				window.dragger.start_y = e.y - w.offset_y
+			if d.z_index > window.dragger.widget.z_index {
+				window.dragger.widget = d
+				window.dragger.start_x = e.x - d.offset_x
+				window.dragger.start_y = e.y - d.offset_y
 				// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
 				window.dragger.pos_x = e.x
 				window.dragger.pos_y = e.y
@@ -74,9 +80,9 @@ fn drag_register(w Draggable, e &MouseEvent) bool {
 			}
 		} else {
 			window.dragger.activated = true
-			window.dragger.widget = w
-			window.dragger.start_x = e.x - w.offset_x
-			window.dragger.start_y = e.y - w.offset_y
+			window.dragger.widget = d
+			window.dragger.start_x = e.x - d.offset_x
+			window.dragger.start_y = e.y - d.offset_y
 			// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
 			window.dragger.pos_x = e.x
 			window.dragger.pos_y = e.y
@@ -85,6 +91,10 @@ fn drag_register(w Draggable, e &MouseEvent) bool {
 		return true
 	}
 	return false
+}
+
+fn drag_active(window &Window) bool {
+	return window.dragger.activated
 }
 
 fn drag_child(mut window Window, x f64, y f64) {
@@ -118,6 +128,26 @@ fn drop_child(mut window Window) {
 	}
 	sapp.show_mouse(true)
 	window.dragger.activated = false
+}
+
+fn dragger_inside_dropzone(mut d Widget) bool {
+	dragger := d.ui.window.dragger
+	if dragger.activated {
+		mut w := dragger.widget
+		return w.inside(d.bounds())
+	} else {
+		return false
+	}
+}
+
+fn dragger_intersect_dropzone(mut d Widget) bool {
+	dragger := d.ui.window.dragger
+	if dragger.activated {
+		mut w := dragger.widget
+		return w.intersect(d.bounds())
+	} else {
+		return false
+	}
 }
 
 // pub fn drop_register
