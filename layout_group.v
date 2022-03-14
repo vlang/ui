@@ -19,6 +19,7 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
+	is_focused    bool
 	parent        Layout = empty_stack
 	ui            &UI
 	children      []Widget

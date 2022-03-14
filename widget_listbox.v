@@ -488,7 +488,7 @@ fn (mut lb ListBox) draw_item(li ListItem, inx int) {
 		println('draw item  $li.draw_text $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
 	}
 	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-		lb.y + lb.text_offset_y, width, lb.item_height, col)
+		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
 	$if nodtw ? {
 		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
 			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
@@ -505,7 +505,7 @@ fn (mut lb ListBox) draw_item(li ListItem, inx int) {
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		lb.ui.gg.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, width, lb.item_height, lb.col_border)
+			lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
 	}
 }
 

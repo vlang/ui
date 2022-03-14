@@ -9,9 +9,11 @@ struct SortedWidget {
 }
 
 fn compare_sorted_widget(a &SortedWidget, b &SortedWidget) int {
-	if a.w.z_index < b.w.z_index {
+	az, bz := a.w.z_index + if a.w.has_focus() { z_index_focus } else { 0 }, b.w.z_index +
+		if b.w.has_focus() { z_index_focus } else { 0 }
+	if az < bz {
 		return -1
-	} else if a.w.z_index > b.w.z_index {
+	} else if az > bz {
 		return 1
 	} else if a.i < b.i {
 		return -1

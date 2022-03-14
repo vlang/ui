@@ -501,6 +501,9 @@ fn (mut c CanvasLayout) draw() {
 	}
 	// if Layout(c).has_scrollview_or_parent_scrollview() {
 	if c.scrollview != 0 {
+		$if cl_draw_children ? {
+			println('draw $c.id: ${c.drawing_children.map(it.id)}')
+		}
 		for mut child in c.drawing_children {
 			if mut child is Layout
 				|| !is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {

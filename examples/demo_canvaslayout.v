@@ -64,7 +64,7 @@ fn main() {
 									ui.message_box('Built with V UI')
 								}
 							)),
-							ui.at(20, 280, ui.label(
+							ui.at(20, 340, ui.label(
 								id: 'l_mm'
 								text: '(0, 0)     '
 							)),
@@ -85,11 +85,12 @@ fn main() {
 									},
 								]
 							)),
-							ui.at(10, 100, ui.listbox(
+							ui.at(10, 70, ui.listbox(
 								width: 100
 								height: 140
 								z_index: 10
 								on_change: lb_change
+								ordered: true
 								// scrollview: false
 								draw_lines: true
 								items: {
@@ -104,7 +105,7 @@ fn main() {
 									'red3':     'Red3'
 								}
 							)),
-							ui.at(200, 220, ui.listbox(
+							ui.at(50, 220, ui.listbox(
 								width: 100
 								height: 100
 								z_index: 10
@@ -118,6 +119,21 @@ fn main() {
 									'classic': 'Classic'
 									'blue':    'Blue'
 									'red':     'Red'
+								}
+							)),
+							ui.at(200, 220, ui.listbox(
+								width: 100
+								height: 100
+								z_index: 10
+								on_change: lb_change_multi
+								scrollview: false
+								// selectable: false
+								ordered: true
+								multi: true
+								draw_lines: true
+								col_bkgrnd: gx.red
+								items: {
+									'classic': 'Classic'
 								}
 							)),
 							ui.at(150, 100, ui.menu(

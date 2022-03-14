@@ -46,6 +46,8 @@ pub fn (mut f Focusable) set_focus() {
 			println('$f.id has focus at $w.ui.gg.frame')
 		}
 	}
+	// update drawing_children when focus is taken
+	f.update_parent_drawing_children()
 }
 
 // Only one widget can have the focus inside a Window
@@ -79,5 +81,17 @@ pub fn (f Focusable) unlock_focus() {
 			println('$f.id unlock focus')
 		}
 		w.locked_focus = ''
+	}
+}
+
+pub fn (f Focusable) update_parent_drawing_children() {
+	if f is Widget {
+		w := f as Widget
+		mut p := w.parent
+		if mut p is CanvasLayout {
+			p.set_drawing_children()
+		} else if mut p is CanvasLayout {
+			p.set_drawing_children()
+		}
 	}
 }

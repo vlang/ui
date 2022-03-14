@@ -96,3 +96,11 @@ pub fn (w Widget) is_layout_with_children() bool {
 		return false
 	}
 }
+
+pub fn (w Widget) has_focus() bool {
+	if w is Focusable {
+		fw := w as Focusable
+		return fw.is_focused
+	}
+	return false
+}

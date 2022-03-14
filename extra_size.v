@@ -7,6 +7,7 @@ pub const (
 	compact        = 0.0 // from parent
 	fit            = 0.0
 	z_index_hidden = -10000
+	z_index_focus  = 10
 )
 
 pub enum WindowSizeType {
