@@ -384,6 +384,9 @@ fn frame(mut w Window) {
 		sw.draw()
 	}
 
+	// draw dragger if active
+	draw_dragger(mut w)
+	// draw tooltip if active
 	draw_tooltip(w)
 
 	if w.on_draw != voidptr(0) {

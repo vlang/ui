@@ -485,9 +485,6 @@ fn (mut lb ListBox) draw() {
 				}
 			}
 		}
-		if lb.dragged_item >= 0 && lb.dragged_item < lb.items.len {
-			lb.items[lb.dragged_item].draw()
-		}
 	}
 	if !lb.draw_lines {
 		lb.ui.gg.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)

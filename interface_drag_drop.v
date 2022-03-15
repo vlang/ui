@@ -16,6 +16,7 @@ mut:
 	offset_x int
 	offset_y int
 	z_index int
+	draw()
 }
 
 pub fn (w Draggable) active() bool {
@@ -95,6 +96,12 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 
 fn drag_active(window &Window) bool {
 	return window.dragger.activated
+}
+
+fn draw_dragger(mut window Window) {
+	if window.dragger.activated {
+		window.dragger.widget.draw()
+	}
 }
 
 fn drag_child(mut window Window, x f64, y f64) {
