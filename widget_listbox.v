@@ -250,14 +250,14 @@ pub fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 pub fn (mut lb ListBox) remove_item(id string) {
 	for i in 0 .. lb.items.len {
 		if lb.items[i].id == id {
-			lb.remove_inx(i)
+			lb.remove_at(i)
 			lb.update_adj_size()
 			break
 		}
 	}
 }
 
-pub fn (mut lb ListBox) remove_inx(i int) {
+pub fn (mut lb ListBox) remove_at(i int) {
 	if i < 0 || i >= lb.items.len {
 		return
 	}
@@ -267,7 +267,17 @@ pub fn (mut lb ListBox) remove_inx(i int) {
 	lb.items.delete(i)
 }
 
-pub fn (mut lb ListBox) move_inx_by(i int, delta int) {
+pub fn (mut lb ListBox) insert_at(i int) {
+	if i < 0 || i >= lb.items.len {
+		return
+	}
+	for j in (i + 1) .. lb.items.len {
+		lb.items[j].y -= lb.item_height
+	}
+	lb.items.delete(i)
+}
+
+pub fn (mut lb ListBox) move_by(i int, delta int) {
 	if i < 0 || i >= lb.items.len || delta == 0 || i + delta < 0 || i + delta >= lb.items.len {
 		return
 	}
@@ -277,7 +287,7 @@ pub fn (mut lb ListBox) move_inx_by(i int, delta int) {
 			cur = i - 1
 		} else {
 			for d in 0 .. (-delta) {
-				lb.move_inx_by(i - d, -1)
+				lb.move_by(i - d, -1)
 			}
 		}
 	} else {
@@ -285,7 +295,7 @@ pub fn (mut lb ListBox) move_inx_by(i int, delta int) {
 			cur = i
 		} else {
 			for d in 0 .. delta {
-				lb.move_inx_by(i + d, 1)
+				lb.move_by(i + d, 1)
 			}
 		}
 	}
@@ -316,7 +326,7 @@ pub fn (lb &ListBox) is_selected() bool {
 	return true
 }
 
-pub fn (lb &ListBox) is_item_selected_by_inx(inx int) bool {
+pub fn (lb &ListBox) is_item_selected_at(inx int) bool {
 	return lb.selectable && if lb.multi {
 		lb.items[inx].selected && !lb.items[inx].disabled
 	} else {
@@ -358,7 +368,7 @@ pub fn (mut lb ListBox) set_item_selected(inx int, enable_mode bool) bool {
 	}
 }
 
-pub fn (lb &ListBox) is_item_enabled_by_inx(inx int) bool {
+pub fn (lb &ListBox) is_item_enabled_at(inx int) bool {
 	return lb.items[inx].is_enabled()
 }
 
@@ -395,7 +405,7 @@ pub fn (lb &ListBox) selected() ?(string, string) {
 }
 
 // Returns the index of the selected item
-pub fn (lb &ListBox) selected_inx() ?int {
+pub fn (lb &ListBox) selected_at() ?int {
 	if !lb.is_selected() {
 		return error('Nothing is selected')
 	}
@@ -622,7 +632,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 			j := lb.selected_item(int(e.y))
 			if j >= 0 && (j == lb.dragged_item - 1 || j == lb.dragged_item + 1) {
 				// println('herrrreee $lb.dragged_item $j')
-				lb.move_inx_by(lb.dragged_item, j - lb.dragged_item)
+				lb.move_by(lb.dragged_item, j - lb.dragged_item)
 				lb.dragged_item = j
 			}
 		} else if dragger_intersect_dropzone(mut lb) {
