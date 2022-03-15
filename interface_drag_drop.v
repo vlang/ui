@@ -141,6 +141,7 @@ fn drag_child_dropped(mut window Window) {
 
 interface DropZone {
 	ui &UI
+	id string
 	size() (int, int)
 mut:
 	x int

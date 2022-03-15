@@ -766,13 +766,6 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		ui.btn_down[int(event.mouse_button)] = false
 	}
 
-	if window.dragger.activated {
-		$if drag ? {
-			println('drop child ($e.x, $e.y)')
-		}
-		drag_child_dropped(mut window)
-	}
-
 	if window.child_window == 0 && window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
 	}
@@ -790,6 +783,12 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		// window.eventbus.unsubscribe()
 	} else {
 		window.eventbus.publish(events.on_mouse_up, window, e)
+	}
+	if window.dragger.activated {
+		$if drag ? {
+			println('drop child ($e.x, $e.y)')
+		}
+		drag_child_dropped(mut window)
 	}
 }
 
