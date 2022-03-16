@@ -50,10 +50,11 @@ pub mut:
 	// files droped
 	files_droped bool
 	// ordered
-	ordered      bool
-	dragged_item int = -1
-	just_dragged bool
-	dragger_copy &ListItem = 0
+	ordered          bool
+	dragged_item     int = -1
+	just_dragged     bool
+	dragger_copy     &ListItem = 0
+	dragger_copy_pos int
 	// drag drop types for compatibility
 	drag_type  string   = 'lb'
 	drop_types []string = ['lb']
@@ -302,22 +303,25 @@ pub fn (mut lb ListBox) move_by(i int, delta int) {
 		}
 	}
 	if cur >= 0 {
-		if lb.selection == i {
-			lb.selection = i + delta
-		} else if lb.selection == i + delta {
-			lb.selection = i
+		if lb.multi {
+		} else {
+			if lb.selection == i {
+				lb.selection = i + delta
+			} else if lb.selection == i + delta {
+				lb.selection = i
+			}
 		}
 		// swap items cur and cur + 1
-		if cur == lb.selection {
-			lb.selection
-		}
+		// if cur == lb.selection {
+		// 	lb.selection
+		// }
 		lb.items[cur], lb.items[cur + 1] = lb.items[cur + 1], lb.items[cur]
-		if cur == lb.dragged_item {
-			lb.items[cur].y -= lb.item_height
-		}
-		if cur + 1 == lb.dragged_item {
-			lb.items[cur + 1].y += lb.item_height
-		}
+		// if delta == -1 {
+		lb.items[i].y += lb.item_height * (-delta)
+		// }
+		// if delta == 1 {
+		// lb.items[i].y -= lb.item_height
+		// }
 	}
 }
 
@@ -639,14 +643,15 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 		if lb.dragger_copy != 0 {
 			//
 			println('drop $lb.id <$dragged.id>')
-			j := lb.current_pos(int(e.y))
+			lb.dragger_copy_pos = lb.current_pos(int(e.y))
 			// dragged.list = lb
-			lb.dragger_copy.y = j * lb.item_height
+			lb.dragger_copy.y = lb.dragger_copy_pos * lb.item_height
 			lb.dragger_copy.offset_x = 0
 			lb.dragger_copy.offset_y = 0
 			lb.dragger_copy.disabled = false
-			lb.dragger_copy.draw_to = lb.get_draw_to(lb.dragger_copy.text)
 			if mut dragged is ListItem {
+				lb.dragger_copy.text = dragged.text
+				lb.dragger_copy.draw_to = lb.get_draw_to(dragged.text)
 				dragged.remove()
 			}
 			lb.dragger_copy = &ListItem(0)
@@ -676,25 +681,24 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 			dragged := lb.ui.window.dragger.widget
 			if dragged is ListItem {
 				if lb.dragger_copy == 0 {
-					j := lb.current_pos(int(e.y))
+					lb.dragger_copy_pos = lb.current_pos(int(e.y))
 					println('dragged_copy created inside $lb.id')
 					lb.dragger_copy = listitem(
-						text: dragged.text
+						text: ''
 						id: dragged.id
 						list: lb
-						x: 0
-						// draw_to: lb.get_draw_to(dragged.text)
-						disabled: true
 					)
-					println('lb $lb.id dragged OUTSIDE insert at $j $e.y $lb.dragger_copy.id')
-					lb.insert_at(j, lb.dragger_copy)
+					println('lb $lb.id dragged OUTSIDE insert at $lb.dragger_copy_pos $e.y $lb.dragger_copy.id')
+					lb.insert_at(lb.dragger_copy_pos, lb.dragger_copy)
 					println('lb $lb.id list: ${lb.items.map(it.id)}')
 				} else {
-					old_j := lb.selected_item(lb.dragger_copy.y)
 					j := lb.selected_item(int(e.y))
-					//
-					println('lb $lb.id  dragged OUTSIDE move $old_j -> $j ($old_j, $j - $old_j)')
-					lb.move_by(old_j, j - old_j)
+					if j != lb.dragger_copy_pos {
+						//
+						println('lb $lb.id  dragged OUTSIDE move $lb.dragger_copy_pos -> $j ($lb.dragger_copy_pos, $j - $lb.dragger_copy_pos)')
+						lb.move_by(lb.dragger_copy_pos, j - lb.dragger_copy_pos)
+						lb.dragger_copy_pos = j
+					}
 				}
 			}
 		}
