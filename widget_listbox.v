@@ -225,7 +225,7 @@ fn (mut lb ListBox) init_style() {
 fn (mut lb ListBox) init_items() {
 	for i, mut item in lb.items {
 		// println("$i $item.text get ot draw-> ${lb.get_draw_to(item.text)}")
-		item.draw_text = item.text[0..lb.get_draw_to(item.text)]
+		item.draw_to = lb.get_draw_to(item.text)
 		item.x = 0
 		item.y = lb.item_height * i
 		// println("item init $i, $item.text, $item.x $item.y")
@@ -272,9 +272,11 @@ pub fn (mut lb ListBox) insert_at(i int, item &ListItem) {
 	if i < 0 || i > lb.items.len {
 		return
 	}
-	println('item $item.id inserted at $i in $lb.id')
+	// println('item $item.id inserted at $i in $lb.id')
 	lb.items.insert(i, item)
 	lb.update_adj_size()
+	lb.init_items()
+	// println("${lb.items.map(it.id)} ${lb.items.map(it.y)}")
 }
 
 pub fn (mut lb ListBox) move_by(i int, delta int) {
@@ -416,7 +418,7 @@ pub fn (mut lb ListBox) set_text(id string, text string) {
 	for i in 0 .. lb.items.len {
 		if lb.items[i].id == id {
 			lb.items[i].text = text
-			lb.items[i].draw_text = text[0..lb.get_draw_to(text)]
+			lb.items[i].draw_to = lb.get_draw_to(text)
 			break
 		}
 	}
@@ -642,9 +644,12 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 			lb.dragger_copy.y = j * lb.item_height
 			lb.dragger_copy.offset_x = 0
 			lb.dragger_copy.offset_y = 0
+			lb.dragger_copy.disabled = false
+			lb.dragger_copy.draw_to = lb.get_draw_to(lb.dragger_copy.text)
 			if mut dragged is ListItem {
 				dragged.remove()
 			}
+			lb.dragger_copy = &ListItem(0)
 		}
 	}
 	// b.state = .normal
@@ -678,7 +683,8 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 						id: dragged.id
 						list: lb
 						x: 0
-						draw_to: lb.get_draw_to(dragged.text)
+						// draw_to: lb.get_draw_to(dragged.text)
+						disabled: true
 					)
 					println('lb $lb.id dragged OUTSIDE insert at $j $e.y $lb.dragger_copy.id')
 					lb.insert_at(j, lb.dragger_copy)
@@ -686,7 +692,8 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 				} else {
 					old_j := lb.selected_item(lb.dragger_copy.y)
 					j := lb.selected_item(int(e.y))
-					// println('lb $lb.id  dragged OUTSIDE move $old_j -> $j')
+					//
+					println('lb $lb.id  dragged OUTSIDE move $old_j -> $j ($old_j, $j - $old_j)')
 					lb.move_by(old_j, j - old_j)
 				}
 			}
@@ -849,14 +856,14 @@ fn (lb &ListBox) set_children_pos() {}
 [heap]
 struct ListItem {
 mut:
-	id        string
-	list      &ListBox
-	x         int
-	y         int
-	offset_x  int
-	offset_y  int
-	z_index   int
-	draw_text string
+	id       string
+	list     &ListBox
+	x        int
+	y        int
+	offset_x int
+	offset_y int
+	z_index  int
+	draw_to  int
 pub mut:
 	text     string
 	disabled bool
@@ -885,7 +892,7 @@ pub fn listitem(p ListItemParams) &ListItem {
 		id: p.id
 		text: p.text
 		list: unsafe { p.list }
-		draw_text: p.text[0..p.draw_to]
+		draw_to: p.draw_to // p.text[0..p.draw_to]
 		offset_x: p.offset_x
 		offset_y: p.offset_y
 		z_index: p.z_index
@@ -902,12 +909,15 @@ fn (item &ListItem) free() {
 	unsafe {
 		item.id.free()
 		item.text.free()
-		item.draw_text.free()
 		// Failing: free(item)
 	}
 	$if free ? {
 		println(' -> freed')
 	}
+}
+
+fn (li &ListItem) text() string {
+	return li.text[0..li.draw_to]
 }
 
 fn (li &ListItem) point_inside(x f64, y f64) bool {
@@ -954,19 +964,19 @@ fn (li &ListItem) draw() {
 	col := if li.is_selected() { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
-		println('draw item  $li.draw_text $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
+		println('draw item  $li.text() $li.x + $lb.x + $ui._text_offset_x, $li.y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
 	}
 	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
 		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
 	$if nodtw ? {
 		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.draw_text })
+			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.text() })
 	} $else {
 		DrawTextWidget(lb).draw_styled_text(li.x + li.offset_x + lb.x + ui._text_offset_x,
 			li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 			li.text
 		} else {
-			li.draw_text
+			li.text()
 		},
 			color: if li.is_enabled() { gx.black } else { lb.col_disabled }
 		)
