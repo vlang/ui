@@ -56,6 +56,8 @@ pub mut:
 	pos_x     f64
 	pos_y     f64
 	time      time.Time
+	// extra     voidptr
+	extra_int int
 }
 
 /*
@@ -93,6 +95,13 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 	}
 	return false
 }
+
+// fn dragger_extra(window &Window, extra voidptr) {
+// 	mut d := window.dragger
+// 	if d.activated {
+// 		d.extra = extra
+// 	}
+// }
 
 fn drag_active(window &Window) bool {
 	return window.dragger.activated
