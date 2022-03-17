@@ -6,11 +6,12 @@ import gx
 [heap]
 struct Hideable {
 pub mut:
-	id       string
-	layout   &ui.Stack
-	window   &ui.Window = &ui.Window(0)
-	z_index  map[string]int
-	children map[string]ui.Widget
+	id              string
+	layout          &ui.Stack
+	child_layout_id string
+	window          &ui.Window = &ui.Window(0)
+	z_index         map[string]int
+	children        map[string]ui.Widget
 }
 
 [params]
@@ -22,17 +23,24 @@ pub struct HideableParams {
 }
 
 pub fn hideable(p HideableParams) &ui.Stack {
+	mut layout := ui.row(
+		id: p.id + '_layout'
+		children: [p.layout]
+	)
+
 	mut h := &Hideable{
 		id: p.id
-		layout: p.layout
+		layout: layout
+		child_layout_id: p.layout.id
 	}
-	h.save_children_depth(h.layout.children)
+
+	h.save_children_depth(layout.children)
 	if p.hidden {
 		h.hide_children()
 	}
-	ui.component_connect(h, h.layout)
-	h.layout.component_init = hideable_init
-	return h.layout
+	ui.component_connect(h, layout)
+	layout.component_init = hideable_init
+	return layout
 }
 
 pub fn component_hideable(w ui.ComponentChild) &Hideable {
@@ -48,10 +56,10 @@ fn hideable_init(layout &ui.Stack) {
 }
 
 pub fn (mut h Hideable) show() {
-	mut layout := h.layout
+	// mut layout := h.window.stack(h.child_layout_id)
 	// restore z_index
 	h.show_children()
-	layout.set_drawing_children()
+	h.layout.set_drawing_children()
 	h.window.update_layout()
 }
 

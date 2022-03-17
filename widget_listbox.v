@@ -230,6 +230,14 @@ fn (mut lb ListBox) init_items() {
 	}
 }
 
+pub fn (mut lb ListBox) update_items(items []string) {
+	unsafe { lb.items.free() }
+	lb.items = []&ListItem{}
+	for item in items {
+		lb.add_item(item, item)
+	}
+}
+
 pub fn (mut lb ListBox) add_item(id string, text string) {
 	lb.append_item(id, text, lb.get_draw_to(text))
 	lb.update_adj_size()
