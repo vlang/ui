@@ -19,6 +19,13 @@ enum GridType {
 }
 
 type GridData = Factor | []bool | []int | []string
+type GridFn = fn (&Grid)
+
+struct GridKeyCallback {
+	key  bool // false means "char" callback
+	mods ui.KeyMod
+	cb   GridFn
+}
 
 [heap]
 struct Grid {
@@ -64,6 +71,8 @@ mut:
 	to_i   int
 	from_j int
 	to_j   int
+	// key maps
+	keymaps map[int]GridKeyCallback
 	// To become a component of a parent component
 	component voidptr
 }
@@ -77,6 +86,7 @@ pub struct GridParams {
 	scrollview   bool
 	is_focused   bool
 	fixed_height bool = true
+	keymaps      map[int]GridKeyCallback
 }
 
 pub fn grid(p GridParams) &ui.CanvasLayout {
@@ -102,6 +112,7 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		layout: layout
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: 'tb_ro_' + p.id)
+		keymaps: p.keymaps
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -296,7 +307,14 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			g.cur_i, g.cur_j = g.nrow() - 1, g.ncol - 1
 			g.cur_allways_visible()
 		}
-		else {}
+		else {
+			if int(e.key) in g.keymaps {
+				km := g.keymaps[int(e.key)]
+				if km.key && ui.check_key(e.mods, km.mods) {
+					km.cb(g)
+				}
+			}
+		}
 	}
 	g.cur_allways_visible()
 }

@@ -181,4 +181,8 @@ pub fn super_alt_key(mods KeyMod) bool {
 	return int(mods) & 12 == 12
 }
 
+pub fn check_key(mods KeyMod, opts KeyMod) bool {
+	return int(mods) & int(opts) == int(opts)
+}
+
 // NB: to complete if useful

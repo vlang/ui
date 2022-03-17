@@ -397,6 +397,14 @@ pub fn (lb &ListBox) selected() ?(string, string) {
 	return lb.items[lb.selection].id, lb.items[lb.selection].text
 }
 
+pub fn (lb &ListBox) items() []&ListItem {
+	if lb.multi {
+		return lb.items
+	} else {
+		return if lb.is_selected() { [lb.items[lb.selection]] } else { []&ListItem{} }
+	}
+}
+
 // Returns the index of the selected item
 pub fn (lb &ListBox) selected_at() ?int {
 	if !lb.is_selected() {
