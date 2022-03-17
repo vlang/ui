@@ -50,11 +50,11 @@ fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string
 
 fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root string, level int) {
 	root_id := tv.id + '_' + id_root
-	for i, item in t.items {
+	for i, mut item in t.items {
 		treeitem_id := root_id + '$component.tree_sep$i'
 		tv.parents[treeitem_id] = root_id
 		mut to_expand := ''
-		if item is string {
+		if mut item is string {
 			tmp := item.split(component.tree_sep)
 			if tmp[0].trim_space() == 'root' {
 				to_expand = tmp[1..].join(component.tree_sep).trim_space()
