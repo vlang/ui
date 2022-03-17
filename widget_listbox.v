@@ -331,7 +331,7 @@ pub fn (lb &ListBox) is_item_selected(li &ListItem) bool {
 	return lb.selectable && if lb.multi {
 		li.selected && !li.disabled
 	} else {
-		if lb.selection < 0 {
+		if lb.selection < 0 || lb.selection >= lb.items.len {
 			false
 		} else {
 			li == lb.items[lb.selection]

@@ -27,9 +27,10 @@ pub fn doublelistbox(c DoubleListBoxParams) &ui.Stack {
 	for item in c.items {
 		items[item] = item
 	}
-	mut lb_left := ui.listbox(width: 50, items: items)
+	mut lb_left := ui.listbox(width: 50, items: items, ordered: true)
 	mut lb_right := ui.listbox(
 		width: 50
+		ordered: true
 		items: map[string]string{}
 	)
 	mut btn_right := ui.button(text: '>>', onclick: doublelistbox_move_right)
