@@ -1078,6 +1078,9 @@ fn (mut s Stack) draw() {
 			}
 		}
 	} else {
+		$if s_draw_children ? {
+			println('draw $s.id: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+		}
 		for mut child in s.drawing_children {
 			// println("$child.type_name() $child.id")
 			child.draw()

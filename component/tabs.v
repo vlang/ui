@@ -14,6 +14,7 @@ pub mut:
 	id          string
 	layout      &ui.Stack // required
 	active      string
+	prev_active string
 	tab_bar     &ui.Stack
 	pages       map[string]ui.Widget
 	mode        TabsMode
@@ -120,6 +121,7 @@ fn tabs_init(layout &ui.Stack) {
 	// for mut tab in tabs.tab_bar.children {
 	// 	tab.width =
 	// }
+	tabs.on_top()
 	tabs.layout.update_layout()
 }
 
@@ -137,13 +139,32 @@ fn tab_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	tabs.layout.update_layout()
 	win := tabs.layout.ui.window
 	win.update_layout()
+	// previous active
+	tabs.prev_active = tabs.active
 	// set current
 	tabs.active = c.id
 	tabs.update_tab_colors()
+	tabs.on_top()
 }
 
 fn tab_id(id string, i int) string {
 	return '${id}_tab_$i'
+}
+
+fn (mut tabs Tabs) on_top() {
+	for t, mut page in tabs.pages {
+		incr := match t {
+			tabs.active { 10 }
+			tabs.prev_active { -10 }
+			else { 0 }
+		}
+		// active
+		if mut page is ui.Layout {
+			mut l := page as ui.Layout
+			l.incr_children_depth(incr)
+			l.update_drawing_children()
+		}
+	}
 }
 
 fn (mut tabs Tabs) update_tab_colors() {

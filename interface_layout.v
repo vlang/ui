@@ -229,3 +229,11 @@ pub fn (l Layout) debug_show_children_tree(level int) {
 		}
 	}
 }
+
+pub fn (mut l Layout) update_drawing_children() {
+	if mut l is CanvasLayout {
+		l.set_drawing_children()
+	} else if mut l is CanvasLayout {
+		l.set_drawing_children()
+	}
+}
