@@ -42,7 +42,7 @@ pub mut:
 	text_size   f64
 	text_cfg    gx.TextCfg
 	hidden      bool
-	bg_color    gx.Color = gx.white
+	bg_color    gx.Color = ui.no_color
 	// component state for composable widget
 	component voidptr
 }
