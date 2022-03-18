@@ -13,8 +13,6 @@ struct FontChooser {
 pub mut:
 	layout &ui.Stack // required
 	dtw    ui.DrawTextWidget
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]

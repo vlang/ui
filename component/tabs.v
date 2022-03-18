@@ -21,8 +21,6 @@ pub mut:
 	tab_width   f64
 	tab_height  f64
 	tab_spacing f64
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]

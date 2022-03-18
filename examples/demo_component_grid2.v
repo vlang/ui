@@ -34,8 +34,8 @@ fn main() {
 					widths: ui.stretch
 					heights: [ui.stretch, 3 * ui.stretch]
 					children: [ui.rectangle(color: gx.red),
-						uic.grid(
-						id: 'grid'
+						uic.datagrid_stack(
+						id: 'grid2'
 						scrollview: true
 						is_focused: true
 						// fixed_height: false
@@ -61,7 +61,7 @@ fn main() {
 }
 
 fn win_init(w &ui.Window) {
-	l := w.canvas_layout('grid_layout')
-	mut g := uic.component_grid(l)
-	g.init_ranked_grid_data([2, 0], [1, 2])
+	// l := w.canvas_layout('grid_layout')
+	// mut g := uic.component_grid(l)
+	// g.init_ranked_grid_data([2, 0], [1, 2])
 }

@@ -19,16 +19,16 @@ enum GridType {
 }
 
 type GridData = Factor | []bool | []int | []string
-type GridFn = fn (g &Grid)
+type GridFn = fn (g &GridComponent)
 
 pub struct GridKey {
-	key  bool // false means "char" callback
-	mods ui.KeyMod
-	cb   GridFn
+	is_char bool // true means "char" callback
+	mods    ui.KeyMod
+	key_fn  GridFn
 }
 
 [heap]
-struct Grid {
+struct GridComponent {
 pub mut:
 	id        string
 	layout    &ui.CanvasLayout
@@ -73,13 +73,10 @@ pub mut:
 	to_j   int
 	// key maps
 	keymaps map[int]GridKey
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
-pub struct GridParams {
-	id           string
+pub struct GridComponentParams {
 	vars         map[string]GridData
 	width        int = 100
 	height       int = 25
@@ -87,11 +84,13 @@ pub struct GridParams {
 	is_focused   bool
 	fixed_height bool = true
 	keymaps      map[int]GridKey
+mut:
+	id string
 }
 
-pub fn grid(p GridParams) &ui.CanvasLayout {
+pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
-		id: p.id + '_layout'
+		id: ui.component_part_id(p.id, 'layout')
 		scrollview: p.scrollview
 		is_focused: p.is_focused
 		on_draw: grid_draw
@@ -107,11 +106,11 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		on_scroll_change: grid_scroll_change
 	)
 	mut dd := map[string]&ui.Dropdown{}
-	mut g := &Grid{
+	mut g := &GridComponent{
 		id: p.id
 		layout: layout
 		headers: p.vars.keys()
-		tb_string: ui.textbox(id: 'tb_ro_' + p.id)
+		tb_string: ui.textbox(id: ui.component_part_id(p.id, 'tb_ro'))
 		keymaps: p.keymaps
 	}
 	ui.component_connect(g, layout)
@@ -129,15 +128,27 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 			[]string {
 				g.types << .tb_string
 				g.set_check_nrow(var.len)
-				g.vars << grid_textbox(id: p.id + '_' + name, grid: g, var: var)
+				g.vars << grid_textbox(
+					id: ui.component_part_id(p.id, 'tb_' + name)
+					grid: g
+					var: var
+				)
 			}
 			Factor {
 				g.types << .dd_factor
 				g.set_check_nrow(var.values.len)
-				dd[name] = ui.dropdown(id: 'dd_ro_' + p.id + '_' + name, texts: var.levels)
-				g.vars << grid_dropdown(id: p.id + '_' + name, grid: g, name: name, var: var)
+				dd[name] = ui.dropdown(
+					id: ui.component_part_id(p.id, 'dd_ro_' + name)
+					texts: var.levels
+				)
+				g.vars << grid_dropdown(
+					id: ui.component_part_id(p.id, 'dd_' + name)
+					grid: g
+					name: name
+					var: var
+				)
 				mut dd_sel := ui.dropdown(
-					id: 'dd_sel_' + p.id + '_' + name
+					id: ui.component_part_id(p.id, 'dd_sel_' + name)
 					texts: var.levels
 					on_selection_changed: grid_dd_changed
 				)
@@ -149,18 +160,27 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 		}
 	}
 	mut tb_sel := ui.textbox(
-		id: 'tb_sel_' + p.id
+		id: ui.component_part_id(p.id, 'tb_sel')
 		on_entered: grid_tb_entered
 	)
+	// println("tb_sel $tb_sel.id created inside $p.id")
 	tb_sel.set_visible(false)
 	layout.children << tb_sel
 	g.selectors << tb_sel
 	ui.component_connect(g, tb_sel)
 
-	g.tb_colbar = ui.textbox(id: 'tb_colbar_' + p.id, bg_color: gx.light_blue, read_only: true)
+	g.tb_colbar = ui.textbox(
+		id: ui.component_part_id(p.id, 'tb_colbar')
+		bg_color: gx.light_blue
+		read_only: true
+	)
 	g.tb_colbar.set_visible(false)
 
-	g.tb_rowbar = ui.textbox(id: 'tb_rowbar_' + p.id, bg_color: gx.light_gray, read_only: true)
+	g.tb_rowbar = ui.textbox(
+		id: ui.component_part_id(p.id, 'tb_rowbar')
+		bg_color: gx.light_gray
+		read_only: true
+	)
 	g.tb_rowbar.set_visible(false)
 
 	g.widths = [p.width].repeat(p.vars.keys().len)
@@ -179,12 +199,12 @@ pub fn grid(p GridParams) &ui.CanvasLayout {
 }
 
 // component access
-pub fn component_grid(w ui.ComponentChild) &Grid {
-	return &Grid(w.component)
+pub fn grid_component(w ui.ComponentChild) &GridComponent {
+	return &GridComponent(w.component)
 }
 
 fn grid_init(mut layout ui.CanvasLayout) {
-	mut g := component_grid(layout)
+	mut g := grid_component(layout)
 	g.tb_string.init(layout)
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
@@ -200,7 +220,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	//
 	println('grid_click $e.x $e.y')
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
 	rx, ry := g.layout.abs_pos(g.rowbar_width, g.colbar_height)
 	ex, ey := g.layout.orig_pos(e.x, e.y)
@@ -231,7 +251,7 @@ fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
 }
 
 fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 	colbar := e.y < g.colbar_height - c.y - c.offset_y
 	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
 	if colbar {
@@ -245,7 +265,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	$if grid_key ? {
 		println('key_down $e')
 	}
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 	if g.is_selected() {
 		if e.key == .escape {
 			println('here')
@@ -310,8 +330,8 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 		else {
 			if int(e.key) in g.keymaps {
 				km := g.keymaps[int(e.key)]
-				if km.key && ui.check_key(e.mods, km.mods) {
-					km.cb(g)
+				if !km.is_char && ui.has_key_mods(e.mods, km.mods) {
+					km.key_fn(g)
 				}
 			}
 		}
@@ -320,7 +340,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 }
 
 fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 	s := utf32_to_str(e.codepoint)
 	$if grid_char ? {
 		println('char $e $s')
@@ -338,8 +358,8 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 			else {
 				if int(e.codepoint) in g.keymaps {
 					km := g.keymaps[int(e.codepoint)]
-					if !km.key && ui.check_key(e.mods, km.mods) {
-						km.cb(g)
+					if km.is_char && ui.has_key_mods(e.mods, km.mods) {
+						km.key_fn(g)
 					}
 				}
 			}
@@ -348,20 +368,20 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 }
 
 fn grid_full_size(mut c ui.CanvasLayout) (int, int) {
-	w, h := component_grid(c).size()
+	w, h := grid_component(c).size()
 	c.adj_width, c.adj_height = w, h
 	return w, h
 }
 
 fn grid_scroll_change(sw ui.ScrollableWidget) {
 	if sw is ui.CanvasLayout {
-		mut g := component_grid(sw)
+		mut g := grid_component(sw)
 		g.visible_cells()
 	}
 }
 
 fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
-	mut g := component_grid(tb)
+	mut g := grid_component(tb)
 	mut gtb := g.vars[g.sel_j]
 	if mut gtb is GridTextBox {
 		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
@@ -378,7 +398,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 
 fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	// println('$dd.id  selection changed $dd.selected_index')
-	mut g := component_grid(dd)
+	mut g := grid_component(dd)
 	mut gdd := g.vars[g.sel_j]
 	if mut gdd is GridDropdown {
 		gdd.var.values[g.ind(g.sel_i)] = dd.selected_index
@@ -393,7 +413,7 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 
 fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("draw begin")
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
 	// println("$g.rowbar_width == $g.pos_x")
 
@@ -415,7 +435,7 @@ fn grid_draw(c &ui.CanvasLayout, app voidptr) {
 
 fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 	// println("post draw begin")
-	mut g := component_grid(c)
+	mut g := grid_component(c)
 
 	g.draw_current()
 
@@ -428,15 +448,15 @@ fn grid_post_draw(c &ui.CanvasLayout, app voidptr) {
 
 // methods
 
-fn (g &Grid) ind(i int) int {
+fn (g &GridComponent) ind(i int) int {
 	return if g.index.len > 0 { g.index[i] } else { i }
 }
 
-fn (g &Grid) nrow() int {
+fn (g &GridComponent) nrow() int {
 	return if g.index.len > 0 { g.index.len } else { g.nrow }
 }
 
-fn (mut g Grid) draw_current() {
+fn (mut g GridComponent) draw_current() {
 	l := 3
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
@@ -448,7 +468,7 @@ fn (mut g Grid) draw_current() {
 	g.layout.draw_rect_filled(pos_x + w, pos_y - l, l, h + 2 * l, gx.red)
 }
 
-fn (mut g Grid) draw_colbar() {
+fn (mut g GridComponent) draw_colbar() {
 	mut tb := g.tb_colbar
 	tb.is_focused = false
 	tb.read_only = true
@@ -482,7 +502,7 @@ fn (mut g Grid) draw_colbar() {
 	tb.draw()
 }
 
-fn (mut g Grid) draw_rowbar() {
+fn (mut g GridComponent) draw_rowbar() {
 	mut tb := g.tb_rowbar
 	tb.is_focused = false
 	tb.read_only = true
@@ -502,7 +522,7 @@ fn (mut g Grid) draw_rowbar() {
 	}
 }
 
-fn (mut g Grid) set_check_nrow(var_len int) {
+fn (mut g GridComponent) set_check_nrow(var_len int) {
 	if g.nrow < 0 {
 		g.nrow = var_len
 	} else {
@@ -512,28 +532,28 @@ fn (mut g Grid) set_check_nrow(var_len int) {
 	}
 }
 
-fn (g &Grid) size() (int, int) {
+fn (g &GridComponent) size() (int, int) {
 	w := ui.scrollbar_size + g.rowbar_width + g.header_size + (arrays.sum(g.widths) or { -1 })
 	h := g.colbar_height + 2 * g.header_size + if g.cell_height > 0 { g.cell_height * g.nrow() } else { arrays.sum(g.heights) or {
 			-1} }
 	return w, h
 }
 
-fn (g &Grid) is_selected() bool {
+fn (g &GridComponent) is_selected() bool {
 	return g.selectors.any(!it.hidden)
 }
 
-fn (mut g Grid) unselect() {
+fn (mut g GridComponent) unselect() {
 	for mut sel in g.selectors {
 		sel.set_visible(false)
 		sel.set_depth(ui.z_index_hidden)
 	}
 }
 
-fn (mut g Grid) colbar_selected() {
+fn (mut g GridComponent) colbar_selected() {
 }
 
-fn (mut g Grid) show_selected() {
+fn (mut g GridComponent) show_selected() {
 	if g.sel_i < 0 || g.sel_j < 0 {
 		return
 	}
@@ -543,7 +563,7 @@ fn (mut g Grid) show_selected() {
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
 		.tb_string {
-			id := 'tb_sel_' + g.id
+			id := ui.component_part_id(g.id, 'tb_sel')
 			// println('tb_sel $id selected')
 			mut tb := g.layout.ui.window.textbox(id)
 			tb.set_visible(true)
@@ -562,7 +582,7 @@ fn (mut g Grid) show_selected() {
 			tb.bg_color = gx.orange
 		}
 		.dd_factor {
-			id := 'dd_sel_' + g.id + '_' + name
+			id := ui.component_part_id(g.id, 'dd_sel' + '_' + name)
 			// println('dd_sel $id selected $g.sel_i, $g.sel_j')
 			mut dd := g.layout.ui.window.dropdown(id)
 			dd.set_visible(true)
@@ -584,7 +604,7 @@ fn (mut g Grid) show_selected() {
 
 // depending on g.index
 
-fn (g &Grid) get_index_pos(x int, y int) (int, int) {
+fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 	mut sel_i, mut sel_j := -1, -1
 	$if gip_old ? {
 		mut cum := g.rowbar_width
@@ -631,7 +651,7 @@ fn (g &Grid) get_index_pos(x int, y int) (int, int) {
 	return sel_i, sel_j
 }
 
-fn (g &Grid) get_pos(i int, j int) (int, int) {
+fn (g &GridComponent) get_pos(i int, j int) (int, int) {
 	mut x, mut y := g.rowbar_width + g.header_size, g.colbar_height + g.header_size
 	for k in 0 .. i {
 		y += g.height(k)
@@ -642,11 +662,11 @@ fn (g &Grid) get_pos(i int, j int) (int, int) {
 	return x, y
 }
 
-fn (g &Grid) height(i int) int {
+fn (g &GridComponent) height(i int) int {
 	return if g.cell_height > 0 { g.cell_height } else { g.heights[g.ind(i)] }
 }
 
-fn (mut g Grid) visible_cells() {
+fn (mut g GridComponent) visible_cells() {
 	if g.layout.has_scrollview {
 		if g.cell_height > 0 {
 			g.visible_fixed_cells()
@@ -703,7 +723,7 @@ fn (mut g Grid) visible_cells() {
 	}
 }
 
-pub fn (mut g Grid) visible_fixed_cells() {
+pub fn (mut g GridComponent) visible_fixed_cells() {
 	g.from_i = math.min(math.max((g.layout.scrollview.offset_y - g.colbar_height - g.header_size) / g.cell_height,
 		0), g.nrow() - 1)
 	g.to_i = math.min((g.layout.scrollview.offset_y +
@@ -712,7 +732,7 @@ pub fn (mut g Grid) visible_fixed_cells() {
 	// println("vfc $g.from_i, $g.to_i")
 }
 
-pub fn (mut g Grid) cur_allways_visible() {
+pub fn (mut g GridComponent) cur_allways_visible() {
 	if !ui.has_scrollview(g.layout) {
 		return
 	}
@@ -735,7 +755,7 @@ pub fn (mut g Grid) cur_allways_visible() {
 	}
 }
 
-pub fn (mut g Grid) scroll_x_to_cur(end bool) {
+pub fn (mut g GridComponent) scroll_x_to_cur(end bool) {
 	if g.layout.scrollview.active_x {
 		delta := if end {
 			-g.layout.width + g.widths[math.min(g.cur_j - 1, g.ncol - 1)] + g.header_size
@@ -747,7 +767,7 @@ pub fn (mut g Grid) scroll_x_to_cur(end bool) {
 	}
 }
 
-pub fn (mut g Grid) scroll_y_to_cur(end bool) {
+pub fn (mut g GridComponent) scroll_y_to_cur(end bool) {
 	if g.layout.scrollview.active_y {
 		delta := if end {
 			-g.layout.height + g.height(math.min(g.cur_i - 1, g.nrow() - 1)) + g.header_size
@@ -759,7 +779,7 @@ pub fn (mut g Grid) scroll_y_to_cur(end bool) {
 	}
 }
 
-pub fn (mut g Grid) scroll_y_to_end() {
+pub fn (mut g GridComponent) scroll_y_to_end() {
 	if g.layout.scrollview.active_y {
 		_, y := g.get_pos(g.nrow - 1, g.ncol - 1)
 		g.layout.scrollview.set(y + g.height(g.nrow() - 1) + g.header_size - g.layout.height,
@@ -771,15 +791,15 @@ pub fn (mut g Grid) scroll_y_to_end() {
 
 interface GridVar {
 	id string
-	grid &Grid
+	grid &GridComponent
 	compare(a int, b int) int
-	draw(j int, mut g Grid)
+	draw(j int, mut g GridComponent)
 }
 
 // TextBox GridVar
 [heap]
 struct GridTextBox {
-	grid &Grid
+	grid &GridComponent
 mut:
 	id  string
 	var []string
@@ -787,7 +807,7 @@ mut:
 
 pub struct GridTextBoxParams {
 	id   string
-	grid &Grid
+	grid &GridComponent
 	var  []string
 }
 
@@ -808,7 +828,7 @@ fn (gtb &GridTextBox) compare(a int, b int) int {
 	}
 }
 
-fn (gtb &GridTextBox) draw(j int, mut g Grid) {
+fn (gtb &GridTextBox) draw(j int, mut g GridComponent) {
 	mut tb := g.tb_string
 	tb.is_focused = false
 	tb.read_only = true
@@ -836,7 +856,7 @@ fn (gtb &GridTextBox) draw(j int, mut g Grid) {
 // Dropdown GridVar
 [heap]
 struct GridDropdown {
-	grid &Grid
+	grid &GridComponent
 mut:
 	id   string
 	name string
@@ -845,7 +865,7 @@ mut:
 
 pub struct GridDropdownParams {
 	id   string
-	grid &Grid
+	grid &GridComponent
 	name string
 	var  Factor
 }
@@ -868,7 +888,7 @@ fn (gdd &GridDropdown) compare(a int, b int) int {
 	}
 }
 
-fn (gdd &GridDropdown) draw(j int, mut g Grid) {
+fn (gdd &GridDropdown) draw(j int, mut g GridComponent) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
@@ -887,7 +907,7 @@ fn (gdd &GridDropdown) draw(j int, mut g Grid) {
 // CheckBox GridVar
 [heap]
 struct GridCheckBox {
-	grid &Grid
+	grid &GridComponent
 mut:
 	id  string
 	cb  &ui.CheckBox
@@ -897,7 +917,7 @@ mut:
 pub fn grid_checkbox() { //&GridCheckBox {
 }
 
-fn (gtb &GridCheckBox) draw(j int, mut g Grid) {
+fn (gtb &GridCheckBox) draw(j int, mut g GridComponent) {
 }
 
 // compare
@@ -905,7 +925,7 @@ fn (gtb &GridCheckBox) draw(j int, mut g Grid) {
 __global (
 	rgd_vars_   []int // all vars
 	rgd_orders_ []int // all orders
-	rgd_grid_   &Grid // the current grid
+	rgd_grid_   &GridComponent // the current grid
 )
 
 // struct RankedGridData {
@@ -914,7 +934,7 @@ __global (
 
 type RankedGridData = int
 
-// fn (g &Grid) ranked_grid_data() []RankedGridData {
+// fn (g &GridComponent) ranked_grid_data() []RankedGridData {
 // 	mut rgd := []RankedGridData{}
 // 	for i in 0..g.nrow() {
 // 		rgd << &RankedGridData{i}
@@ -922,7 +942,7 @@ type RankedGridData = int
 // 	return rgd
 // }
 
-pub fn (mut g Grid) init_ranked_grid_data(vars []int, orders []int) {
+pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	rgd_vars_ = vars.clone()
 	rgd_orders_ = orders.clone()
 	rgd_grid_ = g

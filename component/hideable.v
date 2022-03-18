@@ -22,9 +22,9 @@ pub struct HideableParams {
 	hidden   bool = true
 }
 
-pub fn hideable(p HideableParams) &ui.Stack {
+pub fn hideable_stack(p HideableParams) &ui.Stack {
 	mut layout := ui.row(
-		id: p.id + '_layout'
+		id: ui.component_part_id(p.id, 'layout')
 		children: [p.layout]
 	)
 
@@ -43,12 +43,12 @@ pub fn hideable(p HideableParams) &ui.Stack {
 	return layout
 }
 
-pub fn component_hideable(w ui.ComponentChild) &Hideable {
+pub fn hideable_component(w ui.ComponentChild) &Hideable {
 	return &Hideable(w.component)
 }
 
 fn hideable_init(layout &ui.Stack) {
-	mut h := component_hideable(layout)
+	mut h := hideable_component(layout)
 	h.window = layout.ui.window
 	if h.layout.z_index == ui.z_index_hidden {
 		h.hide()

@@ -11,8 +11,6 @@ pub mut:
 	btn_left  &ui.Button
 	btn_right &ui.Button
 	btn_clear &ui.Button
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
@@ -43,7 +41,7 @@ pub fn doublelistbox(c DoubleListBoxParams) &ui.Stack {
 	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', onclick: doublelistbox_clear)
 	mut layout := ui.row(
 		title: c.title
-		id: c.id
+		id: ui.component_part_id(c.id, 'layout')
 		widths: [4 * ui.stretch, 2 * ui.stretch, 4 * ui.stretch]
 		heights: ui.stretch
 		spacing: .05

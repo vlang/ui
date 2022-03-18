@@ -17,8 +17,6 @@ pub mut:
 	btn_ok     &ui.Button
 	tv         &TreeView
 	dir        string
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
@@ -83,6 +81,7 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 		children.insert(1, ui.Widget(tb))
 	}
 	mut layout := ui.column(
+		id: ui.component_part_id(p.id, 'layout')
 		width: p.width
 		height: p.height
 		heights: if p.with_fpath { [ui.stretch, 30, 40] } else { [ui.stretch, 40] }

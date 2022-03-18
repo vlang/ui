@@ -8,8 +8,6 @@ struct ButtonFont {
 pub mut:
 	btn &ui.Button
 	dtw ui.DrawTextWidget
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]

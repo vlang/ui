@@ -146,8 +146,6 @@ pub mut:
 	indent       int
 	// event
 	on_click TreeViewClickFn
-	// To become a component of a parent component
-	component voidptr
 }
 
 // constructors

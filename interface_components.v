@@ -12,6 +12,7 @@ module ui
 
 pub interface ComponentChild {
 mut:
+	id string
 	component voidptr
 }
 
@@ -22,4 +23,15 @@ pub fn component_connect(comp voidptr, children ...ComponentChild) {
 	for mut child in c {
 		child.component = comp
 	}
+}
+
+// to ensure homogeneity for name related to component
+pub fn component_part_id(id string, parts ...string) string {
+	mut part_id := [id]
+	part_id << parts.clone()
+	return part_id.join(':::')
+}
+
+pub fn component_id(part_id string) string {
+	return part_id.split(':::')#[..-1].join(':::')
 }

@@ -96,7 +96,7 @@ fn main() {
 							),
 						]
 					),
-						uic.hideable(
+						uic.hideable_stack(
 							id: 'htb'
 							layout: ui.row(
 								id: 'htbl'
@@ -182,7 +182,7 @@ fn btn_new_click(a voidptr, b &ui.Button) {
 	// println('new')
 	// uic.newfilebrowser_subwindow_visible(b.ui.window)
 	l := b.ui.window.stack('htb_layout')
-	mut h := uic.component_hideable(l)
+	mut h := uic.hideable_component(l)
 	h.toggle()
 }
 
@@ -220,7 +220,7 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 	// println('ok new')
 	tb := b.ui.window.textbox('tb')
 	l := b.ui.window.stack('htb_layout')
-	mut h := uic.component_hideable(l)
+	mut h := uic.hideable_component(l)
 	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
 	if dtv.sel_id != '' {
 		sel_path := dtv.selected_full_title()

@@ -14,8 +14,6 @@ mut:
 	lb_param &ui.Label
 	lb_font  &ui.Label
 	btn_font &ui.Button
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]

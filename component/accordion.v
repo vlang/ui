@@ -3,10 +3,6 @@ module component
 import ui
 import gx
 
-const (
-	accordion_layout_id = '_cvl_accordion'
-)
-
 [heap]
 struct Accordion {
 pub mut:
@@ -18,8 +14,6 @@ pub mut:
 	text_color gx.Color
 	text_size  int
 	bg_color   gx.Color
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
@@ -44,7 +38,7 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		heights = c.heights
 	}
 	mut layout := ui.column(
-		id: c.id + component.accordion_layout_id
+		id: ui.component_part_id(c.id, 'layout')
 		widths: [ui.stretch].repeat(c.children.len * 2)
 		heights: heights
 		bg_color: c.bg_color
