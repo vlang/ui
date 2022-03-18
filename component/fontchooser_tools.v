@@ -12,7 +12,7 @@ pub fn fontchooser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change u
 	if !ui.Layout(w).has_child_id(component.fontchooser_subwindow_id) {
 		w.subwindows << ui.subwindow(
 			id: component.fontchooser_subwindow_id
-			layout: fontchooser()
+			layout: fontchooser_stack()
 		)
 	}
 }

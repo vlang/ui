@@ -9,7 +9,7 @@ enum TabsMode {
 }
 
 [heap]
-struct Tabs {
+struct TabsComponent {
 pub mut:
 	id          string
 	layout      &ui.Stack // required
@@ -24,7 +24,7 @@ pub mut:
 }
 
 [params]
-pub struct TabsParams {
+pub struct TabsComponentParams {
 	id          string
 	mode        TabsMode = .vertical
 	active      int
@@ -35,7 +35,7 @@ pub struct TabsParams {
 	tab_spacing f64 = 5.0
 }
 
-pub fn tabs(c TabsParams) &ui.Stack {
+pub fn tabs_stack(c TabsComponentParams) &ui.Stack {
 	mut children := []ui.Widget{}
 
 	for i, tab in c.tabs {
@@ -75,7 +75,7 @@ pub fn tabs(c TabsParams) &ui.Stack {
 		]
 	)
 
-	mut tabs := &Tabs{
+	mut tabs := &TabsComponent{
 		id: c.id
 		layout: layout
 		active: tab_active
@@ -104,12 +104,12 @@ pub fn tabs(c TabsParams) &ui.Stack {
 	return layout
 }
 
-pub fn component_tabs(w ui.ComponentChild) &Tabs {
-	return &Tabs(w.component)
+pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
+	return &TabsComponent(w.component)
 }
 
 fn tabs_init(layout &ui.Stack) {
-	mut tabs := component_tabs(layout)
+	mut tabs := tabs_component(layout)
 	for id, mut page in tabs.pages {
 		println('tab $id initialized')
 		page.init(layout)
@@ -125,13 +125,13 @@ fn tabs_init(layout &ui.Stack) {
 
 fn tab_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	if e.key in [.up, .down] {
-		mut tabs := component_tabs(c)
+		mut tabs := tabs_component(c)
 		tabs.transpose()
 	}
 }
 
 fn tab_click(e ui.MouseEvent, c &ui.CanvasLayout) {
-	mut tabs := component_tabs(c)
+	mut tabs := tabs_component(c)
 	// println("selected $c.id")
 	tabs.layout.children[1] = tabs.pages[c.id]
 	tabs.layout.update_layout()
@@ -149,7 +149,7 @@ fn tab_id(id string, i int) string {
 	return '${id}_tab_$i'
 }
 
-fn (mut tabs Tabs) on_top() {
+fn (mut tabs TabsComponent) on_top() {
 	for t, mut page in tabs.pages {
 		incr := match t {
 			tabs.active { 10 }
@@ -165,7 +165,7 @@ fn (mut tabs Tabs) on_top() {
 	}
 }
 
-fn (mut tabs Tabs) update_tab_colors() {
+fn (mut tabs TabsComponent) update_tab_colors() {
 	for mut tab in tabs.tab_bar.children {
 		if mut tab is ui.CanvasLayout {
 			color := if tab.id == tabs.active { gx.rgb(200, 200, 100) } else { gx.white }
@@ -175,7 +175,7 @@ fn (mut tabs Tabs) update_tab_colors() {
 	}
 }
 
-fn (mut tabs Tabs) transpose() {
+fn (mut tabs TabsComponent) transpose() {
 	if tabs.mode in [.vertical, .horizontal] {
 		if tabs.mode == .vertical {
 			tabs.mode = .horizontal

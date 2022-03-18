@@ -37,7 +37,7 @@ fn main() {
 				margin_: .05
 				spacing: .05
 				children: [
-					uic.tabs(
+					uic.tabs_stack(
 						id: 'tab'
 						tabs: ['tab1', 'tab2', 'tab3']
 						pages: [

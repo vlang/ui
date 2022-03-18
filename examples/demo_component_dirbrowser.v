@@ -24,7 +24,7 @@ fn main() {
 		native_message: false
 		mode: .resizable
 		children: [
-			uic.filebrowser(
+			uic.filebrowser_stack(
 				id: 'fb'
 				on_click_ok: on_click_ok
 				on_click_cancel: on_click_cancel
@@ -37,7 +37,7 @@ fn main() {
 }
 
 fn on_click_ok(state voidptr, b &ui.Button) {
-	println(uic.component_filebrowser(b).selected_full_title())
+	println(uic.filebrowser_component(b).selected_full_title())
 }
 
 fn on_click_cancel(state voidptr, b &ui.Button) {
