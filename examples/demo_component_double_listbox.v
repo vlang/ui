@@ -33,10 +33,14 @@ fn main() {
 					margin_: 5
 					widths: ui.stretch
 					children: [
-						uic.doublelistbox_stack(id: 'dlb1', title: 'dlb1', items: [
-							'totto',
-							'titi',
-						]),
+						uic.doublelistbox_stack(
+							id: 'dlb1'
+							title: 'dlb1'
+							items: [
+								'totto',
+								'titi',
+							]
+						),
 						uic.doublelistbox_stack(
 							id: 'dlb2'
 							title: 'dlb2'

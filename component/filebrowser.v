@@ -10,17 +10,17 @@ const (
 )
 
 [heap]
-struct FileBrowser {
+struct FileBrowserComponent {
 pub mut:
 	layout     &ui.Stack
 	btn_cancel &ui.Button
 	btn_ok     &ui.Button
-	tv         &TreeView
+	tv         &TreeViewComponent
 	dir        string
 }
 
 [params]
-pub struct FileBrowserParams {
+pub struct FileBrowserComponentParams {
 	id              string
 	dirs            []string = [os.expand_tilde_to_home('~'), '/']
 	text_ok         string   = 'Ok'
@@ -37,7 +37,7 @@ pub struct FileBrowserParams {
 	on_click_cancel ui.ButtonClickFn
 }
 
-pub fn filebrowser(p FileBrowserParams) &ui.Stack {
+pub fn filebrowser_stack(p FileBrowserComponentParams) &ui.Stack {
 	btn_cancel := ui.button(
 		id: '${p.id}_btn_cancel'
 		text: p.text_cancel
@@ -52,7 +52,7 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 		z_index: 100
 		onclick: p.on_click_ok
 	)
-	tv_layout := dirtreeview(
+	tv_layout := dirtreeview_stack(
 		id: '${p.id}_tvd'
 		trees: p.dirs
 		folder_only: p.folder_only
@@ -87,8 +87,8 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 		heights: if p.with_fpath { [ui.stretch, 30, 40] } else { [ui.stretch, 40] }
 		children: children
 	)
-	tv := component_treeview(tv_layout)
-	mut fb := &FileBrowser{
+	tv := treeview_component(tv_layout)
+	mut fb := &FileBrowserComponent{
 		layout: layout
 		btn_ok: btn_ok
 		btn_cancel: btn_cancel
@@ -99,11 +99,11 @@ pub fn filebrowser(p FileBrowserParams) &ui.Stack {
 }
 
 // component access
-pub fn component_filebrowser(w ui.ComponentChild) &FileBrowser {
-	return &FileBrowser(w.component)
+pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
+	return &FileBrowserComponent(w.component)
 }
 
-pub fn (fb &FileBrowser) selected_full_title() string {
+pub fn (fb &FileBrowserComponent) selected_full_title() string {
 	tv := fb.tv
 	return tv.selected_full_title()
 }
@@ -111,7 +111,7 @@ pub fn (fb &FileBrowser) selected_full_title() string {
 // Subwindow
 [params]
 pub struct FileBrowserSubWindowParams {
-	FileBrowserParams
+	FileBrowserComponentParams
 	x int
 	y int
 }
@@ -123,7 +123,7 @@ pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) 
 			id: component.filebrowser_subwindow_id
 			x: p.x
 			y: p.y
-			layout: filebrowser(p.FileBrowserParams)
+			layout: filebrowser_stack(p.FileBrowserComponentParams)
 		)
 	}
 }
@@ -145,8 +145,8 @@ pub fn filebrowser_subwindow_close(w &ui.Window) {
 pub fn newfilebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
 	// only once
 	if !ui.Layout(w).has_child_id(component.newfilebrowser_subwindow_id) {
-		p2 := FileBrowserParams{
-			...p.FileBrowserParams
+		p2 := FileBrowserComponentParams{
+			...p.FileBrowserComponentParams
 			with_fpath: true
 			text_ok: 'New'
 		}
@@ -154,7 +154,7 @@ pub fn newfilebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParam
 			id: component.newfilebrowser_subwindow_id
 			x: p.x
 			y: p.y
-			layout: filebrowser(p2)
+			layout: filebrowser_stack(p2)
 		)
 	}
 }

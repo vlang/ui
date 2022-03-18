@@ -125,7 +125,7 @@ fn main() {
 							heights: ui.compact
 							bg_color: gx.hex(0xfcf4e4ff)
 							children: [
-								uic.dirtreeview(
+								uic.dirtreeview_stack(
 									id: 'dtv'
 									trees: dirs
 									hidden_files: hidden_files
@@ -161,7 +161,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
+fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	selected := c.id
 	mut app := &App(c.ui.window.state)
 	app.file = tv.full_title(selected)
@@ -204,7 +204,7 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 fn btn_open_ok(mut app App, b &ui.Button) {
 	// println('ok')
 	uic.filebrowser_subwindow_close(b.ui.window)
-	fb := uic.component_filebrowser(b)
+	fb := uic.filebrowser_component(b)
 	app.folder_to_open = fb.selected_full_title()
 	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
 	dtv.open(app.folder_to_open)
