@@ -42,6 +42,7 @@ pub mut:
 	text_size   f64
 	text_cfg    gx.TextCfg
 	hidden      bool
+	bg_color    gx.Color = gx.white
 	// component state for composable widget
 	component voidptr
 }
@@ -199,6 +200,10 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 
 pub fn (mut cb CheckBox) draw() {
 	offset_start(mut cb)
+	if cb.bg_color != no_color {
+		cb.ui.gg.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
+			cb.width, cb.height, cb.bg_color)
+	}
 	cb.ui.gg.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
@@ -245,7 +250,7 @@ pub fn (mut cb CheckBox) set_visible(state bool) {
 	cb.hidden = !state
 }
 
-fn (mut cb CheckBox) focus() {
+pub fn (mut cb CheckBox) focus() {
 	mut f := Focusable(cb)
 	f.set_focus()
 }

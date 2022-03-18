@@ -432,7 +432,16 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	g.layout.update_layout()
 }
 
-fn grid_cb_clicked(cb &ui.CheckBox, state voidptr) {
+fn grid_cb_clicked(mut cb ui.CheckBox, state voidptr) {
+	mut g := grid_component(cb)
+	mut gcb := g.vars[g.sel_j]
+	if mut gcb is GridCheckBox {
+		gcb.var[g.ind(g.sel_i)] = cb.checked
+		// println('$cb.id  selection changed: gcb.var($g.sel_j).values[$g.sel_i] = cb.checked')
+	}
+	cb.set_visible(false)
+	cb.z_index = ui.z_index_hidden
+	g.layout.update_layout()
 }
 
 // main actions
@@ -622,6 +631,25 @@ fn (mut g GridComponent) show_selected() {
 				dd.selected_index = gdd.var.values[g.ind(g.sel_i)]
 			}
 			dd.bg_color = gx.orange
+		}
+		.cb_bool {
+			id := ui.component_part_id(g.id, 'cb_sel')
+			// println('cb_sel $id selected')
+			mut cb := g.layout.ui.window.checkbox(id)
+			cb.set_visible(true)
+			// println('cb $cb.id')
+			cb.z_index = 1000
+			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
+			cb.propose_size(g.widths[g.sel_j], g.height(g.sel_i))
+			mut aw := ui.AdjustableWidget(cb)
+			dx, dy := aw.get_align_offset(0.5, 0.5)
+			g.layout.set_child_relative_pos(id, pos_x + dx, pos_y + dy)
+			cb.focus()
+			gcb := g.vars[g.sel_j]
+			if gcb is GridCheckBox {
+				cb.checked = gcb.var[g.ind(g.sel_i)]
+			}
+			cb.bg_color = gx.orange
 		}
 		else {}
 	}
@@ -968,7 +996,7 @@ fn (gcb &GridCheckBox) draw(j int, mut g GridComponent) {
 	cb.is_focused = false
 	cb.set_visible(false)
 	mut aw := ui.AdjustableWidget(cb)
-	mut dx, mut dy := aw.get_align_offset(0.5, 0.5)
+	mut dx, mut dy := 0, 0
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("from_i=$g.from_i to_i=$g.to_i")
 	for i in g.from_i .. g.to_i {
