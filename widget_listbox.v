@@ -231,8 +231,8 @@ fn (mut lb ListBox) init_items() {
 }
 
 pub fn (mut lb ListBox) update_items(items []string) {
-	unsafe { lb.items.free() }
-	lb.items = []&ListItem{}
+	// unsafe { lb.items.free() }
+	lb.items.clear()
 	for item in items {
 		lb.add_item(item, item)
 	}

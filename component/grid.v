@@ -463,8 +463,7 @@ fn (mut g Grid) draw_colbar() {
 		g.colbar_height, gx.white)
 	g.layout.ui.gg.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width, g.colbar_height +
 		g.header_size, gx.white)
-
-	mut pos_x := g.pos_x + g.rowbar_width + g.header_size
+	mut pos_x := g.layout.x + g.layout.offset_x + g.rowbar_width + g.header_size
 	for j, var in g.headers {
 		tb.set_pos(pos_x, g.pos_y)
 		// println("$j) $g.pos_x, $g.pos_y, ${g.widths[j]} ${var}")
@@ -928,13 +927,26 @@ pub fn (mut g Grid) init_ranked_grid_data(vars []int, orders []int) {
 	rgd_orders_ = orders.clone()
 	rgd_grid_ = g
 	mut rgd := []int{len: g.nrow(), init: it}
-	rgd.sort_with_compare(compare_grid_data)
+	if vars.len > 0 {
+		rgd.sort_with_compare(compare_grid_data)
+	}
 	g.index = rgd
 }
 
 fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
+	mut comp := 0
 	for i, j in rgd_vars_ {
-		comp := rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
+		if j == -1 {
+			comp = if f64(*a) < f64(*b) {
+				-rgd_orders_[i]
+			} else if f64(*a) > f64(*b) {
+				rgd_orders_[i]
+			} else {
+				0
+			}
+		} else {
+			comp = rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
+		}
 		if comp != 0 {
 			return comp
 		}

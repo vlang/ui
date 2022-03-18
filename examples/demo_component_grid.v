@@ -67,15 +67,17 @@ fn main() {
 		on_init: win_init
 		children: [
 			ui.row(
-				widths: [ui.stretch * 3, ui.stretch]
-				children: [gl,
+				widths: [ui.stretch, ui.stretch * 3]
+				children: [
 					uic.hideable(
 					id: 'hgs'
 					layout: uic.gridsettings(
 						id: 'gs'
 						grid: g
+						bg_color: gx.yellow
 					)
-				)]
+				),
+					gl]
 			),
 		]
 	)

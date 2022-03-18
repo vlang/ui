@@ -20,23 +20,31 @@ pub struct GridSettingsParams {
 	id       string
 	bg_color gx.Color = gx.light_blue
 	grid     &Grid
+	z_index  int = 100
 }
 
 pub fn gridsettings(p GridSettingsParams) &ui.Stack {
-	lbl := ui.listbox(id: p.id + '_lb_left', ordered: true)
-	lbr := ui.listbox(id: p.id + '_lb_right')
-	btn := ui.button(id: p.id + '_btn_sort', text: 'sort', onclick: gs_sort_click)
+	lbl := ui.listbox(id: p.id + '_lb_left', ordered: true, selectable: false, z_index: p.z_index)
+	lbr := ui.listbox(id: p.id + '_lb_right', multi: true, ordered: true, z_index: p.z_index)
+	btn := ui.button(
+		id: p.id + '_btn_sort'
+		text: 'sort'
+		onclick: gs_sort_click
+		radius: .3
+		z_index: p.z_index + 10
+	)
 	mut layout := ui.column(
 		id: p.id + '_layout'
 		bg_color: p.bg_color
 		margin_: 10
-		heights: [ui.stretch, 20]
+		spacing: 10
+		heights: [20.0, ui.stretch]
 		children: [
+			btn,
 			ui.row(
 				id: p.id + '_row'
 				children: [lbl, lbr]
 			),
-			btn,
 		]
 	)
 	gs := &GridSettings{
@@ -62,14 +70,20 @@ fn gs_sort_click(a voidptr, mut b ui.Button) {
 	mut g := gs.grid
 	mut vars, mut orders := []int{}, []int{}
 	for item in gs.lb_right.items() {
-		for i, var in g.headers {
-			if var == item.text {
-				vars << i
-				orders << if item.selected { 1 } else { -1 }
-				break
+		if item.text == '.id' {
+			vars << -1
+			orders << if item.selected { 1 } else { -1 }
+		} else {
+			for i, var in g.headers {
+				if var == item.text {
+					vars << i
+					orders << if item.selected { 1 } else { -1 }
+					break
+				}
 			}
 		}
 	}
+	println('sort: $vars, $orders')
 	g.init_ranked_grid_data(vars, orders)
 }
 
@@ -80,9 +94,9 @@ fn gs_sort_click(a voidptr, mut b ui.Button) {
 // }
 
 fn gridsettings_init(layout &ui.Stack) {
-	println('hereeeeee')
 	mut gs := component_gridsettings(layout)
 	g := gs.grid
-	println(g.headers)
-	gs.lb_left.update_items(g.headers)
+	mut headers := ['.id']
+	headers << g.headers
+	gs.lb_left.update_items(headers)
 }
