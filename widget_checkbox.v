@@ -4,6 +4,7 @@
 module ui
 
 import gx
+import math
 
 const (
 	check_mark_size = 14
@@ -20,6 +21,8 @@ pub mut:
 	id               string
 	height           int
 	width            int
+	adj_height       int
+	adj_width        int
 	x                int
 	y                int
 	offset_x         int
@@ -32,6 +35,7 @@ pub mut:
 	on_click         CheckBowClickFn
 	on_check_changed CheckChangedFn
 	text             string
+	justify          []f64
 	disabled         bool
 	// text styles
 	text_styles TextStyles
@@ -53,6 +57,7 @@ pub struct CheckBoxParams {
 	on_check_changed CheckChangedFn
 	checked          bool
 	disabled         bool
+	justify          []f64 = [0.0, 0.0]
 	text_cfg         gx.TextCfg
 	text_size        f64
 }
@@ -70,11 +75,12 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 		disabled: c.disabled
 		text_cfg: c.text_cfg
 		text_size: c.text_size
+		justify: c.justify
 	}
 	return cb
 }
 
-fn (mut cb CheckBox) init(parent Layout) {
+pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
@@ -168,19 +174,30 @@ pub fn (mut cb CheckBox) set_pos(x int, y int) {
 	cb.y = y
 }
 
-pub fn (mut cb CheckBox) size() (int, int) {
+pub fn (mut cb CheckBox) adj_size() (int, int) {
+	if cb.adj_width == 0 || cb.adj_height == 0 {
+		dtw := DrawTextWidget(cb)
+		mut w, mut h := 0, 0
+		w, h = dtw.text_size(cb.text)
+		cb.adj_width, cb.adj_height = w + ui.check_mark_size, math.max(h, ui.check_mark_size)
+	}
+	return cb.adj_width, cb.adj_height
+}
+
+pub fn (cb &CheckBox) size() (int, int) {
 	return cb.width, cb.height
 }
 
 pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
+	// println("propose_size $cb.id ($w, $h)")
 	cb.width = w
 	// TODO: fix height
-	// cb.height = h
+	cb.height = h
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
 	return cb.width, cb.height
 }
 
-fn (mut cb CheckBox) draw() {
+pub fn (mut cb CheckBox) draw() {
 	offset_start(mut cb)
 	cb.ui.gg.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
@@ -224,7 +241,7 @@ fn (cb &CheckBox) point_inside(x f64, y f64) bool {
 fn (mut cb CheckBox) mouse_move(e MouseEvent) {
 }
 
-fn (mut cb CheckBox) set_visible(state bool) {
+pub fn (mut cb CheckBox) set_visible(state bool) {
 	cb.hidden = !state
 }
 

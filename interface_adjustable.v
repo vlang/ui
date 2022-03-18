@@ -13,9 +13,14 @@ mut:
 	adj_size() (int, int)
 }
 
-fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
+pub fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 	width, height := w.size()
 	adj_width, adj_height := w.adj_size()
+	$if aw_gao ? {
+		if w.id == 'grid2:::grid:::cb_ro' {
+			println('aw gao: $w.id ($width, $height) vs ($adj_width, $adj_height)')
+		}
+	}
 	dw := math.max(width - adj_width, 0.0)
 	dh := math.max(height - adj_height, 0.0)
 	return int(aw * dw), int(ah * dh)

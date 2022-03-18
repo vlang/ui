@@ -107,7 +107,7 @@ fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
 		dtw := DrawTextWidget(l)
 		mut w, mut h := 0, 0
-		if l.text.contains('\n') {
+		if !l.text.contains('\n') {
 			w, h = dtw.text_size(l.text)
 		} else {
 			for line in l.text.split('\n') {

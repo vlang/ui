@@ -111,6 +111,7 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 		layout: layout
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_part_id(p.id, 'tb_ro'))
+		cb_bool: ui.checkbox(id: ui.component_part_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
 		keymaps: p.keymaps
 	}
 	ui.component_connect(g, layout)
@@ -121,6 +122,12 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 		match var {
 			[]bool {
 				g.types << .cb_bool
+				g.set_check_nrow(var.len)
+				g.vars << grid_checkbox(
+					id: ui.component_part_id(p.id, 'cb_' + name)
+					grid: g
+					var: var
+				)
 			}
 			[]int {
 				g.types << .tb_int
@@ -159,6 +166,7 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 			}
 		}
 	}
+	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_part_id(p.id, 'tb_sel')
 		on_entered: grid_tb_entered
@@ -169,6 +177,18 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 	g.selectors << tb_sel
 	ui.component_connect(g, tb_sel)
 
+	// checkbox selector
+	mut cb_sel := ui.checkbox(
+		id: ui.component_part_id(p.id, 'cb_sel')
+		on_click: grid_cb_clicked
+	)
+	// println("cb_sel $cb_sel.id created inside $p.id")
+	cb_sel.set_visible(false)
+	layout.children << cb_sel
+	g.selectors << cb_sel
+	ui.component_connect(g, cb_sel)
+
+	// column bar textbox
 	g.tb_colbar = ui.textbox(
 		id: ui.component_part_id(p.id, 'tb_colbar')
 		bg_color: gx.light_blue
@@ -176,6 +196,7 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 	)
 	g.tb_colbar.set_visible(false)
 
+	// row bar textbox
 	g.tb_rowbar = ui.textbox(
 		id: ui.component_part_id(p.id, 'tb_rowbar')
 		bg_color: gx.light_gray
@@ -206,6 +227,8 @@ pub fn grid_component(w ui.ComponentChild) &GridComponent {
 fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := grid_component(layout)
 	g.tb_string.init(layout)
+	g.cb_bool.init(layout)
+
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
 	}
@@ -407,6 +430,9 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	dd.set_visible(false)
 	dd.z_index = ui.z_index_hidden
 	g.layout.update_layout()
+}
+
+fn grid_cb_clicked(cb &ui.CheckBox, state voidptr) {
 }
 
 // main actions
@@ -910,17 +936,56 @@ struct GridCheckBox {
 	grid &GridComponent
 mut:
 	id  string
-	cb  &ui.CheckBox
 	var []bool
 }
 
-pub fn grid_checkbox() { //&GridCheckBox {
+pub struct GridCheckBoxParams {
+	id   string
+	grid &GridComponent
+	var  []bool
 }
 
-fn (gtb &GridCheckBox) draw(j int, mut g GridComponent) {
+pub fn grid_checkbox(p GridCheckBoxParams) &GridCheckBox {
+	return &GridCheckBox{
+		id: p.id
+		grid: p.grid
+		var: p.var
+	}
 }
 
-// compare
+fn (gcb &GridCheckBox) compare(a int, b int) int {
+	if int(gcb.var[a]) < int(gcb.var[b]) {
+		return -1
+	} else if int(gcb.var[a]) > int(gcb.var[b]) {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+fn (gcb &GridCheckBox) draw(j int, mut g GridComponent) {
+	mut cb := g.cb_bool
+	cb.is_focused = false
+	cb.set_visible(false)
+	mut aw := ui.AdjustableWidget(cb)
+	mut dx, mut dy := aw.get_align_offset(0.5, 0.5)
+	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+	// println("from_i=$g.from_i to_i=$g.to_i")
+	for i in g.from_i .. g.to_i {
+		// println("$i) $g.pos_x, $g.pos_y")
+		cb.propose_size(g.widths[j], g.height(i))
+		dx, dy = aw.get_align_offset(0.5, 0.5)
+		cb.set_pos(g.pos_x + dx, g.pos_y + dy)
+		// unsafe {
+		// 	*cb.text = gtb.var[g.ind(i)].clone()
+		// }
+		cb.checked = gcb.var[g.ind(i)]
+		cb.draw()
+		g.pos_y += g.height(i)
+	}
+}
+
+// compare (TODO use sort_with_compare_context)
 
 __global (
 	rgd_vars_   []int // all vars
@@ -928,19 +993,7 @@ __global (
 	rgd_grid_   &GridComponent // the current grid
 )
 
-// struct RankedGridData {
-// 	i   int
-// }
-
 type RankedGridData = int
-
-// fn (g &GridComponent) ranked_grid_data() []RankedGridData {
-// 	mut rgd := []RankedGridData{}
-// 	for i in 0..g.nrow() {
-// 		rgd << &RankedGridData{i}
-// 	}
-// 	return rgd
-// }
 
 pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	rgd_vars_ = vars.clone()
