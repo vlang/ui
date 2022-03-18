@@ -33,11 +33,18 @@ fn main() {
 					margin_: 5
 					widths: ui.stretch
 					children: [
-						uic.doublelistbox(id: 'dlb1', title: 'dlb1', items: ['totto', 'titi']),
-						uic.doublelistbox(
+						uic.doublelistbox_stack(id: 'dlb1', title: 'dlb1', items: [
+							'totto',
+							'titi',
+						]),
+						uic.doublelistbox_stack(
 							id: 'dlb2'
 							title: 'dlb2'
-							items: ['tottoooo', 'titi', 'tototta']
+							items: [
+								'tottoooo',
+								'titi',
+								'tototta',
+							]
 						),
 					]
 				),
@@ -51,9 +58,9 @@ fn main() {
 }
 
 fn btn_click(a voidptr, b &ui.Button) {
-	dlbname := if b.id == 'btn1' { 'dlb1' } else { 'dlb2' }
+	dlbname := ui.component_part_id(if b.id == 'btn1' { 'dlb1' } else { 'dlb2' }, 'layout')
 	s := b.ui.window.stack(dlbname)
-	dlb := uic.component_doublelistbox(s)
+	dlb := uic.doublelistbox_component(s)
 	res := 'result(s) of $dlbname : $dlb.values()'
 	println(res)
 	b.ui.window.message(res)

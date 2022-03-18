@@ -3,7 +3,7 @@ module component
 import ui
 
 [heap]
-struct DoubleListBox {
+struct DoubleListBoxComponent {
 pub mut:
 	layout    &ui.Stack // required
 	lb_left   &ui.ListBox
@@ -14,13 +14,13 @@ pub mut:
 }
 
 [params]
-pub struct DoubleListBoxParams {
+pub struct DoubleListBoxComponentParams {
 	id    string
 	title string
 	items []string
 }
 
-pub fn doublelistbox(c DoubleListBoxParams) &ui.Stack {
+pub fn doublelistbox_stack(c DoubleListBoxComponentParams) &ui.Stack {
 	mut items := map[string]string{}
 	for item in c.items {
 		items[item] = item
@@ -56,7 +56,7 @@ pub fn doublelistbox(c DoubleListBoxParams) &ui.Stack {
 			lb_right,
 		]
 	)
-	dbl_lb := &DoubleListBox{
+	dbl_lb := &DoubleListBoxComponent{
 		layout: layout
 		lb_left: lb_left
 		lb_right: lb_right
@@ -72,13 +72,13 @@ pub fn doublelistbox(c DoubleListBoxParams) &ui.Stack {
 }
 
 // component common access
-pub fn component_doublelistbox(w ui.ComponentChild) &DoubleListBox {
-	return &DoubleListBox(w.component)
+pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
+	return &DoubleListBoxComponent(w.component)
 }
 
 // callback
 fn doublelistbox_clear(a voidptr, btn &ui.Button) {
-	mut dlb := component_doublelistbox(btn)
+	mut dlb := doublelistbox_component(btn)
 	for item in dlb.lb_right.values() {
 		dlb.lb_left.add_item(item, item)
 		dlb.lb_right.remove_item(item)
@@ -86,7 +86,7 @@ fn doublelistbox_clear(a voidptr, btn &ui.Button) {
 }
 
 fn doublelistbox_move_left(a voidptr, btn &ui.Button) {
-	mut dlb := component_doublelistbox(btn)
+	mut dlb := doublelistbox_component(btn)
 	if dlb.lb_right.is_selected() {
 		_, item := dlb.lb_right.selected() or { '', '' }
 		if item !in dlb.lb_left.values() {
@@ -97,7 +97,7 @@ fn doublelistbox_move_left(a voidptr, btn &ui.Button) {
 }
 
 fn doublelistbox_move_right(a voidptr, btn &ui.Button) {
-	mut dlb := component_doublelistbox(btn)
+	mut dlb := doublelistbox_component(btn)
 	if dlb.lb_left.is_selected() {
 		_, item := dlb.lb_left.selected() or { '', '' }
 		// println("move >> $item")
@@ -108,7 +108,7 @@ fn doublelistbox_move_right(a voidptr, btn &ui.Button) {
 	}
 }
 
-pub fn (dlb &DoubleListBox) values() []string {
+pub fn (dlb &DoubleListBoxComponent) values() []string {
 	return dlb.lb_right.values()
 }
 

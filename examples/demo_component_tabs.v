@@ -16,7 +16,7 @@ fn main() {
 	mut app := &App{
 		window: 0
 	}
-	cb_layout := uic.colorbox(id: 'cbox', light: false, hsl: false)
+	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
 		text_cfg: gx.TextCfg{
@@ -63,7 +63,7 @@ fn main() {
 								widths: 300.0
 								bg_color: gx.rgb(100, 200, 200)
 								children: [
-									uic.doublelistbox(
+									uic.doublelistbox_stack(
 										id: 'dlb1'
 										title: 'dlb1'
 										items: [
@@ -78,7 +78,7 @@ fn main() {
 			),
 		]
 	)
-	mut cb := uic.component_colorbox(cb_layout)
+	mut cb := uic.colorbox_component(cb_layout)
 	cb.connect(&rect.color)
 	app.window = window
 	ui.run(window)

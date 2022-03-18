@@ -190,7 +190,7 @@ fn main() {
 		native_message: false
 		mode: .resizable
 		children: [
-			uic.accordion(
+			uic.accordion_stack(
 				id: 'demo'
 				text_color: gx.blue
 				titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']

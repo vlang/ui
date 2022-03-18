@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct Accordion {
+struct AccordionComponent {
 pub mut:
 	layout     &ui.Stack // required
 	titles     map[string]string
@@ -17,7 +17,7 @@ pub mut:
 }
 
 [params]
-pub struct AccordionParams {
+pub struct AccordionComponentParams {
 	id         string
 	titles     []string
 	children   []ui.Widget
@@ -28,7 +28,7 @@ pub struct AccordionParams {
 	scrollview bool
 }
 
-pub fn accordion(c AccordionParams) &ui.Stack {
+pub fn accordion_stack(c AccordionComponentParams) &ui.Stack {
 	// if c.children.len != c.titles.len {
 	// }
 	mut heights := [0.0]
@@ -44,7 +44,7 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 		bg_color: c.bg_color
 		scrollview: c.scrollview
 	)
-	mut acc := &Accordion{
+	mut acc := &AccordionComponent{
 		layout: layout
 		text_color: c.text_color
 		text_size: c.text_size
@@ -75,12 +75,12 @@ pub fn accordion(c AccordionParams) &ui.Stack {
 }
 
 // component access
-pub fn component_accordion(w ui.ComponentChild) &Accordion {
-	return &Accordion(w.component)
+pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
+	return &AccordionComponent(w.component)
 }
 
 fn accordion_draw(c &ui.CanvasLayout, state voidptr) {
-	acc := component_accordion(c)
+	acc := accordion_component(c)
 	if acc.selected[c.id] {
 		c.draw_triangle_filled(5, 8, 12, 8, 8, 14, gx.black)
 	} else {
@@ -91,7 +91,7 @@ fn accordion_draw(c &ui.CanvasLayout, state voidptr) {
 }
 
 fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
-	mut acc := component_accordion(c)
+	mut acc := accordion_component(c)
 	// println("accordion clicked $c.id")
 	acc.selected[c.id] = !acc.selected[c.id]
 	if acc.selected[c.id] {
@@ -106,16 +106,16 @@ fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	// ui.Layout(acc.layout).debug_show_children_tree(0)
 }
 
-fn (mut acc Accordion) activate(id string) {
+fn (mut acc AccordionComponent) activate(id string) {
 	acc.layout.set_children_depth(acc.z_index[id], acc.views[id])
 }
 
-fn (mut acc Accordion) deactivate(id string) {
+fn (mut acc AccordionComponent) deactivate(id string) {
 	acc.layout.set_children_depth(ui.z_index_hidden, acc.views[id])
 }
 
 fn accordion_init(layout &ui.Stack) {
-	mut acc := component_accordion(layout)
+	mut acc := accordion_component(layout)
 	for id in acc.titles.keys() {
 		acc.selected[id] = false
 		acc.deactivate(id)
