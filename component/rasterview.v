@@ -72,7 +72,8 @@ pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponen
 fn rv_init(mut layout ui.CanvasLayout) {
 	mut rv := rasterview_component(layout)
 	rv.visible_pixels()
-	// ui.lock_scrollview_key(layout)
+	println('init rasterview')
+	ui.lock_scrollview_key(layout)
 }
 
 fn rv_full_size(mut c ui.CanvasLayout) (int, int) {
@@ -136,7 +137,7 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 
 		rv.from_j = math.min(math.max(rv.layout.scrollview.offset_x / pixel_size, 0),
 			rv.width - 1)
-		rv.to_j = math.min((rv.layout.scrollview.offset_y +
+		rv.to_j = math.min((rv.layout.scrollview.offset_x +
 			rv.layout.width) / pixel_size, rv.width - 1) + 1
 		rv.from_x = rv.from_j * pixel_size
 	} else {
@@ -157,6 +158,8 @@ pub fn (mut rv RasterViewComponent) load(path string) {
 	rv.width, rv.height, rv.channels = img.width, img.height, img.nr_channels
 	rv.data = []byte{len: rv.width * rv.height * rv.channels}
 	unsafe { C.memcpy(rv.data.data, img.data, rv.data.len) }
+	rv.visible_pixels()
+	rv.layout.ui.window.update_layout()
 }
 
 // KEEP HERE TO SAVE FILE

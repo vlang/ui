@@ -38,5 +38,6 @@ fn main() {
 
 fn win_init(mut w ui.Window) {
 	mut rv := uic.rasterview_component_from_id(w, 'rv')
-	rv.load('/Users/rcqls/Github/ui/assets/img/icons8-cursor-67.png')
+	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-cursor-67.png')
+	rv.load('/Users/rcqls/Github/ui/assets/img/cursor.png')
 }
