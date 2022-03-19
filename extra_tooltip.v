@@ -133,12 +133,9 @@ pub fn (mut w Window) update_tooltip(e &MouseMoveEvent) {
 	for i, mut child in w.widgets_tooltip {
 		id := child.id()
 		if !child.hidden {
-			if child.point_inside(e.x, e.y) {
+			if child.point_inside(e.x, e.y) && !w.dragger.activated {
 				start_tooltip(mut child, id, w.tooltips[i], w.ui)
 			} else {
-				stop_tooltip(id, w.ui)
-			}
-			if w.dragger.activated {
 				stop_tooltip(id, w.ui)
 			}
 		}
