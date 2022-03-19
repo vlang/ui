@@ -80,9 +80,7 @@ pub mut:
 	// drag
 	dragger Dragger = Dragger{}
 	// tooltip
-	tooltip         Tooltip = Tooltip{}
-	widgets_tooltip []Widget
-	tooltips        []TooltipMessage
+	tooltip Tooltip = Tooltip{}
 	// with message
 	native_message bool
 	// focus stuff
@@ -313,6 +311,7 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 
 fn gg_init(mut window Window) {
 	window.mouse.init(window)
+	window.tooltip.init(window.ui)
 	window.load_settings()
 	window.init_styles()
 	window.dpi_scale = gg.dpi_scale()
@@ -371,7 +370,7 @@ fn frame(mut w Window) {
 	// draw dragger if active
 	draw_dragger(mut w)
 	// draw tooltip if active
-	draw_tooltip(w)
+	w.tooltip.draw()
 
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
@@ -408,7 +407,7 @@ fn frame_immediate(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
-	draw_tooltip(w)
+	w.tooltip.draw()
 
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
@@ -736,7 +735,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		window.mouse_move_fn(e, window)
 	}
 
-	window.update_tooltip(e)
+	window.tooltip.update(e)
 
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }

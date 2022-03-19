@@ -196,7 +196,7 @@ fn menu_click() {
 }
 
 fn btn_help_click(a voidptr, b &ui.Button) {
-	//ui.message_box('Built with V UI')
+	// ui.message_box('Built with V UI')
 	b.ui.window.message('  Built with V UI\n  Thus \n  And')
 }
 

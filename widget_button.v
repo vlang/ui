@@ -133,7 +133,7 @@ fn (mut b Button) init(parent Layout) {
 	b.init_style()
 	if b.tooltip.text != '' {
 		mut win := ui.window
-		win.append_tooltip(b, b.tooltip)
+		win.tooltip.append(b, b.tooltip)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, btn_key_down, b)

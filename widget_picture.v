@@ -110,7 +110,7 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 	if pic.tooltip.text != '' {
 		mut win := ui.window
-		win.append_tooltip(pic, pic.tooltip)
+		win.tooltip.append(pic, pic.tooltip)
 	}
 }
 
