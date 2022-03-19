@@ -68,6 +68,7 @@ pub mut:
 	orig_width  int
 	orig_height int
 	touch       TouchInfo
+	mouse       Mouse
 	bg_color    gx.Color
 	// Text Config
 	text_cfg gx.TextCfg
@@ -311,6 +312,7 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 //----
 
 fn gg_init(mut window Window) {
+	window.mouse.init(window)
 	window.load_settings()
 	window.init_styles()
 	window.dpi_scale = gg.dpi_scale()
@@ -374,6 +376,8 @@ fn frame(mut w Window) {
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
 	}
+
+	w.mouse.draw()
 	/*
 	if w.child_window.on_draw != voidptr(0) {
 		println('have child on_draw()')
@@ -463,6 +467,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
 	// println("on_event: $e.typ")
+	window.mouse.update_event(e)
 	match e.typ {
 		.mouse_down {
 			// println("mouse down")
@@ -719,6 +724,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		y: event.mouse_y / ui.gg.scale
 		mouse_button: int(event.mouse_button)
 	}
+
 	if window.dragger.activated {
 		$if drag ? {
 			println('drag child ($e.x, $e.y)')

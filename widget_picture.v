@@ -52,9 +52,6 @@ pub struct PictureParams {
 }
 
 pub fn picture(c PictureParams) &Picture {
-	if !os.exists(c.path) {
-		eprintln('V UI: picture file "$c.path" not found')
-	}
 	// if c.width == 0 || c.height == 0 {
 	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
 	// }
@@ -89,11 +86,18 @@ fn (mut pic Picture) init(parent Layout) {
 		return
 	}
 	*/
-	if !pic.use_cache && pic.path in ui.resource_cache {
-		pic.image = ui.resource_cache[pic.path]
+	if ui.has_img(pic.id) {
+		pic.image = ui.img(pic.id)
 	} else {
-		pic.image = pic.ui.gg.create_image(pic.path)
-		ui.resource_cache[pic.path] = pic.image
+		if !os.exists(pic.path) {
+			eprintln('V UI: picture file "$pic.path" not found')
+		}
+		if !pic.use_cache && pic.path in ui.resource_cache {
+			pic.image = ui.resource_cache[pic.path]
+		} else {
+			pic.image = pic.ui.gg.create_image(pic.path)
+			ui.resource_cache[pic.path] = pic.image
+		}
 	}
 	$if android {
 		byte_ary := os.read_apk_asset(pic.path) or { panic(err) }

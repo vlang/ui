@@ -1,7 +1,6 @@
 module ui
 
 import time
-import sokol.sapp
 import gg
 
 interface Draggable {
@@ -83,6 +82,7 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 			}
 		} else {
 			window.dragger.activated = true
+			window.mouse.start('blue')
 			window.dragger.widget = d
 			window.dragger.start_x = e.x - d.offset_x
 			window.dragger.start_y = e.y - d.offset_y
@@ -115,7 +115,6 @@ fn draw_dragger(mut window Window) {
 
 fn drag_child(mut window Window, x f64, y f64) {
 	mut w := window.dragger.widget
-	sapp.show_mouse(false)
 	$if speed ? {
 		t := time.now()
 		speed := 0.1
@@ -142,7 +141,7 @@ fn drag_child_dropped(mut window Window) {
 		w := window.dragger.widget
 		println('drop $w.type_name()')
 	}
-	sapp.show_mouse(true)
+	window.mouse.stop()
 	window.dragger.activated = false
 }
 

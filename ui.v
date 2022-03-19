@@ -28,6 +28,7 @@ mut:
 	selected_radio_image gg.Image // used only in radio.v
 	down_arrow           gg.Image // used only in dropdown.v
 	resource_cache       map[string]gg.Image // used only in picture.v
+	imgs                 map[string]gg.Image
 	closed               bool
 	ticks                int
 	// text styles and font set
@@ -85,6 +86,30 @@ fn (mut gui UI) load_icos() {
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
 	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
 		bytes_selected_radio_png.len)
+	// load mouse
+	gui.load_img('blue', $embed_file('assets/imgs/cursor.png').to_bytes())
+	gui.load_img('hand', $embed_file('assets/imgs/icons8-hand-cursor-50.png').to_bytes())
+	gui.load_img('vmove', $embed_file('assets/imgs/icons8-cursor-67.png').to_bytes())
+	gui.load_img('text', $embed_file('assets/imgs/icons8-text-cursor-50.png').to_bytes())
+}
+
+// complete the drawing system
+pub fn (mut gui UI) load_img(id string, b []byte) {
+	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
+}
+
+pub fn (gui &UI) img(id string) gg.Image {
+	return gui.imgs[id]
+}
+
+pub fn (gui &UI) has_img(id string) bool {
+	return id in gui.imgs.keys()
+}
+
+pub fn (gui &UI) draw_img(id string, x int, y int, w int, h int) {
+	if gui.has_img(id) {
+		gui.gg.draw_image(x, y, w, h, gui.img(id))
+	}
 }
 
 [unsafe]

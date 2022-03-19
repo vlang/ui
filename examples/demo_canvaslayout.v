@@ -16,11 +16,12 @@ fn main() {
 	$if android {
 		logo = 'img/logo.png'
 	}
-	window := ui.window(
+	mut window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'V UI Demo'
 		mode: .resizable
+		on_init: win_init
 		children: [
 			ui.row(
 				margin_: 10
@@ -205,4 +206,8 @@ fn draw(c &ui.CanvasLayout, app voidptr) {
 fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	mut l := c.ui.window.label('l_mm')
 	l.set_text('($e.x,$e.y)')
+}
+
+fn win_init(mut w ui.Window) {
+	// w.mouse.start('')
 }

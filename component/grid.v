@@ -14,6 +14,7 @@ mut:
 enum GridType {
 	tb_string
 	tb_int
+	tb_float
 	cb_bool
 	dd_factor
 }

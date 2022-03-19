@@ -3,7 +3,9 @@
 // that can be found in the LICENSE file.
 module ui
 
+import gg
 import time
+import sokol.sapp
 
 pub enum MouseAction {
 	up
@@ -52,6 +54,7 @@ pub enum Cursor {
 // Inspiration from 2048 game
 
 struct Pos {
+mut:
 	x int = -1
 	y int = -1
 }
@@ -68,4 +71,63 @@ struct Touch {
 mut:
 	pos  Pos
 	time time.Time
+}
+
+struct Mouse {
+mut:
+	window &Window
+	pos    Pos
+	id     string
+	states []string
+	active bool
+	size   int = 20
+}
+
+pub const (
+	mouse_system = '_system_'
+)
+
+pub fn (mut m Mouse) init(w &Window) {
+	m.window = w
+}
+
+pub fn (mut m Mouse) update() {
+	m.active = m.states.len > 0
+	if m.active {
+		m.id = m.states.last()
+		// println("update current mouse: $m.id")
+	}
+	sapp.show_mouse(m.id == ui.mouse_system || !m.active)
+}
+
+pub fn (mut m Mouse) start(id string) {
+	if m.states.len == 0 || id != m.states.last() {
+		m.states << if m.window.ui.has_img(id) { id } else { ui.mouse_system }
+		m.update()
+	}
+}
+
+pub fn (mut m Mouse) stop() {
+	if m.active {
+		// println("stop mouse")
+		m.states.delete_last()
+		// println("${m.states}")
+		m.update()
+	}
+}
+
+pub fn (mut m Mouse) update_pos(x f64, y f64) {
+	if m.active {
+		m.pos.x, m.pos.y = int(x), int(y)
+	}
+}
+
+pub fn (mut m Mouse) update_event(e &gg.Event) {
+	m.pos.x, m.pos.y = int(e.mouse_x / m.window.ui.gg.scale), int(e.mouse_y / m.window.ui.gg.scale)
+}
+
+pub fn (mut m Mouse) draw() {
+	if m.active {
+		m.window.ui.draw_img(m.id, m.pos.x, m.pos.y, m.size, m.size)
+	}
 }

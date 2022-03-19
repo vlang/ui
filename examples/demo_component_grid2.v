@@ -48,7 +48,7 @@ fn main() {
 								levels: ['Male', 'Female']
 								values: [0, 0, 1].repeat(n)
 							}
-							'worker': [true, false, true].repeat(n)
+							'worker': [true, true, false].repeat(n)
 							'csp':    uic.Factor{
 								levels: ['job1', 'job2', 'other']
 								values: [0, 1, 2].repeat(n)
