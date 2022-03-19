@@ -225,6 +225,10 @@ pub fn grid_component(w ui.ComponentChild) &GridComponent {
 	return &GridComponent(w.component)
 }
 
+pub fn grid_component_from_id(w ui.Window, id string) &GridComponent {
+	return grid_component(w.canvas_layout(ui.component_part_id(id, 'layout')))
+}
+
 fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := grid_component(layout)
 	g.tb_string.init(layout)
