@@ -267,7 +267,7 @@ pub fn window(cfg WindowParams) &Window {
 		gg: gcontext
 		clipboard: clipboard.new()
 	}
-	ui_ctx.load_icos()
+	ui_ctx.load_imgs()
 	window.ui = ui_ctx
 
 	// q := int(window)

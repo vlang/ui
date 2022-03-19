@@ -1,6 +1,5 @@
 import ui
 import gx
-import os
 
 const (
 	win_width   = 780
@@ -35,7 +34,7 @@ mut:
 }
 
 fn main() {
-	mut logo := os.resource_abs_path(os.join_path('assets/img', 'logo.png'))
+	mut logo := 'v-logo'
 	$if android {
 		logo = 'img/logo.png'
 	}
@@ -175,7 +174,7 @@ fn main() {
 								// text_size: 20
 							),
 							ui.picture(
-								id: 'logo'
+								id: logo
 								width: 100
 								height: 100
 								path: logo
