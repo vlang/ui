@@ -86,8 +86,8 @@ fn (mut pic Picture) init(parent Layout) {
 		return
 	}
 	*/
-	if ui.has_img(pic.id) {
-		pic.image = ui.img(pic.id)
+	if ui.has_img(pic.path) {
+		pic.image = ui.img(pic.path)
 	} else {
 		if !os.exists(pic.path) {
 			eprintln('V UI: picture file "$pic.path" not found')
