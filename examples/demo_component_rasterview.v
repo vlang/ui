@@ -1,6 +1,5 @@
 import ui
 import ui.component as uic
-import gg
 
 const (
 	win_width  = 500
@@ -39,5 +38,9 @@ fn main() {
 fn win_init(mut w ui.Window) {
 	mut rv := uic.rasterview_component_from_id(w, 'rv')
 	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-cursor-67.png')
-	rv.load('/Users/rcqls/Github/ui/assets/img/cursor.png')
+	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-text-cursor-50.png')
+	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-hand-cursor-50.png')
+	// rv.load('/Users/rcqls/Github/ui/assets/img/cursor.png')
+	rv.load("/usr/share/httpd/icons/sphere2.png")
+	rv.load("/usr/local/texlive/2021/texmf-dist/tex/latex/notes/hand.png")
 }

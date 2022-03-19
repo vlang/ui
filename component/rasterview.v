@@ -15,8 +15,8 @@ pub mut:
 	height   int
 	channels int = 4
 	data     []byte
-	size     int = 4
-	inter    int = 2
+	size     int = 5
+	inter    int = 1
 	// from
 	from_x int
 	from_y int
@@ -99,7 +99,11 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 	for i in rv.from_i .. rv.to_i {
 		for j in rv.from_j .. rv.to_j {
 			k = (i * rv.width + j) * rv.channels
-			col = gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
+			if rv.channels == 4 {
+				col = gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
+			} else {
+				col = gx.rgb(rv.data[k], rv.data[k + 1], rv.data[k + 2])
+			}
 			pos_x = j * pixel_size
 			pos_y = i * pixel_size
 			c.draw_rect_filled(pos_x, pos_y, rv.size, rv.size, col)
@@ -144,7 +148,7 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 		rv.from_i, rv.to_i, rv.from_y = 0, rv.height, 0
 		rv.from_j, rv.to_j, rv.from_x = 0, rv.width, 0
 	}
-	println('i: ($rv.from_i, $rv.to_i, $rv.from_y)  j: ($rv.from_j, $rv.to_j, $rv.from_x)')
+	// println('i: ($rv.from_i, $rv.to_i, $rv.from_y)  j: ($rv.from_j, $rv.to_j, $rv.from_x)')
 }
 
 pub fn (mut rv RasterViewComponent) load(path string) {
