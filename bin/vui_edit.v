@@ -181,8 +181,8 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 fn btn_new_click(a voidptr, b &ui.Button) {
 	// println('new')
 	// uic.newfilebrowser_subwindow_visible(b.ui.window)
-	l := b.ui.window.stack('htb_layout')
-	mut h := uic.hideable_component(l)
+	// l := b.ui.window.stack('htb_layout')
+	mut h := uic.hideable_component_from_id(b.ui.window,'htb')
 	h.toggle()
 }
 
@@ -219,8 +219,7 @@ fn btn_open_cancel(mut app App, b &ui.Button) {
 fn btn_new_ok(mut app App, b &ui.Button) {
 	// println('ok new')
 	tb := b.ui.window.textbox('tb')
-	l := b.ui.window.stack('htb_layout')
-	mut h := uic.hideable_component(l)
+	mut h := uic.hideable_component_from_id(b.ui.window, "htb")
 	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
 	if dtv.sel_id != '' {
 		sel_path := dtv.selected_full_title()

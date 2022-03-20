@@ -61,12 +61,10 @@ fn main() {
 }
 
 fn win_init(w &ui.Window) {
-	// lg := w.canvas_layout('grid_layout')
-	// mut g := uic.grid_component(lg)
+	// mut g := uic.grid_component_from_id(w, "grid")
 	// g.init_ranked_grid_data([2, 0], [1, -1])
 
-	// gsl := w.stack('gs_layout')
-	// mut gs := uic.gridsettings_component(gsl)
+	// mut gs := uic.gridsettings_component_from_id(w, "gs")
 	// println("gs id: <$gs.id> ${typeof(gs).name} $gsl.id")
 	// gs.update_sorted_vars()
 }

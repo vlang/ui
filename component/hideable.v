@@ -47,7 +47,7 @@ pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
 	return &HideableComponent(w.component)
 }
 
-pub fn hidebable_component_from_id(w ui.Window, id string) &HideableComponent {
+pub fn hideable_component_from_id(w ui.Window, id string) &HideableComponent {
 	return hideable_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 

@@ -74,7 +74,6 @@ fn main() {
 }
 
 fn win_init(w &ui.Window) {
-	// l := w.canvas_layout('grid_layout')
-	// mut g := uic.component_grid(l)
+	// mut g := uic.grid_component_from_id(w, "grid")
 	// g.init_ranked_grid_data([2, 0], [1, 2])
 }
