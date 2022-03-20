@@ -39,7 +39,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_part_id(p.id, 'layout')
 		scrollview: true
-		bg_color: gx.white
+		// bg_color: gx.white
 		on_draw: rv_draw
 		on_click: rv_click
 		on_mouse_down: rv_mouse_down
@@ -167,8 +167,11 @@ pub fn (mut rv RasterViewComponent) load(path string) {
 	rv.layout.ui.window.update_layout()
 }
 
-// pub fn (mut rv RasterViewComponent) load(path string) {
-// 	stbi_write_png(path string, w int, h int, comp int, buf &byte, row_stride_in_bytes int)
+pub fn (mut rv RasterViewComponent) save_to(path string) {
+	stbi.stbi_write_png(path, rv.width, rv.height, rv.channels, rv.data.data, rv.width * rv.channels) or {
+		panic(err)
+	}
+}
 
 // KEEP HERE TO SAVE FILE
 //       if (strcmp(filename, "reference.png") == 0) {

@@ -30,9 +30,9 @@ pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 		on_change: fontchooser_lb_change
 	)
 	fontchooser_add_fonts_items(mut lb)
-	layout := ui.row(
+	mut layout := ui.row(
 		id: component.fontchooser_row_id
-		widths: 300.0
+		widths: ui.stretch
 		heights: 200.0
 		children: [lb]
 	)
@@ -41,6 +41,7 @@ pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 		dtw: c.dtw
 	}
 	ui.component_connect(fc, layout, lb)
+	layout.component_init = fontchooser_init
 	return layout
 }
 
@@ -50,6 +51,11 @@ pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
 
 pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {
 	return fontchooser_component(w.stack(ui.component_part_id(id, 'layout')))
+}
+
+fn fontchooser_init(mut layout ui.Stack) {
+	// println("${layout.size()}")
+	layout.update_layout()
 }
 
 fn fontchooser_add_fonts_items(mut lb ui.ListBox) {

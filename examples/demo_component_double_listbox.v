@@ -62,7 +62,11 @@ fn main() {
 }
 
 fn btn_click(a voidptr, b &ui.Button) {
-	dlb := uic.doublelistbox_component_from_id(b.ui.window, if b.id == 'btn1' { 'dlb1' } else { 'dlb2' })
+	dlb := uic.doublelistbox_component_from_id(b.ui.window, if b.id == 'btn1' {
+		'dlb1'
+	} else {
+		'dlb2'
+	})
 	res := 'result(s) : $dlb.values()'
 	println(res)
 	b.ui.window.message(res)
