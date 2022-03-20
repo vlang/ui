@@ -95,6 +95,7 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 	mut rv := rasterview_component(c)
 	mut k := 0
 	pixel_size := rv.size + rv.inter
+	c.draw_rect_empty(0, 0, rv.width * pixel_size, rv.height * pixel_size, gx.gray)
 	mut pos_x, mut pos_y := rv.from_x, rv.from_y
 	mut col := gx.white
 	for i in rv.from_i .. rv.to_i {

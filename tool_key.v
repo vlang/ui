@@ -6,30 +6,53 @@ module ui
 // This provides user defined shortcut actions (see grid and grid_data as a use case)
 pub type ShortcutFn = fn (context voidptr)
 
+pub type KeyShortcuts = map[int]Shortcut
+pub type CharShortcuts = map[string]Shortcut
+
 pub struct Shortcut {
 pub mut:
-	is_char bool // true means "char" callback
-	mods    KeyMod
-	key_fn  ShortcutFn
+	mods   KeyMod
+	key_fn ShortcutFn
 }
 
-pub type Shortcuts = map[int]Shortcut
-
-pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
-	if int(e.codepoint) in shortcuts {
-		sc := shortcuts[int(e.codepoint)]
-		if sc.is_char && has_key_mods(e.mods, sc.mods) {
+pub fn char_shortcut(e KeyEvent, shortcuts CharShortcuts, context voidptr) {
+	// weirdly when .ctrl modifier the codepoint is differently interpreted
+	s := if e.mods == .ctrl { rune(96 + e.codepoint).str() } else { utf32_to_str(e.codepoint) }
+	if s in shortcuts {
+		sc := shortcuts[s]
+		if has_key_mods(e.mods, sc.mods) {
 			sc.key_fn(context)
 		}
 	}
 }
 
-pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
+pub fn key_shortcut(e KeyEvent, shortcuts KeyShortcuts, context voidptr) {
 	if int(e.key) in shortcuts {
 		sc := shortcuts[int(e.key)]
-		if !sc.is_char && has_key_mods(e.mods, sc.mods) {
+		if has_key_mods(e.mods, sc.mods) {
 			sc.key_fn(context)
 		}
+	}
+}
+
+pub interface Shortcutable {
+	id string
+mut:
+	key_shortcuts KeyShortcuts
+	char_shortcuts CharShortcuts
+}
+
+pub fn (mut s Shortcutable) add_char_shortcut(code string, mods KeyMod, key_fn ShortcutFn) {
+	s.char_shortcuts[code] = Shortcut{
+		mods: mods
+		key_fn: key_fn
+	}
+}
+
+pub fn (mut s Shortcutable) add_key_shortcut(code int, mods KeyMod, key_fn ShortcutFn) {
+	s.key_shortcuts[code] = Shortcut{
+		mods: mods
+		key_fn: key_fn
 	}
 }
 

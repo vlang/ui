@@ -57,82 +57,84 @@ fn main() {
 			ui.row(
 				widths: [ui.stretch, ui.stretch * 2]
 				children: [
-					ui.column(
-					heights: [40.0, 30.0, ui.stretch]
-					spacing: 5
-					margin_: 3
-					bg_color: gx.black
-					children: [
-						ui.row(
-						widths: ui.stretch
-						heights: 30.0
-						margin: ui.Margin{5, 10, 5, 10}
-						spacing: 10
+					uic.hideable_stack(
+					layout: ui.column(
+						heights: [40.0, 30.0, ui.stretch]
+						spacing: 5
+						margin_: 3
 						bg_color: gx.black
 						children: [
-							ui.button(
-								tooltip: 'New File'
-								tooltip_side: .right
-								text: 'New'
-								onclick: btn_new_click
-								radius: .3
-								z_index: 10
-							),
-							ui.button(
-								tooltip: 'Open Folder'
-								tooltip_side: .right
-								text: 'Open'
-								onclick: btn_open_click
-								radius: .3
-								z_index: 10
-							),
-							ui.button(
-								tooltip: 'Save File'
-								tooltip_side: .right
-								text: 'Save'
-								onclick: btn_save_click
-								radius: .3
-								z_index: 10
-							),
-						]
-					),
-						uic.hideable_stack(
-							id: 'htb'
-							layout: ui.row(
-								id: 'htbl'
-								margin_: 3
-								heights: 24.0
-								spacing: 3
-								widths: [
-									ui.stretch,
-									24,
-								]
-								children: [
-									ui.textbox(id: 'tb', z_index: 10),
-									ui.button(
-										id: 'tb_ok'
-										text: 'Ok'
-										z_index: 10
-										radius: 5
-										onclick: btn_new_ok
-									),
-								]
-							)
-						),
-						ui.column(
-							id: 'tvcol'
-							scrollview: true
-							heights: ui.compact
-							bg_color: gx.hex(0xfcf4e4ff)
+							ui.row(
+							widths: ui.stretch
+							heights: 30.0
+							margin: ui.Margin{5, 10, 5, 10}
+							spacing: 10
+							bg_color: gx.black
 							children: [
-								uic.dirtreeview_stack(
-									id: 'dtv'
-									trees: dirs
-									hidden_files: hidden_files
-									on_click: treeview_onclick
+								ui.button(
+									tooltip: 'New File'
+									tooltip_side: .right
+									text: 'New'
+									onclick: btn_new_click
+									radius: .3
+									z_index: 10
+								),
+								ui.button(
+									tooltip: 'Open Folder'
+									tooltip_side: .right
+									text: 'Open'
+									onclick: btn_open_click
+									radius: .3
+									z_index: 10
+								),
+								ui.button(
+									tooltip: 'Save File'
+									tooltip_side: .right
+									text: 'Save'
+									onclick: btn_save_click
+									radius: .3
+									z_index: 10
 								),
 							]
-						)]
+						),
+							uic.hideable_stack(
+								id: 'htb'
+								layout: ui.row(
+									id: 'htbl'
+									margin_: 3
+									heights: 24.0
+									spacing: 3
+									widths: [
+										ui.stretch,
+										24,
+									]
+									children: [
+										ui.textbox(id: 'tb', z_index: 10),
+										ui.button(
+											id: 'tb_ok'
+											text: 'Ok'
+											z_index: 10
+											radius: 5
+											onclick: btn_new_ok
+										),
+									]
+								)
+							),
+							ui.column(
+								id: 'tvcol'
+								scrollview: true
+								heights: ui.compact
+								bg_color: gx.hex(0xfcf4e4ff)
+								children: [
+									uic.dirtreeview_stack(
+										id: 'dtv'
+										trees: dirs
+										hidden_files: hidden_files
+										on_click: treeview_onclick
+									),
+								]
+							)]
+					)
 				),
 					uic.rasterview_canvaslayout(
 						id: 'rv'
@@ -242,4 +244,6 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 // }
 
 fn init(win &ui.Window) {
+	mut sc := ui.Shortcutable(win)
+	sc.add_key_shortcut(int('o'), .ctrl, fn (w Window) {})
 }

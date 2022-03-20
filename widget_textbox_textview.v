@@ -517,7 +517,10 @@ pub fn (mut tv TextView) cursor_allways_visible() {
 
 fn (mut tv TextView) key_char(e &KeyEvent) {
 	// println('key char $e')
-	s := utf32_to_str(e.codepoint)
+
+	// s := utf32_to_str(e.codepoint)
+	s := if e.mods == .ctrl { rune(96 + e.codepoint).str() } else { utf32_to_str(e.codepoint) }
+
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
 	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
@@ -535,7 +538,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 		tv.sync_text_lines()
 	} else if e.mods in [.ctrl, .super] {
 		// WORKAROUND to deal with international keyboard
-		// println('key_char:  <$s> <$e.mods> <${utf32_to_str(u32(e.key))}>')
+		// println('key_char:  <$s> <$e.mods> <$e.codepoint> <$e>')
 		match s {
 			'a' {
 				tv.do_select_all()

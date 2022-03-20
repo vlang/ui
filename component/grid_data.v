@@ -23,17 +23,15 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	pg.id = ui.component_part_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)
-	g.shortcuts[15] = ui.Shortcut{
-		is_char: true
-		mods: .ctrl
-		key_fn: fn (comp voidptr) {
-			g := &GridComponent(comp)
-			l := g.layout.ui.window.stack(ui.component_part_id(ui.component_id(g.id),
-				'hideable', 'layout'))
-			mut h := hideable_component(l)
-			h.toggle()
-		}
-	}
+	// add shortcut
+	mut sc := ui.Shortcutable(g)
+	sc.add_char_shortcut('o', .ctrl, fn (comp voidptr) {
+		g := &GridComponent(comp)
+		l := g.layout.ui.window.stack(ui.component_part_id(ui.component_id(g.id), 'hideable',
+			'layout'))
+		mut h := hideable_component(l)
+		h.toggle()
+	})
 	gsl := gridsettings_stack(
 		id: ui.component_part_id(p.id, 'gridsettings')
 		grid: g

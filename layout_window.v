@@ -96,6 +96,9 @@ pub mut:
 	needs_refresh      bool = true
 	// ui settings
 	settings SettingsUI
+	// shortcuts
+	key_shortcuts  KeyShortcuts
+	char_shortcuts CharShortcuts
 }
 
 [params]
@@ -638,16 +641,20 @@ fn window_key_down(event gg.Event, ui &UI) {
 			window.focus_next()
 		}
 	} else if e.key == .escape {
-		println('escape')
-	}
-	if e.key == .escape && window.child_window != 0 {
-		// Close the child window on Escape
-		for mut child in window.child_window.children {
-			// println('cleanup ${child.id()}')
-			child.cleanup()
+		// println('escape')
+		if window.child_window != 0 {
+			// Close the child window on Escape
+			for mut child in window.child_window.children {
+				// println('cleanup ${child.id()}')
+				child.cleanup()
+			}
+			window.child_window = &Window(0)
 		}
-		window.child_window = &Window(0)
+	} else {
+		// add user shortcuts for window
+		key_shortcut(e, window.key_shortcuts, window)
 	}
+
 	if window.key_down_fn != KeyFn(0) {
 		window.key_down_fn(e, window)
 	}
@@ -679,6 +686,7 @@ fn window_char(event gg.Event, ui &UI) {
 	if window.char_fn != KeyFn(0) {
 		window.char_fn(e, window)
 	}
+	char_shortcut(e, window.char_shortcuts, window)
 
 	window.eventbus.publish(events.on_char, window, e)
 }
