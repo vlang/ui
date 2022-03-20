@@ -23,7 +23,7 @@ pub fn datagrid_stack(p DataGridComponentParams) &ui.Stack {
 	pg.id = ui.component_part_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)
-	g.keymaps[15] = ui.KeyAction{
+	g.shortcuts[15] = ui.Shortcut{
 		is_char: true
 		mods: .ctrl
 		key_fn: fn (comp voidptr) {

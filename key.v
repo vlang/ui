@@ -4,13 +4,33 @@
 module ui
 
 // This provides user defined shortcut actions (see grid and grid_data as a use case)
-pub type KeyActionFn = fn (g voidptr)
+pub type ShortcutFn = fn (context voidptr)
 
-pub struct KeyAction {
+pub struct Shortcut {
 pub mut:
 	is_char bool // true means "char" callback
 	mods    KeyMod
-	key_fn  KeyActionFn
+	key_fn  ShortcutFn
+}
+
+pub type Shortcuts = map[int]Shortcut
+
+pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
+	if int(e.codepoint) in shortcuts {
+		sc := shortcuts[int(e.codepoint)]
+		if sc.is_char && has_key_mods(e.mods, sc.mods) {
+			sc.key_fn(context)
+		}
+	}
+}
+
+pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
+	if int(e.key) in shortcuts {
+		sc := shortcuts[int(e.key)]
+		if !sc.is_char && has_key_mods(e.mods, sc.mods) {
+			sc.key_fn(context)
+		}
+	}
 }
 
 // BitMask

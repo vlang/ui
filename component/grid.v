@@ -66,7 +66,7 @@ pub mut:
 	from_j int
 	to_j   int
 	// key maps
-	keymaps map[int]ui.KeyAction
+	shortcuts ui.Shortcuts // map[int]ui.Shortcut
 }
 
 [params]
@@ -77,7 +77,7 @@ pub struct GridComponentParams {
 	scrollview   bool
 	is_focused   bool
 	fixed_height bool = true
-	keymaps      map[int]ui.KeyAction
+	shortcuts    ui.Shortcuts // map[int]ui.Shortcut
 mut:
 	id string
 }
@@ -106,7 +106,7 @@ pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_part_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_part_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
-		keymaps: p.keymaps
+		shortcuts: p.shortcuts
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -349,12 +349,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			g.cur_allways_visible()
 		}
 		else {
-			if int(e.key) in g.keymaps {
-				km := g.keymaps[int(e.key)]
-				if !km.is_char && ui.has_key_mods(e.mods, km.mods) {
-					km.key_fn(g)
-				}
-			}
+			ui.key_shortcut(e, g.shortcuts, g)
 		}
 	}
 	g.cur_allways_visible()
@@ -377,12 +372,7 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 				g.cur_allways_visible()
 			}
 			else {
-				if int(e.codepoint) in g.keymaps {
-					km := g.keymaps[int(e.codepoint)]
-					if km.is_char && ui.has_key_mods(e.mods, km.mods) {
-						km.key_fn(g)
-					}
-				}
+				ui.char_shortcut(e, g.shortcuts, g)
 			}
 		}
 	}
