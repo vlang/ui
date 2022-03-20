@@ -20,13 +20,6 @@ enum GridType {
 }
 
 type GridData = Factor | []bool | []int | []string
-type GridFn = fn (g &GridComponent)
-
-pub struct GridKey {
-	is_char bool // true means "char" callback
-	mods    ui.KeyMod
-	key_fn  GridFn
-}
 
 [heap]
 struct GridComponent {
@@ -73,7 +66,7 @@ pub mut:
 	from_j int
 	to_j   int
 	// key maps
-	keymaps map[int]GridKey
+	keymaps map[int]ui.KeyAction
 }
 
 [params]
@@ -84,7 +77,7 @@ pub struct GridComponentParams {
 	scrollview   bool
 	is_focused   bool
 	fixed_height bool = true
-	keymaps      map[int]GridKey
+	keymaps      map[int]ui.KeyAction
 mut:
 	id string
 }

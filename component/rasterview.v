@@ -5,6 +5,7 @@ import gx
 import gg
 import math
 import os
+import stbi
 
 [heap]
 struct RasterViewComponent {
@@ -165,6 +166,9 @@ pub fn (mut rv RasterViewComponent) load(path string) {
 	rv.visible_pixels()
 	rv.layout.ui.window.update_layout()
 }
+
+// pub fn (mut rv RasterViewComponent) load(path string) {
+// 	stbi_write_png(path string, w int, h int, comp int, buf &byte, row_stride_in_bytes int)
 
 // KEEP HERE TO SAVE FILE
 //       if (strcmp(filename, "reference.png") == 0) {

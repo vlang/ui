@@ -41,6 +41,6 @@ fn win_init(mut w ui.Window) {
 	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-text-cursor-50.png')
 	// rv.load('/Users/rcqls/Github/ui/assets/img/icons8-hand-cursor-50.png')
 	// rv.load('/Users/rcqls/Github/ui/assets/img/cursor.png')
-	rv.load("/usr/share/httpd/icons/sphere2.png")
-	rv.load("/usr/local/texlive/2021/texmf-dist/tex/latex/notes/hand.png")
+	rv.load('/usr/share/httpd/icons/sphere2.png')
+	rv.load('/usr/local/texlive/2021/texmf-dist/tex/latex/notes/hand.png')
 }

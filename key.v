@@ -3,6 +3,16 @@
 // that can be found in the LICENSE file.
 module ui
 
+// This provides user defined shortcut actions (see grid and grid_data as a use case)
+pub type KeyActionFn = fn (g voidptr)
+
+pub struct KeyAction {
+pub mut:
+	is_char bool // true means "char" callback
+	mods    KeyMod
+	key_fn  KeyActionFn
+}
+
 // BitMask
 
 [flag]

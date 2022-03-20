@@ -135,7 +135,7 @@ fn main() {
 						)]
 				),
 					uic.rasterview_canvaslayout(
-						id: "rv"
+						id: 'rv'
 					)]
 			),
 		]
@@ -160,11 +160,11 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	mut app := &App(c.ui.window.state)
 	app.file = tv.full_title(selected)
 	app.text = os.read_file(app.file) or { '' }
-	if os.file_ext(app.file) == ".png" {
+	if os.file_ext(app.file) == '.png' {
 		app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
-		mut rv := uic.rasterview_component_from_id(app.window, "rv")
+		mut rv := uic.rasterview_component_from_id(app.window, 'rv')
 		rv.load(app.file)
-		
+
 		// reinit textbox scrollview
 		// mut tb := tv.layout.ui.window.textbox('edit')
 		// tb.scrollview.set(0, .btn_y)
