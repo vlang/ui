@@ -44,7 +44,7 @@ pub struct ButtonColorParams {
 	bg_color     &gx.Color
 }
 
-pub fn button_color(c ButtonColorParams) &ui.Button {
+pub fn colorbutton(c ButtonColorParams) &ui.Button {
 	b := &ui.Button{
 		id: c.id
 		width_: c.width
@@ -53,7 +53,7 @@ pub fn button_color(c ButtonColorParams) &ui.Button {
 		bg_color: c.bg_color
 		theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
-		onclick: button_color_click
+		onclick: colorbutton_click
 		radius: f32(c.radius)
 		padding: f32(c.padding)
 		ui: 0
@@ -61,7 +61,7 @@ pub fn button_color(c ButtonColorParams) &ui.Button {
 	return b
 }
 
-fn button_color_click(a voidptr, mut b ui.Button) {
+fn colorbutton_click(a voidptr, mut b ui.Button) {
 	colorbox_subwindow_connect(b.ui.window, b.bg_color)
 	// move only if s.x and s.y == 0 first use
 	mut s := b.ui.window.subwindow(component.colorbox_subwindow_id)

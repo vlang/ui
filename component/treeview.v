@@ -151,7 +151,7 @@ pub mut:
 // constructors
 
 [params]
-pub struct TreeViewComponentParams {
+pub struct TreeViewParams {
 	id           string
 	trees        []Tree
 	icons        map[string]string
@@ -166,7 +166,7 @@ pub struct TreeViewComponentParams {
 	hidden_files bool
 }
 
-pub fn treeview(c TreeViewComponentParams) &ui.Stack {
+pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	mut layout := ui.column(
 		id: c.id + component.treeview_layout_id
 		widths: [ui.compact]
@@ -201,7 +201,7 @@ pub fn treeview(c TreeViewComponentParams) &ui.Stack {
 }
 
 [params]
-pub struct TreeViewDirComponentParams {
+pub struct TreeViewDirParams {
 	id           string = 'tvd'
 	trees        []string
 	icons        map[string]string
@@ -216,8 +216,8 @@ pub struct TreeViewDirComponentParams {
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 }
 
-pub fn dirtreeview_stack(p TreeViewDirComponentParams) &ui.Stack {
-	return treeview(
+pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
+	return treeview_stack(
 		id: p.id
 		incr_mode: p.incr_mode
 		trees: p.trees.map(treedir(it, it, p.incr_mode, p.hidden_files))
@@ -236,6 +236,10 @@ pub fn dirtreeview_stack(p TreeViewDirComponentParams) &ui.Stack {
 // component access
 pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
 	return &TreeViewComponent(w.component)
+}
+
+pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
+	return treeview_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 // callbacks

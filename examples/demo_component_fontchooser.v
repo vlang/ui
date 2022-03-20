@@ -34,14 +34,14 @@ fn main() {
 					widths: ui.compact
 					spacing: 10
 					children: [
-						uic.button_font(
+						uic.fontbutton(
 							text: 'font'
 							dtw: tb
 						),
-						uic.button_color(
+						uic.colorbutton(
 							bg_color: &tb.text_styles.current.color
 						),
-						uic.button_color(
+						uic.colorbutton(
 							bg_color: &tb.bg_color
 						),
 					]

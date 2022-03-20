@@ -20,7 +20,7 @@ pub mut:
 }
 
 [params]
-pub struct FileBrowserComponentParams {
+pub struct FileBrowserParams {
 	id              string
 	dirs            []string = [os.expand_tilde_to_home('~'), '/']
 	text_ok         string   = 'Ok'
@@ -37,7 +37,7 @@ pub struct FileBrowserComponentParams {
 	on_click_cancel ui.ButtonClickFn
 }
 
-pub fn filebrowser_stack(p FileBrowserComponentParams) &ui.Stack {
+pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 	btn_cancel := ui.button(
 		id: '${p.id}_btn_cancel'
 		text: p.text_cancel
@@ -103,6 +103,10 @@ pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
 	return &FileBrowserComponent(w.component)
 }
 
+pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {
+	return filebrowser_component(w.stack(ui.component_part_id(id, 'layout')))
+}
+
 pub fn (fb &FileBrowserComponent) selected_full_title() string {
 	tv := fb.tv
 	return tv.selected_full_title()
@@ -111,7 +115,7 @@ pub fn (fb &FileBrowserComponent) selected_full_title() string {
 // Subwindow
 [params]
 pub struct FileBrowserSubWindowParams {
-	FileBrowserComponentParams
+	FileBrowserParams
 	x int
 	y int
 }
@@ -123,7 +127,7 @@ pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) 
 			id: component.filebrowser_subwindow_id
 			x: p.x
 			y: p.y
-			layout: filebrowser_stack(p.FileBrowserComponentParams)
+			layout: filebrowser_stack(p.FileBrowserParams)
 		)
 	}
 }
@@ -145,8 +149,8 @@ pub fn filebrowser_subwindow_close(w &ui.Window) {
 pub fn newfilebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
 	// only once
 	if !ui.Layout(w).has_child_id(component.newfilebrowser_subwindow_id) {
-		p2 := FileBrowserComponentParams{
-			...p.FileBrowserComponentParams
+		p2 := FileBrowserParams{
+			...p.FileBrowserParams
 			with_fpath: true
 			text_ok: 'New'
 		}

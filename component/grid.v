@@ -66,23 +66,23 @@ pub mut:
 	from_j int
 	to_j   int
 	// key maps
-	shortcuts ui.Shortcuts // map[int]ui.Shortcut
+	shortcuts ui.Shortcuts
 }
 
 [params]
-pub struct GridComponentParams {
+pub struct GridParams {
 	vars         map[string]GridData
 	width        int = 100
 	height       int = 25
 	scrollview   bool
 	is_focused   bool
 	fixed_height bool = true
-	shortcuts    ui.Shortcuts // map[int]ui.Shortcut
+	shortcuts    ui.Shortcuts
 mut:
 	id string
 }
 
-pub fn grid_canvaslayout(p GridComponentParams) &ui.CanvasLayout {
+pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_part_id(p.id, 'layout')
 		scrollview: p.scrollview

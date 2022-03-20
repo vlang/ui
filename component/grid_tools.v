@@ -14,14 +14,14 @@ pub mut:
 }
 
 [params]
-pub struct GridSettingsComponentParams {
+pub struct GridSettingsParams {
 	id       string
 	bg_color gx.Color = gx.light_blue
 	grid     &GridComponent
 	z_index  int = 100
 }
 
-pub fn gridsettings_stack(p GridSettingsComponentParams) &ui.Stack {
+pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	lbl := ui.listbox(
 		id: ui.component_part_id(p.id, 'lb_left')
 		ordered: true
@@ -72,6 +72,10 @@ pub fn gridsettings_stack(p GridSettingsComponentParams) &ui.Stack {
 // component constructor
 pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
 	return &GridSettingsComponent(w.component)
+}
+
+pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
+	return gridsettings_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 fn gs_sort_click(a voidptr, mut b ui.Button) {

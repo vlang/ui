@@ -12,14 +12,14 @@ pub mut:
 }
 
 [params]
-pub struct DataGridComponentParams {
-	GridComponentParams // for settings prepended by settings_
+pub struct DataGridParams {
+	GridParams // for settings prepended by settings_
 	settings_bg_color gx.Color = gx.light_blue
 	settings_z_index  int      = 100
 }
 
-pub fn datagrid_stack(p DataGridComponentParams) &ui.Stack {
-	mut pg := p.GridComponentParams
+pub fn datagrid_stack(p DataGridParams) &ui.Stack {
+	mut pg := p.GridParams
 	pg.id = ui.component_part_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)

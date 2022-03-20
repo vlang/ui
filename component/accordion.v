@@ -17,7 +17,7 @@ pub mut:
 }
 
 [params]
-pub struct AccordionComponentParams {
+pub struct AccordionParams {
 	id         string
 	titles     []string
 	children   []ui.Widget
@@ -28,7 +28,7 @@ pub struct AccordionComponentParams {
 	scrollview bool
 }
 
-pub fn accordion_stack(c AccordionComponentParams) &ui.Stack {
+pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	// if c.children.len != c.titles.len {
 	// }
 	mut heights := [0.0]
@@ -77,6 +77,10 @@ pub fn accordion_stack(c AccordionComponentParams) &ui.Stack {
 // component access
 pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
 	return &AccordionComponent(w.component)
+}
+
+pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
+	return accordion_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 fn accordion_draw(c &ui.CanvasLayout, state voidptr) {

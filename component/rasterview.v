@@ -28,14 +28,14 @@ pub mut:
 }
 
 [params]
-pub struct RasterViewComponentParams {
+pub struct RasterViewParams {
 	id       string
 	width    int = 16
 	height   int = 16
 	channels int = 4
 }
 
-pub fn rasterview_canvaslayout(p RasterViewComponentParams) &ui.CanvasLayout {
+pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_part_id(p.id, 'layout')
 		scrollview: true

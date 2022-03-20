@@ -14,13 +14,13 @@ pub mut:
 }
 
 [params]
-pub struct DoubleListBoxComponentParams {
+pub struct DoubleListBoxParams {
 	id    string
 	title string
 	items []string
 }
 
-pub fn doublelistbox_stack(c DoubleListBoxComponentParams) &ui.Stack {
+pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	mut items := map[string]string{}
 	for item in c.items {
 		items[item] = item
@@ -74,6 +74,10 @@ pub fn doublelistbox_stack(c DoubleListBoxComponentParams) &ui.Stack {
 // component common access
 pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
 	return &DoubleListBoxComponent(w.component)
+}
+
+pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxComponent {
+	return doublelistbox_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 // callback

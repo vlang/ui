@@ -60,14 +60,14 @@ pub mut:
 }
 
 [params]
-pub struct ColorBoxComponentParams {
+pub struct ColorBoxParams {
 	id    string
 	light bool
 	hsl   bool
 	drag  bool
 }
 
-pub fn colorbox_stack(c ColorBoxComponentParams) &ui.Stack {
+pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	mut cv_h := ui.canvas_plus(
 		width: 30
 		height: 256
@@ -160,6 +160,10 @@ pub fn colorbox_stack(c ColorBoxComponentParams) &ui.Stack {
 // component access
 pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
 	return &ColorBoxComponent(w.component)
+}
+
+pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {
+	return colorbox_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 // equivalent of init method for widget

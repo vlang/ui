@@ -24,7 +24,7 @@ pub mut:
 }
 
 [params]
-pub struct TabsComponentParams {
+pub struct TabsParams {
 	id          string
 	mode        TabsMode = .vertical
 	active      int
@@ -35,7 +35,7 @@ pub struct TabsComponentParams {
 	tab_spacing f64 = 5.0
 }
 
-pub fn tabs_stack(c TabsComponentParams) &ui.Stack {
+pub fn tabs_stack(c TabsParams) &ui.Stack {
 	mut children := []ui.Widget{}
 
 	for i, tab in c.tabs {
@@ -106,6 +106,10 @@ pub fn tabs_stack(c TabsComponentParams) &ui.Stack {
 
 pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
 	return &TabsComponent(w.component)
+}
+
+pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
+	return tabs_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 fn tabs_init(layout &ui.Stack) {

@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct Hideable {
+struct HideableComponent {
 pub mut:
 	id              string
 	layout          &ui.Stack
@@ -28,7 +28,7 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 		children: [p.layout]
 	)
 
-	mut h := &Hideable{
+	mut h := &HideableComponent{
 		id: p.id
 		layout: layout
 		child_layout_id: p.layout.id
@@ -43,8 +43,12 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 	return layout
 }
 
-pub fn hideable_component(w ui.ComponentChild) &Hideable {
-	return &Hideable(w.component)
+pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
+	return &HideableComponent(w.component)
+}
+
+pub fn hidebable_component_from_id(w ui.Window, id string) &HideableComponent {
+	return hideable_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
 fn hideable_init(layout &ui.Stack) {
@@ -55,7 +59,7 @@ fn hideable_init(layout &ui.Stack) {
 	}
 }
 
-pub fn (mut h Hideable) show() {
+pub fn (mut h HideableComponent) show() {
 	// mut layout := h.window.stack(h.child_layout_id)
 	// restore z_index
 	h.show_children()
@@ -63,14 +67,14 @@ pub fn (mut h Hideable) show() {
 	h.window.update_layout()
 }
 
-pub fn (mut h Hideable) hide() {
+pub fn (mut h HideableComponent) hide() {
 	mut layout := h.layout
 	h.hide_children()
 	layout.set_drawing_children()
 	h.window.update_layout()
 }
 
-pub fn (mut h Hideable) toggle() {
+pub fn (mut h HideableComponent) toggle() {
 	if h.layout.z_index == ui.z_index_hidden {
 		h.show()
 	} else {
@@ -78,7 +82,7 @@ pub fn (mut h Hideable) toggle() {
 	}
 }
 
-pub fn (mut h Hideable) show_children() {
+pub fn (mut h HideableComponent) show_children() {
 	// restore z_index
 	for id, _ in h.children {
 		mut child := h.children[id]
@@ -86,7 +90,7 @@ pub fn (mut h Hideable) show_children() {
 	}
 }
 
-pub fn (mut h Hideable) hide_children() {
+pub fn (mut h HideableComponent) hide_children() {
 	for id, _ in h.children {
 		mut child := h.children[id]
 		child.z_index = ui.z_index_hidden
@@ -94,14 +98,14 @@ pub fn (mut h Hideable) hide_children() {
 	h.layout.z_index = ui.z_index_hidden
 }
 
-pub fn (mut h Hideable) set_children_depth() {
+pub fn (mut h HideableComponent) set_children_depth() {
 	for child in h.layout.children {
 		h.z_index[child.id] = child.z_index
 	}
 	h.layout.z_index = h.z_index[h.layout.id]
 }
 
-pub fn (mut h Hideable) save_children_depth(children []ui.Widget) {
+pub fn (mut h HideableComponent) save_children_depth(children []ui.Widget) {
 	for child in children {
 		if child is ui.Layout {
 			l := child as ui.Layout
