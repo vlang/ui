@@ -34,6 +34,7 @@ mut:
 	v          f64 = 0.75
 	rgb        gx.Color
 	linked     &gx.Color = &gx.Color(0)
+	colbtn     &ColorButtonComponent = 0
 	ind_sel    int
 	hsv_sel    []HSVColor = []HSVColor{len: component.cb_nc * component.cb_nr}
 	txt_r      string
@@ -185,6 +186,10 @@ pub fn (mut cb ColorBoxComponent) connect(col &gx.Color) {
 	cb.linked = unsafe { col }
 }
 
+pub fn (mut cb ColorBoxComponent) connect_colorbutton(b &ColorButtonComponent) {
+	cb.colbtn = unsafe { b }
+}
+
 fn cv_h_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	mut cb := colorbox_component(c)
 	cb.h = f64(e.y) / 256
@@ -293,9 +298,18 @@ fn cv_sel_draw(mut c ui.CanvasLayout, app voidptr) {
 pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	cb.r_rgb_cur.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
 	if cb.linked != 0 {
+		// attach a component
 		unsafe {
 			*cb.linked = cb.r_rgb_cur.color
 		}
+	}
+	$if cb_ucc ? {
+		id := if cb.colbtn != 0 { cb.colbtn.widget.id } else { 'id_none' }
+		println('update cur color $id ${cb.colbtn != 0
+			&& cb.colbtn.on_changed != ColorButtonChangedFn(0)}')
+	}
+	if cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonChangedFn(0) {
+		cb.colbtn.on_changed(cb.colbtn)
 	}
 	if reactive {
 		cb.txt_r = cb.r_rgb_cur.color.r.str()

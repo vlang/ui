@@ -35,6 +35,21 @@ pub fn key_shortcut(e KeyEvent, shortcuts KeyShortcuts, context voidptr) {
 	}
 }
 
+pub fn parse_char_shortcut(s string) (KeyMod, string) {
+	parts := s.split('+')
+	mut mods := 0
+	for mut part in parts[..(parts.len - 1)] {
+		match part.trim_space().to_lower() {
+			'shift' { mods += 1 << 0 }
+			'ctrl' { mods += 1 << 1 }
+			'alt' { mods += 1 << 2 }
+			'super' { mods += 1 << 3 }
+			else {}
+		}
+	}
+	return KeyMod(mods), parts[parts.len - 1]
+}
+
 pub interface Shortcutable {
 	id string
 mut:

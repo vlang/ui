@@ -55,8 +55,8 @@ fn main() {
 		// on_char: on_char
 		children: [
 			ui.row(
-				id: 'menu'
-				widths: [ui.stretch, ui.stretch * 2]
+				id: 'main'
+				widths: [ui.stretch, ui.stretch * 2, 50]
 				heights: ui.stretch
 				children: [
 					uic.hideable_stack(
@@ -139,9 +139,19 @@ fn main() {
 							)]
 					)
 				),
-					uic.rasterview_canvaslayout(
+					// ui.row(
+					// 	id: "rv_menu"
+					// 	widths: [ui.stretch, 50]
+					// 	children: [ uic.rasterview_canvaslayout(
 						id: 'rv'
-					)]
+					),
+					uic.hideable_stack(
+						id: 'hpalette'
+						layout: uic.colorpalette_stack(id: 'palette')
+					),
+					// 	]
+					// )
+				]
 			),
 		]
 	)
@@ -169,15 +179,6 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 		app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
 		mut rv := uic.rasterview_component_from_id(app.window, 'rv')
 		rv.load(app.file)
-
-		// reinit textbox scrollview
-		// mut tb := tv.layout.ui.window.textbox('edit')
-		// tb.scrollview.set(0, .btn_y)
-		// ui.scrollview_reset(mut tb)
-		// tb.read_only = tv.types[selected] == 'root'
-		// if app.line_numbers {
-		// 	tb.is_line_number = tv.types[selected] != 'root'
-		// }
 	}
 }
 
@@ -190,17 +191,19 @@ fn btn_new_click(a voidptr, b &ui.Button) {
 
 fn btn_open_click(a voidptr, b &ui.Button) {
 	// // println('open')
-	// uic.filebrowser_subwindow_visible(b.ui.window)
+	uic.filebrowser_subwindow_visible(b.ui.window)
 }
 
-fn btn_save_click(a voidptr, b &ui.Button) {
+fn btn_save_click(app &App, b &ui.Button) {
 	// // println("save")
+	mut rv := uic.rasterview_component_from_id(b.ui.window, 'rv')
+	rv.save_to(app.file)
 	// tb := b.ui.window.textbox('edit')
 	// // println("text: <${*tb.text}>")
 	// mut app := &App(b.ui.window.state)
 	// // println(tb.text)
 	// os.write_file(app.file, tb.text) or {}
-	// b.ui.window.root_layout.unfocus_all()
+	b.ui.window.root_layout.unfocus_all()
 }
 
 fn btn_open_ok(mut app App, b &ui.Button) {
@@ -238,18 +241,18 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 	// h.hide()
 }
 
-// fn on_char(e ui.KeyEvent, w &ui.Window) {
-// 	if ui.super_alt_key(e.mods) && e.codepoint == 210 {
-// 		println("save")
-// 	} else {
-// 		println(e)
-// 	}
-// }
-
-fn init(win &ui.Window) {
-	mut sc := ui.Shortcutable(win)
-	sc.add_char_shortcut('o', .ctrl, fn (w &ui.Window) {
-		mut h := uic.hideable_component_from_id(w, 'hmenu')
-		h.toggle()
+fn init(w &ui.Window) {
+	// add shortcut for hmenu
+	uic.hideable_add_char_shortcut(w, 'ctrl+o', fn (w &ui.Window) {
+		uic.hideable_toggle(w, 'hmenu')
 	})
+	// At first hmenu open
+	uic.hideable_show(w, 'hmenu')
+
+	// add shortcut for hpalette
+	uic.hideable_add_char_shortcut(w, 'ctrl+p', fn (w &ui.Window) {
+		uic.hideable_toggle(w, 'hpalette')
+	})
+	// At first hmenu open
+	uic.hideable_show(w, 'hpalette')
 }

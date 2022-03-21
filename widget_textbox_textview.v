@@ -276,9 +276,7 @@ pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
 	tv.draw_styled_text(tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string(),
-		color: gx.black
-	)
+		y, ustr[imin..imax].string())
 }
 
 fn (mut tv TextView) draw_selection() {
@@ -1048,13 +1046,13 @@ fn (mut tv TextView) update_line_height() {
 	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
 }
 
-fn (tv &TextView) update_style(ts TextStyleParams) {
+pub fn (tv &TextView) update_style(ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
 	dtw.update_style(ts)
 }
 
 // Not called automatically as it is in gg
-fn (tv &TextView) load_style() {
+pub fn (tv &TextView) load_style() {
 	DrawTextWidget(tv.tb).load_style()
 }
 

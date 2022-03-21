@@ -12,6 +12,8 @@ pub mut:
 	window          &ui.Window = &ui.Window(0)
 	z_index         map[string]int
 	children        map[string]ui.Widget
+	shortcut        string
+	open            bool
 }
 
 [params]
@@ -20,6 +22,8 @@ pub struct HideableParams {
 	bg_color gx.Color
 	layout   &ui.Stack
 	hidden   bool = true
+	shortcut string
+	open     bool = true
 }
 
 pub fn hideable_stack(p HideableParams) &ui.Stack {
@@ -34,6 +38,8 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 		id: p.id
 		layout: layout
 		child_layout_id: p.layout.id
+		shortcut: p.shortcut
+		open: p.open
 	}
 
 	h.save_children_depth(layout.children)
@@ -59,6 +65,22 @@ fn hideable_init(layout &ui.Stack) {
 	if h.layout.z_index == ui.z_index_hidden {
 		h.hide()
 	}
+}
+
+pub fn hideable_add_char_shortcut(w &ui.Window, shortcut string, shortcut_fn ui.ShortcutFn) {
+	mods, s := ui.parse_char_shortcut(shortcut)
+	mut sc := ui.Shortcutable(w)
+	sc.add_char_shortcut(s, mods, shortcut_fn)
+}
+
+pub fn hideable_toggle(w &ui.Window, id string) {
+	mut h := hideable_component_from_id(w, id)
+	h.toggle()
+}
+
+pub fn hideable_show(w &ui.Window, id string) {
+	mut h := hideable_component_from_id(w, id)
+	h.show()
 }
 
 pub fn (mut h HideableComponent) show() {

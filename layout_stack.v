@@ -12,7 +12,7 @@ pub const (
 	scrollview_empty_rect = gg.Rect{}
 )
 
-enum Direction {
+pub enum Direction {
 	row
 	column
 }
