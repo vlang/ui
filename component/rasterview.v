@@ -25,6 +25,9 @@ pub mut:
 	to_i   int
 	from_j int
 	to_j   int
+	// shortcuts
+	key_shortcuts  ui.KeyShortcuts
+	char_shortcuts ui.CharShortcuts
 }
 
 [params]
