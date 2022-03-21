@@ -65,6 +65,9 @@ pub mut:
 mut:
 	// To keep track of original position
 	pos_ map[int]XYPos
+	// debug stuff to be removed
+	debug_ids          []string
+	debug_children_ids []string
 }
 
 [params]
@@ -237,7 +240,8 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			println('clc $c.id $c.z_index ($e.x, $e.y) ${c.point_inside(e.x, e.y)} ${c.ui.window.is_top_widget(c,
 				events.on_mouse_down)}')
 		} else {
-			println('clc $c.id $c.z_index ($e.x, $e.y)')
+			println('clc $c.id $c.z_index ($e.x, $e.y) ${c.ui.window.is_top_widget(c,
+				events.on_mouse_down)}')
 			println('point_inside $c.id ($e.x, $e.y) in ($c.x + $c.offset_x + $c.width, $c.y + $c.offset_y + $c.height)')
 		}
 	}
@@ -340,19 +344,40 @@ pub fn (mut c CanvasLayout) update_layout() {
 }
 
 pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
-	// println('set_adj $c.full_width $c.full_height')
+	$if c_adj_size ? {
+		c.debug_ids = env('UI_IDS').split(',').clone()
+		c.debug_children_ids = []
+		if c.debug_ids.len == 0 || c.id in c.debug_ids {
+			println('cvl set_adj $c.id $c.full_width $c.full_height')
+		}
+	}
 	if c.full_width > 0 && c.full_height > 0 {
 		c.adj_width, c.adj_height = c.full_width, c.full_height
 		return
 	} else if c.full_width == -1 || c.full_height == -1 { // dynamical
 		fw, fh := c.full_size()
+		$if c_adj_size ? {
+			if c.debug_ids.len == 0 || c.id in c.debug_ids {
+				println('cvl set_adj by full_size $c.id $fw $fh')
+			}
+		}
 		if fw > 0 && fh > 0 {
 			c.adj_width, c.adj_height = fw, fh
 			return
 		}
 	}
 	mut w, mut h := 0, 0
+	$if c_adj_size ? {
+		if c.debug_ids.len == 0 || c.id in c.debug_ids {
+			println('cvl $c.id children: ${c.children.map(it.id)}')
+		}
+	}
 	for mut child in c.children {
+		$if c_adj_size ? {
+			if c.debug_ids.len == 0 || c.id in c.debug_ids {
+				println('cvl child $child.id $child.z_index > $z_index_hidden')
+			}
+		}
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
 			child_width, child_height := child.size()
 
@@ -362,17 +387,29 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 			if child.y + child_height > h {
 				h = child.y + child_height
 			}
+			$if c_adj_size ? {
+				if c.debug_ids.len == 0 || c.id in c.debug_ids {
+					println('cvl size child $child.id $child.type_name() -> ($child.x + $child_width, $child.y + $child_height) -> ($w, $h)')
+				}
+			}
 		}
-		// println("${child.type_name()} -> ($child.x + $child_width, $child.y + $child_height) -> ($w, $h)")
 	}
-	// println("$c.id -> ($w, $h)")
+	$if c_adj_size ? {
+		if c.debug_ids.len == 0 || c.id in c.debug_ids {
+			println('cl set_adj before: $c.id -> ($w, $h)')
+		}
+	}
 	if c.width > w {
 		w = c.width
 	}
 	if c.height > h {
 		h = c.height
 	}
-	// println("cl set_adj $c.id -> ($w, $h)")
+	$if c_adj_size ? {
+		if c.debug_ids.len == 0 || c.id in c.debug_ids {
+			println('cl set_adj after: $c.id -> ($w, $h)')
+		}
+	}
 	c.adj_width = w
 	c.adj_height = h
 }
@@ -432,10 +469,15 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 }
 
 pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
-	c.width = w
-	c.height = h
+	// TODO: to check if this valid for everything
+	c.width = if w > 0 { w } else { c.adj_width }
+	c.height = if h > 0 { h } else { c.adj_height }
 	scrollview_update(c)
-	// println("cl propose_size size($c.width, $c.height) -> adj_size($c.adj_width, $c.adj_height)")
+	$if cl_ps ? {
+		if c.id == 'dtv_root0' {
+			println('cl propose_size $c.id   size($c.width, $c.height) -> adj_size($c.adj_width, $c.adj_height)')
+		}
+	}
 	return c.width, c.height
 }
 

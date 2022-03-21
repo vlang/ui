@@ -55,9 +55,12 @@ fn main() {
 		// on_char: on_char
 		children: [
 			ui.row(
+				id: 'menu'
 				widths: [ui.stretch, ui.stretch * 2]
+				heights: ui.stretch
 				children: [
 					uic.hideable_stack(
+					id: 'hmenu'
 					layout: ui.column(
 						heights: [40.0, 30.0, ui.stretch]
 						spacing: 5
@@ -245,5 +248,8 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 
 fn init(win &ui.Window) {
 	mut sc := ui.Shortcutable(win)
-	sc.add_key_shortcut(int('o'), .ctrl, fn (w Window) {})
+	sc.add_char_shortcut('o', .ctrl, fn (w &ui.Window) {
+		mut h := uic.hideable_component_from_id(w, 'hmenu')
+		h.toggle()
+	})
 }

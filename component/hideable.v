@@ -24,6 +24,8 @@ pub struct HideableParams {
 
 pub fn hideable_stack(p HideableParams) &ui.Stack {
 	mut layout := ui.row(
+		widths: ui.stretch
+		heights: ui.stretch
 		id: ui.component_part_id(p.id, 'layout')
 		children: [p.layout]
 	)
@@ -72,6 +74,10 @@ pub fn (mut h HideableComponent) hide() {
 	h.hide_children()
 	layout.set_drawing_children()
 	h.window.update_layout()
+}
+
+pub fn (h HideableComponent) is_active() bool {
+	return h.layout.z_index != ui.z_index_hidden
 }
 
 pub fn (mut h HideableComponent) toggle() {
