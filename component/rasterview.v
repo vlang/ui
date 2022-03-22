@@ -298,7 +298,7 @@ pub fn (mut rv RasterViewComponent) load(path string) {
 	rv.data = []byte{len: rv.width * rv.height * rv.channels}
 	unsafe { C.memcpy(rv.data.data, img.data, rv.data.len) }
 	rv.visible_pixels()
-	rv.layout.ui.window.update_layout()
+	rv.layout.update_layout()
 }
 
 pub fn (mut rv RasterViewComponent) save_to(path string) {

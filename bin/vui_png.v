@@ -207,12 +207,12 @@ fn btn_save_click(app &App, b &ui.Button) {
 }
 
 fn btn_open_ok(mut app App, b &ui.Button) {
-	// // println('ok')
-	// uic.filebrowser_subwindow_close(b.ui.window)
-	// fb := uic.filebrowser_component(b)
-	// app.folder_to_open = fb.selected_full_title()
-	// mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
-	// dtv.open(app.folder_to_open)
+	// println('ok')
+	uic.filebrowser_subwindow_close(b.ui.window)
+	fb := uic.filebrowser_component(b)
+	app.folder_to_open = fb.selected_full_title()
+	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
+	dtv.open(app.folder_to_open)
 }
 
 fn btn_open_cancel(mut app App, b &ui.Button) {

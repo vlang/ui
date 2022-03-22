@@ -497,7 +497,7 @@ fn on_event(e &gg.Event, mut window Window) {
 				}
 				time: time.now()
 			}
-			window_touch_tap_and_swipe(e, window.ui)
+			window_click_or_touch_tap_and_swipe(e, window.ui)
 		}
 		.files_droped {
 			window_files_droped(e, mut window.ui)
@@ -573,7 +573,7 @@ fn on_event(e &gg.Event, mut window Window) {
 				window.touch.button = -1
 				// println("touch END: ${window.touch.end} $window.touch.button")
 				window_touch_up(e, window.ui)
-				window_touch_tap_and_swipe(e, window.ui)
+				window_click_or_touch_tap_and_swipe(e, window.ui)
 			}
 		}
 		.touches_moved {
@@ -692,6 +692,7 @@ fn window_char(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_down(event gg.Event, mut ui UI) {
+	// println("typ mouse down $event.typ")
 	mut window := ui.window
 	e := MouseEvent{
 		action: .down
@@ -725,6 +726,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 }
 
 fn window_mouse_move(event gg.Event, ui &UI) {
+	// println("typ mouse move $event.typ")
 	mut window := ui.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / ui.gg.scale
@@ -749,6 +751,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 }
 
 fn window_mouse_up(event gg.Event, mut ui UI) {
+	// println("typ mouse up $event.typ")
 	mut window := ui.window
 	e := MouseEvent{
 		action: .up
@@ -784,9 +787,11 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	}
 }
 
+// OBSOLETE
+/*
 fn window_click(event gg.Event, mut ui UI) {
 	window := ui.window
-	// println("typ $event.typ")
+	// println("typ click $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: int(event.mouse_x / ui.gg.scale)
@@ -811,10 +816,7 @@ fn window_click(event gg.Event, mut ui UI) {
 	} else {
 		window.eventbus.publish(events.on_click, window, e)
 	}
-	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = false
-	}
-}
+}*/
 
 fn window_scroll(event gg.Event, ui &UI) {
 	mut window := ui.window
@@ -872,7 +874,8 @@ fn window_touch_up(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_up, window, e)
 }
 
-fn window_touch_tap(event gg.Event, ui &UI) {
+fn window_click_or_touch_tap(event gg.Event, ui &UI) {
+	// println("typ on_tap $event.typ")
 	window := ui.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
@@ -889,6 +892,12 @@ fn window_touch_tap(event gg.Event, ui &UI) {
 		window.eventbus.publish(events.on_click, window.child_window, e)
 	} else {
 		window.eventbus.publish(events.on_click, window, e)
+	}
+	if int(event.mouse_button) < 3 {
+		unsafe {
+			mut gui := ui
+			gui.btn_down[int(event.mouse_button)] = false
+		}
 	}
 }
 
@@ -930,12 +939,12 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_touch_tap_and_swipe(event gg.Event, ui &UI) {
+fn window_click_or_touch_tap_and_swipe(event gg.Event, ui &UI) {
 	window := ui.window
 	s, e := window.touch.start, window.touch.end
 	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
 	if math.max(adx, ady) < 10 {
-		window_touch_tap(event, ui)
+		window_click_or_touch_tap(event, ui)
 	} else {
 		window_touch_swipe(event, ui)
 	}

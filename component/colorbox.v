@@ -305,10 +305,9 @@ pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	}
 	$if cb_ucc ? {
 		id := if cb.colbtn != 0 { cb.colbtn.widget.id } else { 'id_none' }
-		println('update cur color $id ${cb.colbtn != 0
-			&& cb.colbtn.on_changed != ColorButtonChangedFn(0)}')
+		println('update cur color $id ${cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0)}')
 	}
-	if cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonChangedFn(0) {
+	if cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0) {
 		cb.colbtn.on_changed(cb.colbtn)
 	}
 	if reactive {

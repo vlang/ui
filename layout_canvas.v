@@ -341,6 +341,9 @@ fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
 
 pub fn (mut c CanvasLayout) update_layout() {
 	c.set_drawing_children()
+	// update size and scrollview if necessary
+	c.set_adjusted_size(c.ui)
+	scrollview_update(c)
 }
 
 pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {

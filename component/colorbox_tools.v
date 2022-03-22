@@ -20,32 +20,35 @@ pub fn colorbox_subwindow_add(mut w ui.Window) {
 }
 
 // to connect the colorbox to gx.Color reference
-pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent) {
+pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, toogle bool) {
 	mut s := w.subwindow(component.colorbox_subwindow_id)
 	cb_layout := w.stack(component.colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)
 	if col != 0 {
 		cb.connect(col)
 		cb.update_from_rgb(col.r, col.g, col.b)
+		cb.update_cur_color(true)
 	}
 	// connect also the colbtn of cb
 	if colbtn != 0 {
 		// println("connect ${colbtn.widget.id} ${colbtn.on_changed != ColorButtonChangedFn(0)}")
 		cb.connect_colorbutton(colbtn)
 	}
-	s.set_visible(s.hidden)
+	if toogle {
+		s.set_visible(s.hidden)
+	}
 	s.update_layout()
 }
 
-type ColorButtonChangedFn = fn (b &ColorButtonComponent)
+type ColorButtonFn = fn (b &ColorButtonComponent)
 
 struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button
-	on_click   ui.ButtonClickFn
 	bg_color   gx.Color = gx.white
 	ctrl_mode  bool
-	on_changed ColorButtonChangedFn = ColorButtonChangedFn(0)
+	on_click   ColorButtonFn
+	on_changed ColorButtonFn
 }
 
 [params]
@@ -61,8 +64,8 @@ pub struct ColorButtonParams {
 	padding      f64
 	bg_color     &gx.Color = 0
 	ctrl_mode    bool
-	on_click     ui.ButtonClickFn
-	on_changed   ColorButtonChangedFn
+	on_click     ColorButtonFn
+	on_changed   ColorButtonFn
 }
 
 pub fn colorbutton(c ColorButtonParams) &ui.Button {
@@ -102,9 +105,10 @@ pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonCompone
 }
 
 fn colorbutton_click(a voidptr, mut b ui.Button) {
-	clc := colorbutton_component(b)
-	if !clc.ctrl_mode || ui.ctrl_key(b.ui.keymods) {
-		colorbox_subwindow_connect(b.ui.window, b.bg_color, clc)
+	cbc := colorbutton_component(b)
+	// println("here $cbc.ctrl_mode $b.ui.keymods")
+	if !cbc.ctrl_mode || ui.ctrl_key(b.ui.keymods) {
+		colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, true)
 		// move only if s.x and s.y == 0 first use
 		mut s := b.ui.window.subwindow(component.colorbox_subwindow_id)
 		if s.x == 0 && s.y == 0 {
@@ -112,10 +116,14 @@ fn colorbutton_click(a voidptr, mut b ui.Button) {
 			s.set_pos(b.x + w / 2, b.y + h / 2)
 			s.update_layout()
 		}
+	} else if cbc.ctrl_mode {
+		mut s := b.ui.window.subwindow(component.colorbox_subwindow_id)
+		if s.is_visible() {
+			colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, false)
+		}
 	}
 	// on_click initialization if necessary
-	bcc := colorbutton_component(b)
-	if bcc.on_click != ui.ButtonClickFn(0) {
-		bcc.on_click(a, b)
+	if cbc.on_click != ColorButtonFn(0) {
+		cbc.on_click(cbc)
 	}
 }

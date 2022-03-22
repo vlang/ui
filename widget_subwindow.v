@@ -250,6 +250,10 @@ pub fn (mut s SubWindow) set_visible(state bool) {
 	}
 }
 
+pub fn (s &SubWindow) is_visible() bool {
+	return !s.hidden
+}
+
 fn (s &SubWindow) get_ui() &UI {
 	return s.ui
 }

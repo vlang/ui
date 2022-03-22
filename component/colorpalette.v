@@ -2,6 +2,7 @@ module component
 
 import ui
 import gx
+import math
 
 [heap]
 struct ColorPaletteComponent {
@@ -68,9 +69,6 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	}
 	layout.spacings = [f32(2)].repeat(cp.ncolors + 1)
 	ui.component_connect(cp, layout)
-	for i, _ in palette {
-		ui.component_connect(cp, palette[i])
-	}
 	return layout
 }
 
@@ -84,7 +82,7 @@ pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteCompo
 }
 
 pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
-	for i in 0 .. cp.ncolors {
+	for i in 0 .. math.min(cp.ncolors, colors.len) {
 		(*cp.palette[i].bg_color) = colors[i]
 	}
 }
