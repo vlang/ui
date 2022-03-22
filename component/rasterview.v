@@ -180,9 +180,9 @@ fn (rv &RasterViewComponent) get_index_pos(x int, y int) (int, int) {
 fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
 	k := (i * rv.width + j) * rv.channels
 	if rv.channels == 4 {
-		return gx.rgba(rv.data[k], rv.data[k], rv.data[k], rv.data[k])
+		return gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
 	} else if rv.channels == 3 {
-		return gx.rgb(rv.data[k], rv.data[k], rv.data[k])
+		return gx.rgb(rv.data[k], rv.data[k + 1], rv.data[k + 2])
 	}
 	return ui.no_color
 }
@@ -190,10 +190,53 @@ fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
 fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
 	k := (i * rv.width + j) * rv.channels
 	if rv.channels == 4 {
-		rv.data[k], rv.data[k], rv.data[k], rv.data[k] = color.r, color.g, color.b, color.a
+		rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3] = color.r, color.g, color.b, color.a
 	} else if rv.channels == 3 {
-		rv.data[k], rv.data[k], rv.data[k] = color.r, color.g, color.b
+		rv.data[k], rv.data[k + 1], rv.data[k + 2] = color.r, color.g, color.b
 	}
+}
+
+struct Int2 {
+	i int
+	n int
+}
+
+pub fn (rv &RasterViewComponent) top_colors() []gx.Color {
+	mut table := map[int]int{}
+	mut colors := []gx.Color{}
+	mut color, mut ind_color := ui.no_color, 0
+	for i in 0 .. rv.height {
+		for j in 0 .. rv.width {
+			color = rv.get_pixel(i, j)
+			ind_color = colors.index(color)
+			if ind_color == -1 {
+				colors << color
+				ind_color = colors.len - 1
+				table[ind_color] = 0
+			}
+			table[ind_color] += 1
+		}
+	}
+	// sort
+	mut table_sorted := []Int2{}
+	for k, v in table {
+		table_sorted << Int2{k, v}
+	}
+	table_sorted.sort_with_compare(fn (a &Int2, b &Int2) int {
+		if a.n > b.n {
+			return -1
+		} else if a.n < b.n {
+			return 1
+		} else {
+			return 0
+		}
+	})
+	mut table_color := []gx.Color{}
+	for a in table_sorted {
+		table_color << colors[a.i]
+	}
+
+	return table_color
 }
 
 fn (rv &RasterViewComponent) get_pos(i int, j int) (int, int) {

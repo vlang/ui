@@ -169,11 +169,16 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	selected := c.id
 	mut app := &App(c.ui.window.state)
 	app.file = tv.full_title(selected)
-	app.text = os.read_file(app.file) or { '' }
+	// app.text = os.read_file(app.file) or { '' }
 	if os.file_ext(app.file) == '.png' {
 		app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
 		mut rv := uic.rasterview_component_from_id(app.window, 'rv')
 		rv.load(app.file)
+		colors := rv.top_colors()
+		// println("$app.file")
+		// println(colors)
+		mut cp := uic.colorpalette_component_from_id(app.window, 'palette')
+		cp.update_colors(colors)
 	}
 }
 
