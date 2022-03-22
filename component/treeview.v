@@ -267,6 +267,9 @@ fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
 
 fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 	mut tv := treeview_component(c)
+	if !tv.point_inside(e.x, e.y) {
+		return
+	}
 	tv.old_sel_id = tv.sel_id
 	tv.sel_id = c.id
 	// println("${c.id} clicked")
@@ -325,6 +328,15 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 
 pub fn (mut tv TreeViewComponent) cleanup_layout() {
 	tv.layout.cleanup()
+}
+
+pub fn (tv &TreeViewComponent) size() (int, int) {
+	return tv.layout.width, tv.layout.height
+}
+
+fn (tv &TreeViewComponent) point_inside(x int, y int) bool {
+	w, h := tv.size()
+	return x >= 0 && x <= w && y >= 0 && y <= h
 }
 
 pub fn (tv &TreeViewComponent) full_title(id string) string {

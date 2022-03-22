@@ -757,9 +757,6 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
-	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = false
-	}
 
 	if window.child_window == 0 && window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(e, window)
@@ -787,7 +784,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	}
 }
 
-fn window_click(event gg.Event, ui &UI) {
+fn window_click(event gg.Event, mut ui UI) {
 	window := ui.window
 	// println("typ $event.typ")
 	e := MouseEvent{
@@ -813,6 +810,9 @@ fn window_click(event gg.Event, ui &UI) {
 		window.eventbus.publish(events.on_click, window.child_window, e)
 	} else {
 		window.eventbus.publish(events.on_click, window, e)
+	}
+	if int(event.mouse_button) < 3 {
+		ui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
