@@ -56,7 +56,7 @@ fn main() {
 		children: [
 			ui.row(
 				id: 'main'
-				widths: [ui.stretch, 50, ui.stretch * 2]
+				widths: [ui.stretch, ui.stretch * 2, 50]
 				heights: ui.stretch
 				children: [
 					uic.hideable_stack(
@@ -139,12 +139,12 @@ fn main() {
 							)]
 					)
 				),
+					uic.rasterview_canvaslayout(
+						id: 'rv'
+					),
 					uic.hideable_stack(
 						id: 'hpalette'
 						layout: uic.colorpalette_stack(id: 'palette')
-					),
-					uic.rasterview_canvaslayout(
-						id: 'rv'
 					)]
 			),
 		]

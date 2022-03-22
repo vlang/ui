@@ -575,7 +575,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 			}
 			// println(' $item.id -> ($e.x,$e.y)')
 			if item.point_inside(e.x, e.y) {
-				if lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
+				if lb.set_item_selected(inx, ctrl_key(lb.ui.keymods)) {
 					lb.call_on_change()
 				}
 				break
@@ -583,7 +583,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 		}
 	} $else {
 		inx := lb.selected_item(e.y)
-		if inx >= 0 && lb.set_item_selected(inx, ctl_key(lb.ui.keymods)) {
+		if inx >= 0 && lb.set_item_selected(inx, ctrl_key(lb.ui.keymods)) {
 			lb.call_on_change()
 		}
 	}

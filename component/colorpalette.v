@@ -39,11 +39,11 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	}
 	mut palette := []ui.Button{}
 	for i in 0 .. p.ncolors {
-		palette << colorbutton(id: ui.component_part_id(p.id, 'palette$i'))
+		palette << colorbutton(id: ui.component_part_id(p.id, 'palette$i'), ctrl_mode: true)
 	}
 	pa := &ColorPaletteComponent{
 		layout: layout
-		colbtn: colorbutton(id: ui.component_part_id(p.id, 'colbtn'))
+		colbtn: colorbutton(id: ui.component_part_id(p.id, 'colbtn'), ctrl_mode: true)
 		palette: palette
 	}
 	layout.children = [pa.colbtn, ui.spacing()]

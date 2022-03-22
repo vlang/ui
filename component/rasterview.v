@@ -177,6 +177,25 @@ fn (rv &RasterViewComponent) get_index_pos(x int, y int) (int, int) {
 	return sel_i, sel_j
 }
 
+fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
+	k := (i * rv.width + j) * rv.channels
+	if rv.channels == 4 {
+		return gx.rgba(rv.data[k], rv.data[k], rv.data[k], rv.data[k])
+	} else if rv.channels == 3 {
+		return gx.rgb(rv.data[k], rv.data[k], rv.data[k])
+	}
+	return ui.no_color
+}
+
+fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
+	k := (i * rv.width + j) * rv.channels
+	if rv.channels == 4 {
+		rv.data[k], rv.data[k], rv.data[k], rv.data[k] = color.r, color.g, color.b, color.a
+	} else if rv.channels == 3 {
+		rv.data[k], rv.data[k], rv.data[k] = color.r, color.g, color.b
+	}
+}
+
 fn (rv &RasterViewComponent) get_pos(i int, j int) (int, int) {
 	return j * rv.size, i * rv.size
 }

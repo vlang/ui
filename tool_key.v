@@ -226,7 +226,7 @@ pub fn shift_key(mods KeyMod) bool {
 	return int(mods) & 1 == 1
 }
 
-pub fn ctl_key(mods KeyMod) bool {
+pub fn ctrl_key(mods KeyMod) bool {
 	return int(mods) & 2 == 2
 }
 

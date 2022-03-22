@@ -360,7 +360,7 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 	$if grid_char ? {
 		println('char $e <$s>')
 	}
-	if ui.ctl_key(e.mods) {
+	if ui.ctrl_key(e.mods) {
 		match e.codepoint {
 			1 {
 				g.cur_i, g.cur_j = 0, 0
