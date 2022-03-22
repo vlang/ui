@@ -68,9 +68,8 @@ fn hideable_init(layout &ui.Stack) {
 }
 
 pub fn hideable_add_char_shortcut(w &ui.Window, shortcut string, shortcut_fn ui.ShortcutFn) {
-	mods, s := ui.parse_char_shortcut(shortcut)
 	mut sc := ui.Shortcutable(w)
-	sc.add_char_shortcut(s, mods, shortcut_fn)
+	sc.add_char_shortcut(shortcut, shortcut_fn)
 }
 
 pub fn hideable_toggle(w &ui.Window, id string) {

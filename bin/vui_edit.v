@@ -250,7 +250,7 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 
 fn init(w &ui.Window) {
 	// add shortcut for hmenu
-	uic.hideable_add_char_shortcut(w, 'ctrl+o', fn (w &ui.Window) {
+	uic.hideable_add_char_shortcut(w, 'ctrl + o', fn (w &ui.Window) {
 		uic.hideable_toggle(w, 'hmenu')
 	})
 	// At first hmenu open

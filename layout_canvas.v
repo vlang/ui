@@ -578,7 +578,7 @@ pub fn (mut c CanvasLayout) set_visible(state bool) {
 	}
 }
 
-fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
+pub fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
 	if has_scrollview(c) {
 		return point_inside_adj(c, x, y)
 	} else {
@@ -754,4 +754,13 @@ pub fn (c &CanvasLayout) draw_convex_poly(points []f32, color gx.Color) {
 }
 
 pub fn (c &CanvasLayout) draw_empty_poly(points []f32, color gx.Color) {
+}
+
+// special stuff for surrounding rectangle
+
+pub fn (c &CanvasLayout) draw_rect_surrounded(x f32, y f32, w f32, h f32, size int, color gx.Color) {
+	c.draw_rect_filled(x - size, y - size, w + 2 * size, size, color)
+	c.draw_rect_filled(x - size, y + h, w + 2 * size, size, color)
+	c.draw_rect_filled(x - size, y - size, size, h + 2 * size, color)
+	c.draw_rect_filled(x + w, y - size, size, h + 2 * size, color)
 }

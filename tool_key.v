@@ -47,7 +47,7 @@ pub fn parse_char_shortcut(s string) (KeyMod, string) {
 			else {}
 		}
 	}
-	return KeyMod(mods), parts[parts.len - 1]
+	return KeyMod(mods), parts[parts.len - 1].trim_space()
 }
 
 pub interface Shortcutable {
@@ -57,7 +57,8 @@ mut:
 	char_shortcuts CharShortcuts
 }
 
-pub fn (mut s Shortcutable) add_char_shortcut(code string, mods KeyMod, key_fn ShortcutFn) {
+pub fn (mut s Shortcutable) add_char_shortcut(shortcut string, key_fn ShortcutFn) {
+	mods, code := parse_char_shortcut(shortcut)
 	s.char_shortcuts[code] = Shortcut{
 		mods: mods
 		key_fn: key_fn

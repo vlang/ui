@@ -479,15 +479,10 @@ fn (g &GridComponent) nrow() int {
 }
 
 fn (mut g GridComponent) draw_current() {
-	l := 3
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
-
-	// println('current: $pos_x, $pos_y, $w, $h, $l')
-	g.layout.draw_rect_filled(pos_x - l, pos_y - l, w + 2 * l, l, gx.red)
-	g.layout.draw_rect_filled(pos_x - l, pos_y + h, w + 2 * l, 3, gx.red)
-	g.layout.draw_rect_filled(pos_x - l, pos_y - l, l, h + 2 * l, gx.red)
-	g.layout.draw_rect_filled(pos_x + w, pos_y - l, l, h + 2 * l, gx.red)
+	sel_color := gx.red
+	g.layout.draw_rect_surrounded(pos_x, pos_y, w, h, 3, sel_color)
 }
 
 fn (mut g GridComponent) draw_colbar() {
@@ -694,6 +689,7 @@ fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 
 fn (g &GridComponent) get_pos(i int, j int) (int, int) {
 	mut x, mut y := g.rowbar_width + g.header_size, g.colbar_height + g.header_size
+	// TODO: when fixed it is easier
 	for k in 0 .. i {
 		y += g.height(k)
 	}

@@ -16,8 +16,8 @@ pub struct ColorPaletteParams {
 	id        string
 	title     string
 	items     []string
-	direction ui.Direction = .row
-	ncolors   int
+	direction ui.Direction = .column
+	ncolors   int = 6
 }
 
 pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
@@ -25,13 +25,15 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		.row {
 			ui.row(
 				id: ui.component_part_id(p.id, 'layout')
-				bg_color: gx.white
+				bg_color: gx.black
+				margin_: 5
 			)
 		}
 		.column {
 			ui.column(
 				id: ui.component_part_id(p.id, 'layout')
-				bg_color: gx.white
+				bg_color: gx.black
+				margin_: 5
 			)
 		}
 	}
@@ -44,8 +46,26 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		colbtn: colorbutton(id: ui.component_part_id(p.id, 'colbtn'))
 		palette: palette
 	}
-	ui.component_connect(pa, layout)
+	layout.children = [pa.colbtn, ui.spacing()]
+	// Weird: for v in palette {layout.children << v} fails
+	// Also layout.children << palette
+	// unsafe { layout.children << palette }
+	for i, _ in palette {
+		layout.children << palette[i]
+	}
 
+	match p.direction {
+		.row {
+			layout.widths = [f32(30), 10]
+			layout.widths << [f32(30)].repeat(p.ncolors)
+		}
+		.column {
+			layout.heights = [f32(30), 10]
+			layout.heights << [f32(30)].repeat(p.ncolors)
+		}
+	}
+	layout.spacings = [f32(2)].repeat(p.ncolors + 1)
+	ui.component_connect(pa, layout)
 	return layout
 }
 

@@ -10,14 +10,21 @@ import stbi
 [heap]
 struct RasterViewComponent {
 pub mut:
-	id       string
-	layout   &ui.CanvasLayout
-	width    int
-	height   int
-	channels int = 4
-	data     []byte
-	size     int = 5
-	inter    int = 1
+	id         string
+	layout     &ui.CanvasLayout
+	width      int
+	height     int
+	channels   int = 4
+	data       []byte
+	size       int = 11 // pixel_size + inter
+	inter      int = 1
+	pixel_size int = 10
+	// cur_pos
+	cur_i int = -1
+	cur_j int = -1
+	// selection
+	sel_i int = -1
+	sel_j int = -1
 	// from
 	from_x int
 	from_y int
@@ -97,8 +104,8 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	mut k := 0
-	pixel_size := rv.size + rv.inter
-	c.draw_rect_empty(0, 0, rv.width * pixel_size, rv.height * pixel_size, gx.gray)
+	// N.B.: rv.size = rv.pixel_size + rv.inter
+	c.draw_rect_empty(0, 0, rv.width * rv.size, rv.height * rv.size, gx.gray)
 	mut pos_x, mut pos_y := rv.from_x, rv.from_y
 	mut col := gx.white
 	for i in rv.from_i .. rv.to_i {
@@ -109,46 +116,107 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 			} else {
 				col = gx.rgb(rv.data[k], rv.data[k + 1], rv.data[k + 2])
 			}
-			pos_x = j * pixel_size
-			pos_y = i * pixel_size
-			c.draw_rect_filled(pos_x, pos_y, rv.size, rv.size, col)
+			pos_x = j * rv.size
+			pos_y = i * rv.size
+			c.draw_rect_filled(pos_x, pos_y, rv.pixel_size, rv.pixel_size, col)
 		}
 	}
+	rv.draw_selection()
+	rv.draw_current()
 }
 
 fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+	mut rv := rasterview_component(c)
+	rv.sel_i, rv.sel_j = rv.get_index_pos(e.x, e.y)
 }
 
-fn rv_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {}
+fn rv_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {
+}
 
-fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {}
+fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {
+}
 
 fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
 }
 
 fn rv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+	mut rv := rasterview_component(c)
+	if rv.point_inside(int(e.x), int(e.y)) {
+		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.x), int(e.y))
+	} else {
+		rv.cur_i, rv.cur_j = -1, -1
+	}
+}
+
+fn (rv &RasterViewComponent) point_inside(x int, y int) bool {
+	w, h := rv.size()
+	return x >= 0 && x <= w && y >= 0 && y <= h
+}
+
+fn (rv &RasterViewComponent) get_index_pos(x int, y int) (int, int) {
+	mut sel_i, mut sel_j := -1, -1
+
+	mut cum := rv.from_x
+	for j in rv.from_j .. rv.to_j {
+		cum += rv.size
+		if x > rv.from_x && x < cum {
+			sel_j = j
+			break
+		}
+	}
+
+	cum = rv.from_y
+	for i in rv.from_i .. rv.to_i {
+		cum += rv.size
+		if y > rv.from_y && y < cum {
+			sel_i = i
+			break
+		}
+	}
+
+	return sel_i, sel_j
+}
+
+fn (rv &RasterViewComponent) get_pos(i int, j int) (int, int) {
+	return j * rv.size, i * rv.size
+}
+
+fn (rv &RasterViewComponent) draw_current() {
+	if rv.cur_i < 0 || rv.cur_j < 0 {
+		return
+	}
+	pos_x, pos_y := rv.get_pos(rv.cur_i, rv.cur_j)
+	cur_color := gx.yellow
+	rv.layout.draw_rect_surrounded(pos_x, pos_y, rv.pixel_size, rv.pixel_size, 2, cur_color)
+}
+
+fn (rv &RasterViewComponent) draw_selection() {
+	if rv.sel_i < 0 || rv.sel_j < 0 {
+		return
+	}
+	pos_x, pos_y := rv.get_pos(rv.sel_i, rv.sel_j)
+	sel_color := gx.red
+	rv.layout.draw_rect_surrounded(pos_x, pos_y, rv.pixel_size, rv.pixel_size, 3, sel_color)
 }
 
 fn (rv &RasterViewComponent) size() (int, int) {
-	w := rv.width * (rv.size + rv.inter) + rv.inter
-	h := rv.height * (rv.size + rv.inter) + rv.inter
+	w := rv.width * rv.size + rv.inter
+	h := rv.height * rv.size + rv.inter
 	return w, h
 }
 
 fn (mut rv RasterViewComponent) visible_pixels() {
 	if rv.layout.has_scrollview {
-		pixel_size := (rv.size + rv.inter)
-		rv.from_i = math.min(math.max(rv.layout.scrollview.offset_y / pixel_size, 0),
-			rv.height - 1)
+		// rv.size := rv.pixel_size + rv.inter
+		rv.from_i = math.min(math.max(rv.layout.scrollview.offset_y / rv.size, 0), rv.height - 1)
 		rv.to_i = math.min((rv.layout.scrollview.offset_y +
-			rv.layout.height) / pixel_size, rv.height - 1) + 1
-		rv.from_y = rv.from_i * pixel_size
+			rv.layout.height) / rv.size, rv.height - 1) + 1
+		rv.from_y = rv.from_i * rv.size
 
-		rv.from_j = math.min(math.max(rv.layout.scrollview.offset_x / pixel_size, 0),
-			rv.width - 1)
+		rv.from_j = math.min(math.max(rv.layout.scrollview.offset_x / rv.size, 0), rv.width - 1)
 		rv.to_j = math.min((rv.layout.scrollview.offset_x +
-			rv.layout.width) / pixel_size, rv.width - 1) + 1
-		rv.from_x = rv.from_j * pixel_size
+			rv.layout.width) / rv.size, rv.width - 1) + 1
+		rv.from_x = rv.from_j * rv.size
 	} else {
 		rv.from_i, rv.to_i, rv.from_y = 0, rv.height, 0
 		rv.from_j, rv.to_j, rv.from_x = 0, rv.width, 0
@@ -176,15 +244,3 @@ pub fn (mut rv RasterViewComponent) save_to(path string) {
 		panic(err)
 	}
 }
-
-// KEEP HERE TO SAVE FILE
-//       if (strcmp(filename, "reference.png") == 0) {
-//         color = getPixel(i, j, &intersect);
-//       } else if (strcmp(filename, "custom.png") == 0) {
-//         color = getAntialiasedPixel(i, j, &intersect, 2);
-//       } else {
-//         color = getAntialiasedPixel(i, j, &intersect, 5); // Really ramp it up
-//       }
-//   imageData[imagePos++] = color.r;
-//   imageData[imagePos++] = color.g;
-//   imageData[imagePos++] = color.b;

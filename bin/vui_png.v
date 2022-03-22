@@ -56,7 +56,7 @@ fn main() {
 		children: [
 			ui.row(
 				id: 'main'
-				widths: [ui.stretch, ui.stretch * 2, 50]
+				widths: [ui.stretch, 50, ui.stretch * 2]
 				heights: ui.stretch
 				children: [
 					uic.hideable_stack(
@@ -139,19 +139,13 @@ fn main() {
 							)]
 					)
 				),
-					// ui.row(
-					// 	id: "rv_menu"
-					// 	widths: [ui.stretch, 50]
-					// 	children: [ uic.rasterview_canvaslayout(
-						id: 'rv'
-					),
 					uic.hideable_stack(
 						id: 'hpalette'
 						layout: uic.colorpalette_stack(id: 'palette')
 					),
-					// 	]
-					// )
-				]
+					uic.rasterview_canvaslayout(
+						id: 'rv'
+					)]
 			),
 		]
 	)
@@ -167,6 +161,7 @@ fn main() {
 		on_click_ok: btn_open_ok
 		on_click_cancel: btn_open_cancel
 	)
+	uic.colorbox_subwindow_add(mut window)
 	ui.run(window)
 }
 
@@ -243,16 +238,16 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 
 fn init(w &ui.Window) {
 	// add shortcut for hmenu
-	uic.hideable_add_char_shortcut(w, 'ctrl+o', fn (w &ui.Window) {
+	uic.hideable_add_char_shortcut(w, 'ctrl + o', fn (w &ui.Window) {
 		uic.hideable_toggle(w, 'hmenu')
 	})
 	// At first hmenu open
 	uic.hideable_show(w, 'hmenu')
 
 	// add shortcut for hpalette
-	uic.hideable_add_char_shortcut(w, 'ctrl+p', fn (w &ui.Window) {
+	uic.hideable_add_char_shortcut(w, 'ctrl + p', fn (w &ui.Window) {
 		uic.hideable_toggle(w, 'hpalette')
 	})
 	// At first hmenu open
-	uic.hideable_show(w, 'hpalette')
+	// uic.hideable_show(w, 'hpalette')
 }
