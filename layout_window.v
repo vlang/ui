@@ -97,8 +97,7 @@ pub mut:
 	// ui settings
 	settings SettingsUI
 	// shortcuts
-	key_shortcuts  KeyShortcuts
-	char_shortcuts CharShortcuts
+	shortcuts Shortcuts
 }
 
 [params]
@@ -652,7 +651,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 		}
 	} else {
 		// add user shortcuts for window
-		key_shortcut(e, window.key_shortcuts, window)
+		key_shortcut(e, window.shortcuts, window)
 	}
 
 	if window.key_down_fn != KeyFn(0) {
@@ -686,7 +685,7 @@ fn window_char(event gg.Event, ui &UI) {
 	if window.char_fn != KeyFn(0) {
 		window.char_fn(e, window)
 	}
-	char_shortcut(e, window.char_shortcuts, window)
+	char_shortcut(e, window.shortcuts, window)
 
 	window.eventbus.publish(events.on_char, window, e)
 }

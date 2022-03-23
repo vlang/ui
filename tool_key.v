@@ -3,46 +3,12 @@
 // that can be found in the LICENSE file.
 module ui
 
-// This provides user defined shortcut actions (see grid and grid_data as a use case)
-pub type ShortcutFn = fn (context voidptr)
-
-pub type KeyShortcuts = map[int]Shortcut
-pub type CharShortcuts = map[string]Shortcut
-
-pub struct Shortcut {
-pub mut:
-	mods   KeyMod
-	key_fn ShortcutFn
-}
-
-pub fn char_shortcut(e KeyEvent, shortcuts CharShortcuts, context voidptr) {
-	// weirdly when .ctrl modifier the codepoint is differently interpreted
-	s := if e.mods == .ctrl { rune(96 + e.codepoint).str() } else { utf32_to_str(e.codepoint) }
-	if s in shortcuts {
-		sc := shortcuts[s]
-		if has_key_mods(e.mods, sc.mods) {
-			sc.key_fn(context)
-		}
-	}
-}
-
-pub fn key_shortcut(e KeyEvent, shortcuts KeyShortcuts, context voidptr) {
-	if int(e.key) in shortcuts {
-		sc := shortcuts[int(e.key)]
-		if has_key_mods(e.mods, sc.mods) {
-			sc.key_fn(context)
-		}
-	}
-}
-
-
 pub fn parse_shortcut(s string) (KeyMod, int, string) {
 	mods, key := parse_char_shortcut(s)
 	code := parse_key(key)
 	// N.B.: if code == 0 => char mode shortcut
 	return mods, code, key
 }
-
 
 fn parse_char_shortcut(s string) (KeyMod, string) {
 	parts := s.split('+')
@@ -61,90 +27,53 @@ fn parse_char_shortcut(s string) (KeyMod, string) {
 	return KeyMod(mods), parts[parts.len - 1].trim_space().to_lower()
 }
 
-// TODO 
+// parse ley
 pub fn parse_key(key_str string) int {
 	key := match key_str {
-		"escape" { int(Key.escape )}
-		"enter" { int(Key.enter )}
-		"tab" {  int(Key.tab ) }  
-		"backspace" {  int(Key.backspace ) } 
-		"insert" {  int(Key.insert ) } 
-		"delete" {  int(Key.delete ) } 
-		"right" {  int(Key.right ) } 
-		"left" {  int(Key.left ) } 
-		"down" {  int(Key.down ) } 
-		"up" {  int(Key.up ) } 
-		"page_up" {  int(Key.page_up ) }  
-		"page_down" {  int(Key.page_down ) } 
-		"home" {  int(Key.home ) } 
-		"end" {  int(Key.end ) }
-		"f1" { int(Key.f1) }
-	"f2" { int(Key.f2) }
-	"f3" { int(Key.f3) }
-	"f4" { int(Key.f4) }
-	"f5" { int(Key.f5) }
-	"f6" { int(Key.f6) }
-	"f7" { int(Key.f7) }
-	"f8" { int(Key.f8) }
-	"f9" { int(Key.f9) }
-	"f10" { int(Key.f10) }
-	"f11" { int(Key.f11) }
-	"f12" { int(Key.f12) }
-	"f13" { int(Key.f13) }
-	"f14" { int(Key.f14) }
-	"f15" { int(Key.f15) }
-	"f16" { int(Key.f16) }
-	"f17" { int(Key.f17) }
-	"f18" { int(Key.f18) }
-	"f19" { int(Key.f19) }
-	"f20" { int(Key.f20) }
-	"f21" { int(Key.f21) }
-	"f22" { int(Key.f22) }
-	"f23" { int(Key.f23) }
-	"f24" { int(Key.f24) }
-	"f25" { int(Key.f25) } 
-		else {  int(Key.invalid ) }
+		'escape' { int(Key.escape) }
+		'enter' { int(Key.enter) }
+		'tab' { int(Key.tab) }
+		'backspace' { int(Key.backspace) }
+		'insert' { int(Key.insert) }
+		'delete' { int(Key.delete) }
+		'right' { int(Key.right) }
+		'left' { int(Key.left) }
+		'down' { int(Key.down) }
+		'up' { int(Key.up) }
+		'page_up' { int(Key.page_up) }
+		'page_down' { int(Key.page_down) }
+		'home' { int(Key.home) }
+		'end' { int(Key.end) }
+		'f1' { int(Key.f1) }
+		'f2' { int(Key.f2) }
+		'f3' { int(Key.f3) }
+		'f4' { int(Key.f4) }
+		'f5' { int(Key.f5) }
+		'f6' { int(Key.f6) }
+		'f7' { int(Key.f7) }
+		'f8' { int(Key.f8) }
+		'f9' { int(Key.f9) }
+		'f10' { int(Key.f10) }
+		'f11' { int(Key.f11) }
+		'f12' { int(Key.f12) }
+		'f13' { int(Key.f13) }
+		'f14' { int(Key.f14) }
+		'f15' { int(Key.f15) }
+		'f16' { int(Key.f16) }
+		'f17' { int(Key.f17) }
+		'f18' { int(Key.f18) }
+		'f19' { int(Key.f19) }
+		'f20' { int(Key.f20) }
+		'f21' { int(Key.f21) }
+		'f22' { int(Key.f22) }
+		'f23' { int(Key.f23) }
+		'f24' { int(Key.f24) }
+		'f25' { int(Key.f25) }
+		else { int(Key.invalid) }
 	}
 	return key
 }
 
-pub interface Shortcutable {
-	id string
-mut:
-	key_shortcuts KeyShortcuts
-	char_shortcuts CharShortcuts
-}
-
-pub fn (mut s Shortcutable) add_char_shortcut(shortcut string, key_fn ShortcutFn) {
-	mods, key := parse_char_shortcut(shortcut)
-	s.char_shortcuts[key] = Shortcut{
-		mods: mods
-		key_fn: key_fn
-	}
-}
-
-pub fn (mut s Shortcutable) add_key_shortcut(code int, mods KeyMod, key_fn ShortcutFn) {
-	s.key_shortcuts[code] = Shortcut{
-		mods: mods
-		key_fn: key_fn
-	}
-}
-
-// TODO mix both functions above using parse_shortcut
-pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
-	mods, code, key := parse_shortcut(shortcut)
-	if code == 0 {
-		s.char_shortcuts[key] = Shortcut{
-			mods: mods
-			key_fn: key_fn
-		} 
-	} else {
-		s.key_shortcuts[code] = Shortcut{
-			mods: mods
-			key_fn: key_fn
-		}
-	}
-}
 // BitMask
 
 [flag]

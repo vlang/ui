@@ -66,8 +66,7 @@ pub mut:
 	from_j int
 	to_j   int
 	// shortcuts
-	key_shortcuts  ui.KeyShortcuts
-	char_shortcuts ui.CharShortcuts
+	shortcuts ui.Shortcuts
 }
 
 [params]
@@ -348,7 +347,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			g.cur_allways_visible()
 		}
 		else {
-			ui.key_shortcut(e, g.key_shortcuts, g)
+			ui.key_shortcut(e, g.shortcuts, g)
 		}
 	}
 	g.cur_allways_visible()
@@ -371,7 +370,7 @@ fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
 				g.cur_allways_visible()
 			}
 			else {
-				ui.char_shortcut(e, g.char_shortcuts, g)
+				ui.char_shortcut(e, g.shortcuts, g)
 			}
 		}
 	}
