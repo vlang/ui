@@ -243,14 +243,14 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 
 fn init(w &ui.Window) {
 	// add shortcut for hmenu
-	uic.hideable_add_char_shortcut(w, 'ctrl + o', fn (w &ui.Window) {
+	uic.hideable_add_shortcut(w, 'ctrl + o', fn (w &ui.Window) {
 		uic.hideable_toggle(w, 'hmenu')
 	})
 	// At first hmenu open
 	uic.hideable_show(w, 'hmenu')
 
 	// add shortcut for hpalette
-	uic.hideable_add_char_shortcut(w, 'ctrl + p', fn (w &ui.Window) {
+	uic.hideable_add_shortcut(w, 'ctrl + p', fn (w &ui.Window) {
 		uic.hideable_toggle(w, 'hpalette')
 	})
 	// At first hmenu open

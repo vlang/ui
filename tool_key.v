@@ -35,19 +35,77 @@ pub fn key_shortcut(e KeyEvent, shortcuts KeyShortcuts, context voidptr) {
 	}
 }
 
-pub fn parse_char_shortcut(s string) (KeyMod, string) {
+
+pub fn parse_shortcut(s string) (KeyMod, int, string) {
+	mods, key := parse_char_shortcut(s)
+	code := parse_key(key)
+	// N.B.: if code == 0 => char mode shortcut
+	return mods, code, key
+}
+
+
+fn parse_char_shortcut(s string) (KeyMod, string) {
 	parts := s.split('+')
 	mut mods := 0
-	for mut part in parts[..(parts.len - 1)] {
-		match part.trim_space().to_lower() {
-			'shift' { mods += 1 << 0 }
-			'ctrl' { mods += 1 << 1 }
-			'alt' { mods += 1 << 2 }
-			'super' { mods += 1 << 3 }
-			else {}
+	if parts.len > 1 {
+		for mut part in parts[0..(parts.len - 1)] {
+			match part.trim_space().to_lower() {
+				'shift' { mods += 1 << 0 }
+				'ctrl' { mods += 1 << 1 }
+				'alt' { mods += 1 << 2 }
+				'super' { mods += 1 << 3 }
+				else {}
+			}
 		}
 	}
-	return KeyMod(mods), parts[parts.len - 1].trim_space()
+	return KeyMod(mods), parts[parts.len - 1].trim_space().to_lower()
+}
+
+// TODO 
+pub fn parse_key(key_str string) int {
+	key := match key_str {
+		"escape" { int(Key.escape )}
+		"enter" { int(Key.enter )}
+		"tab" {  int(Key.tab ) }  
+		"backspace" {  int(Key.backspace ) } 
+		"insert" {  int(Key.insert ) } 
+		"delete" {  int(Key.delete ) } 
+		"right" {  int(Key.right ) } 
+		"left" {  int(Key.left ) } 
+		"down" {  int(Key.down ) } 
+		"up" {  int(Key.up ) } 
+		"page_up" {  int(Key.page_up ) }  
+		"page_down" {  int(Key.page_down ) } 
+		"home" {  int(Key.home ) } 
+		"end" {  int(Key.end ) }
+		"f1" { int(Key.f1) }
+	"f2" { int(Key.f2) }
+	"f3" { int(Key.f3) }
+	"f4" { int(Key.f4) }
+	"f5" { int(Key.f5) }
+	"f6" { int(Key.f6) }
+	"f7" { int(Key.f7) }
+	"f8" { int(Key.f8) }
+	"f9" { int(Key.f9) }
+	"f10" { int(Key.f10) }
+	"f11" { int(Key.f11) }
+	"f12" { int(Key.f12) }
+	"f13" { int(Key.f13) }
+	"f14" { int(Key.f14) }
+	"f15" { int(Key.f15) }
+	"f16" { int(Key.f16) }
+	"f17" { int(Key.f17) }
+	"f18" { int(Key.f18) }
+	"f19" { int(Key.f19) }
+	"f20" { int(Key.f20) }
+	"f21" { int(Key.f21) }
+	"f22" { int(Key.f22) }
+	"f23" { int(Key.f23) }
+	"f24" { int(Key.f24) }
+	"f25" { int(Key.f25) } 
+		else {  int(Key.invalid ) }
+	}
+	return key
 }
 
 pub interface Shortcutable {
@@ -58,8 +116,8 @@ mut:
 }
 
 pub fn (mut s Shortcutable) add_char_shortcut(shortcut string, key_fn ShortcutFn) {
-	mods, code := parse_char_shortcut(shortcut)
-	s.char_shortcuts[code] = Shortcut{
+	mods, key := parse_char_shortcut(shortcut)
+	s.char_shortcuts[key] = Shortcut{
 		mods: mods
 		key_fn: key_fn
 	}
@@ -72,6 +130,21 @@ pub fn (mut s Shortcutable) add_key_shortcut(code int, mods KeyMod, key_fn Short
 	}
 }
 
+// TODO mix both functions above using parse_shortcut
+pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
+	mods, code, key := parse_shortcut(shortcut)
+	if code == 0 {
+		s.char_shortcuts[key] = Shortcut{
+			mods: mods
+			key_fn: key_fn
+		} 
+	} else {
+		s.key_shortcuts[code] = Shortcut{
+			mods: mods
+			key_fn: key_fn
+		}
+	}
+}
 // BitMask
 
 [flag]
@@ -98,6 +171,7 @@ pub:
 }
 
 // Copied from sapp/enums TODO alias?
+// QWERTY keyboard (TODO add AZERTY and other layouts)
 pub enum Key {
 	invalid = 0
 	space = 32
