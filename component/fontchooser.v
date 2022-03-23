@@ -53,6 +53,10 @@ pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserCompone
 	return fontchooser_component(w.stack(ui.component_part_id(id, 'layout')))
 }
 
+pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
+	return w.listbox(component.fontchooser_lb_id)
+}
+
 fn fontchooser_init(mut layout ui.Stack) {
 	// println("${layout.size()}")
 	layout.update_layout()

@@ -182,43 +182,11 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	}
 }
 
+// New
 fn btn_new_click(a voidptr, b &ui.Button) {
 	// println('new')
-	// uic.newfilebrowser_subwindow_visible(b.ui.window)
-	// mut h := uic.hideable_component_from_id(b.ui.window, "htb")
-	// h.toggle()
-}
-
-fn btn_open_click(a voidptr, b &ui.Button) {
-	// // println('open')
-	uic.filebrowser_subwindow_visible(b.ui.window)
-}
-
-fn btn_save_click(app &App, b &ui.Button) {
-	// // println("save")
-	mut rv := uic.rasterview_component_from_id(b.ui.window, 'rv')
-	rv.save_to(app.file)
-	// tb := b.ui.window.textbox('edit')
-	// // println("text: <${*tb.text}>")
-	// mut app := &App(b.ui.window.state)
-	// // println(tb.text)
-	// os.write_file(app.file, tb.text) or {}
-	b.ui.window.root_layout.unfocus_all()
-}
-
-fn btn_open_ok(mut app App, b &ui.Button) {
-	// println('ok')
-	uic.filebrowser_subwindow_close(b.ui.window)
-	fb := uic.filebrowser_component(b)
-	app.folder_to_open = fb.selected_full_title()
-	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
-	dtv.open(app.folder_to_open)
-}
-
-fn btn_open_cancel(mut app App, b &ui.Button) {
-	// // println('cancel open')
-	// uic.filebrowser_subwindow_close(b.ui.window)
-	// app.folder_to_open = ''
+	mut h := uic.hideable_component_from_id(b.ui.window, 'htb')
+	h.toggle()
 }
 
 fn btn_new_ok(mut app App, b &ui.Button) {
@@ -239,6 +207,40 @@ fn btn_new_ok(mut app App, b &ui.Button) {
 	// 	dtv.open(app.folder_to_open)
 	// }
 	// h.hide()
+}
+
+// OPen folder
+fn btn_open_click(a voidptr, b &ui.Button) {
+	// // println('open')
+	uic.filebrowser_subwindow_visible(b.ui.window, 'fb')
+}
+
+fn btn_open_ok(mut app App, b &ui.Button) {
+	// println('ok')
+	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
+	fb := uic.filebrowser_component(b)
+	app.folder_to_open = fb.selected_full_title()
+	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
+	dtv.open(app.folder_to_open)
+}
+
+fn btn_open_cancel(mut app App, b &ui.Button) {
+	// println('cancel open')
+	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
+	app.folder_to_open = ''
+}
+
+// Save file
+fn btn_save_click(app &App, b &ui.Button) {
+	// // println("save")
+	mut rv := uic.rasterview_component_from_id(b.ui.window, 'rv')
+	rv.save_to(app.file)
+	// tb := b.ui.window.textbox('edit')
+	// // println("text: <${*tb.text}>")
+	// mut app := &App(b.ui.window.state)
+	// // println(tb.text)
+	// os.write_file(app.file, tb.text) or {}
+	b.ui.window.root_layout.unfocus_all()
 }
 
 fn init(w &ui.Window) {

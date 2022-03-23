@@ -184,15 +184,13 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 
 fn btn_new_click(a voidptr, b &ui.Button) {
 	// println('new')
-	// uic.newfilebrowser_subwindow_visible(b.ui.window)
-	// l := b.ui.window.stack('htb_layout')
 	mut h := uic.hideable_component_from_id(b.ui.window, 'htb')
 	h.toggle()
 }
 
 fn btn_open_click(a voidptr, b &ui.Button) {
 	// println('open')
-	uic.filebrowser_subwindow_visible(b.ui.window)
+	uic.filebrowser_subwindow_visible(b.ui.window, 'fb')
 }
 
 fn btn_save_click(a voidptr, b &ui.Button) {
@@ -207,7 +205,7 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 
 fn btn_open_ok(mut app App, b &ui.Button) {
 	// println('ok')
-	uic.filebrowser_subwindow_close(b.ui.window)
+	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
 	fb := uic.filebrowser_component(b)
 	app.folder_to_open = fb.selected_full_title()
 	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
@@ -216,7 +214,7 @@ fn btn_open_ok(mut app App, b &ui.Button) {
 
 fn btn_open_cancel(mut app App, b &ui.Button) {
 	// println('cancel open')
-	uic.filebrowser_subwindow_close(b.ui.window)
+	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
 	app.folder_to_open = ''
 }
 

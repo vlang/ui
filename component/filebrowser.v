@@ -4,11 +4,6 @@ import gx
 import ui
 import os
 
-const (
-	filebrowser_subwindow_id    = '_sw_filebrowser'
-	newfilebrowser_subwindow_id = '_sw_newfilebrowser'
-)
-
 [heap]
 struct FileBrowserComponent {
 pub mut:
@@ -110,67 +105,4 @@ pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserCompone
 pub fn (fb &FileBrowserComponent) selected_full_title() string {
 	tv := fb.tv
 	return tv.selected_full_title()
-}
-
-// Subwindow
-[params]
-pub struct FileBrowserSubWindowParams {
-	FileBrowserParams
-	x int
-	y int
-}
-
-pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
-	// only once
-	if !ui.Layout(w).has_child_id(component.filebrowser_subwindow_id) {
-		w.subwindows << ui.subwindow(
-			id: component.filebrowser_subwindow_id
-			x: p.x
-			y: p.y
-			layout: filebrowser_stack(p.FileBrowserParams)
-		)
-	}
-}
-
-pub fn filebrowser_subwindow_visible(w &ui.Window) {
-	mut s := w.subwindow(component.filebrowser_subwindow_id)
-	s.set_visible(s.hidden)
-	s.update_layout()
-}
-
-pub fn filebrowser_subwindow_close(w &ui.Window) {
-	mut s := w.subwindow(component.filebrowser_subwindow_id)
-	s.set_visible(false)
-	s.update_layout()
-}
-
-// NewFile Browser
-
-pub fn newfilebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
-	// only once
-	if !ui.Layout(w).has_child_id(component.newfilebrowser_subwindow_id) {
-		p2 := FileBrowserParams{
-			...p.FileBrowserParams
-			with_fpath: true
-			text_ok: 'New'
-		}
-		w.subwindows << ui.subwindow(
-			id: component.newfilebrowser_subwindow_id
-			x: p.x
-			y: p.y
-			layout: filebrowser_stack(p2)
-		)
-	}
-}
-
-pub fn newfilebrowser_subwindow_visible(w &ui.Window) {
-	mut s := w.subwindow(component.newfilebrowser_subwindow_id)
-	s.set_visible(s.hidden)
-	s.update_layout()
-}
-
-pub fn newfilebrowser_subwindow_close(w &ui.Window) {
-	mut s := w.subwindow(component.newfilebrowser_subwindow_id)
-	s.set_visible(false)
-	s.update_layout()
 }

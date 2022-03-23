@@ -26,7 +26,3 @@ pub fn fontchooser_subwindow_visible(w &ui.Window) {
 pub fn fontchooser_subwindow(w &ui.Window) &ui.SubWindow {
 	return w.subwindow(component.fontchooser_subwindow_id)
 }
-
-pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
-	return w.listbox(fontchooser_lb_id)
-}
