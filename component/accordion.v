@@ -38,7 +38,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 		heights = c.heights
 	}
 	mut layout := ui.column(
-		id: ui.component_part_id(c.id, 'layout')
+		id: ui.component_id(c.id, 'layout')
 		widths: [ui.stretch].repeat(c.children.len * 2)
 		heights: heights
 		bg_color: c.bg_color
@@ -80,7 +80,7 @@ pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
 }
 
 pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
-	return accordion_component(w.stack(ui.component_part_id(id, 'layout')))
+	return accordion_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 fn accordion_draw(c &ui.CanvasLayout, state voidptr) {

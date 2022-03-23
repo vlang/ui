@@ -109,7 +109,7 @@ pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
 }
 
 pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
-	return tabs_component(w.stack(ui.component_part_id(id, 'layout')))
+	return tabs_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 fn tabs_init(layout &ui.Stack) {

@@ -76,7 +76,7 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 		children.insert(1, ui.Widget(tb))
 	}
 	mut layout := ui.column(
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		width: p.width
 		height: p.height
 		heights: if p.with_fpath { [ui.stretch, 30, 40] } else { [ui.stretch, 40] }
@@ -99,7 +99,7 @@ pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
 }
 
 pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {
-	return filebrowser_component(w.stack(ui.component_part_id(id, 'layout')))
+	return filebrowser_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 pub fn (fb &FileBrowserComponent) selected_full_title() string {

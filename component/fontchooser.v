@@ -50,7 +50,7 @@ pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
 }
 
 pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {
-	return fontchooser_component(w.stack(ui.component_part_id(id, 'layout')))
+	return fontchooser_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {

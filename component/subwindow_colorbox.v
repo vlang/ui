@@ -5,7 +5,7 @@ import gx
 
 const (
 	colorbox_subwindow_id        = '_sw_cbox'
-	colorbox_subwindow_layout_id = ui.component_part_id('_sw_cbox', 'layout')
+	colorbox_subwindow_layout_id = ui.component_id('_sw_cbox', 'layout')
 )
 
 // Append colorbox to window

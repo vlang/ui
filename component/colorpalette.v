@@ -26,14 +26,14 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	mut layout := match p.direction {
 		.row {
 			ui.row(
-				id: ui.component_part_id(p.id, 'layout')
+				id: ui.component_id(p.id, 'layout')
 				bg_color: gx.black
 				margin_: 5
 			)
 		}
 		.column {
 			ui.column(
-				id: ui.component_part_id(p.id, 'layout')
+				id: ui.component_id(p.id, 'layout')
 				bg_color: gx.black
 				margin_: 5
 			)
@@ -41,11 +41,11 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	}
 	mut palette := []ui.Button{}
 	for i in 0 .. p.ncolors {
-		palette << colorbutton(id: ui.component_part_id(p.id, 'palette$i'), ctrl_mode: true)
+		palette << colorbutton(id: ui.component_id(p.id, 'palette$i'), ctrl_mode: true)
 	}
 	cp := &ColorPaletteComponent{
 		layout: layout
-		colbtn: colorbutton(id: ui.component_part_id(p.id, 'colbtn'), ctrl_mode: true)
+		colbtn: colorbutton(id: ui.component_id(p.id, 'colbtn'), ctrl_mode: true)
 		palette: palette
 		ncolors: p.ncolors
 	}
@@ -78,7 +78,7 @@ pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
 }
 
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {
-	return colorpalette_component(w.stack(ui.component_part_id(id, 'layout')))
+	return colorpalette_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {

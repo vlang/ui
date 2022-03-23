@@ -23,26 +23,26 @@ pub struct GridSettingsParams {
 
 pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	lbl := ui.listbox(
-		id: ui.component_part_id(p.id, 'lb_left')
+		id: ui.component_id(p.id, 'lb_left')
 		ordered: true
 		selectable: false
 		z_index: p.z_index
 	)
 	lbr := ui.listbox(
-		id: ui.component_part_id(p.id, 'lb_right')
+		id: ui.component_id(p.id, 'lb_right')
 		multi: true
 		ordered: true
 		z_index: p.z_index
 	)
 	btn := ui.button(
-		id: ui.component_part_id(p.id, 'btn_sort')
+		id: ui.component_id(p.id, 'btn_sort')
 		text: 'sort'
 		onclick: gs_sort_click
 		radius: .3
 		z_index: p.z_index + 10
 	)
 	mut layout := ui.column(
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		bg_color: p.bg_color
 		margin_: 10
 		spacing: 10
@@ -50,7 +50,7 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 		children: [
 			btn,
 			ui.row(
-				id: ui.component_part_id(p.id, 'row')
+				id: ui.component_id(p.id, 'row')
 				children: [lbl, lbr]
 			),
 		]
@@ -75,7 +75,7 @@ pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
 }
 
 pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
-	return gridsettings_component(w.stack(ui.component_part_id(id, 'layout')))
+	return gridsettings_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 fn gs_sort_click(a voidptr, mut b ui.Button) {

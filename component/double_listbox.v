@@ -41,7 +41,7 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', onclick: doublelistbox_clear)
 	mut layout := ui.row(
 		title: c.title
-		id: ui.component_part_id(c.id, 'layout')
+		id: ui.component_id(c.id, 'layout')
 		widths: [4 * ui.stretch, 2 * ui.stretch, 4 * ui.stretch]
 		heights: ui.stretch
 		spacing: .05
@@ -77,7 +77,7 @@ pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
 }
 
 pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxComponent {
-	return doublelistbox_component(w.stack(ui.component_part_id(id, 'layout')))
+	return doublelistbox_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 // callback

@@ -20,30 +20,30 @@ pub struct DataGridParams {
 
 pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	mut pg := p.GridParams
-	pg.id = ui.component_part_id(p.id, 'grid')
+	pg.id = ui.component_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)
 	// add shortcut
 	mut sc := ui.Shortcutable(g)
 	sc.add_shortcut('ctrl + o', fn (g &GridComponent) {
-		l := g.layout.ui.window.stack(ui.component_part_id(ui.component_id(g.id), 'hideable',
+		l := g.layout.ui.window.stack(ui.component_id(ui.component_parent_id(g.id), 'hideable',
 			'layout'))
 		mut h := hideable_component(l)
 		h.toggle()
 	})
 	gsl := gridsettings_stack(
-		id: ui.component_part_id(p.id, 'gridsettings')
+		id: ui.component_id(p.id, 'gridsettings')
 		grid: g
 		bg_color: p.settings_bg_color
 		z_index: p.settings_z_index
 	)
 	mut gs := gridsettings_component(gsl)
 	mut layout := ui.row(
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		widths: [ui.stretch, ui.stretch * 3]
 		children: [
 			hideable_stack(
-				id: ui.component_part_id(p.id, 'hideable')
+				id: ui.component_id(p.id, 'hideable')
 				layout: gsl
 			),
 			gl,

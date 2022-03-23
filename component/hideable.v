@@ -30,7 +30,7 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 	mut layout := ui.row(
 		widths: ui.stretch
 		heights: ui.stretch
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		children: [p.layout]
 	)
 
@@ -56,7 +56,7 @@ pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
 }
 
 pub fn hideable_component_from_id(w ui.Window, id string) &HideableComponent {
-	return hideable_component(w.stack(ui.component_part_id(id, 'layout')))
+	return hideable_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 fn hideable_init(layout &ui.Stack) {

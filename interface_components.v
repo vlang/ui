@@ -26,12 +26,16 @@ pub fn component_connect(comp voidptr, children ...ComponentChild) {
 }
 
 // to ensure homogeneity for name related to component
-pub fn component_part_id(id string, parts ...string) string {
+pub fn component_id(id string, parts ...string) string {
 	mut part_id := [id]
 	part_id << parts.clone()
 	return part_id.join(':::')
 }
 
-pub fn component_id(part_id string) string {
+pub fn component_parent_id(part_id string) string {
 	return part_id.split(':::')#[..-1].join(':::')
+}
+
+pub fn component_id_from(from_id string, id string) string {
+	return component_id(component_parent_id(from_id), id)
 }

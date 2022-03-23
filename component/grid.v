@@ -83,7 +83,7 @@ mut:
 
 pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		scrollview: p.scrollview
 		is_focused: p.is_focused
 		on_draw: grid_draw
@@ -103,8 +103,8 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		id: p.id
 		layout: layout
 		headers: p.vars.keys()
-		tb_string: ui.textbox(id: ui.component_part_id(p.id, 'tb_ro'))
-		cb_bool: ui.checkbox(id: ui.component_part_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
+		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
+		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -116,7 +116,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 				g.types << .cb_bool
 				g.set_check_nrow(var.len)
 				g.vars << grid_checkbox(
-					id: ui.component_part_id(p.id, 'cb_' + name)
+					id: ui.component_id(p.id, 'cb_' + name)
 					grid: g
 					var: var
 				)
@@ -128,7 +128,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 				g.types << .tb_string
 				g.set_check_nrow(var.len)
 				g.vars << grid_textbox(
-					id: ui.component_part_id(p.id, 'tb_' + name)
+					id: ui.component_id(p.id, 'tb_' + name)
 					grid: g
 					var: var
 				)
@@ -137,17 +137,17 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 				g.types << .dd_factor
 				g.set_check_nrow(var.values.len)
 				dd[name] = ui.dropdown(
-					id: ui.component_part_id(p.id, 'dd_ro_' + name)
+					id: ui.component_id(p.id, 'dd_ro_' + name)
 					texts: var.levels
 				)
 				g.vars << grid_dropdown(
-					id: ui.component_part_id(p.id, 'dd_' + name)
+					id: ui.component_id(p.id, 'dd_' + name)
 					grid: g
 					name: name
 					var: var
 				)
 				mut dd_sel := ui.dropdown(
-					id: ui.component_part_id(p.id, 'dd_sel_' + name)
+					id: ui.component_id(p.id, 'dd_sel_' + name)
 					texts: var.levels
 					on_selection_changed: grid_dd_changed
 				)
@@ -160,7 +160,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	}
 	// textbox selector
 	mut tb_sel := ui.textbox(
-		id: ui.component_part_id(p.id, 'tb_sel')
+		id: ui.component_id(p.id, 'tb_sel')
 		on_entered: grid_tb_entered
 	)
 	// println("tb_sel $tb_sel.id created inside $p.id")
@@ -171,7 +171,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 
 	// checkbox selector
 	mut cb_sel := ui.checkbox(
-		id: ui.component_part_id(p.id, 'cb_sel')
+		id: ui.component_id(p.id, 'cb_sel')
 		on_click: grid_cb_clicked
 	)
 	// println("cb_sel $cb_sel.id created inside $p.id")
@@ -182,7 +182,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 
 	// column bar textbox
 	g.tb_colbar = ui.textbox(
-		id: ui.component_part_id(p.id, 'tb_colbar')
+		id: ui.component_id(p.id, 'tb_colbar')
 		bg_color: gx.light_blue
 		read_only: true
 	)
@@ -190,7 +190,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 
 	// row bar textbox
 	g.tb_rowbar = ui.textbox(
-		id: ui.component_part_id(p.id, 'tb_rowbar')
+		id: ui.component_id(p.id, 'tb_rowbar')
 		bg_color: gx.light_gray
 		read_only: true
 	)
@@ -217,7 +217,7 @@ pub fn grid_component(w ui.ComponentChild) &GridComponent {
 }
 
 pub fn grid_component_from_id(w ui.Window, id string) &GridComponent {
-	return grid_component(w.canvas_layout(ui.component_part_id(id, 'layout')))
+	return grid_component(w.canvas_layout(ui.component_id(id, 'layout')))
 }
 
 fn grid_init(mut layout ui.CanvasLayout) {
@@ -579,7 +579,7 @@ fn (mut g GridComponent) show_selected() {
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
 		.tb_string {
-			id := ui.component_part_id(g.id, 'tb_sel')
+			id := ui.component_id(g.id, 'tb_sel')
 			// println('tb_sel $id selected')
 			mut tb := g.layout.ui.window.textbox(id)
 			tb.set_visible(true)
@@ -598,7 +598,7 @@ fn (mut g GridComponent) show_selected() {
 			tb.bg_color = gx.orange
 		}
 		.dd_factor {
-			id := ui.component_part_id(g.id, 'dd_sel' + '_' + name)
+			id := ui.component_id(g.id, 'dd_sel' + '_' + name)
 			// println('dd_sel $id selected $g.sel_i, $g.sel_j')
 			mut dd := g.layout.ui.window.dropdown(id)
 			dd.set_visible(true)
@@ -614,7 +614,7 @@ fn (mut g GridComponent) show_selected() {
 			dd.bg_color = gx.orange
 		}
 		.cb_bool {
-			id := ui.component_part_id(g.id, 'cb_sel')
+			id := ui.component_id(g.id, 'cb_sel')
 			// println('cb_sel $id selected')
 			mut cb := g.layout.ui.window.checkbox(id)
 			cb.set_visible(true)

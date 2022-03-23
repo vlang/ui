@@ -239,7 +239,7 @@ pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
 }
 
 pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
-	return treeview_component(w.stack(ui.component_part_id(id, 'layout')))
+	return treeview_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 // callbacks

@@ -47,7 +47,7 @@ pub struct RasterViewParams {
 
 pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
-		id: ui.component_part_id(p.id, 'layout')
+		id: ui.component_id(p.id, 'layout')
 		scrollview: true
 		// bg_color: gx.white
 		on_draw: rv_draw
@@ -77,7 +77,7 @@ pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
 }
 
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {
-	return rasterview_component(w.canvas_layout(ui.component_part_id(id, 'layout')))
+	return rasterview_component(w.canvas_layout(ui.component_id(id, 'layout')))
 }
 
 fn rv_init(mut layout ui.CanvasLayout) {

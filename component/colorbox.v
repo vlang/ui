@@ -100,7 +100,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	lb_g := ui.label(text: 'G:')
 	lb_b := ui.label(text: 'B:')
 	mut layout := ui.row(
-		id: ui.component_part_id(c.id, 'layout')
+		id: ui.component_id(c.id, 'layout')
 		width: 30 + 256 + 4 * 10 + component.cb_cv_hsv_w
 		height: 256 + 2 * 10
 		widths: [30.0, 256.0, ui.compact]
@@ -164,7 +164,7 @@ pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
 }
 
 pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {
-	return colorbox_component(w.stack(ui.component_part_id(id, 'layout')))
+	return colorbox_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 // equivalent of init method for widget
