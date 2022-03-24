@@ -39,3 +39,11 @@ pub fn component_parent_id(part_id string) string {
 pub fn component_id_from(from_id string, id string) string {
 	return component_id(component_parent_id(from_id), id)
 }
+
+pub fn component_parent_id_by(part_id string, level int) string {
+	return part_id.split(':::')#[..-level].join(':::')
+}
+
+pub fn component_id_from_by(from_id string, level int, id string) string {
+	return component_id(component_parent_id_by(from_id, level), id)
+}

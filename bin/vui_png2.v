@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+// import gx
 import os
 
 const (
@@ -64,6 +64,36 @@ fn main() {
 					layout: uic.menufile_stack(
 						id: 'menu'
 						dirs: dirs
+						on_file_changed: fn (mut mf uic.MenuFileComponent) {
+							// println("hello $mf.file")
+							if os.file_ext(mf.file) == '.png' {
+								mf.layout.ui.window.set_title('V UI Png Edit: $mf.file')
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.load_image(mf.file)
+								colors := rv.top_colors()
+								mut cp := uic.colorpalette_component_from_id(mf.layout.ui.window,
+									'palette')
+								cp.update_colors(colors)
+							}
+						}
+						on_new: fn (mf &uic.MenuFileComponent) {
+							// println("new $mf.file!!!")
+							if os.file_ext(mf.file) == '.png' {
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.new_image()
+							}
+						}
+						on_save: fn (mf &uic.MenuFileComponent) {
+							// println("save $mf.file")
+							if os.file_ext(mf.file) == '.png' {
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.save_image_to(mf.file)
+								mf.layout.ui.window.root_layout.unfocus_all()
+							}
+						}
 					)
 				),
 					uic.rasterview_canvaslayout(
@@ -91,84 +121,6 @@ fn main() {
 	uic.colorbox_subwindow_add(mut window)
 	ui.run(window)
 }
-
-// fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
-// 	selected := c.id
-// 	mut app := &App(c.ui.window.state)
-// 	app.file = tv.full_title(selected)
-// 	// app.text = os.read_file(app.file) or { '' }
-// 	if os.file_ext(app.file) == '.png' {
-// 		app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
-// 		mut rv := uic.rasterview_component_from_id(app.window, 'rv')
-// 		rv.load(app.file)
-// 		colors := rv.top_colors()
-// 		// println("$app.file")
-// 		// println(colors)
-// 		mut cp := uic.colorpalette_component_from_id(app.window, 'palette')
-// 		cp.update_colors(colors)
-// 	}
-// }
-
-// // New
-// fn btn_new_click(a voidptr, b &ui.Button) {
-// 	// println('new')
-// 	mut h := uic.hideable_component_from_id(b.ui.window, 'htb')
-// 	h.toggle()
-// }
-
-// fn btn_new_ok(mut app App, b &ui.Button) {
-// 	// // println('ok new')
-// 	// tb := b.ui.window.textbox('tb')
-// 	// mut h := uic.hideable_component_from_id(b.ui.window, "htb")
-// 	// mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
-// 	// if dtv.sel_id != '' {
-// 	// 	sel_path := dtv.selected_full_title()
-// 	// 	app.folder_to_open = if dtv.types[dtv.sel_id] == 'root' {
-// 	// 		sel_path
-// 	// 	} else {
-// 	// 		os.dir(sel_path)
-// 	// 	}
-// 	// 	app.file = os.join_path(app.folder_to_open, *tb.text)
-// 	// 	// println("open folder: ${app.folder_to_open}, new file: ${app.file}")
-// 	// 	os.write_file(app.file, '') or {}
-// 	// 	dtv.open(app.folder_to_open)
-// 	// }
-// 	// h.hide()
-// }
-
-// // OPen folder
-// fn btn_open_click(a voidptr, b &ui.Button) {
-// 	// // println('open')
-// 	uic.filebrowser_subwindow_visible(b.ui.window, 'fb')
-// }
-
-// fn btn_open_ok(mut app App, b &ui.Button) {
-// 	// println('ok')
-// 	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
-// 	fb := uic.filebrowser_component(b)
-// 	app.folder_to_open = fb.selected_full_title()
-// 	mut dtv := uic.treeview_by_id(b.ui.window, 'dtv')
-// 	dtv.open(app.folder_to_open)
-// }
-
-// fn btn_open_cancel(mut app App, b &ui.Button) {
-// 	// println('cancel open')
-// 	uic.filebrowser_subwindow_close(b.ui.window, 'fb')
-// 	app.folder_to_open = ''
-// }
-
-// // Save file
-// fn btn_save_click(app &App, b &ui.Button) {
-// 	// // println("save")
-// 	mut rv := uic.rasterview_component_from_id(b.ui.window, 'rv')
-// 	rv.save_to(app.file)
-// 	// tb := b.ui.window.textbox('edit')
-// 	// // println("text: <${*tb.text}>")
-// 	// mut app := &App(b.ui.window.state)
-// 	// // println(tb.text)
-// 	// os.write_file(app.file, tb.text) or {}
-// 	b.ui.window.root_layout.unfocus_all()
-// }
 
 fn init(w &ui.Window) {
 	// add shortcut for hmenu

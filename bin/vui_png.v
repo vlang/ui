@@ -173,7 +173,7 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	if os.file_ext(app.file) == '.png' {
 		app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
 		mut rv := uic.rasterview_component_from_id(app.window, 'rv')
-		rv.load(app.file)
+		rv.load_image(app.file)
 		colors := rv.top_colors()
 		// println("$app.file")
 		// println(colors)
@@ -234,7 +234,7 @@ fn btn_open_cancel(mut app App, b &ui.Button) {
 fn btn_save_click(app &App, b &ui.Button) {
 	// // println("save")
 	mut rv := uic.rasterview_component_from_id(b.ui.window, 'rv')
-	rv.save_to(app.file)
+	rv.save_image_to(app.file)
 	// tb := b.ui.window.textbox('edit')
 	// // println("text: <${*tb.text}>")
 	// mut app := &App(b.ui.window.state)

@@ -2,13 +2,17 @@ module component
 
 import ui
 import gx
+import os
 
 pub type MenuFileFn = fn (&MenuFileComponent)
 
 [heap]
 struct MenuFileComponent {
+pub mut:
 	layout          &ui.Stack
 	hidden_files    bool
+	file            string
+	folder_to_open  string
 	on_save         MenuFileFn
 	on_new          MenuFileFn
 	on_file_changed MenuFileFn
@@ -53,7 +57,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 		z_index: 10
 	)
 
-	layout := ui.column(
+	mut layout := ui.column(
 		id: ui.component_id(p.id, 'layout')
 		heights: [40.0, 30.0, ui.stretch]
 		spacing: 5
@@ -82,7 +86,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 						z_index: 10
 					),
 						ui.button(
-							id: ui.component_id(p.id, 'tb_ok')
+							id: ui.component_id(p.id, 'tb_new_ok')
 							text: 'Ok'
 							z_index: 10
 							radius: 5
@@ -100,7 +104,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 					id: ui.component_id(p.id, 'dtv')
 					trees: p.dirs
 					hidden_files: p.hidden_files
-					///on_click: treeview_onclick
+					on_click: treeview_onclick
 				)]
 			),
 		]
@@ -112,6 +116,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 		on_file_changed: p.on_file_changed
 	}
 	ui.component_connect(mf, layout, btn_savefile)
+	layout.component_init = menufile_init
 	return layout
 }
 
@@ -128,8 +133,9 @@ pub fn menufile_component_from_id(w ui.Window, id string) &MenuFileComponent {
 
 pub fn menufile_init(layout &ui.Stack) {
 	mut window := layout.ui.window
+	println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
 	filebrowser_subwindow_add(mut window,
-		id: ui.component_id(ui.component_parent_id(layout.id), 'fb')
+		id: ui.component_id_from(layout.id, 'fb')
 		folder_only: true
 		width: 400
 		height: 300
@@ -144,25 +150,12 @@ pub fn menufile_init(layout &ui.Stack) {
 // treeview
 fn treeview_onclick(c &ui.CanvasLayout, mut tv TreeViewComponent) {
 	selected := c.id
-	// mut app := &App(c.ui.window.state)
-	// app.file = tv.full_title(selected)
-	// app.text = os.read_file(app.file) or { '' }
 
-	mf := menufile_component_from_id(c.ui.window, ui.component_parent_id(tv.id))
+	mut mf := menufile_component_from_id(c.ui.window, ui.component_parent_id(tv.id))
+	mf.file = tv.full_title(selected)
 	if mf.on_file_changed != MenuFileFn(0) {
 		mf.on_file_changed(mf)
 	}
-
-	// if os.file_ext(app.file) == '.png' {
-	// 	app.window.set_title('V UI Png Edit: ${tv.titles[selected]}')
-	// 	mut rv := uic.rasterview_component_from_id(app.window, 'rv')
-	// 	rv.load(app.file)
-	// 	colors := rv.top_colors()
-	// 	// println("$app.file")
-	// 	// println(colors)
-	// 	mut cp := uic.colorpalette_component_from_id(app.window, 'palette')
-	// 	cp.update_colors(colors)
-	// }
 }
 
 // New
@@ -175,22 +168,20 @@ fn btn_new_click(a voidptr, b &ui.Button) {
 
 fn btn_new_ok(a voidptr, b &ui.Button) {
 	// // println('ok new')
-	// tb := b.ui.window.textbox('tb')
-	// mut h := hideable_component_from_id(b.ui.window, "htb")
-	// mut dtv := treeview_by_id(b.ui.window, 'dtv')
-	// if dtv.sel_id != '' {
-	// 	sel_path := dtv.selected_full_title()
-	// 	app.folder_to_open = if dtv.types[dtv.sel_id] == 'root' {
-	// 		sel_path
-	// 	} else {
-	// 		os.dir(sel_path)
-	// 	}
-	// 	app.file = os.join_path(app.folder_to_open, *tb.text)
-	// 	// println("open folder: ${app.folder_to_open}, new file: ${app.file}")
-	// 	os.write_file(app.file, '') or {}
-	// 	dtv.open(app.folder_to_open)
-	// }
-	// h.hide()
+	mf_id := ui.component_parent_id(b.id)
+	tb := b.ui.window.textbox(ui.component_id(mf_id, 'tb'))
+	mut h := hideable_component_from_id(b.ui.window, ui.component_id(mf_id, 'htb'))
+	mut dtv := treeview_by_id(b.ui.window, ui.component_id(mf_id, 'dtv'))
+	if dtv.sel_id != '' {
+		mut mf := menufile_component_from_id(b.ui.window, mf_id)
+		sel_path := dtv.selected_full_title()
+		mf.folder_to_open = if dtv.types[dtv.sel_id] == 'root' { sel_path } else { os.dir(sel_path) }
+		mf.file = os.join_path(mf.folder_to_open, *tb.text)
+		if mf.on_new != MenuFileFn(0) {
+			mf.on_new(mf)
+		}
+	}
+	h.hide()
 }
 
 // Open folder
@@ -201,29 +192,27 @@ fn btn_open_click(a voidptr, b &ui.Button) {
 
 fn btn_open_ok(a voidptr, b &ui.Button) {
 	// println('ok')
-	filebrowser_subwindow_close(b.ui.window, ui.component_id_from(b.id, 'fb'))
+	filebrowser_subwindow_close(b.ui.window, ui.component_parent_id(b.id))
 	fb := filebrowser_component(b)
-	// app.folder_to_open = fb.selected_full_title()
-	mut dtv := treeview_by_id(b.ui.window, ui.component_id_from(b.id, 'dtv'))
-	// dtv.open(app.folder_to_open)
+	mut dtv := treeview_by_id(b.ui.window, ui.component_id_from_by(b.id, 2, 'dtv'))
+	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
+		2))
+	mf.folder_to_open = fb.selected_full_title()
+	dtv.open(mf.folder_to_open)
 }
 
 fn btn_open_cancel(a voidptr, b &ui.Button) {
 	// println('cancel open')
-	filebrowser_subwindow_close(b.ui.window, ui.component_id_from(b.id, 'fb'))
-	// app.folder_to_open = ''
+	filebrowser_subwindow_close(b.ui.window, ui.component_parent_id(b.id))
+	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
+		2))
+	mf.folder_to_open = ''
 }
 
 // Save file
 fn btn_save_click(a voidptr, b &ui.Button) {
-	// ui.component_parent_id(ui.menufile_component(b).id)
-	// // // println("save")
-	// mut rv := rasterview_component_from_id(b.ui.window, 'rv')
-	// rv.save_to(app.file)
-	// // tb := b.ui.window.textbox('edit')
-	// // // println("text: <${*tb.text}>")
-	// // mut app := &App(b.ui.window.state)
-	// // // println(tb.text)
-	// // os.write_file(app.file, tb.text) or {}
-	// b.ui.window.root_layout.unfocus_all()
+	mf := menufile_component_from_id(b.ui.window, ui.component_parent_id(b.id))
+	if mf.on_save != MenuFileFn(0) {
+		mf.on_save(mf)
+	}
 }

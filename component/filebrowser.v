@@ -34,21 +34,21 @@ pub struct FileBrowserParams {
 
 pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 	btn_cancel := ui.button(
-		id: '${p.id}_btn_cancel'
+		id: ui.component_id(p.id, 'btn_cancel')
 		text: p.text_cancel
 		radius: 5
 		z_index: 100
 		onclick: p.on_click_cancel
 	)
 	btn_ok := ui.button(
-		id: '${p.id}_btn_ok'
+		id: ui.component_id(p.id, 'btn_ok')
 		text: p.text_ok
 		radius: 5
 		z_index: 100
 		onclick: p.on_click_ok
 	)
 	tv_layout := dirtreeview_stack(
-		id: '${p.id}_tvd'
+		id: ui.component_id(p.id, 'tvd')
 		trees: p.dirs
 		folder_only: p.folder_only
 		filter_types: p.filter_types
@@ -56,14 +56,14 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 	)
 	mut children := [
 		ui.Widget(ui.column(
-			id: '${p.id}_tvd_col'
+			id: ui.component_id(p.id, 'tvd_col')
 			scrollview: true
 			// heights: ui.compact
 			bg_color: p.bg_color
 			children: [tv_layout]
 		)),
 		ui.Widget(ui.row(
-			id: '${p.id}_btns_row'
+			id: ui.component_id(p.id, 'btns_row')
 			widths: [ui.stretch, 50, ui.stretch, 50, ui.stretch]
 			heights: 30.0
 			margin_: 5
@@ -72,7 +72,7 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 		)),
 	]
 	if p.with_fpath {
-		tb := ui.textbox(id: '${p.id}_tb', placeholder: 'File path...')
+		tb := ui.textbox(id: ui.component_id(p.id, 'tb'), placeholder: 'File path...')
 		children.insert(1, ui.Widget(tb))
 	}
 	mut layout := ui.column(

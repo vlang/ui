@@ -137,6 +137,15 @@ fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {
 }
 
 fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
+	// TODO: to fix
+	mut rv := rasterview_component(c)
+	x, y := c.abs_pos(e.x, e.y)
+	// println("scrolllll ($e.x, $e.y) ($x, $y) ")
+	if rv.point_inside(x, y) {
+		rv.cur_i, rv.cur_j = rv.get_index_pos(x, y)
+	} else {
+		rv.cur_i, rv.cur_j = -1, -1
+	}
 }
 
 fn rv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
@@ -286,7 +295,10 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 	// println('i: ($rv.from_i, $rv.to_i, $rv.from_y)  j: ($rv.from_j, $rv.to_j, $rv.from_x)')
 }
 
-pub fn (mut rv RasterViewComponent) load(path string) {
+pub fn (mut rv RasterViewComponent) new_image() {
+}
+
+pub fn (mut rv RasterViewComponent) load_image(path string) {
 	if !os.exists(path) {
 		return
 	}
@@ -301,7 +313,7 @@ pub fn (mut rv RasterViewComponent) load(path string) {
 	rv.layout.update_layout()
 }
 
-pub fn (mut rv RasterViewComponent) save_to(path string) {
+pub fn (mut rv RasterViewComponent) save_image_to(path string) {
 	stbi.stbi_write_png(path, rv.width, rv.height, rv.channels, rv.data.data, rv.width * rv.channels) or {
 		panic(err)
 	}

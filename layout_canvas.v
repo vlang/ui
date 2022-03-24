@@ -129,6 +129,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		mouse_down_fn: c.on_mouse_down
 		mouse_up_fn: c.on_mouse_up
 		key_down_fn: c.on_key_down
+		scroll_fn: c.on_scroll
 		full_size_fn: c.full_size_fn
 		char_fn: c.on_char
 		on_scroll_change: c.on_scroll_change
@@ -304,7 +305,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 }
 
 fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
-	if c.scroll_fn != voidptr(0) {
+	if c.scroll_fn != CanvasLayoutScrollFn(0) {
 		e2 := ScrollEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
