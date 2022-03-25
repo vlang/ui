@@ -6,6 +6,7 @@ import gg
 import math
 import os
 import stbi
+import regex
 
 [heap]
 struct RasterViewComponent {
@@ -32,6 +33,8 @@ pub mut:
 	to_i   int
 	from_j int
 	to_j   int
+	// current color
+	color gx.Color = gx.black
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
@@ -152,6 +155,9 @@ fn rv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	// println("move: ${int(e.x)}, ${int(e.y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
 	if rv.point_inside(int(e.x), int(e.y)) {
 		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.x), int(e.y))
+		if ui.shift_key(c.ui.keymods) {
+			rv.set_pixel(rv.cur_i, rv.cur_j, rv.color)
+		}
 	} else {
 		rv.cur_i, rv.cur_j = -1, -1
 	}
@@ -296,6 +302,8 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 }
 
 pub fn (mut rv RasterViewComponent) new_image() {
+	rv.channels = 4
+	rv.data = []byte{len: rv.width * rv.height * rv.channels}
 }
 
 pub fn (mut rv RasterViewComponent) load_image(path string) {
@@ -316,5 +324,19 @@ pub fn (mut rv RasterViewComponent) load_image(path string) {
 pub fn (mut rv RasterViewComponent) save_image_as(path string) {
 	stbi.stbi_write_png(path, rv.width, rv.height, rv.channels, rv.data.data, rv.width * rv.channels) or {
 		panic(err)
+	}
+}
+
+pub fn (mut rv RasterViewComponent) extract_size(pngfile string) {
+	query := r'.*\-(?P<width>\d+)x?(?P<height>\d+)?\.png'
+	mut re := regex.regex_opt(query) or { panic(err) }
+	re.match_string(pngfile)
+	w := re.get_group_by_name(pngfile, 'width').int()
+	if w > 0 {
+		mut h := re.get_group_by_name(pngfile, 'height').int()
+		if h == 0 {
+			h = w
+		}
+		rv.width, rv.height = w, h
 	}
 }

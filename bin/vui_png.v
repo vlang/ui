@@ -10,11 +10,7 @@ const (
 
 struct App {
 mut:
-	window         &ui.Window
-	text           string
-	file           string
-	folder_to_open string
-	line_numbers   bool
+	window &ui.Window
 }
 
 fn main() {
@@ -28,15 +24,6 @@ fn main() {
 		hidden_files = (args[0] in ['-H', '--hidden-files'])
 	}
 	if hidden_files {
-		args = args#[1..]
-	}
-	app.line_numbers = true
-	if args.len > 0 {
-		if args[0] in ['-L', '--no-line-number'] {
-			app.line_numbers = false
-		}
-	}
-	if app.line_numbers {
 		args = args#[1..]
 	}
 	mut dirs := args.clone()
@@ -78,11 +65,15 @@ fn main() {
 							}
 						}
 						on_new: fn (mf &uic.MenuFileComponent) {
-							// println("new $mf.file!!!")
+							//
+							println('new $mf.file!!!')
 							if os.file_ext(mf.file) == '.png' {
+								// create image
 								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
 									'rv')
+								rv.extract_size(mf.file)
 								rv.new_image()
+								rv.save_image_as(mf.file)
 							}
 						}
 						on_save: fn (mf &uic.MenuFileComponent) {
@@ -125,4 +116,7 @@ fn init(w &ui.Window) {
 	})
 	// At first hmenu open
 	// uic.hideable_show(w, 'hpalette')
+	mut cp := uic.colorpalette_component_from_id(w, 'palette')
+	rv := uic.rasterview_component_from_id(w, 'rv')
+	cp.connect_color(&rv.color)
 }

@@ -784,9 +784,11 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		}
 		drag_child_dropped(mut window)
 	}
+	mut gui := unsafe { ui }
+	gui.keymods = KeyMod(0)
 }
 
-// OBSOLETE
+// OBSOLETE see window_click_or_touch_pad
 /*
 fn window_click(event gg.Event, mut ui UI) {
 	window := ui.window
@@ -892,11 +894,10 @@ fn window_click_or_touch_tap(event gg.Event, ui &UI) {
 	} else {
 		window.eventbus.publish(events.on_click, window, e)
 	}
+
+	mut gui := unsafe { ui }
 	if int(event.mouse_button) < 3 {
-		unsafe {
-			mut gui := ui
-			gui.btn_down[int(event.mouse_button)] = false
-		}
+		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 

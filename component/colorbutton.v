@@ -5,11 +5,11 @@ import gx
 
 type ColorButtonFn = fn (b &ColorButtonComponent)
 
+[heap]
 struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button
 	bg_color   gx.Color = gx.white
-	ctrl_mode  bool
 	on_click   ColorButtonFn
 	on_changed ColorButtonFn
 }
@@ -26,7 +26,6 @@ pub struct ColorButtonParams {
 	radius       f64     = .25
 	padding      f64
 	bg_color     &gx.Color = 0
-	ctrl_mode    bool
 	on_click     ColorButtonFn
 	on_changed   ColorButtonFn
 }
@@ -43,11 +42,10 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 		onclick: colorbutton_click
 		radius: f32(c.radius)
 		padding: f32(c.padding)
-		ui: 0
+		// ui: 0
 	}
 	cbc := &ColorButtonComponent{
 		widget: b
-		ctrl_mode: c.ctrl_mode
 		on_click: c.on_click
 		on_changed: c.on_changed
 	}
@@ -69,9 +67,9 @@ pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonCompone
 
 fn colorbutton_click(a voidptr, mut b ui.Button) {
 	cbc := colorbutton_component(b)
-	// println("here $cbc.ctrl_mode $b.ui.keymods")
-	if !cbc.ctrl_mode || ui.ctrl_key(b.ui.keymods) {
-		colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, true)
+	// println("here $b.ui.keymods")
+	if b.ui.btn_down[1] {
+		colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .toggle)
 		// move only if s.x and s.y == 0 first use
 		mut s := b.ui.window.subwindow(colorbox_subwindow_id)
 		if s.x == 0 && s.y == 0 {
@@ -79,10 +77,10 @@ fn colorbutton_click(a voidptr, mut b ui.Button) {
 			s.set_pos(b.x + w / 2, b.y + h / 2)
 			s.update_layout()
 		}
-	} else if cbc.ctrl_mode {
+	} else {
 		mut s := b.ui.window.subwindow(colorbox_subwindow_id)
 		if s.is_visible() {
-			colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, false)
+			colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .show)
 		}
 	}
 	// on_click initialization if necessary

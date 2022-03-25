@@ -9,8 +9,8 @@ struct ColorPaletteComponent {
 pub mut:
 	layout  &ui.Stack  // required
 	colbtn  &ui.Button // current
-	palette []ui.Button
 	ncolors int
+	color   &gx.Color = 0
 }
 
 [params]
@@ -23,51 +23,53 @@ pub struct ColorPaletteParams {
 }
 
 pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
+	colbtn := colorbutton(id: ui.component_id(p.id, 'colbtn'), on_click: colorpalette_click)
+	mut children := []ui.Widget{}
+	children << [colbtn, ui.spacing()]
+	for i in 0 .. p.ncolors {
+		cb := colorbutton(id: ui.component_id(p.id, 'palette$i'), on_click: colorpalette_click)
+		children << cb
+	}
+	mut sizes := [f64(30), 10]
+	sizes << [f64(30)].repeat(p.ncolors)
+
 	mut layout := match p.direction {
 		.row {
 			ui.row(
 				id: ui.component_id(p.id, 'layout')
 				bg_color: gx.black
+				widths: sizes
 				margin_: 5
+				children: children
 			)
 		}
 		.column {
 			ui.column(
 				id: ui.component_id(p.id, 'layout')
 				bg_color: gx.black
+				heights: sizes
 				margin_: 5
+				children: children
 			)
 		}
 	}
-	mut palette := []ui.Button{}
-	for i in 0 .. p.ncolors {
-		palette << colorbutton(id: ui.component_id(p.id, 'palette$i'), ctrl_mode: true)
-	}
 	cp := &ColorPaletteComponent{
 		layout: layout
-		colbtn: colorbutton(id: ui.component_id(p.id, 'colbtn'), ctrl_mode: true)
-		palette: palette
+		colbtn: colbtn
 		ncolors: p.ncolors
 	}
-	layout.children = [cp.colbtn, ui.spacing()]
-	// Weird: for v in palette {layout.children << v} fails
-	// Also layout.children << palette
-	// unsafe { layout.children << palette }
-	for i, _ in palette {
-		layout.children << palette[i]
-	}
 
-	match p.direction {
-		.row {
-			layout.widths = [f32(30), 10]
-			layout.widths << [f32(30)].repeat(cp.ncolors)
-		}
-		.column {
-			layout.heights = [f32(30), 10]
-			layout.heights << [f32(30)].repeat(cp.ncolors)
-		}
-	}
-	layout.spacings = [f32(2)].repeat(cp.ncolors + 1)
+	// match p.direction {
+	// 	.row {
+	// 		layout.widths = [f32(30), 10]
+	// 		layout.widths << [f32(30)].repeat(cp.ncolors)
+	// 	}
+	// 	.column {
+	// 		layout.heights = [f32(30), 10]
+	// 		layout.heights << [f32(30)].repeat(cp.ncolors)
+	// 	}
+	// }
+	// layout.spacings = [f32(2)].repeat(cp.ncolors + 1)
 	ui.component_connect(cp, layout)
 	return layout
 }
@@ -78,11 +80,29 @@ pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
 }
 
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {
-	return colorpalette_component(w.stack(ui.component_id(id, 'layout')))
+	cp := colorpalette_component(w.stack(ui.component_id(id, 'layout')))
+	return cp
 }
 
 pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 	for i in 0 .. math.min(cp.ncolors, colors.len) {
-		(*cp.palette[i].bg_color) = colors[i]
+		child := cp.layout.children[i + 2]
+		if child is ui.Button {
+			mut cb := colorbutton_component_from_id(cp.layout.ui.window, child.id)
+			cb.bg_color = colors[i]
+		}
+	}
+}
+
+pub fn (mut cp ColorPaletteComponent) connect_color(color &gx.Color) {
+	unsafe {
+		cp.color = color
+	}
+}
+
+pub fn colorpalette_click(cb &ColorButtonComponent) {
+	mut cp := colorpalette_component_from_id(cb.widget.ui.window, ui.component_parent_id(cb.widget.id))
+	unsafe {
+		*(cp.color) = cb.bg_color
 	}
 }

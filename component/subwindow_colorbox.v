@@ -19,8 +19,14 @@ pub fn colorbox_subwindow_add(mut w ui.Window) {
 	}
 }
 
+pub enum ShowMode {
+	show
+	hide
+	toggle
+}
+
 // to connect the colorbox to gx.Color reference
-pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, toogle bool) {
+pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, show ShowMode) {
 	mut s := w.subwindow(component.colorbox_subwindow_id)
 	cb_layout := w.stack(component.colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)
@@ -34,8 +40,10 @@ pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButt
 		// println("connect ${colbtn.widget.id} ${colbtn.on_changed != ColorButtonChangedFn(0)}")
 		cb.connect_colorbutton(colbtn)
 	}
-	if toogle {
-		s.set_visible(s.hidden)
-	}
+	s.set_visible(match show {
+		.toggle { s.hidden }
+		.show { true }
+		.hide { false }
+	})
 	s.update_layout()
 }
