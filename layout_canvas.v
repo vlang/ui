@@ -307,8 +307,10 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 	if c.scroll_fn != CanvasLayoutScrollFn(0) {
 		e2 := ScrollEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			mouse_x: e.mouse_x - c.x - c.offset_x
+			mouse_y: e.mouse_y - c.y - c.offset_y
+			x: e.x
+			y: e.y
 		}
 		c.scroll_fn(e2, c)
 	}

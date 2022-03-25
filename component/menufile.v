@@ -9,10 +9,12 @@ pub type MenuFileFn = fn (&MenuFileComponent)
 [heap]
 struct MenuFileComponent {
 pub mut:
+	id              string
 	layout          &ui.Stack
 	hidden_files    bool
 	file            string
 	folder_to_open  string
+	item_selected   string
 	on_save         MenuFileFn
 	on_new          MenuFileFn
 	on_file_changed MenuFileFn
@@ -110,6 +112,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 		]
 	)
 	mf := &MenuFileComponent{
+		id: p.id
 		layout: layout
 		on_save: p.on_save
 		on_new: p.on_new
@@ -127,6 +130,10 @@ pub fn menufile_component(w ui.ComponentChild) &MenuFileComponent {
 
 pub fn menufile_component_from_id(w ui.Window, id string) &MenuFileComponent {
 	return menufile_component(w.stack(ui.component_id(id, 'layout')))
+}
+
+pub fn (mf &MenuFileComponent) treeview_component() &TreeViewComponent {
+	return treeview_component_from_id(mf.layout.ui.window, ui.component_id(mf.id, 'dtv'))
 }
 
 // Init
@@ -149,10 +156,9 @@ pub fn menufile_init(layout &ui.Stack) {
 
 // treeview
 fn treeview_onclick(c &ui.CanvasLayout, mut tv TreeViewComponent) {
-	selected := c.id
-
 	mut mf := menufile_component_from_id(c.ui.window, ui.component_parent_id(tv.id))
-	mf.file = tv.full_title(selected)
+	mf.item_selected = c.id
+	mf.file = tv.full_title(mf.item_selected)
 	if mf.on_file_changed != MenuFileFn(0) {
 		mf.on_file_changed(mf)
 	}
@@ -171,7 +177,7 @@ fn btn_new_ok(a voidptr, b &ui.Button) {
 	mf_id := ui.component_parent_id(b.id)
 	tb := b.ui.window.textbox(ui.component_id(mf_id, 'tb'))
 	mut h := hideable_component_from_id(b.ui.window, ui.component_id(mf_id, 'htb'))
-	mut dtv := treeview_by_id(b.ui.window, ui.component_id(mf_id, 'dtv'))
+	mut dtv := treeview_component_from_id(b.ui.window, ui.component_id(mf_id, 'dtv'))
 	if dtv.sel_id != '' {
 		mut mf := menufile_component_from_id(b.ui.window, mf_id)
 		sel_path := dtv.selected_full_title()
@@ -180,6 +186,7 @@ fn btn_new_ok(a voidptr, b &ui.Button) {
 		if mf.on_new != MenuFileFn(0) {
 			mf.on_new(mf)
 		}
+		dtv.open(mf.folder_to_open)
 	}
 	h.hide()
 }
@@ -194,7 +201,8 @@ fn btn_open_ok(a voidptr, b &ui.Button) {
 	// println('ok')
 	filebrowser_subwindow_close(b.ui.window, ui.component_parent_id(b.id))
 	fb := filebrowser_component(b)
-	mut dtv := treeview_by_id(b.ui.window, ui.component_id_from_by(b.id, 2, 'dtv'))
+	mut dtv := treeview_component_from_id(b.ui.window, ui.component_id_from_by(b.id, 2,
+		'dtv'))
 	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
 		2))
 	mf.folder_to_open = fb.selected_full_title()
@@ -215,4 +223,5 @@ fn btn_save_click(a voidptr, b &ui.Button) {
 	if mf.on_save != MenuFileFn(0) {
 		mf.on_save(mf)
 	}
+	b.ui.window.root_layout.unfocus_all()
 }

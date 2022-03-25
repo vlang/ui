@@ -5,9 +5,8 @@ import gx
 import os
 
 const (
-	treeview_layout_id = '_cvl_treeview'
-	tree_sep           = ':'
-	root_sep           = '_|||_'
+	tree_sep = ':'
+	root_sep = '_|||_'
 )
 
 type TreeItem = Tree | string
@@ -168,7 +167,7 @@ pub struct TreeViewParams {
 
 pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	mut layout := ui.column(
-		id: c.id + component.treeview_layout_id
+		id: ui.component_id(c.id, 'layout')
 		widths: [ui.compact]
 		heights: [ui.compact]
 		bg_color: c.bg_color
@@ -404,15 +403,6 @@ pub fn (mut tv TreeViewComponent) open(folder string) {
 }
 
 // tools
-
-pub fn treeview_layout_id(id string) string {
-	return id + component.treeview_layout_id
-}
-
-pub fn treeview_by_id(w &ui.Window, id string) &TreeViewComponent {
-	tv_layout := w.stack(treeview_layout_id(id))
-	return treeview_component(tv_layout)
-}
 
 pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tree {
 	mut files := os.ls(fpath) or { [] }

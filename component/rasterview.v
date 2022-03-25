@@ -139,10 +139,9 @@ fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {
 fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
 	// TODO: to fix
 	mut rv := rasterview_component(c)
-	x, y := c.abs_pos(e.x, e.y)
-	// println("scrolllll ($e.x, $e.y) ($x, $y) ")
-	if rv.point_inside(x, y) {
-		rv.cur_i, rv.cur_j = rv.get_index_pos(x, y)
+	// println("scroll: ${int(e.mouse_x)}, ${int(e.mouse_y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
+	if rv.point_inside(int(e.mouse_x), int(e.mouse_y)) {
+		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.mouse_x), int(e.mouse_y))
 	} else {
 		rv.cur_i, rv.cur_j = -1, -1
 	}
@@ -150,6 +149,7 @@ fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
 
 fn rv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	mut rv := rasterview_component(c)
+	// println("move: ${int(e.x)}, ${int(e.y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
 	if rv.point_inside(int(e.x), int(e.y)) {
 		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.x), int(e.y))
 	} else {
@@ -313,7 +313,7 @@ pub fn (mut rv RasterViewComponent) load_image(path string) {
 	rv.layout.update_layout()
 }
 
-pub fn (mut rv RasterViewComponent) save_image_to(path string) {
+pub fn (mut rv RasterViewComponent) save_image_as(path string) {
 	stbi.stbi_write_png(path, rv.width, rv.height, rv.channels, rv.data.data, rv.width * rv.channels) or {
 		panic(err)
 	}
