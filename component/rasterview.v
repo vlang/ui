@@ -8,6 +8,8 @@ import os
 import stbi
 import regex
 
+type RasterViewFn = fn (rv &RasterViewComponent)
+
 [heap]
 struct RasterViewComponent {
 pub mut:
@@ -38,6 +40,8 @@ pub mut:
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
+	// callback
+	on_click RasterViewFn
 }
 
 [params]
@@ -46,6 +50,7 @@ pub struct RasterViewParams {
 	width    int = 16
 	height   int = 16
 	channels int = 4
+	on_click RasterViewFn = RasterViewFn(0)
 }
 
 pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
@@ -69,6 +74,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		height: p.height
 		channels: p.channels
 		data: []byte{len: p.width * p.height * p.channels}
+		on_click: p.on_click
 	}
 	ui.component_connect(rv, layout)
 	layout.component_init = rv_init
@@ -131,6 +137,9 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	mut rv := rasterview_component(c)
 	rv.sel_i, rv.sel_j = rv.get_index_pos(e.x, e.y)
+	if rv.on_click != RasterViewFn(0) {
+		rv.on_click(rv)
+	} 
 }
 
 fn rv_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {
@@ -192,7 +201,7 @@ fn (rv &RasterViewComponent) get_index_pos(x int, y int) (int, int) {
 	return sel_i, sel_j
 }
 
-fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
+pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
 	k := (i * rv.width + j) * rv.channels
 	if rv.channels == 4 {
 		return gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
@@ -202,7 +211,7 @@ fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
 	return ui.no_color
 }
 
-fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
+pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
 	k := (i * rv.width + j) * rv.channels
 	if rv.channels == 4 {
 		rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3] = color.r, color.g, color.b, color.a

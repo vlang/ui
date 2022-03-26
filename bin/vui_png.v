@@ -89,6 +89,10 @@ fn main() {
 				),
 					uic.rasterview_canvaslayout(
 						id: 'rv'
+						on_click: fn (rv &uic.RasterViewComponent) {
+							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window, "palette")
+							cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
+						}
 					),
 					uic.hideable_stack(
 						id: 'hpalette'

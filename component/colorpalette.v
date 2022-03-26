@@ -37,7 +37,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		.row {
 			ui.row(
 				id: ui.component_id(p.id, 'layout')
-				bg_color: gx.black
+				bg_color: ui.no_color
 				widths: sizes
 				margin_: 5
 				children: children
@@ -46,7 +46,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		.column {
 			ui.column(
 				id: ui.component_id(p.id, 'layout')
-				bg_color: gx.black
+				bg_color: gx.hex(0xfcf4e4ff)
 				heights: sizes
 				margin_: 5
 				children: children
@@ -91,6 +91,12 @@ pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 			mut cb := colorbutton_component_from_id(cp.layout.ui.window, child.id)
 			cb.bg_color = colors[i]
 		}
+	}
+}
+
+pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gx.Color) { 
+	unsafe {
+		*(cp.colbtn.bg_color) = color
 	}
 }
 
