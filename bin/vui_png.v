@@ -65,8 +65,7 @@ fn main() {
 							}
 						}
 						on_new: fn (mf &uic.MenuFileComponent) {
-							//
-							println('new $mf.file!!!')
+							// println('new $mf.file!!!')
 							if os.file_ext(mf.file) == '.png' {
 								// create image
 								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,

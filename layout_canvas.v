@@ -294,6 +294,9 @@ fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 }
 
 fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Window) {
+	if c.hidden {
+		return
+	}
 	if c.point_inside(e.x, e.y) && c.mouse_move_fn != voidptr(0) {
 		e2 := MouseMoveEvent{
 			x: e.x - c.x - c.offset_x
@@ -609,6 +612,14 @@ pub fn (c &CanvasLayout) get_state() voidptr {
 fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber {
 	parent := c.parent
 	return parent.get_subscriber()
+}
+
+pub fn (mut c CanvasLayout) focus() {
+	mut f := Focusable(c)
+	f.set_focus()
+}
+pub fn (mut c CanvasLayout) unfocus() {
+	c.is_focused = false
 }
 
 pub fn (c &CanvasLayout) get_children() []Widget {

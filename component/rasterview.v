@@ -142,7 +142,8 @@ fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	} 
 }
 
-fn rv_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn rv_mouse_down(e ui.MouseEvent, mut c ui.CanvasLayout) {
+	c.focus()
 }
 
 fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {
