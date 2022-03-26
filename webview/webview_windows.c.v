@@ -5,7 +5,7 @@ module webview
 #include <objidl.h>
 
 // WinRT headers. EventToken.h lies here.
-#flag -I /Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/winrt
+#flag -I C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/winrt
 #include <EventToken.h>
 
 #flag Version.lib Advapi32.lib Shell32.lib
