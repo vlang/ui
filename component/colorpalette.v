@@ -13,7 +13,7 @@ pub mut:
 	ncolors  int
 	alpha    &AlphaComponent
 	color    &gx.Color = 0
-	selected string    = 'colbtn'
+	selected string
 }
 
 [params]
@@ -40,6 +40,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		on_changed: fn (ac &AlphaComponent) {
 			parent_id := ui.component_parent_id(ac.id)
 			cpc := colorpalette_component_from_id(ac.layout.ui.window, parent_id)
+			// println("alpha on_chnaged selected: $cpc.selected")
 			mut cbc := colorbutton_component_from_id(ac.layout.ui.window, cpc.selected)
 			cbc.bg_color.a = byte(ac.alpha)
 		}
@@ -70,25 +71,15 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 			)
 		}
 	}
-	cp := &ColorPaletteComponent{
+	mut cp := &ColorPaletteComponent{
 		id: p.id
 		layout: layout
 		colbtn: colbtn
 		ncolors: p.ncolors
 		alpha: alpha_component(alpha)
 	}
-
-	// match p.direction {
-	// 	.row {
-	// 		layout.widths = [f32(30), 10]
-	// 		layout.widths << [f32(30)].repeat(cp.ncolors)
-	// 	}
-	// 	.column {
-	// 		layout.heights = [f32(30), 10]
-	// 		layout.heights << [f32(30)].repeat(cp.ncolors)
-	// 	}
-	// }
-	// layout.spacings = [f32(2)].repeat(cp.ncolors + 1)
+	// init selection
+	cp.selected = ui.component_id(p.id, 'colbtn')
 	ui.component_connect(cp, layout)
 	return layout
 }

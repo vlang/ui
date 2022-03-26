@@ -92,9 +92,11 @@ fn main() {
 					uic.rasterview_canvaslayout(
 						id: 'rv'
 						on_click: fn (rv &uic.RasterViewComponent) {
-							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
-								'palette')
-							cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
+							if rv.layout.ui.btn_down[1] {
+								mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
+									'palette')
+								cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
+							}
 						}
 					),
 					uic.hideable_stack(
@@ -124,6 +126,8 @@ fn init(w &ui.Window) {
 	// At first hmenu open
 	// uic.hideable_show(w, 'hpalette')
 	mut cp := uic.colorpalette_component_from_id(w, 'palette')
-	rv := uic.rasterview_component_from_id(w, 'rv')
+	mut rv := uic.rasterview_component_from_id(w, 'rv')
 	cp.connect_color(&rv.color)
+	// connect palette to rasterview
+	rv.connect_palette(cp)
 }

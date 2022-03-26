@@ -36,7 +36,8 @@ pub mut:
 	from_j int
 	to_j   int
 	// current color
-	color gx.Color = gx.black
+	color   gx.Color = gx.black
+	palette &ColorPaletteComponent = 0
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
@@ -66,6 +67,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		on_mouse_move: rv_mouse_move
 		on_mouse_enter: rv_mouse_enter
 		on_mouse_leave: rv_mouse_leave
+		on_key_down: rv_key_down
 		full_size_fn: rv_full_size
 		on_scroll_change: rv_scroll_change
 	)
@@ -90,6 +92,10 @@ pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
 
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {
 	return rasterview_component(w.canvas_layout(ui.component_id(id, 'layout')))
+}
+
+pub fn (mut rv RasterViewComponent) connect_palette(pa &ColorPaletteComponent) {
+	rv.palette = pa
 }
 
 fn rv_init(mut layout ui.CanvasLayout) {
@@ -135,6 +141,45 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 	}
 	rv.draw_selection()
 	rv.draw_current()
+}
+
+fn rv_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+	mut rv := rasterview_component(c)
+	mut paint := false
+	match e.key {
+		.space {
+			paint = true
+		}
+		.up {
+			if rv.sel_i > 0 {
+				rv.sel_i -= 1
+				paint = true
+			}
+		}
+		.down {
+			if rv.sel_i < rv.height - 1 {
+				rv.sel_i += 1
+				paint = true
+			}
+		}
+		.left {
+			if rv.sel_j > 0 {
+				rv.sel_j -= 1
+				paint = true
+			}
+		}
+		.right {
+			if rv.sel_j < rv.width - 1 {
+				rv.sel_j += 1
+				paint = true
+			}
+		}
+		else {}
+	}
+	if paint && rv.palette != 0 && ui.shift_key(e.mods) {
+		cbc := colorbutton_component_from_id(c.ui.window, rv.palette.selected)
+		rv.set_pixel(rv.sel_i, rv.sel_j, cbc.bg_color)
+	}
 }
 
 fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
