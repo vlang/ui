@@ -209,5 +209,5 @@ fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 }
 
 fn win_init(mut w ui.Window) {
-	// w.mouse.start('')
+	// w.mouse.start(ui.mouse_hidden)
 }

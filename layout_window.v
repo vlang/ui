@@ -740,6 +740,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 		drag_child(mut window, e.x, e.y)
 	}
 
+	window.evt_mngr.point_inside_receivers_mouse_move(e)
 	if window.mouse_move_fn != voidptr(0) {
 		window.mouse_move_fn(e, window)
 	}

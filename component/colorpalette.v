@@ -94,7 +94,7 @@ pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 	}
 }
 
-pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gx.Color) { 
+pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gx.Color) {
 	unsafe {
 		*(cp.colbtn.bg_color) = color
 	}

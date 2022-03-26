@@ -85,6 +85,7 @@ mut:
 
 pub const (
 	mouse_system = '_system_'
+	mouse_hidden = '_hidden_mouse_'
 )
 
 pub fn (mut m Mouse) init(w &Window) {
@@ -102,7 +103,11 @@ pub fn (mut m Mouse) update() {
 
 pub fn (mut m Mouse) start(id string) {
 	if m.states.len == 0 || id != m.states.last() {
-		m.states << if m.window.ui.has_img(id) { id } else { ui.mouse_system }
+		m.states << if m.window.ui.has_img(id) || id == ui.mouse_hidden {
+			id
+		} else {
+			ui.mouse_system
+		}
 		m.update()
 	}
 }
@@ -110,6 +115,15 @@ pub fn (mut m Mouse) start(id string) {
 pub fn (mut m Mouse) stop() {
 	if m.active {
 		// println("stop mouse")
+		m.states.delete_last()
+		// println("${m.states}")
+		m.update()
+	}
+}
+
+pub fn (mut m Mouse) stop_last(id string) {
+	if m.active && id == m.states.last() {
+		// println("stop last mouse $id")
 		m.states.delete_last()
 		// println("${m.states}")
 		m.update()
@@ -130,4 +144,8 @@ pub fn (mut m Mouse) draw() {
 	if m.active {
 		m.window.ui.draw_img(m.id, m.pos.x, m.pos.y, m.size, m.size)
 	}
+}
+
+pub fn show_mouse(state bool) {
+	sapp.show_mouse(state)
 }

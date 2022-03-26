@@ -62,6 +62,8 @@ fn main() {
 								mut cp := uic.colorpalette_component_from_id(mf.layout.ui.window,
 									'palette')
 								cp.update_colors(colors)
+								rv.sel_i, rv.sel_j = -1, -1
+								rv.cur_i, rv.cur_j = -1, -1
 							}
 						}
 						on_new: fn (mf &uic.MenuFileComponent) {
@@ -73,6 +75,7 @@ fn main() {
 								rv.extract_size(mf.file)
 								rv.new_image()
 								rv.save_image_as(mf.file)
+								rv.sel_i, rv.sel_j = -1, -1
 							}
 						}
 						on_save: fn (mf &uic.MenuFileComponent) {
@@ -89,7 +92,8 @@ fn main() {
 					uic.rasterview_canvaslayout(
 						id: 'rv'
 						on_click: fn (rv &uic.RasterViewComponent) {
-							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window, "palette")
+							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
+								'palette')
 							cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
 						}
 					),

@@ -47,8 +47,9 @@ pub mut:
 	component      voidptr
 	component_init ComponentInitFn
 	// scrollview
-	has_scrollview bool
-	scrollview     &ScrollView = 0
+	has_scrollview       bool
+	scrollview           &ScrollView = 0
+	point_inside_visible bool // to avoid point_inside_adj
 	// callbacks
 	draw_fn          CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
 	post_draw_fn     CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
@@ -57,6 +58,8 @@ pub mut:
 	mouse_up_fn      CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
 	scroll_fn        CanvasLayoutScrollFn    = CanvasLayoutScrollFn(0)
 	mouse_move_fn    CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
+	mouse_enter_fn   CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
+	mouse_leave_fn   CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
 	key_down_fn      CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
 	char_fn          CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
 	full_size_fn     CanvasLayoutSizeFn      = CanvasLayoutSizeFn(0)
@@ -72,24 +75,26 @@ mut:
 
 [params]
 pub struct CanvasLayoutParams {
-	id            string
-	width         int
-	height        int
-	full_width    int = -1
-	full_height   int = -1
-	z_index       int
-	text          string
-	bg_color      gx.Color = no_color
-	bg_radius     f64
-	scrollview    bool
-	is_focused    bool
-	on_draw       CanvasLayoutDrawFn      = voidptr(0)
-	on_post_draw  CanvasLayoutDrawFn      = voidptr(0)
-	on_click      CanvasLayoutMouseFn     = voidptr(0)
-	on_mouse_down CanvasLayoutMouseFn     = voidptr(0)
-	on_mouse_up   CanvasLayoutMouseFn     = voidptr(0)
-	on_scroll     CanvasLayoutScrollFn    = voidptr(0)
-	on_mouse_move CanvasLayoutMouseMoveFn = voidptr(0)
+	id             string
+	width          int
+	height         int
+	full_width     int = -1
+	full_height    int = -1
+	z_index        int
+	text           string
+	bg_color       gx.Color = no_color
+	bg_radius      f64
+	scrollview     bool
+	is_focused     bool
+	on_draw        CanvasLayoutDrawFn      = voidptr(0)
+	on_post_draw   CanvasLayoutDrawFn      = voidptr(0)
+	on_click       CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_down  CanvasLayoutMouseFn     = voidptr(0)
+	on_mouse_up    CanvasLayoutMouseFn     = voidptr(0)
+	on_scroll      CanvasLayoutScrollFn    = voidptr(0)
+	on_mouse_move  CanvasLayoutMouseMoveFn = voidptr(0)
+	on_mouse_enter CanvasLayoutMouseMoveFn = voidptr(0)
+	on_mouse_leave CanvasLayoutMouseMoveFn = voidptr(0)
 	// resize_fn     ResizeFn
 	on_key_down      CanvasLayoutKeyFn   = voidptr(0)
 	on_char          CanvasLayoutKeyFn   = voidptr(0)
@@ -126,6 +131,8 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		post_draw_fn: c.on_post_draw
 		click_fn: c.on_click
 		mouse_move_fn: c.on_mouse_move
+		mouse_enter_fn: c.on_mouse_enter
+		mouse_leave_fn: c.on_mouse_leave
 		mouse_down_fn: c.on_mouse_down
 		mouse_up_fn: c.on_mouse_up
 		key_down_fn: c.on_key_down
@@ -159,7 +166,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 		subscriber.subscribe_method(events.on_touch_up, canvas_layout_mouse_up, c)
 		subscriber.subscribe_method(events.on_touch_move, canvas_layout_mouse_move, c)
 	}
-	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down])
+	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down, events.on_mouse_move])
 
 	for mut child in c.children {
 		child.init(c)
@@ -195,7 +202,7 @@ pub fn (mut c CanvasLayout) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_up, c)
 		subscriber.unsubscribe_method(events.on_touch_move, c)
 	}
-	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down])
+	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down, events.on_mouse_move])
 	if has_scrollview(c) {
 		c.ui.window.evt_mngr.rm_receiver(c, [events.on_scroll])
 	}
@@ -265,6 +272,9 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 }
 
 fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	if c.hidden {
+		return
+	}
 	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
 		return
 	}
@@ -281,6 +291,9 @@ fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 }
 
 fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
+	if c.hidden {
+		return
+	}
 	if c.point_inside(e.x, e.y) && c.mouse_up_fn != voidptr(0) {
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
@@ -304,6 +317,30 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 			mouse_button: e.mouse_button
 		}
 		c.mouse_move_fn(e2, c)
+	}
+}
+
+pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
+	// println("enter $c.id")
+	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
+		e2 := MouseMoveEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			mouse_button: e.mouse_button
+		}
+		c.mouse_enter_fn(e2, c)
+	}
+}
+
+pub fn (mut c CanvasLayout) on_mouse_leave(e &MouseMoveEvent) {
+	// println("leave $c.id")
+	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
+		e2 := MouseMoveEvent{
+			x: e.x - c.x - c.offset_x
+			y: e.y - c.y - c.offset_y
+			mouse_button: e.mouse_button
+		}
+		c.mouse_leave_fn(e2, c)
 	}
 }
 
@@ -588,11 +625,15 @@ pub fn (mut c CanvasLayout) set_visible(state bool) {
 }
 
 pub fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
-	if has_scrollview(c) {
-		return point_inside_adj(c, x, y)
+	if c.point_inside_visible {
+		return point_inside_visible(c, x - c.offset_x, y - c.offset_y)
 	} else {
-		// println("point_inside $c.id ($x, $y) in ($c.x + $c.offset_x + $c.width, $c.y + $c.offset_y + $c.height)")
-		return point_inside(c, x, y)
+		if has_scrollview(c) {
+			return point_inside_adj(c, x, y)
+		} else {
+			// println("point_inside $c.id ($x, $y) in ($c.x + $c.offset_x + $c.width, $c.y + $c.offset_y + $c.height)")
+			return point_inside(c, x, y)
+		}
 	}
 }
 
@@ -618,6 +659,7 @@ pub fn (mut c CanvasLayout) focus() {
 	mut f := Focusable(c)
 	f.set_focus()
 }
+
 pub fn (mut c CanvasLayout) unfocus() {
 	c.is_focused = false
 }

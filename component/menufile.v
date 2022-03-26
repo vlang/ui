@@ -140,7 +140,7 @@ pub fn (mf &MenuFileComponent) treeview_component() &TreeViewComponent {
 
 pub fn menufile_init(layout &ui.Stack) {
 	mut window := layout.ui.window
-	println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
+	// println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
 	filebrowser_subwindow_add(mut window,
 		id: ui.component_id_from(layout.id, 'fb')
 		folder_only: true

@@ -16,6 +16,8 @@ pub:
 	on_key_up       string = 'on_key_up'
 	on_scroll       string = 'on_scroll'
 	on_resize       string = 'on_resize'
+	on_mouse_enter  string = 'on_mouse_enter'
+	on_mouse_leave  string = 'on_mouse_leave'
 }
 
 pub const events = EventNames{}
@@ -100,6 +102,42 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 		}
 	}
 	$if evt_mngr_scroll ? {
+		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
+	}
+}
+
+pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
+	// TODO first sort scroll_receivers by order, z_index and hidden
+	evt_type := ui.events.on_mouse_move
+	point_inside_ids := em.point_inside[evt_type].map(it.id)
+	em.point_inside[evt_type].clear()
+	em.sorted_receivers(evt_type)
+	$if evt_mngr_mouse_move ? {
+		println('em.receivers[on_mouse_move] = ${em.receivers[evt_type].map(it.id)}')
+	}
+	for mut w in em.receivers[evt_type] {
+		$if evt_mngr_mouse_move ? {
+			println('point_inside_receivers: $w.id !$w.hidden && ($e.x, $e.y) ${w.point_inside(int(e.x),
+				int(e.y))} $w.has_parent_deactivated()')
+		}
+		if !w.hidden && w.point_inside(int(e.x), int(e.y)) && !w.has_parent_deactivated() {
+			if w.id !in point_inside_ids {
+				if mut w is EnterLeaveWidget {
+					mut elw := w as EnterLeaveWidget
+					elw.on_mouse_enter(e)
+				}
+			}
+			em.point_inside[evt_type] << w
+		} else {
+			if w.id in point_inside_ids {
+				if mut w is EnterLeaveWidget {
+					mut elw := w as EnterLeaveWidget
+					elw.on_mouse_leave(e)
+				}
+			}
+		}
+	}
+	$if evt_mngr_mouse_move ? {
 		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
 	}
 }
