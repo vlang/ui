@@ -26,12 +26,20 @@ pub struct ColorPaletteParams {
 }
 
 pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
-	mut colbtn := colorbutton(id: ui.component_id(p.id, 'colbtn'), on_click: colorpalette_click)
+	mut colbtn := colorbutton(
+		id: ui.component_id(p.id, 'colbtn')
+		on_click: colorpalette_click
+		left_side: true
+	)
 	colbtn.alpha_mode = true
 	mut children := []ui.Widget{}
 	children << [ui.label(text: 'colors', justify: ui.top_center), colbtn, ui.spacing()]
 	for i in 0 .. p.ncolors {
-		mut cb := colorbutton(id: ui.component_id(p.id, 'palette$i'), on_click: colorpalette_click)
+		mut cb := colorbutton(
+			id: ui.component_id(p.id, 'palette$i')
+			on_click: colorpalette_click
+			left_side: true
+		)
 		cb.alpha_mode = true
 		children << cb
 	}

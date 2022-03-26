@@ -13,6 +13,7 @@ pub mut:
 	alpha      int
 	on_click   ColorButtonFn
 	on_changed ColorButtonFn
+	left_side  bool
 }
 
 [params]
@@ -26,6 +27,7 @@ pub struct ColorButtonParams {
 	tooltip_side ui.Side = .top
 	radius       f64     = 0.0
 	padding      f64
+	left_side    bool
 	bg_color     &gx.Color = 0
 	on_click     ColorButtonFn
 	on_changed   ColorButtonFn
@@ -49,6 +51,7 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 		widget: b
 		on_click: c.on_click
 		on_changed: c.on_changed
+		left_side: c.left_side
 	}
 	if b.bg_color == 0 {
 		b.bg_color = &cbc.bg_color
@@ -75,7 +78,12 @@ fn colorbutton_click(a voidptr, mut b ui.Button) {
 		mut s := b.ui.window.subwindow(colorbox_subwindow_id)
 		if s.x == 0 && s.y == 0 {
 			w, h := b.size()
-			s.set_pos(b.x + w / 2, b.y + h / 2)
+			if cbc.left_side {
+				sw, _ := s.size()
+				s.set_pos(b.x + w / 2 - sw, b.y + h / 2)
+			} else {
+				s.set_pos(b.x + w / 2, b.y + h / 2)
+			}
 			s.update_layout()
 		}
 	} else {
