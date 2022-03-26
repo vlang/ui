@@ -164,7 +164,7 @@ fn on_b_value_changed(mut app App, slider &ui.Slider) {
 }
 
 fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.r_textbox.text.int()) {
+	if ui.is_rgb_valid(app.r_textbox.text.int()) {
 		app.r_slider.val = app.r_textbox_text.f32()
 		app.r_textbox.border_accentuated = false
 	} else {
@@ -174,7 +174,7 @@ fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
 }
 
 fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.g_textbox.text.int()) {
+	if ui.is_rgb_valid(app.g_textbox.text.int()) {
 		app.g_slider.val = app.g_textbox_text.f32()
 		app.g_textbox.border_accentuated = false
 	} else {
@@ -184,7 +184,7 @@ fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
 }
 
 fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.b_textbox.text.int()) {
+	if ui.is_rgb_valid(app.b_textbox.text.int()) {
 		app.b_slider.val = app.b_textbox_text.f32()
 		app.b_textbox.border_accentuated = false
 	} else {
@@ -198,15 +198,11 @@ fn textbox_color_update(mut app App) {
 	r := byte(app.r_textbox.text.int())
 	g := byte(app.g_textbox.text.int())
 	b := byte(app.b_textbox.text.int())
-	if !is_rgb_valid(r) || !is_rgb_valid(g) || !is_rgb_valid(b) {
+	if !ui.is_rgb_valid(r) || !ui.is_rgb_valid(g) || !ui.is_rgb_valid(b) {
 		app.rgb_rectangle.color = gx.rgb(255, 255, 255)
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'
 	} else {
 		app.rgb_rectangle.color = gx.rgb(r, g, b)
 		app.rgb_rectangle.text = ''
 	}
-}
-
-fn is_rgb_valid(c int) bool {
-	return if c >= 0 && c < 256 { true } else { false }
 }

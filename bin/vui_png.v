@@ -43,7 +43,7 @@ fn main() {
 		children: [
 			ui.row(
 				id: 'main'
-				widths: [ui.stretch, ui.stretch * 2, 50]
+				widths: [ui.stretch, ui.stretch * 2, 60]
 				heights: ui.stretch
 				children: [
 					uic.hideable_stack(

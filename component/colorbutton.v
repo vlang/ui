@@ -10,6 +10,7 @@ struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button
 	bg_color   gx.Color = gx.white
+	alpha      int
 	on_click   ColorButtonFn
 	on_changed ColorButtonFn
 }
@@ -23,7 +24,7 @@ pub struct ColorButtonParams {
 	z_index      int
 	tooltip      string
 	tooltip_side ui.Side = .top
-	radius       f64     = .25
+	radius       f64     = 0.0
 	padding      f64
 	bg_color     &gx.Color = 0
 	on_click     ColorButtonFn

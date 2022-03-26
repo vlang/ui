@@ -6,6 +6,7 @@ module ui
 import gx
 import gg
 import os
+import math
 
 const (
 	button_bg_color           = gx.rgb(28, 28, 28)
@@ -52,6 +53,7 @@ pub mut:
 	icon_path    string
 	image        gg.Image
 	use_icon     bool
+	alpha_mode   bool
 	padding      f32
 	radius       f32
 	hidden       bool
@@ -362,6 +364,7 @@ fn (mut b Button) draw() {
 	// println("bg:${b.to_hover} ${bg_color}")
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))
+		// println("draw $b.id ${bg_color}")
 		b.ui.gg.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
 		b.ui.gg.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
 			ui.button_focus_border_color
@@ -369,6 +372,18 @@ fn (mut b Button) draw() {
 			ui.button_border_color
 		})
 	} else {
+		if b.alpha_mode && bg_color.a < 255 { // draw a background to see alpha color
+			n := 5
+			dx, dy := width / n, height / n
+			for k1 in 0 .. n {
+				for k2 in 0 .. n {
+					if math.mod(k1 + k2, 2) < 0.1 {
+						b.ui.gg.draw_rect_filled(x + k1 * dx, y + k2 * dy, width / n,
+							height / n, gx.light_gray)
+					}
+				}
+			}
+		}
 		b.ui.gg.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
 		b.ui.gg.draw_rect_empty(x, y, width, height, if b.is_focused {
 			ui.button_focus_border_color

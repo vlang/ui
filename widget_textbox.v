@@ -1025,6 +1025,10 @@ pub fn (mut tb TextBox) set_text(s string) {
 		if (active_x && !tb.scrollview.active_x) || (active_y && !tb.scrollview.active_y) {
 			scrollview_reset(mut tb)
 		}
+	} else {
+		unsafe {
+			*tb.text = s
+		}
 	}
 }
 

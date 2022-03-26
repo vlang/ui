@@ -32,3 +32,7 @@ pub fn inside_rect(r gg.Rect, c gg.Rect) bool { // c for container
 	return r.x >= c.x && r.y >= c.y && r.x + r.width <= c.x + c.width
 		&& r.y + r.height <= c.y + c.height
 }
+
+pub fn is_rgb_valid(c int) bool {
+	return if c >= 0 && c < 256 { true } else { false }
+}

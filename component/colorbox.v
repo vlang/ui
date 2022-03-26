@@ -380,7 +380,7 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 // options
 
 pub fn (mut cb ColorBoxComponent) update_theme() {
-	cb.layout.bg_color = if cb.light { gx.rgba(255, 255, 255, 200) } else { gx.rgba(0, 0, 0, 200) }
+	cb.layout.bg_color = if cb.light { gx.rgba(255, 255, 255, 50) } else { gx.rgba(0, 0, 0, 50) }
 	lbl_cfg := gx.TextCfg{
 		color: if cb.light { gx.black } else { gx.white }
 	}

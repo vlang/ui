@@ -14,7 +14,7 @@ pub fn colorbox_subwindow_add(mut w ui.Window) {
 	if !ui.Layout(w).has_child_id(component.colorbox_subwindow_id) {
 		w.subwindows << ui.subwindow(
 			id: component.colorbox_subwindow_id
-			layout: colorbox_stack(id: component.colorbox_subwindow_id, light: true, hsl: false)
+			layout: colorbox_stack(id: component.colorbox_subwindow_id, light: false, hsl: false)
 		)
 	}
 }
