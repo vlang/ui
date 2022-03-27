@@ -32,7 +32,11 @@ pub fn alpha_stack(p AlphaParams) &ui.Stack {
 	)
 	sl := ui.slider(
 		id: ui.component_id(p.id, 'slider')
-		orientation: if p.direction == .row { .horizontal } else { .vertical }
+		orientation: if p.direction == .row {
+			ui.Orientation.horizontal
+		} else {
+			ui.Orientation.vertical
+		}
 		min: 0
 		max: 255
 		val: p.alpha
