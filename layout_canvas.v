@@ -41,6 +41,7 @@ pub mut:
 	adj_height       int
 	full_width       int
 	full_height      int
+	justify          []f64
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
@@ -86,6 +87,7 @@ pub struct CanvasLayoutParams {
 	bg_radius      f64
 	scrollview     bool
 	is_focused     bool
+	justify        []f64 = [0.0, 0.0]
 	on_draw        CanvasLayoutDrawFn      = voidptr(0)
 	on_post_draw   CanvasLayoutDrawFn      = voidptr(0)
 	on_click       CanvasLayoutMouseFn     = voidptr(0)
@@ -127,6 +129,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		bg_radius: f32(c.bg_radius)
 		bg_color: c.bg_color
 		is_focused: c.is_focused
+		justify: c.justify
 		draw_fn: c.on_draw
 		post_draw_fn: c.on_post_draw
 		click_fn: c.on_click

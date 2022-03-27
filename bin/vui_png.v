@@ -64,6 +64,10 @@ fn main() {
 								cp.update_colors(colors)
 								rv.sel_i, rv.sel_j = -1, -1
 								rv.cur_i, rv.cur_j = -1, -1
+								mut parent := rv.layout.parent
+								if mut parent is ui.Stack {
+									parent.update_layout()
+								}
 							}
 						}
 						on_new: fn (mf &uic.MenuFileComponent) {

@@ -49,7 +49,7 @@ fn get_align_offset_from_parent(mut w Widget, aw f64, ah f64) (int, int) {
 	dw := math.max(parent_width - width, 0.0)
 	dh := math.max(parent_height - height, 0.0)
 	$if get_align ? {
-		if w.id in [] {
+		if w.id in env('UI_IDS').split(',') {
 			println('align: $w.id int($aw * $dw), int($ah * $dh)')
 			println('$width, $height $parent_width, $parent_height')
 		}

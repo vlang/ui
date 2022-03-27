@@ -58,6 +58,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_id(p.id, 'layout')
 		scrollview: true
+		justify: [0.5, 0.5]
 		// bg_color: gx.white
 		on_draw: rv_draw
 		on_click: rv_click

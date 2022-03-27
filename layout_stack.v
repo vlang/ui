@@ -1006,10 +1006,11 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 
 	if mut child is AdjustableWidget {
 		mut w := child as AdjustableWidget
+		// println('$child.id: $x + $offset_x, $y + $offset_y')
 		w.set_adjusted_pos(x + offset_x, y + offset_y)
 	} else {
-		$if set_child_pos ? {
-			if child.id in [] {
+		$if scp ? {
+			if child.id in env('UI_IDS').split(',') {
 				println('$child.id: $x + $offset_x, $y + $offset_y')
 			}
 		}
@@ -1297,31 +1298,31 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 // 	child.set_pos(x + x_offset, y + y_offset)
 // }
 
-fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
-	mut hor_align := s.horizontal_alignment
-	mut ver_align := s.vertical_alignment
-	if i in s.alignments.center {
-		hor_align, ver_align = .center, .center
-	} else if i in s.alignments.left_top {
-		hor_align, ver_align = .left, .top
-	} else if i in s.alignments.top {
-		hor_align, ver_align = .center, .top
-	} else if i in s.alignments.right_top {
-		hor_align, ver_align = .right, .top
-	} else if i in s.alignments.right {
-		hor_align, ver_align = .right, .center
-	} else if i in s.alignments.right_bottom {
-		hor_align, ver_align = .right, .bottom
-	} else if i in s.alignments.bottom {
-		hor_align, ver_align = .center, .bottom
-	} else if i in s.alignments.left_bottom {
-		hor_align, ver_align = .left, .bottom
-	} else if i in s.alignments.left {
-		hor_align, ver_align = .left, .center
-	}
+// fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
+// 	mut hor_align := s.horizontal_alignment
+// 	mut ver_align := s.vertical_alignment
+// 	if i in s.alignments.center {
+// 		hor_align, ver_align = .center, .center
+// 	} else if i in s.alignments.left_top {
+// 		hor_align, ver_align = .left, .top
+// 	} else if i in s.alignments.top {
+// 		hor_align, ver_align = .center, .top
+// 	} else if i in s.alignments.right_top {
+// 		hor_align, ver_align = .right, .top
+// 	} else if i in s.alignments.right {
+// 		hor_align, ver_align = .right, .center
+// 	} else if i in s.alignments.right_bottom {
+// 		hor_align, ver_align = .right, .bottom
+// 	} else if i in s.alignments.bottom {
+// 		hor_align, ver_align = .center, .bottom
+// 	} else if i in s.alignments.left_bottom {
+// 		hor_align, ver_align = .left, .bottom
+// 	} else if i in s.alignments.left {
+// 		hor_align, ver_align = .left, .center
+// 	}
 
-	return hor_align, ver_align
-}
+// 	return hor_align, ver_align
+// }
 
 //**** ChildrenParams *****
 [params]
