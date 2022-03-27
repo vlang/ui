@@ -9,20 +9,20 @@ mut:
 	shortcuts Shortcuts
 }
 
-pub fn (mut s Shortcutable) add_char_shortcut(shortcut string, key_fn ShortcutFn) {
-	mods, key := parse_char_shortcut(shortcut)
-	s.shortcuts.chars[key] = Shortcut{
-		mods: mods
-		key_fn: key_fn
-	}
-}
+// pub fn (mut s Shortcutable) add_char_shortcut(shortcut string, key_fn ShortcutFn) {
+// 	mods, key := parse_char_shortcut(shortcut)
+// 	s.shortcuts.chars[key] = Shortcut{
+// 		mods: mods
+// 		key_fn: key_fn
+// 	}
+// }
 
-pub fn (mut s Shortcutable) add_key_shortcut(code int, mods KeyMod, key_fn ShortcutFn) {
-	s.shortcuts.keys[code] = Shortcut{
-		mods: mods
-		key_fn: key_fn
-	}
-}
+// pub fn (mut s Shortcutable) add_key_shortcut(code int, mods KeyMod, key_fn ShortcutFn) {
+// 	s.shortcuts.keys[code] = Shortcut{
+// 		mods: mods
+// 		key_fn: key_fn
+// 	}
+// }
 
 // TODO mix both functions above using parse_shortcut
 pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {

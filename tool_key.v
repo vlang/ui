@@ -4,13 +4,13 @@
 module ui
 
 pub fn parse_shortcut(s string) (KeyMod, int, string) {
-	mods, key := parse_char_shortcut(s)
+	mods, key := parse_mods_shortcut(s)
 	code := parse_key(key)
 	// N.B.: if code == 0 => char mode shortcut
 	return mods, code, key
 }
 
-fn parse_char_shortcut(s string) (KeyMod, string) {
+fn parse_mods_shortcut(s string) (KeyMod, string) {
 	parts := s.split('+')
 	mut mods := 0
 	if parts.len > 1 {
@@ -27,9 +27,18 @@ fn parse_char_shortcut(s string) (KeyMod, string) {
 	return KeyMod(mods), parts[parts.len - 1].trim_space().to_lower()
 }
 
+pub fn parse_char_key(key_str string) int {
+	key_rune := key_str.runes()[0]
+	key := match key_rune {
+		`a`...`z` { int(Key.a) + int(key_rune) - int(`a`) }
+		else { int(Key.invalid) }
+	}
+	return key
+}
+
 // parse ley
 pub fn parse_key(key_str string) int {
-	key := match key_str {
+	mut key := match key_str {
 		'escape' { int(Key.escape) }
 		'enter' { int(Key.enter) }
 		'tab' { int(Key.tab) }
@@ -70,6 +79,11 @@ pub fn parse_key(key_str string) int {
 		'f24' { int(Key.f24) }
 		'f25' { int(Key.f25) }
 		else { int(Key.invalid) }
+	}
+	$if windows {
+		if key == 0 {
+			key = parse_char_key(key_str)
+		}
 	}
 	return key
 }
