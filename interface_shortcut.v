@@ -60,7 +60,12 @@ pub mut:
 
 pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	// weirdly when .ctrl modifier the codepoint is differently interpreted
-	s := if e.mods == .ctrl { rune(96 + e.codepoint).str() } else { utf32_to_str(e.codepoint) }
+	mut s := utf32_to_str(e.codepoint)
+	$if macos {
+		if e.mods == .ctrl {
+			s = rune(96 + e.codepoint).str()
+		}
+	}
 	if s in shortcuts.chars {
 		sc := shortcuts.chars[s]
 		if has_key_mods(e.mods, sc.mods) {
