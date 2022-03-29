@@ -47,7 +47,7 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 		h.hide_children()
 	}
 	ui.component_connect(h, layout)
-	layout.component_init = hideable_init
+	layout.on_init = hideable_init
 	return layout
 }
 

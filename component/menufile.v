@@ -119,7 +119,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 		on_file_changed: p.on_file_changed
 	}
 	ui.component_connect(mf, layout, btn_savefile)
-	layout.component_init = menufile_init
+	layout.on_init = menufile_init
 	return layout
 }
 

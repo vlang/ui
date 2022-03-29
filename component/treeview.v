@@ -195,7 +195,7 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
 	ui.component_connect(tv, layout)
-	layout.component_init = treeview_init
+	layout.on_init = treeview_init
 	return layout
 }
 

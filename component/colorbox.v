@@ -154,7 +154,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	tb_g.text = &cb.txt_g
 	tb_b.text = &cb.txt_b
 	// init component
-	layout.component_init = colorbox_init
+	layout.on_init = colorbox_init
 	return layout
 }
 

@@ -83,7 +83,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		on_click: p.on_click
 	}
 	ui.component_connect(rv, layout)
-	layout.component_init = rv_init
+	layout.on_init = rv_init
 	return layout
 }
 

@@ -6,6 +6,7 @@ import os
 const (
 	win_width  = 800
 	win_height = 600
+	help_text  = 'Shortcuts:\n\nCtrl + H: toggle this help message box\nCtrl + O: toggle Menu File\nCtrl + P: toggle Palette\n\nSpecify size for a new png file:\n append `-(width)x(height)` or `-(size)` (equivalent to `-(size)x(size)`) or  at the end of the file name just before the extension .png'
 )
 
 struct App {
@@ -112,6 +113,7 @@ fn main() {
 	)
 	app.window = window
 	uic.colorbox_subwindow_add(mut window)
+	uic.messagebox_subwindow_add(mut window, id: 'help', text: help_text)
 	ui.run(window)
 }
 

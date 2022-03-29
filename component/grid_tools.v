@@ -65,7 +65,7 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	// println('gridsettings <$gs.id> grid: <$gs.grid.id> <$layout.id>')
 	ui.component_connect(gs, layout, lbl, lbr, btn)
 	// init component
-	layout.component_init = gridsettings_init
+	layout.on_init = gridsettings_init
 	return layout
 }
 

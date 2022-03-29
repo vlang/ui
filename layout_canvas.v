@@ -45,8 +45,8 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
-	component      voidptr
-	component_init ComponentInitFn
+	component voidptr
+	on_init   InitFn
 	// scrollview
 	has_scrollview       bool
 	scrollview           &ScrollView = 0
@@ -175,8 +175,8 @@ fn (mut c CanvasLayout) init(parent Layout) {
 		child.init(c)
 	}
 	// init for component
-	if c.component_init != ComponentInitFn(0) {
-		c.component_init(c)
+	if c.on_init != InitFn(0) {
+		c.on_init(c)
 	}
 
 	c.set_adjusted_size(ui)

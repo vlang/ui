@@ -74,13 +74,17 @@ pub fn (tv &TextView) size() (int, int) {
 	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
 	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
-	for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
-		lw := tv.text_width(line)
-		if lw > w {
-			w = lw
+	if tv.tlv.from_j > -1 && tv.tlv.from_j <= (tv.tlv.lines.len - 1) && tv.tlv.to_j > -1
+		&& tv.tlv.to_j <= (tv.tlv.lines.len - 1) {
+		for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
+			lw := tv.text_width(line)
+			if lw > w {
+				w = lw
+			}
 		}
+		w += tv.left_margin + ui.textview_margin
 	}
-	w += tv.left_margin + ui.textview_margin
+	// println("tv size: $w, $h")
 	return w, h
 }
 
@@ -176,6 +180,8 @@ pub fn (mut tv TextView) visible_lines() {
 	// println("j2 $j2 $jmax")
 	if j2 > jmax {
 		j2 = jmax
+	} else if j2 < 0 {
+		j2 = 0
 	}
 	tv.tlv.from_j, tv.tlv.to_j = j1, j2
 	tv.update_all_visible_lines()
@@ -236,7 +242,6 @@ fn (mut tv TextView) draw_textlines() {
 		tv.refresh_visible_lines()
 		tv.update_lines()
 	}
-
 	// draw selection
 	tv.draw_selection()
 

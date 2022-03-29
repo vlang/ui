@@ -73,7 +73,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
 	// children initialized after so that subcribe_method
 	mut l := s.layout
-	if l is Widget {
+	if mut l is Widget {
 		mut w := l as Widget
 		w.init(s)
 	}
@@ -236,6 +236,7 @@ pub fn (s SubWindow) size() (int, int) {
 	if s.decoration {
 		h += ui.sw_decoration
 	}
+	// println("subw $s.id (layout: $s.layout.id) $w, $h")
 	return w, h
 }
 

@@ -207,7 +207,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	}
 	g.min_height = p.height
 	g.dd_factor = dd.clone()
-	layout.component_init = grid_init
+	layout.on_init = grid_init
 	return layout
 }
 

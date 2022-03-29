@@ -41,7 +41,7 @@ pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 		dtw: c.dtw
 	}
 	ui.component_connect(fc, layout, lb)
-	layout.component_init = fontchooser_init
+	layout.on_init = fontchooser_init
 	return layout
 }
 

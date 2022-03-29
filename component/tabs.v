@@ -100,7 +100,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 
 	ui.component_connect(tabs, layout, tab_bar)
-	layout.component_init = tabs_init
+	layout.on_init = tabs_init
 	return layout
 }
 

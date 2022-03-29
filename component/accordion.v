@@ -70,7 +70,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
 	// println('here $layout.children.len $acc.titles.len')
 	// init component
-	layout.component_init = accordion_init
+	layout.on_init = accordion_init
 	return layout
 }
 

@@ -185,6 +185,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		border_accentuated: c.border_accentuated
 		ui: 0
 		text: c.text
+		text_: 'totto'
 		is_focused: c.is_focused
 		is_error: c.is_error
 		text_cfg: c.text_cfg

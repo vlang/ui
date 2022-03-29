@@ -40,6 +40,15 @@ pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
 	}
 }
 
+pub fn (mut s Shortcutable) add_shortcut_context(shortcut string, context voidptr) {
+	_, code, key := parse_shortcut(shortcut)
+	if code == 0 {
+		s.shortcuts.chars[key].context = context
+	} else {
+		s.shortcuts.keys[code].context = context
+	}
+}
+
 // This provides user defined shortcut actions (see grid and grid_data as a use case)
 pub type ShortcutFn = fn (context voidptr)
 
@@ -54,8 +63,9 @@ pub mut:
 
 pub struct Shortcut {
 pub mut:
-	mods   KeyMod
-	key_fn ShortcutFn
+	mods    KeyMod
+	key_fn  ShortcutFn
+	context voidptr
 }
 
 pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
@@ -69,7 +79,11 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	if s in shortcuts.chars {
 		sc := shortcuts.chars[s]
 		if has_key_mods(e.mods, sc.mods) {
-			sc.key_fn(context)
+			if sc.context != voidptr(0) {
+				sc.key_fn(sc.context)
+			} else {
+				sc.key_fn(context)
+			}
 		}
 	}
 }
@@ -78,7 +92,11 @@ pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	if int(e.key) in shortcuts.keys {
 		sc := shortcuts.keys[int(e.key)]
 		if has_key_mods(e.mods, sc.mods) {
-			sc.key_fn(context)
+			if sc.context != voidptr(0) {
+				sc.key_fn(sc.context)
+			} else {
+				sc.key_fn(context)
+			}
 		}
 	}
 }
