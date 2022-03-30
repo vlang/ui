@@ -25,6 +25,11 @@ pub mut:
 	// cur_pos
 	cur_i int = -1
 	cur_j int = -1
+	// bounds
+	bounds_i int // top
+	bounds_j int // left
+	bounds_w int // width
+	bounds_h int // height
 	// selection
 	sel_i int = -1
 	sel_j int = -1
@@ -152,27 +157,47 @@ fn rv_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 			paint = true
 		}
 		.up {
-			if rv.sel_i > 0 {
-				rv.sel_i -= 1
-				paint = true
+			if ui.alt_key(e.mods) {
+				// println("move up")
+				rv.move_pixels(-1, 0)
+			} else {
+				if rv.sel_i > 0 {
+					rv.sel_i -= 1
+					paint = true
+				}
 			}
 		}
 		.down {
-			if rv.sel_i < rv.height - 1 {
-				rv.sel_i += 1
-				paint = true
+			if ui.alt_key(e.mods) {
+				// println("move down")
+				rv.move_pixels(1, 0)
+			} else {
+				if rv.sel_i < rv.height - 1 {
+					rv.sel_i += 1
+					paint = true
+				}
 			}
 		}
 		.left {
-			if rv.sel_j > 0 {
-				rv.sel_j -= 1
-				paint = true
+			if ui.alt_key(e.mods) {
+				// println("move left")
+				rv.move_pixels(0, -1)
+			} else {
+				if rv.sel_j > 0 {
+					rv.sel_j -= 1
+					paint = true
+				}
 			}
 		}
 		.right {
-			if rv.sel_j < rv.width - 1 {
-				rv.sel_j += 1
-				paint = true
+			if ui.alt_key(e.mods) {
+				// println("move right")
+				rv.move_pixels(0, 1)
+			} else {
+				if rv.sel_j < rv.width - 1 {
+					rv.sel_j += 1
+					paint = true
+				}
 			}
 		}
 		else {}
@@ -265,25 +290,6 @@ fn (rv &RasterViewComponent) get_index_pos(x int, y int) (int, int) {
 	return sel_i, sel_j
 }
 
-pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
-	k := (i * rv.width + j) * rv.channels
-	if rv.channels == 4 {
-		return gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
-	} else if rv.channels == 3 {
-		return gx.rgb(rv.data[k], rv.data[k + 1], rv.data[k + 2])
-	}
-	return ui.no_color
-}
-
-pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
-	k := (i * rv.width + j) * rv.channels
-	if rv.channels == 4 {
-		rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3] = color.r, color.g, color.b, color.a
-	} else if rv.channels == 3 {
-		rv.data[k], rv.data[k + 1], rv.data[k + 2] = color.r, color.g, color.b
-	}
-}
-
 struct Int2 {
 	i int
 	n int
@@ -336,7 +342,7 @@ fn (rv &RasterViewComponent) draw_current() {
 		return
 	}
 	pos_x, pos_y := rv.get_pos(rv.cur_i, rv.cur_j)
-	cur_color := gx.yellow
+	cur_color := gx.cyan
 	rv.layout.draw_rect_surrounded(pos_x, pos_y, rv.pixel_size, rv.pixel_size, 2, cur_color)
 }
 
@@ -391,12 +397,147 @@ pub fn (mut rv RasterViewComponent) load_image(path string) {
 	rv.data = []byte{len: rv.width * rv.height * rv.channels}
 	unsafe { C.memcpy(rv.data.data, img.data, rv.data.len) }
 	rv.visible_pixels()
+	rv.update_bounds()
 	rv.layout.update_layout()
 }
 
 pub fn (mut rv RasterViewComponent) save_image_as(path string) {
 	stbi.stbi_write_png(path, rv.width, rv.height, rv.channels, rv.data.data, rv.width * rv.channels) or {
 		panic(err)
+	}
+}
+
+pub fn (mut rv RasterViewComponent) update_bounds() {
+	rv.bounds_i, rv.bounds_j, rv.bounds_w, rv.bounds_h = 0, 0, 0, 0
+	mut ok := true
+	for i in 0 .. rv.height {
+		for j in 0 .. rv.width {
+			if rv.get_pixel(i, j) != ui.no_color {
+				ok = false
+				break
+			}
+		}
+		if ok {
+			rv.bounds_i += 1
+		} else {
+			break
+		}
+	}
+	if rv.bounds_i == rv.height - 1 {
+		// empty image
+		rv.bounds_j = rv.width - 1
+	} else {
+		ok = true
+		rv.bounds_h = rv.height - rv.bounds_i
+		for i := rv.height - 1; i > rv.bounds_i; i -= 1 {
+			for j in 0 .. rv.width {
+				if rv.get_pixel(i, j) != ui.no_color {
+					ok = false
+					break
+				}
+			}
+			if ok {
+				rv.bounds_h -= 1
+			} else {
+				break
+			}
+		}
+	}
+	ok = true
+	for j in 0 .. rv.width {
+		for i in rv.bounds_i .. (rv.bounds_i + rv.bounds_h) {
+			if rv.get_pixel(i, j) != ui.no_color {
+				ok = false
+				break
+			}
+		}
+		if ok {
+			rv.bounds_j += 1
+		} else {
+			break
+		}
+	}
+	if rv.bounds_j < rv.width - 1 { // otherwise empty image
+		ok = true
+		rv.bounds_w = rv.width - rv.bounds_j
+		for j := rv.width - 1; j > rv.bounds_j; j -= 1 {
+			for i in rv.bounds_i .. (rv.bounds_i + rv.bounds_h) {
+				if rv.get_pixel(i, j) != ui.no_color {
+					ok = false
+					break
+				}
+			}
+			if ok {
+				rv.bounds_w -= 1
+			} else {
+				break
+			}
+		}
+	}
+	// println("rv bounds: $rv.bounds_i, $rv.bounds_h, $rv.bounds_j, $rv.bounds_w ($rv.width, $rv.height)")
+}
+
+pub fn (rv &RasterViewComponent) get_margins() (int, int, int, int) { // top, bottom, left, right
+	return rv.bounds_i, rv.height - rv.bounds_i - rv.bounds_h, rv.bounds_j, rv.width - rv.bounds_j - rv.bounds_w
+}
+
+pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
+	mt, mb, ml, mr := rv.get_margins()
+	if (di == 0 && dj == 0) || (di < 0 && di < -mt) || (di > 0 && di > mb)
+		|| (dj < 0 && dj < -ml) || (dj > 0 && dj > mr) {
+		return
+	}
+	mut from_i, mut to_i, mut from_j, mut to_j, mut step_i, mut step_j := (rv.bounds_i + rv.bounds_h - 1), rv.bounds_i, (
+		rv.bounds_j + rv.bounds_w - 1), rv.bounds_j, 1, 1
+
+	if di < 0 {
+		step_i = -1
+		from_i, to_i = to_i, from_i
+	}
+	if dj < 0 {
+		step_j = -1
+		from_j, to_j = to_j, from_j
+	}
+
+	$if rv_mp ? {
+		println('di=$di for i := $from_i * $step_i; i >= $to_i * $step_i; i -= 1')
+		println('dj=$dj for j := $from_j * $step_j; j >= $to_j * $step_j; j -= 1')
+		if from_i + di >= rv.height || from_i + di < 0 || to_i + di >= rv.height || to_i + di < 0 {
+			println('erroooorr : $from_i + $di >= $rv.height || $from_i + $di < 0 || $to_i + $di >= $rv.height || $to_i + $di < 0')
+		}
+		if from_j + dj >= rv.width || from_j + dj < 0 || to_j + dj >= rv.width || to_j + dj < 0 {
+			println('erroooorr : $from_j + $dj >= $rv.width || $from_j + $dj < 0 || $to_j + $dj >= $rv.width || $to_j + $dj < 0')
+		}
+	}
+	for i := from_i * step_i; i >= to_i * step_i; i -= 1 {
+		ii := i * step_i
+		for j := from_j * step_j; j >= to_j * step_j; j -= 1 {
+			jj := j * step_j
+			// println("${ii} -> ${ii + di} ($rv.height), ${jj} -> ${jj + dj} (($rv.width))")
+			rv.set_pixel(ii + di, jj + dj, rv.get_pixel(ii, jj))
+			rv.set_pixel(ii, jj, ui.no_color)
+		}
+	}
+	rv.bounds_i += di
+	rv.bounds_j += dj
+}
+
+pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
+	k := (i * rv.width + j) * rv.channels
+	if rv.channels == 4 {
+		return gx.rgba(rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3])
+	} else if rv.channels == 3 {
+		return gx.rgb(rv.data[k], rv.data[k + 1], rv.data[k + 2])
+	}
+	return ui.no_color
+}
+
+pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, color gx.Color) {
+	k := (i * rv.width + j) * rv.channels
+	if rv.channels == 4 {
+		rv.data[k], rv.data[k + 1], rv.data[k + 2], rv.data[k + 3] = color.r, color.g, color.b, color.a
+	} else if rv.channels == 3 {
+		rv.data[k], rv.data[k + 1], rv.data[k + 2] = color.r, color.g, color.b
 	}
 }
 

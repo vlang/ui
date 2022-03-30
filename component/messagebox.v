@@ -40,7 +40,7 @@ pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 		id: ui.component_id(p.id, 'layout')
 		width: p.width
 		height: p.height
-		heights: [ui.stretch, 40]
+		heights: [ui.stretch, 30]
 		children: [tb, ok_btn]
 	)
 	hc := &MessageBoxComponent{
