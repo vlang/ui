@@ -693,6 +693,15 @@ pub fn (c &CanvasLayout) rel_pos(x f64, y f64) (f32, f32) {
 	return f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y)
 }
 
+pub fn (c &CanvasLayout) rel_pos_x(x f64) f32 {
+	return f32(x + c.x + c.offset_x)
+}
+
+pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
+	// println("$y + $c.y + $c.offset_y")
+	return f32(y + c.y + c.offset_y)
+}
+
 // Methods for delegating drawing methods relatively to canvas coordinates
 
 // ---- text

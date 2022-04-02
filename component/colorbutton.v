@@ -25,7 +25,7 @@ pub struct ColorButtonParams {
 	z_index      int
 	tooltip      string
 	tooltip_side ui.Side = .top
-	radius       f64     = 0.0
+	radius       f64     // = 5.0
 	padding      f64
 	left_side    bool
 	bg_color     &gx.Color = 0
