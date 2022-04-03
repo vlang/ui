@@ -282,20 +282,6 @@ fn (mut tb TextBox) init_style() {
 	}
 }
 
-// fn (tb &TextBox) draw_inner_border() {
-fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
-	if !border_accentuated {
-		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
-		gg.draw_rect_empty(x, y, width, height, color)
-		// gg.draw_rect_empty(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
-		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_rect_empty(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
-	} else {
-		gg.draw_rect_empty(x, y, width, height, ui.text_border_accentuated_color)
-		gg.draw_rect_empty(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
-	}
-}
-
 pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
 	// println('text box $xx set pos $x, $y')
@@ -337,21 +323,25 @@ fn (mut tb TextBox) update_line_height() {
 }
 
 pub fn (mut tb TextBox) draw() {
+	tb.draw_device(tb.ui.gg)
+}
+
+pub fn (mut tb TextBox) draw_device(d gg.DrawDevice) {
 	offset_start(mut tb)
 	scrollview_draw_begin(mut tb)
 	// draw background
 	if tb.has_scrollview {
-		tb.ui.gg.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
+		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
 			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
 	} else {
-		tb.ui.gg.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
+		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
 		if !tb.borderless {
-			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
+			draw_device_inner_border(tb.border_accentuated, d, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
 		}
 	}
 	if tb.is_multiline {
-		tb.tv.draw_textlines()
+		tb.tv.draw_device_textlines(d)
 	} else {
 		dtw := DrawTextWidget(tb)
 		text := *(tb.text)
@@ -432,7 +422,7 @@ pub fn (mut tb TextBox) draw() {
 				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			tb.ui.gg.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+			d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
 				gx.black) // , gx.Black)
 		}
 	}

@@ -177,8 +177,11 @@ pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.ui.gg.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height,
-		pic.image)
+	pic.draw_device(pic.ui.gg)
+}
+
+fn (mut pic Picture) draw_device(d gg.DrawDevice) {
+	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)
 }
 
 fn (mut pic Picture) set_visible(state bool) {

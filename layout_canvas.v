@@ -620,6 +620,10 @@ fn (mut c CanvasLayout) draw() {
 	offset_end(mut c)
 }
 
+fn (mut c CanvasLayout) draw_device(d gg.DrawDevice) {
+	// TODO
+}
+
 pub fn (mut c CanvasLayout) set_visible(state bool) {
 	c.hidden = !state
 	for mut child in c.children {
@@ -705,10 +709,6 @@ pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
 // Methods for delegating drawing methods relatively to canvas coordinates
 
 // ---- text
-
-pub fn (c &CanvasLayout) draw_text_def(x int, y int, text string) {
-	c.ui.gg.draw_text_def(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
-}
 
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 	mut dtw := DrawTextWidget(c)

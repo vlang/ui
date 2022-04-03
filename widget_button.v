@@ -349,6 +349,10 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
+	b.draw_device(b.ui.gg)
+}
+
+fn (mut b Button) draw_device(d gg.DrawDevice) {
 	offset_start(mut b)
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
@@ -365,8 +369,8 @@ fn (mut b Button) draw() {
 	if b.radius > 0 {
 		radius := relative_size(b.radius, int(width), int(height))
 		// println("draw $b.id ${bg_color}")
-		b.ui.gg.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
-		b.ui.gg.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
+		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
+		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
 			ui.button_border_color
@@ -378,21 +382,21 @@ fn (mut b Button) draw() {
 			for k1 in 0 .. n {
 				for k2 in 0 .. n {
 					if math.mod(k1 + k2, 2) < 0.1 {
-						b.ui.gg.draw_rect_filled(x + k1 * dx, y + k2 * dy, width / n,
-							height / n, gx.light_gray)
+						d.draw_rect_filled(x + k1 * dx, y + k2 * dy, width / n, height / n,
+							gx.light_gray)
 					}
 				}
 			}
 		}
-		b.ui.gg.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
-		b.ui.gg.draw_rect_empty(x, y, width, height, if b.is_focused {
+		d.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
+		d.draw_rect_empty(x, y, width, height, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
 			ui.button_border_color
 		})
 	}
 	if b.use_icon {
-		b.ui.gg.draw_image(x, y, width, height, b.image)
+		d.draw_image(x, y, width, height, b.image)
 	} else {
 		$if nodtw ? {
 			draw_text(b, bcenter_x, bcenter_y, b.text)

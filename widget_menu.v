@@ -4,6 +4,7 @@
 module ui
 
 import gx
+import gg
 
 const (
 	menu_height       = 30
@@ -138,13 +139,17 @@ pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut m Menu) draw() {
+	m.draw_device(m.ui.gg)
+}
+
+fn (mut m Menu) draw_device(d gg.DrawDevice) {
 	offset_start(mut m)
 	if m.hidden {
 		return
 	}
-	gg := m.ui.gg
-	gg.draw_rect_filled(m.x, m.y, m.width, m.height, ui.menu_color)
-	gg.draw_rect_empty(m.x, m.y, m.width, m.height, ui.menu_border_color)
+
+	d.draw_rect_filled(m.x, m.y, m.width, m.height, ui.menu_color)
+	d.draw_rect_empty(m.x, m.y, m.width, m.height, ui.menu_border_color)
 	for i, item in m.items {
 		m.ui.gg.draw_text_def(m.x + 10, m.y + i * ui.menu_height + 10, item.text)
 	}

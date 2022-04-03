@@ -4,6 +4,7 @@
 module ui
 
 import time
+import gg
 
 [heap]
 pub struct Transition {
@@ -97,6 +98,10 @@ fn (mut t Transition) size() (int, int) {
 }
 
 fn (mut t Transition) draw() {
+	t.draw_device(t.ui.gg)
+}
+
+fn (mut t Transition) draw_device(d gg.DrawDevice) {
 	if t.animated_value == 0 {
 		return
 	}

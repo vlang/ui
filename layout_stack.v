@@ -1139,6 +1139,10 @@ fn (mut s Stack) draw() {
 	offset_end(mut s)
 }
 
+fn (mut c Stack) draw_device(d gg.DrawDevice) {
+	// TODO
+}
+
 fn (s &Stack) margin(side Side) int {
 	size := match side {
 		.top { s.margins.top }

@@ -474,6 +474,10 @@ fn (lb &ListBox) visible_items() (int, int) {
 }
 
 fn (mut lb ListBox) draw() {
+	lb.draw_device(lb.ui.gg)
+}
+
+fn (mut lb ListBox) draw_device(d gg.DrawDevice) {
 	offset_start(mut lb)
 	DrawTextWidget(lb).load_style()
 	// scrollview_clip(mut lb)
@@ -486,7 +490,7 @@ fn (mut lb ListBox) draw() {
 	$if lb_draw ? {
 		println('draw $lb.id scrollview=$lb.has_scrollview $lb.x, $lb.y, $lb.width $lb.height $height')
 	}
-	lb.ui.gg.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
+	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -507,13 +511,13 @@ fn (mut lb ListBox) draw() {
 			}
 			if !has_scrollview(lb) || (inx >= from && inx <= to) {
 				if !lb.has_dragger_active_at(inx) {
-					item.draw()
+					item.draw_device(d)
 				}
 			}
 		}
 	}
 	if !lb.draw_lines {
-		lb.ui.gg.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
+		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
 	}
 
 	// scrollview_draw(lb)
@@ -966,14 +970,18 @@ pub fn (mut li ListItem) update_parent(mut lb ListBox, at int) {
 }
 
 fn (li &ListItem) draw() {
+	li.draw_device(li.list.ui.gg)
+}
+
+fn (li &ListItem) draw_device(d gg.DrawDevice) {
 	lb := li.list
 	col := if li.is_selected() { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui._text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
 	}
-	lb.ui.gg.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-		lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
+	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
+		lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
 	$if nodtw ? {
 		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
 			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.text() })
@@ -989,7 +997,7 @@ fn (li &ListItem) draw() {
 	}
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		lb.ui.gg.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
+		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
+			lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
 	}
 }

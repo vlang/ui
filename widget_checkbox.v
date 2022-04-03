@@ -4,6 +4,7 @@
 module ui
 
 import gx
+import gg
 import math
 
 const (
@@ -199,16 +200,20 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut cb CheckBox) draw() {
+	cb.draw_device(cb.ui.gg)
+}
+
+pub fn (mut cb CheckBox) draw_device(d gg.DrawDevice) {
 	offset_start(mut cb)
 	if cb.bg_color != no_color {
-		cb.ui.gg.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
+		d.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
 			cb.width, cb.height, cb.bg_color)
 	}
-	cb.ui.gg.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
-	draw_inner_border(false, cb.ui.gg, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
+	d.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
+	draw_device_inner_border(false, d, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {
-		cb.ui.gg.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
+		d.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
@@ -223,7 +228,7 @@ pub fn (mut cb CheckBox) draw() {
 		cb.ui.gg.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
 		cb.ui.gg.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
 		*/
-		cb.ui.gg.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
+		d.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
 	$if nodtw ? {

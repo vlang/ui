@@ -4,6 +4,7 @@
 module ui
 
 import gx
+import gg
 
 const (
 	radio_focus_color = gx.rgb(50, 50, 50)
@@ -300,17 +301,21 @@ pub fn (mut r Radio) update_size() {
 }
 
 fn (mut r Radio) draw() {
+	r.draw_device(r.ui.gg)
+}
+
+fn (mut r Radio) draw_device(d gg.DrawDevice) {
 	offset_start(mut r)
 	dtw := DrawTextWidget(r)
 	if r.title != '' {
 		// Border
-		r.ui.gg.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
+		d.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
 			ui.radio_focus_color
 		} else {
 			gx.gray
 		})
 		// Title
-		r.ui.gg.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
+		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 			10, default_window_color)
 		$if nodtw ? {
 			draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
@@ -330,9 +335,9 @@ fn (mut r Radio) draw() {
 				y += r.height
 			}
 		}
-		r.ui.gg.draw_image(x, y - 1, 16, 16, r.ui.selected_radio_image)
+		d.draw_image(x, y - 1, 16, 16, r.ui.selected_radio_image)
 		if i != r.selected_index {
-			r.ui.gg.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
+			d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text

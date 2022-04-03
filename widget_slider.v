@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import gg
 
 const (
 	thumb_color                            = gx.rgb(87, 153, 245)
@@ -181,6 +182,10 @@ pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Slider) draw() {
+	s.draw_device(s.ui.gg)
+}
+
+fn (mut s Slider) draw_device(d gg.DrawDevice) {
 	offset_start(mut s)
 	// Draw the track
 	x, y, w, h := if s.orientation == .horizontal {
@@ -189,22 +194,22 @@ fn (mut s Slider) draw() {
 		s.x + (s.width - s.slider_size) / 2, s.y, s.slider_size, s.height
 	}
 
-	s.ui.gg.draw_rect_filled(x, y, w, h, ui.slider_background_color)
+	d.draw_rect_filled(x, y, w, h, ui.slider_background_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			s.ui.gg.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
+			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
 		} else {
-			s.ui.gg.draw_line(x + w / 2, y + 2, x + w / 2, y + h - 4, gx.rgb(0, 0, 0))
+			d.draw_line(x + w / 2, y + 2, x + w / 2, y + h - 4, gx.rgb(0, 0, 0))
 		}
 	}
 
-	s.ui.gg.draw_rect_empty(x, y, w, h, if s.is_focused {
+	d.draw_rect_empty(x, y, w, h, if s.is_focused {
 		ui.slider_focused_background_border_color
 	} else {
 		ui.slider_background_border_color
 	})
 	// Draw the thumb
-	s.draw_thumb()
+	s.draw_device_thumb(d)
 	$if bb ? {
 		debug_draw_bb_widget(mut s, s.ui)
 	}
@@ -212,7 +217,7 @@ fn (mut s Slider) draw() {
 }
 
 // TODO to simplify (seems a bit too complex)
-fn (s &Slider) draw_thumb() {
+fn (s &Slider) draw_device_thumb(d gg.DrawDevice) {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
 	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }
@@ -231,11 +236,11 @@ fn (s &Slider) draw_thumb() {
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
-		s.ui.gg.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
-			s.thumb_height, ui.thumb_color)
+		d.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
+			ui.thumb_color)
 	} else {
-		s.ui.gg.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
-			s.thumb_height, ui.thumb_color)
+		d.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
+			ui.thumb_color)
 	}
 }
 

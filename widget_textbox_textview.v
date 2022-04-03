@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import gg
 // import time
 // import encoding.utf8
 
@@ -237,13 +238,13 @@ fn (mut tv TextView) scroll_changed() {
 	tv.update_lines()
 }
 
-fn (mut tv TextView) draw_textlines() {
+fn (mut tv TextView) draw_device_textlines(d gg.DrawDevice) {
 	if tv.tb.is_sync {
 		tv.refresh_visible_lines()
 		tv.update_lines()
 	}
 	// draw selection
-	tv.draw_selection()
+	tv.draw_device_selection(d)
 
 	// draw only visible text lines
 	tv.load_style()
@@ -266,8 +267,7 @@ fn (mut tv TextView) draw_textlines() {
 	// draw cursor
 	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
-		tv.tb.ui.gg.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height,
-			gx.black) // , gx.Black)
+		d.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height, gx.black) // , gx.Black)
 	}
 }
 
@@ -284,7 +284,7 @@ pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
 		y, ustr[imin..imax].string())
 }
 
-fn (mut tv TextView) draw_selection() {
+fn (mut tv TextView) draw_device_selection(d gg.DrawDevice) {
 	if !tv.is_sel_active() {
 		// println("return draw_sel")
 		return
@@ -294,23 +294,22 @@ fn (mut tv TextView) draw_selection() {
 		// if on the same line draw the selected background
 		sel_from, sel_width := tv.text_xminmax_from_pos(tv.sel_start_line(), tv.tlv.sel_start_i,
 			tv.tlv.sel_end_i)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
-			textbox_padding_y + tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height,
-			selection_color)
+		d.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y + textbox_padding_y +
+			tv.tlv.sel_start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	} else {
 		// otherwise draw all the selected lines one by one after sorting the position
 		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
 		// here the first line
 		mut ustr := tv.line(start_j)
 		mut sel_from, mut sel_width := tv.text_xminmax_from_pos(ustr, start_i, ustr.len)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
-			textbox_padding_y + start_j * tv.line_height, sel_width, tv.line_height, selection_color)
+		d.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y + textbox_padding_y +
+			start_j * tv.line_height, sel_width, tv.line_height, selection_color)
 		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
 				ustr = tv.line(j)
 				sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, ustr.runes().len)
-				tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
+				d.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
 					textbox_padding_y + j * tv.line_height, sel_width, tv.line_height,
 					selection_color)
 			}
@@ -318,8 +317,8 @@ fn (mut tv TextView) draw_selection() {
 		// and finally the last one
 		ustr = tv.line(end_j)
 		sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, end_i)
-		tv.tb.ui.gg.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y +
-			textbox_padding_y + end_j * tv.line_height, sel_width, tv.line_height, selection_color)
+		d.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y + textbox_padding_y +
+			end_j * tv.line_height, sel_width, tv.line_height, selection_color)
 	}
 }
 

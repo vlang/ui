@@ -2,6 +2,7 @@ module ui
 
 import eventbus
 import gx
+import gg
 
 pub const (
 	sw_decoration    = 20
@@ -98,6 +99,10 @@ pub fn (mut s SubWindow) cleanup() {
 }
 
 fn (mut s SubWindow) draw() {
+	s.draw_device(s.ui.gg)
+}
+
+fn (mut s SubWindow) draw_device(d gg.DrawDevice) {
 	if s.hidden {
 		return
 	}
@@ -108,7 +113,7 @@ fn (mut s SubWindow) draw() {
 		$if sw_draw ? {
 			println('$s.x, $s.y, $w, $ui.sw_decoration')
 		}
-		s.ui.gg.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
+		d.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
 	}
 	s.layout.draw()
 

@@ -1,4 +1,0 @@
-module ui
-
-interface DrawDevice {
-}

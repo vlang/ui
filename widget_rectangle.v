@@ -125,16 +125,20 @@ pub fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut r Rectangle) draw() {
+	r.draw_device(r.ui.gg)
+}
+
+fn (mut r Rectangle) draw_device(d gg.DrawDevice) {
 	offset_start(mut r)
 	if r.radius > 0 {
-		r.ui.gg.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
+		d.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
 		if r.border {
-			r.ui.gg.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
+			d.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
 		}
 	} else {
-		r.ui.gg.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
+		d.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
 		if r.border {
-			r.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
+			d.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
 		}
 	}
 	// Display rectangle text
@@ -152,6 +156,35 @@ fn (mut r Rectangle) draw() {
 	}
 	offset_end(mut r)
 }
+
+// fn (mut r Rectangle) draw(d gg.DrawDevice) {
+// 	offset_start(mut r)
+// 	if r.radius > 0 {
+// 		r.ui.gg.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
+// 		if r.border {
+// 			r.ui.gg.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
+// 		}
+// 	} else {
+// 		r.ui.gg.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
+// 		if r.border {
+// 			r.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
+// 		}
+// 	}
+// 	// Display rectangle text
+// 	if r.text != '' {
+// 		text_width, text_height := text_size(r, r.text)
+// 		mut dx := (r.width - text_width) / 2
+// 		mut dy := (r.height - text_height) / 2
+// 		if dx < 0 {
+// 			dx = 0
+// 		}
+// 		if dy < 0 {
+// 			dy = 0
+// 		}
+// 		draw_text(r, r.x + dx, r.y + dy, r.text)
+// 	}
+// 	offset_end(mut r)
+// }
 
 fn (mut r Rectangle) set_visible(state bool) {
 	r.hidden = !state

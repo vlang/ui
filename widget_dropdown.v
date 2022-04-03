@@ -4,6 +4,7 @@
 module ui
 
 import gx
+import gg
 
 const (
 	dropdown_color        = gx.rgb(240, 240, 240)
@@ -146,33 +147,35 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut dd Dropdown) draw() {
+	dd.draw_device(dd.ui.gg)
+}
+
+pub fn (mut dd Dropdown) draw_device(d gg.DrawDevice) {
 	offset_start(mut dd)
-	gg := dd.ui.gg
 	// draw the main dropdown
-	gg.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
-	gg.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
+	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
+	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
 		ui.dropdown_focus_color
 	} else {
 		ui.dropdown_border_color
 	})
 	if dd.selected_index >= 0 {
-		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
-		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 	}
-	dd.draw_open()
+	dd.draw_device_open(d)
 	// draw the arrow
-	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	d.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 	offset_end(mut dd)
 }
 
-fn (dd &Dropdown) draw_open() {
+fn (dd &Dropdown) draw_device_open(d gg.DrawDevice) {
 	// draw the drawer
 	if dd.open {
-		gg := dd.ui.gg
-		gg.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			ui.dropdown_drawer_color)
-		gg.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+		d.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			ui.dropdown_border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
@@ -181,11 +184,11 @@ fn (dd &Dropdown) draw_open() {
 			} else {
 				ui.dropdown_drawer_color
 			}
-			gg.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+			d.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
-			gg.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				ui.dropdown_border_color)
-			gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			dd.ui.gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 		}
 	}
 }

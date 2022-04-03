@@ -5,6 +5,7 @@ module ui
 
 import math
 import gx
+import gg
 import eventbus
 
 [heap]
@@ -163,6 +164,10 @@ fn (mut g Group) draw() {
 		child.draw()
 	}
 	offset_end(mut g)
+}
+
+fn (mut c Group) draw_device(d gg.DrawDevice) {
+	// TODO
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
