@@ -1,0 +1,4 @@
+module ui
+
+interface DrawDevice {
+}

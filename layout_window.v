@@ -65,11 +65,12 @@ pub mut:
 	root_layout       Layout = empty_stack
 	dpi_scale         f32
 	// saved origin sizes
-	orig_width  int
-	orig_height int
-	touch       TouchInfo
-	mouse       Mouse
-	bg_color    gx.Color
+	orig_width   int
+	orig_height  int
+	touch        TouchInfo
+	mouse        Mouse
+	bg_color     gx.Color
+	sample_count int
 	// Text Config
 	text_cfg gx.TextCfg
 	// themes
@@ -134,6 +135,7 @@ pub:
 	resizable             bool
 	mode                  WindowSizeType
 	immediate             bool
+	sample_count          int = 4
 	// Text Config
 	lines int = 10
 	// message
@@ -219,6 +221,7 @@ pub fn window(cfg WindowParams) &Window {
 		text_cfg: text_cfg
 		native_message: cfg.native_message
 		immediate: cfg.immediate
+		sample_count: cfg.sample_count
 		iconified_fn: cfg.on_iconify
 		restored_fn: cfg.on_restore
 		quit_requested_fn: cfg.on_quit_request
