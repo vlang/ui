@@ -80,7 +80,7 @@ fn (mut gv Grid) draw() {
 	gv.draw_device(gv.ui.gg)
 }
 
-fn (mut gv Grid) draw_device(d gg.DrawDevice) {
+fn (mut gv Grid) draw_device(d DrawDevice) {
 	offset_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width

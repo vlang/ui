@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 
 const (
 	sw_height         = 20
@@ -113,7 +112,7 @@ fn (mut s Switch) draw() {
 	s.draw_device(s.ui.gg)
 }
 
-fn (mut s Switch) draw_device(d gg.DrawDevice) {
+fn (mut s Switch) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {

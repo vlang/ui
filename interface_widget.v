@@ -23,6 +23,7 @@ mut:
 	point_inside(x f64, y f64) bool
 	set_visible(bool)
 	draw()
+	draw_device(d DrawDevice)
 	cleanup()
 }
 

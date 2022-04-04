@@ -148,7 +148,7 @@ fn (mut l Label) draw() {
 	l.draw_device(l.ui.gg)
 }
 
-fn (mut l Label) draw_device(d gg.DrawDevice) {
+fn (mut l Label) draw_device(d DrawDevice) {
 	offset_start(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	l.ui.gg.set_cfg(l.text_cfg)

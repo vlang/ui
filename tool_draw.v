@@ -1,6 +1,5 @@
 module ui
 
-import gg
 import gx
 
 // // fn (tb &TextBox) draw_inner_border() {
@@ -18,7 +17,7 @@ import gx
 // }
 
 // fn (tb &TextBox) draw_inner_border() {
-fn draw_device_inner_border(border_accentuated bool, d gg.DrawDevice, x int, y int, width int, height int, is_error bool) {
+fn draw_device_inner_border(border_accentuated bool, d DrawDevice, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {
 		color := if is_error { gx.rgb(255, 0, 0) } else { text_border_color }
 		d.draw_rect_empty(x, y, width, height, color)

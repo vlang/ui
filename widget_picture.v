@@ -180,7 +180,7 @@ fn (mut pic Picture) draw() {
 	pic.draw_device(pic.ui.gg)
 }
 
-fn (mut pic Picture) draw_device(d gg.DrawDevice) {
+fn (mut pic Picture) draw_device(d DrawDevice) {
 	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)
 }
 

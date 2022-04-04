@@ -326,7 +326,7 @@ pub fn (mut tb TextBox) draw() {
 	tb.draw_device(tb.ui.gg)
 }
 
-pub fn (mut tb TextBox) draw_device(d gg.DrawDevice) {
+pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	offset_start(mut tb)
 	scrollview_draw_begin(mut tb)
 	// draw background

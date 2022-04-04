@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 // import time
 // import encoding.utf8
 
@@ -238,7 +237,7 @@ fn (mut tv TextView) scroll_changed() {
 	tv.update_lines()
 }
 
-fn (mut tv TextView) draw_device_textlines(d gg.DrawDevice) {
+fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	if tv.tb.is_sync {
 		tv.refresh_visible_lines()
 		tv.update_lines()
@@ -284,7 +283,7 @@ pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
 		y, ustr[imin..imax].string())
 }
 
-fn (mut tv TextView) draw_device_selection(d gg.DrawDevice) {
+fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 	if !tv.is_sel_active() {
 		// println("return draw_sel")
 		return

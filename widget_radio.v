@@ -304,7 +304,7 @@ fn (mut r Radio) draw() {
 	r.draw_device(r.ui.gg)
 }
 
-fn (mut r Radio) draw_device(d gg.DrawDevice) {
+fn (mut r Radio) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	dtw := DrawTextWidget(r)
 	if r.title != '' {

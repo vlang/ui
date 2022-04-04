@@ -142,7 +142,7 @@ fn (mut m Menu) draw() {
 	m.draw_device(m.ui.gg)
 }
 
-fn (mut m Menu) draw_device(d gg.DrawDevice) {
+fn (mut m Menu) draw_device(d DrawDevice) {
 	offset_start(mut m)
 	if m.hidden {
 		return

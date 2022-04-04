@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 
 const (
 	progress_bar_color                   = gx.rgb(87, 153, 245)
@@ -108,7 +107,7 @@ fn (mut pb ProgressBar) draw() {
 	pb.draw_device(pb.ui.gg)
 }
 
-fn (mut pb ProgressBar) draw_device(d gg.DrawDevice) {
+fn (mut pb ProgressBar) draw_device(d DrawDevice) {
 	offset_start(mut pb)
 	// Draw the gray background
 	d.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)

@@ -352,7 +352,7 @@ fn (mut b Button) draw() {
 	b.draw_device(b.ui.gg)
 }
 
-fn (mut b Button) draw_device(d gg.DrawDevice) {
+fn (mut b Button) draw_device(d DrawDevice) {
 	offset_start(mut b)
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2

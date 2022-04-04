@@ -620,7 +620,7 @@ fn (mut c CanvasLayout) draw() {
 	offset_end(mut c)
 }
 
-fn (mut c CanvasLayout) draw_device(d gg.DrawDevice) {
+fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	// TODO
 }
 

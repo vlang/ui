@@ -203,7 +203,7 @@ pub fn (mut cb CheckBox) draw() {
 	cb.draw_device(cb.ui.gg)
 }
 
-pub fn (mut cb CheckBox) draw_device(d gg.DrawDevice) {
+pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	offset_start(mut cb)
 	if cb.bg_color != no_color {
 		d.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,

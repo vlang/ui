@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 
 const (
 	thumb_color                            = gx.rgb(87, 153, 245)
@@ -185,7 +184,7 @@ fn (mut s Slider) draw() {
 	s.draw_device(s.ui.gg)
 }
 
-fn (mut s Slider) draw_device(d gg.DrawDevice) {
+fn (mut s Slider) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	// Draw the track
 	x, y, w, h := if s.orientation == .horizontal {
@@ -217,7 +216,7 @@ fn (mut s Slider) draw_device(d gg.DrawDevice) {
 }
 
 // TODO to simplify (seems a bit too complex)
-fn (s &Slider) draw_device_thumb(d gg.DrawDevice) {
+fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	rev_axis := if s.orientation == .horizontal { s.y } else { s.x }
 	rev_dim := if s.orientation == .horizontal { s.height } else { s.width }

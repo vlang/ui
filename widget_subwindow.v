@@ -2,7 +2,6 @@ module ui
 
 import eventbus
 import gx
-import gg
 
 pub const (
 	sw_decoration    = 20
@@ -102,7 +101,7 @@ fn (mut s SubWindow) draw() {
 	s.draw_device(s.ui.gg)
 }
 
-fn (mut s SubWindow) draw_device(d gg.DrawDevice) {
+fn (mut s SubWindow) draw_device(d DrawDevice) {
 	if s.hidden {
 		return
 	}

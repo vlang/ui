@@ -150,7 +150,7 @@ pub fn (mut dd Dropdown) draw() {
 	dd.draw_device(dd.ui.gg)
 }
 
-pub fn (mut dd Dropdown) draw_device(d gg.DrawDevice) {
+pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 	offset_start(mut dd)
 	// draw the main dropdown
 	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
@@ -170,7 +170,7 @@ pub fn (mut dd Dropdown) draw_device(d gg.DrawDevice) {
 	offset_end(mut dd)
 }
 
-fn (dd &Dropdown) draw_device_open(d gg.DrawDevice) {
+fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 	// draw the drawer
 	if dd.open {
 		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,

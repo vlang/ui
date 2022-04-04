@@ -1139,7 +1139,7 @@ fn (mut s Stack) draw() {
 	offset_end(mut s)
 }
 
-fn (mut c Stack) draw_device(d gg.DrawDevice) {
+fn (mut c Stack) draw_device(d DrawDevice) {
 	// TODO
 }
 

@@ -97,7 +97,7 @@ fn (mut c Canvas) draw() {
 	offset_end(mut c)
 }
 
-fn (mut c Canvas) draw_device(d gg.DrawDevice) {
+fn (mut c Canvas) draw_device(d DrawDevice) {
 }
 
 fn (mut c Canvas) set_visible(state bool) {

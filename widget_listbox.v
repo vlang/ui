@@ -477,7 +477,7 @@ fn (mut lb ListBox) draw() {
 	lb.draw_device(lb.ui.gg)
 }
 
-fn (mut lb ListBox) draw_device(d gg.DrawDevice) {
+fn (mut lb ListBox) draw_device(d DrawDevice) {
 	offset_start(mut lb)
 	DrawTextWidget(lb).load_style()
 	// scrollview_clip(mut lb)
@@ -973,7 +973,7 @@ fn (li &ListItem) draw() {
 	li.draw_device(li.list.ui.gg)
 }
 
-fn (li &ListItem) draw_device(d gg.DrawDevice) {
+fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
 	col := if li.is_selected() { lb.col_selected } else { lb.col_bkgrnd }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }

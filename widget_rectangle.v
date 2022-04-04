@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 
 [heap]
 pub struct Rectangle {
@@ -128,7 +127,7 @@ fn (mut r Rectangle) draw() {
 	r.draw_device(r.ui.gg)
 }
 
-fn (mut r Rectangle) draw_device(d gg.DrawDevice) {
+fn (mut r Rectangle) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	if r.radius > 0 {
 		d.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
@@ -157,7 +156,7 @@ fn (mut r Rectangle) draw_device(d gg.DrawDevice) {
 	offset_end(mut r)
 }
 
-// fn (mut r Rectangle) draw(d gg.DrawDevice) {
+// fn (mut r Rectangle) draw(d DrawDevice) {
 // 	offset_start(mut r)
 // 	if r.radius > 0 {
 // 		r.ui.gg.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)

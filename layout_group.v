@@ -166,7 +166,7 @@ fn (mut g Group) draw() {
 	offset_end(mut g)
 }
 
-fn (mut c Group) draw_device(d gg.DrawDevice) {
+fn (mut c Group) draw_device(d DrawDevice) {
 	// TODO
 }
 
