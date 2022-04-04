@@ -141,8 +141,12 @@ pub fn (mut m Mouse) update_event(e &gg.Event) {
 }
 
 pub fn (mut m Mouse) draw() {
+	m.draw_device(m.window.ui.gg)
+}
+
+pub fn (mut m Mouse) draw_device(d DrawDevice) {
 	if m.active {
-		m.window.ui.draw_img(m.id, m.pos.x, m.pos.y, m.size, m.size)
+		m.window.ui.draw_device_img(d, m.id, m.pos.x, m.pos.y, m.size, m.size)
 	}
 }
 

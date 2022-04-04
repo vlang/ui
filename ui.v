@@ -108,9 +108,9 @@ pub fn (gui &UI) has_img(id string) bool {
 	return id in gui.imgs.keys()
 }
 
-pub fn (gui &UI) draw_img(id string, x int, y int, w int, h int) {
+pub fn (gui &UI) draw_device_img(d DrawDevice, id string, x int, y int, w int, h int) {
 	if gui.has_img(id) {
-		gui.gg.draw_image(x, y, w, h, gui.img(id))
+		d.draw_image(x, y, w, h, gui.img(id))
 	}
 }
 

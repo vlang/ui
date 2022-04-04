@@ -444,6 +444,31 @@ fn native_frame(mut w Window) {
 	// w.ui.needs_refresh = false
 }
 
+fn draw_device_draw_print(filename string, mut w Window) {
+	d := draw_device_print('test', filename)
+
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+
+	for mut child in children {
+		child.draw_device(d)
+	}
+
+	for mut sw in w.subwindows {
+		sw.draw_device(d)
+	}
+
+	// draw dragger if active
+	draw_dragger(mut w)
+	// draw tooltip if active
+	w.tooltip.draw_device(d)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.mouse.draw_device(d)
+}
+
 //----
 
 fn on_event(e &gg.Event, mut window Window) {
@@ -651,6 +676,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 				child.cleanup()
 			}
 			window.child_window = &Window(0)
+		} else {
+			if shift_key(e.mods) {
+				draw_device_draw_print('toto.txt', mut window)
+			}
 		}
 	} else {
 		// add user shortcuts for window
