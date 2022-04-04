@@ -254,8 +254,9 @@ pub fn (mut r Radio) set_size_from_values() {
 	} else {
 		r.adj_width, r.adj_height = 0, (r.height + 5) * r.values.len
 	}
+	dtw := DrawTextWidget(r)
 	for value in r.values {
-		width := text_width(r, value)
+		width := dtw.text_width(value)
 		if r.horizontal {
 			if r.compact {
 				w := width + check_mark_size + 10

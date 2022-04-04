@@ -25,10 +25,10 @@ import sokol.sgl
 // 	return w.ui.gg.text_width(text)
 // }
 
-fn text_height<T>(w &T, text string) int {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_height(text)
-}
+// fn text_height<T>(w &T, text string) int {
+// 	w.ui.gg.set_cfg(w.text_cfg)
+// 	return w.ui.gg.text_height(text)
+// }
 
 // T is a widget Type with text_cfg field
 // fn draw_text<T>(w &T, x int, y int, text_ string) {

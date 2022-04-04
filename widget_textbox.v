@@ -313,7 +313,8 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) update_line_height() {
-	tb.line_height = int(f64(text_height(tb, 'W')) * 1.5)
+	dtw := DrawTextWidget(tb)
+	tb.line_height = int(f64(dtw.text_height('W')) * 1.5)
 }
 
 pub fn (mut tb TextBox) draw() {
@@ -458,7 +459,7 @@ fn (mut tb TextBox) draw_selection() {
 		// println("return draw_sel")
 		return
 	}
-	sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
+	sel_from, sel_width := tb.text_xminmax_from_pos(*tb.text, tb.sel_start, tb.sel_end)
 	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
 	tb.ui.gg.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
 		sel_width, tb.line_height, ui.selection_color)
@@ -900,7 +901,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.extend_selection(x, y)
 		} else {
-			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
 			if tb.twosided_sel { // extend selection from both sides
 				// tv.sel_start and tv.sel_end can and have to be sorted
 				if tb.sel_start > tb.sel_end {
@@ -925,7 +926,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.start_selection(x, y)
 		} else {
-			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
 			if tb.dragging {
 				tb.sel_start = tb.cursor_pos
 			}
@@ -947,7 +948,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			y := int(e.y - tb.y - ui.textbox_padding_y)
 			tb.tv.end_selection(x, y)
 		} else {
-			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
+			tb.sel_end = tb.text_pos_from_x(*tb.text, x)
 			tb.ui.show_cursor = false
 		}
 		tb.sel_active = true
@@ -1028,3 +1029,42 @@ pub fn (mut tb TextBox) insert(s string) {
 
 // Normally useless but required for scrollview_draw_begin()
 fn (tb &TextBox) set_children_pos() {}
+
+// Utility functions
+
+pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
+	dtw := DrawTextWidget(tb)
+	ustr := text.runes()
+	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	if x_max > ustr.len {
+		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		x_max = ustr.len
+	}
+	if x_min < 0 {
+		// println('warning: text_xminmax_from_pos $x_min < 0')
+		x_min = 0
+	}
+	// println("xminmax: ${ustr.len} $x_min $x_max")
+	left := ustr[..x_min].string()
+	right := ustr[x_max..].string()
+	ww, lw, rw := dtw.text_width(text), dtw.text_width(left), dtw.text_width(right)
+	return lw, ww - lw - rw
+}
+
+pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
+	if x <= 0 {
+		return 0
+	}
+	dtw := DrawTextWidget(tb)
+	mut prev_width := 0
+	ustr := text.runes()
+	for i in 0 .. ustr.len {
+		width := dtw.text_width(ustr[..i].string())
+		width2 := if i < ustr.len { dtw.text_width(ustr[..(i + 1)].string()) } else { width }
+		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
+			return i
+		}
+		prev_width = width
+	}
+	return ustr.len
+}

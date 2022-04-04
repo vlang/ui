@@ -84,7 +84,8 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
-	cb.width = text_width(cb, cb.text) + 5 + ui.check_mark_size
+	dtw := DrawTextWidget(cb)
+	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
 	cb.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
