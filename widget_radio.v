@@ -255,6 +255,7 @@ pub fn (mut r Radio) set_size_from_values() {
 		r.adj_width, r.adj_height = 0, (r.height + 5) * r.values.len
 	}
 	dtw := DrawTextWidget(r)
+	dtw.load_style()
 	for value in r.values {
 		width := dtw.text_width(value)
 		if r.horizontal {

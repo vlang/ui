@@ -412,6 +412,7 @@ pub fn (mut b Button) set_text_size() {
 		b.height = b.image.height
 	} else {
 		dtw := DrawTextWidget(b)
+		dtw.load_style()
 		b.text_width, b.text_height = dtw.text_size(b.text)
 		// b.text_width, b.text_height = text_size(b, b.text)
 

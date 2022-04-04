@@ -137,6 +137,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	lb.ui = ui
 	lb.init_style()
 	dtw := DrawTextWidget(lb)
+	dtw.load_style()
 	lb.draw_count = lb.height / lb.item_height
 	lb.text_offset_y = (lb.item_height - dtw.text_height('W')) / 2
 	if lb.text_offset_y < 0 {
@@ -525,6 +526,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 		return 0
 	}
 	dtw := DrawTextWidget(lb)
+	dtw.load_style()
 	width := dtw.text_width(text)
 	real_w := lb.width + ui._text_offset_x * 2
 	mut draw_to := text.len
@@ -759,6 +761,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {
 		mut width := 0
 		dtw := DrawTextWidget(lb)
+		dtw.load_style()
 		for item in lb.items {
 			width = dtw.text_width(item.text) + ui._text_offset_x * 2
 			// println('$item.text -> $width')
@@ -778,6 +781,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 fn (mut lb ListBox) update_adj_size() {
 	mut width := 0
 	dtw := DrawTextWidget(lb)
+	dtw.load_style()
 	for item in lb.items {
 		width = dtw.text_width(item.text) + ui._text_offset_x * 2
 		// println('$item.text -> $width')

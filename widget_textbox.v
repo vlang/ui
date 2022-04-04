@@ -288,6 +288,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 		return tb.tv.size()
 	} else {
 		dtw := DrawTextWidget(tb)
+		dtw.load_style()
 		mut w, mut h := dtw.text_size(tb.text)
 		return w + 2 * ui.textbox_padding_x, h + 2 * ui.textbox_padding_y
 	}
@@ -314,6 +315,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 
 fn (mut tb TextBox) update_line_height() {
 	dtw := DrawTextWidget(tb)
+	dtw.load_style()
 	tb.line_height = int(f64(dtw.text_height('W')) * 1.5)
 }
 
@@ -339,6 +341,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 		tb.tv.draw_device_textlines(d)
 	} else {
 		dtw := DrawTextWidget(tb)
+		dtw.load_style()
 		text := *(tb.text)
 		ustr := text.runes()
 		text_len := ustr.len
@@ -1034,6 +1037,7 @@ fn (tb &TextBox) set_children_pos() {}
 
 pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
 	dtw := DrawTextWidget(tb)
+	dtw.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
 	if x_max > ustr.len {
@@ -1056,6 +1060,7 @@ pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
 		return 0
 	}
 	dtw := DrawTextWidget(tb)
+	dtw.load_style()
 	mut prev_width := 0
 	ustr := text.runes()
 	for i in 0 .. ustr.len {

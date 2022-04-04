@@ -85,6 +85,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
 	dtw := DrawTextWidget(cb)
+	dtw.load_style()
 	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
 	cb.init_style()
 	mut subscriber := parent.get_subscriber()
@@ -166,6 +167,7 @@ pub fn (mut cb CheckBox) set_pos(x int, y int) {
 pub fn (mut cb CheckBox) adj_size() (int, int) {
 	if cb.adj_width == 0 || cb.adj_height == 0 {
 		dtw := DrawTextWidget(cb)
+		dtw.load_style()
 		mut w, mut h := 0, 0
 		w, h = dtw.text_size(cb.text)
 		cb.adj_width, cb.adj_height = w + ui.check_mark_size, math.max(h, ui.check_mark_size)
