@@ -6,8 +6,8 @@ import gg
 type DrawContext = gg.Context
 
 interface DrawDevice {
-	draw_pixel(x f32, y f32, c gx.Color)
-	draw_pixels(points []f32, c gx.Color)
+	// draw_pixel(x f32, y f32, c gx.Color)
+	// draw_pixels(points []f32, c gx.Color)
 	draw_image(x f32, y f32, width f32, height f32, img &gg.Image)
 	// draw_text_def(x int, y int, text string)
 	// draw_text(x int, y int, text string)

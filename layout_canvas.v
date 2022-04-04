@@ -547,6 +547,10 @@ fn (mut c CanvasLayout) set_drawing_children() {
 }
 
 fn (mut c CanvasLayout) draw() {
+	c.draw_device(c.ui.gg)
+}
+
+fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	if c.hidden {
 		return
 	}
@@ -598,7 +602,7 @@ fn (mut c CanvasLayout) draw() {
 		for mut child in c.drawing_children {
 			if mut child is Layout
 				|| !is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {
-				child.draw()
+				child.draw_device(d)
 			}
 		}
 	} else {
@@ -606,7 +610,7 @@ fn (mut c CanvasLayout) draw() {
 			println('draw $c.id: ${c.drawing_children.map(it.id)}')
 		}
 		for mut child in c.drawing_children {
-			child.draw()
+			child.draw_device(d)
 		}
 	}
 
@@ -618,10 +622,6 @@ fn (mut c CanvasLayout) draw() {
 	scrollview_draw_end(c)
 
 	offset_end(mut c)
-}
-
-fn (mut c CanvasLayout) draw_device(d DrawDevice) {
-	// TODO
 }
 
 pub fn (mut c CanvasLayout) set_visible(state bool) {
