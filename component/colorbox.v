@@ -204,15 +204,16 @@ fn cv_h_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn cv_h_draw(c &ui.CanvasLayout, app voidptr) {
+fn cv_h_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 	cb := colorbox_component(c)
 	for j in 0 .. 255 {
-		c.draw_rect_empty(0, j, 30, 1, cb.hsv_to_rgb(f64(j) / 256.0, .75, .75))
+		c.draw_device_rect_empty(d, 0, j, 30, 1, cb.hsv_to_rgb(f64(j) / 256.0, .75, .75))
 	}
-	c.draw_rounded_rect_filled(-3, int(cb.h * 256) - 3, 36, 6, 2, cb.hsv_to_rgb(cb.h,
+	c.draw_device_rounded_rect_filled(d, -3, int(cb.h * 256) - 3, 36, 6, 2, cb.hsv_to_rgb(cb.h,
 		.2, .7))
-	c.draw_rect_filled(3, int(cb.h * 256) - 1, 24, 2, cb.hsv_to_rgb(cb.h, .75, .75))
-	c.draw_rounded_rect_empty(-3, int(cb.h * 256) - 3, 36, 6, 2, if cb.light {
+	c.draw_device_rect_filled(d, 3, int(cb.h * 256) - 1, 24, 2, cb.hsv_to_rgb(cb.h, .75,
+		.75))
+	c.draw_device_rounded_rect_empty(d, -3, int(cb.h * 256) - 3, 36, 6, 2, if cb.light {
 		gx.black
 	} else {
 		gx.white
@@ -236,15 +237,16 @@ fn cv_sv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn cv_sv_draw(mut c ui.CanvasLayout, app voidptr) {
+fn cv_sv_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
 	mut cb := colorbox_component(c)
 
+	// TODO: check extra_draw c.draw_device_texture
 	c.draw_texture(cb.simg)
 
-	c.draw_rounded_rect_filled(int(cb.s * 256.0) - 10, int((1.0 - cb.v) * 256.0) - 10,
+	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 10, int((1.0 - cb.v) * 256.0) - 10,
 		20, 20, 10, cb.hsv_to_rgb(cb.h, 1 - cb.s, 1.0 - cb.v))
-	c.draw_rounded_rect_filled(int(cb.s * 256.0) - 7, int((1.0 - cb.v) * 256.0) - 7, 14,
-		14, 7, cb.hsv_to_rgb(cb.h, cb.s, cb.v))
+	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 7, int((1.0 - cb.v) * 256.0) - 7,
+		14, 14, 7, cb.hsv_to_rgb(cb.h, cb.s, cb.v))
 }
 
 fn cv_sel_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
@@ -276,19 +278,19 @@ fn cv_sel_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	cb.update_cur_color(true)
 }
 
-fn cv_sel_draw(mut c ui.CanvasLayout, app voidptr) {
+fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
 	cb := colorbox_component(c)
 	mut hsv := HSVColor{}
 	mut h, mut s, mut v := 0.0, 0.0, 0.0
 	ii, jj := cb.ind_sel % component.cb_nc, cb.ind_sel / component.cb_nc
-	c.draw_rounded_rect_filled(component.cb_sp + ii * (component.cb_hsv_col + component.cb_sp) - 1,
-		component.cb_sp + jj * (component.cb_hsv_col + component.cb_sp) - 1, component.cb_hsv_col +
-		2, component.cb_hsv_col + 2, .25, gx.black)
+	c.draw_device_rounded_rect_filled(d, component.cb_sp + ii * (component.cb_hsv_col +
+		component.cb_sp) - 1, component.cb_sp + jj * (component.cb_hsv_col + component.cb_sp) - 1,
+		component.cb_hsv_col + 2, component.cb_hsv_col + 2, .25, gx.black)
 	for j in 0 .. component.cb_nr {
 		for i in 0 .. component.cb_nc {
 			hsv = cb.hsv_sel[i + j * component.cb_nc]
 			h, s, v = hsv.h, hsv.s, hsv.v
-			c.draw_rounded_rect_filled(component.cb_sp + i * (component.cb_hsv_col +
+			c.draw_device_rounded_rect_filled(d, component.cb_sp + i * (component.cb_hsv_col +
 				component.cb_sp), component.cb_sp + j * (component.cb_hsv_col + component.cb_sp),
 				component.cb_hsv_col, component.cb_hsv_col, .25, cb.hsv_to_rgb(h, s, v))
 		}

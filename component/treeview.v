@@ -250,18 +250,21 @@ fn treeview_init(layout &ui.Stack) {
 	}
 }
 
-fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
+fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
 	tv := treeview_component(c)
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
 		if tv.selected[c.id] {
-			c.draw_triangle_filled(5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
+			c.draw_device_triangle_filled(d, 5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
 		} else {
-			c.draw_triangle_filled(7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gx.black)
+			c.draw_device_triangle_filled(d, 7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gx.black)
 		}
 	}
 
-	c.draw_styled_text(16 + dx, 4, tv.titles[c.id], color: tv.text_color, size: tv.text_size)
+	c.draw_device_styled_text(d, 16 + dx, 4, tv.titles[c.id],
+		color: tv.text_color
+		size: tv.text_size
+	)
 }
 
 fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {

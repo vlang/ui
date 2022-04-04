@@ -124,12 +124,12 @@ fn rv_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn rv_draw(c &ui.CanvasLayout, app voidptr) {
+fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	mut k := 0
 	// N.B.: rv.size = rv.pixel_size + rv.inter
-	c.draw_rect_empty(0, 0, rv.width * rv.size, rv.height * rv.size, gx.gray)
+	c.draw_device_rect_empty(d, 0, 0, rv.width * rv.size, rv.height * rv.size, gx.gray)
 	mut pos_x, mut pos_y := rv.from_x, rv.from_y
 	mut col := gx.white
 	for i in rv.from_i .. rv.to_i {
@@ -142,11 +142,11 @@ fn rv_draw(c &ui.CanvasLayout, app voidptr) {
 			}
 			pos_x = j * rv.size
 			pos_y = i * rv.size
-			c.draw_rect_filled(pos_x, pos_y, rv.pixel_size, rv.pixel_size, col)
+			c.draw_device_rect_filled(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size, col)
 		}
 	}
-	rv.draw_selection()
-	rv.draw_current()
+	rv.draw_device_selection(d)
+	rv.draw_device_current(d)
 }
 
 fn rv_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
@@ -337,22 +337,24 @@ fn (rv &RasterViewComponent) get_pos(i int, j int) (int, int) {
 	return j * rv.size, i * rv.size
 }
 
-fn (rv &RasterViewComponent) draw_current() {
+fn (rv &RasterViewComponent) draw_device_current(d ui.DrawDevice) {
 	if rv.cur_i < 0 || rv.cur_j < 0 {
 		return
 	}
 	pos_x, pos_y := rv.get_pos(rv.cur_i, rv.cur_j)
 	cur_color := gx.cyan
-	rv.layout.draw_rect_surrounded(pos_x, pos_y, rv.pixel_size, rv.pixel_size, 2, cur_color)
+	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
+		2, cur_color)
 }
 
-fn (rv &RasterViewComponent) draw_selection() {
+fn (rv &RasterViewComponent) draw_device_selection(d ui.DrawDevice) {
 	if rv.sel_i < 0 || rv.sel_j < 0 {
 		return
 	}
 	pos_x, pos_y := rv.get_pos(rv.sel_i, rv.sel_j)
 	sel_color := gx.red
-	rv.layout.draw_rect_surrounded(pos_x, pos_y, rv.pixel_size, rv.pixel_size, 3, sel_color)
+	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
+		3, sel_color)
 }
 
 fn (rv &RasterViewComponent) size() (int, int) {

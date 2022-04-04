@@ -7,7 +7,7 @@ import gg
 import gx
 import eventbus
 
-pub type CanvasLayoutDrawFn = fn (c &CanvasLayout, state voidptr) // x_offset int, y_offset int)
+pub type CanvasLayoutDrawDeviceFn = fn (d DrawDevice, c &CanvasLayout, state voidptr) // x_offset int, y_offset int)
 
 pub type CanvasLayoutScrollFn = fn (e ScrollEvent, c &CanvasLayout)
 
@@ -52,20 +52,20 @@ pub mut:
 	scrollview           &ScrollView = 0
 	point_inside_visible bool // to avoid point_inside_adj
 	// callbacks
-	draw_fn          CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
-	post_draw_fn     CanvasLayoutDrawFn      = CanvasLayoutDrawFn(0)
-	click_fn         CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
-	mouse_down_fn    CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
-	mouse_up_fn      CanvasLayoutMouseFn     = CanvasLayoutMouseFn(0)
-	scroll_fn        CanvasLayoutScrollFn    = CanvasLayoutScrollFn(0)
-	mouse_move_fn    CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
-	mouse_enter_fn   CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
-	mouse_leave_fn   CanvasLayoutMouseMoveFn = CanvasLayoutMouseMoveFn(0)
-	key_down_fn      CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
-	char_fn          CanvasLayoutKeyFn       = CanvasLayoutKeyFn(0)
-	full_size_fn     CanvasLayoutSizeFn      = CanvasLayoutSizeFn(0)
-	on_scroll_change ScrollViewChangedFn     = ScrollViewChangedFn(0)
-	parent           Layout = empty_stack
+	draw_device_fn      CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)
+	post_draw_device_fn CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)
+	click_fn            CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
+	mouse_down_fn       CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
+	mouse_up_fn         CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
+	scroll_fn           CanvasLayoutScrollFn     = CanvasLayoutScrollFn(0)
+	mouse_move_fn       CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
+	mouse_enter_fn      CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
+	mouse_leave_fn      CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
+	key_down_fn         CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
+	char_fn             CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
+	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
+	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
+	parent              Layout = empty_stack
 mut:
 	// To keep track of original position
 	pos_ map[int]XYPos
@@ -88,15 +88,15 @@ pub struct CanvasLayoutParams {
 	scrollview     bool
 	is_focused     bool
 	justify        []f64 = [0.0, 0.0]
-	on_draw        CanvasLayoutDrawFn      = voidptr(0)
-	on_post_draw   CanvasLayoutDrawFn      = voidptr(0)
-	on_click       CanvasLayoutMouseFn     = voidptr(0)
-	on_mouse_down  CanvasLayoutMouseFn     = voidptr(0)
-	on_mouse_up    CanvasLayoutMouseFn     = voidptr(0)
-	on_scroll      CanvasLayoutScrollFn    = voidptr(0)
-	on_mouse_move  CanvasLayoutMouseMoveFn = voidptr(0)
-	on_mouse_enter CanvasLayoutMouseMoveFn = voidptr(0)
-	on_mouse_leave CanvasLayoutMouseMoveFn = voidptr(0)
+	on_draw        CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_post_draw   CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_click       CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_down  CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_up    CanvasLayoutMouseFn      = voidptr(0)
+	on_scroll      CanvasLayoutScrollFn     = voidptr(0)
+	on_mouse_move  CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_enter CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_leave CanvasLayoutMouseMoveFn  = voidptr(0)
 	// resize_fn     ResizeFn
 	on_key_down      CanvasLayoutKeyFn   = voidptr(0)
 	on_char          CanvasLayoutKeyFn   = voidptr(0)
@@ -130,8 +130,8 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		bg_color: c.bg_color
 		is_focused: c.is_focused
 		justify: c.justify
-		draw_fn: c.on_draw
-		post_draw_fn: c.on_post_draw
+		draw_device_fn: c.on_draw
+		post_draw_device_fn: c.on_post_draw
 		click_fn: c.on_click
 		mouse_move_fn: c.on_mouse_move
 		mouse_enter_fn: c.on_mouse_enter
@@ -572,14 +572,14 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
-			c.draw_rounded_rect_filled(0, 0, w, h, radius, c.bg_color)
+			c.draw_device_rounded_rect_filled(d, 0, 0, w, h, radius, c.bg_color)
 		} else {
-			c.draw_rect_filled(0, 0, w, h, c.bg_color)
+			c.draw_device_rect_filled(d, 0, 0, w, h, c.bg_color)
 		}
 	}
 
-	if c.draw_fn != voidptr(0) {
-		c.draw_fn(c, state)
+	if c.draw_device_fn != voidptr(0) {
+		c.draw_device_fn(d, c, state)
 	}
 	$if cdraw_scroll ? {
 		if Layout(c).has_scrollview_or_parent_scrollview() {
@@ -614,8 +614,8 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 	}
 
-	if c.post_draw_fn != voidptr(0) {
-		c.post_draw_fn(c, state)
+	if c.post_draw_device_fn != voidptr(0) {
+		c.post_draw_device_fn(d, c, state)
 	}
 
 	// scrollview_draw(c)
@@ -733,115 +733,113 @@ pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, tex
 
 // ---- triangle
 
-pub fn (c &CanvasLayout) draw_triangle_empty(x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
-	c.ui.gg.draw_triangle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		f32(x2 + c.x + c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x),
-		f32(y3 + c.y + c.offset_y), color)
+pub fn (c &CanvasLayout) draw_device_triangle_empty(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+	d.draw_triangle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
+		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
+		c.offset_y), color)
 }
 
-pub fn (c &CanvasLayout) draw_triangle_filled(x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
-	c.ui.gg.draw_triangle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		f32(x2 + c.x + c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x),
-		f32(y3 + c.y + c.offset_y), color)
+pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+	d.draw_triangle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
+		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
+		c.offset_y), color)
 }
 
 // ---- square
 
-pub fn (c &CanvasLayout) draw_square_empty(x f64, y f64, s f32, color gx.Color) {
-	c.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
+pub fn (c &CanvasLayout) draw_device_square_empty(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
+	c.draw_device_rect_empty(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		s, s, color)
 }
 
-pub fn (c &CanvasLayout) draw_square_filled(x f64, y f64, s f32, color gx.Color) {
-	c.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
+pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
+	c.draw_device_rect_filled(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
+		s, s, color)
 }
 
 // ---- rectangle
 
-pub fn (c &CanvasLayout) draw_rect_empty(x f64, y f64, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h,
-		color)
+pub fn (c &CanvasLayout) draw_device_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
+	d.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
-pub fn (c &CanvasLayout) draw_rect_filled(x f64, y f64, w f32, h f32, color gx.Color) {
-	c.ui.gg.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
-		h, color)
+pub fn (c &CanvasLayout) draw_device_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
+	d.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
-pub fn (c &CanvasLayout) draw_rounded_rect_filled(x f64, y f64, w f32, h f32, radius f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rounded_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		w, h, rad, color)
+	d.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
+		h, rad, color)
 }
 
-pub fn (c &CanvasLayout) draw_rounded_rect_empty(x f64, y f64, w f32, h f32, radius f32, border_color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, border_color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	c.ui.gg.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		w, h, rad, border_color)
+	d.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
+		h, rad, border_color)
 }
 
 // ---- circle
 
-pub fn (c &CanvasLayout) draw_circle_line(x f64, y f64, r int, segments int, color gx.Color) {
-	c.ui.gg.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
-		segments, color)
-}
-
-pub fn (c &CanvasLayout) draw_circle_empty(x f64, y f64, r f32, color gx.Color) {
-	c.ui.gg.draw_circle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
+pub fn (c &CanvasLayout) draw_device_circle_line(d DrawDevice, x f64, y f64, r int, segments int, color gx.Color) {
+	d.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, segments,
 		color)
 }
 
-pub fn (c &CanvasLayout) draw_circle_filled(x f64, y f64, r f32, color gx.Color) {
-	c.ui.gg.draw_circle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
-		color)
+pub fn (c &CanvasLayout) draw_device_circle_empty(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
+	d.draw_circle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
+}
+
+pub fn (c &CanvasLayout) draw_device_circle_filled(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
+	d.draw_circle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
 }
 
 // ---- slice
 
-pub fn (c &CanvasLayout) draw_slice_empty(x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
-		start_angle, end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_device_slice_empty(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_slice_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
+		end_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_slice_filled(x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_slice_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r,
-		start_angle, end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_slice_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
+		end_angle, segments, color)
 }
 
 // ---- arc
 
-pub fn (c &CanvasLayout) draw_arc_empty(x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
+pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
 		thickness, start_angle, end_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_arc_filled(x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	c.ui.gg.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
+pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
 		thickness, start_angle, end_angle, segments, color)
 }
 
 // ---- line
 
-pub fn (c &CanvasLayout) draw_line(x f64, y f64, x2 f64, y2 f64, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2 f64, color gx.Color) {
 	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
 	// $y2 + $c.y + $c.offset_y")
-	c.ui.gg.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
-		c.offset_x), f32(y2 + c.y + c.offset_y), color)
+	d.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x + c.offset_x),
+		f32(y2 + c.y + c.offset_y), color)
 }
 
 // ---- polygon
 // TODO: What to do about canvas offset?
-pub fn (c &CanvasLayout) draw_convex_poly(points []f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_convex_poly(d DrawDevice, points []f32, color gx.Color) {
 }
 
-pub fn (c &CanvasLayout) draw_empty_poly(points []f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_empty_poly(d DrawDevice, points []f32, color gx.Color) {
 }
 
 // special stuff for surrounding rectangle
 
-pub fn (c &CanvasLayout) draw_rect_surrounded(x f32, y f32, w f32, h f32, size int, color gx.Color) {
-	c.draw_rect_filled(x - size, y - size, w + 2 * size, size, color)
-	c.draw_rect_filled(x - size, y + h, w + 2 * size, size, color)
-	c.draw_rect_filled(x - size, y - size, size, h + 2 * size, color)
-	c.draw_rect_filled(x + w, y - size, size, h + 2 * size, color)
+pub fn (c &CanvasLayout) draw_device_rect_surrounded(d DrawDevice, x f32, y f32, w f32, h f32, size int, color gx.Color) {
+	c.draw_device_rect_filled(d, x - size, y - size, w + 2 * size, size, color)
+	c.draw_device_rect_filled(d, x - size, y + h, w + 2 * size, size, color)
+	c.draw_device_rect_filled(d, x - size, y - size, size, h + 2 * size, color)
+	c.draw_device_rect_filled(d, x + w, y - size, size, h + 2 * size, color)
 }
