@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 import math
 
 const (
@@ -112,22 +111,9 @@ pub fn (cb &CheckBox) free() {
 }
 
 fn (mut cb CheckBox) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(cb.text_cfg) {
-			cb.text_cfg = cb.ui.window.text_cfg
-		}
-		if cb.text_size > 0 {
-			_, win_height := cb.ui.window.size()
-			cb.text_cfg = gx.TextCfg{
-				...cb.text_cfg
-				size: text_size_as_int(cb.text_size, win_height)
-			}
-		}
-	} $else {
-		mut dtw := DrawTextWidget(cb)
-		dtw.init_style()
-		dtw.update_text_size(cb.text_size)
-	}
+	mut dtw := DrawTextWidget(cb)
+	dtw.init_style()
+	dtw.update_text_size(cb.text_size)
 }
 
 fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
@@ -231,13 +217,9 @@ pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 		d.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	$if nodtw ? {
-		cb.ui.gg.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text, cb.text_cfg)
-	} $else {
-		dtw := DrawTextWidget(cb)
-		dtw.load_style()
-		dtw.draw_text(cb.x + ui.check_mark_size + 5, cb.y, cb.text)
-	}
+	dtw := DrawTextWidget(cb)
+	dtw.load_style()
+	dtw.draw_device_text(d, cb.x + ui.check_mark_size + 5, cb.y, cb.text)
 	$if bb ? {
 		debug_draw_bb_widget(mut cb, cb.ui)
 	}

@@ -253,15 +253,15 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	}
 	tv.sh.reset_chunks()
 	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
-		tv.draw_visible_line(j, y, line)
+		tv.draw_device_visible_line(d, j, y, line)
 		if tv.tb.is_line_number {
-			tv.draw_line_number(j, y)
+			tv.draw_device_line_number(d, j, y)
 		}
 		tv.sh.parse_chunks(j, y, line)
 		// tv.sh.parse_chunks(j, y, line)
 		y += tv.line_height
 	}
-	tv.sh.draw_chunks()
+	tv.sh.draw_device_chunks(d)
 
 	// draw cursor
 	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
@@ -270,7 +270,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	}
 }
 
-pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
+pub fn (mut tv TextView) draw_device_visible_line(d DrawDevice, j int, y int, text string) {
 	if j == tv.tlv.from_i.len {
 		// println("draw_visible_line $i $tv.tlv.from_i.len")
 		tv.refresh_visible_lines()
@@ -279,7 +279,7 @@ pub fn (mut tv TextView) draw_visible_line(j int, y int, text string) {
 	imin, imax := tv.tlv.from_i[j], tv.tlv.to_i[j]
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_styled_text(tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
+	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
 		y, ustr[imin..imax].string())
 }
 
@@ -321,8 +321,8 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 	}
 }
 
-fn (tv &TextView) draw_line_number(i int, y int) {
-	tv.draw_styled_text(tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
+fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
+	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
 		
 		color: gx.gray
 	)
@@ -1019,12 +1019,17 @@ fn (tv &TextView) fix_tab_char(txt string) string {
 }
 
 // TextStyles
-fn (tv &TextView) draw_text(x int, y int, text string) {
-	DrawTextWidget(tv.tb).draw_text(x, y, tv.fix_tab_char(text))
-}
+
+// fn (tv &TextView) draw_text(x int, y int, text string) {
+// 	DrawTextWidget(tv.tb).draw_text(x, y, tv.fix_tab_char(text))
+// }
 
 fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	DrawTextWidget(tv.tb).draw_styled_text(x, y, tv.fix_tab_char(text), ts)
+	tv.draw_device_styled_text(tv.tb.ui.gg, x, y, text, ts)
+}
+
+fn (tv &TextView) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
+	DrawTextWidget(tv.tb).draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
 }
 
 fn (tv &TextView) text_width(text string) int {

@@ -142,22 +142,9 @@ pub fn (r &Radio) free() {
 }
 
 fn (mut r Radio) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(r.text_cfg) {
-			r.text_cfg = r.ui.window.text_cfg
-		}
-		if r.text_size > 0 {
-			_, win_height := r.ui.window.size()
-			r.text_cfg = gx.TextCfg{
-				...r.text_cfg
-				size: text_size_as_int(r.text_size, win_height)
-			}
-		}
-	} $else {
-		mut dtw := DrawTextWidget(r)
-		dtw.init_style()
-		dtw.update_text_size(r.text_size)
-	}
+	mut dtw := DrawTextWidget(r)
+	dtw.init_style()
+	dtw.update_text_size(r.text_size)
 }
 
 fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
@@ -317,12 +304,9 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 		// Title
 		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 			10, default_window_color)
-		$if nodtw ? {
-			draw_text(r, r.x + check_mark_size + 3, r.y - 7, r.title)
-		} $else {
-			dtw.load_style()
-			dtw.draw_text(r.x + check_mark_size + 3, r.y - 7, r.title)
-		}
+
+		dtw.load_style()
+		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
 	}
 	// Values
 	dy := if r.title == '' { 0 } else { 15 }
@@ -341,12 +325,8 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		$if nodtw ? {
-			draw_text(r, x + check_mark_size + 5, y, val)
-		} $else {
-			dtw.load_style()
-			dtw.draw_text(x + check_mark_size + 5, y, val)
-		}
+		dtw.load_style()
+		dtw.draw_device_text(d, x + check_mark_size + 5, y, val)
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut r, r.ui)

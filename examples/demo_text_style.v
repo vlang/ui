@@ -99,7 +99,7 @@ fn window_init(mut w ui.Window) {
 fn on_draw(c &ui.CanvasLayout, app &App) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_style()
-	c.draw_text(10, 10, app.text)
+	c.draw_device_text(c.ui.gg, 10, 10, app.text)
 	w, h := dtw.text_size(app.text)
 	c.draw_rect_empty(10, 11, w + 2, h + 2, gx.black)
 	c.draw_styled_text(10 + w + 10, 10, 'size: ($w, $h)')

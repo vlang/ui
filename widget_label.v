@@ -87,16 +87,9 @@ pub fn (l &Label) free() {
 }
 
 fn (mut l Label) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(l.text_cfg) {
-			l.text_cfg = l.ui.window.text_cfg
-		}
-		update_text_size(mut l)
-	} $else {
-		mut dtw := DrawTextWidget(l)
-		dtw.init_style()
-		dtw.update_text_size(l.text_size)
-	}
+	mut dtw := DrawTextWidget(l)
+	dtw.init_style()
+	dtw.update_text_size(l.text_size)
 }
 
 fn (mut l Label) set_pos(x int, y int) {
@@ -154,16 +147,9 @@ fn (mut l Label) draw_device(d DrawDevice) {
 	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
-		// Draw the text at l.x and l.y + line height * current line
-		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
-		// l.draw_text(l.x, l.y + (height * i), split)
-		$if nodtw ? {
-			draw_text(l, l.x, l.y + (height * i), split)
-		} $else {
-			dtw := DrawTextWidget(l)
-			dtw.load_style()
-			dtw.draw_text(l.x, l.y + (height * i), split)
-		}
+		dtw := DrawTextWidget(l)
+		dtw.load_style()
+		dtw.draw_device_text(d, l.x, l.y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
 			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')

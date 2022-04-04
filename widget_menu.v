@@ -15,16 +15,18 @@ const (
 [heap]
 pub struct Menu {
 pub mut:
-	id        string
-	offset_x  int
-	offset_y  int
-	hidden    bool
-	ui        &UI
-	text_cfg  gx.TextCfg
-	text_size f64
-	component voidptr
-	width     int
-	height    int
+	id       string
+	offset_x int
+	offset_y int
+	hidden   bool
+	ui       &UI
+	// text styles
+	text_styles TextStyles
+	text_cfg    gx.TextCfg
+	text_size   f64
+	component   voidptr
+	width       int
+	height      int
 mut:
 	text    string
 	parent  Layout = empty_stack
@@ -71,10 +73,16 @@ fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
-	init_text_cfg(mut m)
+	m.init_style()
 	m.update_height()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
+}
+
+fn (mut m Menu) init_style() {
+	mut dtw := DrawTextWidget(m)
+	dtw.init_style()
+	dtw.update_text_size(m.text_size)
 }
 
 [manualfree]

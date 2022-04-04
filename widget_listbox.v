@@ -202,22 +202,22 @@ pub fn (lb &ListBox) free() {
 }
 
 fn (mut lb ListBox) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(lb.text_cfg) {
-			lb.text_cfg = lb.ui.window.text_cfg
-		}
-		if lb.text_size > 0 {
-			_, win_height := lb.ui.window.size()
-			lb.text_cfg = gx.TextCfg{
-				...lb.text_cfg
-				size: text_size_as_int(lb.text_size, win_height)
-			}
-		}
-	} $else {
-		mut dtw := DrawTextWidget(lb)
-		dtw.init_style()
-		dtw.update_text_size(lb.text_size)
-	}
+	// $if nodtw ? {
+	// 	if is_empty_text_cfg(lb.text_cfg) {
+	// 		lb.text_cfg = lb.ui.window.text_cfg
+	// 	}
+	// 	if lb.text_size > 0 {
+	// 		_, win_height := lb.ui.window.size()
+	// 		lb.text_cfg = gx.TextCfg{
+	// 			...lb.text_cfg
+	// 			size: text_size_as_int(lb.text_size, win_height)
+	// 		}
+	// 	}
+	// } $else {
+	mut dtw := DrawTextWidget(lb)
+	dtw.init_style()
+	dtw.update_text_size(lb.text_size)
+	// }
 }
 
 fn (mut lb ListBox) init_items() {
@@ -494,15 +494,9 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
-		$if nodtw ? {
-			draw_text_with_color(lb, lb.x + ui._text_offset_x, lb.y + lb.text_offset_y,
-				if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
-				gx.gray)
-		} $else {
-			DrawTextWidget(lb).draw_styled_text(lb.x + ui._text_offset_x, lb.y + lb.text_offset_y,
-				if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
-				color: gx.gray)
-		}
+		DrawTextWidget(lb).draw_device_styled_text(d, lb.x + ui._text_offset_x, lb.y +
+			lb.text_offset_y, if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
+			color: gx.gray)
 	} else {
 		for inx, item in lb.items {
 			// println("$inx >= $lb.draw_count")
@@ -982,19 +976,15 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	}
 	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
 		lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
-	$if nodtw ? {
-		lb.ui.gg.draw_text_def(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, if lb.has_scrollview { li.text } else { li.text() })
-	} $else {
-		DrawTextWidget(lb).draw_styled_text(li.x + li.offset_x + lb.x + ui._text_offset_x,
-			li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
-			li.text
-		} else {
-			li.text()
-		},
-			color: if li.is_enabled() { gx.black } else { lb.col_disabled }
-		)
-	}
+
+	DrawTextWidget(lb).draw_device_styled_text(d, li.x + li.offset_x + lb.x + ui._text_offset_x,
+		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+		li.text
+	} else {
+		li.text()
+	},
+		color: if li.is_enabled() { gx.black } else { lb.col_disabled }
+	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +

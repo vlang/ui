@@ -8,17 +8,19 @@ import gx
 [heap]
 pub struct Rectangle {
 pub mut:
-	id        string
-	color     gx.Color
-	text      string
-	offset_x  int
-	offset_y  int
-	height    int
-	width     int
-	ui        &UI
-	parent    Layout = empty_stack
-	text_cfg  gx.TextCfg
-	text_size f64
+	id       string
+	color    gx.Color
+	text     string
+	offset_x int
+	offset_y int
+	height   int
+	width    int
+	ui       &UI
+	parent   Layout = empty_stack
+	// text styles
+	text_styles TextStyles
+	text_cfg    gx.TextCfg
+	text_size   f64
 	// component state for composable widget
 	component voidptr
 mut:
@@ -46,8 +48,9 @@ pub struct RectangleParams {
 		g: 180
 		b: 190
 	}
-	x         int
-	y         int
+	x int
+	y int
+
 	text_cfg  gx.TextCfg
 	text_size f64
 }
@@ -86,7 +89,13 @@ fn (mut r Rectangle) init(parent Layout) {
 	r.parent = parent
 	ui := parent.get_ui()
 	r.ui = ui
-	init_text_cfg(mut r)
+	r.init_style()
+}
+
+fn (mut r Rectangle) init_style() {
+	mut dtw := DrawTextWidget(r)
+	dtw.init_style()
+	dtw.update_text_size(r.text_size)
 }
 
 [manualfree]
@@ -142,7 +151,8 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 	}
 	// Display rectangle text
 	if r.text != '' {
-		text_width, text_height := text_size(r, r.text)
+		dtw := DrawTextWidget(r)
+		text_width, text_height := dtw.text_size(r.text)
 		mut dx := (r.width - text_width) / 2
 		mut dy := (r.height - text_height) / 2
 		if dx < 0 {
@@ -151,7 +161,8 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 		if dy < 0 {
 			dy = 0
 		}
-		draw_text(r, r.x + dx, r.y + dy, r.text)
+		dtw.draw_device_text(d, r.x + dx, r.y + dy, r.text)
+		// draw_text(r, r.x + dx, r.y + dy, r.text)
 	}
 	offset_end(mut r)
 }

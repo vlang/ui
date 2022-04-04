@@ -265,7 +265,7 @@ fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 	sh.chunks[typ] << chunk
 }
 
-fn (mut sh SyntaxHighLighter) draw_chunks() {
+fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 	if !sh.is_lang_loaded() {
 		return
 	}
@@ -277,9 +277,12 @@ fn (mut sh SyntaxHighLighter) draw_chunks() {
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
 			// fix background
-			tv.tb.ui.gg.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text),
-				tv.line_height, tv.tb.bg_color)
-			tv.draw_styled_text(chunk.x, chunk.y, chunk.text, color: color, font_name: font)
+			d.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text), tv.line_height,
+				tv.tb.bg_color)
+			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
+				color: color
+				font_name: font
+			)
 		}
 	}
 }

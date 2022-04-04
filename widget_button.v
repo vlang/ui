@@ -184,24 +184,10 @@ pub fn (b &Button) free() {
 }
 
 fn (mut b Button) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(b.text_cfg) {
-			b.text_cfg = b.ui.window.text_cfg
-		}
-		if b.text_size > 0 {
-			_, win_height := b.ui.window.size()
-			b.text_cfg = gx.TextCfg{
-				...b.text_cfg
-				size: text_size_as_int(b.text_size, win_height)
-			}
-		}
-		set_text_cfg_align(mut b, .center)
-		set_text_cfg_vertical_align(mut b, .middle)
-	} $else {
-		mut dtw := DrawTextWidget(b)
-		dtw.init_style(align: .center, vertical_align: .middle)
-		dtw.update_text_size(b.text_size)
-	}
+	mut dtw := DrawTextWidget(b)
+	dtw.init_style(align: .center, vertical_align: .middle)
+	dtw.update_text_size(b.text_size)
+
 	b.set_text_size()
 	b.update_theme()
 }
@@ -398,13 +384,9 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	if b.use_icon {
 		d.draw_image(x, y, width, height, b.image)
 	} else {
-		$if nodtw ? {
-			draw_text(b, bcenter_x, bcenter_y, b.text)
-		} $else {
-			dtw := DrawTextWidget(b)
-			dtw.load_style()
-			dtw.draw_text(bcenter_x, bcenter_y, b.text)
-		}
+		dtw := DrawTextWidget(b)
+		dtw.load_style()
+		dtw.draw_device_text(d, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
 		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
@@ -429,7 +411,10 @@ pub fn (mut b Button) set_text_size() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else {
-		b.text_width, b.text_height = text_size(b, b.text)
+		dtw := DrawTextWidget(b)
+		b.text_width, b.text_height = dtw.text_size(b.text)
+		// b.text_width, b.text_height = text_size(b, b.text)
+
 		// b.text_width = int(f32(b.text_width))
 		// b.text_height = int(f32(b.text_height))
 		b.width = b.text_width + ui.button_horizontal_padding

@@ -270,16 +270,9 @@ pub fn (tb &TextBox) free() {
 }
 
 fn (mut tb TextBox) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
-			tb.text_cfg = tb.ui.window.text_cfg
-		}
-		update_text_size(mut tb)
-	} $else {
-		mut dtw := DrawTextWidget(tb)
-		dtw.init_style()
-		dtw.update_text_size(tb.text_size)
-	}
+	mut dtw := DrawTextWidget(tb)
+	dtw.init_style()
+	dtw.update_text_size(tb.text_size)
 }
 
 pub fn (mut t TextBox) set_pos(x int, y int) {
@@ -294,7 +287,8 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		mut w, mut h := text_size(tb, tb.text)
+		dtw := DrawTextWidget(tb)
+		mut w, mut h := dtw.text_size(tb.text)
 		return w + 2 * ui.textbox_padding_x, h + 2 * ui.textbox_padding_y
 	}
 }
@@ -351,19 +345,14 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 		if tb.placeholder_bind != 0 {
 			placeholder = *(tb.placeholder_bind)
 		}
-		width := if text_len == 0 { 0 } else { text_width(tb, text) }
+		width := if text_len == 0 { 0 } else { dtw.text_width(text) }
 		text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
 		mut skip_idx := 0
 
 		// Placeholder
 		if text == '' && placeholder != '' {
-			$if nodtw ? {
-				draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
-					gx.gray)
-			} $else {
-				dtw.draw_styled_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
-					color: gx.gray)
-			}
+			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
+				color: gx.gray)
 		}
 		// Text
 		else {
@@ -374,30 +363,23 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 				tb.ui.gg.set_cfg(tb.text_cfg)
 				if !tb.is_focused || tb.read_only {
 					skip_idx = tb.skip_index_from_start(ustr, dtw)
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx + 1)].string())
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
+						1)].string())
 				} else {
 					skip_idx = tb.skip_index_from_end(ustr, dtw)
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
 				}
 			} else {
 				if tb.is_password {
-					$if nodtw ? {
-						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
-					} $else {
-						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
-					}
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
 				} else {
-					$if nodtw ? {
-						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
-					} $else {
-						if tb.justify != top_left {
-							mut aw := AdjustableWidget(tb)
-							dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
-							dtw.draw_text(tb.x + ui.textbox_padding_x + dx, text_y + dy,
-								text)
-						} else {
-							dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
-						}
+					if tb.justify != top_left {
+						mut aw := AdjustableWidget(tb)
+						dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x + dx, text_y + dy,
+							text)
+					} else {
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, text)
 					}
 				}
 			}
@@ -409,16 +391,16 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 			mut cursor_x := tb.x + ui.textbox_padding_x
 			if text_len > 0 {
 				if tb.is_password {
-					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
+					cursor_x += dtw.text_width('*'.repeat(tb.cursor_pos))
 				} else if skip_idx > 0 {
-					cursor_x += text_width(tb, text[skip_idx..])
+					cursor_x += dtw.text_width(text[skip_idx..])
 				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
 					if tb.cursor_pos > text.runes().len {
 						tb.cursor_pos = text.runes().len
 					}
 					left := text.runes()[..tb.cursor_pos].string()
-					cursor_x += text_width(tb, left)
+					cursor_x += dtw.text_width(left)
 				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)

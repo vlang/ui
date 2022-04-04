@@ -23,7 +23,10 @@ pub fn (d &DrawDevicePrint) draw_image(x f32, y f32, width f32, height f32, img 
 }
 
 // pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string)
-// pub fn (d &DrawDevicePrint) draw_text(x int, y int, text string)
+pub fn (d &DrawDevicePrint) draw_text_default(x int, y int, text string) {
+	println('$d.id draw_text_default($x, $y, $text)')
+}
+
 pub fn (d &DrawDevicePrint) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
 	println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 }

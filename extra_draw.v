@@ -4,26 +4,26 @@ import gx
 import math
 import sokol.sgl
 
-const (
-	empty_text_cfg = gx.TextCfg{}
-)
+// const (
+// 	empty_text_cfg = gx.TextCfg{}
+// )
 
-pub fn is_empty_text_cfg(t gx.TextCfg) bool {
-	return t.str() == ui.empty_text_cfg.str()
-}
+// pub fn is_empty_text_cfg(t gx.TextCfg) bool {
+// 	return t.str() == ui.empty_text_cfg.str()
+// }
 
 //-----  Generic for performance
 
 // T is Widget with text_cfg field
-fn text_size<T>(widget &T, text string) (int, int) {
-	widget.ui.gg.set_cfg(widget.text_cfg)
-	return widget.ui.gg.text_size(text)
-}
+// fn text_size<T>(widget &T, text string) (int, int) {
+// 	widget.ui.gg.set_cfg(widget.text_cfg)
+// 	return widget.ui.gg.text_size(text)
+// }
 
-fn text_width<T>(w &T, text string) int {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_width(text)
-}
+// fn text_width<T>(w &T, text string) int {
+// 	w.ui.gg.set_cfg(w.text_cfg)
+// 	return w.ui.gg.text_width(text)
+// }
 
 fn text_height<T>(w &T, text string) int {
 	w.ui.gg.set_cfg(w.text_cfg)
@@ -31,38 +31,38 @@ fn text_height<T>(w &T, text string) int {
 }
 
 // T is a widget Type with text_cfg field
-fn draw_text<T>(w &T, x int, y int, text_ string) {
-	window := w.ui.window
-	if w.text_size > 0 {
-		_, win_height := window.size()
-		tc := gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	} else {
-		// println("draw_text: $text_ $w.text_cfg.color")
-		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
-	}
-}
+// fn draw_text<T>(w &T, x int, y int, text_ string) {
+// 	window := w.ui.window
+// 	if w.text_size > 0 {
+// 		_, win_height := window.size()
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	} else {
+// 		// println("draw_text: $text_ $w.text_cfg.color")
+// 		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
+// 	}
+// }
 
-fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
-	if w.text_size > 0 {
-		_, win_height := w.ui.window.size()
-		tc := gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-			color: color
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	} else {
-		tc := gx.TextCfg{
-			...w.text_cfg
-			color: color
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	}
-}
+// fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
+// 	if w.text_size > 0 {
+// 		_, win_height := w.ui.window.size()
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 			color: color
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	} else {
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			color: color
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	}
+// }
 
 //--------- DrawText interface (for Tooltip and Message)
 // Rmk: this can be used for Widget having these fields too
@@ -74,18 +74,18 @@ mut:
 	text_size f64
 }
 
-fn init_text_cfg(mut w DrawText) {
-	if is_empty_text_cfg(w.text_cfg) {
-		w.text_cfg = w.ui.window.text_cfg
-	}
-	if w.text_size > 0 {
-		_, win_height := w.ui.window.size()
-		w.text_cfg = gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-		}
-	}
-}
+// fn init_text_cfg(mut w DrawText) {
+// 	if is_empty_text_cfg(w.text_cfg) {
+// 		w.text_cfg = w.ui.window.text_cfg
+// 	}
+// 	if w.text_size > 0 {
+// 		_, win_height := w.ui.window.size()
+// 		w.text_cfg = gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 		}
+// 	}
+// }
 
 // No text_size to not conflict with
 fn get_text_size(w DrawText, text_ string) (int, int) {

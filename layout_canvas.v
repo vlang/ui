@@ -711,14 +711,24 @@ pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
 // ---- text
 
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
+	c.draw_device_text(c.ui.gg, x, y, text)
+}
+
+pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
 	mut dtw := DrawTextWidget(c)
 	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
-	dtw.draw_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text)
+	dtw.draw_device_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(c)
-	dtw.draw_styled_text(x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
+	dtw.draw_device_styled_text(c.ui.gg, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
+		ts)
+}
+
+pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
+	mut dtw := DrawTextWidget(c)
+	dtw.draw_device_styled_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
 }
 
 // ---- triangle
