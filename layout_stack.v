@@ -1126,7 +1126,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 			child.draw_device(d)
 		}
 	}
-	scrollview_draw_end(s)
+	scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack

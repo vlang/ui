@@ -619,7 +619,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	}
 
 	// scrollview_draw(c)
-	scrollview_draw_end(c)
+	scrollview_draw_end(c, d)
 
 	offset_end(mut c)
 }

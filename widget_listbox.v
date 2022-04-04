@@ -517,7 +517,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	}
 
 	// scrollview_draw(lb)
-	scrollview_draw_end(lb)
+	scrollview_draw_end(lb, d)
 	offset_end(mut lb)
 }
 

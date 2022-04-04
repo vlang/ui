@@ -336,10 +336,10 @@ pub fn scrollview_draw_begin<T>(mut w T) {
 	}
 }
 
-pub fn scrollview_draw_end<T>(w &T) {
+pub fn scrollview_draw_end<T>(w &T, d DrawDevice) {
 	if has_scrollview(w) {
 		sv := w.scrollview
-		sv.draw()
+		sv.draw_device(d)
 	}
 }
 
@@ -673,7 +673,7 @@ pub fn (mut sv ScrollView) clip() {
 	}
 }
 
-pub fn (sv &ScrollView) draw() {
+pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 	scissor_rect := sv.parent_scissor_rect()
 	sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
 		int(scissor_rect.height), true)
@@ -682,18 +682,18 @@ pub fn (sv &ScrollView) draw() {
 
 	if sv.active_x {
 		// horizontal scrollbar
-		sv.ui.gg.draw_rounded_rect_filled(svx, svy + sv.height - ui.scrollbar_size, sv.sb_w,
+		d.draw_rounded_rect_filled(svx, svy + sv.height - ui.scrollbar_size, sv.sb_w,
 			ui.scrollbar_size, ui.scrollbar_size / 3, ui.scrollbar_background_color)
 		// horizontal button
-		sv.ui.gg.draw_rounded_rect_filled(svx + sv.btn_x, svy + sv.height - ui.scrollbar_size,
+		d.draw_rounded_rect_filled(svx + sv.btn_x, svy + sv.height - ui.scrollbar_size,
 			sv.btn_w, ui.scrollbar_size, ui.scrollbar_size / 3, sv.btn_color_x)
 	}
 	if sv.active_y {
 		// vertical scrollbar
-		sv.ui.gg.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy, ui.scrollbar_size,
+		d.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy, ui.scrollbar_size,
 			sv.sb_h, ui.scrollbar_size / 3, ui.scrollbar_background_color)
 		// vertical button
-		sv.ui.gg.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy + sv.btn_y,
+		d.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy + sv.btn_y,
 			ui.scrollbar_size, sv.btn_h, ui.scrollbar_size / 3, sv.btn_color_y)
 	}
 }
