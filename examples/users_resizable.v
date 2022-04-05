@@ -65,7 +65,7 @@ fn main() {
 		)
 		label: ui.label(text: '2/10')
 	}
-	window := ui.window(
+	mut window := ui.window(
 		width: win_width
 		height: win_height
 		state: app
@@ -206,6 +206,7 @@ fn (mut app App) btn_add_click(b &Button) {
 }
 */
 fn btn_add_click(mut app State, x voidptr) {
+	ui.draw_device_draw_window('users.svg', mut app.window)
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)
@@ -233,18 +234,18 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn draw(c &ui.CanvasLayout, app &State) {
+fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app &State) {
 	w, h := c.width, c.height
-	c.draw_rect_filled(0, 0, w, h, gx.white)
+	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height
 		// Outer border
-		c.draw_rect_empty(marginx, y, table_width, cell_height, gx.gray)
+		c.draw_device_rect_empty(d, marginx, y, table_width, cell_height, gx.gray)
 		// Vertical separators
-		c.draw_line(cell_width, y, cell_width, y + cell_height, gx.gray)
-		c.draw_line(cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
-		c.draw_line(cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width, y, cell_width, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
 		// Text values
 		c.draw_device_text(c.ui.gg, marginx + 5, y + 5, user.first_name)
 		c.draw_device_text(c.ui.gg, marginx + 5 + cell_width, y + 5, user.last_name)

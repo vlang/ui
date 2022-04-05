@@ -341,7 +341,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 		tb.tv.draw_device_textlines(d)
 	} else {
 		dtw := DrawTextWidget(tb)
-		dtw.load_style()
+		dtw.load_device_style(d)
 		text := *(tb.text)
 		ustr := text.runes()
 		text_len := ustr.len

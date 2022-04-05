@@ -4,6 +4,10 @@ import gx
 import gg
 
 interface DrawDevice {
+	// related to text style
+	has_text_style() bool
+	set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int)
+	// drawing methods
 	// draw_pixel(x f32, y f32, c gx.Color)
 	// draw_pixels(points []f32, c gx.Color)
 	draw_image(x f32, y f32, width f32, height f32, img &gg.Image)

@@ -134,6 +134,18 @@ pub fn (w DrawTextWidget) font_size() int {
 
 // Draw and size methods
 
+pub fn (w DrawTextWidget) load_device_style(d DrawDevice) {
+	ts := w.current_style()
+	// println("lds current style: $ts")
+	w.load_style_(ts)
+	if d.has_text_style() {
+		//
+		println('lds current style: $ts')
+		println('d.set_text_style($ts.font_name, $ts.size, $ts.color, ${int(ts.align)}, ${int(ts.vertical_align)})')
+		d.set_text_style(ts.font_name, ts.size, ts.color, int(ts.align), int(ts.vertical_align))
+	}
+}
+
 pub fn (w DrawTextWidget) draw_device_text(d DrawDevice, x int, y int, text string) {
 	d.draw_text_default(x, y, text)
 }

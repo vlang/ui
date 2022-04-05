@@ -221,7 +221,7 @@ pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	}
 	// Text
 	dtw := DrawTextWidget(cb)
-	dtw.load_style()
+	dtw.load_device_style(d)
 	dtw.draw_device_text(d, cb.x + ui.check_mark_size + 5, cb.y, cb.text)
 	$if bb ? {
 		debug_draw_bb_widget(mut cb, cb.ui)

@@ -149,7 +149,7 @@ fn (mut l Label) draw_device(d DrawDevice) {
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		dtw := DrawTextWidget(l)
-		dtw.load_style()
+		dtw.load_device_style(d)
 		dtw.draw_device_text(d, l.x, l.y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)

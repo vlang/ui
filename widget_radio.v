@@ -296,6 +296,7 @@ fn (mut r Radio) draw() {
 fn (mut r Radio) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	dtw := DrawTextWidget(r)
+	dtw.load_device_style(d)
 	if r.title != '' {
 		// Border
 		d.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
@@ -307,7 +308,6 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
 			10, default_window_color)
 
-		dtw.load_style()
 		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
 	}
 	// Values
@@ -327,7 +327,6 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		}
 		// Text
-		dtw.load_style()
 		dtw.draw_device_text(d, x + check_mark_size + 5, y, val)
 	}
 	$if bb ? {

@@ -12,6 +12,12 @@ pub fn draw_device_print(id string, filename string) &DrawDevicePrint {
 	return &DrawDevicePrint{id, filename}
 }
 
+pub fn (d &DrawDevicePrint) has_text_style() bool {
+	return false
+}
+
+pub fn (d &DrawDevicePrint) set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int) {}
+
 // pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, c gx.Color) {
 // 	println("$d.id draw_pixel($x, $y, $c)")
 // }
