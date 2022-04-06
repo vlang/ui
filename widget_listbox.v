@@ -483,7 +483,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	offset_start(mut lb)
 	DrawTextWidget(lb).load_device_style(d)
 	// scrollview_clip(mut lb)
-	scrollview_draw_begin(mut lb)
+	scrollview_draw_begin(mut lb, d)
 	height := if lb.has_scrollview && lb.adj_height > lb.height {
 		lb.adj_height + lb.text_offset_y
 	} else {

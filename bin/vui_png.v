@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-// import gx
+import gx
 import os
 
 const (
@@ -35,6 +35,7 @@ fn main() {
 	mut window := ui.window(
 		width: win_width
 		height: win_height
+		bg_color: gx.yellow
 		title: 'V UI Png Edit: ${dirs[0]}'
 		state: app
 		native_message: false

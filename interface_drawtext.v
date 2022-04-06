@@ -101,14 +101,13 @@ pub fn (mut w DrawTextWidget) set_current_style(ts TextStyleParams) {
 	w.text_styles.current = w.text_style(ts)
 }
 
-pub fn (w DrawTextWidget) load_style() {
-	ts := w.current_style()
-	// println("current style: $ts")
-	w.load_style_(ts)
-}
-
-pub fn (w DrawTextWidget) load_style_(ts TextStyle) {
+pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	// println("load style ${w.style_id()} $ts")
+	if d.has_text_style() {
+		// println('lds current style: $ts')
+		// println('d.set_text_style($ts.font_name, $ts.size, $ts.color, ${int(ts.align)}, ${int(ts.vertical_align)})')
+		d.set_text_style(ts.font_name, ts.size, ts.color, int(ts.align), int(ts.vertical_align))
+	}
 	gg := w.ui.gg
 	fons := gg.ft.fons
 	fons.set_font(w.ui.fonts.hash[ts.font_name])
@@ -132,18 +131,16 @@ pub fn (w DrawTextWidget) font_size() int {
 	return w.current_style().size
 }
 
+pub fn (w DrawTextWidget) load_style() {
+	w.load_device_style(w.ui.gg)
+}
+
 // Draw and size methods
 
 pub fn (w DrawTextWidget) load_device_style(d DrawDevice) {
 	ts := w.current_style()
 	// println("lds current style: $ts")
-	w.load_style_(ts)
-	if d.has_text_style() {
-		//
-		println('lds current style: $ts')
-		println('d.set_text_style($ts.font_name, $ts.size, $ts.color, ${int(ts.align)}, ${int(ts.vertical_align)})')
-		d.set_text_style(ts.font_name, ts.size, ts.color, int(ts.align), int(ts.vertical_align))
-	}
+	w.load_style_(d, ts)
 }
 
 pub fn (w DrawTextWidget) draw_device_text(d DrawDevice, x int, y int, text string) {
@@ -151,7 +148,7 @@ pub fn (w DrawTextWidget) draw_device_text(d DrawDevice, x int, y int, text stri
 }
 
 pub fn (w DrawTextWidget) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
-	w.load_style_(w.text_style(ts))
+	w.load_style_(d, w.text_style(ts))
 	d.draw_text_default(x, y, text)
 }
 

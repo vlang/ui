@@ -325,7 +325,7 @@ pub fn (mut tb TextBox) draw() {
 
 pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	offset_start(mut tb)
-	scrollview_draw_begin(mut tb)
+	scrollview_draw_begin(mut tb, d)
 	// draw background
 	if tb.has_scrollview {
 		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,

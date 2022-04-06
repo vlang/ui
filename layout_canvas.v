@@ -557,12 +557,13 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	offset_start(mut c)
 	parent := c.parent
 	state := parent.get_state()
-
+	dtw := DrawTextWidget(c)
+	dtw.load_device_style(d)
 	// if scrollview_clip(mut c) {
 	// 	c.set_children_pos()
 	// 	c.scrollview.children_to_update = false
 	// }
-	scrollview_draw_begin(mut c)
+	scrollview_draw_begin(mut c, d)
 
 	if c.bg_color != no_color {
 		mut w, mut h := c.width, c.height

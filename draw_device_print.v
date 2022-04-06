@@ -12,11 +12,38 @@ pub fn draw_device_print(id string, filename string) &DrawDevicePrint {
 	return &DrawDevicePrint{id, filename}
 }
 
+fn draw_device_draw_print(filename string, mut w Window) {
+	d := draw_device_print('test', filename)
+
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+
+	for mut child in children {
+		child.draw_device(d)
+	}
+
+	for mut sw in w.subwindows {
+		sw.draw_device(d)
+	}
+
+	// draw dragger if active
+	draw_dragger(mut w)
+	// draw tooltip if active
+	w.tooltip.draw_device(d)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.mouse.draw_device(d)
+}
+
 pub fn (d &DrawDevicePrint) has_text_style() bool {
 	return false
 }
 
 pub fn (d &DrawDevicePrint) set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int) {}
+
+pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}
 
 // pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, c gx.Color) {
 // 	println("$d.id draw_pixel($x, $y, $c)")

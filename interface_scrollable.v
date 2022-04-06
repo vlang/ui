@@ -2,7 +2,6 @@ module ui
 
 import gx
 import gg
-import sokol.sgl
 
 // ScrollView exists only when attached to Widget
 // Is it not a widget but attached to a widget.
@@ -317,7 +316,7 @@ pub fn scrollview_widget_update_active(w Widget) {
 	}
 }
 
-pub fn scrollview_draw_begin<T>(mut w T) {
+pub fn scrollview_draw_begin<T>(mut w T, d DrawDevice) {
 	if scrollview_is_active(mut w) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
@@ -332,7 +331,7 @@ pub fn scrollview_draw_begin<T>(mut w T) {
 			sv.children_to_update = false
 		}
 
-		sv.clip()
+		sv.clip(d)
 	}
 }
 
@@ -649,7 +648,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	}
 }
 
-pub fn (mut sv ScrollView) clip() {
+pub fn (mut sv ScrollView) clip(d DrawDevice) {
 	if sv.is_active() {
 		svx, svy := sv.orig_xy()
 		sr := gg.Rect{
@@ -660,8 +659,8 @@ pub fn (mut sv ScrollView) clip() {
 		}
 		psr := sv.parent_scissor_rect()
 		scissor_rect := intersection_rect(sr, psr)
-		sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-			int(scissor_rect.height), true)
+		d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
+			int(scissor_rect.height))
 		sv.scissor_rect = scissor_rect
 	} else {
 		if !sv.active_x {
@@ -675,8 +674,8 @@ pub fn (mut sv ScrollView) clip() {
 
 pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 	scissor_rect := sv.parent_scissor_rect()
-	sgl.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-		int(scissor_rect.height), true)
+	d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
+		int(scissor_rect.height))
 
 	svx, svy := sv.orig_xy()
 

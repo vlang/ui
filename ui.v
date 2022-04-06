@@ -77,6 +77,7 @@ fn (mut gui UI) idle_loop() {
 
 fn (mut gui UI) load_imgs() {
 	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
+	gui.cb_image.path = 'assets/img/check.png'
 	$if macos {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
 			bytes_darwin_circle_png.len)
@@ -86,18 +87,22 @@ fn (mut gui UI) load_imgs() {
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
 	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
 		bytes_selected_radio_png.len)
+	gui.selected_radio_image.path = 'assets/img/selected_radio.png'
 	// load mouse
-	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes())
-	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes())
-	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes())
-	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes())
+	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
+	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),
+		'assets/img/icons8-hand-cursor-50.png')
+	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes(), 'assets/img/icons8-cursor-67.png')
+	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes(),
+		'assets/img/icons8-text-cursor-50.png')
 	// v-logo
-	gui.load_img('v-logo', $embed_file('examples/assets/img/logo.png').to_bytes())
+	gui.load_img('v-logo', $embed_file('examples/assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
 }
 
 // complete the drawing system
-pub fn (mut gui UI) load_img(id string, b []byte) {
+pub fn (mut gui UI) load_img(id string, b []byte, path string) {
 	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
+	gui.imgs[id].path = path
 }
 
 pub fn (gui &UI) img(id string) gg.Image {

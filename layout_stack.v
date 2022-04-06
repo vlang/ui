@@ -1091,7 +1091,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 			d.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
 		}
 	}
-	scrollview_draw_begin(mut s)
+	scrollview_draw_begin(mut s, d)
 
 	$if bb ? {
 		debug_draw_bb_stack(s)

@@ -206,7 +206,6 @@ fn (mut app App) btn_add_click(b &Button) {
 }
 */
 fn btn_add_click(mut app State, x voidptr) {
-	ui.draw_device_draw_window('users.svg', mut app.window)
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)
