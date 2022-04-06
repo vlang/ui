@@ -38,6 +38,7 @@ fn main() {
 	$if android {
 		logo = 'img/logo.png'
 	}
+	println('${@FILE} lunched')
 	mut app := &State{
 		users: [
 			User{
@@ -246,9 +247,9 @@ fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app &State) {
 		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
 		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
 		// Text values
-		c.draw_device_text(c.ui.gg, marginx + 5, y + 5, user.first_name)
-		c.draw_device_text(c.ui.gg, marginx + 5 + cell_width, y + 5, user.last_name)
-		c.draw_device_text(c.ui.gg, marginx + 5 + cell_width * 2, y + 5, user.age.str())
-		c.draw_device_text(c.ui.gg, marginx + 5 + cell_width * 3, y + 5, user.country)
+		c.draw_device_text(d, marginx + 5, y + 5, user.first_name)
+		c.draw_device_text(d, marginx + 5 + cell_width, y + 5, user.last_name)
+		c.draw_device_text(d, marginx + 5 + cell_width * 2, y + 5, user.age.str())
+		c.draw_device_text(d, marginx + 5 + cell_width * 3, y + 5, user.country)
 	}
 }

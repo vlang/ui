@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg width='500px' height='300px'  xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink'>
+<rect fill='#ecececff' stroke='none' stroke-width='0px' width='500' height='300' y='0' x='0' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='490' height='22' y='4' x='4' ry='0' rx='0' />
+<rect fill='none' stroke='#b1b1b1ff' stroke-width='1px' width='490' height='22' y='4' x='4' ry='0' rx='0' />
+<rect fill='none' stroke='#f0f0f0ff' stroke-width='1px' width='489' height='21' y='4' x='4' ry='0' rx='0' />
+<text x='9' y='6' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[hggyjgyguguglul]]></text>
+<text x='4' y='36' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Word wrap]]></text>
+<rect fill='#dcdfe6ff' stroke='none' stroke-width='0px' width='40' height='20' y='36' x='72' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='16' height='16' y='38' x='74' ry='0' rx='0' />
+<rect fill='#dcdfe6ff' stroke='none' stroke-width='0px' width='40' height='20' y='36' x='117' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='16' height='16' y='38' x='119' ry='0' rx='0' />
+<rect fill='#fcf4e4ff' stroke='none' stroke-width='0px' width='490' height='109' y='66' x='4' ry='0' rx='0' />
+<text x='14' y='68' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[toto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='87' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<text x='14' y='106' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[tata tatatoto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='125' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<text x='14' y='144' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[tata tatatoto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='163' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<rect fill='#dbdbdbff' stroke='none' stroke-width='0px' width='10' height='99' y='66' x='484' ry='3' rx='3' />
+<rect fill='#969696ff' stroke='none' stroke-width='0px' width='10' height='0' y='66' x='484' ry='3' rx='3' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='490' height='109' y='185' x='4' ry='0' rx='0' />
+<text x='14' y='187' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[toto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='206' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<text x='14' y='225' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[tata tatatoto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='244' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<text x='14' y='263' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[tata tatatoto bbub jhuui jkhuhui hubhuib]]></text>
+<text x='14' y='282' fill='none' stroke='#000000ff' font-family='fixed' font-size='18px' dominant-baseline='hanging' text-anchor='start'><![CDATA[titi tutu toto]]></text>
+<rect fill='#dbdbdbff' stroke='none' stroke-width='0px' width='10' height='99' y='185' x='484' ry='3' rx='3' />
+<rect fill='#969696ff' stroke='none' stroke-width='0px' width='10' height='0' y='185' x='484' ry='3' rx='3' />
+</svg>

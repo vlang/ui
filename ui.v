@@ -15,8 +15,9 @@ const (
 
 pub struct UI {
 pub mut:
-	gg             &gg.Context = voidptr(0)
-	window         &Window     = voidptr(0)
+	gg             &gg.Context    = voidptr(0)
+	window         &Window        = voidptr(0)
+	svg            &DrawDeviceSVG = voidptr(0)
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard

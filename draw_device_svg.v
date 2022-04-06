@@ -7,8 +7,9 @@ import vsvg
 struct DrawDeviceSVG {
 mut:
 	id string = 'dd_svg'
-	s  &vsvg.Svg
 	ts &vsvg.TextStyle = 0
+pub mut:
+	s &vsvg.Svg
 }
 
 [params]
@@ -28,9 +29,9 @@ pub fn draw_device_svg(p DrawDeviceSVGParams) &DrawDeviceSVG {
 	}
 }
 
-pub fn draw_device_draw_window(filename string, mut w Window) {
+// screenshot method for SVG device
+pub fn (d &DrawDeviceSVG) screenshot(filename string, mut w Window) {
 	// println("svg device")
-	d := draw_device_svg(width: w.width, height: w.height)
 	d.begin(w.bg_color)
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
@@ -64,7 +65,7 @@ pub fn (d &DrawDeviceSVG) begin(win_bg_color gx.Color) {
 	mut s := d.s
 	s.begin()
 	// window.bg_color
-	s.rectangle(0, 0, d.s.width, d.s.height, vsvg.color(win_bg_color), 'none', 0, 0, 0)
+	s.fill(vsvg.color(win_bg_color))
 }
 
 pub fn (d &DrawDeviceSVG) end() {
@@ -113,39 +114,46 @@ pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
 pub fn (d &DrawDeviceSVG) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
 	// println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 	mut s := d.s
-	s.polyline('$x,$y $x2,$y2 $x3,$y3 $x,$y', 'transparent', vsvg.color(color), 1)
+	s.polyline('$x,$y $x2,$y2 $x3,$y3 $x,$y', stroke: vsvg.color(color), strokewidth: 1)
 }
 
 pub fn (d &DrawDeviceSVG) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
 	// println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 	mut s := d.s
-	s.polygon('$x,$y $x2,$y2 $x3,$y3 $x,$y', vsvg.color(color), 'transparent', 0)
+	s.polygon('$x,$y $x2,$y2 $x3,$y3 $x,$y', fill: vsvg.color(color))
 }
 
 pub fn (d &DrawDeviceSVG) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
 	// println('$d.id draw_rect_empty($x, $y, $w, $h, color gx.Color)')
 	mut s := d.s
-	s.rectangle(int(x), int(y), int(w), int(h), 'none', vsvg.color(color), 1, 0, 0)
+	s.rectangle(int(x), int(y), int(w), int(h), stroke: vsvg.color(color), strokewidth: 1)
 }
 
 pub fn (d &DrawDeviceSVG) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
 	// println('$d.id draw_rect_filled($x, $y, $w, $h, color gx.Color)')
 	mut s := d.s
-	s.rectangle(int(x), int(y), int(w), int(h), vsvg.color(color), 'none', 0, 0, 0)
+	s.rectangle(int(x), int(y), int(w), int(h), fill: vsvg.color(color))
 }
 
 pub fn (d &DrawDeviceSVG) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gx.Color)')
+	// println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gx.Color)')
 	mut s := d.s
-	s.rectangle(int(x), int(y), int(w), int(h), vsvg.color(color), 'none', 0, int(radius),
-		int(radius))
+	s.rectangle(int(x), int(y), int(w), int(h),
+		rx: int(radius)
+		ry: int(radius)
+		fill: vsvg.color(color)
+	)
 }
 
 pub fn (d &DrawDeviceSVG) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gx.Color)')
+	// println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gx.Color)')
 	mut s := d.s
-	s.rectangle(int(x), int(y), int(w), int(h), 'none', vsvg.color(color), 1, int(radius),
-		int(radius))
+	s.rectangle(int(x), int(y), int(w), int(h),
+		rx: int(radius)
+		ry: int(radius)
+		stroke: vsvg.color(color)
+		strokewidth: 1
+	)
 }
 
 pub fn (d &DrawDeviceSVG) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {
@@ -155,43 +163,43 @@ pub fn (d &DrawDeviceSVG) draw_circle_line(x f32, y f32, r int, segments int, co
 pub fn (d &DrawDeviceSVG) draw_circle_empty(x f32, y f32, r f32, color gx.Color) {
 	// println('$d.id ')
 	mut s := d.s
-	s.circle(int(x), int(y), int(r), vsvg.color(color), 1, 'none')
+	s.circle(int(x), int(y), int(r), stroke: vsvg.color(color), strokewidth: 1)
 }
 
 pub fn (d &DrawDeviceSVG) draw_circle_filled(x f32, y f32, r f32, color gx.Color) {
 	// println('$d.id ')
 	mut s := d.s
-	s.circle(int(x), int(y), int(r), 'none', 0, vsvg.color(color))
+	s.circle(int(x), int(y), int(r), fill: vsvg.color(color))
 }
 
 pub fn (d &DrawDeviceSVG) draw_slice_empty(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	println('$d.id ')
+	// println('$d.id ')
 }
 
 pub fn (d &DrawDeviceSVG) draw_slice_filled(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	println('$d.id ')
+	// println('$d.id ')
 }
 
 pub fn (d &DrawDeviceSVG) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	println('$d.id ')
+	// println('$d.id ')
 }
 
 pub fn (d &DrawDeviceSVG) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	println('$d.id ')
+	// println('$d.id ')
 }
 
 pub fn (d &DrawDeviceSVG) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color) {
 	// println('$d.id ')
 	mut s := d.s
-	s.line(int(x), int(y), int(x2), int(y2), vsvg.color(color), 1)
+	s.line(int(x), int(y), int(x2), int(y2), stroke: vsvg.color(color), strokewidth: 1)
 }
 
 pub fn (d &DrawDeviceSVG) draw_convex_poly(points []f32, color gx.Color) {
-	println('$d.id ')
-	mut s := d.s
-	s.polygon(points.map(it.str()).join(','), vsvg.color(color), 'none', 0)
+	// println('$d.id ')
+	// mut s := d.s
+	// s.polygon(points.map(it.str()).join(','), fill: vsvg.color(color))
 }
 
 pub fn (d &DrawDeviceSVG) draw_poly_empty(points []f32, color gx.Color) {
-	println('$d.id ')
+	// println('$d.id ')
 }

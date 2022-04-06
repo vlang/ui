@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg width='500px' height='385px'  xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink'>
+<rect fill='#ecececff' stroke='none' stroke-width='0px' width='500' height='385' y='0' x='0' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='400' height='385' y='9' x='119' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='35' height='19' y='49' x='129' ry='0' rx='0' />
+<rect fill='none' stroke='#c8c8c8ff' stroke-width='1px' width='35' height='19' y='49' x='129' ry='0' rx='0' />
+<text x='146' y='58' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[X]]></text>
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='50' height='19' y='49' x='174' ry='0' rx='0' />
+<rect fill='none' stroke='#c8c8c8ff' stroke-width='1px' width='50' height='19' y='49' x='174' ry='0' rx='0' />
+<text x='199' y='58' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[Add]]></text>
+<text x='139' y='349' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[(0, 0)     ]]></text>
+<rect fill='#f0f0f0ff' stroke='none' stroke-width='0px' width='150' height='90' y='109' x='269' ry='0' rx='0' />
+<rect fill='none' stroke='#dfdfdfff' stroke-width='1px' width='150' height='90' y='109' x='269' ry='0' rx='0' />
+<rect fill='#ffcccbff' stroke='none' stroke-width='0px' width='100' height='19' y='19' x='129' ry='0' rx='0' />
+<rect fill='none' stroke='#c8c8c8ff' stroke-width='1px' width='100' height='19' y='19' x='129' ry='0' rx='0' />
+<text x='179' y='28' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[Theme]]></text>
+<rect fill='#f0f0f0ff' stroke='none' stroke-width='0px' width='140' height='20' y='19' x='239' ry='0' rx='0' />
+<rect fill='none' stroke='#dfdfdfff' stroke-width='1px' width='140' height='20' y='19' x='239' ry='0' rx='0' />
+<image xlink:href='' x='351' y='16' height='28' width='28' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='100' height='192' y='79' x='129' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='83' x='134' ry='0' rx='0' />
+<text x='134' y='83' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Classic]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='83' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='103' x='134' ry='0' rx='0' />
+<text x='134' y='103' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Blue]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='103' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='123' x='134' ry='0' rx='0' />
+<text x='134' y='123' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Red]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='123' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='143' x='134' ry='0' rx='0' />
+<text x='134' y='143' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Classic2]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='143' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='163' x='134' ry='0' rx='0' />
+<text x='134' y='163' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Blue2]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='163' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='183' x='134' ry='0' rx='0' />
+<text x='134' y='183' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Red2]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='183' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='203' x='134' ry='0' rx='0' />
+<text x='134' y='203' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Classic3]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='203' x='134' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='223' x='134' ry='0' rx='0' />
+<text x='134' y='223' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Blue3]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='223' x='134' ry='0' rx='0' />
+<rect fill='#dbdbdbff' stroke='none' stroke-width='0px' width='10' height='130' y='79' x='219' ry='3' rx='3' />
+<rect fill='#969696ff' stroke='none' stroke-width='0px' width='10' height='96' y='79' x='219' ry='3' rx='3' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='100' height='100' y='229' x='169' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='233' x='174' ry='0' rx='0' />
+<text x='174' y='233' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Classic]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='233' x='174' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='253' x='174' ry='0' rx='0' />
+<text x='174' y='253' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Blue]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='253' x='174' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='90' height='20' y='273' x='174' ry='0' rx='0' />
+<text x='174' y='273' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Red]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='273' x='174' ry='0' rx='0' />
+<rect fill='#ff0000ff' stroke='none' stroke-width='0px' width='100' height='100' y='229' x='319' ry='0' rx='0' />
+<rect fill='#ff0000ff' stroke='none' stroke-width='0px' width='90' height='20' y='233' x='324' ry='0' rx='0' />
+<text x='324' y='233' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Classic]]></text>
+<rect fill='none' stroke='#808080ff' stroke-width='1px' width='90' height='20' y='233' x='324' ry='0' rx='0' />
+<rect fill='#ffffffff' stroke='none' stroke-width='0px' width='120' height='21' y='89' x='269' ry='0' rx='0' />
+<rect fill='none' stroke='#c8c8c8ff' stroke-width='1px' width='120' height='21' y='89' x='269' ry='0' rx='0' />
+<text x='329' y='99' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[hide/show menu]]></text>
+<rect fill='#dbdbdbff' stroke='none' stroke-width='0px' width='360' height='10' y='364' x='119' ry='3' rx='3' />
+<rect fill='#969696ff' stroke='none' stroke-width='0px' width='333' height='10' y='364' x='119' ry='3' rx='3' />
+<rect fill='#dbdbdbff' stroke='none' stroke-width='0px' width='10' height='355' y='9' x='479' ry='3' rx='3' />
+<rect fill='#969696ff' stroke='none' stroke-width='0px' width='10' height='336' y='9' x='479' ry='3' rx='3' />
+<image xlink:href='/Users/rcqls/GitHub/ui/examples/assets/img/logo.png' x='9' y='9' height='100' width='100' />
+</svg>

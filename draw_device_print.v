@@ -8,12 +8,18 @@ struct DrawDevicePrint {
 	filename string
 }
 
-pub fn draw_device_print(id string, filename string) &DrawDevicePrint {
-	return &DrawDevicePrint{id, filename}
+[params]
+pub struct DrawDevicePrintParams {
+	id       string = 'dd_print'
+	filename string
+}
+
+pub fn draw_device_print(p DrawDevicePrintParams) &DrawDevicePrint {
+	return &DrawDevicePrint{p.id, p.filename}
 }
 
 fn draw_device_draw_print(filename string, mut w Window) {
-	d := draw_device_print('test', filename)
+	d := draw_device_print(id: 'test', filename: filename)
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 

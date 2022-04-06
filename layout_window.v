@@ -9,6 +9,7 @@ import eventbus
 import time
 import math
 import os.font
+import os
 
 const (
 	default_window_color = gx.rgb(236, 236, 236)
@@ -268,6 +269,7 @@ pub fn window(cfg WindowParams) &Window {
 
 	mut ui_ctx := &UI{
 		gg: gcontext
+		svg: draw_device_svg(width: width, height: height)
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_imgs()
@@ -654,7 +656,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 		} else {
 			if shift_key(e.mods) {
 				// draw_device_draw_print('toto.txt', mut window)
-				draw_device_draw_window('users.svg', mut window)
+				window.ui.svg.screenshot('screenshot-${os.file_name(os.executable())}.svg', mut
+					window)
 			}
 		}
 	} else {

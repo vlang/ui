@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg width='780px' height='395px'  xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink'>
+<rect x='0' y='0' width='780' height='395' rx='0' ry='0' fill='#ecececff' stroke='none' stroke-width='0px' />
+<rect x='14' y='38' width='234' height='22' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='38' width='234' height='22' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='38' width='233' height='21' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<text x='19' y='40' fill='none' stroke='#808080ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Last name]]></text>
+<rect x='14' y='70' width='234' height='22' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='70' width='234' height='22' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='70' width='233' height='21' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<text x='19' y='72' fill='none' stroke='#808080ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Age]]></text>
+<rect x='14' y='102' width='234' height='22' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='102' width='234' height='22' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='102' width='233' height='21' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<text x='19' y='104' fill='none' stroke='#808080ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Password]]></text>
+<rect x='14' y='134' width='14' height='14' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='134' width='14' height='14' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='134' width='13' height='13' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<image xlink:href='assets/img/check.png' x='17' y='137' height='8' width='8' />
+<text x='33' y='134' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Online registration]]></text>
+<rect x='14' y='163' width='14' height='14' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='163' width='14' height='14' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='163' width='13' height='13' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<image xlink:href='assets/img/check.png' x='17' y='166' height='8' width='8' />
+<text x='33' y='163' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Subscribe to the newsletter]]></text>
+<rect x='14' y='192' width='234' height='100' rx='0' ry='0' fill='none' stroke='#808080ff' stroke-width='1px' />
+<rect x='28' y='187' width='50' height='10' rx='0' ry='0' fill='#ecececff' stroke='none' stroke-width='0px' />
+<text x='31' y='185' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Country]]></text>
+<image xlink:href='assets/img/selected_radio.png' x='19' y='206' height='16' width='16' />
+<rect x='23' y='210' width='8' height='8' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<text x='38' y='207' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[United States]]></text>
+<image xlink:href='assets/img/selected_radio.png' x='19' y='226' height='16' width='16' />
+<text x='38' y='227' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Canada]]></text>
+<image xlink:href='assets/img/selected_radio.png' x='19' y='246' height='16' width='16' />
+<rect x='23' y='250' width='8' height='8' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<text x='38' y='247' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[United Kingdom]]></text>
+<image xlink:href='assets/img/selected_radio.png' x='19' y='266' height='16' width='16' />
+<rect x='23' y='270' width='8' height='8' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<text x='38' y='267' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Australia]]></text>
+<rect x='14' y='302' width='117' height='20' rx='6' ry='6' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='302' width='117' height='20' rx='6' ry='6' fill='none' stroke='#c8c8c8ff' stroke-width='1px' />
+<text x='72' y='312' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[Add user]]></text>
+<rect x='201' y='302' width='46' height='20' rx='6' ry='6' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='201' y='302' width='46' height='20' rx='6' ry='6' fill='none' stroke='#c8c8c8ff' stroke-width='1px' />
+<text x='224' y='312' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='middle' text-anchor='middle'><![CDATA[?]]></text>
+<rect x='14' y='332' width='187' height='16' rx='0' ry='0' fill='#dbdbdbff' stroke='none' stroke-width='0px' />
+<rect x='14' y='332' width='187' height='16' rx='0' ry='0' fill='none' stroke='#bfbfbfff' stroke-width='1px' />
+<rect x='14' y='332' width='37' height='16' rx='0' ry='0' fill='none' stroke='#4c85d5ff' stroke-width='1px' />
+<rect x='14' y='332' width='37' height='16' rx='0' ry='0' fill='#5799f5ff' stroke='none' stroke-width='0px' />
+<text x='212' y='332' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[2/10]]></text>
+<rect x='14' y='6' width='234' height='22' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='14' y='6' width='234' height='22' rx='0' ry='0' fill='none' stroke='#b1b1b1ff' stroke-width='1px' />
+<rect x='14' y='6' width='233' height='21' rx='0' ry='0' fill='none' stroke='#f0f0f0ff' stroke-width='1px' />
+<text x='19' y='8' fill='none' stroke='#808080ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[First name]]></text>
+<rect x='263' y='6' width='499' height='381' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='263' y='6' width='499' height='281' rx='0' ry='0' fill='#ffffffff' stroke='none' stroke-width='0px' />
+<rect x='283' y='26' width='400' height='25' rx='0' ry='0' fill='none' stroke='#808080ff' stroke-width='1px' />
+<line x1='363' y1='26' x2='363' y2='51' stroke='#808080ff' stroke-width='1px' />
+<line x1='463' y1='26' x2='463' y2='51' stroke='#808080ff' stroke-width='1px' />
+<line x1='563' y1='26' x2='563' y2='51' stroke='#808080ff' stroke-width='1px' />
+<text x='288' y='31' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Sam]]></text>
+<text x='388' y='31' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Johnson]]></text>
+<text x='488' y='31' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[29]]></text>
+<text x='588' y='31' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[United States]]></text>
+<rect x='283' y='51' width='400' height='25' rx='0' ry='0' fill='none' stroke='#808080ff' stroke-width='1px' />
+<line x1='363' y1='51' x2='363' y2='76' stroke='#808080ff' stroke-width='1px' />
+<line x1='463' y1='51' x2='463' y2='76' stroke='#808080ff' stroke-width='1px' />
+<line x1='563' y1='51' x2='563' y2='76' stroke='#808080ff' stroke-width='1px' />
+<text x='288' y='56' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Kate]]></text>
+<text x='388' y='56' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Williams]]></text>
+<text x='488' y='56' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[26]]></text>
+<text x='588' y='56' fill='none' stroke='#000000ff' font-family='SFNS' font-size='16px' dominant-baseline='hanging' text-anchor='start'><![CDATA[Canada]]></text>
+<image xlink:href='examples/assets/img/logo.png' x='662' y='287' height='100' width='100' />
+</svg>
