@@ -22,7 +22,6 @@ pub mut:
 	ui       &UI
 	// text styles
 	text_styles TextStyles
-	text_cfg    gx.TextCfg
 	text_size   f64
 	component   voidptr
 	width       int
@@ -50,7 +49,6 @@ pub struct MenuParams {
 	id        string
 	width     int = 150
 	z_index   int
-	text_cfg  gx.TextCfg
 	text_size f64
 	text      string
 	items     []MenuItem
@@ -64,7 +62,6 @@ pub fn menu(c MenuParams) &Menu {
 		width: c.width
 		ui: 0
 		z_index: c.z_index
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 	}
 }

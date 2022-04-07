@@ -40,7 +40,6 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	hidden      bool
 	bg_color    gx.Color = no_color
 	// component state for composable widget
@@ -59,7 +58,6 @@ pub struct CheckBoxParams {
 	checked          bool
 	disabled         bool
 	justify          []f64 = [0.0, 0.0]
-	text_cfg         gx.TextCfg
 	text_size        f64
 }
 
@@ -74,7 +72,6 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 		justify: c.justify
 	}

@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 
 const (
 	dropdown_color        = gx.rgb(240, 240, 240)
@@ -37,6 +36,9 @@ pub mut:
 	on_selection_changed DropDownSelectionChangedFn
 	hidden               bool
 	bg_color             gx.Color = ui.dropdown_color
+	// text styles
+	text_styles TextStyles
+	text_size   f64
 	// component state for composable widget
 	component voidptr
 }
@@ -51,6 +53,7 @@ pub struct DropdownParams {
 	height               int = 25
 	z_index              int = 10
 	selected_index       int = -1
+	text_size            f64
 	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
 	texts                []string
@@ -85,6 +88,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
+	dd.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
@@ -131,6 +135,12 @@ pub fn (dd &Dropdown) free() {
 	}
 }
 
+fn (mut dd Dropdown) init_style() {
+	mut dtw := DrawTextWidget(dd)
+	// dtw.init_style(align: .center, vertical_align: .middle)
+	dtw.update_text_size(dd.text_size)
+}
+
 pub fn (mut dd Dropdown) set_pos(x int, y int) {
 	dd.x = x
 	dd.y = y
@@ -152,6 +162,8 @@ pub fn (mut dd Dropdown) draw() {
 
 pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 	offset_start(mut dd)
+	dtw := DrawTextWidget(dd)
+	dtw.load_device_style(d)
 	// draw the main dropdown
 	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
 	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
@@ -160,9 +172,11 @@ pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 		ui.dropdown_border_color
 	})
 	if dd.selected_index >= 0 {
-		dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
-		dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.def_text)
 	}
 	dd.draw_device_open(d)
 	// draw the arrow
@@ -188,7 +202,9 @@ fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 				color)
 			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				ui.dropdown_border_color)
-			dd.ui.gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			// dd.ui.gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			DrawTextWidget(dd).draw_device_text(d, dd.x + 5, y + i * dd.dropdown_height + 5,
+				item.text)
 		}
 	}
 }

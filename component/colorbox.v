@@ -383,12 +383,13 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 
 pub fn (mut cb ColorBoxComponent) update_theme() {
 	cb.layout.bg_color = if cb.light { gx.rgba(255, 255, 255, 50) } else { gx.rgba(0, 0, 0, 50) }
-	lbl_cfg := gx.TextCfg{
-		color: if cb.light { gx.black } else { gx.white }
-	}
-	cb.lb_r.text_cfg = lbl_cfg
-	cb.lb_g.text_cfg = lbl_cfg
-	cb.lb_b.text_cfg = lbl_cfg
+	color := if cb.light { gx.black } else { gx.white }
+	mut dtw := ui.DrawTextWidget(cb.lb_r)
+	dtw.update_style(color: color)
+	dtw = ui.DrawTextWidget(cb.lb_g)
+	dtw.update_style(color: color)
+	dtw = ui.DrawTextWidget(cb.lb_b)
+	dtw.update_style(color: color)
 }
 
 pub fn (mut cb ColorBoxComponent) update_hsl() {

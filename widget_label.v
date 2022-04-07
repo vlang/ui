@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
 import gg
 
 [heap]
@@ -26,7 +25,6 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	hidden      bool
 	// component state for composable widget
 	component voidptr
@@ -40,7 +38,6 @@ pub struct LabelParams {
 	z_index   int
 	justify   []f64 = [0.0, 0.0]
 	text      string
-	text_cfg  gx.TextCfg
 	text_size f64
 }
 
@@ -53,7 +50,6 @@ pub fn label(c LabelParams) &Label {
 		ui: 0
 		z_index: c.z_index
 		text_size: c.text_size
-		text_cfg: c.text_cfg
 		justify: c.justify
 	}
 	return lbl
@@ -145,7 +141,6 @@ fn (mut l Label) draw() {
 fn (mut l Label) draw_device(d DrawDevice) {
 	offset_start(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
-	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
 		dtw := DrawTextWidget(l)

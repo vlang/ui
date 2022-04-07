@@ -656,7 +656,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 		} else {
 			if shift_key(e.mods) {
 				// draw_device_draw_print('toto.txt', mut window)
-				window.ui.svg.screenshot('screenshot-${os.file_name(os.executable())}.svg', mut
+				// println("screenshot screenshot-${os.file_name(os.executable())}.svg")
+				window.ui.svg.svg_screenshot_window('screenshot-${os.file_name(os.executable())}.svg', mut
 					window)
 			}
 		}

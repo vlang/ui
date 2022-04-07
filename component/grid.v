@@ -507,7 +507,7 @@ fn (mut g GridComponent) draw_device_colbar(d ui.DrawDevice) {
 		unsafe {
 			*tb.text = var
 		}
-		tb.draw()
+		tb.draw_device(d)
 		pos_x += g.widths[j]
 	}
 	tb.set_pos(g.pos_x, g.pos_y)

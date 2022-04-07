@@ -96,7 +96,6 @@ pub mut:
 	text_styles TextStyles
 	// related to text drawing
 	text_size f64
-	text_cfg  gx.TextCfg // TO REMOVE SOON
 	hidden    bool
 	// component state for composable widget
 	component voidptr
@@ -152,7 +151,6 @@ pub struct TextBoxParams {
 	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	border_accentuated bool
-	text_cfg           gx.TextCfg
 	text_size          f64
 	scrollview         bool = true
 	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
@@ -188,7 +186,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		text_: 'totto'
 		is_focused: c.is_focused
 		is_error: c.is_error
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 		read_only: c.read_only || c.mode.has(.read_only)
 		is_multiline: c.is_multiline || c.mode.has(.multiline)
@@ -305,7 +302,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	if tb.height > ui.max_textbox_height && !tb.fitted_height {
 		tb.height = ui.max_textbox_height
 	}
-	update_text_size(mut tb)
+	// update_text_size(mut tb)
 	if tb.is_multiline {
 		scrollview_update(tb)
 		tb.tv.update_lines()
@@ -364,7 +361,6 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
 			if width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
-				tb.ui.gg.set_cfg(tb.text_cfg)
 				if !tb.is_focused || tb.read_only {
 					skip_idx = tb.skip_index_from_start(ustr, dtw)
 					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
@@ -763,7 +759,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 						if tb.text_size < 8 {
 							tb.text_size = 8
 						}
-						update_text_size(mut tb)
+						// update_text_size(mut tb)
+						mut dtw := DrawTextWidget(tb)
+						dtw.update_text_size(tb.text_size)
 						tb.update_line_height()
 					}
 				}
@@ -776,7 +774,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 						if tb.text_size > 48 {
 							tb.text_size = 48
 						}
-						update_text_size(mut tb)
+						// update_text_size(mut tb)
+						mut dtw := DrawTextWidget(tb)
+						dtw.update_text_size(tb.text_size)
 						tb.update_line_height()
 					}
 				}

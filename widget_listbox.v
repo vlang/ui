@@ -45,7 +45,6 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	hidden      bool
 	// files droped
 	files_droped bool
@@ -83,7 +82,6 @@ mut:
 	text_offset_y int      = ui._text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// related to text drawing
-	text_cfg   gx.TextCfg
 	text_size  f64
 	selection  int  = -1
 	selectable bool = true
@@ -114,7 +112,6 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		col_border: c.col_border
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 		files_droped: c.files_droped
 		ordered: c.ordered

@@ -19,7 +19,6 @@ pub mut:
 	parent   Layout = empty_stack
 	// text styles
 	text_styles TextStyles
-	text_cfg    gx.TextCfg
 	text_size   f64
 	// component state for composable widget
 	component voidptr
@@ -51,7 +50,6 @@ pub struct RectangleParams {
 	x int
 	y int
 
-	text_cfg  gx.TextCfg
 	text_size f64
 }
 
@@ -70,7 +68,6 @@ pub fn rectangle(c RectangleParams) &Rectangle {
 		x: c.x
 		y: c.y
 		text_size: c.text_size
-		text_cfg: c.text_cfg
 	}
 	return rect
 }

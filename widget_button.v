@@ -66,7 +66,6 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	// theme
 	theme_cfg ColorThemeCfg
 	theme     map[int]gx.Color = map[int]gx.Color{}
@@ -88,7 +87,6 @@ pub struct ButtonParams {
 	hoverable    bool
 	tooltip      string
 	tooltip_side Side = .top
-	text_cfg     gx.TextCfg
 	text_size    f64
 	bg_color     &gx.Color     = 0
 	theme        ColorThemeCfg = 'classic'
@@ -112,7 +110,6 @@ pub fn button(c ButtonParams) &Button {
 		theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
 		onclick: c.onclick
 		on_key_down: c.on_key_down
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 		radius: f32(c.radius)
 		padding: f32(c.padding)
@@ -330,7 +327,7 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
 	// println("but prop size: $w, $h => $b.width, $b.height")
-	update_text_size(mut b)
+	// update_text_size(mut b)
 	return b.width, b.height
 }
 

@@ -49,7 +49,6 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	hidden      bool
 	horizontal  bool
 	compact     bool
@@ -68,7 +67,6 @@ pub struct RadioParams {
 	width    int
 	z_index  int
 	// ref       &Radio = voidptr(0)
-	text_cfg   gx.TextCfg
 	text_size  f64
 	horizontal bool
 	compact    bool
@@ -82,7 +80,6 @@ pub fn radio(c RadioParams) &Radio {
 		values: c.values
 		title: c.title
 		width: c.width
-		text_cfg: c.text_cfg
 		text_size: c.text_size
 		horizontal: c.horizontal
 		compact: c.compact

@@ -9,7 +9,7 @@ mut:
 	id string = 'dd_svg'
 	ts &vsvg.TextStyle = 0
 pub mut:
-	s &vsvg.Svg
+	s &vsvg.Svg = 0
 }
 
 [params]
@@ -20,21 +20,19 @@ struct DrawDeviceSVGParams {
 }
 
 pub fn draw_device_svg(p DrawDeviceSVGParams) &DrawDeviceSVG {
-	s := vsvg.svg(width: p.width, height: p.height)
 	ts := vsvg.text_style()
 	return &DrawDeviceSVG{
 		id: p.id
-		s: s
 		ts: ts
 	}
 }
 
 // screenshot method for SVG device
-pub fn (d &DrawDeviceSVG) screenshot(filename string, mut w Window) {
+[manualfree]
+pub fn (mut d DrawDeviceSVG) svg_screenshot_window(filename string, mut w Window) {
 	// println("svg device")
+	d.s = vsvg.svg(width: w.width, height: w.height)
 	d.begin(w.bg_color)
-	mut s := d.s
-	s.resize(w.width, w.height)
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
@@ -59,6 +57,7 @@ pub fn (d &DrawDeviceSVG) screenshot(filename string, mut w Window) {
 
 	d.end()
 	d.save(filename)
+	unsafe { d.s.free() }
 }
 
 // methods
@@ -89,7 +88,7 @@ pub fn (d &DrawDeviceSVG) has_text_style() bool {
 
 pub fn (d &DrawDeviceSVG) set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int) {
 	mut ts := d.ts
-	ts.font_name = if font_name == 'system' { 'SFNS' } else { font_name }
+	ts.font_name = if font_name == 'system' { 'Systemfont' } else { font_name }
 	ts.size = size
 	ts.color = color
 	ts.set_align(align)
