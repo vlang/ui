@@ -257,7 +257,7 @@ pub fn window(cfg WindowParams) &Window {
 		cleanup_fn: gg_cleanup
 		// keydown_fn: window_key_down
 		// char_fn: window_char
-		bg_color: cfg.bg_color // gx.rgb(230,230,230)
+		bg_color: window.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
 		ui_mode: !cfg.immediate

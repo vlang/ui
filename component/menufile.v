@@ -28,6 +28,7 @@ pub struct MenuFileParams {
 	on_save         MenuFileFn
 	on_new          MenuFileFn
 	on_file_changed MenuFileFn
+	bg_color        gx.Color = ui.color_solaris
 }
 
 pub fn menufile_stack(p MenuFileParams) &ui.Stack {
@@ -100,7 +101,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 				id: ui.component_id(p.id, 'tvcol')
 				scrollview: true
 				heights: ui.compact
-				bg_color: gx.hex(0xfcf4e4ff)
+				bg_color: p.bg_color
 				children: [
 					dirtreeview_stack(
 					id: ui.component_id(p.id, 'dtv')

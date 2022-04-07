@@ -72,6 +72,7 @@ fn main() {
 		state: app
 		title: 'V UI Demo'
 		mode: .resizable
+		bg_color: ui.color_solaris
 		native_message: false
 		children: [
 			ui.row(

@@ -2,6 +2,10 @@ module ui
 
 import gx
 
+pub const (
+	color_solaris = gx.hex(0xfcf4e4ff)
+)
+
 // fn (tb &TextBox) draw_inner_border() {
 fn draw_device_inner_border(border_accentuated bool, d DrawDevice, x int, y int, width int, height int, is_error bool) {
 	if !border_accentuated {

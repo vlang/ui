@@ -77,8 +77,8 @@ fn (mut gui UI) idle_loop() {
 }
 
 fn (mut gui UI) load_imgs() {
-	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
-	gui.cb_image.path = 'assets/img/check.png'
+	// gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
+	// gui.cb_image.path = 'assets/img/check.png'
 	$if macos {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
 			bytes_darwin_circle_png.len)
@@ -86,9 +86,15 @@ fn (mut gui UI) load_imgs() {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
 	}
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
-	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
-		bytes_selected_radio_png.len)
-	gui.selected_radio_image.path = 'assets/img/selected_radio.png'
+	// gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
+	// 	bytes_selected_radio_png.len)
+	// gui.selected_radio_image.path = 'assets/img/selected_radio.png'
+	// images
+	gui.load_img('check', $embed_file('assets/img/check.png').to_bytes(), 'assets/img/check.png')
+	gui.cb_image = gui.img('check')
+	gui.load_img('selected_radio', $embed_file('assets/img/selected_radio.png').to_bytes(),
+		'assets/img/selected_radio.png')
+	gui.selected_radio_image = gui.img('selected_radio')
 	// load mouse
 	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
 	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),
