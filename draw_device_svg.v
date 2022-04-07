@@ -33,6 +33,8 @@ pub fn draw_device_svg(p DrawDeviceSVGParams) &DrawDeviceSVG {
 pub fn (d &DrawDeviceSVG) screenshot(filename string, mut w Window) {
 	// println("svg device")
 	d.begin(w.bg_color)
+	mut s := d.s
+	s.resize(w.width, w.height)
 
 	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
 
