@@ -2,10 +2,7 @@ module component
 
 import ui
 import gx
-import gg
 import math
-import os
-import stbi
 import regex
 import ui.libvg
 
@@ -383,26 +380,18 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 }
 
 pub fn (mut rv RasterViewComponent) new_image() {
-	rv.r.reinit()
+	rv.r.clear()
 }
 
 pub fn (mut rv RasterViewComponent) load_image(path string) {
-	if !os.exists(path) {
-		return
-	}
-
-	img := rv.layout.ui.gg.create_image(path)
-	rv.r.load(img)
-
+	rv.r.load_image(mut rv.layout.ui.gg, path)
 	rv.visible_pixels()
 	rv.update_bounds()
 	rv.layout.update_layout()
 }
 
 pub fn (mut rv RasterViewComponent) save_image_as(path string) {
-	stbi.stbi_write_png(path, rv.width(), rv.height(), rv.channels(), rv.data(), rv.width() * rv.channels()) or {
-		panic(err)
-	}
+	rv.r.save_image_as(path)
 }
 
 pub fn (mut rv RasterViewComponent) update_bounds() {

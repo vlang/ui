@@ -14,9 +14,7 @@ pub mut:
 
 [params]
 struct DrawDeviceSVGParams {
-	id     string = 'dd_print'
-	width  int
-	height int
+	id string = 'dd_svg'
 }
 
 pub fn draw_device_svg(p DrawDeviceSVGParams) &DrawDeviceSVG {
@@ -33,28 +31,7 @@ pub fn (mut d DrawDeviceSVG) screenshot_window(filename string, mut w Window) {
 	// println("svg device")
 	d.s = libvg.svg(width: w.width, height: w.height)
 	d.begin(w.bg_color)
-
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
-
-	for mut child in children {
-		child.draw_device(d)
-	}
-
-	for mut sw in w.subwindows {
-		sw.draw_device(d)
-	}
-
-	// draw dragger if active
-	draw_dragger(mut w)
-	// draw tooltip if active
-	w.tooltip.draw_device(d)
-
-	if w.on_draw != voidptr(0) {
-		w.on_draw(w)
-	}
-
-	w.mouse.draw_device(d)
-
+	DrawDevice(d).draw_window(mut w)
 	d.end()
 	d.save(filename)
 	unsafe { d.s.free() }
@@ -125,13 +102,13 @@ pub fn (d &DrawDeviceSVG) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 
 }
 
 pub fn (d &DrawDeviceSVG) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
-	// println('$d.id draw_rect_empty($x, $y, $w, $h, color gx.Color)')
+	// println('$d.id draw_rect_empty($x, $y, $w, $h, $color)')
 	mut s := d.s
 	s.rectangle(int(x), int(y), int(w), int(h), stroke: libvg.color(color), strokewidth: 1)
 }
 
 pub fn (d &DrawDeviceSVG) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
-	// println('$d.id draw_rect_filled($x, $y, $w, $h, color gx.Color)')
+	// println('$d.id draw_rect_filled($x, $y, $w, $h, $color)')
 	mut s := d.s
 	s.rectangle(int(x), int(y), int(w), int(h), fill: libvg.color(color))
 }

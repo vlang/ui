@@ -20,27 +20,7 @@ pub fn draw_device_print(p DrawDevicePrintParams) &DrawDevicePrint {
 
 fn draw_device_draw_print(filename string, mut w Window) {
 	d := draw_device_print(id: 'test', filename: filename)
-
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
-
-	for mut child in children {
-		child.draw_device(d)
-	}
-
-	for mut sw in w.subwindows {
-		sw.draw_device(d)
-	}
-
-	// draw dragger if active
-	draw_dragger(mut w)
-	// draw tooltip if active
-	w.tooltip.draw_device(d)
-
-	if w.on_draw != voidptr(0) {
-		w.on_draw(w)
-	}
-
-	w.mouse.draw_device(d)
+	DrawDevice(d).draw_window(mut w)
 }
 
 pub fn (d &DrawDevicePrint) has_text_style() bool {

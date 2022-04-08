@@ -269,7 +269,8 @@ pub fn window(cfg WindowParams) &Window {
 
 	mut ui_ctx := &UI{
 		gg: gcontext
-		svg: draw_device_svg(width: width, height: height)
+		svg: draw_device_svg()
+		raster: draw_device_raster()
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_imgs()
@@ -658,6 +659,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 				// draw_device_draw_print('toto.txt', mut window)
 				// println("screenshot screenshot-${os.file_name(os.executable())}.svg")
 				window.svg_screenshot('screenshot-${os.file_name(os.executable())}.svg')
+				window.png_screenshot('screenshot-${os.file_name(os.executable())}.png')
 			}
 		}
 	} else {
@@ -1562,4 +1564,9 @@ pub fn (w Window) subwindow(id string) &SubWindow {
 pub fn (mut w Window) svg_screenshot(filename string) {
 	mut d := w.ui.svg
 	d.screenshot_window(filename, mut w)
+}
+
+pub fn (mut w Window) png_screenshot(filename string) {
+	mut d := w.ui.raster
+	d.png_screenshot_window(filename, mut w)
 }

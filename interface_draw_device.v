@@ -32,3 +32,26 @@ interface DrawDevice {
 	draw_convex_poly(points []f32, color gx.Color)
 	draw_poly_empty(points []f32, color gx.Color)
 }
+
+fn (d DrawDevice) draw_window(mut w Window) {
+	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+
+	for mut child in children {
+		child.draw_device(d)
+	}
+
+	for mut sw in w.subwindows {
+		sw.draw_device(d)
+	}
+
+	// draw dragger if active
+	draw_dragger(mut w)
+	// draw tooltip if active
+	w.tooltip.draw_device(d)
+
+	if w.on_draw != voidptr(0) {
+		w.on_draw(w)
+	}
+
+	w.mouse.draw_device(d)
+}
