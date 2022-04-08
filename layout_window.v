@@ -657,8 +657,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 			if shift_key(e.mods) {
 				// draw_device_draw_print('toto.txt', mut window)
 				// println("screenshot screenshot-${os.file_name(os.executable())}.svg")
-				window.ui.svg.svg_screenshot_window('screenshot-${os.file_name(os.executable())}.svg', mut
-					window)
+				window.svg_screenshot('screenshot-${os.file_name(os.executable())}.svg')
 			}
 		}
 	} else {
@@ -1558,4 +1557,9 @@ pub fn (w Window) subwindow(id string) &SubWindow {
 	} else {
 		return subwindow()
 	}
+}
+
+pub fn (mut w Window) svg_screenshot(filename string) {
+	mut d := w.ui.svg
+	d.screenshot_window(filename, mut w)
 }

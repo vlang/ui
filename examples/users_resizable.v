@@ -38,7 +38,6 @@ fn main() {
 	$if android {
 		logo = 'img/logo.png'
 	}
-	println('${@FILE} lunched')
 	mut app := &State{
 		users: [
 			User{
