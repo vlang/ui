@@ -1,4 +1,4 @@
-module svg
+module libvg
 
 import gx
 
