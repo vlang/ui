@@ -4,24 +4,30 @@ import gg
 import gx
 import os
 import stbi
+import x.ttf
 
 // draw style
-pub enum Style {
-	outline
-	outline_aliased
-	filled
-	raw
-}
+// pub enum Style {
+// 	outline
+// 	outline_aliased
+// 	filled
+// 	raw
+// }
 
 [heap]
 struct Raster {
 pub mut:
-	width    int
-	height   int
-	channels int = 4
-	data     []byte
-	filler   [][]int
-	style    Style
+	width     int
+	height    int
+	channels  int = 4
+	data      []byte
+	ttf_font  &ttf.TTF_File = 0
+	ttf_fonts map[string]ttf.TTF_File
+	bmp       &ttf.BitMap = 0
+	color     gx.Color
+	// to remove
+	filler [][]int
+	style  ttf.Style
 }
 
 [params]

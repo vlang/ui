@@ -27,7 +27,7 @@ pub fn (d &DrawDevicePrint) has_text_style() bool {
 	return false
 }
 
-pub fn (d &DrawDevicePrint) set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int) {}
+pub fn (d &DrawDevicePrint) set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int) {}
 
 pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}
 

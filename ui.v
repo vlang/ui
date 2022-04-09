@@ -18,7 +18,7 @@ pub mut:
 	gg             &gg.Context       = voidptr(0)
 	window         &Window           = voidptr(0)
 	svg            &DrawDeviceSVG    = voidptr(0)
-	raster         &DrawDeviceRaster = voidptr(0)
+	bmp            &DrawDeviceBitmap = voidptr(0)
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
@@ -36,6 +36,7 @@ mut:
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
+	font_paths  map[string]string
 }
 
 fn (mut gui UI) idle_loop() {

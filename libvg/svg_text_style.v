@@ -2,17 +2,18 @@ module libvg
 
 import gx
 
-pub struct TextStyle {
+pub struct SvgTextStyle {
 pub mut:
 	font_name      string
+	font_path      string
 	size           int
 	color          gx.Color
 	align          string
 	vertical_align string
 }
 
-pub fn text_style() &TextStyle {
-	return &TextStyle{}
+pub fn svg_text_style() &SvgTextStyle {
+	return &SvgTextStyle{}
 }
 
 // utility
@@ -24,7 +25,7 @@ pub fn color(c gx.Color) string {
 	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
 }
 
-pub fn (mut ts TextStyle) set_align(align int) {
+pub fn (mut ts SvgTextStyle) set_align(align int) {
 	ts.align = match align {
 		C.FONS_ALIGN_LEFT { 'start' }
 		C.FONS_ALIGN_CENTER { 'middle' }
@@ -33,7 +34,7 @@ pub fn (mut ts TextStyle) set_align(align int) {
 	}
 }
 
-pub fn (mut ts TextStyle) set_vertical_align(align int) {
+pub fn (mut ts SvgTextStyle) set_vertical_align(align int) {
 	ts.vertical_align = match align {
 		C.FONS_ALIGN_BOTTOM { 'text-top' }
 		C.FONS_ALIGN_TOP { 'hanging' } // weird

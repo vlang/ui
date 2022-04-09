@@ -7,7 +7,7 @@ import ui.libvg
 struct DrawDeviceSVG {
 mut:
 	id string = 'dd_svg'
-	ts &libvg.TextStyle = 0
+	ts &libvg.SvgTextStyle = 0
 pub mut:
 	s &libvg.Svg = 0
 }
@@ -18,7 +18,7 @@ struct DrawDeviceSVGParams {
 }
 
 pub fn draw_device_svg(p DrawDeviceSVGParams) &DrawDeviceSVG {
-	ts := libvg.text_style()
+	ts := libvg.svg_text_style()
 	return &DrawDeviceSVG{
 		id: p.id
 		ts: ts
@@ -63,9 +63,10 @@ pub fn (d &DrawDeviceSVG) has_text_style() bool {
 	return true
 }
 
-pub fn (d &DrawDeviceSVG) set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int) {
+pub fn (d &DrawDeviceSVG) set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int) {
 	mut ts := d.ts
 	ts.font_name = if font_name == 'system' { 'Systemfont' } else { font_name }
+	ts.font_path = font_path
 	ts.size = size
 	ts.color = color
 	ts.set_align(align)

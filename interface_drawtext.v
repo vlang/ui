@@ -58,28 +58,28 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 	// println(w.text_styles.hash)
 }
 
-pub fn (w2 DrawTextWidget) update_style2(ts TextStyleParams) {
-	mut w := w2
-	mut ts_ := if ts.id in w.text_styles.hash {
-		&(w.text_styles.hash[ts.id])
-	} else {
-		&(w.text_styles.current)
-	}
-	unsafe {
-		*ts_ = TextStyle{
-			...(*ts_)
-			size: if ts.size < 0 { ts_.size } else { ts.size }
-			font_name: if ts.font_name == no_string { ts_.font_name } else { ts.font_name }
-			color: if ts.color == no_color { ts_.color } else { ts.color }
-			align: if ts.align == .@none { ts_.align } else { ts.align }
-			vertical_align: if ts.vertical_align == .@none {
-				ts_.vertical_align
-			} else {
-				ts.vertical_align
-			}
-		}
-	}
-}
+// pub fn (w2 DrawTextWidget) update_style2(ts TextStyleParams) {
+// 	mut w := w2
+// 	mut ts_ := if ts.id in w.text_styles.hash {
+// 		&(w.text_styles.hash[ts.id])
+// 	} else {
+// 		&(w.text_styles.current)
+// 	}
+// 	unsafe {
+// 		*ts_ = TextStyle{
+// 			...(*ts_)
+// 			size: if ts.size < 0 { ts_.size } else { ts.size }
+// 			font_name: if ts.font_name == no_string { ts_.font_name } else { ts.font_name }
+// 			color: if ts.color == no_color { ts_.color } else { ts.color }
+// 			align: if ts.align == .@none { ts_.align } else { ts.align }
+// 			vertical_align: if ts.vertical_align == .@none {
+// 				ts_.vertical_align
+// 			} else {
+// 				ts.vertical_align
+// 			}
+// 		}
+// 	}
+// }
 
 pub fn (mut w DrawTextWidget) update_style(ts TextStyleParams) {
 	mut ts_ := if ts.id in w.text_styles.hash {
@@ -133,7 +133,8 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	if d.has_text_style() {
 		// println('lds current style: $ts')
 		// println('d.set_text_style($ts.font_name, $ts.size, $ts.color, ${int(ts.align)}, ${int(ts.vertical_align)})')
-		d.set_text_style(ts.font_name, ts.size, ts.color, int(ts.align), int(ts.vertical_align))
+		d.set_text_style(ts.font_name, w.ui.font_paths[ts.font_name], ts.size, ts.color,
+			int(ts.align), int(ts.vertical_align))
 	}
 	gg := w.ui.gg
 	fons := gg.ft.fons

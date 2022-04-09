@@ -6,7 +6,7 @@ import gg
 interface DrawDevice {
 	// text style
 	has_text_style() bool
-	set_text_style(font_name string, size int, color gx.Color, align int, vertical_align int)
+	set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int)
 	// clip
 	scissor_rect(x int, y int, w int, h int)
 	// drawing methods

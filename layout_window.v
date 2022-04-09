@@ -270,7 +270,7 @@ pub fn window(cfg WindowParams) &Window {
 	mut ui_ctx := &UI{
 		gg: gcontext
 		svg: draw_device_svg()
-		raster: draw_device_raster()
+		bmp: draw_device_bitmap()
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_imgs()
@@ -1567,6 +1567,6 @@ pub fn (mut w Window) svg_screenshot(filename string) {
 }
 
 pub fn (mut w Window) png_screenshot(filename string) {
-	mut d := w.ui.raster
+	mut d := w.ui.bmp
 	d.png_screenshot_window(filename, mut w)
 }
