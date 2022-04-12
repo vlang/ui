@@ -146,8 +146,8 @@ fn tab_id(id string, i int) string {
 	return '${id}_tab_$i'
 }
 
-fn (tabs &Tabs) update_tab_colors() {
-	for tab in tabs.tab_bar.children {
+fn (mut tabs Tabs) update_tab_colors() {
+	for mut tab in tabs.tab_bar.children {
 		if mut tab is ui.CanvasLayout {
 			color := if tab.id == tabs.active { gx.rgb(200, 200, 100) } else { gx.white }
 			// println("$tab.id == $tabs.active -> $color")
