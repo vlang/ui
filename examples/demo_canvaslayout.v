@@ -58,9 +58,10 @@ fn main() {
 								id: 'b_thm'
 								text: 'Theme'
 								width: 100
-								theme: 'red'
+								style: 'red'
 								z_index: 10
 								movable: true
+								hoverable: true
 								onclick: fn (a voidptr, b voidptr) {
 									ui.message_box('Built with V UI')
 								}
@@ -181,8 +182,8 @@ fn dd_change(app voidptr, dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
 	mut b := win.button('b_thm')
-	b.set_theme(dd.selected().text)
-	b.update_theme()
+	b.style_from_theme(dd.selected().text)
+	// b.update_theme()
 }
 
 fn lb_change(app voidptr, lb &ui.ListBox) {
@@ -190,8 +191,9 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 
 	win := lb.ui.window
 	mut b := win.button('b_thm')
-	b.set_theme(id)
-	b.update_theme()
+	// b.style_from_theme(id)
+	b.update_style(style: id)
+	// b.update_theme()
 }
 
 fn lb_change_multi(app voidptr, lb &ui.ListBox) {

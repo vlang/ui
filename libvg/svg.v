@@ -81,7 +81,7 @@ pub fn (mut s Svg) fill(fill string) {
 }
 
 pub fn (mut s Svg) text(x int, y int, text string, fill string, ts SvgTextStyle) {
-	col := if fill !in ['', 'none', 'transparent'] { fill } else { color(ts.color) }
+	col := if fill !in ['', 'none', 'transparent'] { fill } else { hex_color(ts.color) }
 	s.content.write_string("<text x='${x + s.offset_x}' y='${y + s.offset_y}'  fill='$col' font-family='$ts.font_name' font-size='${ts.size}px' dominant-baseline='$ts.vertical_align' text-anchor='$ts.align'><![CDATA[$text]]></text>\n")
 }
 

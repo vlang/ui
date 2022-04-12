@@ -24,6 +24,7 @@ pub mut:
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
 	keymods        KeyMod
+	styles         Styles
 mut:
 	cb_image             gg.Image // used only in checkbox.v
 	circle_image         gg.Image // used in radio.v but no use, in idle_loop()

@@ -18,7 +18,8 @@ const (
 
 enum ButtonState {
 	normal = 1 // synchronized with .button_normal
-	pressed = 2
+	pressed
+	hovering
 }
 
 type ButtonClickFn = fn (voidptr, &Button) // state, btn
@@ -42,8 +43,7 @@ pub mut:
 	offset_y    int
 	text_width  int
 	text_height int
-	bg_color    &gx.Color = 0
-	parent      Layout    = empty_stack
+	parent      Layout = empty_stack
 	is_focused  bool
 	ui          &UI = 0
 	onclick     ButtonClickFn
@@ -55,26 +55,31 @@ pub mut:
 	use_icon     bool
 	alpha_mode   bool
 	padding      f32
-	radius       f32
 	hidden       bool
 	movable      bool // drag, transition or anything allowing offset yo be updated
 	just_dragged bool
 	drag_type    string = 'btn'
 	hoverable    bool
-	to_hover     bool
 	tooltip      TooltipMessage
+	// style
+	radius   f32
+	bg_color &gx.Color = 0
+	// Style
+	theme_style string
+	style       ButtonStyle
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	// theme
-	theme_cfg ColorThemeCfg
-	theme     map[int]gx.Color = map[int]gx.Color{}
+	// // theme
+	// theme_cfg ColorThemeCfg
+	// theme     map[int]gx.Color = map[int]gx.Color{}
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct ButtonParams {
+	ButtonStyleParams
 	id           string
 	text         string
 	icon_path    string
@@ -88,10 +93,7 @@ pub struct ButtonParams {
 	tooltip      string
 	tooltip_side Side = .top
 	text_size    f64
-	bg_color     &gx.Color     = 0
-	theme        ColorThemeCfg = 'classic'
-	radius       f64
-	padding      f64
+	theme        string
 }
 
 pub fn button(c ButtonParams) &Button {
@@ -106,13 +108,14 @@ pub fn button(c ButtonParams) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		bg_color: c.bg_color
-		theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
+		// bg_color: c.bg_color
+		// theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
+		theme_style: c.theme
 		onclick: c.onclick
 		on_key_down: c.on_key_down
 		text_size: c.text_size
-		radius: f32(c.radius)
-		padding: f32(c.padding)
+		// radius: f32(c.radius)
+		// padding: f32(c.padding)
 		ui: 0
 	}
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -186,7 +189,8 @@ fn (mut b Button) init_style() {
 	dtw.update_text_size(b.text_size)
 
 	b.set_text_size()
-	b.update_theme()
+	// println("init style <$b.style_id>")
+	b.update_style(style: b.theme_style)
 }
 
 fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
@@ -290,13 +294,12 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 	if e.mouse_button == 256 {
 		if b.point_inside(e.x, e.y) {
-			if b.hoverable && !b.to_hover {
-				b.to_hover = true
+			if b.hoverable && b.state != .hovering {
+				if b.state != .pressed {
+					b.state = .hovering
+				}
 			}
 		} else {
-			if b.hoverable && b.to_hover {
-				b.to_hover = false
-			}
 			b.state = .normal
 		}
 	}
@@ -341,16 +344,19 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
 	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
-	bg_color := if b.theme_cfg != no_theme {
-		color(b.theme, if b.to_hover && b.state != .pressed { 3 } else { int(b.state) })
-	} else if b.bg_color != voidptr(0) {
-		*b.bg_color
-	} else {
-		gx.white
+	bg_color := match b.state {
+		.normal {
+			if b.bg_color != voidptr(0) { *b.bg_color } else { b.style.bg_color }
+		}
+		.hovering {
+			b.style.bg_color_hover
+		}
+		.pressed {
+			b.style.bg_color_pressed
+		}
 	}
-	// println("bg:${b.to_hover} ${bg_color}")
-	if b.radius > 0 {
-		radius := relative_size(b.radius, int(width), int(height))
+	if b.style.radius > 0 {
+		radius := relative_size(b.style.radius, int(width), int(height))
 		// println("draw $b.id ${bg_color}")
 		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
 		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
@@ -445,13 +451,18 @@ fn (mut b Button) unfocus() {
 	b.state = .normal
 }
 
-pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
-	b.theme_cfg = theme_cfg
+pub fn (mut b Button) style_from_theme(theme string) {
+	// b.style = f(theme)
+	// do furter here like update b
 }
 
-pub fn (mut b Button) update_theme() {
-	update_colors_from(mut b.theme, theme(b), [1, 2, 3])
-}
+// pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
+// 	b.theme_cfg = theme_cfg
+// }
+
+// pub fn (mut b Button) update_theme() {
+// 	update_colors_from(mut b.theme, theme(b), [1, 2, 3])
+// }
 
 // method implemented in Draggable
 fn (b &Button) get_window() &Window {

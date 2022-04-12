@@ -274,6 +274,7 @@ pub fn window(cfg WindowParams) &Window {
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_imgs()
+	ui_ctx.load_styles()
 	window.ui = ui_ctx
 
 	// q := int(window)

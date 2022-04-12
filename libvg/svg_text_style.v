@@ -17,13 +17,6 @@ pub fn svg_text_style() &SvgTextStyle {
 }
 
 // utility
-pub fn rgba(r byte, g byte, b byte, a byte) string {
-	return '#$r.hex()$g.hex()$b.hex()$a.hex()'
-}
-
-pub fn color(c gx.Color) string {
-	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
-}
 
 pub fn (mut ts SvgTextStyle) set_align(align int) {
 	ts.align = match align {
@@ -42,4 +35,9 @@ pub fn (mut ts SvgTextStyle) set_vertical_align(align int) {
 		C.FONS_ALIGN_BASELINE { 'hanging' }
 		else { '' }
 	}
+}
+
+// Color (because of cycle modules copy here)
+pub fn hex_color(c gx.Color) string {
+	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
 }

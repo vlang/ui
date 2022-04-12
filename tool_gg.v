@@ -1,6 +1,7 @@
 module ui
 
 import gg
+import gx
 import math
 
 pub fn intersection_rect(r1 gg.Rect, r2 gg.Rect) gg.Rect {
@@ -35,4 +36,25 @@ pub fn inside_rect(r gg.Rect, c gg.Rect) bool { // c for container
 
 pub fn is_rgb_valid(c int) bool {
 	return if c >= 0 && c < 256 { true } else { false }
+}
+
+// Color
+type HexColor = string
+
+pub fn hex_rgba(r byte, g byte, b byte, a byte) HexColor {
+	return '#$r.hex()$g.hex()$b.hex()$a.hex()'
+}
+
+pub fn hex_color(c gx.Color) HexColor {
+	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
+}
+
+pub fn (hs HexColor) rgba() (byte, byte, byte, byte) {
+	u := ('0x' + hs[1..]).u32()
+	return byte(u >> 24), byte(u >> 16), byte(u >> 8), byte(u)
+}
+
+pub fn (hs HexColor) color() gx.Color {
+	u := ('0x' + hs[1..]).u32()
+	return gx.rgba(byte(u >> 24), byte(u >> 16), byte(u >> 8), byte(u))
 }

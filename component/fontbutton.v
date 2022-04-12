@@ -33,7 +33,7 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 		height_: c.height
 		z_index: c.z_index
 		bg_color: c.bg_color
-		theme_cfg: ui.no_theme
+		// theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
 		onclick: font_button_click
 		radius: f32(c.radius)
