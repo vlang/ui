@@ -1570,3 +1570,5 @@ pub fn (mut w Window) png_screenshot(filename string) {
 	mut d := w.ui.bmp
 	d.png_screenshot_window(filename, mut w)
 }
+
+pub fn (mut w Window) load_style() {}

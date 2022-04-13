@@ -133,7 +133,7 @@ fn (mut b Button) init(parent Layout) {
 	if b.use_icon {
 		b.image = b.ui.gg.create_image(b.icon_path)
 	}
-	b.init_style()
+	b.load_style()
 	if b.tooltip.text != '' {
 		mut win := ui.window
 		win.tooltip.append(b, b.tooltip)
@@ -184,7 +184,8 @@ pub fn (b &Button) free() {
 	}
 }
 
-fn (mut b Button) init_style() {
+fn (mut b Button) load_style() {
+	// println("btn load style $b.theme_style")
 	style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
 	b.update_style(style: style)
 	// forced overload default style
