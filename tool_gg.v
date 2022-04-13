@@ -41,11 +41,11 @@ pub fn is_rgb_valid(c int) bool {
 // Color
 type HexColor = string
 
-pub fn hex_rgba(r byte, g byte, b byte, a byte) HexColor {
+pub fn hex_rgba(r byte, g byte, b byte, a byte) string {
 	return '#$r.hex()$g.hex()$b.hex()$a.hex()'
 }
 
-pub fn hex_color(c gx.Color) HexColor {
+pub fn hex_color(c gx.Color) string {
 	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
 }
 

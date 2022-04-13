@@ -97,7 +97,7 @@ pub mut:
 	children_immediate []Widget
 	needs_refresh      bool = true
 	// ui settings
-	settings SettingsUI
+	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
 }
@@ -321,8 +321,8 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 fn gg_init(mut window Window) {
 	window.mouse.init(window)
 	window.tooltip.init(window.ui)
-	window.load_settings()
-	window.init_styles()
+	load_settings()
+	window.init_text_styles()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
 	w := int(f32(window_size.width) / window.dpi_scale)
@@ -1571,4 +1571,6 @@ pub fn (mut w Window) png_screenshot(filename string) {
 	d.png_screenshot_window(filename, mut w)
 }
 
-pub fn (mut w Window) load_style() {}
+pub fn (mut w Window) load_style() {
+	w.update_style(style: w.theme_style)
+}

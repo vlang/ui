@@ -195,7 +195,7 @@ pub fn (mut w Window) add_font(id string, font_path string) {
 	w.ui.add_font(id, font_default())
 }
 
-pub fn (mut w Window) init_styles() {
+pub fn (mut w Window) init_text_styles() {
 	w.ui.add_font('system', font_default())
 	// init default style
 	w.ui.add_style(id: '_default_')

@@ -12,6 +12,12 @@ pub fn (mut w WidgetThemeStyle) update_theme_style(theme_style string) {
 }
 
 pub fn (mut l Layout) update_theme_style(theme_style string) {
+	if mut l is WidgetThemeStyle {
+		mut w := l as WidgetThemeStyle
+		w.update_theme_style(theme_style)
+		// println("$w.id load style")
+		w.load_style()
+	}
 	for mut child in l.get_children() {
 		if mut child is WidgetThemeStyle {
 			mut w := child as WidgetThemeStyle

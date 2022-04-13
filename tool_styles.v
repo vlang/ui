@@ -1,6 +1,9 @@
 module ui
 
 import gx
+import gg
+import toml
+import os
 
 // define style outside Widget definition
 // all styles would be collected inside one map attached to ui
@@ -10,29 +13,80 @@ pub const (
 	no_color = gx.Color{0, 0, 0, 0}
 )
 
-pub struct Styles {
-pub mut:
-	btn map[string]ButtonStyle
-}
-
 // load styles
 
 pub fn (mut gui UI) load_styles() {
-	gui.load_default_style()
-	gui.load_red_style()
-	gui.load_blue_style()
+	for style_id in ['default', 'red', 'blue'] {
+		gui.load_style_from_file(style_id)
+	}
+}
+
+pub fn (mut gui UI) load_style_from_file(style_id string) {
+	style := parse_style_toml_file(style_toml_file(style_id))
+	// println("$style_id: $style")
+	gui.styles[style_id] = style
+}
+
+pub fn style_toml_file(style_id string) string {
+	return os.join_path(settings_styles_dir, 'style_${style_id}.toml')
+}
+
+pub struct Style {
+pub mut:
+	win WindowStyle
+	btn ButtonStyle
+}
+
+pub fn (s Style) to_toml() string {
+	mut toml := ''
+	toml += '[win]\n'
+	toml += s.win.to_toml()
+	toml += '\n[btn]\n'
+	toml += s.btn.to_toml()
+	return toml
+}
+
+pub fn parse_style_toml_file(path string) Style {
+	doc := toml.parse_file(path) or { panic(err) }
+	mut s := Style{}
+	s.win.from_toml(doc.value('win'))
+	s.btn.from_toml(doc.value('btn'))
+	return s
+}
+
+pub fn (s Style) as_toml_file(path string) {
+	text := '# $path generated automatically\n' + s.to_toml()
+	os.write_file(path, text) or { panic(err) }
 }
 
 // init at least default styles
+
+pub fn default_style() Style {
+	// "" means default
+	return Style{
+		// window
+		win: WindowStyle{
+			bg_color: default_window_color
+		}
+		// button
+		btn: ButtonStyle{
+			radius: .3
+			border_color: button_border_color
+			bg_color: gx.white
+			bg_color_pressed: gx.rgb(119, 119, 119)
+			bg_color_hover: gx.rgb(219, 219, 219)
+		}
+	}
+}
+
+pub fn create_default_style_file() {
+	default_style().as_toml_file(style_toml_file('default'))
+}
+
 pub fn (mut gui UI) load_default_style() {
 	// "" means default
-	gui.styles.btn['default'] = ButtonStyle{
-		radius: .3
-		border_color: button_border_color
-		bg_color: gx.white
-		bg_color_pressed: gx.rgb(119, 119, 119)
-		bg_color_hover: gx.rgb(219, 219, 219)
-	}
+	style := 'default'
+	gui.styles[style] = default_style()
 }
 
 // Window
@@ -40,6 +94,34 @@ pub fn (mut gui UI) load_default_style() {
 pub struct WindowStyle {
 pub mut:
 	bg_color gx.Color
+}
+
+[params]
+pub struct WindowStyleParams {
+mut:
+	style    string = ui.no_style
+	bg_color gx.Color
+}
+
+pub fn (mut w Window) update_style(p WindowStyleParams) {
+	// println("update_style <$p.style>")
+	style := if p.style == '' { 'default' } else { p.style }
+	if style != ui.no_style && style in w.ui.styles {
+		ws := w.ui.styles[style].win
+		w.bg_color = ws.bg_color
+		mut gui := w.ui
+		gui.gg.set_bg_color(w.bg_color)
+	}
+}
+
+pub fn (w WindowStyle) to_toml() string {
+	mut toml := map[string]toml.Any{}
+	toml['bg_color'] = hex_color(w.bg_color)
+	return toml.to_toml()
+}
+
+pub fn (mut w WindowStyle) from_toml(a toml.Any) {
+	w.bg_color = HexColor(a.value('bg_color').string()).color()
 }
 
 // Button
@@ -55,6 +137,7 @@ pub mut:
 
 pub struct ButtonStyle {
 	ButtonShapeStyle // text_style TextStyle
+pub mut:
 	text_font_name      string = 'system'
 	text_color          gx.Color
 	text_size           int = 16
@@ -81,8 +164,8 @@ pub struct ButtonStyleParams {
 pub fn (mut b Button) update_style(p ButtonStyleParams) {
 	// println("update_style <$p.style>")
 	style := if p.style == '' { 'default' } else { p.style }
-	if style != ui.no_style && style in b.ui.styles.btn {
-		bs := b.ui.styles.btn[style]
+	if style != ui.no_style && style in b.ui.styles {
+		bs := b.ui.styles[style].btn
 		b.theme_style = p.style
 		b.style.radius = bs.radius
 		b.style.border_color = bs.border_color
@@ -138,4 +221,32 @@ pub fn (mut b Button) update_style(p ButtonStyleParams) {
 			dtw.update_style(ts)
 		}
 	}
+}
+
+pub fn (bs ButtonStyle) to_toml() string {
+	mut toml := map[string]toml.Any{}
+	toml['radius'] = bs.radius
+	toml['border_color'] = hex_color(bs.border_color)
+	toml['bg_color'] = hex_color(bs.bg_color)
+	toml['bg_color_pressed'] = hex_color(bs.bg_color_hover)
+	toml['bg_color_hover'] = hex_color(bs.bg_color_pressed)
+	toml['text_font_name'] = bs.text_font_name
+	toml['text_color'] = hex_color(bs.text_color)
+	toml['text_size'] = bs.text_size
+	toml['text_align'] = int(bs.text_align)
+	toml['text_vertical_align'] = int(bs.text_vertical_align)
+	return toml.to_toml()
+}
+
+pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
+	bs.radius = a.value('radius').f32()
+	bs.border_color = HexColor(a.value('border_color').string()).color()
+	bs.bg_color = HexColor(a.value('bg_color').string()).color()
+	bs.bg_color_hover = HexColor(a.value('bg_color_pressed').string()).color()
+	bs.bg_color_pressed = HexColor(a.value('bg_color_hover').string()).color()
+	bs.text_font_name = a.value('text_font_name').string()
+	bs.text_color = HexColor(a.value('text_color').string()).color()
+	bs.text_size = a.value('text_size').int()
+	bs.text_align = TextHorizontalAlign(a.value('text_align').int())
+	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
 }
