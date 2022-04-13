@@ -72,6 +72,7 @@ fn main() {
 		title: 'V UI Demo'
 		mode: .resizable
 		bg_color: ui.color_solaris
+		theme: 'red'
 		native_message: false
 		children: [
 			ui.row(

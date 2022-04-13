@@ -75,7 +75,7 @@ pub mut:
 	// Text Config
 	text_cfg gx.TextCfg
 	// themes
-	color_themes map[string]ColorTheme
+	theme_style string
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
@@ -111,8 +111,10 @@ pub:
 	title         string
 	always_on_top bool
 	state         voidptr
-	// draw_fn               DrawFn
-	bg_color              gx.Color = ui.default_window_color
+
+	bg_color gx.Color = ui.default_window_color
+	theme    string
+
 	on_click              ClickFn
 	on_mouse_down         ClickFn
 	on_mouse_up           ClickFn
@@ -202,6 +204,7 @@ pub fn window(cfg WindowParams) &Window {
 		bg_color: cfg.bg_color
 		width: width
 		height: height
+		theme_style: cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
 		children: cfg.children
@@ -229,9 +232,6 @@ pub fn window(cfg WindowParams) &Window {
 		suspended_fn: cfg.on_suspend
 		resumed_fn: cfg.on_resume
 	}
-
-	// register default color themes
-	window.register_default_color_themes()
 
 	gcontext := gg.new_context(
 		width: width
@@ -1098,7 +1098,6 @@ pub fn (w &Window) free() {
 		w.children.free()
 		w.title.free()
 		// w.eventbus.free()
-		w.color_themes.free()
 		w.widgets.free()
 		w.widgets_counts.free()
 		w.tooltip.free()

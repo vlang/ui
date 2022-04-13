@@ -65,8 +65,9 @@ pub mut:
 	radius   f32
 	bg_color &gx.Color = 0
 	// Style
-	theme_style string
-	style       ButtonStyle
+	theme_style  string
+	style        ButtonShapeStyle
+	style_forced ButtonStyleParams
 	// text styles
 	text_styles TextStyles
 	text_size   f64
@@ -184,13 +185,10 @@ pub fn (b &Button) free() {
 }
 
 fn (mut b Button) init_style() {
-	mut dtw := DrawTextWidget(b)
-	dtw.init_style(align: .center, vertical_align: .middle)
-	dtw.update_text_size(b.text_size)
-
-	b.set_text_size()
-	// println("init style <$b.style_id>")
-	b.update_style(style: b.theme_style)
+	style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
+	b.update_style(style: style)
+	// forced overload default style
+	b.update_style(b.style_forced)
 }
 
 fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
@@ -450,19 +448,6 @@ fn (mut b Button) unfocus() {
 	b.is_focused = false
 	b.state = .normal
 }
-
-pub fn (mut b Button) style_from_theme(theme string) {
-	// b.style = f(theme)
-	// do furter here like update b
-}
-
-// pub fn (mut b Button) set_theme(theme_cfg ColorThemeCfg) {
-// 	b.theme_cfg = theme_cfg
-// }
-
-// pub fn (mut b Button) update_theme() {
-// 	update_colors_from(mut b.theme, theme(b), [1, 2, 3])
-// }
 
 // method implemented in Draggable
 fn (b &Button) get_window() &Window {

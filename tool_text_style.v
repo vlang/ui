@@ -37,6 +37,7 @@ pub mut:
 
 [params]
 pub struct TextStyleParams {
+pub mut:
 	// text style identifier
 	id string = ui.no_string
 	// fields

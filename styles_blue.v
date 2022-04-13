@@ -4,7 +4,7 @@ import gx
 
 pub fn (mut gui UI) load_blue_style() {
 	// button
-	gui.styles.btn['blue'] = ButtonFullStyle{
+	gui.styles.btn['blue'] = ButtonStyle{
 		border_color: button_border_color
 		bg_color: gx.light_blue
 		bg_color_pressed: gx.rgb(0, 0, 119)
