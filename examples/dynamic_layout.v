@@ -178,7 +178,7 @@ fn btn_third_text_click(mut app State, btn &ui.Button) {
 }
 
 fn btn_text_below_click(mut app State, btn &ui.Button) {
-	s := btn.parent
+	mut s := btn.parent
 	if mut s is ui.Stack {
 		// An example of extracting child from stack
 		mut w := s.child(s.get_children().len - 2)
