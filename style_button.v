@@ -68,6 +68,14 @@ pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
 	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
 }
 
+pub fn (mut b Button) load_style() {
+	// println("btn load style $b.theme_style")
+	style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
+	b.update_style(style: style)
+	// forced overload default style
+	b.update_style(b.style_forced)
+}
+
 pub fn (mut b Button) update_style(p ButtonStyleParams) {
 	// println("update_style <$p.style>")
 	style := if p.style == '' { 'default' } else { p.style }

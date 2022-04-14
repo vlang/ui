@@ -3,15 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
-
-const (
-	progress_bar_color                   = gx.rgb(87, 153, 245)
-	progress_bar_border_color            = gx.rgb(76, 133, 213)
-	progress_bar_background_color        = gx.rgb(219, 219, 219)
-	progress_bar_background_border_color = gx.rgb(191, 191, 191)
-)
-
 [heap]
 pub struct ProgressBar {
 pub mut:
@@ -29,12 +20,17 @@ pub mut:
 	min      int
 	max      int
 	hidden   bool
+	// Style
+	theme_style  string
+	style        ProgressBarStyle
+	style_forced ProgressBarStyleParams
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct ProgressBarParams {
+	ProgressBarStyleParams
 	id      string
 	width   int
 	height  int = 16
@@ -62,6 +58,7 @@ fn (mut pb ProgressBar) init(parent Layout) {
 	pb.parent = parent
 	ui := parent.get_ui()
 	pb.ui = ui
+	pb.load_style()
 }
 
 [manualfree]
@@ -110,12 +107,12 @@ fn (mut pb ProgressBar) draw() {
 fn (mut pb ProgressBar) draw_device(d DrawDevice) {
 	offset_start(mut pb)
 	// Draw the gray background
-	d.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_color)
-	d.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, ui.progress_bar_background_border_color)
+	d.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, pb.style.bg_color)
+	d.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, pb.style.bg_border_color)
 	// Draw the value
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
-	d.draw_rect_empty(pb.x, pb.y, width, pb.height, ui.progress_bar_border_color) // gx.Black)
-	d.draw_rect_filled(pb.x, pb.y, width, pb.height, ui.progress_bar_color) // gx.Black)
+	d.draw_rect_empty(pb.x, pb.y, width, pb.height, pb.style.border_color) // gx.Black)
+	d.draw_rect_filled(pb.x, pb.y, width, pb.height, pb.style.color) // gx.Black)
 	$if bb ? {
 		debug_draw_bb_widget(mut pb, pb.ui)
 	}

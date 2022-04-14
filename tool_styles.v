@@ -14,24 +14,28 @@ pub const (
 
 pub struct Style {
 pub mut:
-	win WindowStyle
-	btn ButtonStyle
+	win   WindowStyle
+	btn   ButtonStyle
+	pgbar ProgressBarStyle
 }
 
 pub fn (s Style) to_toml() string {
 	mut toml := ''
-	toml += '[win]\n'
+	toml += '[window]\n'
 	toml += s.win.to_toml()
-	toml += '\n[btn]\n'
+	toml += '\n[button]\n'
 	toml += s.btn.to_toml()
+	toml += '\n[progressbar]\n'
+	toml += s.pgbar.to_toml()
 	return toml
 }
 
 pub fn parse_style_toml_file(path string) Style {
 	doc := toml.parse_file(path) or { panic(err) }
 	mut s := Style{}
-	s.win.from_toml(doc.value('win'))
-	s.btn.from_toml(doc.value('btn'))
+	s.win.from_toml(doc.value('window'))
+	s.btn.from_toml(doc.value('button'))
+	s.pgbar.from_toml(doc.value('progressbar'))
 	return s
 }
 
@@ -92,6 +96,13 @@ pub fn default_style() Style {
 			bg_color_pressed: gx.rgb(119, 119, 119)
 			bg_color_hover: gx.rgb(219, 219, 219)
 		}
+		// progressbar
+		pgbar: ProgressBarStyle{
+			color: gx.rgb(87, 153, 245)
+			border_color: gx.rgb(76, 133, 213)
+			bg_color: gx.rgb(219, 219, 219)
+			bg_border_color: gx.rgb(191, 191, 191)
+		}
 	}
 }
 
@@ -112,6 +123,13 @@ pub fn blue_style() Style {
 			bg_color_pressed: gx.rgb(0, 0, 119)
 			bg_color_hover: gx.rgb(0, 0, 219)
 		}
+		// progressbar
+		pgbar: ProgressBarStyle{
+			color: gx.rgb(87, 153, 245)
+			border_color: gx.rgb(76, 133, 213)
+			bg_color: gx.rgb(219, 219, 219)
+			bg_border_color: gx.rgb(191, 191, 191)
+		}
 	}
 }
 
@@ -131,6 +149,13 @@ pub fn red_style() Style {
 			bg_color: gx.light_red
 			bg_color_pressed: gx.rgb(119, 0, 0)
 			bg_color_hover: gx.rgb(219, 0, 0)
+		}
+		// progressbar
+		pgbar: ProgressBarStyle{
+			color: gx.rgb(245, 153, 87)
+			border_color: gx.rgb(213, 133, 76)
+			bg_color: gx.rgb(219, 219, 219)
+			bg_border_color: gx.rgb(191, 191, 191)
 		}
 	}
 }

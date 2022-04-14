@@ -184,14 +184,6 @@ pub fn (b &Button) free() {
 	}
 }
 
-fn (mut b Button) load_style() {
-	// println("btn load style $b.theme_style")
-	style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
-	b.update_style(style: style)
-	// forced overload default style
-	b.update_style(b.style_forced)
-}
-
 fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
