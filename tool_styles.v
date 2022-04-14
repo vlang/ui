@@ -12,26 +12,6 @@ pub const (
 	no_color = gx.Color{0, 0, 0, 0}
 )
 
-// load styles
-
-pub fn (mut gui UI) load_styles() {
-	// ensure some theme styles are predefined
-	create_theme_styles()
-	for style_id in ['default', 'red', 'blue'] {
-		gui.load_style_from_file(style_id)
-	}
-}
-
-pub fn (mut gui UI) load_style_from_file(style_id string) {
-	style := parse_style_toml_file(style_toml_file(style_id))
-	// println("$style_id: $style")
-	gui.styles[style_id] = style
-}
-
-pub fn style_toml_file(style_id string) string {
-	return os.join_path(settings_styles_dir, 'style_${style_id}.toml')
-}
-
 pub struct Style {
 pub mut:
 	win WindowStyle
@@ -58,6 +38,26 @@ pub fn parse_style_toml_file(path string) Style {
 pub fn (s Style) as_toml_file(path string) {
 	text := '# $path generated automatically\n' + s.to_toml()
 	os.write_file(path, text) or { panic(err) }
+}
+
+pub fn style_toml_file(style_id string) string {
+	return os.join_path(settings_styles_dir, 'style_${style_id}.toml')
+}
+
+// load styles
+
+pub fn (mut gui UI) load_styles() {
+	// ensure some theme styles are predefined
+	create_theme_styles()
+	for style_id in ['default', 'red', 'blue'] {
+		gui.load_style_from_file(style_id)
+	}
+}
+
+pub fn (mut gui UI) load_style_from_file(style_id string) {
+	style := parse_style_toml_file(style_toml_file(style_id))
+	// println("$style_id: $style")
+	gui.styles[style_id] = style
 }
 
 // predefined style
