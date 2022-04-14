@@ -4,6 +4,8 @@
 *.exe
 *.ilk
 *.pdb
+screenshot*.png
+screenshot*.svg
 examples/*
 !examples/*.*
 fmt_verify_all
