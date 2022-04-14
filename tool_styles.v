@@ -17,6 +17,7 @@ pub mut:
 	win   WindowStyle
 	btn   ButtonStyle
 	pgbar ProgressBarStyle
+	cl    CanvasLayoutStyle
 }
 
 pub fn (s Style) to_toml() string {
