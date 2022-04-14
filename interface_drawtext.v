@@ -160,12 +160,12 @@ pub fn (w DrawTextWidget) font_size() int {
 }
 
 pub fn (w DrawTextWidget) load_style() {
-	w.load_device_style(w.ui.gg)
+	w.draw_device_load_style(w.ui.gg)
 }
 
 // Draw and size methods
 
-pub fn (w DrawTextWidget) load_device_style(d DrawDevice) {
+pub fn (w DrawTextWidget) draw_device_load_style(d DrawDevice) {
 	ts := w.current_style()
 	// println("lds $w.id current style: $ts")
 	w.load_style_(d, ts)

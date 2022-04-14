@@ -83,12 +83,6 @@ pub fn create_default_style_file() {
 	default_style().as_toml_file(style_toml_file('default'))
 }
 
-pub fn (mut gui UI) load_default_style() {
-	// "" means default
-	style := 'default'
-	gui.styles[style] = default_style()
-}
-
 // Window
 
 pub struct WindowStyle {
@@ -103,6 +97,16 @@ mut:
 	bg_color gx.Color
 }
 
+pub fn (w WindowStyle) to_toml() string {
+	mut toml := map[string]toml.Any{}
+	toml['bg_color'] = hex_color(w.bg_color)
+	return toml.to_toml()
+}
+
+pub fn (mut w WindowStyle) from_toml(a toml.Any) {
+	w.bg_color = HexColor(a.value('bg_color').string()).color()
+}
+
 pub fn (mut w Window) update_style(p WindowStyleParams) {
 	// println("update_style <$p.style>")
 	style := if p.style == '' { 'default' } else { p.style }
@@ -112,16 +116,6 @@ pub fn (mut w Window) update_style(p WindowStyleParams) {
 		mut gui := w.ui
 		gui.gg.set_bg_color(w.bg_color)
 	}
-}
-
-pub fn (w WindowStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_color'] = hex_color(w.bg_color)
-	return toml.to_toml()
-}
-
-pub fn (mut w WindowStyle) from_toml(a toml.Any) {
-	w.bg_color = HexColor(a.value('bg_color').string()).color()
 }
 
 // Button
@@ -159,6 +153,34 @@ pub struct ButtonStyleParams {
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
+}
+
+pub fn (bs ButtonStyle) to_toml() string {
+	mut toml := map[string]toml.Any{}
+	toml['radius'] = bs.radius
+	toml['border_color'] = hex_color(bs.border_color)
+	toml['bg_color'] = hex_color(bs.bg_color)
+	toml['bg_color_pressed'] = hex_color(bs.bg_color_hover)
+	toml['bg_color_hover'] = hex_color(bs.bg_color_pressed)
+	toml['text_font_name'] = bs.text_font_name
+	toml['text_color'] = hex_color(bs.text_color)
+	toml['text_size'] = bs.text_size
+	toml['text_align'] = int(bs.text_align)
+	toml['text_vertical_align'] = int(bs.text_vertical_align)
+	return toml.to_toml()
+}
+
+pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
+	bs.radius = a.value('radius').f32()
+	bs.border_color = HexColor(a.value('border_color').string()).color()
+	bs.bg_color = HexColor(a.value('bg_color').string()).color()
+	bs.bg_color_hover = HexColor(a.value('bg_color_pressed').string()).color()
+	bs.bg_color_pressed = HexColor(a.value('bg_color_hover').string()).color()
+	bs.text_font_name = a.value('text_font_name').string()
+	bs.text_color = HexColor(a.value('text_color').string()).color()
+	bs.text_size = a.value('text_size').int()
+	bs.text_align = TextHorizontalAlign(a.value('text_align').int())
+	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
 }
 
 pub fn (mut b Button) update_style(p ButtonStyleParams) {
@@ -221,32 +243,4 @@ pub fn (mut b Button) update_style(p ButtonStyleParams) {
 			dtw.update_style(ts)
 		}
 	}
-}
-
-pub fn (bs ButtonStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['radius'] = bs.radius
-	toml['border_color'] = hex_color(bs.border_color)
-	toml['bg_color'] = hex_color(bs.bg_color)
-	toml['bg_color_pressed'] = hex_color(bs.bg_color_hover)
-	toml['bg_color_hover'] = hex_color(bs.bg_color_pressed)
-	toml['text_font_name'] = bs.text_font_name
-	toml['text_color'] = hex_color(bs.text_color)
-	toml['text_size'] = bs.text_size
-	toml['text_align'] = int(bs.text_align)
-	toml['text_vertical_align'] = int(bs.text_vertical_align)
-	return toml.to_toml()
-}
-
-pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
-	bs.radius = a.value('radius').f32()
-	bs.border_color = HexColor(a.value('border_color').string()).color()
-	bs.bg_color = HexColor(a.value('bg_color').string()).color()
-	bs.bg_color_hover = HexColor(a.value('bg_color_pressed').string()).color()
-	bs.bg_color_pressed = HexColor(a.value('bg_color_hover').string()).color()
-	bs.text_font_name = a.value('text_font_name').string()
-	bs.text_color = HexColor(a.value('text_color').string()).color()
-	bs.text_size = a.value('text_size').int()
-	bs.text_align = TextHorizontalAlign(a.value('text_align').int())
-	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
 }

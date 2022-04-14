@@ -558,7 +558,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	parent := c.parent
 	state := parent.get_state()
 	dtw := DrawTextWidget(c)
-	dtw.load_device_style(d)
+	dtw.draw_device_load_style(d)
 	// if scrollview_clip(mut c) {
 	// 	c.set_children_pos()
 	// 	c.scrollview.children_to_update = false

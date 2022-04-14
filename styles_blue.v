@@ -19,11 +19,11 @@ pub fn blue_style() Style {
 	}
 }
 
-pub fn (mut gui UI) load_blue_style() {
-	style := 'blue'
-	// window
-	gui.styles[style] = blue_style()
-}
+// pub fn (mut gui UI) load_blue_style() {
+// 	style := 'blue'
+// 	// window
+// 	gui.styles[style] = blue_style()
+// }
 
 pub fn create_blue_style_file() {
 	blue_style().as_toml_file(os.join_path(settings_styles_dir, 'style_blue.toml'))

@@ -387,7 +387,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 		d.draw_image(x, y, width, height, b.image)
 	} else {
 		dtw := DrawTextWidget(b)
-		dtw.load_device_style(d)
+		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {

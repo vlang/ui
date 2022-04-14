@@ -293,7 +293,7 @@ fn (mut r Radio) draw() {
 fn (mut r Radio) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	dtw := DrawTextWidget(r)
-	dtw.load_device_style(d)
+	dtw.draw_device_load_style(d)
 	if r.title != '' {
 		// Border
 		d.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {

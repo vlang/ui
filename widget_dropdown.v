@@ -163,7 +163,7 @@ pub fn (mut dd Dropdown) draw() {
 pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 	offset_start(mut dd)
 	dtw := DrawTextWidget(dd)
-	dtw.load_device_style(d)
+	dtw.draw_device_load_style(d)
 	// draw the main dropdown
 	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
 	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {

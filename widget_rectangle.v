@@ -149,7 +149,7 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 	// Display rectangle text
 	if r.text != '' {
 		dtw := DrawTextWidget(r)
-		dtw.load_device_style(d)
+		dtw.draw_device_load_style(d)
 		text_width, text_height := dtw.text_size(r.text)
 		mut dx := (r.width - text_width) / 2
 		mut dy := (r.height - text_height) / 2

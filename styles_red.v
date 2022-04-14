@@ -19,11 +19,11 @@ pub fn red_style() Style {
 	}
 }
 
-pub fn (mut gui UI) load_red_style() {
-	style := 'red'
-	// window
-	gui.styles[style] = red_style()
-}
+// pub fn (mut gui UI) load_red_style() {
+// 	style := 'red'
+// 	// window
+// 	gui.styles[style] = red_style()
+// }
 
 pub fn create_red_style_file() {
 	red_style().as_toml_file(os.join_path(settings_styles_dir, 'style_red.toml'))
