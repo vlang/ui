@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 import toml
 import os
 
@@ -16,6 +15,8 @@ pub const (
 // load styles
 
 pub fn (mut gui UI) load_styles() {
+	// ensure some theme styles are predefined
+	create_theme_styles()
 	for style_id in ['default', 'red', 'blue'] {
 		gui.load_style_from_file(style_id)
 	}
@@ -59,7 +60,22 @@ pub fn (s Style) as_toml_file(path string) {
 	os.write_file(path, text) or { panic(err) }
 }
 
-// init at least default styles
+// predefined style
+
+fn create_theme_styles() {
+	if !os.exists(settings_styles_dir) {
+		os.mkdir_all(settings_styles_dir) or { panic(err) }
+	}
+	if !os.exists(style_toml_file('default')) {
+		create_default_style_file()
+	}
+	if !os.exists(style_toml_file('red')) {
+		create_red_style_file()
+	}
+	if !os.exists(style_toml_file('blue')) {
+		create_blue_style_file()
+	}
+}
 
 pub fn default_style() Style {
 	// "" means default
@@ -83,164 +99,42 @@ pub fn create_default_style_file() {
 	default_style().as_toml_file(style_toml_file('default'))
 }
 
-// Window
-
-pub struct WindowStyle {
-pub mut:
-	bg_color gx.Color
+pub fn blue_style() Style {
+	return Style{
+		// win
+		win: WindowStyle{
+			bg_color: gx.blue
+		}
+		// button
+		btn: ButtonStyle{
+			border_color: button_border_color
+			bg_color: gx.light_blue
+			bg_color_pressed: gx.rgb(0, 0, 119)
+			bg_color_hover: gx.rgb(0, 0, 219)
+		}
+	}
 }
 
-[params]
-pub struct WindowStyleParams {
-mut:
-	style    string = ui.no_style
-	bg_color gx.Color
+pub fn create_blue_style_file() {
+	blue_style().as_toml_file(os.join_path(settings_styles_dir, 'style_blue.toml'))
 }
 
-pub fn (w WindowStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_color'] = hex_color(w.bg_color)
-	return toml.to_toml()
-}
-
-pub fn (mut w WindowStyle) from_toml(a toml.Any) {
-	w.bg_color = HexColor(a.value('bg_color').string()).color()
-}
-
-pub fn (mut w Window) update_style(p WindowStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != ui.no_style && style in w.ui.styles {
-		ws := w.ui.styles[style].win
-		w.bg_color = ws.bg_color
-		mut gui := w.ui
-		gui.gg.set_bg_color(w.bg_color)
+pub fn red_style() Style {
+	return Style{
+		// win
+		win: WindowStyle{
+			bg_color: gx.red
+		}
+		// button
+		btn: ButtonStyle{
+			border_color: button_border_color
+			bg_color: gx.light_red
+			bg_color_pressed: gx.rgb(119, 0, 0)
+			bg_color_hover: gx.rgb(219, 0, 0)
+		}
 	}
 }
 
-// Button
-
-pub struct ButtonShapeStyle {
-pub mut:
-	radius           f32
-	border_color     gx.Color
-	bg_color         gx.Color
-	bg_color_pressed gx.Color
-	bg_color_hover   gx.Color
-}
-
-pub struct ButtonStyle {
-	ButtonShapeStyle // text_style TextStyle
-pub mut:
-	text_font_name      string = 'system'
-	text_color          gx.Color
-	text_size           int = 16
-	text_align          TextHorizontalAlign = .center
-	text_vertical_align TextVerticalAlign   = .middle
-}
-
-[params]
-pub struct ButtonStyleParams {
-	style            string = ui.no_style
-	radius           f32
-	border_color     gx.Color = ui.no_color
-	bg_color         gx.Color = ui.no_color
-	bg_color_pressed gx.Color = ui.no_color
-	bg_color_hover   gx.Color = ui.no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = ui.no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
-}
-
-pub fn (bs ButtonStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['radius'] = bs.radius
-	toml['border_color'] = hex_color(bs.border_color)
-	toml['bg_color'] = hex_color(bs.bg_color)
-	toml['bg_color_pressed'] = hex_color(bs.bg_color_hover)
-	toml['bg_color_hover'] = hex_color(bs.bg_color_pressed)
-	toml['text_font_name'] = bs.text_font_name
-	toml['text_color'] = hex_color(bs.text_color)
-	toml['text_size'] = bs.text_size
-	toml['text_align'] = int(bs.text_align)
-	toml['text_vertical_align'] = int(bs.text_vertical_align)
-	return toml.to_toml()
-}
-
-pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
-	bs.radius = a.value('radius').f32()
-	bs.border_color = HexColor(a.value('border_color').string()).color()
-	bs.bg_color = HexColor(a.value('bg_color').string()).color()
-	bs.bg_color_hover = HexColor(a.value('bg_color_pressed').string()).color()
-	bs.bg_color_pressed = HexColor(a.value('bg_color_hover').string()).color()
-	bs.text_font_name = a.value('text_font_name').string()
-	bs.text_color = HexColor(a.value('text_color').string()).color()
-	bs.text_size = a.value('text_size').int()
-	bs.text_align = TextHorizontalAlign(a.value('text_align').int())
-	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
-}
-
-pub fn (mut b Button) update_style(p ButtonStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != ui.no_style && style in b.ui.styles {
-		bs := b.ui.styles[style].btn
-		b.theme_style = p.style
-		b.style.radius = bs.radius
-		b.style.border_color = bs.border_color
-		b.style.bg_color = bs.bg_color
-		b.style.bg_color_pressed = bs.bg_color_pressed
-		b.style.bg_color_hover = bs.bg_color_hover
-		mut dtw := DrawTextWidget(b)
-		dtw.update_style(
-			font_name: bs.text_font_name
-			color: bs.text_color
-			size: bs.text_size
-			align: bs.text_align
-			vertical_align: bs.text_vertical_align
-		)
-	} else {
-		if p.radius > 0 {
-			b.style.radius = p.radius
-		}
-		if p.border_color != ui.no_color {
-			b.style.border_color = p.border_color
-		}
-		if p.bg_color != ui.no_color {
-			b.style.bg_color = p.bg_color
-		}
-		if p.bg_color_pressed != ui.no_color {
-			b.style.bg_color_pressed = p.bg_color_pressed
-		}
-		if p.bg_color_hover != ui.no_color {
-			b.style.bg_color_hover = p.bg_color_hover
-		}
-		mut dtw := DrawTextWidget(b)
-		if p.text_size > 0 {
-			dtw.update_text_size(p.text_size)
-		}
-		mut ts, mut ok := TextStyleParams{}, false
-		if p.text_font_name != '' {
-			ok = true
-			ts.font_name = p.text_font_name
-		}
-		if p.text_color != ui.no_color {
-			ok = true
-			ts.color = p.text_color
-		}
-		if p.text_align != .@none {
-			ok = true
-			ts.align = p.text_align
-		}
-		if p.text_vertical_align != .@none {
-			ok = true
-			ts.vertical_align = p.text_vertical_align
-		}
-		if ok {
-			dtw.update_style(ts)
-		}
-	}
+pub fn create_red_style_file() {
+	red_style().as_toml_file(os.join_path(settings_styles_dir, 'style_red.toml'))
 }

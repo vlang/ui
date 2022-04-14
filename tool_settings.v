@@ -11,19 +11,6 @@ const (
 // Tool for TOML
 
 pub fn load_settings() {
-	if !os.exists(ui.settings_styles_dir) {
-		os.mkdir_all(ui.settings_styles_dir) or { panic(err) }
-	}
-
-	if !os.exists(style_toml_file('default')) {
-		create_default_style_file()
-	}
-	if !os.exists(style_toml_file('red')) {
-		create_red_style_file()
-	}
-	if !os.exists(style_toml_file('blue')) {
-		create_blue_style_file()
-	}
 }
 
 [params]
