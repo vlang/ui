@@ -18,6 +18,7 @@ pub mut:
 	btn   ButtonStyle
 	pgbar ProgressBarStyle
 	cl    CanvasLayoutStyle
+	stack StackStyle
 }
 
 pub fn (s Style) to_toml() string {

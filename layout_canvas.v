@@ -44,7 +44,7 @@ pub mut:
 	justify          []f64
 	// Style
 	theme_style  string
-	style        CanvasLayoutStyle
+	style        CanvasLayoutShapeStyle
 	style_forced CanvasLayoutStyleParams
 	// text styles
 	text_styles TextStyles

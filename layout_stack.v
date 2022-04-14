@@ -85,6 +85,12 @@ pub mut:
 	bg_color              gx.Color
 	bg_radius             f32
 	is_root_layout        bool = true
+	// Style
+	theme_style  string
+	style        StackShapeStyle
+	style_forced StackStyleParams
+	// text styles
+	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
 	on_init   InitFn
@@ -99,6 +105,7 @@ pub mut:
 
 [params]
 struct StackParams {
+	StackStyleParams
 	id                   string
 	width                int // useful for root_layout to init size
 	height               int
@@ -1137,7 +1144,9 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		ty := s.y - int(f32(text_height) * 1.25)
 		d.draw_rect_filled(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
 		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
-		s.ui.gg.draw_text_def(tx, ty - 2, s.title)
+		dtw := DrawTextWidget(s)
+		dtw.draw_device_load_style(d)
+		dtw.draw_device_text(d, tx, ty - 2, s.title)
 	}
 	offset_end(mut s)
 }
