@@ -62,7 +62,7 @@ pub mut:
 	hoverable    bool
 	tooltip      TooltipMessage
 	// style
-	radius   f32
+	// radius   f32
 	bg_color &gx.Color = 0
 	// Style
 	theme_style  string

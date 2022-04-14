@@ -42,6 +42,10 @@ pub mut:
 	full_width       int
 	full_height      int
 	justify          []f64
+	// Style
+	theme_style  string
+	style        CanvasLayoutStyle
+	style_forced CanvasLayoutStyleParams
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
@@ -76,6 +80,7 @@ mut:
 
 [params]
 pub struct CanvasLayoutParams {
+	CanvasLayoutStyleParams
 	id             string
 	width          int
 	height         int

@@ -7,10 +7,10 @@ import toml
 
 pub struct ProgressBarStyle {
 pub mut:
-	color           gx.Color = gx.rgb(87, 153, 245)
-	border_color    gx.Color = gx.rgb(76, 133, 213)
-	bg_color        gx.Color = gx.rgb(219, 219, 219)
-	bg_border_color gx.Color = gx.rgb(191, 191, 191)
+	color           gx.Color
+	border_color    gx.Color
+	bg_color        gx.Color
+	bg_border_color gx.Color
 }
 
 [params]
