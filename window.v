@@ -115,6 +115,8 @@ pub mut:
 	needs_refresh      bool = true
 	// ui settings
 	settings SettingsUI
+	mx       f64 // TODO remove
+	my       f64
 }
 
 [params]
