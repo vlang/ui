@@ -6,42 +6,46 @@ import gg
 type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
 
 const (
-	_item_height      = 20
-	_col_list_bkgrnd  = gx.white
-	_col_item_select  = gx.light_blue
-	_col_item_disable = gx.light_gray
-	_col_border       = gx.gray
-	_text_offset_y    = 3
-	_text_offset_x    = 5
+	_item_height           = 20
+	listbox_bg_color       = gx.white
+	listbox_selected_color = gx.light_blue
+	listbox_disabled_color = gx.light_gray
+	listbox_border_color   = gx.gray
+	_text_offset_y         = 3
+	_text_offset_x         = 5
 )
 
 [heap]
 pub struct ListBox {
 pub mut:
-	height        int
-	width         int
-	x             int
-	y             int
-	offset_x      int
-	offset_y      int
-	z_index       int
-	parent        Layout      = empty_stack
-	ui            &UI         = 0
-	items         []&ListItem = []&ListItem{}
-	selection     int = -1
-	selectable    bool
-	multi         bool
-	draw_count    int
-	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
-	is_focused    bool
-	draw_lines    bool
-	col_bkgrnd    gx.Color = ui._col_list_bkgrnd
-	col_selected  gx.Color = ui._col_item_select
-	col_disabled  gx.Color = ui._col_item_disable
-	col_border    gx.Color = ui._col_border
-	item_height   int      = ui._item_height
-	text_offset_y int      = ui._text_offset_y
-	id            string
+	height         int
+	width          int
+	x              int
+	y              int
+	offset_x       int
+	offset_y       int
+	z_index        int
+	parent         Layout      = empty_stack
+	ui             &UI         = 0
+	items          []&ListItem = []&ListItem{}
+	selection      int = -1
+	selectable     bool
+	multi          bool
+	draw_count     int
+	on_change      ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	is_focused     bool
+	draw_lines     bool
+	bg_color       gx.Color = ui.listbox_bg_color
+	selected_color gx.Color = ui.listbox_selected_color
+	disabled_color gx.Color = ui.listbox_disabled_color
+	border_color   gx.Color = ui.listbox_border_color
+	item_height    int      = ui._item_height
+	text_offset_y  int      = ui._text_offset_y
+	id             string
+	// Style
+	theme_style  string
+	style        ListBoxShapeStyle
+	style_forced ListBoxStyleParams
 	// text styles
 	text_styles TextStyles
 	text_size   f64
@@ -67,20 +71,21 @@ pub mut:
 
 [params]
 pub struct ListBoxParams {
+	ListBoxStyleParams
 mut:
-	x             int
-	y             int
-	width         int
-	height        int
-	z_index       int
-	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
-	draw_lines    bool     // Draw a rectangle around every item?
-	col_border    gx.Color = ui._col_border // Item and list border color
-	col_bkgrnd    gx.Color = ui._col_list_bkgrnd // ListBox background color
-	col_selected  gx.Color = ui._col_item_select // Selected item background color
-	item_height   int      = ui._item_height
-	text_offset_y int      = ui._text_offset_y
-	id            string // To use one callback for multiple ListBoxes
+	x              int
+	y              int
+	width          int
+	height         int
+	z_index        int
+	on_change      ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	draw_lines     bool     // Draw a rectangle around every item?
+	border_color   gx.Color = ui.listbox_border_color // Item and list border color
+	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
+	selected_color gx.Color = ui.listbox_selected_color // Selected item background color
+	item_height    int      = ui._item_height
+	text_offset_y  int      = ui._text_offset_y
+	id             string // To use one callback for multiple ListBoxes
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
@@ -107,9 +112,9 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		multi: c.multi
 		on_change: c.on_change
 		draw_lines: c.draw_lines
-		col_bkgrnd: c.col_bkgrnd
-		col_selected: c.col_selected
-		col_border: c.col_border
+		bg_color: c.bg_color
+		selected_color: c.selected_color
+		border_color: c.border_color
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
 		text_size: c.text_size
@@ -489,7 +494,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	$if lb_draw ? {
 		println('draw $lb.id scrollview=$lb.has_scrollview $lb.x, $lb.y, $lb.width $lb.height $height')
 	}
-	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.col_bkgrnd)
+	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.bg_color)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -510,7 +515,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 		}
 	}
 	if !lb.draw_lines {
-		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.col_border)
+		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.border_color)
 	}
 
 	// scrollview_draw(lb)
@@ -974,7 +979,7 @@ fn (li &ListItem) draw() {
 
 fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
-	col := if li.is_selected() { lb.col_selected } else { lb.col_bkgrnd }
+	col := if li.is_selected() { lb.selected_color } else { lb.bg_color }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui._text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
@@ -988,11 +993,11 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	} else {
 		li.text()
 	},
-		color: if li.is_enabled() { gx.black } else { lb.col_disabled }
+		color: if li.is_enabled() { gx.black } else { lb.disabled_color }
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
-			lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.col_border)
+			lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.border_color)
 	}
 }

@@ -94,6 +94,10 @@ pub mut:
 	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
+	// Style
+	theme_style  string
+	style        TextBoxShapeStyle
+	style_forced TextBoxStyleParams
 	// related to text drawing
 	text_size f64
 	hidden    bool
@@ -115,6 +119,7 @@ pub enum TextBoxMode {
 
 [params]
 pub struct TextBoxParams {
+	TextBoxStyleParams
 	id               string
 	width            int
 	height           int = 22

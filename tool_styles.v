@@ -19,6 +19,8 @@ pub mut:
 	pgbar ProgressBarStyle
 	cl    CanvasLayoutStyle
 	stack StackStyle
+	tb    TextBoxStyle
+	lb    ListBoxStyle
 }
 
 pub fn (s Style) to_toml() string {
@@ -151,6 +153,7 @@ pub fn red_style() Style {
 			bg_color: gx.light_red
 			bg_color_pressed: gx.rgb(119, 0, 0)
 			bg_color_hover: gx.rgb(219, 0, 0)
+			text_color: gx.red
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{

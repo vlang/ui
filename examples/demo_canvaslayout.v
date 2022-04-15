@@ -133,7 +133,7 @@ fn main() {
 								ordered: true
 								multi: true
 								draw_lines: true
-								col_bkgrnd: gx.red
+								bg_color: gx.red
 								items: {
 									'classic': 'Classic'
 								}
@@ -141,8 +141,6 @@ fn main() {
 							ui.at(150, 100, ui.menu(
 								id: 'menu'
 								text: 'Menu'
-								// width: 100
-								// theme: 'red'
 								items: [
 									ui.MenuItem{
 										text: 'Delete all users'
@@ -182,8 +180,7 @@ fn dd_change(app voidptr, dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
 	mut b := win.button('b_thm')
-	b.style_from_theme(dd.selected().text)
-	// b.update_theme()
+	b.update_style(style: dd.selected().text)
 }
 
 fn lb_change(app voidptr, lb &ui.ListBox) {
@@ -191,9 +188,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 
 	win := lb.ui.window
 	mut b := win.button('b_thm')
-	// b.style_from_theme(id)
 	b.update_style(style: id)
-	// b.update_theme()
 }
 
 fn lb_change_multi(app voidptr, lb &ui.ListBox) {
