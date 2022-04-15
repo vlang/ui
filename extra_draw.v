@@ -209,7 +209,7 @@ pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(byte((r + m) * 255.0), byte((g + m) * 255.0), byte((b + m) * 255.0))
+	return gx.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
 }
 
 // h, s, l in [0,1]
@@ -232,7 +232,7 @@ pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(byte((r + m) * 255.0), byte((g + m) * 255.0), byte((b + m) * 255.0))
+	return gx.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
 }
 
 pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
@@ -305,7 +305,7 @@ pub fn create_texture(w int, h int, buf &byte) C.sg_image {
 		mag_filter: .linear
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
-		label: &byte(0)
+		label: &u8(0)
 		d3d11_texture: 0
 	}
 	sz := w * h * 4
@@ -334,7 +334,7 @@ pub fn create_dynamic_texture(w int, h int) C.sg_image {
 		usage: .dynamic
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
-		label: &byte(0)
+		label: &u8(0)
 		d3d11_texture: 0
 	}
 

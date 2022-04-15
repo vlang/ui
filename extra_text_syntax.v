@@ -303,11 +303,11 @@ fn is_whitespace(r byte) bool {
 }
 
 fn is_alpha_underscore(r int) bool {
-	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$` || byte(r) == `:`
-		|| byte(r) == `=` || byte(r) == `&` || byte(r) == `<` || byte(r) == `>` || byte(r) == `!`
+	return is_alpha(u8(r)) || u8(r) == `_` || u8(r) == `#` || u8(r) == `$` || u8(r) == `:`
+		|| u8(r) == `=` || u8(r) == `&` || u8(r) == `<` || u8(r) == `>` || u8(r) == `!`
 }
 
 fn is_alpha_and_symbols(r int) bool {
-	return is_alpha(byte(r))
-		|| byte(r) in [`_`, `#`, `$`, `:`, `=`, `&`, `<`, `>`, `!`, `|`, `+`, `-`, `[`, `]`, `{`, `}`, `(`, `)`]
+	return is_alpha(u8(r))
+		|| u8(r) in [`_`, `#`, `$`, `:`, `=`, `&`, `<`, `>`, `!`, `|`, `+`, `-`, `[`, `]`, `{`, `}`, `(`, `)`]
 }

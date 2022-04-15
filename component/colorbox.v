@@ -342,7 +342,7 @@ pub fn (mut cb ColorBox) update_from_rgb(r int, g int, b int) {
 	if 0 <= r && r < 256 {
 		if 0 <= g && g < 256 {
 			if 0 <= b && b < 256 {
-				col := gx.rgb(byte(r), byte(g), byte(b))
+				col := gx.rgb(u8(r), u8(g), u8(b))
 				// println("ggggg $r, $g, $b ${col}")
 				h, s, v := cb.rgb_to_hsv(col)
 				// println("hsv: $r, $g, $b ->  $h, $s, $v")
@@ -359,7 +359,7 @@ fn (mut cb ColorBox) update_from_tb() {
 	r := cb.txt_r.int()
 	g := cb.txt_g.int()
 	b := cb.txt_b.int()
-	cb.h, cb.s, cb.v = cb.rgb_to_hsv(gx.rgb(byte(r), byte(g), byte(b)))
+	cb.h, cb.s, cb.v = cb.rgb_to_hsv(gx.rgb(u8(r), u8(g), u8(b)))
 }
 
 // options
