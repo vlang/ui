@@ -94,7 +94,8 @@ pub struct ButtonParams {
 	tooltip      string
 	tooltip_side Side = .top
 	text_size    f64
-	theme        string
+	// style 		ButtonStyleParams
+	theme string
 }
 
 pub fn button(c ButtonParams) &Button {
@@ -112,6 +113,7 @@ pub fn button(c ButtonParams) &Button {
 		// bg_color: c.bg_color
 		// theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
 		theme_style: c.theme
+		style_forced: c.ButtonStyleParams
 		onclick: c.onclick
 		on_key_down: c.on_key_down
 		text_size: c.text_size

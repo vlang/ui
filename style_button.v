@@ -26,8 +26,8 @@ pub mut:
 
 [params]
 pub struct ButtonStyleParams {
-	style            string = no_style
-	radius           f32
+	style            string   = no_style
+	radius           f32      = -1
 	border_color     gx.Color = no_color
 	bg_color         gx.Color = no_color
 	bg_color_pressed gx.Color = no_color
@@ -38,6 +38,10 @@ pub struct ButtonStyleParams {
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
+}
+
+pub fn button_style(p ButtonStyleParams) ButtonStyleParams {
+	return p
 }
 
 pub fn (bs ButtonStyle) to_toml() string {
@@ -85,7 +89,7 @@ fn (mut b Button) update_shape_style(bs ButtonStyle) {
 }
 
 fn (mut b Button) update_shape_style_params(p ButtonStyleParams) {
-	if p.radius > 0 {
+	if p.radius >= 0 {
 		b.style.radius = p.radius
 	}
 	if p.border_color != no_color {

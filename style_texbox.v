@@ -35,6 +35,10 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .@none
 }
 
+pub fn textbox_style(p TextBoxStyleParams) TextBoxStyleParams {
+	return p
+}
+
 pub fn (ts TextBoxStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['bg_radius'] = ts.bg_radius

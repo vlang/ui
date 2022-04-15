@@ -122,6 +122,7 @@ pub fn blue_style() Style {
 		}
 		// button
 		btn: ButtonStyle{
+			radius: .3
 			border_color: button_border_color
 			bg_color: gx.light_blue
 			bg_color_pressed: gx.rgb(0, 0, 119)
@@ -149,6 +150,7 @@ pub fn red_style() Style {
 		}
 		// button
 		btn: ButtonStyle{
+			radius: .3
 			border_color: button_border_color
 			bg_color: gx.light_red
 			bg_color_pressed: gx.rgb(119, 0, 0)

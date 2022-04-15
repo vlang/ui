@@ -40,6 +40,10 @@ pub struct ListBoxStyleParams {
 	text_vertical_align TextVerticalAlign   = .@none
 }
 
+pub fn listbox_style(p ListBoxStyleParams) ListBoxStyleParams {
+	return p
+}
+
 pub fn (lbs ListBoxStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['radius'] = lbs.radius

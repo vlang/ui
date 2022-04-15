@@ -76,31 +76,32 @@ pub mut:
 	is_numeric    bool
 	is_password   bool
 	read_only     bool
-	borderless    bool
-	bg_color      gx.Color
 	fitted_height bool // if true fit height in propose_size
 	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
 	on_char       TextBoxCharFn    = TextBoxCharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
-	is_selectable      bool // for read_only textbox
-	sel_active         bool // to deal with show cursor when selection active
-	dragging           bool
-	sel_direction      SelectionDirection
-	border_accentuated bool
-	is_error           &bool = voidptr(0)
-	on_change          TextBoxChangeFn    = TextBoxChangeFn(0)
-	on_enter           TextBoxEnterFn     = TextBoxEnterFn(0)
-	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	is_selectable bool // for read_only textbox
+	sel_active    bool // to deal with show cursor when selection active
+	dragging      bool
+	sel_direction SelectionDirection
+	is_error      &bool = voidptr(0)
+	on_change     TextBoxChangeFn    = TextBoxChangeFn(0)
+	on_enter      TextBoxEnterFn     = TextBoxEnterFn(0)
+	on_changed    TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered    TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
+	text_size   f64
 	// Style
 	theme_style  string
 	style        TextBoxShapeStyle
 	style_forced TextBoxStyleParams
+	// TODO: put in style
+	borderless         bool
+	bg_color           gx.Color
+	border_accentuated bool
 	// related to text drawing
-	text_size f64
-	hidden    bool
+	hidden bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -144,8 +145,10 @@ pub struct TextBoxParams {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	bg_color      gx.Color = gx.white
-	borderless    bool
+	bg_color           gx.Color = gx.white
+	borderless         bool
+	border_accentuated bool
+
 	fitted_height bool
 	on_key_down   TextBoxKeyDownFn
 	on_char       TextBoxCharFn
@@ -153,12 +156,11 @@ pub struct TextBoxParams {
 	on_change voidptr
 	on_enter  voidptr
 	// TODO replacement of signature later
-	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	border_accentuated bool
-	text_size          f64
-	scrollview         bool = true
-	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_changed       TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered       TextBoxValidatedFn = TextBoxValidatedFn(0)
+	text_size        f64
+	scrollview       bool = true
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxParams) &TextBox {

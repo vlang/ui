@@ -23,6 +23,10 @@ pub mut:
 	bg_border_color gx.Color = no_color
 }
 
+pub fn progressbar_style(p ProgressBarStyleParams) ProgressBarStyleParams {
+	return p
+}
+
 pub fn (pbs ProgressBarStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['color'] = hex_color(pbs.color)

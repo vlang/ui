@@ -43,7 +43,7 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 		// theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
 		onclick: colorbutton_click
-		radius: f32(c.radius)
+		style_forced: ui.button_style(radius: f32(c.radius))
 		padding: f32(c.padding)
 		// ui: 0
 	}

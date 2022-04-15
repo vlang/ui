@@ -35,6 +35,10 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .@none
 }
 
+pub fn canvaslayout_style(p CanvasLayoutStyleParams) CanvasLayoutStyleParams {
+	return p
+}
+
 pub fn (ls CanvasLayoutStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['bg_radius'] = ls.bg_radius
@@ -115,6 +119,10 @@ pub mut:
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
+}
+
+pub fn stack_style(p StackStyleParams) StackStyleParams {
+	return p
 }
 
 pub fn (ls StackStyle) to_toml() string {

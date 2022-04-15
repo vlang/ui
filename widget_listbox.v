@@ -6,42 +6,43 @@ import gg
 type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
 
 const (
-	_item_height           = 20
+	listbox_item_height    = 20
 	listbox_bg_color       = gx.white
 	listbox_selected_color = gx.light_blue
 	listbox_disabled_color = gx.light_gray
 	listbox_border_color   = gx.gray
-	_text_offset_y         = 3
-	_text_offset_x         = 5
+	listbox_text_offset_y  = 3
+	listbox_text_offset_x  = 5
 )
 
 [heap]
 pub struct ListBox {
 pub mut:
-	height         int
-	width          int
-	x              int
-	y              int
-	offset_x       int
-	offset_y       int
-	z_index        int
-	parent         Layout      = empty_stack
-	ui             &UI         = 0
-	items          []&ListItem = []&ListItem{}
-	selection      int = -1
-	selectable     bool
-	multi          bool
-	draw_count     int
-	on_change      ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
-	is_focused     bool
+	height        int
+	width         int
+	x             int
+	y             int
+	offset_x      int
+	offset_y      int
+	z_index       int
+	parent        Layout      = empty_stack
+	ui            &UI         = 0
+	items         []&ListItem = []&ListItem{}
+	selection     int = -1
+	selectable    bool
+	multi         bool
+	draw_count    int
+	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	is_focused    bool
+	item_height   int = ui.listbox_item_height
+	text_offset_y int = ui.listbox_text_offset_y
+	id            string
+	// TODO
 	draw_lines     bool
 	bg_color       gx.Color = ui.listbox_bg_color
 	selected_color gx.Color = ui.listbox_selected_color
 	disabled_color gx.Color = ui.listbox_disabled_color
 	border_color   gx.Color = ui.listbox_border_color
-	item_height    int      = ui._item_height
-	text_offset_y  int      = ui._text_offset_y
-	id             string
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
@@ -73,19 +74,20 @@ pub mut:
 pub struct ListBoxParams {
 	ListBoxStyleParams
 mut:
-	x              int
-	y              int
-	width          int
-	height         int
-	z_index        int
-	on_change      ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	x             int
+	y             int
+	width         int
+	height        int
+	z_index       int
+	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	item_height   int = ui.listbox_item_height
+	text_offset_y int = ui.listbox_text_offset_y
+	id            string // To use one callback for multiple ListBoxes
+	// TODO
 	draw_lines     bool     // Draw a rectangle around every item?
 	border_color   gx.Color = ui.listbox_border_color // Item and list border color
 	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
 	selected_color gx.Color = ui.listbox_selected_color // Selected item background color
-	item_height    int      = ui._item_height
-	text_offset_y  int      = ui._text_offset_y
-	id             string // To use one callback for multiple ListBoxes
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
@@ -498,9 +500,12 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
-		DrawTextWidget(lb).draw_device_styled_text(d, lb.x + ui._text_offset_x, lb.y +
-			lb.text_offset_y, if lb.files_droped { 'Empty listbox. Drop files here ...' } else { '' },
-			color: gx.gray)
+		DrawTextWidget(lb).draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x,
+			lb.y + lb.text_offset_y, if lb.files_droped {
+			'Empty listbox. Drop files here ...'
+		} else {
+			''
+		}, color: gx.gray)
 	} else {
 		for inx, item in lb.items {
 			// println("$inx >= $lb.draw_count")
@@ -530,7 +535,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 	dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	width := dtw.text_width(text)
-	real_w := lb.width + ui._text_offset_x * 2
+	real_w := lb.width + ui.listbox_text_offset_x * 2
 	mut draw_to := text.len
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
@@ -765,7 +770,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		dtw := DrawTextWidget(lb)
 		dtw.load_style()
 		for item in lb.items {
-			width = dtw.text_width(item.text) + ui._text_offset_x * 2
+			width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
 			// println('$item.text -> $width')
 			if width > lb.adj_width {
 				lb.adj_width = width
@@ -785,7 +790,7 @@ fn (mut lb ListBox) update_adj_size() {
 	dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	for item in lb.items {
-		width = dtw.text_width(item.text) + ui._text_offset_x * 2
+		width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
 		// println('$item.text -> $width')
 		if width > lb.adj_width {
 			lb.adj_width = width
@@ -982,13 +987,14 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	col := if li.is_selected() { lb.selected_color } else { lb.bg_color }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
-		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui._text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
+		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
 	}
-	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
-		lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, col)
+	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
+		lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
+		col)
 
-	DrawTextWidget(lb).draw_device_styled_text(d, li.x + li.offset_x + lb.x + ui._text_offset_x,
-		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+	DrawTextWidget(lb).draw_device_styled_text(d, li.x + li.offset_x + lb.x +
+		ui.listbox_text_offset_x, li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text
 	} else {
 		li.text()
@@ -997,7 +1003,8 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui._text_offset_x, li.y + li.offset_y + lb.y +
-			lb.text_offset_y, width - 2 * ui._text_offset_x, lb.item_height, lb.border_color)
+		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
+			lb.border_color)
 	}
 }

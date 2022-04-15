@@ -3,7 +3,7 @@ module ui
 import gx
 
 const (
-	thumb_color                            = gx.rgb(87, 153, 245)
+	slider_thumb_color                     = gx.rgb(87, 153, 245)
 	slider_background_color                = gx.rgb(219, 219, 219)
 	slider_background_border_color         = gx.rgb(191, 191, 191)
 	slider_focused_background_border_color = gx.rgb(255, 0, 0)
@@ -236,10 +236,10 @@ fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
 		d.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			ui.thumb_color)
+			ui.slider_thumb_color)
 	} else {
 		d.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			ui.thumb_color)
+			ui.slider_thumb_color)
 	}
 }
 
