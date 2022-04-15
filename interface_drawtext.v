@@ -230,7 +230,7 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
 	// (in fons__getGlyph, added becomes 0)
 	ui.gg.ft.fons.reset_atlas(512, 512)
-	bytes := os.read_bytes(font_path) or { []byte{} }
+	bytes := os.read_bytes(font_path) or { []u8{} }
 	// gg := ui.gg
 	// mut f := ui.fonts
 	if bytes.len > 0 {
