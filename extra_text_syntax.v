@@ -106,7 +106,7 @@ fn (mut sh SyntaxHighLighter) load_default_style() {
 // TODO: load syntax with json or toml file
 fn (mut sh SyntaxHighLighter) load_v() {
 	sh.keywords['v'] = {
-		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,byte,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
+		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,u8,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
 		'decl':    '[,],{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
 			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
@@ -131,7 +131,7 @@ fn (mut sh SyntaxHighLighter) load_v() {
 
 fn (mut sh SyntaxHighLighter) load_c() {
 	sh.keywords['c'] = {
-		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|byte|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
+		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|u8|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
 		'decl':    'mut|pub|unsafe|default|module|import|const|interface'.split('|')
 		'control': (
 			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
@@ -297,20 +297,20 @@ fn (mut sh SyntaxHighLighter) reset_chunks() {
 	}
 }
 
-fn is_alpha(r byte) bool {
+fn is_alpha(r u8) bool {
 	return (r >= `a` && r <= `z`) || (r >= `A` && r <= `Z`) || (r >= `0` && r <= `9`)
 }
 
-fn is_whitespace(r byte) bool {
+fn is_whitespace(r u8) bool {
 	return r == ` ` || r == `\t`
 }
 
 fn is_alpha_underscore(r int) bool {
-	return is_alpha(byte(r)) || byte(r) == `_` || byte(r) == `#` || byte(r) == `$` || byte(r) == `:`
-		|| byte(r) == `=` || byte(r) == `&` || byte(r) == `<` || byte(r) == `>` || byte(r) == `!`
+	return is_alpha(u8(r)) || u8(r) == `_` || u8(r) == `#` || u8(r) == `$` || u8(r) == `:`
+		|| u8(r) == `=` || u8(r) == `&` || u8(r) == `<` || u8(r) == `>` || u8(r) == `!`
 }
 
 fn is_alpha_and_symbols(r int) bool {
-	return is_alpha(byte(r))
-		|| byte(r) in [`_`, `#`, `$`, `:`, `=`, `&`, `<`, `>`, `!`, `|`, `+`, `-`, `[`, `]`, `{`, `}`, `(`, `)`]
+	return is_alpha(u8(r))
+		|| u8(r) in [`_`, `#`, `$`, `:`, `=`, `&`, `<`, `>`, `!`, `|`, `+`, `-`, `[`, `]`, `{`, `}`, `(`, `)`]
 }

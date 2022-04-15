@@ -110,7 +110,7 @@ fn (mut gui UI) load_imgs() {
 }
 
 // complete the drawing system
-pub fn (mut gui UI) load_img(id string, b []byte, path string) {
+pub fn (mut gui UI) load_img(id string, b []u8, path string) {
 	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
 	gui.imgs[id].path = path
 }

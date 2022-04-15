@@ -41,7 +41,7 @@ pub fn is_rgb_valid(c int) bool {
 // Color
 type HexColor = string
 
-pub fn hex_rgba(r byte, g byte, b byte, a byte) string {
+pub fn hex_rgba(r u8, g u8, b u8, a u8) string {
 	return '#$r.hex()$g.hex()$b.hex()$a.hex()'
 }
 
@@ -49,12 +49,12 @@ pub fn hex_color(c gx.Color) string {
 	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
 }
 
-pub fn (hs HexColor) rgba() (byte, byte, byte, byte) {
+pub fn (hs HexColor) rgba() (u8, u8, u8, u8) {
 	u := ('0x' + hs[1..]).u32()
-	return byte(u >> 24), byte(u >> 16), byte(u >> 8), byte(u)
+	return u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u)
 }
 
 pub fn (hs HexColor) color() gx.Color {
 	u := ('0x' + hs[1..]).u32()
-	return gx.rgba(byte(u >> 24), byte(u >> 16), byte(u >> 8), byte(u))
+	return gx.rgba(u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u))
 }

@@ -538,7 +538,7 @@ pub fn (mut r Raster) draw_glyph(index u16) (int, int) {
 			}
 		}
 
-		if count == glyph.contour_ends[c] {
+		if u16(count) == glyph.contour_ends[c] {
 			// println("count == glyph.contour_ends[count]")
 			if s == 2 { // final point was off-curve. connect to start
 
@@ -585,7 +585,7 @@ pub fn (mut r Raster) draw_glyph(index u16) (int, int) {
 }
 
 fn color_multiply_alpha(c gx.Color, a f64) gx.Color {
-	return gx.Color{c.r, c.g, c.b, byte(c.a * a)}
+	return gx.Color{c.r, c.g, c.b, u8(c.a * a)}
 }
 
 [params]
