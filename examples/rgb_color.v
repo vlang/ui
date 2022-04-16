@@ -69,6 +69,7 @@ fn main() {
 			rev_min_max_pos: true
 			on_value_changed: on_r_value_changed
 			entering: entering
+			thumb_color: gx.light_red
 		)
 		g_slider: ui.slider(
 			orientation: .vertical
@@ -79,6 +80,7 @@ fn main() {
 			rev_min_max_pos: true
 			on_value_changed: on_g_value_changed
 			entering: entering
+			thumb_color: gx.light_green
 		)
 		b_slider: ui.slider(
 			orientation: .vertical
@@ -89,6 +91,7 @@ fn main() {
 			rev_min_max_pos: true
 			on_value_changed: on_b_value_changed
 			entering: entering
+			thumb_color: gx.light_blue
 		)
 		r_label: ui.label(text: 'R', justify: ui.top_center)
 		g_label: ui.label(text: 'G', justify: ui.top_center)
@@ -195,9 +198,9 @@ fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
 
 // others functions
 fn textbox_color_update(mut app App) {
-	r := byte(app.r_textbox.text.int())
-	g := byte(app.g_textbox.text.int())
-	b := byte(app.b_textbox.text.int())
+	r := u8(app.r_textbox.text.int())
+	g := u8(app.g_textbox.text.int())
+	b := u8(app.b_textbox.text.int())
 	if !ui.is_rgb_valid(r) || !ui.is_rgb_valid(g) || !ui.is_rgb_valid(b) {
 		app.rgb_rectangle.color = gx.rgb(255, 255, 255)
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'

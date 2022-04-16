@@ -15,13 +15,14 @@ pub const (
 
 pub struct Style {
 pub mut:
-	win   WindowStyle
-	btn   ButtonStyle
-	pgbar ProgressBarStyle
-	cl    CanvasLayoutStyle
-	stack StackStyle
-	tb    TextBoxStyle
-	lb    ListBoxStyle
+	win    WindowStyle
+	btn    ButtonStyle
+	pgbar  ProgressBarStyle
+	cl     CanvasLayoutStyle
+	stack  StackStyle
+	tb     TextBoxStyle
+	lb     ListBoxStyle
+	slider SliderStyle
 }
 
 pub fn (s Style) to_toml() string {
@@ -32,6 +33,8 @@ pub fn (s Style) to_toml() string {
 	toml += s.btn.to_toml()
 	toml += '\n[progressbar]\n'
 	toml += s.pgbar.to_toml()
+	toml += '\n[slider]\n'
+	toml += s.slider.to_toml()
 	toml += '\n[canvaslayout]\n'
 	toml += s.cl.to_toml()
 	toml += '\n[stack]\n'
@@ -45,6 +48,7 @@ pub fn parse_style_toml_file(path string) Style {
 	s.win.from_toml(doc.value('window'))
 	s.btn.from_toml(doc.value('button'))
 	s.pgbar.from_toml(doc.value('progressbar'))
+	s.slider.from_toml(doc.value('slider'))
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
 	return s
@@ -178,6 +182,10 @@ pub fn red_style() Style {
 			border_color: gx.rgb(213, 133, 76)
 			bg_color: gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
+		}
+		// slider
+		slider: SliderStyle{
+			thumb_color: gx.rgb(245, 153, 87)
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{

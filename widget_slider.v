@@ -3,10 +3,10 @@ module ui
 import gx
 
 const (
-	slider_thumb_color                     = gx.rgb(87, 153, 245)
-	slider_background_color                = gx.rgb(219, 219, 219)
-	slider_background_border_color         = gx.rgb(191, 191, 191)
-	slider_focused_background_border_color = gx.rgb(255, 0, 0)
+	slider_thumb_color             = gx.rgb(87, 153, 245)
+	slider_bg_color                = gx.rgb(219, 219, 219)
+	slider_bg_border_color         = gx.rgb(191, 191, 191)
+	slider_focused_bg_border_color = gx.rgb(255, 0, 0)
 )
 
 type SliderValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
@@ -45,12 +45,17 @@ pub mut:
 	track_line_displayed bool
 	entering             bool
 	hidden               bool
+	// Style
+	theme_style  string
+	style        SliderStyle
+	style_forced SliderStyleParams
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct SliderParams {
+	SliderStyleParams
 	id                   string
 	width                int
 	height               int
@@ -60,6 +65,7 @@ pub struct SliderParams {
 	max                  int
 	val                  f32
 	orientation          Orientation
+	theme                string = no_style
 	on_value_changed     SliderValueChangedFn
 	focus_on_thumb_only  bool = true
 	rev_min_max_pos      bool
@@ -86,7 +92,9 @@ pub fn slider(c SliderParams) &Slider {
 		ui: 0
 		z_index: c.z_index
 		entering: c.entering
+		style_forced: c.SliderStyleParams
 	}
+	s.style_forced.style = c.theme
 	s.set_thumb_size()
 
 	if s.min > s.max {
@@ -101,6 +109,7 @@ fn (mut s Slider) init(parent Layout) {
 	s.parent = parent
 	ui := parent.get_ui()
 	s.ui = ui
+	s.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
 	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
@@ -193,7 +202,7 @@ fn (mut s Slider) draw_device(d DrawDevice) {
 		s.x + (s.width - s.slider_size) / 2, s.y, s.slider_size, s.height
 	}
 
-	d.draw_rect_filled(x, y, w, h, ui.slider_background_color)
+	d.draw_rect_filled(x, y, w, h, s.style.bg_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
@@ -203,9 +212,9 @@ fn (mut s Slider) draw_device(d DrawDevice) {
 	}
 
 	d.draw_rect_empty(x, y, w, h, if s.is_focused {
-		ui.slider_focused_background_border_color
+		s.style.focused_bg_border_color
 	} else {
-		ui.slider_background_border_color
+		s.style.bg_border_color
 	})
 	// Draw the thumb
 	s.draw_device_thumb(d)
@@ -236,10 +245,10 @@ fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
 		d.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			ui.slider_thumb_color)
+			s.style.thumb_color)
 	} else {
 		d.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			ui.slider_thumb_color)
+			s.style.thumb_color)
 	}
 }
 
