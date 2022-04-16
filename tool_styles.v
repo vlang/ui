@@ -22,6 +22,7 @@ pub mut:
 	stack  StackStyle
 	tb     TextBoxStyle
 	lb     ListBoxStyle
+	cb     CheckBoxStyle
 	slider SliderStyle
 	dd     DropdownStyle
 }
@@ -38,6 +39,8 @@ pub fn (s Style) to_toml() string {
 	toml += s.slider.to_toml()
 	toml += '\n[dropdown]\n'
 	toml += s.dd.to_toml()
+	toml += '\n[checkbox]\n'
+	toml += s.cb.to_toml()
 	toml += '\n[canvaslayout]\n'
 	toml += s.cl.to_toml()
 	toml += '\n[stack]\n'
@@ -53,6 +56,7 @@ pub fn parse_style_toml_file(path string) Style {
 	s.pgbar.from_toml(doc.value('progressbar'))
 	s.slider.from_toml(doc.value('slider'))
 	s.dd.from_toml(doc.value('dropdown'))
+	s.cb.from_toml(doc.value('checkbox'))
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
 	return s

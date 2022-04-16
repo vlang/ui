@@ -630,7 +630,7 @@ fn (mut g GridComponent) show_selected() {
 			if gcb is GridCheckBox {
 				cb.checked = gcb.var[g.ind(g.sel_i)]
 			}
-			cb.bg_color = gx.orange
+			cb.style.bg_color = gx.orange
 		}
 		else {}
 	}

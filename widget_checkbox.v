@@ -37,17 +37,22 @@ pub mut:
 	text             string
 	justify          []f64
 	disabled         bool
+	// Style
+	theme_style  string
+	style        CheckBoxShapeStyle
+	style_forced CheckBoxStyleParams
 	// text styles
 	text_styles TextStyles
-	text_size   f64
-	hidden      bool
-	bg_color    gx.Color = no_color
+	// text_size   f64
+	hidden bool
+	// bg_color    gx.Color = no_color
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct CheckBoxParams {
+	CheckBoxStyleParams
 	id               string
 	x                int
 	y                int
@@ -57,8 +62,8 @@ pub struct CheckBoxParams {
 	on_check_changed CheckChangedFn
 	checked          bool
 	disabled         bool
-	justify          []f64 = [0.0, 0.0]
-	text_size        f64
+	justify          []f64  = [0.0, 0.0]
+	theme            string = no_style
 }
 
 pub fn checkbox(c CheckBoxParams) &CheckBox {
@@ -72,9 +77,10 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
-		text_size: c.text_size
+		style_forced: c.CheckBoxStyleParams
 		justify: c.justify
 	}
+	cb.style_forced.style = c.theme
 	return cb
 }
 
@@ -84,7 +90,8 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	dtw := DrawTextWidget(cb)
 	dtw.load_style()
 	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
-	cb.init_style()
+	cb.load_style()
+	// cb.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
@@ -109,11 +116,11 @@ pub fn (cb &CheckBox) free() {
 	}
 }
 
-fn (mut cb CheckBox) init_style() {
-	mut dtw := DrawTextWidget(cb)
-	dtw.init_style()
-	dtw.update_text_size(cb.text_size)
-}
+// fn (mut cb CheckBox) init_style() {
+// 	mut dtw := DrawTextWidget(cb)
+// 	dtw.init_style()
+// 	dtw.update_text_size(cb.text_size)
+// }
 
 fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
@@ -191,15 +198,15 @@ pub fn (mut cb CheckBox) draw() {
 
 pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	offset_start(mut cb)
-	if cb.bg_color != no_color {
+	if cb.style.bg_color != no_color {
 		d.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
-			cb.width, cb.height, cb.bg_color)
+			cb.width, cb.height, cb.style.bg_color)
 	}
 	d.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
 	draw_device_inner_border(false, d, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {
-		d.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, ui.cb_border_color)
+		d.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, cb.style.border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {

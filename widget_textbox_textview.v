@@ -242,11 +242,11 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 		tv.refresh_visible_lines()
 		tv.update_lines()
 	}
+	tv.load_style()
 	// draw selection
 	tv.draw_device_selection(d)
 
 	// draw only visible text lines
-	tv.load_style()
 	mut y := tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height

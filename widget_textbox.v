@@ -91,7 +91,7 @@ pub mut:
 	on_entered    TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
-	text_size   f64
+	// text_size   f64
 	// Style
 	theme_style  string
 	style        TextBoxShapeStyle
@@ -218,7 +218,8 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	tb.init_style()
+	// tb.init_style()
+	tb.load_style()
 	{
 	}
 	// TODO: Maybe in a method later to allow font size update
@@ -275,11 +276,11 @@ pub fn (tb &TextBox) free() {
 	}
 }
 
-fn (mut tb TextBox) init_style() {
-	mut dtw := DrawTextWidget(tb)
-	dtw.init_style()
-	dtw.update_text_size(tb.text_size)
-}
+// fn (mut tb TextBox) init_style() {
+// 	mut dtw := DrawTextWidget(tb)
+// 	dtw.init_style()
+// 	dtw.update_text_size(tb.text_size)
+// }
 
 pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
@@ -764,13 +765,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 					if tb.fitted_height {
 						// TODO: propose_size
-						tb.text_size -= 2
-						if tb.text_size < 8 {
-							tb.text_size = 8
+						tb.style_forced.text_size -= 2
+						if tb.style_forced.text_size < 8 {
+							tb.style_forced.text_size = 8
 						}
 						// update_text_size(mut tb)
 						mut dtw := DrawTextWidget(tb)
-						dtw.update_text_size(tb.text_size)
+						dtw.update_text_size(tb.style_forced.text_size)
 						tb.update_line_height()
 					}
 				}
@@ -779,13 +780,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 						return
 					}
 					if tb.fitted_height {
-						tb.text_size += 2
-						if tb.text_size > 48 {
-							tb.text_size = 48
+						tb.style_forced.text_size += 2
+						if tb.style_forced.text_size > 48 {
+							tb.style_forced.text_size = 48
 						}
 						// update_text_size(mut tb)
 						mut dtw := DrawTextWidget(tb)
-						dtw.update_text_size(tb.text_size)
+						dtw.update_text_size(tb.style_forced.text_size)
 						tb.update_line_height()
 					}
 				}

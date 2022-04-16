@@ -96,6 +96,7 @@ fn main() {
 						height: 200
 						// text: &app.text
 						text_size: 24
+						text_font_name: 'fixed'
 						bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
 					)]
 			),
