@@ -93,8 +93,7 @@ pub struct ButtonParams {
 	hoverable    bool
 	tooltip      string
 	tooltip_side Side = .top
-	text_size    f64
-	// style 		ButtonStyleParams
+	// text_size    f64
 	theme string
 }
 

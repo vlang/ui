@@ -50,7 +50,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 			cpc := colorpalette_component_from_id(ac.layout.ui.window, parent_id)
 			// println("alpha on_chnaged selected: $cpc.selected")
 			mut cbc := colorbutton_component_from_id(ac.layout.ui.window, cpc.selected)
-			cbc.bg_color.a = byte(ac.alpha)
+			cbc.bg_color.a = u8(ac.alpha)
 		}
 	)
 	children << [ui.spacing(), ui.label(text: 'alpha', justify: ui.top_center), alpha]

@@ -125,6 +125,7 @@ struct StackParams {
 	horizontal_alignments HorizontalAlignments
 	bg_color              gx.Color
 	bg_radius             f32
+	theme                 string
 	scrollview            bool
 	children              []Widget
 }
@@ -149,6 +150,8 @@ fn stack(c StackParams) &Stack {
 		alignments: c.align
 		bg_color: c.bg_color
 		bg_radius: c.bg_radius
+		theme_style: c.theme
+		style_forced: c.StackStyleParams
 		title: c.title
 		ui: 0
 	}

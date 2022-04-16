@@ -81,18 +81,19 @@ mut:
 [params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
-	id             string
-	width          int
-	height         int
-	full_width     int = -1
-	full_height    int = -1
-	z_index        int
-	text           string
-	bg_color       gx.Color = no_color
-	bg_radius      f64
+	id          string
+	width       int
+	height      int
+	full_width  int = -1
+	full_height int = -1
+	z_index     int
+	text        string
+	// bg_color       gx.Color = no_color
+	// bg_radius      f64
 	scrollview     bool
 	is_focused     bool
 	justify        []f64 = [0.0, 0.0]
+	theme          string
 	on_draw        CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_post_draw   CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_click       CanvasLayoutMouseFn      = voidptr(0)
@@ -135,6 +136,8 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		bg_color: c.bg_color
 		is_focused: c.is_focused
 		justify: c.justify
+		theme_style: c.theme
+		style_forced: c.CanvasLayoutStyleParams
 		draw_device_fn: c.on_draw
 		post_draw_device_fn: c.on_post_draw
 		click_fn: c.on_click

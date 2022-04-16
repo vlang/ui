@@ -148,17 +148,17 @@ pub struct TextBoxParams {
 	bg_color           gx.Color = gx.white
 	borderless         bool
 	border_accentuated bool
-
-	fitted_height bool
-	on_key_down   TextBoxKeyDownFn
-	on_char       TextBoxCharFn
+	text_size          f64
+	theme              string
+	fitted_height      bool
+	on_key_down        TextBoxKeyDownFn
+	on_char            TextBoxCharFn
 	// on_key_up          KeyUpFn
 	on_change voidptr
 	on_enter  voidptr
 	// TODO replacement of signature later
 	on_changed       TextBoxValidatedFn = TextBoxValidatedFn(0)
 	on_entered       TextBoxValidatedFn = TextBoxValidatedFn(0)
-	text_size        f64
 	scrollview       bool = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
@@ -178,7 +178,23 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		is_password: c.is_password
 		max_len: c.max_len
 		borderless: c.borderless
+		border_accentuated: c.border_accentuated
 		bg_color: c.bg_color
+		text_size: c.text_size
+		theme_style: c.theme
+		style_forced: c.TextBoxStyleParams
+		ui: 0
+		text: c.text
+		text_: ''
+		is_focused: c.is_focused
+		is_error: c.is_error
+		read_only: c.read_only || c.mode.has(.read_only)
+		is_multiline: c.is_multiline || c.mode.has(.multiline)
+		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
+		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
+		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
+		is_sync: c.is_sync || c.read_only
+		twosided_sel: c.twosided_sel
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -187,20 +203,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// TODO
 		on_changed: c.on_changed
 		on_entered: c.on_entered
-		border_accentuated: c.border_accentuated
-		ui: 0
-		text: c.text
-		text_: 'totto'
-		is_focused: c.is_focused
-		is_error: c.is_error
-		text_size: c.text_size
-		read_only: c.read_only || c.mode.has(.read_only)
-		is_multiline: c.is_multiline || c.mode.has(.multiline)
-		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
-		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
-		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
-		is_sync: c.is_sync || c.read_only
-		twosided_sel: c.twosided_sel
 		on_scroll_change: c.on_scroll_change
 	}
 	if tb.text == 0 {
