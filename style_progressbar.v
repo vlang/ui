@@ -45,34 +45,39 @@ pub fn (mut pbs ProgressBarStyle) from_toml(a toml.Any) {
 
 fn (mut pb ProgressBar) load_style() {
 	// println("pgbar load style $pb.theme_style")
-	style := if pb.theme_style == '' { pb.ui.window.theme_style } else { pb.theme_style }
-	pb.update_style(style: style)
+	mut style := if pb.theme_style == '' { pb.ui.window.theme_style } else { pb.theme_style }
+	if pb.style_forced.style != no_style {
+		style = pb.style_forced.style
+	}
+	pb.update_theme_style(style)
 	// forced overload default style
 	pb.update_style(pb.style_forced)
 }
 
-pub fn (mut pb ProgressBar) update_style(p ProgressBarStyleParams) {
+pub fn (mut pb ProgressBar) update_theme_style(theme string) {
 	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
+	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in pb.ui.styles {
 		pbs := pb.ui.styles[style].pgbar
-		pb.theme_style = p.style
+		pb.theme_style = theme
 		pb.style.color = pbs.color
 		pb.style.border_color = pbs.border_color
 		pb.style.bg_color = pbs.bg_color
 		pb.style.bg_border_color = pbs.bg_border_color
-	} else {
-		if p.color != no_color {
-			pb.style.color = p.color
-		}
-		if p.border_color != no_color {
-			pb.style.border_color = p.border_color
-		}
-		if p.bg_color != no_color {
-			pb.style.bg_color = p.bg_color
-		}
-		if p.bg_border_color != no_color {
-			pb.style.bg_border_color = p.bg_border_color
-		}
+	}
+}
+
+pub fn (mut pb ProgressBar) update_style(p ProgressBarStyleParams) {
+	if p.color != no_color {
+		pb.style.color = p.color
+	}
+	if p.border_color != no_color {
+		pb.style.border_color = p.border_color
+	}
+	if p.bg_color != no_color {
+		pb.style.bg_color = p.bg_color
+	}
+	if p.bg_border_color != no_color {
+		pb.style.bg_border_color = p.bg_border_color
 	}
 }

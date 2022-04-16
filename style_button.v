@@ -26,6 +26,7 @@ pub mut:
 
 [params]
 pub struct ButtonStyleParams {
+mut:
 	style            string   = no_style
 	radius           f32      = -1
 	border_color     gx.Color = no_color
@@ -74,10 +75,32 @@ pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
 
 pub fn (mut b Button) load_style() {
 	// println("btn load style $b.theme_style")
-	style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
-	b.update_style(style: style)
+	mut style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
+	if b.style_forced.style != no_style {
+		style = b.style_forced.style
+	}
+	b.update_theme_style(style)
 	// forced overload default style
 	b.update_style(b.style_forced)
+}
+
+pub fn (mut b Button) update_theme_style(theme string) {
+	// println("update_style <$p.style>")
+	style := if theme == '' { 'default' } else { theme }
+	if style != no_style && style in b.ui.styles {
+		bs := b.ui.styles[style].btn
+		b.theme_style = theme
+		b.update_shape_style(bs)
+		mut dtw := DrawTextWidget(b)
+		dtw.update_theme_style(bs)
+	}
+}
+
+pub fn (mut b Button) update_style(p ButtonStyleParams) {
+	// println("update_style <$p.style>")
+	b.update_shape_style_params(p)
+	mut dtw := DrawTextWidget(b)
+	dtw.update_theme_style_params(p)
 }
 
 fn (mut b Button) update_shape_style(bs ButtonStyle) {
@@ -103,21 +126,5 @@ fn (mut b Button) update_shape_style_params(p ButtonStyleParams) {
 	}
 	if p.bg_color_hover != no_color {
 		b.style.bg_color_hover = p.bg_color_hover
-	}
-}
-
-pub fn (mut b Button) update_style(p ButtonStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != no_style && style in b.ui.styles {
-		bs := b.ui.styles[style].btn
-		b.theme_style = p.style
-		b.update_shape_style(bs)
-		mut dtw := DrawTextWidget(b)
-		dtw.update_theme_style(bs)
-	} else {
-		b.update_shape_style_params(p)
-		mut dtw := DrawTextWidget(b)
-		dtw.update_theme_style_params(p)
 	}
 }

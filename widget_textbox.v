@@ -149,7 +149,7 @@ pub struct TextBoxParams {
 	borderless         bool
 	border_accentuated bool
 	text_size          f64
-	theme              string
+	theme              string = no_style
 	fitted_height      bool
 	on_key_down        TextBoxKeyDownFn
 	on_char            TextBoxCharFn
@@ -181,7 +181,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		border_accentuated: c.border_accentuated
 		bg_color: c.bg_color
 		text_size: c.text_size
-		theme_style: c.theme
 		style_forced: c.TextBoxStyleParams
 		ui: 0
 		text: c.text
@@ -205,6 +204,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		on_entered: c.on_entered
 		on_scroll_change: c.on_scroll_change
 	}
+	tb.style_forced.style = c.theme
 	if tb.text == 0 {
 		tb.text = &tb.text_
 	}

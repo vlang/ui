@@ -8,7 +8,7 @@ import toml
 pub struct CanvasLayoutShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color
+	bg_color  gx.Color = no_color
 }
 
 pub struct CanvasLayoutStyle {
@@ -53,10 +53,31 @@ pub fn (mut ls CanvasLayoutStyle) from_toml(a toml.Any) {
 
 fn (mut l CanvasLayout) load_style() {
 	// println("pgbar load style $l.theme_style")
-	style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
-	l.update_style(style: style)
+	mut style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
+	if l.style_forced.style != no_style {
+		style = l.style_forced.style
+	}
+	l.update_theme_style(style)
 	// forced overload default style
 	l.update_style(l.style_forced)
+}
+
+pub fn (mut l CanvasLayout) update_theme_style(theme string) {
+	// println("update_style <$p.style>")
+	style := if theme == '' { 'default' } else { theme }
+	if style != no_style && style in l.ui.styles {
+		ls := l.ui.styles[style].cl
+		l.theme_style = theme
+		l.update_shape_style(ls)
+		mut dtw := DrawTextWidget(l)
+		dtw.update_theme_style(ls)
+	}
+}
+
+pub fn (mut l CanvasLayout) update_style(p CanvasLayoutStyleParams) {
+	l.update_shape_style_params(p)
+	mut dtw := DrawTextWidget(l)
+	dtw.update_theme_style_params(p)
 }
 
 pub fn (mut l CanvasLayout) update_shape_style(ls CanvasLayoutStyle) {
@@ -73,28 +94,12 @@ pub fn (mut l CanvasLayout) update_shape_style_params(p CanvasLayoutStyleParams)
 	}
 }
 
-pub fn (mut l CanvasLayout) update_style(p CanvasLayoutStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != no_style && style in l.ui.styles {
-		ls := l.ui.styles[style].cl
-		l.theme_style = p.style
-		l.update_shape_style(ls)
-		mut dtw := DrawTextWidget(l)
-		dtw.update_theme_style(ls)
-	} else {
-		l.update_shape_style_params(p)
-		mut dtw := DrawTextWidget(l)
-		dtw.update_theme_style_params(p)
-	}
-}
-
 // Stack
 
 pub struct StackShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color
+	bg_color  gx.Color = no_color
 }
 
 pub struct StackStyle {
@@ -139,10 +144,31 @@ pub fn (mut ls StackStyle) from_toml(a toml.Any) {
 
 fn (mut l Stack) load_style() {
 	// println("pgbar load style $l.theme_style")
-	style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
-	l.update_style(style: style)
+	mut style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
+	if l.style_forced.style != no_style {
+		style = l.style_forced.style
+	}
+	l.update_theme_style(style)
 	// forced overload default style
 	l.update_style(l.style_forced)
+}
+
+pub fn (mut l Stack) update_theme_style(theme string) {
+	// println("update_style <$p.style>")
+	style := if theme == '' { 'default' } else { theme }
+	if style != no_style && style in l.ui.styles {
+		ls := l.ui.styles[style].stack
+		l.theme_style = theme
+		l.update_shape_style(ls)
+		mut dtw := DrawTextWidget(l)
+		dtw.update_theme_style(ls)
+	}
+}
+
+pub fn (mut l Stack) update_style(p StackStyleParams) {
+	l.update_shape_style_params(p)
+	mut dtw := DrawTextWidget(l)
+	dtw.update_theme_style_params(p)
 }
 
 pub fn (mut l Stack) update_shape_style(ls StackStyle) {
@@ -156,21 +182,5 @@ pub fn (mut l Stack) update_shape_style_params(p StackStyleParams) {
 	}
 	if p.bg_color != no_color {
 		l.style.bg_color = p.bg_color
-	}
-}
-
-pub fn (mut l Stack) update_style(p StackStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != no_style && style in l.ui.styles {
-		ls := l.ui.styles[style].stack
-		l.theme_style = p.style
-		l.update_shape_style(ls)
-		mut dtw := DrawTextWidget(l)
-		dtw.update_theme_style(ls)
-	} else {
-		l.update_shape_style_params(p)
-		mut dtw := DrawTextWidget(l)
-		dtw.update_theme_style_params(p)
 	}
 }

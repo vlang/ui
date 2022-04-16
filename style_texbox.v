@@ -53,10 +53,31 @@ pub fn (mut ts TextBoxStyle) from_toml(a toml.Any) {
 
 fn (mut t TextBox) load_style() {
 	// println("pgbar load style $t.theme_style")
-	style := if t.theme_style == '' { t.ui.window.theme_style } else { t.theme_style }
-	t.update_style(style: style)
+	mut style := if t.theme_style == '' { t.ui.window.theme_style } else { t.theme_style }
+	if t.style_forced.style != no_style {
+		style = t.style_forced.style
+	}
+	t.update_theme_style(style)
 	// forced overload default style
 	t.update_style(t.style_forced)
+}
+
+pub fn (mut t TextBox) update_theme_style(theme string) {
+	// println("update_style <$p.style>")
+	style := if theme == '' { 'default' } else { theme }
+	if style != no_style && style in t.ui.styles {
+		ts := t.ui.styles[style].tb
+		t.theme_style = theme
+		t.update_shape_style(ts)
+		mut dtw := DrawTextWidget(t)
+		dtw.update_theme_style(ts)
+	}
+}
+
+pub fn (mut t TextBox) update_style(p TextBoxStyleParams) {
+	t.update_shape_style_params(p)
+	mut dtw := DrawTextWidget(t)
+	dtw.update_theme_style_params(p)
 }
 
 pub fn (mut t TextBox) update_shape_style(ts TextBoxStyle) {
@@ -70,21 +91,5 @@ pub fn (mut t TextBox) update_shape_style_params(p TextBoxStyleParams) {
 	}
 	if p.bg_color != no_color {
 		t.style.bg_color = p.bg_color
-	}
-}
-
-pub fn (mut t TextBox) update_style(p TextBoxStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != no_style && style in t.ui.styles {
-		ts := t.ui.styles[style].tb
-		t.theme_style = p.style
-		t.update_shape_style(ts)
-		mut dtw := DrawTextWidget(t)
-		dtw.update_theme_style(ts)
-	} else {
-		t.update_shape_style_params(p)
-		mut dtw := DrawTextWidget(t)
-		dtw.update_theme_style_params(p)
 	}
 }

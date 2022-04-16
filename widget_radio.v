@@ -303,7 +303,7 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 		})
 		// Title
 		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
-			10, r.ui.window.bg_color)
+			10, r.parent.bg_color()) // r.ui.window.bg_color)
 
 		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
 	}

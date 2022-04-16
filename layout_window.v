@@ -75,7 +75,8 @@ pub mut:
 	// Text Config
 	text_cfg gx.TextCfg
 	// themes
-	theme_style string
+	theme_style  string
+	style_forced WindowStyleParams
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
@@ -112,8 +113,8 @@ pub:
 	always_on_top bool
 	state         voidptr
 
-	bg_color gx.Color = ui.default_window_color
-	theme    string
+	bg_color gx.Color = no_color
+	theme    string   = 'default'
 
 	on_click              ClickFn
 	on_mouse_down         ClickFn
@@ -201,7 +202,6 @@ pub fn window(cfg WindowParams) &Window {
 	mut window := &Window{
 		state: cfg.state
 		title: cfg.title
-		bg_color: cfg.bg_color
 		width: width
 		height: height
 		theme_style: cfg.theme
@@ -232,6 +232,7 @@ pub fn window(cfg WindowParams) &Window {
 		suspended_fn: cfg.on_suspend
 		resumed_fn: cfg.on_resume
 	}
+	window.style_forced.bg_color = cfg.bg_color
 
 	gcontext := gg.new_context(
 		width: width
@@ -322,6 +323,7 @@ fn gg_init(mut window Window) {
 	window.mouse.init(window)
 	window.tooltip.init(window.ui)
 	load_settings()
+	window.load_style()
 	window.init_text_styles()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
@@ -1569,8 +1571,4 @@ pub fn (mut w Window) svg_screenshot(filename string) {
 pub fn (mut w Window) png_screenshot(filename string) {
 	mut d := w.ui.bmp
 	d.png_screenshot_window(filename, mut w)
-}
-
-pub fn (mut w Window) load_style() {
-	w.update_style(style: w.theme_style)
 }

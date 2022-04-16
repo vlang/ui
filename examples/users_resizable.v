@@ -62,6 +62,7 @@ fn main() {
 			width: 170
 			max: 10
 			val: 2
+			// theme: "red"
 		)
 		label: ui.label(text: '2/10')
 	}
@@ -71,8 +72,8 @@ fn main() {
 		state: app
 		title: 'V UI Demo'
 		mode: .resizable
-		bg_color: ui.color_solaris
-		theme: 'red'
+		// bg_color: ui.color_solaris
+		// theme: 'red'
 		native_message: false
 		children: [
 			ui.row(
@@ -167,12 +168,13 @@ fn main() {
 							ui.stretch,
 							ui.compact,
 						]
-						bg_color: gx.white
 						children: [
 							ui.canvas_plus(
 								width: 400
 								height: 275
 								on_draw: draw
+								bg_color: gx.Color{255, 220, 220, 150}
+								bg_radius: 10
 								// text_size: 20
 							),
 							ui.picture(
@@ -251,8 +253,6 @@ fn btn_add_click(mut app State, x voidptr) {
 }
 
 fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app &State) {
-	w, h := c.width, c.height
-	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height

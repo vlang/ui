@@ -38,7 +38,7 @@ pub struct ProgressBarParams {
 	min     int
 	max     int
 	val     int
-	theme   string
+	theme   string = no_style
 }
 
 pub fn progressbar(c ProgressBarParams) &ProgressBar {
@@ -50,10 +50,11 @@ pub fn progressbar(c ProgressBarParams) &ProgressBar {
 		min: c.min
 		max: c.max
 		val: c.val
-		theme_style: c.theme
+		// theme_style: c.theme
 		style_forced: c.ProgressBarStyleParams
 		ui: 0
 	}
+	pb.style_forced.style = c.theme
 	return pb
 }
 

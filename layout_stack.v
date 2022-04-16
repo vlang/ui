@@ -82,8 +82,6 @@ pub mut:
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
-	bg_color              gx.Color
-	bg_radius             f32
 	is_root_layout        bool = true
 	// Style
 	theme_style  string
@@ -123,9 +121,7 @@ struct StackParams {
 	align                 Alignments
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
-	bg_color              gx.Color
-	bg_radius             f32
-	theme                 string
+	theme                 string = no_style
 	scrollview            bool
 	children              []Widget
 }
@@ -148,13 +144,11 @@ fn stack(c StackParams) &Stack {
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
-		bg_color: c.bg_color
-		bg_radius: c.bg_radius
-		theme_style: c.theme
 		style_forced: c.StackStyleParams
 		title: c.title
 		ui: 0
 	}
+	s.style_forced.style = c.theme
 	if c.width > 0 {
 		s.fixed_width = c.width
 	}
@@ -1091,14 +1085,14 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		return
 	}
 	offset_start(mut s)
-	if s.bg_color != no_color {
-		if s.bg_radius > 0 {
-			radius := relative_size(s.bg_radius, s.real_width, s.real_height)
+	if s.style.bg_color != no_color {
+		if s.style.bg_radius > 0 {
+			radius := relative_size(s.style.bg_radius, s.real_width, s.real_height)
 			d.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
-				radius, s.bg_color)
+				radius, s.style.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			d.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.bg_color)
+			d.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.style.bg_color)
 		}
 	}
 	scrollview_draw_begin(mut s, d)

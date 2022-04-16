@@ -26,6 +26,7 @@ pub mut:
 
 [params]
 pub struct ListBoxStyleParams {
+mut:
 	style            string = no_style
 	radius           f32
 	border_color     gx.Color = no_color
@@ -74,10 +75,31 @@ pub fn (mut lbs ListBoxStyle) from_toml(a toml.Any) {
 
 pub fn (mut lb ListBox) load_style() {
 	// println("btn load style $lb.theme_style")
-	style := if lb.theme_style == '' { lb.ui.window.theme_style } else { lb.theme_style }
-	lb.update_style(style: style)
+	mut style := if lb.theme_style == '' { lb.ui.window.theme_style } else { lb.theme_style }
+	if lb.style_forced.style != no_style {
+		style = lb.style_forced.style
+	}
+	lb.update_theme_style(style)
 	// forced overload default style
 	lb.update_style(lb.style_forced)
+}
+
+pub fn (mut lb ListBox) update_theme_style(theme string) {
+	// println("update_style <$p.style>")
+	style := if theme == '' { 'default' } else { theme }
+	if style != no_style && style in lb.ui.styles {
+		lbs := lb.ui.styles[style].lb
+		lb.theme_style = theme
+		lb.update_shape_style(lbs)
+		mut dtw := DrawTextWidget(lb)
+		dtw.update_theme_style(lbs)
+	}
+}
+
+pub fn (mut lb ListBox) update_style(p ListBoxStyleParams) {
+	lb.update_shape_style_params(p)
+	mut dtw := DrawTextWidget(lb)
+	dtw.update_theme_style_params(p)
 }
 
 fn (mut lb ListBox) update_shape_style(lbs ListBoxStyle) {
@@ -103,21 +125,5 @@ fn (mut lb ListBox) update_shape_style_params(p ListBoxStyleParams) {
 	}
 	if p.bg_color_hover != no_color {
 		lb.style.bg_color_hover = p.bg_color_hover
-	}
-}
-
-pub fn (mut lb ListBox) update_style(p ListBoxStyleParams) {
-	// println("update_style <$p.style>")
-	style := if p.style == '' { 'default' } else { p.style }
-	if style != no_style && style in lb.ui.styles {
-		lbs := lb.ui.styles[style].lb
-		lb.theme_style = p.style
-		lb.update_shape_style(lbs)
-		mut dtw := DrawTextWidget(lb)
-		dtw.update_theme_style(lbs)
-	} else {
-		lb.update_shape_style_params(p)
-		mut dtw := DrawTextWidget(lb)
-		dtw.update_theme_style_params(p)
 	}
 }

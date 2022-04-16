@@ -88,7 +88,7 @@ mut:
 	border_color   gx.Color = ui.listbox_border_color // Item and list border color
 	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
 	selected_color gx.Color = ui.listbox_selected_color // Selected item background color
-	theme          string
+	theme          string   = no_style
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
@@ -121,13 +121,13 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
 		text_size: c.text_size
-		theme_style: c.theme
 		style_forced: c.ListBoxStyleParams
 		files_droped: c.files_droped
 		ordered: c.ordered
 		id: c.id
 		ui: 0
 	}
+	list.style_forced.style = c.theme
 	for id, text in c.items {
 		// println(" append $id -> $text ")
 		list.append_item(id, text, 0)

@@ -8,8 +8,9 @@ import os
 // all styles would be collected inside one map attached to ui
 
 pub const (
-	no_style = '_no_style_'
-	no_color = gx.Color{0, 0, 0, 0}
+	no_style    = '_no_style_'
+	no_color    = gx.Color{0, 0, 0, 0}
+	transparent = gx.Color{0, 0, 0, 1}
 )
 
 pub struct Style {
@@ -31,6 +32,10 @@ pub fn (s Style) to_toml() string {
 	toml += s.btn.to_toml()
 	toml += '\n[progressbar]\n'
 	toml += s.pgbar.to_toml()
+	toml += '\n[canvaslayout]\n'
+	toml += s.cl.to_toml()
+	toml += '\n[stack]\n'
+	toml += s.stack.to_toml()
 	return toml
 }
 
@@ -40,6 +45,8 @@ pub fn parse_style_toml_file(path string) Style {
 	s.win.from_toml(doc.value('window'))
 	s.btn.from_toml(doc.value('button'))
 	s.pgbar.from_toml(doc.value('progressbar'))
+	s.cl.from_toml(doc.value('canvaslayout'))
+	s.stack.from_toml(doc.value('stack'))
 	return s
 }
 
@@ -135,6 +142,14 @@ pub fn blue_style() Style {
 			bg_color: gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
+		// canvas layout
+		cl: CanvasLayoutStyle{
+			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+		}
+		// stack
+		stack: StackStyle{
+			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+		}
 	}
 }
 
@@ -163,6 +178,14 @@ pub fn red_style() Style {
 			border_color: gx.rgb(213, 133, 76)
 			bg_color: gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
+		}
+		// canvas layout
+		cl: CanvasLayoutStyle{
+			bg_color: ui.transparent // gx.rgb(255, 220, 220)
+		}
+		// stack
+		stack: StackStyle{
+			bg_color: ui.transparent // gx.rgb(255, 220, 220)
 		}
 	}
 }
@@ -224,4 +247,24 @@ pub fn (mut dtw DrawTextWidget) update_theme_style_params(ds DrawTextWidgetStyle
 	if ok {
 		dtw.update_style(ts)
 	}
+}
+
+// parent style
+
+pub fn (l Layout) bg_color() gx.Color {
+	mut col := ui.no_color
+	if l is Stack {
+		col = l.style.bg_color
+		if col in [ui.no_color, ui.transparent] {
+			return l.parent.bg_color()
+		}
+	} else if l is CanvasLayout {
+		col = l.style.bg_color
+		if col in [ui.no_color, ui.transparent] {
+			return l.parent.bg_color()
+		}
+	} else if l is Window {
+		col = l.bg_color
+	}
+	return col
 }

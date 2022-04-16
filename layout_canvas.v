@@ -35,8 +35,6 @@ pub mut:
 	is_focused       bool
 	ui               &UI = 0
 	hidden           bool
-	bg_color         gx.Color
-	bg_radius        f32
 	adj_width        int
 	adj_height       int
 	full_width       int
@@ -81,19 +79,17 @@ mut:
 [params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
-	id          string
-	width       int
-	height      int
-	full_width  int = -1
-	full_height int = -1
-	z_index     int
-	text        string
-	// bg_color       gx.Color = no_color
-	// bg_radius      f64
+	id             string
+	width          int
+	height         int
+	full_width     int = -1
+	full_height    int = -1
+	z_index        int
+	text           string
 	scrollview     bool
 	is_focused     bool
-	justify        []f64 = [0.0, 0.0]
-	theme          string
+	justify        []f64  = [0.0, 0.0]
+	theme          string = no_style
 	on_draw        CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_post_draw   CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_click       CanvasLayoutMouseFn      = voidptr(0)
@@ -132,11 +128,10 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		full_width: c.full_width
 		full_height: c.full_height
 		z_index: c.z_index
-		bg_radius: f32(c.bg_radius)
-		bg_color: c.bg_color
+		// bg_radius: f32(c.bg_radius)
+		// bg_color: c.bg_color
 		is_focused: c.is_focused
 		justify: c.justify
-		theme_style: c.theme
 		style_forced: c.CanvasLayoutStyleParams
 		draw_device_fn: c.on_draw
 		post_draw_device_fn: c.on_post_draw
@@ -152,6 +147,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		char_fn: c.on_char
 		on_scroll_change: c.on_scroll_change
 	}
+	canvas.style_forced.style = c.theme
 	if c.scrollview {
 		scrollview_add(mut canvas)
 	}
@@ -163,6 +159,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	ui := parent.get_ui()
 	c.ui = ui
 	c.init_size()
+	c.load_style()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -573,17 +570,17 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	// }
 	scrollview_draw_begin(mut c, d)
 
-	if c.bg_color != no_color {
+	if c.style.bg_color != no_color {
 		mut w, mut h := c.width, c.height
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
 			w, h = int(f32(fw) * c.ui.gg.scale), int(f32(fh) * c.ui.gg.scale)
 		}
-		if c.bg_radius > 0 {
-			radius := relative_size(c.bg_radius, w, h)
-			c.draw_device_rounded_rect_filled(d, 0, 0, w, h, radius, c.bg_color)
+		if c.style.bg_radius > 0 {
+			radius := relative_size(c.style.bg_radius, w, h)
+			c.draw_device_rounded_rect_filled(d, 0, 0, w, h, radius, c.style.bg_color)
 		} else {
-			c.draw_device_rect_filled(d, 0, 0, w, h, c.bg_color)
+			c.draw_device_rect_filled(d, 0, 0, w, h, c.style.bg_color)
 		}
 	}
 

@@ -94,7 +94,7 @@ pub struct ButtonParams {
 	tooltip      string
 	tooltip_side Side = .top
 	// text_size    f64
-	theme string
+	theme string = no_style
 }
 
 pub fn button(c ButtonParams) &Button {
@@ -109,9 +109,6 @@ pub fn button(c ButtonParams) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		// bg_color: c.bg_color
-		// theme_cfg: if c.bg_color == voidptr(0) { c.theme } else { no_theme }
-		theme_style: c.theme
 		style_forced: c.ButtonStyleParams
 		onclick: c.onclick
 		on_key_down: c.on_key_down
@@ -120,6 +117,7 @@ pub fn button(c ButtonParams) &Button {
 		// padding: f32(c.padding)
 		ui: 0
 	}
+	b.style_forced.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {
 		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
 		b.use_icon = false
