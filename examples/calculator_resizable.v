@@ -33,7 +33,7 @@ fn main() {
 			placeholder: '0'
 			fitted_height: true
 			// width: 135
-			text_size: 1.0 / 20
+			text_size: 1.0 / 10
 			read_only: true
 		),
 	]
@@ -46,7 +46,7 @@ fn main() {
 				onclick: btn_click
 				text_size: 1.0 / 20
 				radius: .25
-				theme: 'blue'
+				// theme: 'blue'
 				hoverable: true
 			)
 		}
@@ -64,6 +64,7 @@ fn main() {
 		state: app
 		mode: .resizable // .max_size //
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
+		theme: "red"
 		children: [
 			ui.column(
 				margin_: 10
@@ -75,6 +76,7 @@ fn main() {
 		]
 	)
 	// app.text = "size= ${app.window.width} ${app.window.height}"
+	app.window.add_shortcut_theme()
 	ui.run(app.window)
 }
 

@@ -39,6 +39,8 @@ pub fn (mut w Window) load_style() {
 	// println("w2 bg: $w.bg_color")
 	mut gui := w.ui
 	gui.gg.set_bg_color(w.bg_color)
+	// mut l := Layout(w)
+	// l.update_theme_style(style)
 }
 
 pub fn (mut w Window) update_theme_style(theme string) {

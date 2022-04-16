@@ -323,8 +323,8 @@ fn gg_init(mut window Window) {
 	window.mouse.init(window)
 	window.tooltip.init(window.ui)
 	load_settings()
-	window.load_style()
 	window.init_text_styles()
+	window.load_style()
 	window.dpi_scale = gg.dpi_scale()
 	window_size := gg.window_size_real_pixels()
 	w := int(f32(window_size.width) / window.dpi_scale)
@@ -353,6 +353,9 @@ fn gg_init(mut window Window) {
 	if window.on_init != voidptr(0) {
 		window.on_init(window)
 	}
+	// update theme style recursively
+	mut l := Layout(window)
+	l.update_theme_style(window.theme_style)
 }
 
 [manualfree]

@@ -195,18 +195,7 @@ fn main() {
 	app.window = window
 
 	// add shortcut
-	mut sc := ui.Shortcutable(window)
-	sc.add_shortcut('ctrl + t', fn (mut w ui.Window) {
-		themes := ['default', 'red', 'blue']
-		for i, theme in themes {
-			if w.theme_style == theme {
-				w.theme_style = themes[if i + 1 == themes.len { 0 } else { i + 1 }]
-				break
-			}
-		}
-		mut l := ui.Layout(w)
-		l.update_theme_style(w.theme_style)
-	})
+	window.add_shortcut_theme()
 
 	ui.run(window)
 }

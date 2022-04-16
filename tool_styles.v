@@ -276,3 +276,19 @@ pub fn (l Layout) bg_color() gx.Color {
 	}
 	return col
 }
+
+// add shortcut
+pub fn (mut window Window) add_shortcut_theme() {
+	mut sc := ui.Shortcutable(window)
+	sc.add_shortcut('ctrl + t', fn (mut w Window) {
+		themes := ['default', 'red', 'blue']
+		for i, theme in themes {
+			if w.theme_style == theme {
+				w.theme_style = themes[if i + 1 == themes.len { 0 } else { i + 1 }]
+				break
+			}
+		}
+		mut l := Layout(w)
+		l.update_theme_style(w.theme_style)
+	})
+}

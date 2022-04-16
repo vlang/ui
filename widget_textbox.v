@@ -148,7 +148,7 @@ pub struct TextBoxParams {
 	bg_color           gx.Color = gx.white
 	borderless         bool
 	border_accentuated bool
-	text_size          f64
+	// text_size          f64
 	theme              string = no_style
 	fitted_height      bool
 	on_key_down        TextBoxKeyDownFn
@@ -180,7 +180,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		borderless: c.borderless
 		border_accentuated: c.border_accentuated
 		bg_color: c.bg_color
-		text_size: c.text_size
+		// text_size: c.text_size
 		style_forced: c.TextBoxStyleParams
 		ui: 0
 		text: c.text
