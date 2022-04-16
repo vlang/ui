@@ -15,7 +15,7 @@ pub mut:
 }
 
 pub struct ButtonStyle {
-	ButtonShapeStyle // text_style TextStyle
+	ButtonShapeStyle
 pub mut:
 	text_font_name      string = 'system'
 	text_color          gx.Color
@@ -26,7 +26,7 @@ pub mut:
 
 [params]
 pub struct ButtonStyleParams {
-mut:
+pub mut:
 	style            string   = no_style
 	radius           f32      = -1
 	border_color     gx.Color = no_color

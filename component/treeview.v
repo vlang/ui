@@ -304,10 +304,10 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 		tv.layout.update_layout_without_pos()
 	}
 	if tv.sel_id != '' {
-		c.bg_color = tv.bg_sel_color
+		c.style.bg_color = tv.bg_sel_color
 		if tv.old_sel_id != '' && tv.old_sel_id != tv.sel_id {
 			mut old_sel_c := c.ui.window.canvas_layout(tv.old_sel_id)
-			old_sel_c.bg_color = tv.bg_color
+			old_sel_c.style.bg_color = tv.bg_color
 		}
 	}
 	if tv.on_click != TreeViewClickFn(0) {

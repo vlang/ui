@@ -174,7 +174,7 @@ fn (mut tabs TabsComponent) update_tab_colors() {
 		if mut tab is ui.CanvasLayout {
 			color := if tab.id == tabs.active { gx.rgb(200, 200, 100) } else { gx.white }
 			// println("$tab.id == $tabs.active -> $color")
-			tab.bg_color = color
+			tab.style.bg_color = color
 		}
 	}
 }

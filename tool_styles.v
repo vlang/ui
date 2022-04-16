@@ -23,6 +23,7 @@ pub mut:
 	tb     TextBoxStyle
 	lb     ListBoxStyle
 	slider SliderStyle
+	dd     DropdownStyle
 }
 
 pub fn (s Style) to_toml() string {
@@ -35,6 +36,8 @@ pub fn (s Style) to_toml() string {
 	toml += s.pgbar.to_toml()
 	toml += '\n[slider]\n'
 	toml += s.slider.to_toml()
+	toml += '\n[dropdown]\n'
+	toml += s.dd.to_toml()
 	toml += '\n[canvaslayout]\n'
 	toml += s.cl.to_toml()
 	toml += '\n[stack]\n'
@@ -49,6 +52,7 @@ pub fn parse_style_toml_file(path string) Style {
 	s.btn.from_toml(doc.value('button'))
 	s.pgbar.from_toml(doc.value('progressbar'))
 	s.slider.from_toml(doc.value('slider'))
+	s.dd.from_toml(doc.value('dropdown'))
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
 	return s
@@ -279,7 +283,7 @@ pub fn (l Layout) bg_color() gx.Color {
 
 // add shortcut
 pub fn (mut window Window) add_shortcut_theme() {
-	mut sc := ui.Shortcutable(window)
+	mut sc := Shortcutable(window)
 	sc.add_shortcut('ctrl + t', fn (mut w Window) {
 		themes := ['default', 'red', 'blue']
 		for i, theme in themes {

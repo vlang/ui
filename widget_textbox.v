@@ -149,10 +149,10 @@ pub struct TextBoxParams {
 	borderless         bool
 	border_accentuated bool
 	// text_size          f64
-	theme              string = no_style
-	fitted_height      bool
-	on_key_down        TextBoxKeyDownFn
-	on_char            TextBoxCharFn
+	theme         string = no_style
+	fitted_height bool
+	on_key_down   TextBoxKeyDownFn
+	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
 	on_change voidptr
 	on_enter  voidptr

@@ -595,7 +595,7 @@ fn (mut g GridComponent) show_selected() {
 					*(tb.text) = gtb.var[g.ind(g.sel_i)]
 				}
 			}
-			tb.bg_color = gx.orange
+			tb.style.bg_color = gx.orange
 		}
 		.dd_factor {
 			id := ui.component_id(g.id, 'dd_sel' + '_' + name)
@@ -611,7 +611,7 @@ fn (mut g GridComponent) show_selected() {
 			if gdd is GridDropdown {
 				dd.selected_index = gdd.var.values[g.ind(g.sel_i)]
 			}
-			dd.bg_color = gx.orange
+			dd.style.bg_color = gx.orange
 		}
 		.cb_bool {
 			id := ui.component_id(g.id, 'cb_sel')

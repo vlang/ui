@@ -70,7 +70,7 @@ pub mut:
 	style_forced ButtonStyleParams
 	// text styles
 	text_styles TextStyles
-	text_size   f64
+	// text_size   f64
 	// // theme
 	// theme_cfg ColorThemeCfg
 	// theme     map[int]gx.Color = map[int]gx.Color{}
@@ -112,7 +112,7 @@ pub fn button(c ButtonParams) &Button {
 		style_forced: c.ButtonStyleParams
 		onclick: c.onclick
 		on_key_down: c.on_key_down
-		text_size: c.text_size
+		// text_size: c.text_size
 		// radius: f32(c.radius)
 		// padding: f32(c.padding)
 		ui: 0

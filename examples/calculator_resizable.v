@@ -64,7 +64,7 @@ fn main() {
 		state: app
 		mode: .resizable // .max_size //
 		font_path: os.resource_abs_path(os.join_path('assets/fonts/', 'RobotoMono-Regular.ttf'))
-		theme: "red"
+		theme: 'red'
 		children: [
 			ui.column(
 				margin_: 10

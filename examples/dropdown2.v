@@ -30,6 +30,9 @@ fn main() {
 					ui.dropdown(
 						width: 140
 						def_text: 'Select an option'
+						text_color: gx.blue
+						text_size: 20
+						bg_color: gx.light_blue
 						on_selection_changed: dd_change
 						items: [
 							ui.DropdownItem{

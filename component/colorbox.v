@@ -382,7 +382,11 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 // options
 
 pub fn (mut cb ColorBoxComponent) update_theme() {
-	cb.layout.bg_color = if cb.light { gx.rgba(255, 255, 255, 50) } else { gx.rgba(0, 0, 0, 50) }
+	cb.layout.style.bg_color = if cb.light {
+		gx.rgba(255, 255, 255, 50)
+	} else {
+		gx.rgba(0, 0, 0, 50)
+	}
 	color := if cb.light { gx.black } else { gx.white }
 	mut dtw := ui.DrawTextWidget(cb.lb_r)
 	dtw.update_style(color: color)
