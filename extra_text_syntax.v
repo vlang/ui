@@ -276,9 +276,9 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 		color, font := style[typ].color, style[typ].font
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
-			// fix background
-			d.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text), tv.line_height,
-				tv.tb.bg_color)
+			// fix background (not needed with real fixed font)
+			// d.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text), tv.line_height,
+			// 	tv.tb.bg_color)
 			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
 				color: color
 				font_name: font
