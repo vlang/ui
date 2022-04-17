@@ -513,18 +513,18 @@ pub fn (sv &ScrollView) draw() {
 	if sv.active_x {
 		// horizontal scrollbar
 		sv.ui.gg.draw_rounded_rect_filled(svx, svy + sv.height - ui.scrollbar_size, sv.sb_w,
-			ui.scrollbar_size, ui.scrollbar_size / 3, ui.scrollbar_background_color)
+			ui.scrollbar_size, 0, ui.scrollbar_background_color)
 		// horizontal button
 		sv.ui.gg.draw_rounded_rect_filled(svx + sv.btn_x, svy + sv.height - ui.scrollbar_size,
-			sv.btn_w, ui.scrollbar_size, ui.scrollbar_size / 3, sv.btn_color_x)
+			sv.btn_w, ui.scrollbar_size, 0, sv.btn_color_x)
 	}
 	if sv.active_y {
 		// vertical scrollbar
 		sv.ui.gg.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy, ui.scrollbar_size,
-			sv.sb_h, ui.scrollbar_size / 3, ui.scrollbar_background_color)
+			sv.sb_h, 0, ui.scrollbar_background_color)
 		// vertical button
 		sv.ui.gg.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy + sv.btn_y,
-			ui.scrollbar_size, sv.btn_h, ui.scrollbar_size / 3, sv.btn_color_y)
+			ui.scrollbar_size, sv.btn_h, 0, sv.btn_color_y)
 	}
 }
 
