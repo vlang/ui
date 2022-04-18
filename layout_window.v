@@ -1157,6 +1157,13 @@ pub fn (w &Window) update_layout() {
 			s.update_layout()
 		}
 	}
+	// for mut s in w.get_children() {
+	// 	if mut s is Stack {
+	// 		if s.id != empty_stack.id {
+	// 			s.update_layout()
+	// 		}
+	// 	}
+	// }
 }
 
 pub fn (w &Window) update_layout_without_pos() {

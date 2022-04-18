@@ -52,6 +52,7 @@ pub struct MenuParams {
 	text_size f64
 	text      string
 	items     []MenuItem
+	hidden bool
 }
 
 pub fn menu(c MenuParams) &Menu {
@@ -63,6 +64,7 @@ pub fn menu(c MenuParams) &Menu {
 		ui: 0
 		z_index: c.z_index
 		text_size: c.text_size
+		hidden: c.hidden
 	}
 }
 
@@ -168,7 +170,7 @@ pub fn (mut m Menu) add_item(text string, action MenuItemFn) {
 	}
 }
 
-fn (mut m Menu) set_visible(state bool) {
+pub fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
 }
 
