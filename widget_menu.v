@@ -52,7 +52,7 @@ pub struct MenuParams {
 	text_size f64
 	text      string
 	items     []MenuItem
-	hidden bool
+	hidden    bool
 }
 
 pub fn menu(c MenuParams) &Menu {
