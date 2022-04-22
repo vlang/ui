@@ -4,6 +4,7 @@
 module ui
 
 import gg
+import gx
 
 pub interface Widget {
 	ui &UI
@@ -105,4 +106,9 @@ pub fn (w Widget) has_focus() bool {
 		return fw.is_focused
 	}
 	return false
+}
+
+pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
+	println('heeeee $w.id $r')
+	w.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }

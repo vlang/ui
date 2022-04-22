@@ -19,11 +19,9 @@ fn main() {
 	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
-		text_cfg: gx.TextCfg{
-			color: gx.blue
-			align: gx.align_left
-			size: 30
-		}
+		color: gx.blue
+		// align: gx.align_left
+		text_size: 30
 	)
 	window := ui.window(
 		width: win_width

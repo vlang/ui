@@ -96,10 +96,13 @@ fn (mut l Label) set_pos(x int, y int) {
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
 		dtw := DrawTextWidget(l)
+		println(dtw.current_style().size)
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		if !l.text.contains('\n') {
-			w, h = dtw.text_size(l.text)
+			w, _ = dtw.text_size(l.text)
+			h = dtw.current_style().size // better for label?
+			// println("$w, $h, $l.text ${dtw.text_height(l.text)}")
 		} else {
 			for line in l.text.split('\n') {
 				wi, he := dtw.text_size(line)

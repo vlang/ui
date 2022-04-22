@@ -153,6 +153,7 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	descender := f32(0.0)
 	lh := f32(0.0)
 	fons.vert_metrics(&ascender, &descender, &lh)
+	// println("load style $ascender, $descender ${}")
 }
 
 pub fn (w DrawTextWidget) font_size() int {

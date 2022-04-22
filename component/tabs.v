@@ -36,6 +36,7 @@ pub struct TabsParams {
 }
 
 pub fn tabs_stack(c TabsParams) &ui.Stack {
+	println('herennkjn')
 	mut children := []ui.Widget{}
 
 	for i, tab in c.tabs {
@@ -63,7 +64,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 
 	tab_active := tab_id(c.id, c.active)
-	println('active: $tab_active')
+	// println('active: $tab_active')
 
 	mut layout := ui.column(
 		id: c.id
@@ -113,6 +114,7 @@ pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
 }
 
 fn tabs_init(layout &ui.Stack) {
+	println('iciiii')
 	mut tabs := tabs_component(layout)
 	for id, mut page in tabs.pages {
 		println('tab $id initialized')

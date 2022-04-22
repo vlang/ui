@@ -4,11 +4,10 @@
 module ui
 
 import gx
-import gg
 
 const (
 	menu_height       = 30
-	menu_color        = gx.rgb(240, 240, 240)
+	menu_bg_color     = gx.rgb(240, 240, 240)
 	menu_border_color = gx.rgb(223, 223, 223)
 )
 
@@ -20,9 +19,12 @@ pub mut:
 	offset_y int
 	hidden   bool
 	ui       &UI
+	// Style
+	theme_style  string
+	style        MenuShapeStyle
+	style_forced MenuStyleParams
 	// text styles
 	text_styles TextStyles
-	text_size   f64
 	component   voidptr
 	width       int
 	height      int
@@ -46,6 +48,7 @@ pub mut:
 
 [params]
 pub struct MenuParams {
+	MenuStyleParams
 	id        string
 	width     int = 150
 	z_index   int
@@ -53,36 +56,39 @@ pub struct MenuParams {
 	text      string
 	items     []MenuItem
 	hidden    bool
+	theme     string = no_style
 }
 
 pub fn menu(c MenuParams) &Menu {
-	return &Menu{
+	mut m := &Menu{
 		id: c.id
 		text: c.text
 		items: c.items
 		width: c.width
 		ui: 0
 		z_index: c.z_index
-		text_size: c.text_size
+		style_forced: c.MenuStyleParams
 		hidden: c.hidden
 	}
+	m.style_forced.style = c.theme
+	return m
 }
 
 fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
-	m.init_style()
+	m.load_style()
 	m.update_height()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
 
-fn (mut m Menu) init_style() {
-	mut dtw := DrawTextWidget(m)
-	dtw.init_style()
-	dtw.update_text_size(m.text_size)
-}
+// fn (mut m Menu) init_style() {
+// 	mut dtw := DrawTextWidget(m)
+// 	dtw.init_style()
+// 	dtw.update_text_size(m.text_size)
+// }
 
 [manualfree]
 pub fn (mut m Menu) cleanup() {
@@ -154,11 +160,13 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	if m.hidden {
 		return
 	}
+	dtw := DrawTextWidget(m)
+	dtw.draw_device_load_style(d)
 
-	d.draw_rect_filled(m.x, m.y, m.width, m.height, ui.menu_color)
-	d.draw_rect_empty(m.x, m.y, m.width, m.height, ui.menu_border_color)
+	d.draw_rect_filled(m.x, m.y, m.width, m.height, m.style.bg_color)
+	d.draw_rect_empty(m.x, m.y, m.width, m.height, m.style.border_color)
 	for i, item in m.items {
-		m.ui.gg.draw_text_def(m.x + 10, m.y + i * ui.menu_height + 10, item.text)
+		dtw.draw_device_text(d, m.x + 10, m.y + i * ui.menu_height + 10, item.text)
 	}
 	offset_end(mut m)
 }

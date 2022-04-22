@@ -592,7 +592,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 			// if c.scrollview != 0 {
 			for i, mut child in c.drawing_children {
 				if child !is Layout
-					&& is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {
+					&& is_empty_intersection(c.scrollview.scissor_rect, child.bounds()) {
 					sr := c.scrollview.scissor_rect
 					cr := child.bounds()
 					println('cdraw $c.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
@@ -600,14 +600,14 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 			}
 		}
 	}
-	// if Layout(c).has_scrollview_or_parent_scrollview() {
-	if c.scrollview != 0 {
+	if Layout(c).has_scrollview_or_parent_scrollview() && scrollview_is_active(c) {
+		// if c.scrollview != 0  && scrollview_is_active(c) {
 		$if cl_draw_children ? {
 			println('draw $c.id: ${c.drawing_children.map(it.id)}')
 		}
 		for mut child in c.drawing_children {
 			if mut child is Layout
-				|| !is_empty_intersection(c.scrollview.scissor_rect, child.scaled_bounds()) {
+				|| !is_empty_intersection(c.scrollview.scissor_rect, child.bounds()) {
 				child.draw_device(d)
 			}
 		}

@@ -26,13 +26,13 @@ fn main() {
 			ui.row(
 				margin_: 10
 				spacing: 10
-				widths: [ui.compact, ui.compact] // 350.0]
-				heights: [ui.compact, ui.compact] // 300.0]
+				widths: [ui.compact, ui.stretch] // 350.0]
+				heights: [ui.compact, ui.stretch] // 300.0]
 				// scrollview: true
 				children: [
 					ui.picture(
-					width: 100
-					height: 100
+					width: 20
+					height: 20
 					movable: true
 					z_index: 20
 					path: logo

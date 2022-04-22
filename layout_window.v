@@ -155,8 +155,7 @@ pub fn window(cfg WindowParams) &Window {
 	println('window()')
 	defer {
 		println('end of window()')
-	}
-	*/
+	}*/
 
 	mut width, mut height := cfg.width, cfg.height
 	mut resizable := cfg.resizable

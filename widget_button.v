@@ -93,6 +93,7 @@ pub struct ButtonParams {
 	hoverable    bool
 	tooltip      string
 	tooltip_side Side = .top
+	padding      f64
 	// text_size    f64
 	theme string = no_style
 }
@@ -114,7 +115,7 @@ pub fn button(c ButtonParams) &Button {
 		on_key_down: c.on_key_down
 		// text_size: c.text_size
 		// radius: f32(c.radius)
-		// padding: f32(c.padding)
+		padding: f32(c.padding)
 		ui: 0
 	}
 	b.style_forced.style = c.theme

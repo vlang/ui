@@ -541,6 +541,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					if tb.cursor_pos == 0 {
 						return
 					}
+					u := text.runes()
 					// Delete the entire selection
 					if tb.is_sel_active() {
 						tb.delete_selection()
@@ -552,13 +553,14 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 								i--
 							}
 							if text[i].is_space() || i == 0 {
-								// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos]}
+								unsafe {
+									*tb.text = u[..i].string() + u[tb.cursor_pos..].string()
+								}
 								break
 							}
 						}
 						tb.cursor_pos = i
 					} else {
-						u := text.runes()
 						// Delete just one character
 						unsafe {
 							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()

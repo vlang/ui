@@ -94,7 +94,7 @@ pub fn has_scrollview_or_parent_scrollview(w ScrollableWidget) bool {
 	return w.scrollview != 0
 }
 
-pub fn scrollview_is_active(mut w ScrollableWidget) bool {
+pub fn scrollview_is_active(w ScrollableWidget) bool {
 	return w.has_scrollview && w.scrollview.is_active()
 }
 
@@ -317,7 +317,7 @@ pub fn scrollview_widget_update_active(w Widget) {
 }
 
 pub fn scrollview_draw_begin<T>(mut w T, d DrawDevice) {
-	if scrollview_is_active(mut w) {
+	if scrollview_is_active(w) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
 			svx, svy := sv.orig_xy()
@@ -502,7 +502,7 @@ pub fn (sv &ScrollView) orig_xy() (int, int) {
 
 fn (sv &ScrollView) parent_scissor_rect() gg.Rect {
 	parent := sv.parent
-	size := gg.window_size_real_pixels()
+	size := gg.window_size() //_real_pixels()
 	mut scissor_rect := gg.Rect{f32(0), f32(0), f32(size.width), f32(size.height)}
 	if parent is Stack {
 		if parent.scrollview != voidptr(0) {
@@ -652,10 +652,10 @@ pub fn (mut sv ScrollView) clip(d DrawDevice) {
 	if sv.is_active() {
 		svx, svy := sv.orig_xy()
 		sr := gg.Rect{
-			x: svx * gg.dpi_scale()
-			y: svy * gg.dpi_scale()
-			width: sv.width * gg.dpi_scale()
-			height: sv.height * gg.dpi_scale()
+			x: svx //* gg.dpi_scale()
+			y: svy //* gg.dpi_scale()
+			width: sv.width //* gg.dpi_scale()
+			height: sv.height //* gg.dpi_scale()
 		}
 		psr := sv.parent_scissor_rect()
 		scissor_rect := intersection_rect(sr, psr)
