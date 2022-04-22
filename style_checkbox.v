@@ -78,28 +78,39 @@ pub fn (mut cb CheckBox) update_theme_style(theme string) {
 	if style != no_style && style in cb.ui.styles {
 		cbs := cb.ui.styles[style].cb
 		cb.theme_style = theme
-		cb.update_shape_style(cbs)
+		cb.update_shape_theme_style(cbs)
 		mut dtw := DrawTextWidget(cb)
 		dtw.update_theme_style(cbs)
 	}
 }
 
 pub fn (mut cb CheckBox) update_style(p CheckBoxStyleParams) {
-	cb.update_shape_style_params(p)
+	cb.update_shape_style(p)
 	mut dtw := DrawTextWidget(cb)
 	dtw.update_theme_style_params(p)
 }
 
-fn (mut cb CheckBox) update_shape_style(cbs CheckBoxStyle) {
+fn (mut cb CheckBox) update_shape_theme_style(cbs CheckBoxStyle) {
 	cb.style.border_color = cbs.border_color
 	cb.style.bg_color = cbs.bg_color
 }
 
-fn (mut cb CheckBox) update_shape_style_params(p CheckBoxStyleParams) {
+fn (mut cb CheckBox) update_shape_style(p CheckBoxStyleParams) {
 	if p.border_color != no_color {
 		cb.style.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
 		cb.style.bg_color = p.bg_color
 	}
+}
+
+fn (mut cb CheckBox) update_style_forced(p CheckBoxStyleParams) {
+	if p.border_color != no_color {
+		cb.style_forced.border_color = p.border_color
+	}
+	if p.bg_color != no_color {
+		cb.style_forced.bg_color = p.bg_color
+	}
+	mut dtw := DrawTextWidget(cb)
+	dtw.update_theme_style_params(p)
 }

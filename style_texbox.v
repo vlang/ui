@@ -68,28 +68,39 @@ pub fn (mut t TextBox) update_theme_style(theme string) {
 	if style != no_style && style in t.ui.styles {
 		ts := t.ui.styles[style].tb
 		t.theme_style = theme
-		t.update_shape_style(ts)
+		t.update_shape_theme_style(ts)
 		mut dtw := DrawTextWidget(t)
 		dtw.update_theme_style(ts)
 	}
 }
 
 pub fn (mut t TextBox) update_style(p TextBoxStyleParams) {
-	t.update_shape_style_params(p)
+	t.update_shape_style(p)
 	mut dtw := DrawTextWidget(t)
 	dtw.update_theme_style_params(p)
 }
 
-pub fn (mut t TextBox) update_shape_style(ts TextBoxStyle) {
+pub fn (mut t TextBox) update_shape_theme_style(ts TextBoxStyle) {
 	t.style.bg_radius = ts.bg_radius
 	t.style.bg_color = ts.bg_color
 }
 
-pub fn (mut t TextBox) update_shape_style_params(p TextBoxStyleParams) {
+pub fn (mut t TextBox) update_shape_style(p TextBoxStyleParams) {
 	if p.bg_radius > 0 {
 		t.style.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
 		t.style.bg_color = p.bg_color
 	}
+}
+
+pub fn (mut t TextBox) update_style_forced(p TextBoxStyleParams) {
+	if p.bg_radius > 0 {
+		t.style_forced.bg_radius = p.bg_radius
+	}
+	if p.bg_color != no_color {
+		t.style_forced.bg_color = p.bg_color
+	}
+	mut dtw := DrawTextWidget(t)
+	dtw.update_theme_style_params(p)
 }

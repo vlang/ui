@@ -78,28 +78,39 @@ pub fn (mut m Menu) update_theme_style(theme string) {
 	if style != no_style && style in m.ui.styles {
 		ms := m.ui.styles[style].menu
 		m.theme_style = theme
-		m.update_shape_style(ms)
+		m.update_shape_theme_style(ms)
 		mut dtw := DrawTextWidget(m)
 		dtw.update_theme_style(ms)
 	}
 }
 
 pub fn (mut m Menu) update_style(p MenuStyleParams) {
-	m.update_shape_style_params(p)
+	m.update_shape_style(p)
 	mut dtw := DrawTextWidget(m)
 	dtw.update_theme_style_params(p)
 }
 
-fn (mut m Menu) update_shape_style(ms MenuStyle) {
+fn (mut m Menu) update_shape_theme_style(ms MenuStyle) {
 	m.style.border_color = ms.border_color
 	m.style.bg_color = ms.bg_color
 }
 
-fn (mut m Menu) update_shape_style_params(p MenuStyleParams) {
+fn (mut m Menu) update_shape_style(p MenuStyleParams) {
 	if p.border_color != no_color {
 		m.style.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
 		m.style.bg_color = p.bg_color
 	}
+}
+
+fn (mut m Menu) update_style_forced(p MenuStyleParams) {
+	if p.border_color != no_color {
+		m.style_forced.border_color = p.border_color
+	}
+	if p.bg_color != no_color {
+		m.style_forced.bg_color = p.bg_color
+	}
+	mut dtw := DrawTextWidget(m)
+	dtw.update_theme_style_params(p)
 }

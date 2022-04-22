@@ -63,35 +63,47 @@ fn (mut l CanvasLayout) load_style() {
 }
 
 pub fn (mut l CanvasLayout) update_theme_style(theme string) {
-	// println("update_style <$p.style>")
+	// println("$l.id update_theme_style <$theme>")
 	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in l.ui.styles {
 		ls := l.ui.styles[style].cl
 		l.theme_style = theme
-		l.update_shape_style(ls)
+		l.update_shape_theme_style(ls)
 		mut dtw := DrawTextWidget(l)
 		dtw.update_theme_style(ls)
 	}
 }
 
 pub fn (mut l CanvasLayout) update_style(p CanvasLayoutStyleParams) {
-	l.update_shape_style_params(p)
+	// println("$l.id update_style <$p>")
+	l.update_shape_style(p)
 	mut dtw := DrawTextWidget(l)
 	dtw.update_theme_style_params(p)
 }
 
-pub fn (mut l CanvasLayout) update_shape_style(ls CanvasLayoutStyle) {
+pub fn (mut l CanvasLayout) update_shape_theme_style(ls CanvasLayoutStyle) {
 	l.style.bg_radius = ls.bg_radius
 	l.style.bg_color = ls.bg_color
 }
 
-pub fn (mut l CanvasLayout) update_shape_style_params(p CanvasLayoutStyleParams) {
+pub fn (mut l CanvasLayout) update_shape_style(p CanvasLayoutStyleParams) {
 	if p.bg_radius > 0 {
 		l.style.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
 		l.style.bg_color = p.bg_color
 	}
+}
+
+pub fn (mut l CanvasLayout) update_style_forced(p CanvasLayoutStyleParams) {
+	if p.bg_radius > 0 {
+		l.style_forced.bg_radius = p.bg_radius
+	}
+	if p.bg_color != no_color {
+		l.style_forced.bg_color = p.bg_color
+	}
+	mut dtw := DrawTextWidget(l)
+	dtw.update_theme_style_params(p)
 }
 
 // Stack
@@ -160,28 +172,39 @@ pub fn (mut l Stack) update_theme_style(theme string) {
 	if style != no_style && style in l.ui.styles {
 		ls := l.ui.styles[style].stack
 		l.theme_style = theme
-		l.update_shape_style(ls)
+		l.update_shape_theme_style(ls)
 		mut dtw := DrawTextWidget(l)
 		dtw.update_theme_style(ls)
 	}
 }
 
 pub fn (mut l Stack) update_style(p StackStyleParams) {
-	l.update_shape_style_params(p)
+	l.update_shape_style(p)
 	mut dtw := DrawTextWidget(l)
 	dtw.update_theme_style_params(p)
 }
 
-pub fn (mut l Stack) update_shape_style(ls StackStyle) {
+pub fn (mut l Stack) update_shape_theme_style(ls StackStyle) {
 	l.style.bg_radius = ls.bg_radius
 	l.style.bg_color = ls.bg_color
 }
 
-pub fn (mut l Stack) update_shape_style_params(p StackStyleParams) {
+pub fn (mut l Stack) update_shape_style(p StackStyleParams) {
 	if p.bg_radius > 0 {
 		l.style.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
 		l.style.bg_color = p.bg_color
 	}
+}
+
+pub fn (mut l Stack) update_style_forced(p StackStyleParams) {
+	if p.bg_radius > 0 {
+		l.style_forced.bg_radius = p.bg_radius
+	}
+	if p.bg_color != no_color {
+		l.style_forced.bg_color = p.bg_color
+	}
+	mut dtw := DrawTextWidget(l)
+	dtw.update_theme_style_params(p)
 }

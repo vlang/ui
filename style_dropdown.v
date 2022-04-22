@@ -76,7 +76,7 @@ pub fn (mut dd Dropdown) update_theme_style(theme string) {
 	if style != no_style && style in dd.ui.styles {
 		dds := dd.ui.styles[style].dd
 		dd.theme_style = theme
-		dd.update_shape_style(dds)
+		dd.update_shape_theme_style(dds)
 		mut dtw := DrawTextWidget(dd)
 		dtw.update_theme_style(dds)
 	}
@@ -84,19 +84,19 @@ pub fn (mut dd Dropdown) update_theme_style(theme string) {
 
 pub fn (mut dd Dropdown) update_style(p DropdownStyleParams) {
 	// println("update_style <$p.style>")
-	dd.update_shape_style_params(p)
+	dd.update_shape_style(p)
 	mut dtw := DrawTextWidget(dd)
 	dtw.update_theme_style_params(p)
 }
 
-fn (mut dd Dropdown) update_shape_style(dds DropdownStyle) {
+fn (mut dd Dropdown) update_shape_theme_style(dds DropdownStyle) {
 	dd.style.bg_color = dds.bg_color
 	dd.style.border_color = dds.border_color
 	dd.style.focus_color = dds.focus_color
 	dd.style.drawer_color = dds.drawer_color
 }
 
-pub fn (mut dd Dropdown) update_shape_style_params(p DropdownStyleParams) {
+pub fn (mut dd Dropdown) update_shape_style(p DropdownStyleParams) {
 	if p.bg_color != no_color {
 		dd.style.bg_color = p.bg_color
 	}
@@ -109,4 +109,21 @@ pub fn (mut dd Dropdown) update_shape_style_params(p DropdownStyleParams) {
 	if p.drawer_color != no_color {
 		dd.style.drawer_color = p.drawer_color
 	}
+}
+
+pub fn (mut dd Dropdown) update_style_forced(p DropdownStyleParams) {
+	if p.bg_color != no_color {
+		dd.style_forced.bg_color = p.bg_color
+	}
+	if p.border_color != no_color {
+		dd.style_forced.border_color = p.border_color
+	}
+	if p.focus_color != no_color {
+		dd.style_forced.focus_color = p.focus_color
+	}
+	if p.drawer_color != no_color {
+		dd.style_forced.drawer_color = p.drawer_color
+	}
+	mut dtw := DrawTextWidget(dd)
+	dtw.update_theme_style_params(p)
 }

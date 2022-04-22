@@ -90,19 +90,19 @@ pub fn (mut lb ListBox) update_theme_style(theme string) {
 	if style != no_style && style in lb.ui.styles {
 		lbs := lb.ui.styles[style].lb
 		lb.theme_style = theme
-		lb.update_shape_style(lbs)
+		lb.update_shape_theme_style(lbs)
 		mut dtw := DrawTextWidget(lb)
 		dtw.update_theme_style(lbs)
 	}
 }
 
 pub fn (mut lb ListBox) update_style(p ListBoxStyleParams) {
-	lb.update_shape_style_params(p)
+	lb.update_shape_style(p)
 	mut dtw := DrawTextWidget(lb)
 	dtw.update_theme_style_params(p)
 }
 
-fn (mut lb ListBox) update_shape_style(lbs ListBoxStyle) {
+fn (mut lb ListBox) update_shape_theme_style(lbs ListBoxStyle) {
 	lb.style.radius = lbs.radius
 	lb.style.border_color = lbs.border_color
 	lb.style.bg_color = lbs.bg_color
@@ -110,7 +110,7 @@ fn (mut lb ListBox) update_shape_style(lbs ListBoxStyle) {
 	lb.style.bg_color_hover = lbs.bg_color_hover
 }
 
-fn (mut lb ListBox) update_shape_style_params(p ListBoxStyleParams) {
+fn (mut lb ListBox) update_shape_style(p ListBoxStyleParams) {
 	if p.radius > 0 {
 		lb.style.radius = p.radius
 	}
@@ -126,4 +126,24 @@ fn (mut lb ListBox) update_shape_style_params(p ListBoxStyleParams) {
 	if p.bg_color_hover != no_color {
 		lb.style.bg_color_hover = p.bg_color_hover
 	}
+}
+
+fn (mut lb ListBox) update_style_forced(p ListBoxStyleParams) {
+	if p.radius > 0 {
+		lb.style_forced.radius = p.radius
+	}
+	if p.border_color != no_color {
+		lb.style_forced.border_color = p.border_color
+	}
+	if p.bg_color != no_color {
+		lb.style_forced.bg_color = p.bg_color
+	}
+	if p.bg_color_pressed != no_color {
+		lb.style_forced.bg_color_pressed = p.bg_color_pressed
+	}
+	if p.bg_color_hover != no_color {
+		lb.style_forced.bg_color_hover = p.bg_color_hover
+	}
+	mut dtw := DrawTextWidget(lb)
+	dtw.update_theme_style_params(p)
 }

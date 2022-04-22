@@ -159,7 +159,6 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	ui := parent.get_ui()
 	c.ui = ui
 	c.init_size()
-	c.load_style()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -183,6 +182,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	if c.on_init != InitFn(0) {
 		c.on_init(c)
 	}
+	c.load_style()
 
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
@@ -570,12 +570,14 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	// }
 	scrollview_draw_begin(mut c, d)
 
+	// println("$c.id $c.style")
 	if c.style.bg_color != no_color {
 		mut w, mut h := c.width, c.height
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
 			w, h = int(f32(fw) * c.ui.gg.scale), int(f32(fh) * c.ui.gg.scale)
 		}
+		// println("$c.id ($w, $h)")
 		if c.style.bg_radius > 0 {
 			radius := relative_size(c.style.bg_radius, w, h)
 			c.draw_device_rounded_rect_filled(d, 0, 0, w, h, radius, c.style.bg_color)

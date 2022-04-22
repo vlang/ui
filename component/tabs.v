@@ -11,16 +11,18 @@ enum TabsMode {
 [heap]
 struct TabsComponent {
 pub mut:
-	id          string
-	layout      &ui.Stack // required
-	active      string
-	prev_active string
-	tab_bar     &ui.Stack
-	pages       map[string]ui.Widget
-	mode        TabsMode
-	tab_width   f64
-	tab_height  f64
-	tab_spacing f64
+	id                 string
+	layout             &ui.Stack // required
+	active             string
+	prev_active        string
+	tab_bar            &ui.Stack
+	pages              map[string]ui.Widget
+	mode               TabsMode
+	tab_width          f64
+	tab_height         f64
+	tab_spacing        f64
+	bg_color           gx.Color = gx.white
+	bg_color_selection gx.Color = gx.rgb(200, 200, 100)
 }
 
 [params]
@@ -36,13 +38,13 @@ pub struct TabsParams {
 }
 
 pub fn tabs_stack(c TabsParams) &ui.Stack {
-	println('herennkjn')
 	mut children := []ui.Widget{}
 
 	for i, tab in c.tabs {
 		children << ui.canvas_layout(
 			id: tab_id(c.id, i)
 			on_click: tab_click
+			// bg_color: gx.white
 			on_key_down: tab_key_down
 			children: [
 				ui.at(0, 0, ui.label(text: tab)),
@@ -96,6 +98,9 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 		}
 		mut tab := tab_bar.children[i]
 		if mut tab is ui.CanvasLayout {
+			tab.update_style_forced(
+				bg_color: if i == 0 { tabs.bg_color_selection } else { tabs.bg_color }
+			)
 			ui.component_connect(tabs, tab)
 		}
 	}
@@ -114,19 +119,16 @@ pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
 }
 
 fn tabs_init(layout &ui.Stack) {
-	println('iciiii')
 	mut tabs := tabs_component(layout)
 	for id, mut page in tabs.pages {
 		println('tab $id initialized')
 		page.init(layout)
 	}
 	tabs.update_tab_colors()
-	// set width and height of tab
-	// for mut tab in tabs.tab_bar.children {
-	// 	tab.width =
-	// }
 	tabs.on_top()
 	tabs.layout.update_layout()
+	// println("${tabs.tab_bar.children.map(it.id)}")
+	// tabs.print_styles()
 }
 
 fn tab_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
@@ -174,9 +176,18 @@ fn (mut tabs TabsComponent) on_top() {
 fn (mut tabs TabsComponent) update_tab_colors() {
 	for mut tab in tabs.tab_bar.children {
 		if mut tab is ui.CanvasLayout {
-			color := if tab.id == tabs.active { gx.rgb(200, 200, 100) } else { gx.white }
+			color := if tab.id == tabs.active { tabs.bg_color_selection } else { tabs.bg_color }
 			// println("$tab.id == $tabs.active -> $color")
-			tab.style.bg_color = color
+			tab.update_style(bg_color: color)
+			// println("$tab.id $tab.style.bg_color")
+		}
+	}
+}
+
+fn (mut tabs TabsComponent) print_styles() {
+	for tab in tabs.tab_bar.children {
+		if tab is ui.CanvasLayout {
+			println('$tab.id $tab.style')
 		}
 	}
 }

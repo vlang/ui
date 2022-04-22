@@ -90,7 +90,7 @@ pub fn (mut b Button) update_theme_style(theme string) {
 	if style != no_style && style in b.ui.styles {
 		bs := b.ui.styles[style].btn
 		b.theme_style = theme
-		b.update_shape_style(bs)
+		b.update_shape_theme_style(bs)
 		mut dtw := DrawTextWidget(b)
 		dtw.update_theme_style(bs)
 	}
@@ -98,12 +98,12 @@ pub fn (mut b Button) update_theme_style(theme string) {
 
 pub fn (mut b Button) update_style(p ButtonStyleParams) {
 	// println("update_style <$p.style>")
-	b.update_shape_style_params(p)
+	b.update_shape_style(p)
 	mut dtw := DrawTextWidget(b)
 	dtw.update_theme_style_params(p)
 }
 
-fn (mut b Button) update_shape_style(bs ButtonStyle) {
+fn (mut b Button) update_shape_theme_style(bs ButtonStyle) {
 	b.style.radius = bs.radius
 	b.style.border_color = bs.border_color
 	b.style.bg_color = bs.bg_color
@@ -111,7 +111,7 @@ fn (mut b Button) update_shape_style(bs ButtonStyle) {
 	b.style.bg_color_hover = bs.bg_color_hover
 }
 
-fn (mut b Button) update_shape_style_params(p ButtonStyleParams) {
+fn (mut b Button) update_shape_style(p ButtonStyleParams) {
 	if p.radius >= 0 {
 		b.style.radius = p.radius
 	}
@@ -127,4 +127,25 @@ fn (mut b Button) update_shape_style_params(p ButtonStyleParams) {
 	if p.bg_color_hover != no_color {
 		b.style.bg_color_hover = p.bg_color_hover
 	}
+}
+
+// update style_forced
+fn (mut b Button) update_style_forced(p ButtonStyleParams) {
+	if p.radius >= 0 {
+		b.style_forced.radius = p.radius
+	}
+	if p.border_color != no_color {
+		b.style_forced.border_color = p.border_color
+	}
+	if p.bg_color != no_color {
+		b.style_forced.bg_color = p.bg_color
+	}
+	if p.bg_color_pressed != no_color {
+		b.style.bg_color_pressed = p.bg_color_pressed
+	}
+	if p.bg_color_hover != no_color {
+		b.style.bg_color_hover = p.bg_color_hover
+	}
+	mut dtw := DrawTextWidget(b)
+	dtw.update_theme_style_params(p)
 }

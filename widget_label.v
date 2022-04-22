@@ -96,7 +96,7 @@ fn (mut l Label) set_pos(x int, y int) {
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
 		dtw := DrawTextWidget(l)
-		println(dtw.current_style().size)
+		// println(dtw.current_style().size)
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		if !l.text.contains('\n') {

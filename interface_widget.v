@@ -109,6 +109,5 @@ pub fn (w Widget) has_focus() bool {
 }
 
 pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
-	println('heeeee $w.id $r')
 	w.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }
