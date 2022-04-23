@@ -179,8 +179,8 @@ fn main() {
 							),
 							ui.picture(
 								id: 'logo'
-								width: 100
-								height: 100
+								width: 50
+								height: 50
 								path: logo
 							),
 						]

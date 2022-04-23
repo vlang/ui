@@ -350,6 +350,7 @@ fn gg_init(mut window Window) {
 	}
 	// refresh the layout
 	window.update_layout()
+	window.top_layer.init(window)
 	if window.on_init != voidptr(0) {
 		window.on_init(window)
 	}
@@ -389,6 +390,8 @@ fn frame(mut w Window) {
 	if w.on_draw != voidptr(0) {
 		w.on_draw(w)
 	}
+
+	w.top_layer.draw()
 
 	w.mouse.draw()
 	/*

@@ -81,6 +81,7 @@ pub fn menu(c MenuParams) &Menu {
 		hidden: c.hidden
 	}
 	m.style_forced.style = c.theme
+	// connect parent menu
 	for mut item in m.items {
 		item.menu = m
 	}
@@ -151,6 +152,9 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 			int((e.x - m.x - m.offset_y) / ui.menu_width)
 		}
 		item := m.items[i]
+		if item.submenu != 0 {
+			// item.open()
+		}
 		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()

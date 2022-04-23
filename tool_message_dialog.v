@@ -22,6 +22,7 @@ fn (mut win Window) add_message_dialog() {
 				text: 'OK'
 				width: 100
 				radius: .3
+				z_index: 1000
 				onclick: message_dialog_click
 			),
 		]
