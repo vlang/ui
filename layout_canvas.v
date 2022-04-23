@@ -40,6 +40,7 @@ pub mut:
 	full_width       int
 	full_height      int
 	justify          []f64
+	is_canvas_layer  bool
 	// Style
 	theme_style  string
 	style        CanvasLayoutShapeStyle
@@ -159,6 +160,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	ui := parent.get_ui()
 	c.ui = ui
 	c.init_size()
+	c.init_layer()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -691,6 +693,8 @@ pub fn (c &CanvasLayout) child_index_by_id(id string) int {
 	}
 	return -1
 }
+
+//
 
 pub fn (c &CanvasLayout) orig_pos(x f64, y f64) (int, int) {
 	return int(x + c.x + c.offset_x), int(y + c.y + c.offset_y)

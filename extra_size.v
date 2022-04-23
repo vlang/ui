@@ -48,11 +48,6 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	}
 }
 
-fn is_children_have_widget(children []Widget) bool {
-	tmp := children.filter(!(it is Stack || it is Group))
-	return tmp.len > 0
-}
-
 //***********  cache **********
 
 pub enum ChildSize {

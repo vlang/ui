@@ -111,3 +111,26 @@ pub fn (w Widget) has_focus() bool {
 pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
 	w.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }
+
+// children contains pure widgets (no stack or group), canvas_layout considered here as a widget (as it is the case ver often for component)
+pub fn is_children_have_widget(children []Widget) bool {
+	tmp := children.filter(!(it is Stack || it is Group))
+	return tmp.len > 0
+}
+
+pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
+	if parent is Layout {
+		if w.parent.id == parent.id {
+			return true
+		} else {
+			// p := w.parent
+			// if p is Widget {
+			// 	wi := p as Widget
+
+			// }
+			return false
+		}
+	} else {
+		return false
+	}
+}

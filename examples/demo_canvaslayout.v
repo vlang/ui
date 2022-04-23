@@ -3,12 +3,8 @@ import gx
 import os
 
 const (
-	win_width   = 500
-	win_height  = 385
-	nr_cols     = 4
-	cell_height = 25
-	cell_width  = 100
-	table_width = cell_width * nr_cols
+	win_width  = 500
+	win_height = 385
 )
 
 fn main() {
@@ -42,7 +38,7 @@ fn main() {
 					ui.canvas_layout(
 						on_draw: draw
 						on_mouse_move: mouse_move
-						full_width: win_width - 100
+						full_width: win_width - 20
 						full_height: win_height
 						scrollview: true
 						children: [
@@ -50,15 +46,15 @@ fn main() {
 								spacing: 10
 								heights: ui.compact
 								children: [
-									ui.button(z_index: 1, text: 'X'),
-									ui.button(z_index: 1, text: 'Add'),
+									ui.button(z_index: 10, text: 'X'),
+									ui.button(z_index: 10, text: 'Add'),
 								]
 							)),
 							ui.at(10, 10, ui.button(
 								id: 'b_thm'
 								text: 'Theme'
 								width: 100
-								style: 'red'
+								theme: 'red'
 								z_index: 10
 								movable: true
 								hoverable: true
@@ -77,7 +73,7 @@ fn main() {
 								on_selection_changed: dd_change
 								items: [
 									ui.DropdownItem{
-										text: 'classic'
+										text: 'default'
 									},
 									ui.DropdownItem{
 										text: 'blue'
@@ -96,7 +92,7 @@ fn main() {
 								// scrollview: false
 								draw_lines: true
 								items: {
-									'classic':  'Classic'
+									'default':  'Classic'
 									'blue':     'Blue'
 									'red':      'Red'
 									'classic2': 'Classic2'
@@ -141,6 +137,7 @@ fn main() {
 							ui.at(150, 100, ui.menu(
 								id: 'menu'
 								text: 'Menu'
+								width: 200
 								items: [
 									ui.MenuItem{
 										text: 'Delete all users'
@@ -172,7 +169,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click(m &ui.Menu, item &ui.MenuItem, app voidptr) {
+fn menu_click(item &ui.MenuItem, app voidptr) {
 	println('menu here $item.text')
 }
 
@@ -180,7 +177,7 @@ fn dd_change(app voidptr, dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
 	mut b := win.button('b_thm')
-	b.update_style(style: dd.selected().text)
+	b.update_theme_style(dd.selected().text)
 }
 
 fn lb_change(app voidptr, lb &ui.ListBox) {
@@ -188,7 +185,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 
 	win := lb.ui.window
 	mut b := win.button('b_thm')
-	b.update_style(style: id)
+	b.update_theme_style(id)
 }
 
 fn lb_change_multi(app voidptr, lb &ui.ListBox) {

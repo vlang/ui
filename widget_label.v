@@ -100,8 +100,7 @@ fn (mut l Label) adj_size() (int, int) {
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		if !l.text.contains('\n') {
-			w, _ = dtw.text_size(l.text)
-			h = dtw.current_style().size // better for label?
+			w, h = dtw.text_width(l.text), dtw.current_style().size
 			// println("$w, $h, $l.text ${dtw.text_height(l.text)}")
 		} else {
 			for line in l.text.split('\n') {

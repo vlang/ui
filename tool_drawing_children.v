@@ -9,8 +9,12 @@ struct SortedWidget {
 }
 
 fn compare_sorted_widget(a &SortedWidget, b &SortedWidget) int {
-	az, bz := a.w.z_index + if a.w.has_focus() { z_index_focus } else { 0 }, b.w.z_index +
-		if b.w.has_focus() { z_index_focus } else { 0 }
+	// z_index_focus added only if a is not the parent of b
+	az := a.w.z_index +
+		if !b.w.is_in_parent_tree(a.w) && a.w.has_focus() { z_index_focus } else { 0 }
+	// z_index_focus added only if b is not the parent of a
+	bz := b.w.z_index +
+		if !a.w.is_in_parent_tree(b.w) && b.w.has_focus() { z_index_focus } else { 0 }
 	if az < bz {
 		return -1
 	} else if az > bz {

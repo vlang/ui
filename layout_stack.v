@@ -1116,8 +1116,8 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 	if Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s) {
 		// if s.scrollview != 0 {
 		for mut child in s.drawing_children {
-			Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
-			Widget(s).debug_gg_rect(child.bounds(), gx.green)
+			// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
+			// Widget(s).debug_gg_rect(child.bounds(), gx.green)
 			if mut child is Layout
 				|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
 				child.draw_device(d)

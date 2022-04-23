@@ -64,6 +64,7 @@ pub mut:
 	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
 	mode              WindowSizeType
 	root_layout       Layout = empty_stack
+	top_layer         CanvasLayout // For absolute coordinates widgets located on top
 	dpi_scale         f32
 	// saved origin sizes
 	orig_width   int
@@ -1212,8 +1213,7 @@ pub fn (w &Window) close() {}
 
 //---- child widgets
 
-// Experimental: attempt to register child to get it by id from window
-// RMK: If id is accepted by community, put `id` inside interface Widget
+// Register child to be obtained by id from window
 pub fn (mut w Window) register_child(child_ Widget) {
 	mut child := unsafe { child_ }
 	if mut child is Button {

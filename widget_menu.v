@@ -7,6 +7,8 @@ import gx
 
 const (
 	menu_height       = 30
+	menu_width        = 150
+	menu_padding      = 10
 	menu_bg_color     = gx.rgb(240, 240, 240)
 	menu_border_color = gx.rgb(223, 223, 223)
 )
@@ -29,34 +31,41 @@ pub mut:
 	width       int
 	height      int
 mut:
-	text    string
-	parent  Layout = empty_stack
-	x       int
-	y       int
-	z_index int
-	items   []MenuItem
-}
-
-pub type MenuItemFn = fn (m &Menu, item &MenuItem, state voidptr)
-
-pub struct MenuItem {
-mut:
-	action MenuItemFn
-pub mut:
-	text string
+	text        string
+	parent      Layout = empty_stack
+	x           int
+	y           int
+	dx          int
+	dy          int = 1
+	z_index     int
+	items       []MenuItem
+	orientation Orientation = Orientation.vertical
 }
 
 [params]
 pub struct MenuParams {
 	MenuStyleParams
-	id        string
-	width     int = 150
-	z_index   int
-	text_size f64
-	text      string
-	items     []MenuItem
-	hidden    bool
-	theme     string = no_style
+	id      string
+	width   int = ui.menu_width
+	height  int = ui.menu_height
+	z_index int
+	// text_size f64
+	text   string
+	items  []MenuItem
+	hidden bool
+	theme  string = no_style
+}
+
+pub type MenuItemFn = fn (item &MenuItem, state voidptr)
+
+[params]
+pub struct MenuItem {
+pub mut:
+	text    string
+	submenu &Menu = 0
+	menu    &Menu = 0
+mut:
+	action MenuItemFn = MenuItemFn(0)
 }
 
 pub fn menu(c MenuParams) &Menu {
@@ -65,13 +74,28 @@ pub fn menu(c MenuParams) &Menu {
 		text: c.text
 		items: c.items
 		width: c.width
+		height: c.height
 		ui: 0
 		z_index: c.z_index
 		style_forced: c.MenuStyleParams
 		hidden: c.hidden
 	}
 	m.style_forced.style = c.theme
+	for mut item in m.items {
+		item.menu = m
+	}
 	return m
+}
+
+pub fn menu_main(c MenuParams) &Menu {
+	mut m := menu(c)
+	m.orientation = .horizontal
+	m.dx, m.dy = 1, 0
+	return m
+}
+
+pub fn menuitem(p MenuItem) MenuItem {
+	return p
 }
 
 fn (mut m Menu) init(parent Layout) {
@@ -79,7 +103,7 @@ fn (mut m Menu) init(parent Layout) {
 	ui := parent.get_ui()
 	m.ui = ui
 	m.load_style()
-	m.update_height()
+	m.update_size()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
@@ -121,12 +145,16 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
-		i := int((e.y - m.y - m.offset_y) / ui.menu_height)
+		i := if m.orientation == .vertical {
+			int((e.y - m.y - m.offset_y) / ui.menu_height)
+		} else {
+			int((e.x - m.x - m.offset_y) / ui.menu_width)
+		}
 		item := m.items[i]
 		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()
-			item.action(&m, &item, state)
+			item.action(&item, state)
 		}
 	}
 }
@@ -136,12 +164,16 @@ pub fn (mut m Menu) set_pos(x int, y int) {
 	m.y = y
 }
 
-fn (mut m Menu) update_height() {
-	m.height = m.items.len * ui.menu_height
+fn (mut m Menu) update_size() {
+	if m.orientation == .vertical {
+		m.height = m.items.len * ui.menu_height
+	} else {
+		m.width = m.items.len * ui.menu_width
+	}
 }
 
 pub fn (mut m Menu) size() (int, int) {
-	m.update_height()
+	m.update_size()
 	return m.width, m.height
 }
 
@@ -165,8 +197,10 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 
 	d.draw_rect_filled(m.x, m.y, m.width, m.height, m.style.bg_color)
 	d.draw_rect_empty(m.x, m.y, m.width, m.height, m.style.border_color)
+
 	for i, item in m.items {
-		dtw.draw_device_text(d, m.x + 10, m.y + i * ui.menu_height + 10, item.text)
+		dtw.draw_device_text(d, m.x + i * m.dx * ui.menu_width + ui.menu_padding, m.y +
+			i * m.dy * ui.menu_height + ui.menu_padding, item.text)
 	}
 	offset_end(mut m)
 }
