@@ -160,7 +160,6 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	ui := parent.get_ui()
 	c.ui = ui
 	c.init_size()
-	c.init_layer()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -393,6 +392,10 @@ fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
 }
 
 pub fn (mut c CanvasLayout) update_layout() {
+	if c.is_canvas_layer {
+		return
+	}
+	// println("$c.id update_layout")
 	c.set_drawing_children()
 	// update size and scrollview if necessary
 	c.set_adjusted_size(c.ui)
@@ -573,7 +576,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	scrollview_draw_begin(mut c, d)
 
 	// println("$c.id $c.style")
-	if c.style.bg_color != no_color {
+	if c.style.bg_color !in [no_color, transparent] {
 		mut w, mut h := c.width, c.height
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
@@ -607,7 +610,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	if Layout(c).has_scrollview_or_parent_scrollview() && scrollview_is_active(c) {
 		// if c.scrollview != 0  && scrollview_is_active(c) {
 		$if cl_draw_children ? {
-			println('draw $c.id: ${c.drawing_children.map(it.id)}')
+			println('draw <$c.id>: ${c.drawing_children.map(it.id)}')
 		}
 		for mut child in c.drawing_children {
 			if mut child is Layout
@@ -617,7 +620,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 	} else {
 		$if cl_draw_children ? {
-			println('draw $c.id: ${c.drawing_children.map(it.id)}')
+			println('draw <$c.id>: ${c.drawing_children.map(it.id)}')
 		}
 		for mut child in c.drawing_children {
 			child.draw_device(d)

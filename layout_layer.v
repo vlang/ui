@@ -9,22 +9,28 @@ const (
 // Used to absolute coordinates on top (of everything)
 pub fn canvas_layer(c CanvasLayoutParams) &CanvasLayout {
 	mut cl := canvas_layout(c)
+	cl.id = 'top_layer'
 	cl.is_canvas_layer = true
 	cl.update_style_forced(bg_color: transparent)
+	println('canvas_layer $cl.id')
 	return cl
 }
 
-fn (mut c CanvasLayout) init_layer() {
-	if c.is_canvas_layer {
-		c.width = c.ui.window.width
-		c.height = c.ui.window.height
-	}
-}
-
-pub fn (mut c CanvasLayout) layer_add(w Widget) {
+pub fn (mut c CanvasLayout) add_top_layer(w Widget) {
 	if c.is_canvas_layer {
 		c.children << w
+		c.drawing_children << w
 	}
 }
 
-// Preprocess for Window for
+pub fn (mut window Window) add_top_layer(w Widget) {
+	window.top_layer.add_top_layer(w)
+}
+
+// init for top layer
+fn (mut window Window) init_top_layer() {
+	window.top_layer.init(window)
+	window.top_layer.width = window.width
+	window.top_layer.height = window.height
+	window.top_layer.update_layout()
+}

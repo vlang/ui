@@ -233,7 +233,7 @@ pub fn window(cfg WindowParams) &Window {
 		resumed_fn: cfg.on_resume
 	}
 	window.style_forced.bg_color = cfg.bg_color
-
+	window.top_layer = canvas_layer()
 	gcontext := gg.new_context(
 		width: width
 		height: height
@@ -337,6 +337,7 @@ fn gg_init(mut window Window) {
 	if !window.native_message {
 		window.add_message_dialog()
 	}
+
 	for mut child in window.children {
 		// println('init <$child.id>')
 		window.register_child(*child)
@@ -350,7 +351,11 @@ fn gg_init(mut window Window) {
 	}
 	// refresh the layout
 	window.update_layout()
-	window.top_layer.init(window)
+
+	// top layer
+	window.init_top_layer()
+
+	// last window init
 	if window.on_init != voidptr(0) {
 		window.on_init(window)
 	}

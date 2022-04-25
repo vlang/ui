@@ -30,6 +30,8 @@ pub mut:
 	component   voidptr
 	width       int
 	height      int
+	item_width  int
+	item_height int
 mut:
 	text        string
 	parent      Layout = empty_stack
@@ -38,7 +40,7 @@ mut:
 	dx          int
 	dy          int = 1
 	z_index     int
-	items       []MenuItem
+	items       []&MenuItem
 	orientation Orientation = Orientation.vertical
 }
 
@@ -51,21 +53,9 @@ pub struct MenuParams {
 	z_index int
 	// text_size f64
 	text   string
-	items  []MenuItem
+	items  []&MenuItem
 	hidden bool
 	theme  string = no_style
-}
-
-pub type MenuItemFn = fn (item &MenuItem, state voidptr)
-
-[params]
-pub struct MenuItem {
-pub mut:
-	text    string
-	submenu &Menu = 0
-	menu    &Menu = 0
-mut:
-	action MenuItemFn = MenuItemFn(0)
 }
 
 pub fn menu(c MenuParams) &Menu {
@@ -75,6 +65,8 @@ pub fn menu(c MenuParams) &Menu {
 		items: c.items
 		width: c.width
 		height: c.height
+		item_width: c.width
+		item_height: c.height
 		ui: 0
 		z_index: c.z_index
 		style_forced: c.MenuStyleParams
@@ -82,8 +74,9 @@ pub fn menu(c MenuParams) &Menu {
 	}
 	m.style_forced.style = c.theme
 	// connect parent menu
-	for mut item in m.items {
+	for i, mut item in m.items {
 		item.menu = m
+		item.pos = i
 	}
 	return m
 }
@@ -95,16 +88,15 @@ pub fn menu_main(c MenuParams) &Menu {
 	return m
 }
 
-pub fn menuitem(p MenuItem) MenuItem {
-	return p
-}
-
 fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
 	m.load_style()
 	m.update_size()
+	for mut item in m.items {
+		item.init()
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 }
@@ -147,32 +139,34 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	}
 	if m.point_inside(e.x, e.y) {
 		i := if m.orientation == .vertical {
-			int((e.y - m.y - m.offset_y) / ui.menu_height)
+			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			int((e.x - m.x - m.offset_y) / ui.menu_width)
+			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
-		item := m.items[i]
+		mut item := m.items[i]
 		if item.submenu != 0 {
-			// item.open()
+			println('open submenu $item.id')
+			item.open_submenu()
 		}
 		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()
-			item.action(&item, state)
+			item.action(item, state)
 		}
 	}
 }
 
 pub fn (mut m Menu) set_pos(x int, y int) {
+	println('set_pos $m.id $x, $y')
 	m.x = x
 	m.y = y
 }
 
 fn (mut m Menu) update_size() {
 	if m.orientation == .vertical {
-		m.height = m.items.len * ui.menu_height
+		m.height = m.items.len * m.item_height
 	} else {
-		m.width = m.items.len * ui.menu_width
+		m.width = m.items.len * m.item_width
 	}
 }
 
@@ -203,17 +197,15 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	d.draw_rect_empty(m.x, m.y, m.width, m.height, m.style.border_color)
 
 	for i, item in m.items {
-		dtw.draw_device_text(d, m.x + i * m.dx * ui.menu_width + ui.menu_padding, m.y +
-			i * m.dy * ui.menu_height + ui.menu_padding, item.text)
+		// println("item <$m.id> $m.x, $m.y")
+		dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
+			i * m.dy * m.item_height + ui.menu_padding, item.text)
 	}
 	offset_end(mut m)
 }
 
-pub fn (mut m Menu) add_item(text string, action MenuItemFn) {
-	m.items << MenuItem{
-		text: text
-		action: action
-	}
+pub fn (mut m Menu) add_item(p MenuItemParams) {
+	m.items << menuitem(p)
 }
 
 pub fn (mut m Menu) set_visible(state bool) {
@@ -226,4 +218,64 @@ fn (m &Menu) point_inside(x f64, y f64) bool {
 
 pub fn (mut m Menu) set_text(s string) {
 	m.text = s
+}
+
+pub type MenuItemFn = fn (item &MenuItem, state voidptr)
+
+[heap]
+pub struct MenuItem {
+pub mut:
+	id      string
+	text    string
+	pos     int
+	submenu &Menu = 0
+	menu    &Menu = 0
+mut:
+	action MenuItemFn
+}
+
+[params]
+pub struct MenuItemParams {
+	id      string
+	text    string
+	submenu &Menu      = 0
+	action  MenuItemFn = MenuItemFn(0)
+}
+
+pub fn menuitem(p MenuItemParams) &MenuItem {
+	mi := &MenuItem{
+		text: p.text
+		id: if p.id == '' { p.text } else { p.id }
+		action: p.action
+		submenu: p.submenu
+	}
+	return mi
+}
+
+fn (mut mi MenuItem) init() {
+	if mi.submenu != 0 {
+		mi.submenu.id = '$mi.menu.id/$mi.id'
+		mi.menu.ui.window.add_top_layer(mi.submenu)
+		mi.submenu.set_visible(false)
+		println('add_top_layer $mi.submenu.id')
+		println('<$mi.submenu.id> $mi.submenu.x, $mi.submenu.y')
+		println('${mi.menu.ui.window.top_layer.children.map(it.id)}')
+	}
+}
+
+pub fn (mut mi MenuItem) open_submenu() {
+	if mi.submenu.hidden {
+		if mi.menu.orientation == .horizontal {
+			mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y +
+				mi.menu.item_height)
+		} else {
+			mi.submenu.set_pos(mi.menu.x + mi.menu.item_width, mi.menu.y +
+				mi.pos * mi.menu.item_height)
+		}
+		mi.submenu.set_visible(true)
+	} else {
+		mi.submenu.set_visible(false)
+	}
+	// println("open ${mi.menu.ui.window.top_layer.children.map(it.id)}")
+	// mi.menu.ui.window.top_layer.update_layout()
 }

@@ -2,8 +2,8 @@ import ui
 import gx
 
 const (
-	win_width  = 250
-	win_height = 250
+	win_width  = 800
+	win_height = 600
 )
 
 struct App {
@@ -13,6 +13,39 @@ mut:
 
 fn main() {
 	mut app := &App{}
+	menu_items := [
+		ui.menuitem(
+			text: 'Delete'
+			submenu: ui.menu(
+				items: [
+					ui.menuitem(
+						text: 'all developers'
+						action: menu_click
+					),
+					ui.menuitem(
+						text: 'users'
+						submenu: ui.menu(
+							items: [
+								ui.menuitem(
+									text: 'all'
+									action: menu_click
+								),
+								ui.menuitem(
+									text: 'devel'
+									action: menu_click
+								),
+							]
+						)
+					),
+				]
+			)
+		),
+		ui.menuitem(
+			text: 'Export users'
+			action: menu_click
+		),
+		ui.menuitem(text: 'Exit', action: menu_click),
+	]
 	window := ui.window(
 		width: win_width
 		height: win_height
@@ -20,17 +53,22 @@ fn main() {
 		resizable: true
 		state: app
 		children: [
-			ui.row(
-				margin_: .3
-				widths: .4
-				heights: .4
+			ui.column(
+				margin_: 0
+				widths: [ui.stretch, .4]
+				heights: [ui.compact, .4]
 				bg_color: gx.rgba(255, 0, 0, 20)
-				children: [
-					ui.button(text: 'Add user'),
-				]
+				children: [ui.menu_main(
+					items: menu_items
+				),
+					ui.button(text: 'Add user')]
 			),
 		]
 	)
 	app.window = window
 	ui.run(window)
+}
+
+fn menu_click(item &ui.MenuItem, a voidptr) {
+	println('$item.text selected')
 }
