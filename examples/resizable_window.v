@@ -32,7 +32,29 @@ fn main() {
 								),
 								ui.menuitem(
 									text: 'devel'
-									action: menu_click
+									submenu: ui.menu(
+										items: [
+											ui.menuitem(
+												text: 'all'
+												action: menu_click
+											),
+											ui.menuitem(
+												text: 'devel'
+												submenu: ui.menu(
+													items: [
+														ui.menuitem(
+															text: 'all'
+															action: menu_click
+														),
+														ui.menuitem(
+															text: 'devel'
+															action: menu_click
+														),
+													]
+												)
+											),
+										]
+									)
 								),
 							]
 						)
@@ -45,6 +67,32 @@ fn main() {
 			action: menu_click
 		),
 		ui.menuitem(text: 'Exit', action: menu_click),
+		ui.menuitem(
+			text: 'devel'
+			submenu: ui.menu(
+				items: [
+					ui.menuitem(
+						text: 'all'
+						action: menu_click
+					),
+					ui.menuitem(
+						text: 'devel'
+						submenu: ui.menu(
+							items: [
+								ui.menuitem(
+									text: 'all'
+									action: menu_click
+								),
+								ui.menuitem(
+									text: 'devel'
+									action: menu_click
+								),
+							]
+						)
+					),
+				]
+			)
+		),
 	]
 	window := ui.window(
 		width: win_width
@@ -58,7 +106,7 @@ fn main() {
 				widths: [ui.stretch, .4]
 				heights: [ui.compact, .4]
 				bg_color: gx.rgba(255, 0, 0, 20)
-				children: [ui.menu_main(
+				children: [ui.menubar(
 					items: menu_items
 				),
 					ui.button(text: 'Add user')]

@@ -10,8 +10,8 @@ const (
 	menu_width          = 150
 	menu_padding        = 10
 	menu_bg_color       = gx.rgb(240, 240, 240)
-	menu_bg_color_hover = gx.rgb(250, 250, 250)
-	menu_border_color   = gx.rgb(223, 223, 223)
+	menu_bg_color_hover = gx.rgb(220, 220, 220)
+	menu_border_color   = gx.rgb(123, 123, 123)
 )
 
 [heap]
@@ -34,6 +34,7 @@ pub mut:
 	item_width  int
 	item_height int
 	hovered     int = -1
+	selected    int = -1
 mut:
 	text        string
 	parent      Layout = empty_stack
@@ -43,6 +44,7 @@ mut:
 	dy          int = 1
 	z_index     int
 	items       []&MenuItem
+	parent_menu &Menu       = 0 // for submenu
 	orientation Orientation = Orientation.vertical
 }
 
@@ -79,11 +81,14 @@ pub fn menu(c MenuParams) &Menu {
 	for i, mut item in m.items {
 		item.menu = m
 		item.pos = i
+		if item.id == '' {
+			item.id = '$i'
+		}
 	}
 	return m
 }
 
-pub fn menu_main(c MenuParams) &Menu {
+pub fn menubar(c MenuParams) &Menu {
 	mut m := menu(c)
 	m.orientation = .horizontal
 	m.dx, m.dy = 1, 0
@@ -135,15 +140,16 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
-		i := if m.orientation == .vertical {
+		m.selected = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
-		mut item := m.items[i]
+		mut item := m.items[m.selected]
 		if item.submenu != 0 {
-			println('open submenu $item.id')
-			item.open_submenu()
+			println('toggle submenu $item.id')
+			item.submenu.parent_menu = item.menu
+			item.toggle_submenu()
 		}
 		if item.action != voidptr(0) {
 			parent := m.parent
@@ -158,12 +164,11 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
-		i := if m.orientation == .vertical {
+		m.hovered = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
-		m.hovered = i
 
 		// if item.submenu != 0 {
 		// 	println('open submenu $item.id')
@@ -234,6 +239,16 @@ pub fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
 }
 
+pub fn (mut m Menu) set_children_visible(state bool) {
+	m.set_visible(state)
+	if m.selected >= 0 {
+		mut item := m.items[m.selected]
+		if item.has_submenu() {
+			item.submenu.set_children_visible(state)
+		}
+	}
+}
+
 fn (m &Menu) point_inside(x f64, y f64) bool {
 	return point_inside(m, x, y)
 }
@@ -267,7 +282,7 @@ pub struct MenuItemParams {
 pub fn menuitem(p MenuItemParams) &MenuItem {
 	mi := &MenuItem{
 		text: p.text
-		id: if p.id == '' { p.text } else { p.id }
+		id: p.id
 		action: p.action
 		submenu: p.submenu
 	}
@@ -275,8 +290,9 @@ pub fn menuitem(p MenuItemParams) &MenuItem {
 }
 
 fn (mut mi MenuItem) init() {
+	mi.id = mi.menu.id + '/' + mi.id
 	if mi.submenu != 0 {
-		mi.submenu.id = '$mi.menu.id/$mi.id'
+		mi.submenu.id = '$mi.id'
 		mi.menu.ui.window.add_top_layer(mi.submenu)
 		mi.submenu.set_visible(false)
 		println('add_top_layer $mi.submenu.id')
@@ -285,19 +301,35 @@ fn (mut mi MenuItem) init() {
 	}
 }
 
-pub fn (mut mi MenuItem) open_submenu() {
+pub fn (mi &MenuItem) has_submenu() bool {
+	return mi.submenu != 0
+}
+
+pub fn (mut mi MenuItem) toggle_submenu() {
 	if mi.submenu.hidden {
-		if mi.menu.orientation == .horizontal {
-			mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y +
-				mi.menu.item_height)
-		} else {
-			mi.submenu.set_pos(mi.menu.x + mi.menu.item_width, mi.menu.y +
-				mi.pos * mi.menu.item_height)
-		}
+		mi.set_pos_submenu()
 		mi.submenu.set_visible(true)
 	} else {
-		mi.submenu.set_visible(false)
+		mi.submenu.set_children_visible(false)
 	}
-	// println("open ${mi.menu.ui.window.top_layer.children.map(it.id)}")
-	// mi.menu.ui.window.top_layer.update_layout()
+}
+
+pub fn (mut mi MenuItem) set_submenu_visible(state bool) {
+	if state {
+		mi.set_pos_submenu()
+		mi.submenu.set_visible(true)
+	} else {
+		mi.submenu.set_children_visible(false)
+	}
+}
+
+pub fn (mut mi MenuItem) set_pos_submenu() {
+	if mi.submenu == voidptr(0) {
+		return
+	}
+	if mi.menu.orientation == .horizontal {
+		mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y + mi.menu.item_height)
+	} else {
+		mi.submenu.set_pos(mi.menu.x + mi.menu.item_width, mi.menu.y + mi.pos * mi.menu.item_height)
+	}
 }
