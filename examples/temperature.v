@@ -43,8 +43,8 @@ fn main() {
 				heights: 20.0
 				children: [ui.label(text: 'Celsius'), app.txt_box_celsius,
 					ui.label(
-					text: 'Fahrenheit'
-				), app.txt_box_fahrenheit]
+						text: 'Fahrenheit'
+					), app.txt_box_fahrenheit]
 			),
 		]
 	)

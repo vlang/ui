@@ -31,41 +31,41 @@ fn main() {
 				widths: [ui.stretch, 15 * ui.stretch]
 				children: [ui.rectangle(color: gx.red),
 					ui.column(
-					// scrollview: true
-					widths: ui.stretch
-					heights: [ui.stretch, 15 * ui.stretch]
-					children: [ui.rectangle(color: gx.red),
-						uic.datagrid_stack(
-						id: 'grid2'
-						scrollview: true
-						is_focused: true
-						settings_bg_color: gx.hex(0xfcf4e4ff)
-						// fixed_height: false
-						vars: {
-							'v1':     ['toto', 'titi', 'tata'].repeat(n)
-							'v2':     ['toti', 'tito', 'tato'].repeat(n)
-							'sex':    uic.Factor{
-								levels: ['Male', 'Female']
-								values: [0, 0, 1].repeat(n)
-							}
-							'worker': [true, true, false].repeat(n)
-							'csp':    uic.Factor{
-								levels: ['job1', 'job2', 'other']
-								values: [0, 1, 2].repeat(n)
-							}
-							'v3':     ['toto', 'titi', 'tata'].repeat(n)
-							'v4':     ['toti', 'tito', 'tato'].repeat(n)
-							'sex2':   uic.Factor{
-								levels: ['Male', 'Female']
-								values: [0, 0, 1].repeat(n)
-							}
-							'csp2':   uic.Factor{
-								levels: ['job1', 'job2', 'other']
-								values: [0, 1, 2].repeat(n)
-							}
-						}
+						// scrollview: true
+						widths: ui.stretch
+						heights: [ui.stretch, 15 * ui.stretch]
+						children: [ui.rectangle(color: gx.red),
+							uic.datagrid_stack(
+								id: 'grid2'
+								scrollview: true
+								is_focused: true
+								settings_bg_color: gx.hex(0xfcf4e4ff)
+								// fixed_height: false
+								vars: {
+									'v1':     ['toto', 'titi', 'tata'].repeat(n)
+									'v2':     ['toti', 'tito', 'tato'].repeat(n)
+									'sex':    uic.Factor{
+										levels: ['Male', 'Female']
+										values: [0, 0, 1].repeat(n)
+									}
+									'worker': [true, true, false].repeat(n)
+									'csp':    uic.Factor{
+										levels: ['job1', 'job2', 'other']
+										values: [0, 1, 2].repeat(n)
+									}
+									'v3':     ['toto', 'titi', 'tata'].repeat(n)
+									'v4':     ['toti', 'tito', 'tato'].repeat(n)
+									'sex2':   uic.Factor{
+										levels: ['Male', 'Female']
+										values: [0, 0, 1].repeat(n)
+									}
+									'csp2':   uic.Factor{
+										levels: ['job1', 'job2', 'other']
+										values: [0, 1, 2].repeat(n)
+									}
+								}
+							)]
 					)]
-				)]
 			),
 		]
 	)

@@ -82,74 +82,81 @@ fn main() {
 				widths: [.3, .64] // 1.0 == .64 + .3 + .02 + 2 * .02
 				children: [
 					ui.column(
-					spacing: 10
-					heights: ui.compact
-					scrollview: true
-					children: [
-						ui.textbox(
-							max_len: 20
-							width: 200
-							placeholder: 'First name'
-							text: &app.first_name
-							// is_focused: &app.started
-							is_error: &app.is_error
-							is_focused: true
-						),
-						ui.textbox(
-							max_len: 50
-							width: 200
-							placeholder: 'Last name'
-							text: &app.last_name
-							is_error: &app.is_error
-						),
-						ui.textbox(
-							max_len: 3
-							width: 200
-							placeholder: 'Age'
-							is_numeric: true
-							text: &app.age
-							is_error: &app.is_error
-						),
-						ui.textbox(
-							width: 200
-							placeholder: 'Password'
-							is_password: true
-							max_len: 20
-							text: &app.password
-						),
-						ui.checkbox(
-							checked: true
-							text: 'Online registration'
-						),
-						ui.checkbox(text: 'Subscribe to the newsletter'),
-						app.country,
-						ui.row(
-							id: 'btn_row'
-							widths: [.5, .2]
-							heights: 20.0
-							spacing: .3
-							children: [
-								ui.button(
-								text: 'Add user'
-								tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
-								onclick: btn_add_click
-								radius: .0
+						spacing: 10
+						heights: ui.compact
+						scrollview: true
+						children: [
+							ui.textbox(
+								max_len: 20
+								width: 200
+								placeholder: 'First name'
+								text: &app.first_name
+								// is_focused: &app.started
+								is_error: &app.is_error
+								is_focused: true
 							),
-								ui.button(
-									tooltip: 'about'
-									text: '?'
-									onclick: btn_help_click
-									radius: .3
-								)]
-						),
-						ui.row(
-							spacing: .05
-							widths: [.8, .15]
-							heights: ui.compact
-							children: [app.pbar, app.label]
-						),
-					]
-				),
+							ui.textbox(
+								max_len: 50
+								width: 200
+								placeholder: 'Last name'
+								text: &app.last_name
+								is_error: &app.is_error
+							),
+							ui.textbox(
+								max_len: 3
+								width: 200
+								placeholder: 'Age'
+								is_numeric: true
+								text: &app.age
+								is_error: &app.is_error
+							),
+							ui.textbox(
+								width: 200
+								placeholder: 'Password'
+								is_password: true
+								max_len: 20
+								text: &app.password
+							),
+							ui.checkbox(
+								checked: true
+								text: 'Online registration'
+							),
+							ui.checkbox(text: 'Subscribe to the newsletter'),
+							app.country,
+							ui.row(
+								id: 'btn_row'
+								widths: [.5, .2]
+								heights: 20.0
+								spacing: .3
+								children: [
+									ui.button(
+										text: 'Add user'
+										tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
+										onclick: btn_add_click
+										radius: .0
+									),
+									ui.button(
+										tooltip: 'about'
+										text: '?'
+										onclick: btn_help_click
+										radius: .3
+									),
+								]
+							),
+							ui.row(
+								spacing: .05
+								widths: [
+									.8,
+									.15,
+								]
+								heights: ui.compact
+								children: [
+									app.pbar,
+									app.label,
+								]
+							),
+						]
+					),
 					ui.column(
 						scrollview: true
 						alignments: ui.HorizontalAlignments{
@@ -184,7 +191,8 @@ fn main() {
 								path: logo
 							),
 						]
-					)]
+					),
+				]
 			),
 		]
 	)

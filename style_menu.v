@@ -7,8 +7,9 @@ import toml
 
 pub struct MenuShapeStyle {
 pub mut:
-	border_color gx.Color = menu_border_color
-	bg_color     gx.Color = menu_bg_color
+	border_color   gx.Color = menu_border_color
+	bg_color       gx.Color = menu_bg_color
+	bg_color_hover gx.Color = menu_bg_color_hover
 }
 
 pub struct MenuStyle {
@@ -24,9 +25,10 @@ pub mut:
 [params]
 pub struct MenuStyleParams {
 mut:
-	style        string   = no_style
-	border_color gx.Color = no_color
-	bg_color     gx.Color = no_color
+	style          string   = no_style
+	border_color   gx.Color = no_color
+	bg_color       gx.Color = no_color
+	bg_color_hover gx.Color = no_color
 	// text_style TextStyle
 	text_font_name      string
 	text_color          gx.Color = no_color
@@ -43,6 +45,7 @@ pub fn (ms MenuStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['border_color'] = hex_color(ms.border_color)
 	toml['bg_color'] = hex_color(ms.bg_color)
+	toml['bg_color_hover'] = hex_color(ms.bg_color_hover)
 	toml['text_font_name'] = ms.text_font_name
 	toml['text_color'] = hex_color(ms.text_color)
 	toml['text_size'] = ms.text_size
@@ -54,6 +57,7 @@ pub fn (ms MenuStyle) to_toml() string {
 pub fn (mut ms MenuStyle) from_toml(a toml.Any) {
 	ms.border_color = HexColor(a.value('border_color').string()).color()
 	ms.bg_color = HexColor(a.value('bg_color').string()).color()
+	ms.bg_color_hover = HexColor(a.value('bg_color_hover').string()).color()
 	ms.text_font_name = a.value('text_font_name').string()
 	ms.text_color = HexColor(a.value('text_color').string()).color()
 	ms.text_size = a.value('text_size').int()
@@ -93,6 +97,7 @@ pub fn (mut m Menu) update_style(p MenuStyleParams) {
 fn (mut m Menu) update_shape_theme_style(ms MenuStyle) {
 	m.style.border_color = ms.border_color
 	m.style.bg_color = ms.bg_color
+	m.style.bg_color_hover = ms.bg_color_hover
 }
 
 fn (mut m Menu) update_shape_style(p MenuStyleParams) {
@@ -102,6 +107,9 @@ fn (mut m Menu) update_shape_style(p MenuStyleParams) {
 	if p.bg_color != no_color {
 		m.style.bg_color = p.bg_color
 	}
+	if p.bg_color_hover != no_color {
+		m.style.bg_color_hover = p.bg_color_hover
+	}
 }
 
 fn (mut m Menu) update_style_forced(p MenuStyleParams) {
@@ -110,6 +118,9 @@ fn (mut m Menu) update_style_forced(p MenuStyleParams) {
 	}
 	if p.bg_color != no_color {
 		m.style_forced.bg_color = p.bg_color
+	}
+	if p.bg_color_hover != no_color {
+		m.style_forced.bg_color_hover = p.bg_color_hover
 	}
 	mut dtw := DrawTextWidget(m)
 	dtw.update_theme_style_params(p)

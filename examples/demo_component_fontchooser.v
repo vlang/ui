@@ -31,29 +31,30 @@ fn main() {
 				spacing: 10
 				children: [
 					ui.row(
-					widths: ui.compact
-					spacing: 10
-					children: [
-						uic.fontbutton(
-							text: 'font'
-							dtw: tb
-						),
-						uic.colorbutton(
-							id: 'txt_color'
-							// bg_color: &tb.text_styles.current.color
-							// DO NOT REMOVE: more general alternative with callback
-							on_changed: fn (cbc &uic.ColorButtonComponent) {
-								mut tv := cbc.widget.ui.window.textbox('tb').tv
-								tv.update_style(color: cbc.bg_color)
-							}
-						),
-						uic.colorbutton(
-							id: 'bg_color'
-							bg_color: &tb.bg_color
-						),
-					]
-				),
-					tb]
+						widths: ui.compact
+						spacing: 10
+						children: [
+							uic.fontbutton(
+								text: 'font'
+								dtw: tb
+							),
+							uic.colorbutton(
+								id: 'txt_color'
+								// bg_color: &tb.text_styles.current.color
+								// DO NOT REMOVE: more general alternative with callback
+								on_changed: fn (cbc &uic.ColorButtonComponent) {
+									mut tv := cbc.widget.ui.window.textbox('tb').tv
+									tv.update_style(color: cbc.bg_color)
+								}
+							),
+							uic.colorbutton(
+								id: 'bg_color'
+								bg_color: &tb.bg_color
+							),
+						]
+					),
+					tb,
+				]
 			),
 		]
 	)

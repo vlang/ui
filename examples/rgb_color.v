@@ -117,13 +117,13 @@ fn main() {
 				heights: [ui.stretch, 2 * ui.stretch, ui.stretch, 5 * ui.stretch, ui.stretch]
 				children: [
 					ui.button(
-					id: 'rgb_btn'
-					text: 'Show rgb color'
-					onclick: fn (app &App, b voidptr) {
-						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
-						ui.message_box(txt)
-					}
-				),
+						id: 'rgb_btn'
+						text: 'Show rgb color'
+						onclick: fn (app &App, b voidptr) {
+							txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+							ui.message_box(txt)
+						}
+					),
 					app.rgb_rectangle,
 					ui.row(
 						id: 'row_tb'
@@ -140,7 +140,8 @@ fn main() {
 						widths: w
 						children: [ui.spacing(), app.r_label, ui.spacing(), app.g_label,
 							ui.spacing(), app.b_label, ui.spacing()]
-					)]
+					),
+				]
 			),
 		]
 	)

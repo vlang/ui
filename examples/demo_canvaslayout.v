@@ -27,14 +27,14 @@ fn main() {
 				// scrollview: true
 				children: [
 					ui.picture(
-					width: 20
-					height: 20
-					movable: true
-					z_index: 20
-					path: logo
-					tooltip: 'press Shift to drag'
-					tooltip_side: .right
-				),
+						width: 20
+						height: 20
+						movable: true
+						z_index: 20
+						path: logo
+						tooltip: 'press Shift to drag'
+						tooltip_side: .right
+					),
 					ui.canvas_layout(
 						on_draw: draw
 						on_mouse_move: mouse_move
@@ -162,7 +162,8 @@ fn main() {
 								}
 							)),
 						]
-					)]
+					),
+				]
 			),
 		]
 	)

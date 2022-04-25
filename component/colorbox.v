@@ -117,9 +117,9 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 				spacing: 5.0
 				children: [cv_hsv_sel, r_rgb_cur,
 					ui.row(
-					widths: [20.0, ui.stretch]
-					children: [lb_r, tb_r]
-				),
+						widths: [20.0, ui.stretch]
+						children: [lb_r, tb_r]
+					),
 					ui.row(
 						widths: [20.0, ui.stretch]
 						children: [lb_g, tb_g]

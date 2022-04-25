@@ -80,68 +80,68 @@ fn main() {
 				spacing: 30
 				children: [
 					ui.column(
-					spacing: 13
-					children: [
-						ui.textbox(
-							max_len: 20
-							width: 200
-							placeholder: 'First name'
-							text: &app.first_name
-							// is_focused: &app.started
-							is_error: &app.is_error
-							is_focused: true
-						),
-						ui.textbox(
-							max_len: 50
-							width: 200
-							placeholder: 'Last name'
-							text: &app.last_name
-							is_error: &app.is_error
-						),
-						ui.textbox(
-							max_len: 3
-							width: 200
-							placeholder: 'Age'
-							is_numeric: true
-							text: &app.age
-							is_error: &app.is_error
-						),
-						ui.textbox(
-							width: 200
-							placeholder: 'Password'
-							is_password: true
-							max_len: 20
-							text: &app.password
-						),
-						ui.checkbox(
-							checked: true
-							text: 'Online registration'
-						),
-						ui.checkbox(text: 'Subscribe to the newsletter'),
-						app.country,
-						ui.row(
-							spacing: 65
-							widths: ui.compact
-							children: [
-								ui.button(
-									text: 'Add user'
-									onclick: btn_add_click
-								),
-								ui.button(
-									text: '?'
-									onclick: btn_help_click
-								),
-							]
-						),
-						ui.row(
-							spacing: 5
-							children: [
-								app.pbar,
-								app.label,
-							]
-						),
-					]
-				),
+						spacing: 13
+						children: [
+							ui.textbox(
+								max_len: 20
+								width: 200
+								placeholder: 'First name'
+								text: &app.first_name
+								// is_focused: &app.started
+								is_error: &app.is_error
+								is_focused: true
+							),
+							ui.textbox(
+								max_len: 50
+								width: 200
+								placeholder: 'Last name'
+								text: &app.last_name
+								is_error: &app.is_error
+							),
+							ui.textbox(
+								max_len: 3
+								width: 200
+								placeholder: 'Age'
+								is_numeric: true
+								text: &app.age
+								is_error: &app.is_error
+							),
+							ui.textbox(
+								width: 200
+								placeholder: 'Password'
+								is_password: true
+								max_len: 20
+								text: &app.password
+							),
+							ui.checkbox(
+								checked: true
+								text: 'Online registration'
+							),
+							ui.checkbox(text: 'Subscribe to the newsletter'),
+							app.country,
+							ui.row(
+								spacing: 65
+								widths: ui.compact
+								children: [
+									ui.button(
+										text: 'Add user'
+										onclick: btn_add_click
+									),
+									ui.button(
+										text: '?'
+										onclick: btn_help_click
+									),
+								]
+							),
+							ui.row(
+								spacing: 5
+								children: [
+									app.pbar,
+									app.label,
+								]
+							),
+						]
+					),
 					ui.column(
 						alignments: ui.HorizontalAlignments{
 							center: [
@@ -171,7 +171,8 @@ fn main() {
 								path: logo
 							),
 						]
-					)]
+					),
+				]
 			),
 			// ui.menu(
 			// 	items: [ui.MenuItem{'Delete all users', menu_click},

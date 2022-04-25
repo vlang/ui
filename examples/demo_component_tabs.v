@@ -40,14 +40,14 @@ fn main() {
 						tabs: ['tab1', 'tab2', 'tab3']
 						pages: [
 							ui.column(
-							heights: ui.compact
-							widths: ui.compact
-							bg_color: gx.rgb(200, 100, 200)
-							children: [
-								ui.button(id: 'left1', text: 'toto', padding: .1, radius: .25),
-								ui.button(id: 'left2', text: 'toto2'),
-							]
-						),
+								heights: ui.compact
+								widths: ui.compact
+								bg_color: gx.rgb(200, 100, 200)
+								children: [
+									ui.button(id: 'left1', text: 'toto', padding: .1, radius: .25),
+									ui.button(id: 'left2', text: 'toto2'),
+								]
+							),
 							ui.column(
 								heights: ui.compact
 								widths: ui.compact
@@ -70,7 +70,8 @@ fn main() {
 										]
 									),
 								]
-							)]
+							),
+						]
 					),
 				]
 			),

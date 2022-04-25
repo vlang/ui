@@ -85,16 +85,17 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 					widths: [ui.stretch, 24]
 					children: [
 						ui.textbox(
-						id: ui.component_id(p.id, 'tb')
-						z_index: 10
-					),
+							id: ui.component_id(p.id, 'tb')
+							z_index: 10
+						),
 						ui.button(
 							id: ui.component_id(p.id, 'tb_new_ok')
 							text: 'Ok'
 							z_index: 10
 							radius: 5
 							onclick: btn_new_ok
-						)]
+						),
+					]
 				)
 			),
 			ui.column(
@@ -104,11 +105,12 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 				bg_color: p.bg_color
 				children: [
 					dirtreeview_stack(
-					id: ui.component_id(p.id, 'dtv')
-					trees: p.dirs
-					hidden_files: p.hidden_files
-					on_click: treeview_onclick
-				)]
+						id: ui.component_id(p.id, 'dtv')
+						trees: p.dirs
+						hidden_files: p.hidden_files
+						on_click: treeview_onclick
+					),
+				]
 			),
 		]
 	)

@@ -6,11 +6,12 @@ module ui
 import gx
 
 const (
-	menu_height       = 30
-	menu_width        = 150
-	menu_padding      = 10
-	menu_bg_color     = gx.rgb(240, 240, 240)
-	menu_border_color = gx.rgb(223, 223, 223)
+	menu_height         = 30
+	menu_width          = 150
+	menu_padding        = 10
+	menu_bg_color       = gx.rgb(240, 240, 240)
+	menu_bg_color_hover = gx.rgb(250, 250, 250)
+	menu_border_color   = gx.rgb(223, 223, 223)
 )
 
 [heap]
@@ -32,6 +33,7 @@ pub mut:
 	height      int
 	item_width  int
 	item_height int
+	hovered     int = -1
 mut:
 	text        string
 	parent      Layout = empty_stack
@@ -99,13 +101,8 @@ fn (mut m Menu) init(parent Layout) {
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
+	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
 }
-
-// fn (mut m Menu) init_style() {
-// 	mut dtw := DrawTextWidget(m)
-// 	dtw.init_style()
-// 	dtw.update_text_size(m.text_size)
-// }
 
 [manualfree]
 pub fn (mut m Menu) cleanup() {
@@ -156,6 +153,27 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	}
 }
 
+fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
+	if m.hidden {
+		return
+	}
+	if m.point_inside(e.x, e.y) {
+		i := if m.orientation == .vertical {
+			int((e.y - m.y - m.offset_y) / m.item_height)
+		} else {
+			int((e.x - m.x - m.offset_y) / m.item_width)
+		}
+		m.hovered = i
+
+		// if item.submenu != 0 {
+		// 	println('open submenu $item.id')
+		// 	item.open_submenu()
+		// }
+	} else {
+		m.hovered = -1
+	}
+}
+
 pub fn (mut m Menu) set_pos(x int, y int) {
 	println('set_pos $m.id $x, $y')
 	m.x = x
@@ -198,6 +216,10 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 
 	for i, item in m.items {
 		// println("item <$m.id> $m.x, $m.y")
+		if m.hovered >= 0 && i == m.hovered {
+			d.draw_rect_filled(m.x + i * m.dx * m.item_width, m.y + i * m.dy * m.item_height,
+				m.item_width, m.item_height, m.style.bg_color_hover)
+		}
 		dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
 			i * m.dy * m.item_height + ui.menu_padding, item.text)
 	}

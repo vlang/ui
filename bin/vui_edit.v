@@ -56,39 +56,39 @@ fn main() {
 				widths: [ui.stretch, ui.stretch * 2]
 				children: [
 					uic.hideable_stack(
-					id: 'hmenu'
-					layout: uic.menufile_stack(
-						id: 'menu'
-						dirs: dirs
-						on_file_changed: fn (mut mf uic.MenuFileComponent) {
-							mf.layout.ui.window.set_title('V UI Edit: $mf.file')
-							// reinit textbox scrollview
-							mut tb := mf.layout.ui.window.textbox('edit')
-							tb.scrollview.set(0, .btn_y)
-							ui.scrollview_reset(mut tb)
-							tv := mf.treeview_component()
-							tb.read_only = tv.types[mf.item_selected] == 'root'
-							mut app := &App(mf.layout.ui.window.state)
-							if app.line_numbers {
-								tb.is_line_number = tv.types[mf.item_selected] != 'root'
+						id: 'hmenu'
+						layout: uic.menufile_stack(
+							id: 'menu'
+							dirs: dirs
+							on_file_changed: fn (mut mf uic.MenuFileComponent) {
+								mf.layout.ui.window.set_title('V UI Edit: $mf.file')
+								// reinit textbox scrollview
+								mut tb := mf.layout.ui.window.textbox('edit')
+								tb.scrollview.set(0, .btn_y)
+								ui.scrollview_reset(mut tb)
+								tv := mf.treeview_component()
+								tb.read_only = tv.types[mf.item_selected] == 'root'
+								mut app := &App(mf.layout.ui.window.state)
+								if app.line_numbers {
+									tb.is_line_number = tv.types[mf.item_selected] != 'root'
+								}
+								unsafe {
+									*(tb.text) = os.read_file(mf.file) or { '' }
+								}
+								tb.tv.sh.set_lang(os.file_ext(mf.file))
 							}
-							unsafe {
-								*(tb.text) = os.read_file(mf.file) or { '' }
+							on_new: fn (mf &uic.MenuFileComponent) {
+								// println("new $mf.file!!!")
+								os.write_file(mf.file, '') or {}
 							}
-							tb.tv.sh.set_lang(os.file_ext(mf.file))
-						}
-						on_new: fn (mf &uic.MenuFileComponent) {
-							// println("new $mf.file!!!")
-							os.write_file(mf.file, '') or {}
-						}
-						on_save: fn (mf &uic.MenuFileComponent) {
-							// println("save $mf.file")
-							tb := mf.layout.ui.window.textbox('edit')
-							// println("text: <${*tb.text}>")
-							os.write_file(mf.file, tb.text) or {}
-						}
-					)
-				),
+							on_save: fn (mf &uic.MenuFileComponent) {
+								// println("save $mf.file")
+								tb := mf.layout.ui.window.textbox('edit')
+								// println("text: <${*tb.text}>")
+								os.write_file(mf.file, tb.text) or {}
+							}
+						)
+					),
 					ui.textbox(
 						mode: .multiline
 						id: 'edit'
@@ -98,7 +98,8 @@ fn main() {
 						text_size: 24
 						text_font_name: 'fixed'
 						bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
-					)]
+					),
+				]
 			),
 		]
 	)
