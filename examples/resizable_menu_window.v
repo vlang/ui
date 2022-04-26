@@ -118,5 +118,5 @@ fn main() {
 }
 
 fn menu_click(item &ui.MenuItem, a voidptr) {
-	println('$item.text selected')
+	println('$item.text selected (id: $item.id)')
 }

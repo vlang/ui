@@ -79,7 +79,6 @@ pub fn menu(c MenuParams) &Menu {
 	m.style_forced.style = c.theme
 	// connect parent menu
 	for i, mut item in m.items {
-		item.menu = m
 		item.pos = i
 		if item.id == '' {
 			item.id = '$i'
@@ -88,16 +87,26 @@ pub fn menu(c MenuParams) &Menu {
 	return m
 }
 
+// main
 pub fn menubar(c MenuParams) &Menu {
 	mut m := menu(c)
+	m.parent_menu = m
 	m.orientation = .horizontal
 	m.dx, m.dy = 1, 0
+	return m
+}
+
+// often activated by right click
+pub fn menucontext(c MenuParams) &Menu {
+	mut m := menu(c)
+	m.parent_menu = m
 	return m
 }
 
 fn (mut m Menu) build(mut win Window) {
 	// println("menu $m.id build")
 	for mut item in m.items {
+		item.menu = m
 		item.build(mut win)
 	}
 }
@@ -108,9 +117,9 @@ fn (mut m Menu) init(parent Layout) {
 	m.ui = ui
 	m.load_style()
 	m.update_size()
-	// for mut item in m.items {
-	// 	item.init()
-	// }
+	if m.is_root_menu() {
+		m.propagate_parent_menu()
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
@@ -142,26 +151,48 @@ pub fn (m &Menu) free() {
 	}
 }
 
+pub fn (m &Menu) is_root_menu() bool {
+	return m.parent_menu != 0 && m.id == m.parent_menu.id
+}
+
+pub fn (m &Menu) is_top_layer_menu() bool {
+	return m.parent.id == m.ui.window.top_layer.id
+}
+
+fn (mut m Menu) propagate_parent_menu() {
+	for mut item in m.items {
+		item.set_menu_parent_menu()
+		if item.has_submenu() {
+			item.submenu.propagate_parent_menu()
+		}
+	}
+}
+
 fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	if m.hidden {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
+		selected := m.selected
 		m.selected = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
-		mut item := m.items[m.selected]
-		if item.submenu != 0 {
-			println('toggle submenu $item.id')
-			item.submenu.parent_menu = item.menu
-			item.toggle_submenu()
+		if selected >= 0 && selected != m.selected {
+			m.close()
 		}
+		mut item := m.items[m.selected]
 		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()
 			item.action(item, state)
+		}
+		if item.submenu != 0 {
+			println('toggle menu $item.id')
+			item.toggle_menu()
+		} else {
+			item.menu.parent_menu.close()
 		}
 	}
 }
@@ -187,7 +218,7 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 }
 
 pub fn (mut m Menu) set_pos(x int, y int) {
-	println('set_pos $m.id $x, $y')
+	// println('set_pos $m.id $x, $y')
 	m.x = x
 	m.y = y
 }
@@ -256,6 +287,20 @@ pub fn (mut m Menu) set_children_visible(state bool) {
 	}
 }
 
+pub fn (mut m Menu) close() {
+	// if m.parent_menu != 0 && m.id != m.parent_menu.id {
+	// 	m.set_visible(false)
+	// }
+	if m.is_top_layer_menu() {
+		m.set_visible(false)
+	}
+	for mut item in m.items {
+		if item.has_submenu() {
+			item.submenu.close()
+		}
+	}
+}
+
 fn (m &Menu) point_inside(x f64, y f64) bool {
 	return point_inside(m, x, y)
 }
@@ -300,12 +345,26 @@ fn (mut mi MenuItem) build(mut win Window) {
 	mi.id = mi.menu.id + '/' + mi.id
 	if mi.submenu != 0 {
 		mi.submenu.id = '$mi.id'
+		mi.submenu.build(mut win)
 		win.add_top_layer(mi.submenu)
 		mi.submenu.set_visible(false)
-		mi.submenu.build(mut win)
+		// println("$mi.submenu.id $mi.submenu.parent_menu.id")
 		// println('add_top_layer $mi.submenu.id')
 		// println('<$mi.submenu.id> $mi.submenu.x, $mi.submenu.y')
 		// println('${mi.menu.ui.window.top_layer.children.map(it.id)}')
+	}
+}
+
+fn (mut mi MenuItem) set_menu_parent_menu() {
+	if mi.submenu != 0 {
+		$if mi_smpm ? {
+			if mi.menu.parent_menu == 0 {
+				println("item $mi.id submenu can't inherit parent menu")
+			} else {
+				println('item $mi.id submenu inherit from parent $mi.menu.parent_menu.id')
+			}
+		}
+		mi.submenu.parent_menu = mi.menu.parent_menu
 	}
 }
 
@@ -313,25 +372,25 @@ pub fn (mi &MenuItem) has_submenu() bool {
 	return mi.submenu != 0
 }
 
-pub fn (mut mi MenuItem) toggle_submenu() {
+pub fn (mut mi MenuItem) toggle_menu() {
 	if mi.submenu.hidden {
-		mi.set_pos_submenu()
+		mi.set_menu_pos()
 		mi.submenu.set_visible(true)
 	} else {
 		mi.submenu.set_children_visible(false)
 	}
 }
 
-pub fn (mut mi MenuItem) set_submenu_visible(state bool) {
+pub fn (mut mi MenuItem) set_menu_visible(state bool) {
 	if state {
-		mi.set_pos_submenu()
+		mi.set_menu_pos()
 		mi.submenu.set_visible(true)
 	} else {
 		mi.submenu.set_children_visible(false)
 	}
 }
 
-pub fn (mut mi MenuItem) set_pos_submenu() {
+pub fn (mut mi MenuItem) set_menu_pos() {
 	if mi.submenu == voidptr(0) {
 		return
 	}

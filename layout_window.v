@@ -279,7 +279,7 @@ pub fn window(cfg WindowParams) &Window {
 	window.ui = ui_ctx
 
 	// once window and ui created, a build step (before init) can be applied
-	window.register_children()
+	window.register_children(mut window.children)
 	window.build()
 
 	// q := int(window)
@@ -344,7 +344,6 @@ fn gg_init(mut window Window) {
 
 	for mut child in window.children {
 		// println('init <$child.id>')
-		// window.register_child(*child)
 		child.init(window)
 	}
 	// then subwindows
@@ -1225,8 +1224,8 @@ pub fn (w &Window) close() {}
 
 //---- child widgets
 
-pub fn (mut w Window) register_children() {
-	for mut child in w.children {
+pub fn (mut w Window) register_children(mut children []Widget) {
+	for mut child in children {
 		// println('init <$child.id>')
 		w.register_child(*child)
 	}
