@@ -214,26 +214,17 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		mut item := m.items[m.hovered]
 		if item.has_menu() {
 			// println('open submenu $item.id')
+			item.submenu.set_all_children_visible(false)
 			item.set_menu_visible(true)
 		}
 		if item.menu != 0 {
-			println('hover close $item.menu.id ${item.menu.items.map(it.id)}')
+			// println('hover close $item.menu.id ${item.menu.items.map(it.id)}')
 			for mut mi in item.menu.items {
 				if mi.id != item.id && mi.has_menu() {
 					mi.submenu.set_all_children_visible(false)
 				}
 			}
 		}
-
-		// println("ggg")
-		// if item.menu != 0 {
-		// 	item.menu.root_menu.close()
-		// }
-		// println("ggg1")
-		// // if item.has_menu() {
-		// item.highlight()
-		// // }
-		// println("ggg2")
 	} else {
 		m.hovered = -1
 	}
@@ -409,7 +400,7 @@ pub fn (mut mi MenuItem) toggle_menu() {
 		mi.set_menu_pos()
 		mi.submenu.set_visible(true)
 	} else {
-		mi.submenu.set_children_visible(false)
+		mi.submenu.set_all_children_visible(false)
 	}
 }
 
