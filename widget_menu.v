@@ -44,7 +44,8 @@ mut:
 	dy          int = 1
 	z_index     int
 	items       []&MenuItem
-	parent_menu &Menu       = 0 // for submenu
+	root_menu   &Menu       = 0 // for submenu
+	parent_item &MenuItem   = 0
 	orientation Orientation = Orientation.vertical
 }
 
@@ -90,7 +91,7 @@ pub fn menu(c MenuParams) &Menu {
 // main
 pub fn menubar(c MenuParams) &Menu {
 	mut m := menu(c)
-	m.parent_menu = m
+	m.root_menu = m
 	m.orientation = .horizontal
 	m.dx, m.dy = 1, 0
 	return m
@@ -99,7 +100,7 @@ pub fn menubar(c MenuParams) &Menu {
 // often activated by right click
 pub fn menucontext(c MenuParams) &Menu {
 	mut m := menu(c)
-	m.parent_menu = m
+	m.root_menu = m
 	return m
 }
 
@@ -118,7 +119,7 @@ fn (mut m Menu) init(parent Layout) {
 	m.load_style()
 	m.update_size()
 	if m.is_root_menu() {
-		m.propagate_parent_menu()
+		m.propagate_connection()
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
@@ -152,18 +153,21 @@ pub fn (m &Menu) free() {
 }
 
 pub fn (m &Menu) is_root_menu() bool {
-	return m.parent_menu != 0 && m.id == m.parent_menu.id
+	return m.root_menu != 0 && m.id == m.root_menu.id
 }
 
 pub fn (m &Menu) is_top_layer_menu() bool {
 	return m.parent.id == m.ui.window.top_layer.id
 }
 
-fn (mut m Menu) propagate_parent_menu() {
+fn (mut m Menu) propagate_connection() {
 	for mut item in m.items {
-		item.set_menu_parent_menu()
-		if item.has_submenu() {
-			item.submenu.propagate_parent_menu()
+		// set root_menu for submenu
+		item.set_menu_root_menu()
+		if item.has_menu() {
+			// submenu parent item
+			item.submenu.parent_item = item
+			item.submenu.propagate_connection()
 		}
 	}
 }
@@ -188,11 +192,11 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 			state := parent.get_state()
 			item.action(item, state)
 		}
-		if item.submenu != 0 {
-			println('toggle menu $item.id')
+		if item.has_menu() {
+			// println('toggle menu $item.id')
 			item.toggle_menu()
 		} else {
-			item.menu.parent_menu.close()
+			item.menu.root_menu.close()
 		}
 	}
 }
@@ -207,11 +211,29 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
+		mut item := m.items[m.hovered]
+		if item.has_menu() {
+			// println('open submenu $item.id')
+			item.set_menu_visible(true)
+		}
+		if item.menu != 0 {
+			println('hover close $item.menu.id ${item.menu.items.map(it.id)}')
+			for mut mi in item.menu.items {
+				if mi.id != item.id && mi.has_menu() {
+					mi.submenu.set_all_children_visible(false)
+				}
+			}
+		}
 
-		// if item.submenu != 0 {
-		// 	println('open submenu $item.id')
-		// 	item.open_submenu()
+		// println("ggg")
+		// if item.menu != 0 {
+		// 	item.menu.root_menu.close()
 		// }
+		// println("ggg1")
+		// // if item.has_menu() {
+		// item.highlight()
+		// // }
+		// println("ggg2")
 	} else {
 		m.hovered = -1
 	}
@@ -281,8 +303,17 @@ pub fn (mut m Menu) set_children_visible(state bool) {
 	m.set_visible(state)
 	if m.selected >= 0 {
 		mut item := m.items[m.selected]
-		if item.has_submenu() {
+		if item.has_menu() {
 			item.submenu.set_children_visible(state)
+		}
+	}
+}
+
+pub fn (mut m Menu) set_all_children_visible(state bool) {
+	for mut item in m.items {
+		m.set_visible(state)
+		if item.has_menu() {
+			item.submenu.set_all_children_visible(state)
 		}
 	}
 }
@@ -295,7 +326,7 @@ pub fn (mut m Menu) close() {
 		m.set_visible(false)
 	}
 	for mut item in m.items {
-		if item.has_submenu() {
+		if item.has_menu() {
 			item.submenu.close()
 		}
 	}
@@ -314,11 +345,12 @@ pub type MenuItemFn = fn (item &MenuItem, state voidptr)
 [heap]
 pub struct MenuItem {
 pub mut:
-	id      string
-	text    string
-	pos     int
-	submenu &Menu = 0
-	menu    &Menu = 0
+	id          string
+	text        string
+	pos         int
+	submenu     &Menu     = 0
+	menu        &Menu     = 0
+	parent_item &MenuItem = 0
 mut:
 	action MenuItemFn
 }
@@ -355,20 +387,20 @@ fn (mut mi MenuItem) build(mut win Window) {
 	}
 }
 
-fn (mut mi MenuItem) set_menu_parent_menu() {
-	if mi.submenu != 0 {
+fn (mut mi MenuItem) set_menu_root_menu() {
+	if mi.has_menu() {
 		$if mi_smpm ? {
-			if mi.menu.parent_menu == 0 {
-				println("item $mi.id submenu can't inherit parent menu")
+			if mi.menu.root_menu == 0 {
+				println("item $mi.id submenu can't inherit root menu")
 			} else {
-				println('item $mi.id submenu inherit from parent $mi.menu.parent_menu.id')
+				println('item $mi.id submenu inherit root menu from parent $mi.menu.parent_menu.id')
 			}
 		}
-		mi.submenu.parent_menu = mi.menu.parent_menu
+		mi.submenu.root_menu = mi.menu.root_menu
 	}
 }
 
-pub fn (mi &MenuItem) has_submenu() bool {
+pub fn (mi &MenuItem) has_menu() bool {
 	return mi.submenu != 0
 }
 
@@ -378,6 +410,16 @@ pub fn (mut mi MenuItem) toggle_menu() {
 		mi.submenu.set_visible(true)
 	} else {
 		mi.submenu.set_children_visible(false)
+	}
+}
+
+pub fn (mut mi MenuItem) highlight() {
+	if mi.has_menu() {
+		mi.set_menu_pos()
+		mi.submenu.set_visible(true)
+	}
+	if mi.menu.parent_item != 0 {
+		mi.menu.parent_item.highlight()
 	}
 }
 
