@@ -7,8 +7,8 @@ import gg
 import gx
 
 pub interface Widget {
-	ui &UI
 mut:
+	ui &UI
 	id string
 	x int
 	y int

@@ -278,6 +278,10 @@ pub fn window(cfg WindowParams) &Window {
 	ui_ctx.load_styles()
 	window.ui = ui_ctx
 
+	// once window and ui created, a build step (before init) can be applied
+	window.register_children()
+	window.build()
+
 	// q := int(window)
 	// println('created window $q.hex()')
 
@@ -340,7 +344,7 @@ fn gg_init(mut window Window) {
 
 	for mut child in window.children {
 		// println('init <$child.id>')
-		window.register_child(*child)
+		// window.register_child(*child)
 		child.init(window)
 	}
 	// then subwindows
@@ -1220,6 +1224,13 @@ pub fn (w &Window) onmousedown(cb voidptr) {}
 pub fn (w &Window) close() {}
 
 //---- child widgets
+
+pub fn (mut w Window) register_children() {
+	for mut child in w.children {
+		// println('init <$child.id>')
+		w.register_child(*child)
+	}
+}
 
 // Register child to be obtained by id from window
 pub fn (mut w Window) register_child(child_ Widget) {

@@ -95,15 +95,22 @@ pub fn menubar(c MenuParams) &Menu {
 	return m
 }
 
+fn (mut m Menu) build(mut win Window) {
+	// println("menu $m.id build")
+	for mut item in m.items {
+		item.build(mut win)
+	}
+}
+
 fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
 	m.load_style()
 	m.update_size()
-	for mut item in m.items {
-		item.init()
-	}
+	// for mut item in m.items {
+	// 	item.init()
+	// }
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
@@ -289,15 +296,16 @@ pub fn menuitem(p MenuItemParams) &MenuItem {
 	return mi
 }
 
-fn (mut mi MenuItem) init() {
+fn (mut mi MenuItem) build(mut win Window) {
 	mi.id = mi.menu.id + '/' + mi.id
 	if mi.submenu != 0 {
 		mi.submenu.id = '$mi.id'
-		mi.menu.ui.window.add_top_layer(mi.submenu)
+		win.add_top_layer(mi.submenu)
 		mi.submenu.set_visible(false)
-		println('add_top_layer $mi.submenu.id')
-		println('<$mi.submenu.id> $mi.submenu.x, $mi.submenu.y')
-		println('${mi.menu.ui.window.top_layer.children.map(it.id)}')
+		mi.submenu.build(mut win)
+		// println('add_top_layer $mi.submenu.id')
+		// println('<$mi.submenu.id> $mi.submenu.x, $mi.submenu.y')
+		// println('${mi.menu.ui.window.top_layer.children.map(it.id)}')
 	}
 }
 
