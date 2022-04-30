@@ -77,6 +77,7 @@ pub fn menu(c MenuParams) &Menu {
 		style_forced: c.MenuStyleParams
 		hidden: c.hidden
 	}
+	m.root_menu = m
 	m.style_forced.style = c.theme
 	// connect parent menu
 	for i, mut item in m.items {
@@ -91,7 +92,6 @@ pub fn menu(c MenuParams) &Menu {
 // main
 pub fn menubar(c MenuParams) &Menu {
 	mut m := menu(c)
-	m.root_menu = m
 	m.orientation = .horizontal
 	m.dx, m.dy = 1, 0
 	return m
@@ -100,7 +100,6 @@ pub fn menubar(c MenuParams) &Menu {
 // often activated by right click
 pub fn menucontext(c MenuParams) &Menu {
 	mut m := menu(c)
-	m.root_menu = m
 	return m
 }
 

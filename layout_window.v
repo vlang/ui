@@ -1483,9 +1483,7 @@ pub fn (w Window) button(id string) &Button {
 }
 
 pub fn (w Window) label(id string) &Label {
-	println('labl $id')
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
-	println('icici')
 	if widget is Label {
 		println('$id')
 		return widget

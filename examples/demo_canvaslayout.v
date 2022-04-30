@@ -139,18 +139,18 @@ fn main() {
 								text: 'Menu'
 								width: 200
 								items: [
-									ui.MenuItem{
+									ui.menuitem(
 										text: 'Delete all users'
 										action: menu_click
-									},
-									ui.MenuItem{
+									),
+									ui.menuitem(
 										text: 'Export users'
 										action: menu_click
-									},
-									ui.MenuItem{
+									),
+									ui.menuitem(
 										text: 'Exit'
 										action: menu_click
-									},
+									),
 								]
 							)),
 							ui.at(150, 80, ui.button(
