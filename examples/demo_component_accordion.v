@@ -176,11 +176,9 @@ fn main() {
 		text: 'Here a simple ui rectangle'
 		color: gx.red
 		height: 100
-		text_cfg: gx.TextCfg{
-			color: gx.blue
-			align: gx.align_left
-			size: 30
-		}
+		// text_color: gx.blue
+		// text_align: gx.align_left
+		// text_size: 30
 	)
 	window := ui.window(
 		width: win_width
