@@ -88,7 +88,7 @@ fn (mut l Label) init_style() {
 	dtw.update_text_size(l.text_size)
 }
 
-fn (mut l Label) set_pos(x int, y int) {
+pub fn (mut l Label) set_pos(x int, y int) {
 	l.x = x
 	l.y = y
 }

@@ -55,7 +55,7 @@ pub struct MenuParams {
 	id      string
 	width   int = ui.menu_width
 	height  int = ui.menu_height
-	z_index int
+	z_index int = 1000
 	// text_size f64
 	text   string
 	items  []&MenuItem
@@ -124,12 +124,14 @@ fn (mut m Menu) init(parent Layout) {
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
+	m.ui.window.evt_mngr.add_receiver(m, [events.on_mouse_down])
 }
 
 [manualfree]
 pub fn (mut m Menu) cleanup() {
 	mut subscriber := m.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, m)
+	m.ui.window.evt_mngr.rm_receiver(m, [events.on_mouse_down])
 	unsafe { m.free() }
 }
 

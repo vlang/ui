@@ -270,6 +270,7 @@ pub fn window(cfg WindowParams) &Window {
 
 	mut ui_ctx := &UI{
 		gg: gcontext
+		window: window
 		svg: draw_device_svg()
 		bmp: draw_device_bitmap()
 		clipboard: clipboard.new()
@@ -1482,8 +1483,11 @@ pub fn (w Window) button(id string) &Button {
 }
 
 pub fn (w Window) label(id string) &Label {
+	println('labl $id')
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	println('icici')
 	if widget is Label {
+		println('$id')
 		return widget
 	} else {
 		return label()

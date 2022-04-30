@@ -995,20 +995,33 @@ fn (gcb &GridCheckBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) 
 	}
 }
 
-// compare (TODO use sort_with_compare_context)
-
-__global (
-	rgd_vars_   []int // all vars
-	rgd_orders_ []int // all orders
-	rgd_grid_   &GridComponent // the current grid
-)
+// using closure
 
 type RankedGridData = int
 
 pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
-	rgd_vars_ = vars.clone()
-	rgd_orders_ = orders.clone()
-	rgd_grid_ = g
+	// create compare_grid_data closure
+	compare_grid_data := fn [vars, orders, g] (a &RankedGridData, b &RankedGridData) int {
+		mut comp := 0
+		for i, j in vars {
+			if j == -1 {
+				comp = if f64(*a) < f64(*b) {
+					-orders[i]
+				} else if f64(*a) > f64(*b) {
+					orders[i]
+				} else {
+					0
+				}
+			} else {
+				comp = g.vars[j].compare(a, b) * orders[i]
+			}
+			if comp != 0 {
+				return comp
+			}
+		}
+		return 0
+	}
+
 	mut rgd := []int{len: g.nrow(), init: it}
 	if vars.len > 0 {
 		rgd.sort_with_compare(compare_grid_data)
@@ -1016,23 +1029,44 @@ pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	g.index = rgd
 }
 
-fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
-	mut comp := 0
-	for i, j in rgd_vars_ {
-		if j == -1 {
-			comp = if f64(*a) < f64(*b) {
-				-rgd_orders_[i]
-			} else if f64(*a) > f64(*b) {
-				rgd_orders_[i]
-			} else {
-				0
-			}
-		} else {
-			comp = rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
-		}
-		if comp != 0 {
-			return comp
-		}
-	}
-	return 0
-}
+// compare (TODO use sort_with_compare_context)
+
+// __global (
+// 	rgd_vars_   []int // all vars
+// 	rgd_orders_ []int // all orders
+// 	rgd_grid_   &GridComponent // the current grid
+// )
+
+// type RankedGridData = int
+
+// pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
+// 	rgd_vars_ = vars.clone()
+// 	rgd_orders_ = orders.clone()
+// 	rgd_grid_ = g
+// 	mut rgd := []int{len: g.nrow(), init: it}
+// 	if vars.len > 0 {
+// 		rgd.sort_with_compare(compare_grid_data)
+// 	}
+// 	g.index = rgd
+// }
+
+// fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
+// 	mut comp := 0
+// 	for i, j in rgd_vars_ {
+// 		if j == -1 {
+// 			comp = if f64(*a) < f64(*b) {
+// 				-rgd_orders_[i]
+// 			} else if f64(*a) > f64(*b) {
+// 				rgd_orders_[i]
+// 			} else {
+// 				0
+// 			}
+// 		} else {
+// 			comp = rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
+// 		}
+// 		if comp != 0 {
+// 			return comp
+// 		}
+// 	}
+// 	return 0
+// }

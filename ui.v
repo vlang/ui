@@ -149,7 +149,7 @@ pub fn (gui &UI) free() {
 
 pub fn run(window &Window) {
 	mut gui := window.ui
-	gui.window = window
+	gui.window = window // TODO: this can be removed since now in the window constructor
 	go gui.idle_loop()
 	gui.gg.run()
 	gui.closed = true

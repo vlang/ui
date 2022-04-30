@@ -49,6 +49,7 @@ pub mut:
 	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
+	on_build  BuildFn
 	on_init   InitFn
 	// scrollview
 	has_scrollview       bool
@@ -153,6 +154,13 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		scrollview_add(mut canvas)
 	}
 	return canvas
+}
+
+fn (mut c CanvasLayout) build(win &Window) {
+	// init for component
+	if c.on_build != BuildFn(0) {
+		c.on_build(c, win)
+	}
 }
 
 fn (mut c CanvasLayout) init(parent Layout) {
@@ -473,7 +481,7 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	c.adj_height = h
 }
 
-fn (mut c CanvasLayout) set_children_pos() {
+pub fn (mut c CanvasLayout) set_children_pos() {
 	for i, mut child in c.children {
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
 		if mut child is Stack {
@@ -620,7 +628,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 	} else {
 		$if cl_draw_children ? {
-			println('draw <$c.id>: ${c.drawing_children.map(it.id)}')
+			println('draw <$c.id>: ${c.drawing_children.map(it.id)} at ${c.drawing_children.map(it.x)}')
 		}
 		for mut child in c.drawing_children {
 			child.draw_device(d)

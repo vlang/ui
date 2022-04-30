@@ -10,6 +10,7 @@ const (
 pub fn canvas_layer(c CanvasLayoutParams) &CanvasLayout {
 	mut cl := canvas_layout(c)
 	cl.id = 'top_layer'
+	cl.z_index = -1
 	cl.is_canvas_layer = true
 	cl.update_style_forced(bg_color: transparent)
 	println('canvas_layer $cl.id')

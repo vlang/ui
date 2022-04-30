@@ -7,6 +7,8 @@ import eventbus
 import gx
 import gg
 
+pub type BuildFn = fn (layout voidptr, win &Window)
+
 pub type InitFn = fn (layout voidptr)
 
 pub const (
@@ -91,6 +93,7 @@ pub mut:
 	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
+	on_build  BuildFn
 	on_init   InitFn
 	// scrollview
 	has_scrollview   bool
@@ -160,6 +163,13 @@ fn stack(c StackParams) &Stack {
 		// to restrict drawing to visible children
 	}
 	return s
+}
+
+fn (mut s Stack) build(win &Window) {
+	// init for component
+	if s.on_build != BuildFn(0) {
+		s.on_build(s, win)
+	}
 }
 
 pub fn (mut s Stack) init(parent Layout) {

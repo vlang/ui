@@ -42,7 +42,7 @@ pub struct Alignments {
 	left         []int
 }
 
-fn get_align_offset_from_parent(mut w Widget, aw f64, ah f64) (int, int) {
+pub fn get_align_offset_from_parent(mut w Widget, aw f64, ah f64) (int, int) {
 	width, height := w.size()
 	parent := w.parent
 	parent_width, parent_height := if parent is Stack { parent.free_size() } else { parent.size() }

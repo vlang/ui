@@ -23,6 +23,7 @@ pub mut:
 	tab_spacing        f64
 	bg_color           gx.Color = gx.white
 	bg_color_selection gx.Color = gx.rgb(200, 200, 100)
+	justify            []f64    = ui.center_center
 }
 
 [params]
@@ -41,13 +42,14 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	mut children := []ui.Widget{}
 
 	for i, tab in c.tabs {
+		println(tab_id(c.id, i) + '_label')
 		children << ui.canvas_layout(
 			id: tab_id(c.id, i)
 			on_click: tab_click
 			// bg_color: gx.white
 			on_key_down: tab_key_down
 			children: [
-				ui.at(0, 0, ui.label(text: tab)),
+				ui.label(id: tab_id(c.id, i) + '_label', text: tab),
 			]
 		)
 	}
@@ -69,7 +71,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	// println('active: $tab_active')
 
 	mut layout := ui.column(
-		id: c.id
+		id: ui.component_id(c.id, 'layout')
 		widths: [ui.compact, ui.stretch]
 		heights: [ui.compact, ui.stretch]
 		children: [
@@ -106,6 +108,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 
 	ui.component_connect(tabs, layout, tab_bar)
+	// layout.on_build = tabs_build
 	layout.on_init = tabs_init
 	return layout
 }
@@ -118,8 +121,14 @@ pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
 	return tabs_component(w.stack(ui.component_id(id, 'layout')))
 }
 
+// fn tabs_build(layout &ui.Stack, win &ui.Window) {
+// 	mut tabs := tabs_component(layout)
+// 	tabs.update_pos(win)
+// }
+
 fn tabs_init(layout &ui.Stack) {
 	mut tabs := tabs_component(layout)
+	tabs.update_pos(layout.ui.window)
 	for id, mut page in tabs.pages {
 		println('tab $id initialized')
 		page.init(layout)
@@ -203,5 +212,25 @@ fn (mut tabs TabsComponent) transpose() {
 		tabs.tab_bar.update_layout()
 		tabs.layout.transpose(false)
 		tabs.layout.update_layout()
+	}
+}
+
+fn (tabs &TabsComponent) update_pos(win &ui.Window) {
+	for i, _ in tabs.tab_bar.children {
+		// println("$tabs.id ${tab_id(tabs.id, i) + "_label"}")
+		lab_id := tab_id(tabs.id, i) + '_label'
+		mut lab := win.label(lab_id)
+		lab.ui = win.ui
+		mut dtw := ui.DrawTextWidget(lab)
+		w, h := dtw.text_size(lab.text)
+		// println(tabs.justify)
+		// println("$lab.text ($w, $h) in (${int(tabs.tab_bar.widths[i])}, ${int(tabs.tab_bar.heights[i])})")
+		dx, dy := ui.get_align_offset_from_size(w, h, int(tabs.tab_bar.widths[i]), int(tabs.tab_bar.heights[i]),
+			tabs.justify[0], tabs.justify[1])
+		// println("$dx, $dy $lab.x $lab.y")
+		lab.set_pos(dx, dy)
+		// println("$dx, $dy $lab.x $lab.y")
+		mut c := win.canvas_layout(tab_id(tabs.id, i))
+		c.set_child_relative_pos(lab_id, dx, dy)
 	}
 }
