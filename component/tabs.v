@@ -134,6 +134,12 @@ fn tabs_init(layout &ui.Stack) {
 	tabs.update_pos(layout.ui.window)
 	for id, mut page in tabs.pages {
 		println('tab $id initialized')
+		if id != tabs.active {
+			if mut page is ui.Layout {
+				mut pa := page as ui.Layout
+				tabs.layout.ui.window.register_children(mut pa.get_children())
+			}
+		}
 		page.init(layout)
 	}
 	tabs.update_tab_colors()
