@@ -48,9 +48,10 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
-	component voidptr
-	on_build  BuildFn
-	on_init   InitFn
+	component       voidptr
+	active_evt_mngr bool
+	on_build        BuildFn
+	on_init         InitFn
 	// scrollview
 	has_scrollview       bool
 	scrollview           &ScrollView = 0
@@ -81,26 +82,27 @@ mut:
 [params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
-	id             string
-	width          int
-	height         int
-	full_width     int = -1
-	full_height    int = -1
-	z_index        int
-	text           string
-	scrollview     bool
-	is_focused     bool
-	justify        []f64  = [0.0, 0.0]
-	theme          string = no_style
-	on_draw        CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_post_draw   CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_click       CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_down  CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_up    CanvasLayoutMouseFn      = voidptr(0)
-	on_scroll      CanvasLayoutScrollFn     = voidptr(0)
-	on_mouse_move  CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_enter CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_leave CanvasLayoutMouseMoveFn  = voidptr(0)
+	id              string
+	width           int
+	height          int
+	full_width      int = -1
+	full_height     int = -1
+	z_index         int
+	text            string
+	scrollview      bool
+	is_focused      bool
+	justify         []f64  = [0.0, 0.0]
+	theme           string = no_style
+	active_evt_mngr bool   = true
+	on_draw         CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_post_draw    CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_click        CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_down   CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_up     CanvasLayoutMouseFn      = voidptr(0)
+	on_scroll       CanvasLayoutScrollFn     = voidptr(0)
+	on_mouse_move   CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_enter  CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_leave  CanvasLayoutMouseMoveFn  = voidptr(0)
 	// resize_fn     ResizeFn
 	on_key_down      CanvasLayoutKeyFn   = voidptr(0)
 	on_char          CanvasLayoutKeyFn   = voidptr(0)
@@ -135,6 +137,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		is_focused: c.is_focused
 		justify: c.justify
 		style_forced: c.CanvasLayoutStyleParams
+		active_evt_mngr: c.active_evt_mngr
 		draw_device_fn: c.on_draw
 		post_draw_device_fn: c.on_post_draw
 		click_fn: c.on_click
@@ -182,8 +185,9 @@ fn (mut c CanvasLayout) init(parent Layout) {
 		subscriber.subscribe_method(events.on_touch_up, canvas_layout_mouse_up, c)
 		subscriber.subscribe_method(events.on_touch_move, canvas_layout_mouse_move, c)
 	}
-	c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down, events.on_mouse_move])
-
+	if c.active_evt_mngr {
+		c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down, events.on_mouse_move])
+	}
 	for mut child in c.children {
 		child.init(c)
 	}
@@ -219,7 +223,9 @@ pub fn (mut c CanvasLayout) cleanup() {
 		subscriber.unsubscribe_method(events.on_touch_up, c)
 		subscriber.unsubscribe_method(events.on_touch_move, c)
 	}
-	c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down, events.on_mouse_move])
+	if c.active_evt_mngr {
+		c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down, events.on_mouse_move])
+	}
 	if has_scrollview(c) {
 		c.ui.window.evt_mngr.rm_receiver(c, [events.on_scroll])
 	}
@@ -557,6 +563,9 @@ fn (mut c CanvasLayout) set_drawing_children() {
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > c.z_index {
+			$if cl_z_index_update ? {
+				println('$c.id changed z_index from $child.id $child.z_index')
+			}
 			c.z_index = child.z_index - 1
 		}
 	}

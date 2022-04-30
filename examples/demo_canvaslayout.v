@@ -36,7 +36,9 @@ fn main() {
 						tooltip_side: .right
 					),
 					ui.canvas_layout(
+						id: 'demo_cl'
 						on_draw: draw
+						active_evt_mngr: false
 						on_mouse_move: mouse_move
 						full_width: win_width - 20
 						full_height: win_height

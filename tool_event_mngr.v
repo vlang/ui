@@ -92,6 +92,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 			sw := w as ScrollableWidget
 			if !w.hidden && has_scrollview(sw)
 				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
+				&& !sw.scrollview.children_point_inside(e.mouse_x, e.mouse_y, .view)
 				&& !w.has_parent_deactivated() {
 				em.point_inside[evt_type] << w
 			}
@@ -177,7 +178,7 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 		pi = pi.filter(Layout(w.child_window).has_child_id(it.id))
 	}
 	$if em_itw ? {
-		println('is_top_widget $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
+		println('is_top_widget ($evt_type) $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
 	}
 	return pi.len >= 1 && pi.first().id == widget.id
 }
