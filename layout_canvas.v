@@ -32,6 +32,7 @@ pub mut:
 	offset_x         int
 	offset_y         int
 	z_index          int
+	deactivated      bool
 	is_focused       bool
 	ui               &UI = 0
 	hidden           bool

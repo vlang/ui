@@ -70,6 +70,7 @@ pub struct ColorBoxParams {
 
 pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	mut cv_h := ui.canvas_plus(
+		id: ui.component_id(c.id, 'h')
 		width: 30
 		height: 256
 		on_draw: cv_h_draw
@@ -77,6 +78,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 		// on_mouse_move: cv_h_mouse_move
 	)
 	mut cv_sv := ui.canvas_plus(
+		id: ui.component_id(c.id, 'sv')
 		width: 256
 		height: 256
 		on_draw: cv_sv_draw
@@ -87,15 +89,16 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 		radius: 5
 	)
 	mut cv_hsv_sel := ui.canvas_plus(
+		id: ui.component_id(c.id, 'hsv_sel')
 		bg_radius: 5
 		bg_color: gx.rgb(220, 220, 220)
 		on_draw: cv_sel_draw
 		on_click: cv_sel_click
 		on_key_down: cv_sel_key_down
 	)
-	mut tb_r := ui.textbox(is_numeric: true, on_char: tb_char)
-	mut tb_g := ui.textbox(is_numeric: true, on_char: tb_char)
-	mut tb_b := ui.textbox(is_numeric: true, on_char: tb_char)
+	mut tb_r := ui.textbox(id: ui.component_id(c.id, 'tb_r'), is_numeric: true, on_char: tb_char)
+	mut tb_g := ui.textbox(id: ui.component_id(c.id, 'tb_g'), is_numeric: true, on_char: tb_char)
+	mut tb_b := ui.textbox(id: ui.component_id(c.id, 'tb_b'), is_numeric: true, on_char: tb_char)
 	lb_r := ui.label(text: 'R:')
 	lb_g := ui.label(text: 'G:')
 	lb_b := ui.label(text: 'B:')

@@ -58,6 +58,7 @@ pub mut:
 	width                int
 	height               int
 	z_index              int
+	deactivated          bool
 	parent               Layout = ui.empty_stack
 	ui                   &UI
 	vertical_alignment   VerticalAlignment

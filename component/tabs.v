@@ -17,6 +17,7 @@ pub mut:
 	prev_active        string
 	tab_bar            &ui.Stack
 	pages              map[string]ui.Widget
+	z_index            map[string]int
 	mode               TabsMode
 	tab_width          f64
 	tab_height         f64
@@ -94,8 +95,10 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 
 	for i, page in c.pages {
 		if page is ui.Stack {
+			tabs.z_index[tab_id(c.id, i)] = page.z_index
 			ui.component_connect(tabs, page)
 		} else if page is ui.CanvasLayout {
+			tabs.z_index[tab_id(c.id, i)] = page.z_index
 			ui.component_connect(tabs, page)
 		}
 		mut tab := tab_bar.children[i]
@@ -168,19 +171,36 @@ fn tab_id(id string, i int) string {
 
 fn (mut tabs TabsComponent) on_top() {
 	for t, mut page in tabs.pages {
-		incr := match t {
-			tabs.active { 10 }
-			tabs.prev_active { -10 }
-			else { 0 }
-		}
 		// active
 		if mut page is ui.Layout {
 			mut l := page as ui.Layout
-			l.incr_children_depth(incr)
-			l.update_drawing_children()
+			if t == tabs.active {
+				l.activate()
+			} else {
+				l.deactivate()
+			}
+			// l.update_drawing_children()
+			// tabs.layout.ui.window.update_layout()
 		}
 	}
 }
+
+// fn (mut tabs TabsComponent) on_top() {
+// 	for t, mut page in tabs.pages {
+// 		incr := match t {
+// 			tabs.active { 10 }
+// 			tabs.prev_active { -10 }
+// 			else { 0 }
+// 		}
+// 		// active
+// 		if mut page is ui.Layout {
+// 			mut l := page as ui.Layout
+// 			l.incr_children_depth(incr)
+// 			l.update_drawing_children()
+
+// 		}
+// 	}
+// }
 
 fn (mut tabs TabsComponent) update_tab_colors() {
 	for mut tab in tabs.tab_bar.children {

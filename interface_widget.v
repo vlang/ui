@@ -47,10 +47,10 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 	p := w.parent
 	if p is Stack {
 		// println("hpd $w.id: $p.z_index")
-		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
 	} else if p is CanvasLayout {
 		// println("hpd $w.id: $p.z_index")
-		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
 	} else if p is Group {
 		// println("hpd $w.id: $p.z_index")
 		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()

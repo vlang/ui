@@ -58,6 +58,22 @@ pub fn (l &Layout) has_child_id(widget_id string) bool {
 	return false
 }
 
+pub fn (mut l Layout) activate() {
+	if mut l is Stack {
+		l.deactivated = false
+	} else if mut l is CanvasLayout {
+		l.deactivated = false
+	}
+}
+
+pub fn (mut l Layout) deactivate() {
+	if mut l is Stack {
+		l.deactivated = true
+	} else if mut l is CanvasLayout {
+		l.deactivated = true
+	}
+}
+
 pub fn (l &Layout) has_child(widget &Widget) bool {
 	return l.has_child_id(widget.id)
 }
