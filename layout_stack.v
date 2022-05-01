@@ -178,6 +178,7 @@ pub fn (mut s Stack) init(parent Layout) {
 	mut ui := parent.get_ui()
 	s.ui = ui
 	s.init_size()
+	s.load_style()
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
@@ -1152,7 +1153,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3
 		ty := s.y - int(f32(text_height) * 1.25)
-		d.draw_rect_filled(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
+		d.draw_rect_filled(tx, ty, text_width + 5, text_height, s.style.bg_color)
 		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
 		dtw := DrawTextWidget(s)
 		dtw.draw_device_load_style(d)

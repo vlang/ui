@@ -27,7 +27,7 @@ pub struct FileBrowserParams {
 	filter_types    []string
 	with_fpath      bool
 	hidden          bool
-	bg_color        gx.Color = gx.hex(0xfcf4e4ff)
+	bg_color        gx.Color = gx.red // gx.hex(0xfcf4e4ff)
 	on_click_ok     ui.ButtonClickFn
 	on_click_cancel ui.ButtonClickFn
 }
@@ -52,7 +52,7 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 		trees: p.dirs
 		folder_only: p.folder_only
 		filter_types: p.filter_types
-		bg_color: ui.no_color
+		bg_color: ui.transparent
 	)
 	mut children := [
 		ui.Widget(ui.column(
