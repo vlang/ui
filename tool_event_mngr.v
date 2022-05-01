@@ -37,6 +37,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 			em.receivers[evt_type] << widget
 			$if em_add ? {
 				println('add receiver $widget.id ($widget.type_name()) for $evt_type')
+				em.list_receivers(evt_type)
 			}
 		}
 		// sort it
@@ -46,6 +47,9 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 
 pub fn (mut em EventMngr) rm_receiver(widget Widget, evt_types []string) {
 	for evt_type in evt_types {
+		$if em_rc ? {
+			println('rm_receivers from $evt_type widget $widget.id')
+		}
 		// BUG: ind := em.mouse_down_receivers.index(widget)
 		// WORKAROUND with id
 		ind := em.receivers[evt_type].map(it.id).index(widget.id)
@@ -61,6 +65,10 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	// TODO first sort mouse_down_receivers by order, z_index and hidden
 	em.point_inside[evt_type].clear()
 	em.sorted_receivers(evt_type)
+	$if em_mouse ? {
+		println('point_inside_receivers_mouse_event em.receivers[$evt_type]: ')
+		em.list_receivers(evt_type)
+	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse ? {
 			println('point_inside_receivers: $w.id !$w.hidden && ${w.point_inside(e.x,
@@ -147,12 +155,8 @@ pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	mut sw := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if em_sr ? {
-		println('(Z_INDEX) em.receivers[$evt_type]: ')
-		for i, ch in em.receivers[evt_type] {
-			id := ch.id()
-			print('($i)[$id -> $ch.z_index] ')
-		}
-		println('\n')
+		println('Before sort: ')
+		em.list_receivers(evt_type)
 	}
 	for i, child in em.receivers[evt_type] {
 		sw << SortedWidget{i, child}
@@ -164,11 +168,7 @@ pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	em.receivers[evt_type] = sorted.reverse()
 	$if em_sr ? {
 		println('(SORTED) em.receivers[$evt_type]: ')
-		for i, ch in em.receivers[evt_type] {
-			id := ch.id()
-			print('($i)[$id -> $ch.z_index] ')
-		}
-		println('\n')
+		em.list_receivers(evt_type)
 	}
 }
 
@@ -185,4 +185,14 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 
 pub fn (w Window) point_inside_receivers(evt_type string) []string {
 	return w.evt_mngr.point_inside[evt_type].map(it.id)
+}
+
+// used for debug
+pub fn (em &EventMngr) list_receivers(evt_type string) {
+	print('receivers list for $evt_type: ')
+	for i, ch in em.receivers[evt_type] {
+		id := ch.id()
+		print('($i)[$id: $ch.z_index] ')
+	}
+	println('\n')
 }

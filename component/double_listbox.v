@@ -66,7 +66,6 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	}
 	// link to one component all the components
 	ui.component_connect(dbl_lb, layout, lb_left, lb_right, btn_left, btn_right, btn_clear)
-
 	// This needs to be added to the children tree
 	return layout
 }

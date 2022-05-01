@@ -345,6 +345,7 @@ fn gg_init(mut window Window) {
 
 	for mut child in window.children {
 		// println('init <$child.id>')
+		window.register_child(*child)
 		child.init(window)
 	}
 	// then subwindows
@@ -746,6 +747,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		}
 	}
 	*/
+
 	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer

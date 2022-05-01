@@ -12,8 +12,7 @@ const (
 
 struct App {
 mut:
-	window ui.Window
-	sizes  map[string]f64
+	sizes map[string]f64
 }
 
 fn main() {
@@ -27,7 +26,7 @@ fn main() {
 		'2*ui.stretch':   2 * ui.stretch
 		'3*ui.stretch':   3 * ui.stretch
 	}
-	app.window = ui.window(
+	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'Stack widths and heights management'
@@ -209,7 +208,7 @@ fn main() {
 			),
 		]
 	)
-	ui.run(app.window)
+	ui.run(window)
 }
 
 fn lb_change(app &App, lb &ui.ListBox) {
