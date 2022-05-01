@@ -3,7 +3,7 @@ module ui
 import gx
 
 pub const (
-	color_solaris = gx.hex(0xfcf4e4ff)
+	color_solaris             = gx.hex(0xfcf4e4ff)
 	color_solaris_transparent = gx.hex(0xfcf4e4f0)
 )
 
