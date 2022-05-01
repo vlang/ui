@@ -151,7 +151,7 @@ pub fn menufile_init(layout &ui.Stack) {
 		height: 300
 		x: 50
 		y: 50
-		bg_color: gx.white
+		bg_color: ui.color_solaris_transparent
 		on_click_ok: btn_open_ok
 		on_click_cancel: btn_open_cancel
 	)

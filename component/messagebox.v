@@ -1,7 +1,6 @@
 module component
 
 import ui
-import gx
 
 type MessageBoxFn = fn (&MessageBoxComponent)
 
@@ -29,7 +28,7 @@ pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 		id: ui.component_id(p.id, 'textbox')
 		mode: .multiline | .read_only
 		text_size: 24
-		bg_color: gx.hex(0xfcf4e4f0)
+		bg_color: ui.color_solaris_transparent
 	)
 	ok_btn := ui.button(
 		id: ui.component_id(p.id, 'ok_btn')
