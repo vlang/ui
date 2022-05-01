@@ -27,27 +27,27 @@ fn main() {
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all'
+									text: 'all1'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel'
+									text: 'devel1'
 									submenu: ui.menu(
 										items: [
 											ui.menuitem(
-												text: 'all'
+												text: 'all2'
 												action: menu_click
 											),
 											ui.menuitem(
-												text: 'devel'
+												text: 'devel2'
 												submenu: ui.menu(
 													items: [
 														ui.menuitem(
-															text: 'all'
+															text: 'all3'
 															action: menu_click
 														),
 														ui.menuitem(
-															text: 'devel'
+															text: 'devel3'
 															action: menu_click
 														),
 													]
@@ -72,19 +72,19 @@ fn main() {
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
-						text: 'all'
+						text: 'all4'
 						action: menu_click
 					),
 					ui.menuitem(
-						text: 'devel'
+						text: 'devel4'
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all'
+									text: 'all5'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel'
+									text: 'devel5'
 									action: menu_click
 								),
 							]

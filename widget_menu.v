@@ -184,10 +184,14 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
+		mut item := m.items[m.selected]
+		mut submenu_to_open := false
+		if item.has_menu() {
+			submenu_to_open = item.submenu.hidden
+		}
 		if selected >= 0 && selected != m.selected {
 			m.close()
 		}
-		mut item := m.items[m.selected]
 		if item.action != voidptr(0) {
 			parent := m.parent
 			state := parent.get_state()
@@ -195,9 +199,11 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		}
 		if item.has_menu() {
 			// println('toggle menu $item.id')
-			item.toggle_menu()
+			// item.toggle_menu()
+			item.set_menu(submenu_to_open)
 		} else {
 			item.menu.root_menu.close()
+			m.selected = -1
 		}
 	}
 }
@@ -332,6 +338,20 @@ pub fn (mut m Menu) set_text(s string) {
 	m.text = s
 }
 
+pub fn (m &Menu) show_all_states() {
+	println('Show states: $m.id')
+	for i, item in m.items {
+		print('$i) $item.id $item.text')
+		if item.has_menu() {
+			println(' with submenu $item.submenu.id hidden $item.submenu.hidden')
+			item.submenu.show_all_states()
+		} else {
+			println('')
+		}
+	}
+	println('')
+}
+
 pub type MenuItemFn = fn (item &MenuItem, state voidptr)
 
 [heap]
@@ -396,22 +416,12 @@ pub fn (mi &MenuItem) has_menu() bool {
 	return mi.submenu != 0
 }
 
-pub fn (mut mi MenuItem) toggle_menu() {
-	if mi.submenu.hidden {
+pub fn (mut mi MenuItem) set_menu(state bool) {
+	if state {
 		mi.set_menu_pos()
 		mi.submenu.set_visible(true)
 	} else {
 		mi.submenu.set_all_children_visible(false)
-	}
-}
-
-pub fn (mut mi MenuItem) highlight() {
-	if mi.has_menu() {
-		mi.set_menu_pos()
-		mi.submenu.set_visible(true)
-	}
-	if mi.menu.parent_item != 0 {
-		mi.menu.parent_item.highlight()
 	}
 }
 
