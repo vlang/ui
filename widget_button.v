@@ -211,7 +211,7 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_click ? {
-		println('btn_click $b.id movable $b.movable top_widget ${b.ui.window.is_top_widget(b,
+		println('btn_click $b.id movable $b.movable focused $b.is_focused top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
 	if b.hidden {

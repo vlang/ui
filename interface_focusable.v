@@ -61,7 +61,7 @@ pub fn (mut f Focusable) force_focus() {
 	}
 	Layout(w).unfocus_all()
 	f.is_focused = true
-	$if focus2 ? {
+	$if focus ? {
 		println('$f.id has focus at $w.ui.gg.frame')
 	}
 }

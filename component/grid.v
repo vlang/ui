@@ -227,6 +227,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
+		dd.set_visible(false)
 	}
 	g.tb_colbar.init(layout)
 	g.tb_rowbar.init(layout)
