@@ -78,7 +78,7 @@ fn main() {
 		]
 	)
 	mut cb := uic.colorbox_component(cb_layout)
-	cb.connect(&rect.color)
+	cb.connect(&rect.style.color)
 	app.window = window
 	ui.run(window)
 }

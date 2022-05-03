@@ -301,11 +301,11 @@ fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
 }
 
 pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
-	cb.r_rgb_cur.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
+	cb.r_rgb_cur.style.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
 	if cb.linked != 0 {
 		// attach a component
 		unsafe {
-			*cb.linked = cb.r_rgb_cur.color
+			*cb.linked = cb.r_rgb_cur.style.color
 		}
 	}
 	$if cb_ucc ? {
@@ -316,9 +316,9 @@ pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 		cb.colbtn.on_changed(cb.colbtn)
 	}
 	if reactive {
-		cb.txt_r = cb.r_rgb_cur.color.r.str()
-		cb.txt_g = cb.r_rgb_cur.color.g.str()
-		cb.txt_b = cb.r_rgb_cur.color.b.str()
+		cb.txt_r = cb.r_rgb_cur.style.color.r.str()
+		cb.txt_g = cb.r_rgb_cur.style.color.g.str()
+		cb.txt_b = cb.r_rgb_cur.style.color.b.str()
 	}
 }
 

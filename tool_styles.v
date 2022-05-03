@@ -23,6 +23,7 @@ pub mut:
 	tb     TextBoxStyle
 	lb     ListBoxStyle
 	cb     CheckBoxStyle
+	rect   RectangleStyle
 	slider SliderStyle
 	dd     DropdownStyle
 	menu   MenuStyle
@@ -42,6 +43,8 @@ pub fn (s Style) to_toml() string {
 	toml += s.dd.to_toml()
 	toml += '\n[checkbox]\n'
 	toml += s.cb.to_toml()
+	toml += '\n[rectangle]\n'
+	toml += s.rect.to_toml()
 	toml += '\n[menu]\n'
 	toml += s.menu.to_toml()
 	toml += '\n[canvaslayout]\n'
@@ -60,6 +63,7 @@ pub fn parse_style_toml_file(path string) Style {
 	s.slider.from_toml(doc.value('slider'))
 	s.dd.from_toml(doc.value('dropdown'))
 	s.cb.from_toml(doc.value('checkbox'))
+	s.rect.from_toml(doc.value('rectangle'))
 	s.menu.from_toml(doc.value('menu'))
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
