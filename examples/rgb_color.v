@@ -203,10 +203,10 @@ fn textbox_color_update(mut app App) {
 	g := u8(app.g_textbox.text.int())
 	b := u8(app.b_textbox.text.int())
 	if !ui.is_rgb_valid(r) || !ui.is_rgb_valid(g) || !ui.is_rgb_valid(b) {
-		app.rgb_rectangle.color = gx.rgb(255, 255, 255)
+		app.rgb_rectangle.style.color = gx.rgb(255, 255, 255)
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'
 	} else {
-		app.rgb_rectangle.color = gx.rgb(r, g, b)
+		app.rgb_rectangle.style.color = gx.rgb(r, g, b)
 		app.rgb_rectangle.text = ''
 	}
 }
