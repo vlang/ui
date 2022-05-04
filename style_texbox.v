@@ -8,7 +8,7 @@ import toml
 pub struct TextBoxShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color
+	bg_color  gx.Color = gx.white
 }
 
 pub struct TextBoxStyle {

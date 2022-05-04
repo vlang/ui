@@ -24,6 +24,11 @@ fn main() {
 		mode: .resizable
 		width: 800
 		height: 600
+		on_init: fn (win &ui.Window) {
+			mut btn := win.button('txt_color')
+			tb := win.textbox('tb')
+			(*btn.bg_color) = tb.text_styles.current.color
+		}
 		children: [
 			ui.column(
 				margin_: 10
@@ -49,7 +54,7 @@ fn main() {
 							),
 							uic.colorbutton(
 								id: 'bg_color'
-								bg_color: &tb.bg_color
+								bg_color: &tb.style.bg_color
 							),
 						]
 					),

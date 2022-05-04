@@ -130,7 +130,7 @@ fn (mut b Button) update_shape_style(p ButtonStyleParams) {
 }
 
 // update style_forced
-fn (mut b Button) update_style_forced(p ButtonStyleParams) {
+pub fn (mut b Button) update_style_forced(p ButtonStyleParams) {
 	if p.radius >= 0 {
 		b.style_forced.radius = p.radius
 	}

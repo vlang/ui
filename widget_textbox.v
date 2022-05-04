@@ -97,8 +97,8 @@ pub mut:
 	style        TextBoxShapeStyle
 	style_forced TextBoxStyleParams
 	// TODO: put in style
-	borderless         bool
-	bg_color           gx.Color
+	borderless bool
+	// bg_color           gx.Color
 	border_accentuated bool
 	// related to text drawing
 	hidden bool
@@ -145,7 +145,7 @@ pub struct TextBoxParams {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	bg_color           gx.Color = gx.white
+	// bg_color           gx.Color = gx.white
 	borderless         bool
 	border_accentuated bool
 	// text_size          f64
@@ -179,7 +179,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		max_len: c.max_len
 		borderless: c.borderless
 		border_accentuated: c.border_accentuated
-		bg_color: c.bg_color
+		// bg_color: c.bg_color
 		// text_size: c.text_size
 		style_forced: c.TextBoxStyleParams
 		ui: 0
@@ -336,9 +336,9 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	// draw background
 	if tb.has_scrollview {
 		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
-			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
+			tb.scrollview.width, tb.scrollview.height, tb.style.bg_color)
 	} else {
-		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
+		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.style.bg_color)
 		if !tb.borderless {
 			draw_device_inner_border(tb.border_accentuated, d, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
