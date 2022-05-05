@@ -46,7 +46,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
-	style_forced ListBoxStyleParams
+	style_params ListBoxStyleParams
 	// text styles
 	text_styles TextStyles
 	text_size   f64
@@ -121,13 +121,13 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
 		text_size: c.text_size
-		style_forced: c.ListBoxStyleParams
+		style_params: c.ListBoxStyleParams
 		files_droped: c.files_droped
 		ordered: c.ordered
 		id: c.id
 		ui: 0
 	}
-	list.style_forced.style = c.theme
+	list.style_params.style = c.theme
 	for id, text in c.items {
 		// println(" append $id -> $text ")
 		list.append_item(id, text, 0)

@@ -48,7 +48,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        SliderStyle
-	style_forced SliderStyleParams
+	style_params SliderStyleParams
 	// component state for composable widget
 	component voidptr
 }
@@ -92,9 +92,9 @@ pub fn slider(c SliderParams) &Slider {
 		ui: 0
 		z_index: c.z_index
 		entering: c.entering
-		style_forced: c.SliderStyleParams
+		style_params: c.SliderStyleParams
 	}
-	s.style_forced.style = c.theme
+	s.style_params.style = c.theme
 	s.set_thumb_size()
 
 	if s.min > s.max {

@@ -13,7 +13,7 @@ pub fn canvas_layer(c CanvasLayoutParams) &CanvasLayout {
 	cl.z_index = -1
 	cl.active_evt_mngr = false
 	cl.is_canvas_layer = true
-	cl.update_style_forced(bg_color: transparent)
+	cl.update_style_params(bg_color: transparent)
 	println('canvas_layer $cl.id')
 	return cl
 }

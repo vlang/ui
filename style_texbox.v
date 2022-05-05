@@ -54,12 +54,12 @@ pub fn (mut ts TextBoxStyle) from_toml(a toml.Any) {
 fn (mut t TextBox) load_style() {
 	// println("pgbar load style $t.theme_style")
 	mut style := if t.theme_style == '' { t.ui.window.theme_style } else { t.theme_style }
-	if t.style_forced.style != no_style {
-		style = t.style_forced.style
+	if t.style_params.style != no_style {
+		style = t.style_params.style
 	}
 	t.update_theme_style(style)
 	// forced overload default style
-	t.update_style(t.style_forced)
+	t.update_style(t.style_params)
 }
 
 pub fn (mut t TextBox) update_theme_style(theme string) {
@@ -94,12 +94,12 @@ pub fn (mut t TextBox) update_shape_style(p TextBoxStyleParams) {
 	}
 }
 
-pub fn (mut t TextBox) update_style_forced(p TextBoxStyleParams) {
+pub fn (mut t TextBox) update_style_params(p TextBoxStyleParams) {
 	if p.bg_radius > 0 {
-		t.style_forced.bg_radius = p.bg_radius
+		t.style_params.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
-		t.style_forced.bg_color = p.bg_color
+		t.style_params.bg_color = p.bg_color
 	}
 	mut dtw := DrawTextWidget(t)
 	dtw.update_theme_style_params(p)

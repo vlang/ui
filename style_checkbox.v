@@ -64,12 +64,12 @@ pub fn (mut cbs CheckBoxStyle) from_toml(a toml.Any) {
 pub fn (mut cb CheckBox) load_style() {
 	// println("btn load style $cb.theme_style")
 	mut style := if cb.theme_style == '' { cb.ui.window.theme_style } else { cb.theme_style }
-	if cb.style_forced.style != no_style {
-		style = cb.style_forced.style
+	if cb.style_params.style != no_style {
+		style = cb.style_params.style
 	}
 	cb.update_theme_style(style)
 	// forced overload default style
-	cb.update_style(cb.style_forced)
+	cb.update_style(cb.style_params)
 }
 
 pub fn (mut cb CheckBox) update_theme_style(theme string) {
@@ -104,12 +104,12 @@ fn (mut cb CheckBox) update_shape_style(p CheckBoxStyleParams) {
 	}
 }
 
-fn (mut cb CheckBox) update_style_forced(p CheckBoxStyleParams) {
+fn (mut cb CheckBox) update_style_params(p CheckBoxStyleParams) {
 	if p.border_color != no_color {
-		cb.style_forced.border_color = p.border_color
+		cb.style_params.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
-		cb.style_forced.bg_color = p.bg_color
+		cb.style_params.bg_color = p.bg_color
 	}
 	mut dtw := DrawTextWidget(cb)
 	dtw.update_theme_style_params(p)

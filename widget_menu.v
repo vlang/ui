@@ -25,7 +25,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        MenuShapeStyle
-	style_forced MenuStyleParams
+	style_params MenuStyleParams
 	// text styles
 	text_styles TextStyles
 	component   voidptr
@@ -74,11 +74,11 @@ pub fn menu(c MenuParams) &Menu {
 		item_height: c.height
 		ui: 0
 		z_index: c.z_index
-		style_forced: c.MenuStyleParams
+		style_params: c.MenuStyleParams
 		hidden: c.hidden
 	}
 	m.root_menu = m
-	m.style_forced.style = c.theme
+	m.style_params.style = c.theme
 	// connect parent menu
 	for i, mut item in m.items {
 		item.pos = i

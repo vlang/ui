@@ -68,12 +68,12 @@ pub fn (mut ms MenuStyle) from_toml(a toml.Any) {
 pub fn (mut m Menu) load_style() {
 	// println("btn load style $m.theme_style")
 	mut style := if m.theme_style == '' { m.ui.window.theme_style } else { m.theme_style }
-	if m.style_forced.style != no_style {
-		style = m.style_forced.style
+	if m.style_params.style != no_style {
+		style = m.style_params.style
 	}
 	m.update_theme_style(style)
 	// forced overload default style
-	m.update_style(m.style_forced)
+	m.update_style(m.style_params)
 }
 
 pub fn (mut m Menu) update_theme_style(theme string) {
@@ -112,15 +112,15 @@ fn (mut m Menu) update_shape_style(p MenuStyleParams) {
 	}
 }
 
-fn (mut m Menu) update_style_forced(p MenuStyleParams) {
+fn (mut m Menu) update_style_params(p MenuStyleParams) {
 	if p.border_color != no_color {
-		m.style_forced.border_color = p.border_color
+		m.style_params.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
-		m.style_forced.bg_color = p.bg_color
+		m.style_params.bg_color = p.bg_color
 	}
 	if p.bg_color_hover != no_color {
-		m.style_forced.bg_color_hover = p.bg_color_hover
+		m.style_params.bg_color_hover = p.bg_color_hover
 	}
 	mut dtw := DrawTextWidget(m)
 	dtw.update_theme_style_params(p)

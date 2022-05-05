@@ -18,7 +18,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        RectangleShapeStyle
-	style_forced RectangleStyleParams
+	style_params RectangleStyleParams
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -64,7 +64,7 @@ pub fn rectangle(c RectangleParams) &Rectangle {
 		width: c.width
 		z_index: c.z_index
 		radius: c.radius
-		style_forced: c.RectangleStyleParams
+		style_params: c.RectangleStyleParams
 		// color: c.color
 		border: c.border
 		// border_color: c.border_color
@@ -73,7 +73,7 @@ pub fn rectangle(c RectangleParams) &Rectangle {
 		y: c.y
 		// text_size: c.text_size
 	}
-	rect.style_forced.style = c.theme
+	rect.style_params.style = c.theme
 	return rect
 }
 

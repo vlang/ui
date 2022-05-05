@@ -103,7 +103,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 		}
 		mut tab := tab_bar.children[i]
 		if mut tab is ui.CanvasLayout {
-			tab.update_style_forced(
+			tab.update_style_params(
 				bg_color: if i == 0 { tabs.bg_color_selection } else { tabs.bg_color }
 			)
 			ui.component_connect(tabs, tab)

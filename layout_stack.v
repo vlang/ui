@@ -89,7 +89,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        StackShapeStyle
-	style_forced StackStyleParams
+	style_params StackStyleParams
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
@@ -148,11 +148,11 @@ fn stack(c StackParams) &Stack {
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
-		style_forced: c.StackStyleParams
+		style_params: c.StackStyleParams
 		title: c.title
 		ui: 0
 	}
-	s.style_forced.style = c.theme
+	s.style_params.style = c.theme
 	if c.width > 0 {
 		s.fixed_width = c.width
 	}

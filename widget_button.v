@@ -67,7 +67,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        ButtonShapeStyle
-	style_forced ButtonStyleParams
+	style_params ButtonStyleParams
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -110,7 +110,7 @@ pub fn button(c ButtonParams) &Button {
 		icon_path: c.icon_path
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		style_forced: c.ButtonStyleParams
+		style_params: c.ButtonStyleParams
 		onclick: c.onclick
 		on_key_down: c.on_key_down
 		// text_size: c.text_size
@@ -118,7 +118,7 @@ pub fn button(c ButtonParams) &Button {
 		padding: f32(c.padding)
 		ui: 0
 	}
-	b.style_forced.style = c.theme
+	b.style_params.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {
 		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
 		b.use_icon = false

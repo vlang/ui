@@ -76,12 +76,12 @@ pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
 pub fn (mut b Button) load_style() {
 	// println("btn load style $b.theme_style")
 	mut style := if b.theme_style == '' { b.ui.window.theme_style } else { b.theme_style }
-	if b.style_forced.style != no_style {
-		style = b.style_forced.style
+	if b.style_params.style != no_style {
+		style = b.style_params.style
 	}
 	b.update_theme_style(style)
 	// forced overload default style
-	b.update_style(b.style_forced)
+	b.update_style(b.style_params)
 }
 
 pub fn (mut b Button) update_theme_style(theme string) {
@@ -129,16 +129,16 @@ fn (mut b Button) update_shape_style(p ButtonStyleParams) {
 	}
 }
 
-// update style_forced
-pub fn (mut b Button) update_style_forced(p ButtonStyleParams) {
+// update style_params
+pub fn (mut b Button) update_style_params(p ButtonStyleParams) {
 	if p.radius >= 0 {
-		b.style_forced.radius = p.radius
+		b.style_params.radius = p.radius
 	}
 	if p.border_color != no_color {
-		b.style_forced.border_color = p.border_color
+		b.style_params.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
-		b.style_forced.bg_color = p.bg_color
+		b.style_params.bg_color = p.bg_color
 	}
 	if p.bg_color_pressed != no_color {
 		b.style.bg_color_pressed = p.bg_color_pressed

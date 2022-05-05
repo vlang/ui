@@ -64,12 +64,12 @@ pub fn (mut rects RectangleStyle) from_toml(a toml.Any) {
 pub fn (mut rect Rectangle) load_style() {
 	// println("btn load style $rect.theme_style")
 	mut style := if rect.theme_style == '' { rect.ui.window.theme_style } else { rect.theme_style }
-	if rect.style_forced.style != no_style {
-		style = rect.style_forced.style
+	if rect.style_params.style != no_style {
+		style = rect.style_params.style
 	}
 	rect.update_theme_style(style)
 	// forced overload default style
-	rect.update_style(rect.style_forced)
+	rect.update_style(rect.style_params)
 }
 
 pub fn (mut rect Rectangle) update_theme_style(theme string) {
@@ -104,12 +104,12 @@ fn (mut rect Rectangle) update_shape_style(p RectangleStyleParams) {
 	}
 }
 
-fn (mut rect Rectangle) update_style_forced(p RectangleStyleParams) {
+fn (mut rect Rectangle) update_style_params(p RectangleStyleParams) {
 	if p.border_color != no_color {
-		rect.style_forced.border_color = p.border_color
+		rect.style_params.border_color = p.border_color
 	}
 	if p.color != no_color {
-		rect.style_forced.color = p.color
+		rect.style_params.color = p.color
 	}
 	mut dtw := DrawTextWidget(rect)
 	dtw.update_theme_style_params(p)

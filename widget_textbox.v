@@ -95,7 +95,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        TextBoxShapeStyle
-	style_forced TextBoxStyleParams
+	style_params TextBoxStyleParams
 	// TODO: put in style
 	borderless bool
 	// bg_color           gx.Color
@@ -181,7 +181,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		border_accentuated: c.border_accentuated
 		// bg_color: c.bg_color
 		// text_size: c.text_size
-		style_forced: c.TextBoxStyleParams
+		style_params: c.TextBoxStyleParams
 		ui: 0
 		text: c.text
 		text_: ''
@@ -204,7 +204,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		on_entered: c.on_entered
 		on_scroll_change: c.on_scroll_change
 	}
-	tb.style_forced.style = c.theme
+	tb.style_params.style = c.theme
 	if tb.text == 0 {
 		tb.text = &tb.text_
 	}
@@ -767,13 +767,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 					if tb.fitted_height {
 						// TODO: propose_size
-						tb.style_forced.text_size -= 2
-						if tb.style_forced.text_size < 8 {
-							tb.style_forced.text_size = 8
+						tb.style_params.text_size -= 2
+						if tb.style_params.text_size < 8 {
+							tb.style_params.text_size = 8
 						}
 						// update_text_size(mut tb)
 						mut dtw := DrawTextWidget(tb)
-						dtw.update_text_size(tb.style_forced.text_size)
+						dtw.update_text_size(tb.style_params.text_size)
 						tb.update_line_height()
 					}
 				}
@@ -782,13 +782,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 						return
 					}
 					if tb.fitted_height {
-						tb.style_forced.text_size += 2
-						if tb.style_forced.text_size > 48 {
-							tb.style_forced.text_size = 48
+						tb.style_params.text_size += 2
+						if tb.style_params.text_size > 48 {
+							tb.style_params.text_size = 48
 						}
 						// update_text_size(mut tb)
 						mut dtw := DrawTextWidget(tb)
-						dtw.update_text_size(tb.style_forced.text_size)
+						dtw.update_text_size(tb.style_params.text_size)
 						tb.update_line_height()
 					}
 				}

@@ -54,12 +54,12 @@ pub fn (mut ls CanvasLayoutStyle) from_toml(a toml.Any) {
 fn (mut l CanvasLayout) load_style() {
 	// println("pgbar load style $l.theme_style")
 	mut style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
-	if l.style_forced.style != no_style {
-		style = l.style_forced.style
+	if l.style_params.style != no_style {
+		style = l.style_params.style
 	}
 	l.update_theme_style(style)
 	// forced overload default style
-	l.update_style(l.style_forced)
+	l.update_style(l.style_params)
 }
 
 pub fn (mut l CanvasLayout) update_theme_style(theme string) {
@@ -95,12 +95,12 @@ pub fn (mut l CanvasLayout) update_shape_style(p CanvasLayoutStyleParams) {
 	}
 }
 
-pub fn (mut l CanvasLayout) update_style_forced(p CanvasLayoutStyleParams) {
+pub fn (mut l CanvasLayout) update_style_params(p CanvasLayoutStyleParams) {
 	if p.bg_radius > 0 {
-		l.style_forced.bg_radius = p.bg_radius
+		l.style_params.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
-		l.style_forced.bg_color = p.bg_color
+		l.style_params.bg_color = p.bg_color
 	}
 	mut dtw := DrawTextWidget(l)
 	dtw.update_theme_style_params(p)
@@ -157,13 +157,13 @@ pub fn (mut ls StackStyle) from_toml(a toml.Any) {
 fn (mut l Stack) load_style() {
 	// println("stack load style $l.theme_style")
 	mut style := if l.theme_style == '' { l.ui.window.theme_style } else { l.theme_style }
-	if l.style_forced.style != no_style {
-		style = l.style_forced.style
+	if l.style_params.style != no_style {
+		style = l.style_params.style
 	}
 	l.update_theme_style(style)
 	// forced overload default style
-	l.update_style(l.style_forced)
-	// println("s ls $l.theme_style $l.style $l.style_forced")
+	l.update_style(l.style_params)
+	// println("s ls $l.theme_style $l.style $l.style_params")
 }
 
 pub fn (mut l Stack) update_theme_style(theme string) {
@@ -198,12 +198,12 @@ pub fn (mut l Stack) update_shape_style(p StackStyleParams) {
 	}
 }
 
-pub fn (mut l Stack) update_style_forced(p StackStyleParams) {
+pub fn (mut l Stack) update_style_params(p StackStyleParams) {
 	if p.bg_radius > 0 {
-		l.style_forced.bg_radius = p.bg_radius
+		l.style_params.bg_radius = p.bg_radius
 	}
 	if p.bg_color != no_color {
-		l.style_forced.bg_color = p.bg_color
+		l.style_params.bg_color = p.bg_color
 	}
 	mut dtw := DrawTextWidget(l)
 	dtw.update_theme_style_params(p)

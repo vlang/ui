@@ -40,7 +40,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        CheckBoxShapeStyle
-	style_forced CheckBoxStyleParams
+	style_params CheckBoxStyleParams
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -77,10 +77,10 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 		on_check_changed: c.on_check_changed
 		checked: c.checked
 		disabled: c.disabled
-		style_forced: c.CheckBoxStyleParams
+		style_params: c.CheckBoxStyleParams
 		justify: c.justify
 	}
-	cb.style_forced.style = c.theme
+	cb.style_params.style = c.theme
 	return cb
 }
 

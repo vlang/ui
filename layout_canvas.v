@@ -45,7 +45,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        CanvasLayoutShapeStyle
-	style_forced CanvasLayoutStyleParams
+	style_params CanvasLayoutStyleParams
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
@@ -137,7 +137,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		// bg_color: c.bg_color
 		is_focused: c.is_focused
 		justify: c.justify
-		style_forced: c.CanvasLayoutStyleParams
+		style_params: c.CanvasLayoutStyleParams
 		active_evt_mngr: c.active_evt_mngr
 		draw_device_fn: c.on_draw
 		post_draw_device_fn: c.on_post_draw
@@ -153,7 +153,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		char_fn: c.on_char
 		on_scroll_change: c.on_scroll_change
 	}
-	canvas.style_forced.style = c.theme
+	canvas.style_params.style = c.theme
 	if c.scrollview {
 		scrollview_add(mut canvas)
 	}

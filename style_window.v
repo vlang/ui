@@ -30,12 +30,12 @@ pub fn (mut w WindowStyle) from_toml(a toml.Any) {
 
 pub fn (mut w Window) load_style() {
 	mut style := w.theme_style
-	if w.style_forced.style != no_style {
-		style = w.style_forced.style
+	if w.style_params.style != no_style {
+		style = w.style_params.style
 	}
 	w.update_theme_style(style)
 	// println("w bg: $w.bg_color")
-	w.update_style(w.style_forced)
+	w.update_style(w.style_params)
 	// println("w2 bg: $w.bg_color")
 	mut gui := w.ui
 	gui.gg.set_bg_color(w.bg_color)

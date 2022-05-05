@@ -46,12 +46,12 @@ pub fn (mut ss SliderStyle) from_toml(a toml.Any) {
 fn (mut s Slider) load_style() {
 	// println("pgbar load style $s.theme_style")
 	mut style := if s.theme_style == '' { s.ui.window.theme_style } else { s.theme_style }
-	if s.style_forced.style != no_style {
-		style = s.style_forced.style
+	if s.style_params.style != no_style {
+		style = s.style_params.style
 	}
 	s.update_theme_style(style)
 	// forced overload default style
-	s.update_style(s.style_forced)
+	s.update_style(s.style_params)
 }
 
 pub fn (mut s Slider) update_theme_style(theme string) {

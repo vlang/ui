@@ -77,7 +77,7 @@ pub mut:
 	text_cfg gx.TextCfg
 	// themes
 	theme_style  string
-	style_forced WindowStyleParams
+	style_params WindowStyleParams
 	// widgets register
 	widgets        map[string]Widget
 	widgets_counts map[string]int
@@ -232,7 +232,7 @@ pub fn window(cfg WindowParams) &Window {
 		suspended_fn: cfg.on_suspend
 		resumed_fn: cfg.on_resume
 	}
-	window.style_forced.bg_color = cfg.bg_color
+	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
 	gcontext := gg.new_context(
 		width: width

@@ -23,7 +23,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        ProgressBarStyle
-	style_forced ProgressBarStyleParams
+	style_params ProgressBarStyleParams
 	// component state for composable widget
 	component voidptr
 }
@@ -50,10 +50,10 @@ pub fn progressbar(c ProgressBarParams) &ProgressBar {
 		min: c.min
 		max: c.max
 		val: c.val
-		style_forced: c.ProgressBarStyleParams
+		style_params: c.ProgressBarStyleParams
 		ui: 0
 	}
-	pb.style_forced.style = c.theme
+	pb.style_params.style = c.theme
 	return pb
 }
 

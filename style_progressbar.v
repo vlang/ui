@@ -46,12 +46,12 @@ pub fn (mut pbs ProgressBarStyle) from_toml(a toml.Any) {
 fn (mut pb ProgressBar) load_style() {
 	// println("pgbar load style $pb.theme_style")
 	mut style := if pb.theme_style == '' { pb.ui.window.theme_style } else { pb.theme_style }
-	if pb.style_forced.style != no_style {
-		style = pb.style_forced.style
+	if pb.style_params.style != no_style {
+		style = pb.style_params.style
 	}
 	pb.update_theme_style(style)
 	// forced overload default style
-	pb.update_style(pb.style_forced)
+	pb.update_style(pb.style_params)
 }
 
 pub fn (mut pb ProgressBar) update_theme_style(theme string) {

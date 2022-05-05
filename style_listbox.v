@@ -76,12 +76,12 @@ pub fn (mut lbs ListBoxStyle) from_toml(a toml.Any) {
 pub fn (mut lb ListBox) load_style() {
 	// println("btn load style $lb.theme_style")
 	mut style := if lb.theme_style == '' { lb.ui.window.theme_style } else { lb.theme_style }
-	if lb.style_forced.style != no_style {
-		style = lb.style_forced.style
+	if lb.style_params.style != no_style {
+		style = lb.style_params.style
 	}
 	lb.update_theme_style(style)
 	// forced overload default style
-	lb.update_style(lb.style_forced)
+	lb.update_style(lb.style_params)
 }
 
 pub fn (mut lb ListBox) update_theme_style(theme string) {
@@ -128,21 +128,21 @@ fn (mut lb ListBox) update_shape_style(p ListBoxStyleParams) {
 	}
 }
 
-fn (mut lb ListBox) update_style_forced(p ListBoxStyleParams) {
+fn (mut lb ListBox) update_style_params(p ListBoxStyleParams) {
 	if p.radius > 0 {
-		lb.style_forced.radius = p.radius
+		lb.style_params.radius = p.radius
 	}
 	if p.border_color != no_color {
-		lb.style_forced.border_color = p.border_color
+		lb.style_params.border_color = p.border_color
 	}
 	if p.bg_color != no_color {
-		lb.style_forced.bg_color = p.bg_color
+		lb.style_params.bg_color = p.bg_color
 	}
 	if p.bg_color_pressed != no_color {
-		lb.style_forced.bg_color_pressed = p.bg_color_pressed
+		lb.style_params.bg_color_pressed = p.bg_color_pressed
 	}
 	if p.bg_color_hover != no_color {
-		lb.style_forced.bg_color_hover = p.bg_color_hover
+		lb.style_params.bg_color_hover = p.bg_color_hover
 	}
 	mut dtw := DrawTextWidget(lb)
 	dtw.update_theme_style_params(p)

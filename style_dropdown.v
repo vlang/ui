@@ -62,12 +62,12 @@ pub fn (mut dds DropdownStyle) from_toml(a toml.Any) {
 fn (mut dd Dropdown) load_style() {
 	// println("pgbar load style $dd.theme_style")
 	mut style := if dd.theme_style == '' { dd.ui.window.theme_style } else { dd.theme_style }
-	if dd.style_forced.style != no_style {
-		style = dd.style_forced.style
+	if dd.style_params.style != no_style {
+		style = dd.style_params.style
 	}
 	dd.update_theme_style(style)
 	// forced overload default style
-	dd.update_style(dd.style_forced)
+	dd.update_style(dd.style_params)
 }
 
 pub fn (mut dd Dropdown) update_theme_style(theme string) {
@@ -111,18 +111,18 @@ pub fn (mut dd Dropdown) update_shape_style(p DropdownStyleParams) {
 	}
 }
 
-pub fn (mut dd Dropdown) update_style_forced(p DropdownStyleParams) {
+pub fn (mut dd Dropdown) update_style_params(p DropdownStyleParams) {
 	if p.bg_color != no_color {
-		dd.style_forced.bg_color = p.bg_color
+		dd.style_params.bg_color = p.bg_color
 	}
 	if p.border_color != no_color {
-		dd.style_forced.border_color = p.border_color
+		dd.style_params.border_color = p.border_color
 	}
 	if p.focus_color != no_color {
-		dd.style_forced.focus_color = p.focus_color
+		dd.style_params.focus_color = p.focus_color
 	}
 	if p.drawer_color != no_color {
-		dd.style_forced.drawer_color = p.drawer_color
+		dd.style_params.drawer_color = p.drawer_color
 	}
 	mut dtw := DrawTextWidget(dd)
 	dtw.update_theme_style_params(p)

@@ -39,7 +39,7 @@ pub mut:
 	// Style
 	theme_style  string
 	style        DropdownShapeStyle
-	style_forced DropdownStyleParams
+	style_params DropdownStyleParams
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -79,11 +79,11 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 		items: c.items
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
-		style_forced: c.DropdownStyleParams
+		style_params: c.DropdownStyleParams
 		def_text: c.def_text
 		ui: 0
 	}
-	dd.style_forced.style = c.theme
+	dd.style_params.style = c.theme
 	if c.texts.len > 0 {
 		for t in c.texts {
 			dd.add_item(t)
