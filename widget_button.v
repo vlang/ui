@@ -353,7 +353,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
-			ui.button_border_color
+			b.style.border_color
 		})
 	} else {
 		if b.alpha_mode && bg_color.a < 255 { // draw a background to see alpha color
@@ -372,7 +372,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 		d.draw_rect_empty(x, y, width, height, if b.is_focused {
 			ui.button_focus_border_color
 		} else {
-			ui.button_border_color
+			b.style.border_color
 		})
 	}
 	if b.use_icon {

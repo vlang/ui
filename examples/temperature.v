@@ -2,7 +2,7 @@ import ui
 
 const (
 	win_width  = 400
-	win_height = 41
+	win_height = 40
 )
 
 struct App {

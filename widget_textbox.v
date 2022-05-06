@@ -575,6 +575,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
 				}
+				if tb.on_changed != TextBoxValidatedFn(0) {
+					tb.on_changed(tb, window.state)
+				}
 			}
 			.delete {
 				tb.ui.show_cursor = true
@@ -589,6 +592,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// u.free() // TODO remove
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
+				}
+				if tb.on_changed != TextBoxValidatedFn(0) {
+					tb.on_changed(tb, window.state)
 				}
 			}
 			.left {
@@ -802,6 +808,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 				if e.key == .backspace {
 					tb.on_change(*tb.text, window.state)
 				}
+			}
+			if tb.on_changed != TextBoxValidatedFn(0) {
+				tb.on_changed(tb, window.state)
 			}
 		}
 	}
