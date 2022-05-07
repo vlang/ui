@@ -8,13 +8,12 @@ const (
 
 struct App {
 mut:
-	counter string     = '0'
-	window  &ui.Window = 0
+	counter string = '0'
 }
 
 fn main() {
 	mut app := &App{}
-	app.window = ui.window(
+	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'Counter'
@@ -45,7 +44,7 @@ fn main() {
 			),
 		]
 	)
-	ui.run(app.window)
+	ui.run(window)
 }
 
 fn btn_count_click(mut app App, btn &ui.Button) {

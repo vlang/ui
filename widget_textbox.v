@@ -913,6 +913,9 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		return
 	} else {
 		// println('mouse second $tb.id')
+		if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+			return
+		}
 		tb.focus()
 	}
 	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
