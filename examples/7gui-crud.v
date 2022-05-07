@@ -40,11 +40,13 @@ fn main() {
 									),
 									ui.row(
 										widths: [60.0, ui.stretch]
-										children: [ui.label(
-											text: 'Surname:'
-											justify: ui.center_left
-										),
-											ui.textbox()]
+										children: [
+											ui.label(
+												text: 'Surname:'
+												justify: ui.center_left
+											),
+											ui.textbox(),
+										]
 									),
 								]
 							),
