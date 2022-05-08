@@ -56,6 +56,7 @@ pub mut:
 	alpha_mode   bool
 	padding      f32
 	hidden       bool
+	disabled     bool
 	movable      bool // drag, transition or anything allowing offset yo be updated
 	just_dragged bool
 	drag_type    string = 'btn'
@@ -335,7 +336,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
 	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
-	bg_color := match b.state {
+	mut bg_color := match b.state {
 		.normal {
 			if b.bg_color != voidptr(0) { *b.bg_color } else { b.style.bg_color }
 		}
@@ -345,6 +346,9 @@ fn (mut b Button) draw_device(d DrawDevice) {
 		.pressed {
 			b.style.bg_color_pressed
 		}
+	}
+	if b.disabled {
+		bg_color.a = 50
 	}
 	if b.style.radius > 0 {
 		radius := relative_size(b.style.radius, int(width), int(height))
