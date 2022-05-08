@@ -3,9 +3,14 @@ import gx
 import math
 
 struct Circle {
-	x      f32
-	y      f32
+	x f32
+	y f32
+mut:
 	radius f32
+}
+
+fn (c Circle) contains(x f32, y f32) bool {
+	return math.pow((c.x - x), 2) + math.pow((c.y - y), 2) <= math.pow(c.radius, 2)
 }
 
 struct Circles {
@@ -15,13 +20,71 @@ mut:
 	circles []Circle
 }
 
-fn (mut c Circles) add(x f64, y f64, radius f64) {
-	c.circles << Circle{f32(x), f32(y), f32(radius)}
+struct State {
+mut:
+	circles        []Circle
+	current_action int = -1
+	history        []Action
+}
+
+fn (mut state State) add_action(action Action) {
+	state.history << action
+	state.current_action += 1
+}
+
+fn (mut state State) undo() {
+	if state.current_action >= 0 {
+		state.history[state.current_action].undo(mut state)
+		state.current_action -= 1
+	}
+}
+
+fn (mut state State) redo() {
+	if state.current_action < state.history.len - 1 {
+		state.current_action += 1
+		state.history[state.current_action].do(mut state)
+	}
+}
+
+interface Action {
+	do(mut state State)
+	undo(mut state State)
+}
+
+struct ActionAddCircle {
+	circle Circle
+}
+
+fn (a ActionAddCircle) do(mut state State) {
+	state.circles << a.circle
+}
+
+fn (a ActionAddCircle) undo(mut state State) {
+	if state.circles.len > 0 {
+		state.circles.delete_last()
+	} else {
+		println('Warning: no circle to delete')
+	}
+}
+
+struct ActionSetCircleRadius {
+	circle_index int
+	new_radius   f32
+	old_radius   f32
+}
+
+fn (a ActionSetCircleRadius) do(mut state State) {
+	state.circles[a.circle_index].radius = a.new_radius
+}
+
+fn (a ActionSetCircleRadius) undo(mut state State) {
+	state.circles[a.circle_index].radius = a.old_radius
 }
 
 struct App {
 mut:
-	circles Circles
+	hover int
+	state State
 }
 
 fn main() {
@@ -62,8 +125,8 @@ fn main() {
 }
 
 fn draw_circles(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
-	for i, circle in app.circles.circles[..app.circles.last] {
-		if i == app.circles.hover {
+	for i, circle in app.state.circles {
+		if i == app.hover {
 			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gx.light_gray)
 		}
 		c.draw_device_circle_empty(d, circle.x, circle.y, circle.radius, gx.black)
@@ -72,37 +135,38 @@ fn draw_circles(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
 
 fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 	mut app := &App(c.ui.window.state)
-	println('click $e.x $e.y nb pts = $app.circles.circles.len')
-	app.circles.circles.trim(app.circles.last)
-	app.circles.add(e.x, e.y, 20)
-	app.circles.last += 1
-	mut btn_redo := c.ui.window.button('btn_redo')
-	btn_redo.disabled = true
+	// println("click $e.x $e.y nb pts = $app.state.circles.len")
+	radius := 20
+	circle := Circle{f32(e.x), f32(e.y), f32(radius)}
+	action := ActionAddCircle{circle}
+	app.state.add_action(action)
+	action.do(mut app.state)
+	// mut btn_redo := c.ui.window.button("btn_redo")
+	// btn_redo.disabled = true
 }
 
 fn mouse_move_circles(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	mut app := &App(c.ui.window.state)
 	// println("move $e.x $e.y nb pts = $app.circles.circles.len")
-	app.circles.hover = -1
-	for i, circle in app.circles.circles[..app.circles.last] {
-		if math.pow((circle.x - e.x), 2) + math.pow((circle.y - e.y), 2) <= math.pow(circle.radius,
-			2) {
-			app.circles.hover = i
+	app.hover = -1
+	for i, circle in app.state.circles {
+		if circle.contains(f32(e.x), f32(e.y)) {
+			app.hover = i
 			break
 		}
 	}
 }
 
 fn click_undo(mut a App, b &ui.Button) {
-	if a.circles.last > 0 {
-		a.circles.last -= 1
-	}
-	mut btn_redo := b.ui.window.button('btn_redo')
-	btn_redo.disabled = false
+	a.state.undo()
+
+	// mut btn_redo := b.ui.window.button("btn_redo")
+	// btn_redo.disabled = false
 }
 
 fn click_redo(mut a App, b &ui.Button) {
-	if a.circles.last < a.circles.circles.len - 1 {
-		a.circles.last += 1
-	}
+	a.state.redo()
+	// if a.circles.last <  a.circles.circles.len - 1 {
+	// 	a.circles.last += 1
+	// }
 }
