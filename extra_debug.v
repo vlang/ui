@@ -1,6 +1,11 @@
 module ui
 
 import gx
+import os
+
+pub fn env(var string) string {
+	return os.getenv(var)
+}
 
 // Draw bounding box for Stack
 fn debug_draw_bb_stack(s &Stack) {

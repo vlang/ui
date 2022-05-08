@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 
 [heap]
 pub struct Label {
@@ -20,11 +20,11 @@ pub mut:
 	z_index    int
 	adj_width  int
 	adj_height int
+	justify    []f64
 	ui         &UI
 	// text styles
 	text_styles TextStyles
 	text_size   f64
-	text_cfg    gx.TextCfg
 	hidden      bool
 	// component state for composable widget
 	component voidptr
@@ -36,8 +36,8 @@ pub struct LabelParams {
 	width     int
 	height    int
 	z_index   int
+	justify   []f64 = [0.0, 0.0]
 	text      string
-	text_cfg  gx.TextCfg
 	text_size f64
 }
 
@@ -50,7 +50,7 @@ pub fn label(c LabelParams) &Label {
 		ui: 0
 		z_index: c.z_index
 		text_size: c.text_size
-		text_cfg: c.text_cfg
+		justify: c.justify
 	}
 	return lbl
 }
@@ -83,29 +83,37 @@ pub fn (l &Label) free() {
 }
 
 fn (mut l Label) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(l.text_cfg) {
-			l.text_cfg = l.ui.window.text_cfg
-		}
-		update_text_size(mut l)
-	} $else {
-		mut dtw := DrawTextWidget(l)
-		dtw.init_style()
-		dtw.update_text_size(l.text_size)
-	}
+	mut dtw := DrawTextWidget(l)
+	dtw.init_style()
+	dtw.update_text_size(l.text_size)
 }
 
-fn (mut l Label) set_pos(x int, y int) {
+pub fn (mut l Label) set_pos(x int, y int) {
 	l.x = x
 	l.y = y
 }
 
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
-		// println("size $l.text")
-		w, h := text_size(l, l.text)
+		dtw := DrawTextWidget(l)
+		// println(dtw.current_style().size)
+		dtw.load_style()
+		mut w, mut h := 0, 0
+		if !l.text.contains('\n') {
+			w, h = dtw.text_width(l.text), dtw.current_style().size
+			// println("$w, $h, $l.text ${dtw.text_height(l.text)}")
+		} else {
+			for line in l.text.split('\n') {
+				wi, he := dtw.text_size(line)
+				if wi > w {
+					w = wi
+				}
+				h += he
+			}
+		}
+
 		// println("label size: $w, $h ${l.text.split('\n').len}")
-		l.adj_width, l.adj_height = w, h * l.text.split('\n').len
+		l.adj_width, l.adj_height = w, h
 	}
 	return l.adj_width, l.adj_height
 }
@@ -129,21 +137,17 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut l Label) draw() {
+	l.draw_device(l.ui.gg)
+}
+
+fn (mut l Label) draw_device(d DrawDevice) {
 	offset_start(mut l)
 	splits := l.text.split('\n') // Split the text into an array of lines.
-	l.ui.gg.set_cfg(l.text_cfg)
 	height := l.ui.gg.text_height('W') // Get the height of the current font.
 	for i, split in splits {
-		// Draw the text at l.x and l.y + line height * current line
-		// l.ui.gg.draw_text(l.x, l.y + (height * i), split, l.text_cfg.as_text_cfg())
-		// l.draw_text(l.x, l.y + (height * i), split)
-		$if nodtw ? {
-			draw_text(l, l.x, l.y + (height * i), split)
-		} $else {
-			dtw := DrawTextWidget(l)
-			dtw.load_style()
-			dtw.draw_text(l.x, l.y + (height * i), split)
-		}
+		dtw := DrawTextWidget(l)
+		dtw.draw_device_load_style(d)
+		dtw.draw_device_text(d, l.x, l.y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
 			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')

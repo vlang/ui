@@ -4,9 +4,11 @@
 module ui
 
 import gg
+import gx
 
 pub interface Widget {
 mut:
+	ui &UI
 	id string
 	x int
 	y int
@@ -22,6 +24,7 @@ mut:
 	point_inside(x f64, y f64) bool
 	set_visible(bool)
 	draw()
+	draw_device(d DrawDevice)
 	cleanup()
 }
 
@@ -44,10 +47,10 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 	p := w.parent
 	if p is Stack {
 		// println("hpd $w.id: $p.z_index")
-		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
 	} else if p is CanvasLayout {
 		// println("hpd $w.id: $p.z_index")
-		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
+		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
 	} else if p is Group {
 		// println("hpd $w.id: $p.z_index")
 		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
@@ -92,6 +95,41 @@ pub fn (w Widget) is_layout_with_children() bool {
 	if w is Layout {
 		l := w as Layout
 		return l.get_children().len > 0
+	} else {
+		return false
+	}
+}
+
+pub fn (w Widget) has_focus() bool {
+	if w is Focusable {
+		fw := w as Focusable
+		return fw.is_focused
+	}
+	return false
+}
+
+pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
+	w.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, color)
+}
+
+// children contains pure widgets (no stack or group), canvas_layout considered here as a widget (as it is the case ver often for component)
+pub fn is_children_have_widget(children []Widget) bool {
+	tmp := children.filter(!(it is Stack || it is Group))
+	return tmp.len > 0
+}
+
+pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
+	if parent is Layout {
+		if w.parent.id == parent.id {
+			return true
+		} else {
+			// p := w.parent
+			// if p is Widget {
+			// 	wi := p as Widget
+
+			// }
+			return false
+		}
 	} else {
 		return false
 	}

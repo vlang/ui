@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import gg
 
 [heap]
 pub struct Grid {
@@ -76,6 +77,10 @@ pub fn (g &Grid) free() {
 }
 
 fn (mut gv Grid) draw() {
+	gv.draw_device(gv.ui.gg)
+}
+
+fn (mut gv Grid) draw_device(d DrawDevice) {
 	offset_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width
@@ -87,13 +92,12 @@ fn (mut gv Grid) draw() {
 	mut text_width := 0
 	mut text_height := 0
 	// Outer border
-	gv.ui.gg.draw_rect_filled(x, y, gv.width, gv.height, gx.white)
-	gv.ui.gg.draw_rect_empty(x, y, cell_width * header.len, cell_height, gx.gray)
+	d.draw_rect_filled(x, y, gv.width, gv.height, gx.white)
+	d.draw_rect_empty(x, y, cell_width * header.len, cell_height, gx.gray)
 	for i, c in header {
 		// Vertical separators
 		if i != 0 {
-			gv.ui.gg.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height,
-				gx.gray)
+			d.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height, gx.gray)
 		}
 		// Text values
 		text_width = gv.ui.gg.text_width(c)
@@ -103,13 +107,13 @@ fn (mut gv Grid) draw() {
 	}
 	y += int(cell_height) * if gv.header.len == 0 { 0 } else { 1 }
 	for ir, b_c in body {
-		gv.ui.gg.draw_rect_empty(x, y + (cell_height * ir), cell_width * gv.body[0].len,
-			cell_height, gx.gray)
+		d.draw_rect_empty(x, y + (cell_height * ir), cell_width * gv.body[0].len, cell_height,
+			gx.gray)
 		for i, c in b_c {
 			// Vertical separators
 			if i != 0 {
-				gv.ui.gg.draw_line(x + cell_width * i, y, x + cell_width * i, y +
-					cell_height * body.len, gx.gray)
+				d.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height * body.len,
+					gx.gray)
 			}
 			// Text values
 			text_width = gv.ui.gg.text_width(c)

@@ -4,16 +4,14 @@ import ui
 import gx
 
 [heap]
-struct ButtonFont {
+struct FontButtonComponent {
 pub mut:
 	btn &ui.Button
 	dtw ui.DrawTextWidget
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
-pub struct ButtonFontParams {
+pub struct FontButtonParams {
 	id           string
 	dtw          ui.DrawTextWidget = ui.canvas_plus()
 	text         string
@@ -27,7 +25,7 @@ pub struct ButtonFontParams {
 	bg_color     &gx.Color = 0
 }
 
-pub fn button_font(c ButtonFontParams) &ui.Button {
+pub fn fontbutton(c FontButtonParams) &ui.Button {
 	b := &ui.Button{
 		id: c.id
 		text: c.text
@@ -35,14 +33,14 @@ pub fn button_font(c ButtonFontParams) &ui.Button {
 		height_: c.height
 		z_index: c.z_index
 		bg_color: c.bg_color
-		theme_cfg: ui.no_theme
+		// theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
-		onclick: button_font_click
-		radius: f32(c.radius)
+		onclick: font_button_click
+		style_params: ui.button_style(radius: f32(c.radius))
 		padding: f32(c.padding)
 		ui: 0
 	}
-	mut fb := &ButtonFont{
+	mut fb := &FontButtonComponent{
 		btn: b
 		dtw: c.dtw
 	}
@@ -50,12 +48,16 @@ pub fn button_font(c ButtonFontParams) &ui.Button {
 	return b
 }
 
-pub fn component_button_font(w ui.ComponentChild) &ButtonFont {
-	return &ButtonFont(w.component)
+pub fn fontbutton_component(w ui.ComponentChild) &FontButtonComponent {
+	return &FontButtonComponent(w.component)
 }
 
-fn button_font_click(a voidptr, mut b ui.Button) {
-	fb := component_button_font(b)
+pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent {
+	return fontbutton_component(w.button(id))
+}
+
+fn font_button_click(a voidptr, mut b ui.Button) {
+	fb := fontbutton_component(b)
 	// println('fb_click $fb.dtw.id')
 	fontchooser_connect(b.ui.window, fb.dtw)
 	fontchooser_subwindow_visible(b.ui.window)

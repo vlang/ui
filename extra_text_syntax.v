@@ -106,7 +106,7 @@ fn (mut sh SyntaxHighLighter) load_default_style() {
 // TODO: load syntax with json or toml file
 fn (mut sh SyntaxHighLighter) load_v() {
 	sh.keywords['v'] = {
-		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,byte,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
+		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,u8,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
 		'decl':    '[,],{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
 			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
@@ -131,7 +131,7 @@ fn (mut sh SyntaxHighLighter) load_v() {
 
 fn (mut sh SyntaxHighLighter) load_c() {
 	sh.keywords['c'] = {
-		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|byte|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
+		'types':   'int|i8|i16|i64|i128|u8|u16|u32|u64|u128|f32|f64|bool|u8|byteptr|charptr|voidptr|string|ustring|rune'.split('|')
 		'decl':    'mut|pub|unsafe|default|module|import|const|interface'.split('|')
 		'control': (
 			'enum|in|is|or|as|in|is|or|break|continue|match|if|else|for|go|goto|defer|return|shared|select|rlock|lock|atomic|asm' +
@@ -265,7 +265,7 @@ fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 	sh.chunks[typ] << chunk
 }
 
-fn (mut sh SyntaxHighLighter) draw_chunks() {
+fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 	if !sh.is_lang_loaded() {
 		return
 	}
@@ -276,10 +276,13 @@ fn (mut sh SyntaxHighLighter) draw_chunks() {
 		color, font := style[typ].color, style[typ].font
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
-			// fix background
-			tv.tb.ui.gg.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text),
-				tv.line_height, tv.tb.bg_color)
-			tv.draw_styled_text(chunk.x, chunk.y, chunk.text, color: color, font_name: font)
+			// fix background (not needed with real fixed font)
+			// d.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text), tv.line_height,
+			// 	tv.tb.bg_color)
+			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
+				color: color
+				font_name: font
+			)
 		}
 	}
 }
@@ -294,11 +297,11 @@ fn (mut sh SyntaxHighLighter) reset_chunks() {
 	}
 }
 
-fn is_alpha(r byte) bool {
+fn is_alpha(r u8) bool {
 	return (r >= `a` && r <= `z`) || (r >= `A` && r <= `Z`) || (r >= `0` && r <= `9`)
 }
 
-fn is_whitespace(r byte) bool {
+fn is_whitespace(r u8) bool {
 	return r == ` ` || r == `\t`
 }
 

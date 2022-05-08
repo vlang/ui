@@ -48,6 +48,7 @@ pub mut:
 	offset_x   int
 	offset_y   int
 	z_index    int
+	justify    []f64
 	parent     Layout = empty_stack
 	is_focused bool
 	is_typing  bool
@@ -75,28 +76,32 @@ pub mut:
 	is_numeric    bool
 	is_password   bool
 	read_only     bool
-	borderless    bool
-	bg_color      gx.Color
 	fitted_height bool // if true fit height in propose_size
 	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
 	on_char       TextBoxCharFn    = TextBoxCharFn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
-	is_selectable      bool // for read_only textbox
-	sel_active         bool // to deal with show cursor when selection active
-	dragging           bool
-	sel_direction      SelectionDirection
-	border_accentuated bool
-	is_error           &bool = voidptr(0)
-	on_change          TextBoxChangeFn    = TextBoxChangeFn(0)
-	on_enter           TextBoxEnterFn     = TextBoxEnterFn(0)
-	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
+	is_selectable bool // for read_only textbox
+	sel_active    bool // to deal with show cursor when selection active
+	dragging      bool
+	sel_direction SelectionDirection
+	is_error      &bool = voidptr(0)
+	on_change     TextBoxChangeFn    = TextBoxChangeFn(0)
+	on_enter      TextBoxEnterFn     = TextBoxEnterFn(0)
+	on_changed    TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered    TextBoxValidatedFn = TextBoxValidatedFn(0)
 	// text styles
 	text_styles TextStyles
+	// text_size   f64
+	// Style
+	theme_style  string
+	style        TextBoxShapeStyle
+	style_params TextBoxStyleParams
+	// TODO: put in style
+	borderless bool
+	// bg_color           gx.Color
+	border_accentuated bool
 	// related to text drawing
-	text_size f64
-	text_cfg  gx.TextCfg // TO REMOVE SOON
-	hidden    bool
+	hidden bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -115,6 +120,7 @@ pub enum TextBoxMode {
 
 [params]
 pub struct TextBoxParams {
+	TextBoxStyleParams
 	id               string
 	width            int
 	height           int = 22
@@ -126,6 +132,7 @@ pub struct TextBoxParams {
 	is_sync          bool = true
 	twosided_sel     bool
 	z_index          int
+	justify          []f64 = top_left
 	min              int
 	max              int
 	val              int
@@ -138,8 +145,11 @@ pub struct TextBoxParams {
 	is_error         &bool   = voidptr(0)
 	is_focused       bool
 	// is_error bool
-	bg_color      gx.Color = gx.white
-	borderless    bool
+	// bg_color           gx.Color = gx.white
+	borderless         bool
+	border_accentuated bool
+	// text_size          f64
+	theme         string = no_style
 	fitted_height bool
 	on_key_down   TextBoxKeyDownFn
 	on_char       TextBoxCharFn
@@ -147,13 +157,10 @@ pub struct TextBoxParams {
 	on_change voidptr
 	on_enter  voidptr
 	// TODO replacement of signature later
-	on_changed         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered         TextBoxValidatedFn = TextBoxValidatedFn(0)
-	border_accentuated bool
-	text_cfg           gx.TextCfg
-	text_size          f64
-	scrollview         bool = true
-	on_scroll_change   ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_changed       TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_entered       TextBoxValidatedFn = TextBoxValidatedFn(0)
+	scrollview       bool = true
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn textbox(c TextBoxParams) &TextBox {
@@ -162,6 +169,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		height: c.height
 		width: if c.width < 30 { 30 } else { c.width }
 		z_index: c.z_index
+		justify: c.justify
 		// sel_start_i: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
@@ -170,7 +178,22 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		is_password: c.is_password
 		max_len: c.max_len
 		borderless: c.borderless
-		bg_color: c.bg_color
+		border_accentuated: c.border_accentuated
+		// bg_color: c.bg_color
+		// text_size: c.text_size
+		style_params: c.TextBoxStyleParams
+		ui: 0
+		text: c.text
+		text_: ''
+		is_focused: c.is_focused
+		is_error: c.is_error
+		read_only: c.read_only || c.mode.has(.read_only)
+		is_multiline: c.is_multiline || c.mode.has(.multiline)
+		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
+		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
+		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
+		is_sync: c.is_sync || c.read_only
+		twosided_sel: c.twosided_sel
 		on_key_down: c.on_key_down
 		on_char: c.on_char
 		// on_key_up: c.on_key_up
@@ -179,22 +202,9 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// TODO
 		on_changed: c.on_changed
 		on_entered: c.on_entered
-		border_accentuated: c.border_accentuated
-		ui: 0
-		text: c.text
-		is_focused: c.is_focused
-		is_error: c.is_error
-		text_cfg: c.text_cfg
-		text_size: c.text_size
-		read_only: c.read_only || c.mode.has(.read_only)
-		is_multiline: c.is_multiline || c.mode.has(.multiline)
-		is_wordwrap: c.is_wordwrap || c.mode.has(.word_wrap)
-		is_line_number: c.is_line_number || c.mode.has(.line_numbers)
-		fitted_height: c.fitted_height || c.is_multiline || c.mode.has(.multiline)
-		is_sync: c.is_sync || c.read_only
-		twosided_sel: c.twosided_sel
 		on_scroll_change: c.on_scroll_change
 	}
+	tb.style_params.style = c.theme
 	if tb.text == 0 {
 		tb.text = &tb.text_
 	}
@@ -208,7 +218,8 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
 	ui := parent.get_ui()
 	tb.ui = ui
-	tb.init_style()
+	// tb.init_style()
+	tb.load_style()
 	{
 	}
 	// TODO: Maybe in a method later to allow font size update
@@ -265,32 +276,11 @@ pub fn (tb &TextBox) free() {
 	}
 }
 
-fn (mut tb TextBox) init_style() {
-	$if nodtw ? {
-		if is_empty_text_cfg(tb.text_cfg) && tb.text_size == 0 {
-			tb.text_cfg = tb.ui.window.text_cfg
-		}
-		update_text_size(mut tb)
-	} $else {
-		mut dtw := DrawTextWidget(tb)
-		dtw.init_style()
-		dtw.update_text_size(tb.text_size)
-	}
-}
-
-// fn (tb &TextBox) draw_inner_border() {
-fn draw_inner_border(border_accentuated bool, gg &gg.Context, x int, y int, width int, height int, is_error bool) {
-	if !border_accentuated {
-		color := if is_error { gx.rgb(255, 0, 0) } else { ui.text_border_color }
-		gg.draw_rect_empty(x, y, width, height, color)
-		// gg.draw_rect_empty(tb.x, tb.y, tb.width, tb.height, color) //ui.text_border_color)
-		// TODO this should be +-1, not 0.5, a bug in gg/opengl
-		gg.draw_rect_empty(0.5 + f32(x), 0.5 + f32(y), width - 1, height - 1, ui.text_inner_border_color) // inner lighter border
-	} else {
-		gg.draw_rect_empty(x, y, width, height, ui.text_border_accentuated_color)
-		gg.draw_rect_empty(1.5 + f32(x), 1.5 + f32(y), width - 3, height - 3, ui.text_border_accentuated_color) // inner lighter border
-	}
-}
+// fn (mut tb TextBox) init_style() {
+// 	mut dtw := DrawTextWidget(tb)
+// 	dtw.init_style()
+// 	dtw.update_text_size(tb.text_size)
+// }
 
 pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
@@ -304,11 +294,14 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		return text_size(tb, tb.text)
+		dtw := DrawTextWidget(tb)
+		dtw.load_style()
+		mut w, mut h := dtw.text_size(tb.text)
+		return w + 2 * ui.textbox_padding_x, h + 2 * ui.textbox_padding_y
 	}
 }
 
-pub fn (mut tb TextBox) size() (int, int) {
+pub fn (tb &TextBox) size() (int, int) {
 	return tb.width, tb.height
 }
 
@@ -319,7 +312,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	if tb.height > ui.max_textbox_height && !tb.fitted_height {
 		tb.height = ui.max_textbox_height
 	}
-	update_text_size(mut tb)
+	// update_text_size(mut tb)
 	if tb.is_multiline {
 		scrollview_update(tb)
 		tb.tv.update_lines()
@@ -328,27 +321,34 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) update_line_height() {
-	tb.line_height = int(f64(text_height(tb, 'W')) * 1.5)
+	dtw := DrawTextWidget(tb)
+	dtw.load_style()
+	tb.line_height = int(f64(dtw.text_height('W')) * 1.5)
 }
 
 pub fn (mut tb TextBox) draw() {
+	tb.draw_device(tb.ui.gg)
+}
+
+pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	offset_start(mut tb)
-	scrollview_draw_begin(mut tb)
+	scrollview_draw_begin(mut tb, d)
 	// draw background
 	if tb.has_scrollview {
-		tb.ui.gg.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
-			tb.scrollview.width, tb.scrollview.height, tb.bg_color)
+		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
+			tb.scrollview.width, tb.scrollview.height, tb.style.bg_color)
 	} else {
-		tb.ui.gg.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.bg_color)
+		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.style.bg_color)
 		if !tb.borderless {
-			draw_inner_border(tb.border_accentuated, tb.ui.gg, tb.x, tb.y, tb.width, tb.height,
+			draw_device_inner_border(tb.border_accentuated, d, tb.x, tb.y, tb.width, tb.height,
 				tb.is_error != 0 && *tb.is_error)
 		}
 	}
 	if tb.is_multiline {
-		tb.tv.draw_textlines()
+		tb.tv.draw_device_textlines(d)
 	} else {
 		dtw := DrawTextWidget(tb)
+		dtw.draw_device_load_style(d)
 		text := *(tb.text)
 		ustr := text.runes()
 		text_len := ustr.len
@@ -356,19 +356,14 @@ pub fn (mut tb TextBox) draw() {
 		if tb.placeholder_bind != 0 {
 			placeholder = *(tb.placeholder_bind)
 		}
-		width := if text_len == 0 { 0 } else { text_width(tb, text) }
+		width := if text_len == 0 { 0 } else { dtw.text_width(text) }
 		text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
 		mut skip_idx := 0
 
 		// Placeholder
 		if text == '' && placeholder != '' {
-			$if nodtw ? {
-				draw_text_with_color(tb, tb.x + ui.textbox_padding_x, text_y, placeholder,
-					gx.gray)
-			} $else {
-				dtw.draw_styled_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
-					color: gx.gray)
-			}
+			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
+				color: gx.gray)
 		}
 		// Text
 		else {
@@ -376,26 +371,25 @@ pub fn (mut tb TextBox) draw() {
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
 			if width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
-				tb.ui.gg.set_cfg(tb.text_cfg)
 				if !tb.is_focused || tb.read_only {
 					skip_idx = tb.skip_index_from_start(ustr, dtw)
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx + 1)].string())
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
+						1)].string())
 				} else {
 					skip_idx = tb.skip_index_from_end(ustr, dtw)
-					dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
 				}
 			} else {
 				if tb.is_password {
-					$if nodtw ? {
-						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
-					} $else {
-						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
-					}
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
 				} else {
-					$if nodtw ? {
-						draw_text(tb, tb.x + ui.textbox_padding_x, text_y, text)
-					} $else {
-						dtw.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+					if tb.justify != top_left {
+						mut aw := AdjustableWidget(tb)
+						dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x + dx, text_y + dy,
+							text)
+					} else {
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, text)
 					}
 				}
 			}
@@ -407,27 +401,27 @@ pub fn (mut tb TextBox) draw() {
 			mut cursor_x := tb.x + ui.textbox_padding_x
 			if text_len > 0 {
 				if tb.is_password {
-					cursor_x += text_width(tb, '*'.repeat(tb.cursor_pos))
+					cursor_x += dtw.text_width('*'.repeat(tb.cursor_pos))
 				} else if skip_idx > 0 {
-					cursor_x += text_width(tb, text[skip_idx..])
+					cursor_x += dtw.text_width(text[skip_idx..])
 				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
 					if tb.cursor_pos > text.runes().len {
 						tb.cursor_pos = text.runes().len
 					}
 					left := text.runes()[..tb.cursor_pos].string()
-					cursor_x += text_width(tb, left)
+					cursor_x += dtw.text_width(left)
 				}
 			}
 			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			tb.ui.gg.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+			d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
 				gx.black) // , gx.Black)
 		}
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut tb, tb.ui)
 	}
-	scrollview_draw_end(tb)
+	scrollview_draw_end(tb, d)
 	offset_end(mut tb)
 }
 
@@ -474,7 +468,7 @@ fn (mut tb TextBox) draw_selection() {
 		// println("return draw_sel")
 		return
 	}
-	sel_from, sel_width := text_xminmax_from_pos(tb, *tb.text, tb.sel_start, tb.sel_end)
+	sel_from, sel_width := tb.text_xminmax_from_pos(*tb.text, tb.sel_start, tb.sel_end)
 	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
 	tb.ui.gg.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
 		sel_width, tb.line_height, ui.selection_color)
@@ -547,6 +541,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					if tb.cursor_pos == 0 {
 						return
 					}
+					u := text.runes()
 					// Delete the entire selection
 					if tb.is_sel_active() {
 						tb.delete_selection()
@@ -558,13 +553,14 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 								i--
 							}
 							if text[i].is_space() || i == 0 {
-								// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos]}
+								unsafe {
+									*tb.text = u[..i].string() + u[tb.cursor_pos..].string()
+								}
 								break
 							}
 						}
 						tb.cursor_pos = i
 					} else {
-						u := text.runes()
 						// Delete just one character
 						unsafe {
 							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()
@@ -578,6 +574,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// tb.update_text()
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
+				}
+				if tb.on_changed != TextBoxValidatedFn(0) {
+					tb.on_changed(tb, window.state)
 				}
 			}
 			.delete {
@@ -593,6 +592,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				// u.free() // TODO remove
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
+				}
+				if tb.on_changed != TextBoxValidatedFn(0) {
+					tb.on_changed(tb, window.state)
 				}
 			}
 			.left {
@@ -771,11 +773,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 					}
 					if tb.fitted_height {
 						// TODO: propose_size
-						tb.text_size -= 2
-						if tb.text_size < 8 {
-							tb.text_size = 8
+						tb.style_params.text_size -= 2
+						if tb.style_params.text_size < 8 {
+							tb.style_params.text_size = 8
 						}
-						update_text_size(mut tb)
+						// update_text_size(mut tb)
+						mut dtw := DrawTextWidget(tb)
+						dtw.update_text_size(tb.style_params.text_size)
 						tb.update_line_height()
 					}
 				}
@@ -784,11 +788,13 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 						return
 					}
 					if tb.fitted_height {
-						tb.text_size += 2
-						if tb.text_size > 48 {
-							tb.text_size = 48
+						tb.style_params.text_size += 2
+						if tb.style_params.text_size > 48 {
+							tb.style_params.text_size = 48
 						}
-						update_text_size(mut tb)
+						// update_text_size(mut tb)
+						mut dtw := DrawTextWidget(tb)
+						dtw.update_text_size(tb.style_params.text_size)
 						tb.update_line_height()
 					}
 				}
@@ -802,6 +808,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 				if e.key == .backspace {
 					tb.on_change(*tb.text, window.state)
 				}
+			}
+			if tb.on_changed != TextBoxValidatedFn(0) {
+				tb.on_changed(tb, window.state)
 			}
 		}
 	}
@@ -904,6 +913,9 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		return
 	} else {
 		// println('mouse second $tb.id')
+		if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
+			return
+		}
 		tb.focus()
 	}
 	if !tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
@@ -916,7 +928,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.extend_selection(x, y)
 		} else {
-			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
 			if tb.twosided_sel { // extend selection from both sides
 				// tv.sel_start and tv.sel_end can and have to be sorted
 				if tb.sel_start > tb.sel_end {
@@ -941,7 +953,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.start_selection(x, y)
 		} else {
-			tb.cursor_pos = text_pos_from_x(tb, *tb.text, x)
+			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
 			if tb.dragging {
 				tb.sel_start = tb.cursor_pos
 			}
@@ -963,7 +975,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			y := int(e.y - tb.y - ui.textbox_padding_y)
 			tb.tv.end_selection(x, y)
 		} else {
-			tb.sel_end = text_pos_from_x(tb, *tb.text, x)
+			tb.sel_end = tb.text_pos_from_x(*tb.text, x)
 			tb.ui.show_cursor = false
 		}
 		tb.sel_active = true
@@ -1014,6 +1026,10 @@ pub fn (mut tb TextBox) set_text(s string) {
 		if (active_x && !tb.scrollview.active_x) || (active_y && !tb.scrollview.active_y) {
 			scrollview_reset(mut tb)
 		}
+	} else {
+		unsafe {
+			*tb.text = s
+		}
 	}
 }
 
@@ -1040,3 +1056,44 @@ pub fn (mut tb TextBox) insert(s string) {
 
 // Normally useless but required for scrollview_draw_begin()
 fn (tb &TextBox) set_children_pos() {}
+
+// Utility functions
+
+pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
+	dtw := DrawTextWidget(tb)
+	dtw.load_style()
+	ustr := text.runes()
+	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
+	if x_max > ustr.len {
+		// println('warning: text_xminmax_from_pos $x_max > $ustr.len')
+		x_max = ustr.len
+	}
+	if x_min < 0 {
+		// println('warning: text_xminmax_from_pos $x_min < 0')
+		x_min = 0
+	}
+	// println("xminmax: ${ustr.len} $x_min $x_max")
+	left := ustr[..x_min].string()
+	right := ustr[x_max..].string()
+	ww, lw, rw := dtw.text_width(text), dtw.text_width(left), dtw.text_width(right)
+	return lw, ww - lw - rw
+}
+
+pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
+	if x <= 0 {
+		return 0
+	}
+	dtw := DrawTextWidget(tb)
+	dtw.load_style()
+	mut prev_width := 0
+	ustr := text.runes()
+	for i in 0 .. ustr.len {
+		width := dtw.text_width(ustr[..i].string())
+		width2 := if i < ustr.len { dtw.text_width(ustr[..(i + 1)].string()) } else { width }
+		if (prev_width + width) / 2 <= x && x <= (width + width2) / 2 {
+			return i
+		}
+		prev_width = width
+	}
+	return ustr.len
+}

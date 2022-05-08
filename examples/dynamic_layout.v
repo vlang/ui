@@ -27,24 +27,24 @@ fn main() {
 				heights: ui.stretch
 				children: [
 					ui.column(
-					id: 'col1'
-					spacing: 10
-					margin_: 10
-					children: [
-						ui.button(text: 'add last', onclick: btn_add_click),
-						ui.button(text: 'add two', onclick: btn_add_two_click),
-						ui.button(text: 'remove last', onclick: btn_remove_click),
-						ui.button(text: 'remove second', onclick: btn_remove_second_click),
-						ui.button(text: 'hide', onclick: btn_show_hide_click),
-						ui.button(text: 'deactivate', onclick: btn_show_activate_click),
-						ui.button(text: 'move', onclick: btn_move_click),
-						ui.button(text: 'text last', onclick: btn_last_text_click),
-						ui.button(text: 'text third', onclick: btn_third_text_click),
-						ui.button(text: 'text below', onclick: btn_text_below_click),
-						ui.button(text: 'switch', onclick: btn_switch_click),
-						ui.button(text: 'migrate', onclick: btn_migrate_click),
-					]
-				),
+						id: 'col1'
+						spacing: 10
+						margin_: 10
+						children: [
+							ui.button(text: 'add last', onclick: btn_add_click),
+							ui.button(text: 'add two', onclick: btn_add_two_click),
+							ui.button(text: 'remove last', onclick: btn_remove_click),
+							ui.button(text: 'remove second', onclick: btn_remove_second_click),
+							ui.button(text: 'hide', onclick: btn_show_hide_click),
+							ui.button(text: 'deactivate', onclick: btn_show_activate_click),
+							ui.button(text: 'move', onclick: btn_move_click),
+							ui.button(text: 'text last', onclick: btn_last_text_click),
+							ui.button(text: 'text third', onclick: btn_third_text_click),
+							ui.button(text: 'text below', onclick: btn_text_below_click),
+							ui.button(text: 'switch', onclick: btn_switch_click),
+							ui.button(text: 'migrate', onclick: btn_migrate_click),
+						]
+					),
 					ui.column(
 						id: 'col2'
 						spacing: 10
@@ -52,7 +52,8 @@ fn main() {
 						children: [
 							ui.button(text: 'Button'),
 						]
-					)]
+					),
+				]
 			),
 		]
 	)

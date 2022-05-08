@@ -4,65 +4,65 @@ import gx
 import math
 import sokol.sgl
 
-const (
-	empty_text_cfg = gx.TextCfg{}
-)
+// const (
+// 	empty_text_cfg = gx.TextCfg{}
+// )
 
-pub fn is_empty_text_cfg(t gx.TextCfg) bool {
-	return t.str() == ui.empty_text_cfg.str()
-}
+// pub fn is_empty_text_cfg(t gx.TextCfg) bool {
+// 	return t.str() == ui.empty_text_cfg.str()
+// }
 
 //-----  Generic for performance
 
 // T is Widget with text_cfg field
-fn text_size<T>(widget &T, text string) (int, int) {
-	widget.ui.gg.set_cfg(widget.text_cfg)
-	return widget.ui.gg.text_size(text)
-}
+// fn text_size<T>(widget &T, text string) (int, int) {
+// 	widget.ui.gg.set_cfg(widget.text_cfg)
+// 	return widget.ui.gg.text_size(text)
+// }
 
-fn text_width<T>(w &T, text string) int {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_width(text)
-}
+// fn text_width<T>(w &T, text string) int {
+// 	w.ui.gg.set_cfg(w.text_cfg)
+// 	return w.ui.gg.text_width(text)
+// }
 
-fn text_height<T>(w &T, text string) int {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_height(text)
-}
+// fn text_height<T>(w &T, text string) int {
+// 	w.ui.gg.set_cfg(w.text_cfg)
+// 	return w.ui.gg.text_height(text)
+// }
 
 // T is a widget Type with text_cfg field
-fn draw_text<T>(w &T, x int, y int, text_ string) {
-	window := w.ui.window
-	if w.text_size > 0 {
-		_, win_height := window.size()
-		tc := gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	} else {
-		// println("draw_text: $text_ $w.text_cfg.color")
-		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
-	}
-}
+// fn draw_text<T>(w &T, x int, y int, text_ string) {
+// 	window := w.ui.window
+// 	if w.text_size > 0 {
+// 		_, win_height := window.size()
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	} else {
+// 		// println("draw_text: $text_ $w.text_cfg.color")
+// 		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
+// 	}
+// }
 
-fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
-	if w.text_size > 0 {
-		_, win_height := w.ui.window.size()
-		tc := gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-			color: color
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	} else {
-		tc := gx.TextCfg{
-			...w.text_cfg
-			color: color
-		}
-		w.ui.gg.draw_text(x, y, text_, tc)
-	}
-}
+// fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
+// 	if w.text_size > 0 {
+// 		_, win_height := w.ui.window.size()
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 			color: color
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	} else {
+// 		tc := gx.TextCfg{
+// 			...w.text_cfg
+// 			color: color
+// 		}
+// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 	}
+// }
 
 //--------- DrawText interface (for Tooltip and Message)
 // Rmk: this can be used for Widget having these fields too
@@ -74,18 +74,18 @@ mut:
 	text_size f64
 }
 
-fn init_text_cfg(mut w DrawText) {
-	if is_empty_text_cfg(w.text_cfg) {
-		w.text_cfg = w.ui.window.text_cfg
-	}
-	if w.text_size > 0 {
-		_, win_height := w.ui.window.size()
-		w.text_cfg = gx.TextCfg{
-			...w.text_cfg
-			size: text_size_as_int(w.text_size, win_height)
-		}
-	}
-}
+// fn init_text_cfg(mut w DrawText) {
+// 	if is_empty_text_cfg(w.text_cfg) {
+// 		w.text_cfg = w.ui.window.text_cfg
+// 	}
+// 	if w.text_size > 0 {
+// 		_, win_height := w.ui.window.size()
+// 		w.text_cfg = gx.TextCfg{
+// 			...w.text_cfg
+// 			size: text_size_as_int(w.text_size, win_height)
+// 		}
+// 	}
+// }
 
 // No text_size to not conflict with
 fn get_text_size(w DrawText, text_ string) (int, int) {
@@ -187,6 +187,13 @@ fn point_inside<T>(w &T, x f64, y f64) bool {
 fn point_inside_adj<T>(w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.adj_width && y >= wy && y <= wy + w.adj_height
+}
+
+fn point_inside_visible<T>(w &T, x f64, y f64) bool {
+	xx, yy := if has_scrollview(w) { w.scrollview.orig_xy() } else { w.x, w.y }
+	wx, wy := xx + w.offset_x, yy + w.offset_y
+	return x >= wx && x <= wx + math.min(w.adj_width, w.width) && y >= wy
+		&& y <= wy + math.min(w.adj_height, w.height)
 }
 
 // h, s, l in [0,1]
@@ -296,7 +303,7 @@ pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
 // Texture stuff borrowed from @penguindark to deal with texture in sokol
 //
 
-pub fn create_texture(w int, h int, buf &byte) C.sg_image {
+pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 	mut img_desc := C.sg_image_desc{
 		width: w
 		height: h
@@ -343,7 +350,7 @@ pub fn create_dynamic_texture(w int, h int) C.sg_image {
 }
 
 // Use only if usage: .dynamic is enabled
-pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &byte) {
+pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &u8) {
 	sz := w * h * 4
 	mut tmp_sbc := C.sg_image_data{}
 	tmp_sbc.subimage[0][0] = C.sg_range{

@@ -5,9 +5,8 @@ import gx
 import os
 
 const (
-	treeview_layout_id = '_cvl_treeview'
-	tree_sep           = ':'
-	root_sep           = '_|||_'
+	tree_sep = ':'
+	root_sep = '_|||_'
 )
 
 type TreeItem = Tree | string
@@ -18,7 +17,7 @@ mut:
 	items []TreeItem
 }
 
-fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string, level int) &ui.Stack {
+fn (mut t Tree) create_root(mut tv TreeViewComponent, mut layout ui.Stack, id_root string, level int) &ui.Stack {
 	root_id := tv.id + '_' + id_root
 	tv.root_trees[root_id] = t
 	tv.root_created[root_id] = false
@@ -48,7 +47,7 @@ fn (mut t Tree) create_root(mut tv TreeView, mut layout ui.Stack, id_root string
 	return l
 }
 
-fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root string, level int) {
+fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_root string, level int) {
 	root_id := tv.id + '_' + id_root
 	for i, mut item in t.items {
 		treeitem_id := root_id + '$component.tree_sep$i'
@@ -103,16 +102,16 @@ fn (mut t Tree) add_root_children(mut tv TreeView, mut l ui.Stack, id_root strin
 	}
 }
 
-fn (mut t Tree) create_layout(mut tv TreeView, mut layout ui.Stack, id_root string, level int) &ui.Stack {
+fn (mut t Tree) create_layout(mut tv TreeViewComponent, mut layout ui.Stack, id_root string, level int) &ui.Stack {
 	mut l := t.create_root(mut tv, mut layout, id_root, level)
 	t.add_root_children(mut tv, mut l, id_root, level)
 	return l
 }
 
-type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeView)
+type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeViewComponent)
 
 [heap]
-struct TreeView {
+struct TreeViewComponent {
 pub mut:
 	id         string
 	layout     &ui.Stack // required
@@ -146,8 +145,6 @@ pub mut:
 	indent       int
 	// event
 	on_click TreeViewClickFn
-	// To become a component of a parent component
-	component voidptr
 }
 
 // constructors
@@ -168,14 +165,14 @@ pub struct TreeViewParams {
 	hidden_files bool
 }
 
-pub fn treeview(c TreeViewParams) &ui.Stack {
+pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	mut layout := ui.column(
-		id: c.id + component.treeview_layout_id
+		id: ui.component_id(c.id, 'layout')
 		widths: [ui.compact]
 		heights: [ui.compact]
 		bg_color: c.bg_color
 	)
-	mut tv := &TreeView{
+	mut tv := &TreeViewComponent{
 		id: c.id
 		layout: layout
 		trees: c.trees
@@ -198,7 +195,7 @@ pub fn treeview(c TreeViewParams) &ui.Stack {
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
 	ui.component_connect(tv, layout)
-	layout.component_init = treeview_init
+	layout.on_init = treeview_init
 	return layout
 }
 
@@ -218,8 +215,8 @@ pub struct TreeViewDirParams {
 	on_click     TreeViewClickFn = TreeViewClickFn(0)
 }
 
-pub fn dirtreeview(p TreeViewDirParams) &ui.Stack {
-	return treeview(
+pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
+	return treeview_stack(
 		id: p.id
 		incr_mode: p.incr_mode
 		trees: p.trees.map(treedir(it, it, p.incr_mode, p.hidden_files))
@@ -236,35 +233,45 @@ pub fn dirtreeview(p TreeViewDirParams) &ui.Stack {
 }
 
 // component access
-pub fn component_treeview(w ui.ComponentChild) &TreeView {
-	return &TreeView(w.component)
+pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
+	return &TreeViewComponent(w.component)
+}
+
+pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
+	return treeview_component(w.stack(ui.component_id(id, 'layout')))
 }
 
 // callbacks
 
 fn treeview_init(layout &ui.Stack) {
-	mut tv := component_treeview(layout)
+	mut tv := treeview_component(layout)
 	if !tv.incr_mode {
 		tv.deactivate_all()
 	}
 }
 
-fn treeview_draw(c &ui.CanvasLayout, state voidptr) {
-	tv := component_treeview(c)
+fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
+	tv := treeview_component(c)
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
 		if tv.selected[c.id] {
-			c.draw_triangle_filled(5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
+			c.draw_device_triangle_filled(d, 5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
 		} else {
-			c.draw_triangle_filled(7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gx.black)
+			c.draw_device_triangle_filled(d, 7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gx.black)
 		}
 	}
 
-	c.draw_styled_text(16 + dx, 4, tv.titles[c.id], color: tv.text_color, size: tv.text_size)
+	c.draw_device_styled_text(d, 16 + dx, 4, tv.titles[c.id],
+		color: tv.text_color
+		size: tv.text_size
+	)
 }
 
 fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
-	mut tv := component_treeview(c)
+	mut tv := treeview_component(c)
+	if !tv.point_inside(e.x, e.y) {
+		return
+	}
 	tv.old_sel_id = tv.sel_id
 	tv.sel_id = c.id
 	// println("${c.id} clicked")
@@ -297,10 +304,10 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 		tv.layout.update_layout_without_pos()
 	}
 	if tv.sel_id != '' {
-		c.bg_color = tv.bg_sel_color
+		c.style.bg_color = tv.bg_sel_color
 		if tv.old_sel_id != '' && tv.old_sel_id != tv.sel_id {
 			mut old_sel_c := c.ui.window.canvas_layout(tv.old_sel_id)
-			old_sel_c.bg_color = tv.bg_color
+			old_sel_c.style.bg_color = tv.bg_color
 		}
 	}
 	if tv.on_click != TreeViewClickFn(0) {
@@ -321,11 +328,20 @@ fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
 
 // methods
 
-pub fn (mut tv TreeView) cleanup_layout() {
+pub fn (mut tv TreeViewComponent) cleanup_layout() {
 	tv.layout.cleanup()
 }
 
-pub fn (tv &TreeView) full_title(id string) string {
+pub fn (tv &TreeViewComponent) size() (int, int) {
+	return tv.layout.width, tv.layout.height
+}
+
+fn (tv &TreeViewComponent) point_inside(x int, y int) bool {
+	w, h := tv.size()
+	return x >= 0 && x <= w && y >= 0 && y <= h
+}
+
+pub fn (tv &TreeViewComponent) full_title(id string) string {
 	mut res := []string{}
 	mut cid := id
 	for {
@@ -343,21 +359,21 @@ pub fn (tv &TreeView) full_title(id string) string {
 	return os.join_path(res[0], ...res[1..])
 }
 
-fn (mut tv TreeView) activate(id string) {
+fn (mut tv TreeViewComponent) activate(id string) {
 	if id in tv.containers {
 		mut l := tv.containers[id]
 		l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
 	}
 }
 
-fn (mut tv TreeView) deactivate(id string) {
+fn (mut tv TreeViewComponent) deactivate(id string) {
 	if id in tv.containers {
 		mut l := tv.containers[id]
 		l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
 	}
 }
 
-fn (mut tv TreeView) deactivate_all() {
+fn (mut tv TreeViewComponent) deactivate_all() {
 	for id in tv.root_ids.reverse() {
 		if tv.types[id] == 'root' {
 			// println("dea all $id ${tv.titles[id]}")
@@ -368,11 +384,11 @@ fn (mut tv TreeView) deactivate_all() {
 	}
 }
 
-pub fn (tv &TreeView) selected_full_title() string {
+pub fn (tv &TreeViewComponent) selected_full_title() string {
 	return tv.full_title(tv.sel_id)
 }
 
-pub fn (mut tv TreeView) open(folder string) {
+pub fn (mut tv TreeViewComponent) open(folder string) {
 	tv.deactivate_all()
 	l := tv.layout
 	mut l2 := l.parent
@@ -380,7 +396,7 @@ pub fn (mut tv TreeView) open(folder string) {
 		l2.remove(at: 0)
 		l2.add(
 			at: 0
-			child: dirtreeview(
+			child: dirtreeview_stack(
 				id: tv.id
 				trees: [folder]
 				on_click: tv.on_click
@@ -390,15 +406,6 @@ pub fn (mut tv TreeView) open(folder string) {
 }
 
 // tools
-
-pub fn treeview_layout_id(id string) string {
-	return id + component.treeview_layout_id
-}
-
-pub fn treeview_by_id(w &ui.Window, id string) &TreeView {
-	tv_layout := w.stack(treeview_layout_id(id))
-	return component_treeview(tv_layout)
-}
 
 pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tree {
 	mut files := os.ls(fpath) or { [] }

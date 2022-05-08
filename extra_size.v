@@ -7,6 +7,7 @@ pub const (
 	compact        = 0.0 // from parent
 	fit            = 0.0
 	z_index_hidden = -10000
+	z_index_focus  = 10
 )
 
 pub enum WindowSizeType {
@@ -45,11 +46,6 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	} else {
 		size
 	}
-}
-
-fn is_children_have_widget(children []Widget) bool {
-	tmp := children.filter(!(it is Stack || it is Group))
-	return tmp.len > 0
 }
 
 //***********  cache **********

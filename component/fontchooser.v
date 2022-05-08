@@ -9,12 +9,10 @@ const (
 )
 
 [heap]
-struct FontChooser {
+struct FontChooserComponent {
 pub mut:
 	layout &ui.Stack // required
 	dtw    ui.DrawTextWidget
-	// To become a component of a parent component
-	component voidptr
 }
 
 [params]
@@ -24,7 +22,7 @@ pub struct FontChooserParams {
 	dtw        ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
 }
 
-pub fn fontchooser(c FontChooserParams) &ui.Stack {
+pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 	mut lb := ui.listbox(
 		id: c.id
 		scrollview: true
@@ -32,22 +30,36 @@ pub fn fontchooser(c FontChooserParams) &ui.Stack {
 		on_change: fontchooser_lb_change
 	)
 	fontchooser_add_fonts_items(mut lb)
-	layout := ui.row(
+	mut layout := ui.row(
 		id: component.fontchooser_row_id
-		widths: 300.0
+		widths: ui.stretch
 		heights: 200.0
 		children: [lb]
 	)
-	mut fc := &FontChooser{
+	mut fc := &FontChooserComponent{
 		layout: layout
 		dtw: c.dtw
 	}
 	ui.component_connect(fc, layout, lb)
+	layout.on_init = fontchooser_init
 	return layout
 }
 
-pub fn component_fontchooser(w ui.ComponentChild) &FontChooser {
-	return &FontChooser(w.component)
+pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
+	return &FontChooserComponent(w.component)
+}
+
+pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {
+	return fontchooser_component(w.stack(ui.component_id(id, 'layout')))
+}
+
+pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
+	return w.listbox(component.fontchooser_lb_id)
+}
+
+fn fontchooser_init(mut layout ui.Stack) {
+	// println("${layout.size()}")
+	layout.update_layout()
 }
 
 fn fontchooser_add_fonts_items(mut lb ui.ListBox) {
@@ -60,13 +72,13 @@ fn fontchooser_add_fonts_items(mut lb ui.ListBox) {
 
 pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
 	fc_layout := w.stack(component.fontchooser_row_id)
-	mut fc := component_fontchooser(fc_layout)
+	mut fc := fontchooser_component(fc_layout)
 	fc.dtw = dtw
 }
 
 fn fontchooser_lb_change(a voidptr, lb &ui.ListBox) {
 	mut w := lb.ui.window
-	fc := component_fontchooser(lb)
+	fc := fontchooser_component(lb)
 	// println('fc_lb_change: $lb.id')
 	mut dtw := ui.DrawTextWidget(fc.dtw)
 	fp, id := lb.selected() or { 'classic', '' }

@@ -2,12 +2,16 @@ import ui
 import ui.webview
 
 struct App {
+mut:
 	webview &webview.WebView
 }
 
 fn main() {
 	mut app := &App{
-		webview: voidptr(0)
+		webview: webview.new_window(
+			url: 'https://github.com/revosw/ui/tree/master'
+			title: 'hello'
+		)
 	}
 	window := ui.window(
 		width: 800
@@ -24,12 +28,9 @@ fn main() {
 						text: 'Open'
 						width: 70
 						height: 100
-						onclick: fn (a voidptr, b voidptr) {
+						onclick: fn (mut a App, b voidptr) {
 							// println("onclick open")
-							webview.new_window(
-								url: 'https://github.com/revosw/ui/tree/master'
-								title: 'hello'
-							)
+							a.webview.navigate('https://github.com/revosw/ui/tree/master')
 						}
 					),
 					ui.button(

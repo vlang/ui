@@ -14,6 +14,8 @@ fmt_verify_all
 
 # Other files
 fns.txt
+screenshot*.png
+screenshot*.svg
 
 # To develop examples inside ui folder
 examples/modules
