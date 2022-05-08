@@ -1530,6 +1530,15 @@ pub fn (w Window) radio(id string) &Radio {
 	}
 }
 
+pub fn (w Window) slider(id string) &Slider {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Slider {
+		return widget
+	} else {
+		return slider()
+	}
+}
+
 pub fn (w Window) checkbox(id string) &CheckBox {
 	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
 	if widget is CheckBox {

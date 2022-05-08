@@ -58,3 +58,7 @@ pub fn (hs HexColor) color() gx.Color {
 	u := ('0x' + hs[1..]).u32()
 	return gx.rgba(u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u))
 }
+
+pub fn alpha_colored(c gx.Color, a u8) gx.Color {
+	return gx.rgba(c.r, c.g, c.b, a)
+}
