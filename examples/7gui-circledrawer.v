@@ -2,6 +2,10 @@ import ui
 import gx
 import math
 
+const (
+	default_radius = 20
+)
+
 struct Circle {
 	x f32
 	y f32
@@ -183,7 +187,7 @@ fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 			action.do(mut app.state)
 		} else {
 			// println("click $e.x $e.y nb pts = $app.state.circles.len")
-			radius := 20
+			radius := default_radius
 			circle := Circle{f32(e.x), f32(e.y), f32(radius)}
 			action := ActionAddCircle{circle}
 			app.state.add_action(action)
@@ -197,6 +201,8 @@ fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 		if app.sel >= 0 {
 			app.sel_radius = app.state.circles[app.sel].radius
 			sw.set_visible(true)
+			sw.set_pos(e.x + int(app.sel_radius), e.y + int(app.sel_radius))
+			sw.update_layout()
 		}
 	}
 }
