@@ -6,6 +6,8 @@ const (
 	default_radius = 20
 )
 
+// Circle
+
 struct Circle {
 	x f32
 	y f32
@@ -59,6 +61,8 @@ fn (state State) point_inside(x f32, y f32) int {
 	return sel
 }
 
+// Action
+
 interface Action {
 	do(mut state State)
 	undo(mut state State)
@@ -94,6 +98,8 @@ fn (a ActionSetCircleRadius) undo(mut state State) {
 	state.circles[a.circle_index].radius = a.old_radius
 }
 
+// App
+
 struct App {
 mut:
 	sel        int
@@ -121,7 +127,9 @@ fn main() {
 					orientation: .horizontal
 					max: 50
 					val: 20
-					on_value_changed: radius_changed
+					on_value_changed: fn (mut a App, sl &ui.Slider) {
+						a.state.circles[a.sel].radius = sl.val
+					}
 				),
 			]
 		)
@@ -186,15 +194,12 @@ fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 			app.state.add_action(action)
 			action.do(mut app.state)
 		} else {
-			// println("click $e.x $e.y nb pts = $app.state.circles.len")
 			radius := default_radius
 			circle := Circle{f32(e.x), f32(e.y), f32(radius)}
 			action := ActionAddCircle{circle}
 			app.state.add_action(action)
 			app.state.reset_history() // clear the end of history from the current action
 			action.do(mut app.state)
-			// mut btn_redo := c.ui.window.button("btn_redo")
-			// btn_redo.disabled = true
 		}
 	} else if c.ui.btn_down[1] {
 		app.sel = app.state.point_inside(f32(e.x), f32(e.y))
@@ -205,6 +210,10 @@ fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 			sw.update_layout()
 		}
 	}
+	mut btn_undo := c.ui.window.button('btn_undo')
+	check_undo_disabled(app.state, mut btn_undo)
+	mut btn_redo := c.ui.window.button('btn_redo')
+	check_redo_disabled(app.state, mut btn_redo)
 }
 
 fn mouse_move_circles(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
@@ -212,23 +221,30 @@ fn mouse_move_circles(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	app.hover = app.state.point_inside(f32(e.x), f32(e.y))
 }
 
-fn click_undo(mut a App, b &ui.Button) {
+fn click_undo(mut a App, mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
 	a.state.undo()
-
-	// mut btn_redo := b.ui.window.button("btn_redo")
-	// btn_redo.disabled = false
+	check_undo_disabled(a.state, mut b)
+	mut redo := b.ui.window.button('btn_redo')
+	check_redo_disabled(a.state, mut redo)
 }
 
-fn click_redo(mut a App, b &ui.Button) {
+fn click_redo(mut a App, mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
 	a.state.redo()
+	check_redo_disabled(a.state, mut b)
+	mut undo := b.ui.window.button('btn_undo')
+	check_undo_disabled(a.state, mut undo)
 }
 
-fn radius_changed(mut a App, sl &ui.Slider) {
-	a.state.circles[a.sel].radius = sl.val
+fn check_undo_disabled(state State, mut undo ui.Button) {
+	undo.disabled = state.current_action == -1
+}
+
+fn check_redo_disabled(state State, mut redo ui.Button) {
+	redo.disabled = state.current_action == state.history.len - 1
 }
