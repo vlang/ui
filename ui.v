@@ -15,23 +15,29 @@ const (
 
 pub struct UI {
 pub mut:
-	gg             &gg.Context = voidptr(0)
-	window         &Window     = voidptr(0)
+	gg             &gg.Context       = voidptr(0)
+	window         &Window           = voidptr(0)
+	svg            &DrawDeviceSVG    = voidptr(0)
+	bmp            &DrawDeviceBitmap = voidptr(0)
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
+	keymods        KeyMod
+	styles         map[string]Style
 mut:
 	cb_image             gg.Image // used only in checkbox.v
 	circle_image         gg.Image // used in radio.v but no use, in idle_loop()
 	selected_radio_image gg.Image // used only in radio.v
 	down_arrow           gg.Image // used only in dropdown.v
 	resource_cache       map[string]gg.Image // used only in picture.v
+	imgs                 map[string]gg.Image
 	closed               bool
 	ticks                int
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
+	font_paths  map[string]string
 }
 
 fn (mut gui UI) idle_loop() {
@@ -73,8 +79,9 @@ fn (mut gui UI) idle_loop() {
 	}
 }
 
-fn (mut gui UI) load_icos() {
-	gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
+fn (mut gui UI) load_imgs() {
+	// gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
+	// gui.cb_image.path = 'assets/img/check.png'
 	$if macos {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
 			bytes_darwin_circle_png.len)
@@ -82,8 +89,44 @@ fn (mut gui UI) load_icos() {
 		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
 	}
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
-	gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
-		bytes_selected_radio_png.len)
+	// gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
+	// 	bytes_selected_radio_png.len)
+	// gui.selected_radio_image.path = 'assets/img/selected_radio.png'
+	// images
+	gui.load_img('check', $embed_file('assets/img/check.png').to_bytes(), 'assets/img/check.png')
+	gui.cb_image = gui.img('check')
+	gui.load_img('selected_radio', $embed_file('assets/img/selected_radio.png').to_bytes(),
+		'assets/img/selected_radio.png')
+	gui.selected_radio_image = gui.img('selected_radio')
+	// load mouse
+	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
+	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),
+		'assets/img/icons8-hand-cursor-50.png')
+	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes(), 'assets/img/icons8-cursor-67.png')
+	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes(),
+		'assets/img/icons8-text-cursor-50.png')
+	// v-logo
+	gui.load_img('v-logo', $embed_file('examples/assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
+}
+
+// complete the drawing system
+pub fn (mut gui UI) load_img(id string, b []u8, path string) {
+	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
+	gui.imgs[id].path = path
+}
+
+pub fn (gui &UI) img(id string) gg.Image {
+	return gui.imgs[id]
+}
+
+pub fn (gui &UI) has_img(id string) bool {
+	return id in gui.imgs.keys()
+}
+
+pub fn (gui &UI) draw_device_img(d DrawDevice, id string, x int, y int, w int, h int) {
+	if gui.has_img(id) {
+		d.draw_image(x, y, w, h, gui.img(id))
+	}
 }
 
 [unsafe]
@@ -106,7 +149,7 @@ pub fn (gui &UI) free() {
 
 pub fn run(window &Window) {
 	mut gui := window.ui
-	gui.window = window
+	gui.window = window // TODO: this can be removed since now in the window constructor
 	go gui.idle_loop()
 	gui.gg.run()
 	gui.closed = true

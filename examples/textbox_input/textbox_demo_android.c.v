@@ -46,12 +46,12 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 	buffer := jni.j2v_string(env, jstr)
 	println(@MOD + '.' + @FN + ': "$buffer" ($start,$before,$count)')
 
-	mut char_code := byte(0)
+	mut char_code := u8(0)
 	mut char_literal := ''
 
 	mut pos := start + before
 	if pos >= 0 && pos <= buffer.len {
-		char_code = byte(buffer[pos])
+		char_code = u8(buffer[pos])
 		char_literal = char_code.ascii_str()
 	}
 	println(@MOD + '.' + @FN + ': input "$char_literal"')

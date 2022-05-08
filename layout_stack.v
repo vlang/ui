@@ -7,12 +7,16 @@ import eventbus
 import gx
 import gg
 
+pub type BuildFn = fn (layout voidptr, win &Window)
+
+pub type InitFn = fn (layout voidptr)
+
 pub const (
 	empty_stack           = stack(id: '_empty_stack_')
 	scrollview_empty_rect = gg.Rect{}
 )
 
-enum Direction {
+pub enum Direction {
 	row
 	column
 }
@@ -54,6 +58,7 @@ pub mut:
 	width                int
 	height               int
 	z_index              int
+	deactivated          bool
 	parent               Layout = ui.empty_stack
 	ui                   &UI
 	vertical_alignment   VerticalAlignment
@@ -80,25 +85,32 @@ pub mut:
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
-	bg_color              gx.Color
-	bg_radius             f32
 	is_root_layout        bool = true
+	// Style
+	theme_style  string
+	style        StackShapeStyle
+	style_params StackStyleParams
+	// text styles
+	text_styles TextStyles
 	// component state for composable widget
-	component      voidptr
-	component_init ComponentInitFn
+	component voidptr
+	on_build  BuildFn
+	on_init   InitFn
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView = 0
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	// debug stuff to be removed
-	debug_ids []string
+	debug_ids          []string
+	debug_children_ids []string
 }
 
 [params]
 struct StackParams {
+	StackStyleParams
 	id                   string
-	width                int // To remove soon
-	height               int // To remove soon
+	width                int // useful for root_layout to init size
+	height               int
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
 	spacings             []f32 // Spacing = Spacing(0) // int
@@ -113,8 +125,7 @@ struct StackParams {
 	align                 Alignments
 	vertical_alignments   VerticalAlignments
 	horizontal_alignments HorizontalAlignments
-	bg_color              gx.Color
-	bg_radius             f32
+	theme                 string = no_style
 	scrollview            bool
 	children              []Widget
 }
@@ -137,11 +148,11 @@ fn stack(c StackParams) &Stack {
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
-		bg_color: c.bg_color
-		bg_radius: c.bg_radius
+		style_params: c.StackStyleParams
 		title: c.title
 		ui: 0
 	}
+	s.style_params.style = c.theme
 	if c.width > 0 {
 		s.fixed_width = c.width
 	}
@@ -155,18 +166,26 @@ fn stack(c StackParams) &Stack {
 	return s
 }
 
+fn (mut s Stack) build(win &Window) {
+	// init for component
+	if s.on_build != BuildFn(0) {
+		s.on_build(s, win)
+	}
+}
+
 pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
 	mut ui := parent.get_ui()
 	s.ui = ui
 	s.init_size()
+	s.load_style()
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
 	// init for component attached to s when it is the layout of a component
-	if s.component_init != ComponentInitFn(0) {
-		s.component_init(s)
+	if s.on_init != InitFn(0) {
+		s.on_init(s)
 	}
 
 	if parent is Window {
@@ -277,12 +296,21 @@ pub fn (mut s Stack) update_layout_without_pos() {
 fn (mut s Stack) init_size() {
 	parent := s.parent
 	parent_width, parent_height := parent.size()
-	// println('parent size: ($parent_width, $parent_height)')
-	// debug_show_sizes(mut s, "decode before -> ")
+	$if s_is ? {
+		s.debug_ids = env('UI_IDS').split(',').clone()
+		if s.id in s.debug_ids {
+			println('parent size: $s.id ($parent_width, $parent_height) root_layout? $s.is_root_layout')
+			// debug_show_sizes(mut s, "decode before -> ")
+		}
+	}
 	if s.is_root_layout {
 		// Default: same as s.stretch == true
 		if s.parent is SubWindow {
-			// println("$s.id init_size: $s.width, $s.height ${s.adj_size()}")
+			$if s_is ? {
+				if s.id in s.debug_ids {
+					println('Init_size $s.id: $s.width, $s.height $s.adj_size()')
+				}
+			}
 			s.real_width, s.real_height = s.adj_size()
 		} else {
 			s.real_height = parent_height
@@ -298,8 +326,8 @@ fn (mut s Stack) set_children_sizes() {
 	// size of children from
 	c := unsafe { &s.cache }
 	widths, heights := s.children_sizes()
-	$if scs ? {
-		s.debug_ids = ['demo_cvl_accordion']
+	$if s_scs ? {
+		s.debug_ids = env('UI_IDS').split(',').clone()
 	}
 	// set children sizes
 	for i, mut child in s.children {
@@ -314,7 +342,7 @@ fn (mut s Stack) set_children_sizes() {
 				h = heights[i]
 			}
 		}
-		$if scs ? {
+		$if s_scs ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
 				println('scs ($s.id): propose_size $i) $child.id ($child.type_name()) ($wt: $w, $ht:$h)')
@@ -327,7 +355,7 @@ fn (mut s Stack) set_children_sizes() {
 		}
 	}
 	// Only for debug stuff
-	$if scs ? {
+	$if s_scsd ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
 			debug_set_children_sizes(s, widths, heights, c)
 		}
@@ -345,16 +373,20 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 	// free_width -= c.fixed_width
 	// free_height -= c.fixed_height
 
-	$if cs ? {
-		s.debug_ids = ['row_slider']
+	$if s_cs ? {
+		s.debug_ids = env('UI_IDS').split(',').clone()
+		s.debug_children_ids = env('UI_CIDS').split(',').clone()
 
-		println('----------------------------------------')
-		println('| First pass: children_size: $s.id s.widths:  $s.widths s.heights:  $s.heights ')
-		println('|    w weight: ($c.weight_widths, $c.width_mass)  fixed: ($c.fixed_widths, $c.fixed_width, $c.min_width)')
-		println('|    h weight: ($c.weight_heights, $c.height_mass)  fixed: ($c.fixed_heights, $c.fixed_height, $c.min_height)')
-		println('|    type (w: $c.width_type, h: $c.height_type)')
-		println('|    real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
-		println('|---------------------------------------')
+		if s.debug_ids.len == 0 || s.id in s.debug_ids {
+			println('----------------------------------------')
+			println('| First pass: children_size: $s.id s.widths:  $s.widths s.heights:  $s.heights ')
+			println('|    width [weight: widths: $c.weight_widths, mass: $c.width_mass]  fixed: [widths: $c.fixed_widths, width: $c.fixed_width, min: $c.min_width]')
+			println('|    height [weight: (heights: $c.weight_heights, mass: $c.height_mass)]  fixed: [heights: $c.fixed_heights, height: $c.fixed_height, min: $c.min_height]')
+			println('|    type (w: $c.width_type, h: $c.height_type)')
+			println('|    real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+			println('| Parent: $s.parent.id Children: ${s.children.map(it.id)}')
+			println('|---------------------------------------')
+		}
 	}
 
 	// IMPORTANT: weighted sizes have to be substracted in free sizes.
@@ -404,15 +436,16 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 			}
 			else {}
 		}
-		$if cs ? {
-			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+		$if s_cs ? {
+			if (s.debug_ids.len == 0 || s.id in s.debug_ids)
+				&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
 				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
 				println('|----------------------------------------')
 			}
 		}
 	}
-	$if cs ? {
+	$if s_cs ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
 			println('| Second pass:   real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
 		}
@@ -442,8 +475,9 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 				if s.direction == .column {
 					weight := c.weight_heights[i] / c.height_mass
 					mch[i] = int(weight * f32(free_height))
-					$if cs ? {
-						if s.debug_ids.len == 0 || s.id in s.debug_ids {
+					$if s_cs ? {
+						if (s.debug_ids.len == 0 || s.id in s.debug_ids)
+							&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
 							println('stretch: $weight (=${c.weight_heights[i]} / $c.height_mass) * $free_height = ${mch[i]}')
 						}
 					} $else {
@@ -461,8 +495,9 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 				mch[i] = int(weight * f32(free_height))
 			}
 		}
-		$if cs ? {
-			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+		$if s_cs ? {
+			if (s.debug_ids.len == 0 || s.id in s.debug_ids)
+				&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
 				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
 				println('|----------------------------------------')
@@ -490,8 +525,8 @@ fn (mut s Stack) set_cache_sizes() {
 	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
 	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
 
-	$if scas ? {
-		s.debug_ids = ['demo_cvl_accordion']
+	$if s_scas ? {
+		s.debug_ids = env('UI_IDS').split(',').clone()
 	}
 
 	for i, mut child in s.children {
@@ -509,9 +544,9 @@ fn (mut s Stack) set_cache_sizes() {
 			adj_child_width, adj_child_height = child.adj_size()
 		}
 
-		$if scas ? {
+		$if s_scas ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
-				println('scas ($s.id): $i) adj_child ($child.id) size -> ($adj_child_width, $adj_child_height) cw, ch = $cw, $ch')
+				println('scas ($s.id): $i) adj_child ($child.id, $child.type_name()) size -> ($adj_child_width, $adj_child_height) cw, ch = $cw, $ch')
 			}
 		}
 
@@ -529,7 +564,7 @@ fn (mut s Stack) set_cache_sizes() {
 			}
 		}
 
-		$if scas ? {
+		$if s_scas ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
 				println('scas ($s.id): $i) cw, ch = $cw, $ch')
 			}
@@ -761,6 +796,13 @@ fn (mut s Stack) default_sizes() {
 }
 
 pub fn (s &Stack) adj_size() (int, int) {
+	$if s_as ? {
+		mut s2 := s
+		s2.debug_ids = env('UI_IDS').split(',').clone()
+		if s2.debug_ids.len == 0 || s2.id in s.debug_ids {
+			println('adj_size $s.id: fixed: ($s.fixed_width, $s.fixed_height) adj: ($s.adj_width, $s.adj_height) ')
+		}
+	}
 	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
 		s.fixed_height
 	} else {
@@ -770,7 +812,7 @@ pub fn (s &Stack) adj_size() (int, int) {
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	$if sps ? {
-		s.debug_ids = ['row_slider', 'row_group']
+		s.debug_ids = env('UI_IDS').split(',').clone()
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
 			println('propose_size $s.id : ($w, $h) from $s.parent.id')
 		}
@@ -804,22 +846,32 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
 	// Comment/uncomment
-	$if adj_size ? {
-		s.debug_ids = ['row_slider', 'row_group']
+	$if s_adj_size ? {
+		s.debug_ids = env('UI_IDS').split(',').clone()
 	}
 	for mut child in s.children {
+		$if s_adj_size ? {
+			if s.debug_ids.len == 0 || s.id in s.debug_ids {
+				println('set_adj_size $child.id) z_index:  $child.z_index > $z_index_hidden')
+			}
+		}
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
 			mut child_width, mut child_height := 0, 0
 			if mut child is Stack {
 				if force || child.adj_width == 0 {
+					$if s_adj_size ? {
+						if s.debug_ids.len == 0 || s.id in s.debug_ids {
+							println('set_adj_size : stack $child.id set_adjusted_size(${i + 1}, $force, gui)')
+						}
+					}
 					child.set_adjusted_size(i + 1, force, gui)
 				}
 				child_width, child_height = child.adj_width + child.margin(.left) +
 					child.margin(.right), child.adj_height + child.margin(.top) +
 					child.margin(.bottom)
-				$if adj_size ? {
+				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('adj_size $s.id (stack): child($child.id) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
+						println('set_adj_size $s.id (stack): child($child.id}) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
 						println('                      child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
 					}
 				} $else {
@@ -830,9 +882,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				}
 				child_width, child_height = child.adj_width + child.margin_left + child.margin_right,
 					child.adj_height + child.margin_top + child.margin_bottom
-				$if adj_size ? {
+				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('adj_size $s.id (group): child($child.id) child_width = $child_width  child_height = $child_height)')
+						println('set_adj_size $s.id (group): child($child.id) child_width = $child_width  child_height = $child_height)')
 					}
 				} $else {
 				} // because of a bug mixing $if and else
@@ -841,17 +893,17 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					child.set_adjusted_size(gui)
 				}
 				child_width, child_height = child.adj_width, child.adj_height
-				$if adj_size ? {
+				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('adj_size $s.id (cvl): child($child.id) child_width = $child_width  child_height = $child_height)')
+						println('set_adj_size $s.id (cvl): child($child.id) child_width = $child_width  child_height = $child_height)')
 					}
 				} $else {
 				} // because of a bug mixing $if and else
 			} else {
 				child_width, child_height = child.size()
-				$if adj_size ? {
+				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('adj_size $s.id (widget): child ($child.id) size $child.type_name(): ($child_width, $child_height) ')
+						println('set_adj_size $s.id (widget): child ($child.id) size $child.type_name(): ($child_width, $child_height) ')
 					}
 				}
 			}
@@ -868,9 +920,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 			}
 		}
 	}
-	$if adj_size ? {
+	$if s_adj_size ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('adj_size ($s.id) (before spacing): ($w, $h)')
+			println('set_adj_size ($s.id) (before spacing): ($w, $h)')
 		}
 	}
 	// adding total spacing between children
@@ -881,9 +933,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	}
 	s.adj_width = w
 	s.adj_height = h
-	$if adj_size ? {
+	$if s_adj_size ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('adj_size ($s.id) end: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height)')
+			println('set_adj_size ($s.id) end: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height)')
 		}
 	}
 }
@@ -900,7 +952,7 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 	if s.real_x != x || s.real_y != y {
 		// could depend on anchor in the future
 		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
-		$if pos ? {
+		$if stack_pos ? {
 			println('set_pos($s.id): $($x, $y)')
 		}
 		s.real_x, s.real_y = x, y
@@ -954,58 +1006,42 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	$if scp ? {
 		println('set_child_pos: $i) ${typeof(s).name}-$child.type_name()')
 	}
-
-	child_width, child_height := child.size()
-
-	if s.direction == .column {
-		container_width := s.width
-		mut x_offset := 0
-		match s.get_horizontal_alignment(i) {
-			.left {
-				x_offset = 0
-			}
-			.center {
-				if container_width > child_width {
-					x_offset = (container_width - child_width) / 2
-				} else {
-					x_offset = 0
-				}
-			}
-			.right {
-				if container_width > child_width {
-					x_offset = (container_width - child_width)
-				} else {
-					x_offset = 0
-				}
-			}
+	mut aw, mut ah := 0.0, 0.0
+	aw = match s.get_horizontal_alignment(i) {
+		.left {
+			0.0
 		}
-		child.set_pos(x + x_offset, y)
+		.center {
+			0.5
+		}
+		.right {
+			1.0
+		}
+	}
+	ah = match s.get_vertical_alignment(i) {
+		.top {
+			0.0
+		}
+		.center {
+			0.5
+		}
+		.bottom {
+			1.0
+		}
+	}
+	offset_x, offset_y := get_align_offset_from_parent(mut child, aw, ah)
+
+	if mut child is AdjustableWidget {
+		mut w := child as AdjustableWidget
+		// println('$child.id: $x + $offset_x, $y + $offset_y')
+		w.set_adjusted_pos(x + offset_x, y + offset_y)
 	} else {
-		container_height := s.height
-		mut y_offset := 0
-		match s.get_vertical_alignment(i) {
-			.top {
-				y_offset = 0
-			}
-			.center {
-				if container_height > child_height {
-					y_offset = (container_height - child_height) / 2
-				} else {
-					y_offset = 0
-				}
-			}
-			.bottom {
-				if container_height > child_height {
-					y_offset = container_height - child_height
-				} else {
-					y_offset = 0
-				}
-			}
-		}
 		$if scp ? {
-			println(' set_pos ($x,$y + $y_offset)')
+			if child.id in env('UI_IDS').split(',') {
+				println('$child.id: $x + $offset_x, $y + $offset_y')
+			}
 		}
-		child.set_pos(x, y + y_offset)
+		child.set_pos(x + offset_x, y + offset_y)
 	}
 }
 
@@ -1053,22 +1089,25 @@ pub fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
+	s.draw_device(s.ui.gg)
+}
+
+fn (mut s Stack) draw_device(d DrawDevice) {
 	if s.hidden {
 		return
 	}
 	offset_start(mut s)
-	if s.bg_color != no_color {
-		if s.bg_radius > 0 {
-			radius := relative_size(s.bg_radius, s.real_width, s.real_height)
-			s.ui.gg.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
-				radius, s.bg_color)
+	if s.style.bg_color != no_color {
+		if s.style.bg_radius > 0 {
+			radius := relative_size(s.style.bg_radius, s.real_width, s.real_height)
+			d.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
+				radius, s.style.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			s.ui.gg.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
-				s.bg_color)
+			d.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.style.bg_color)
 		}
 	}
-	scrollview_draw_begin(mut s)
+	scrollview_draw_begin(mut s, d)
 
 	$if bb ? {
 		debug_draw_bb_stack(s)
@@ -1078,7 +1117,7 @@ fn (mut s Stack) draw() {
 			// if s.scrollview != 0 {
 			for i, mut child in s.drawing_children {
 				if mut child !is Layout
-					&& is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
+					&& is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
 					sr := s.scrollview.scissor_rect
 					cr := child.bounds()
 					println('sdraw $s.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
@@ -1086,32 +1125,39 @@ fn (mut s Stack) draw() {
 			}
 		}
 	}
-	if Layout(s).has_scrollview_or_parent_scrollview() {
+	if Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s) {
 		// if s.scrollview != 0 {
 		for mut child in s.drawing_children {
+			// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
+			// Widget(s).debug_gg_rect(child.bounds(), gx.green)
 			if mut child is Layout
-				|| !is_empty_intersection(s.scrollview.scissor_rect, child.scaled_bounds()) {
-				child.draw()
+				|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+				child.draw_device(d)
 			}
 		}
 	} else {
+		$if s_draw_children ? {
+			println('draw $s.id: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+		}
 		for mut child in s.drawing_children {
 			// println("$child.type_name() $child.id")
-			child.draw()
+			child.draw_device(d)
 		}
 	}
-	scrollview_draw_end(s)
+	scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.gg.text_size(s.title)
 		// draw rectangle around stack
-		s.ui.gg.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width +
-			text_height, s.real_height + int(f32(text_height) * .75), gx.black)
+		d.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height,
+			s.real_height + int(f32(text_height) * .75), gx.black)
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3
 		ty := s.y - int(f32(text_height) * 1.25)
-		s.ui.gg.draw_rect_filled(tx, ty, text_width + 5, text_height, gx.white) // s.bg_color)
-		s.ui.gg.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
-		s.ui.gg.draw_text_def(tx, ty - 2, s.title)
+		d.draw_rect_filled(tx, ty, text_width + 5, text_height, s.style.bg_color)
+		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
+		dtw := DrawTextWidget(s)
+		dtw.draw_device_load_style(d)
+		dtw.draw_device_text(d, tx, ty - 2, s.title)
 	}
 	offset_end(mut s)
 }
@@ -1195,11 +1241,13 @@ pub fn (mut s Stack) set_visible(state bool) {
 }
 
 fn (mut s Stack) resize(width int, height int) {
+	scrollview_widget_save_offset(s)
 	s.init_size()
 	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
-	scrollview_widget_set_orig_xy(s)
+	scrollview_widget_restore_offset(s)
+	// println("RESIZE: $width, $height")
 }
 
 pub fn (s &Stack) get_children() []Widget {
@@ -1234,81 +1282,81 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 	return align
 }
 
-fn (s &Stack) set_child_pos_aligned(mut child Widget, i int, x int, y int) {
-	child_width, child_height := child.size()
-	horizontal_alignment, vertical_alignment := s.get_alignments(i)
-	// set x_offset
-	container_width := s.width
-	mut x_offset := 0
-	match horizontal_alignment {
-		.left {
-			x_offset = 0
-		}
-		.center {
-			if container_width > child_width {
-				x_offset = (container_width - child_width) / 2
-			} else {
-				x_offset = 0
-			}
-		}
-		.right {
-			if container_width > child_width {
-				x_offset = (container_width - child_width)
-			} else {
-				x_offset = 0
-			}
-		}
-	}
-	// set y_offset
-	container_height := s.height
-	mut y_offset := 0
-	match vertical_alignment {
-		.top {
-			y_offset = 0
-		}
-		.center {
-			if container_height > child_height {
-				y_offset = (container_height - child_height) / 2
-			} else {
-				y_offset = 0
-			}
-		}
-		.bottom {
-			if container_height > child_height {
-				y_offset = container_height - child_height
-			} else {
-				y_offset = 0
-			}
-		}
-	}
-	child.set_pos(x + x_offset, y + y_offset)
-}
+// fn (s &Stack) set_child_pos_aligned(mut child Widget, i int, x int, y int) {
+// 	child_width, child_height := child.size()
+// 	horizontal_alignment, vertical_alignment := s.get_alignments(i)
+// 	// set x_offset
+// 	container_width := s.width
+// 	mut x_offset := 0
+// 	match horizontal_alignment {
+// 		.left {
+// 			x_offset = 0
+// 		}
+// 		.center {
+// 			if container_width > child_width {
+// 				x_offset = (container_width - child_width) / 2
+// 			} else {
+// 				x_offset = 0
+// 			}
+// 		}
+// 		.right {
+// 			if container_width > child_width {
+// 				x_offset = (container_width - child_width)
+// 			} else {
+// 				x_offset = 0
+// 			}
+// 		}
+// 	}
+// 	// set y_offset
+// 	container_height := s.height
+// 	mut y_offset := 0
+// 	match vertical_alignment {
+// 		.top {
+// 			y_offset = 0
+// 		}
+// 		.center {
+// 			if container_height > child_height {
+// 				y_offset = (container_height - child_height) / 2
+// 			} else {
+// 				y_offset = 0
+// 			}
+// 		}
+// 		.bottom {
+// 			if container_height > child_height {
+// 				y_offset = container_height - child_height
+// 			} else {
+// 				y_offset = 0
+// 			}
+// 		}
+// 	}
+// 	child.set_pos(x + x_offset, y + y_offset)
+// }
 
-fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
-	mut hor_align := s.horizontal_alignment
-	mut ver_align := s.vertical_alignment
-	if i in s.alignments.center {
-		hor_align, ver_align = .center, .center
-	} else if i in s.alignments.left_top {
-		hor_align, ver_align = .left, .top
-	} else if i in s.alignments.top {
-		hor_align, ver_align = .center, .top
-	} else if i in s.alignments.right_top {
-		hor_align, ver_align = .right, .top
-	} else if i in s.alignments.right {
-		hor_align, ver_align = .right, .center
-	} else if i in s.alignments.right_bottom {
-		hor_align, ver_align = .right, .bottom
-	} else if i in s.alignments.bottom {
-		hor_align, ver_align = .center, .bottom
-	} else if i in s.alignments.left_bottom {
-		hor_align, ver_align = .left, .bottom
-	} else if i in s.alignments.left {
-		hor_align, ver_align = .left, .center
-	}
+// fn (s &Stack) get_alignments(i int) (HorizontalAlignment, VerticalAlignment) {
+// 	mut hor_align := s.horizontal_alignment
+// 	mut ver_align := s.vertical_alignment
+// 	if i in s.alignments.center {
+// 		hor_align, ver_align = .center, .center
+// 	} else if i in s.alignments.left_top {
+// 		hor_align, ver_align = .left, .top
+// 	} else if i in s.alignments.top {
+// 		hor_align, ver_align = .center, .top
+// 	} else if i in s.alignments.right_top {
+// 		hor_align, ver_align = .right, .top
+// 	} else if i in s.alignments.right {
+// 		hor_align, ver_align = .right, .center
+// 	} else if i in s.alignments.right_bottom {
+// 		hor_align, ver_align = .right, .bottom
+// 	} else if i in s.alignments.bottom {
+// 		hor_align, ver_align = .center, .bottom
+// 	} else if i in s.alignments.left_bottom {
+// 		hor_align, ver_align = .left, .bottom
+// 	} else if i in s.alignments.left {
+// 		hor_align, ver_align = .left, .center
+// 	}
 
-	return hor_align, ver_align
-}
+// 	return hor_align, ver_align
+// }
 
 //**** ChildrenParams *****
 [params]
@@ -1523,14 +1571,14 @@ pub fn (s &Stack) child(from ...int) Widget {
 			if i < from.len - 1 {
 				if ind >= 0 && ind < children.len {
 					widget := children[ind]
-					if mut widget is Stack {
+					if widget is Stack {
 						children = widget.children
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 					}
 				} else if i == -1 {
 					widget := children[children.len - 1]
-					if mut widget is Stack {
+					if widget is Stack {
 						children = widget.children
 					}
 				} else {
@@ -1574,4 +1622,9 @@ pub fn (s &Stack) child_index_by_id(id string) int {
 		}
 	}
 	return -1
+}
+
+// method implemented in Draggable
+fn (s &Stack) get_window() &Window {
+	return s.ui.window
 }

@@ -73,7 +73,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
 	// children initialized after so that subcribe_method
 	mut l := s.layout
-	if l is Widget {
+	if mut l is Widget {
 		mut w := l as Widget
 		w.init(s)
 	}
@@ -98,6 +98,10 @@ pub fn (mut s SubWindow) cleanup() {
 }
 
 fn (mut s SubWindow) draw() {
+	s.draw_device(s.ui.gg)
+}
+
+fn (mut s SubWindow) draw_device(d DrawDevice) {
 	if s.hidden {
 		return
 	}
@@ -105,7 +109,10 @@ fn (mut s SubWindow) draw() {
 	// possibly add window decoration
 	if s.decoration {
 		w, _ := s.size()
-		s.ui.gg.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
+		$if sw_draw ? {
+			println('$s.x, $s.y, $w, $ui.sw_decoration')
+		}
+		d.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
 	}
 	s.layout.draw()
 
@@ -233,6 +240,7 @@ pub fn (s SubWindow) size() (int, int) {
 	if s.decoration {
 		h += ui.sw_decoration
 	}
+	// println("subw $s.id (layout: $s.layout.id) $w, $h")
 	return w, h
 }
 
@@ -245,6 +253,10 @@ pub fn (mut s SubWindow) set_visible(state bool) {
 	if !s.hidden {
 		s.ui.window.update_layout()
 	}
+}
+
+pub fn (s &SubWindow) is_visible() bool {
+	return !s.hidden
 }
 
 fn (s &SubWindow) get_ui() &UI {

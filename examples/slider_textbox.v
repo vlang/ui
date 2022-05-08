@@ -76,17 +76,18 @@ fn main() {
 				heights: [.1, .9]
 				children: [
 					ui.row(
-					margin: ui.Margin{50, 115, 30, 30}
-					spacing: 100
-					heights: 20.0
-					children: [app.hor_textbox, app.vert_textbox]
-				),
+						margin: ui.Margin{50, 115, 30, 30}
+						spacing: 100
+						heights: 20.0
+						children: [app.hor_textbox, app.vert_textbox]
+					),
 					ui.row(
 						heights: [ui.compact, ui.stretch]
 						margin: ui.Margin{100, 30, 30, 30}
 						spacing: 30
 						children: [app.hor_slider, app.vert_slider]
-					)]
+					),
+				]
 			),
 		]
 	)

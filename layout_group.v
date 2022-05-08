@@ -5,6 +5,7 @@ module ui
 
 import math
 import gx
+import gg
 import eventbus
 
 [heap]
@@ -19,6 +20,7 @@ pub mut:
 	offset_x      int
 	offset_y      int
 	z_index       int
+	is_focused    bool
 	parent        Layout = empty_stack
 	ui            &UI
 	children      []Widget
@@ -139,6 +141,10 @@ fn (mut g Group) calculate_child_positions() {
 }
 
 fn (mut g Group) draw() {
+	g.draw_device(g.ui.gg)
+}
+
+fn (mut g Group) draw_device(d DrawDevice) {
 	offset_start(mut g)
 	// Border
 	$if gdraw ? {
@@ -146,7 +152,7 @@ fn (mut g Group) draw() {
 			println('group $g.id size: ($g.width, $g.height)')
 		}
 	}
-	g.ui.gg.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
+	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.gg.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {
@@ -156,10 +162,10 @@ fn (mut g Group) draw() {
 		text_width = g.ui.gg.text_width(title)
 	}
 	// Title
-	g.ui.gg.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
+	d.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
 	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
 	for mut child in g.children {
-		child.draw()
+		child.draw_device(d)
 	}
 	offset_end(mut g)
 }

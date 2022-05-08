@@ -1,6 +1,11 @@
 module ui
 
 import gx
+import os
+
+pub fn env(var string) string {
+	return os.getenv(var)
+}
 
 // Draw bounding box for Stack
 fn debug_draw_bb_stack(s &Stack) {
@@ -77,7 +82,7 @@ fn debug_show_sizes(mut s Stack, t string) {
 	print('${t}Stack ${typeof(s).name}')
 	C.printf(c' %p', s)
 	println(' => size ($sw, $sh), ($s.width, $s.height)  adj: ($s.adj_width, $s.adj_height) spacing: $s.spacings')
-	if mut parent is Stack {
+	if parent is Stack {
 		// print('	parent: $${typeof(parent).name} ')
 		C.printf(c' %p', parent)
 		println('=> size ($parent.width, $parent.height)  adj: ($parent.adj_width, $parent.adj_height) spacing: $parent.spacings')

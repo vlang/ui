@@ -2,8 +2,8 @@ import ui
 import gx
 
 const (
-	win_width  = 400
-	win_height = 565
+	win_width  = 200
+	win_height = 400
 	slider_min = 0
 	slider_max = 255
 	slider_val = (slider_max + slider_min) / 2
@@ -28,8 +28,13 @@ mut:
 }
 
 fn main() {
+	mut entering := false
+	$if sync ? {
+		entering = true
+	}
 	mut app := &App{
 		rgb_rectangle: ui.rectangle(
+			id: 'rgb_rect'
 			border: true
 			color: gx.Color{
 				r: slider_val
@@ -63,6 +68,8 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_r_value_changed
+			entering: entering
+			thumb_color: gx.light_red
 		)
 		g_slider: ui.slider(
 			orientation: .vertical
@@ -72,6 +79,8 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_g_value_changed
+			entering: entering
+			thumb_color: gx.light_green
 		)
 		b_slider: ui.slider(
 			orientation: .vertical
@@ -81,15 +90,17 @@ fn main() {
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
 			on_value_changed: on_b_value_changed
+			entering: entering
+			thumb_color: gx.light_blue
 		)
-		r_label: ui.label(text: 'R')
-		g_label: ui.label(text: 'G')
-		b_label: ui.label(text: 'B')
+		r_label: ui.label(text: 'R', justify: ui.top_center)
+		g_label: ui.label(text: 'G', justify: ui.top_center)
+		b_label: ui.label(text: 'B', justify: ui.top_center)
 	}
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
-	w := 40.0
+	w := [ui.stretch, 40.0, 2 * ui.stretch, 40, 2 * ui.stretch, 40, ui.stretch]
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -98,53 +109,39 @@ fn main() {
 		mode: .resizable
 		children: [
 			ui.column(
-				heights: [.1, .2, .1, .5, .1]
+				margin_: 10
+				spacing: 5
 				alignments: ui.HorizontalAlignments{
 					center: [0, 1, 2, 3]
 				}
+				heights: [ui.stretch, 2 * ui.stretch, ui.stretch, 5 * ui.stretch, ui.stretch]
 				children: [
 					ui.button(
-					text: 'Show rgb color'
-					onclick: fn (app &App, b voidptr) {
-						txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
-						ui.message_box(txt)
-					}
-				),
+						id: 'rgb_btn'
+						text: 'Show rgb color'
+						onclick: fn (app &App, b voidptr) {
+							txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+							ui.message_box(txt)
+						}
+					),
 					app.rgb_rectangle,
 					ui.row(
-						margin: ui.Margin{
-							right: 30
-							left: 30
-							top: 5
-							bottom: 5
-						}
-						spacing: .3
-						heights: ui.compact
+						id: 'row_tb'
 						widths: w
-						children: [app.r_textbox, app.g_textbox, app.b_textbox]
+						children: [ui.spacing(), app.r_textbox, ui.spacing(), app.g_textbox,
+							ui.spacing(), app.b_textbox, ui.spacing()]
 					),
 					ui.row(
-						margin: ui.Margin{
-							right: 30
-							left: 30
-							top: 5
-							bottom: 5
-						}
-						spacing: .3
 						widths: w
-						children: [app.r_slider, app.g_slider, app.b_slider]
+						children: [ui.spacing(), app.r_slider, ui.spacing(), app.g_slider,
+							ui.spacing(), app.b_slider, ui.spacing()]
 					),
 					ui.row(
-						margin: ui.Margin{
-							right: 30
-							left: 30
-							top: 5
-							bottom: 5
-						}
-						spacing: .3
 						widths: w
-						children: [app.r_label, app.g_label, app.b_label]
-					)]
+						children: [ui.spacing(), app.r_label, ui.spacing(), app.g_label,
+							ui.spacing(), app.b_label, ui.spacing()]
+					),
+				]
 			),
 		]
 	)
@@ -171,7 +168,7 @@ fn on_b_value_changed(mut app App, slider &ui.Slider) {
 }
 
 fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.r_textbox.text.int()) {
+	if ui.is_rgb_valid(app.r_textbox.text.int()) {
 		app.r_slider.val = app.r_textbox_text.f32()
 		app.r_textbox.border_accentuated = false
 	} else {
@@ -181,7 +178,7 @@ fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
 }
 
 fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.g_textbox.text.int()) {
+	if ui.is_rgb_valid(app.g_textbox.text.int()) {
 		app.g_slider.val = app.g_textbox_text.f32()
 		app.g_textbox.border_accentuated = false
 	} else {
@@ -191,7 +188,7 @@ fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
 }
 
 fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
-	if is_rgb_valid(app.b_textbox.text.int()) {
+	if ui.is_rgb_valid(app.b_textbox.text.int()) {
 		app.b_slider.val = app.b_textbox_text.f32()
 		app.b_textbox.border_accentuated = false
 	} else {
@@ -202,18 +199,14 @@ fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
 
 // others functions
 fn textbox_color_update(mut app App) {
-	r := byte(app.r_textbox.text.int())
-	g := byte(app.g_textbox.text.int())
-	b := byte(app.b_textbox.text.int())
-	if !is_rgb_valid(r) || !is_rgb_valid(g) || !is_rgb_valid(b) {
-		app.rgb_rectangle.color = gx.rgb(255, 255, 255)
+	r := u8(app.r_textbox.text.int())
+	g := u8(app.g_textbox.text.int())
+	b := u8(app.b_textbox.text.int())
+	if !ui.is_rgb_valid(r) || !ui.is_rgb_valid(g) || !ui.is_rgb_valid(b) {
+		app.rgb_rectangle.style.color = gx.rgb(255, 255, 255)
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'
 	} else {
-		app.rgb_rectangle.color = gx.rgb(r, g, b)
+		app.rgb_rectangle.style.color = gx.rgb(r, g, b)
 		app.rgb_rectangle.text = ''
 	}
-}
-
-fn is_rgb_valid(c int) bool {
-	return if c >= 0 && c < 256 { true } else { false }
 }

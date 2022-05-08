@@ -1,0 +1,8 @@
+Shortcuts:
+
+Ctrl + H: toggle this help message box
+Ctrl + O: toggle Menu File
+Ctrl + P: toggle Palette
+
+Specify size for a new png file:
+    append `-(width)x(height)` or `-(size)` (equivalent to `-(size)x(size)`) or  at the end of the file name just before the extension .png

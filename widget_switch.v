@@ -109,19 +109,23 @@ pub fn (mut s Switch) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
+	s.draw_device(s.ui.gg)
+}
+
+fn (mut s Switch) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
-		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
-		s.ui.gg.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding,
-			ui.sw_dot_size, ui.sw_dot_size, gx.white)
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
+		d.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding, ui.sw_dot_size,
+			ui.sw_dot_size, gx.white)
 	} else {
-		s.ui.gg.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
-		s.ui.gg.draw_rect_filled(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
+		d.draw_rect_filled(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
 			gx.white)
 	}
 	if s.is_focused {
-		s.ui.gg.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
+		d.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut s, s.ui)

@@ -26,6 +26,7 @@ mut:
 	y         int
 	z_index   int
 	movable   bool
+	drag_type string = 'pic'
 	path      string
 	ui        &UI
 	image     gg.Image
@@ -51,9 +52,6 @@ pub struct PictureParams {
 }
 
 pub fn picture(c PictureParams) &Picture {
-	if !os.exists(c.path) {
-		eprintln('V UI: picture file "$c.path" not found')
-	}
 	// if c.width == 0 || c.height == 0 {
 	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
 	// }
@@ -88,11 +86,18 @@ fn (mut pic Picture) init(parent Layout) {
 		return
 	}
 	*/
-	if !pic.use_cache && pic.path in ui.resource_cache {
-		pic.image = ui.resource_cache[pic.path]
+	if ui.has_img(pic.path) {
+		pic.image = ui.img(pic.path)
 	} else {
-		pic.image = pic.ui.gg.create_image(pic.path)
-		ui.resource_cache[pic.path] = pic.image
+		if !os.exists(pic.path) {
+			eprintln('V UI: picture file "$pic.path" not found')
+		}
+		if !pic.use_cache && pic.path in ui.resource_cache {
+			pic.image = ui.resource_cache[pic.path]
+		} else {
+			pic.image = pic.ui.gg.create_image(pic.path)
+			ui.resource_cache[pic.path] = pic.image
+		}
 	}
 	$if android {
 		byte_ary := os.read_apk_asset(pic.path) or { panic(err) }
@@ -105,7 +110,7 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 	if pic.tooltip.text != '' {
 		mut win := ui.window
-		win.append_tooltip(pic, pic.tooltip)
+		win.tooltip.append(pic, pic.tooltip)
 	}
 }
 
@@ -151,7 +156,7 @@ fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 	if pic.point_inside(e.x, e.y) {
 		if pic.movable {
-			drag_register(pic, pic.ui, e)
+			drag_register(pic, e)
 		}
 	}
 }
@@ -161,7 +166,7 @@ pub fn (mut pic Picture) set_pos(x int, y int) {
 	pic.y = y
 }
 
-pub fn (mut pic Picture) size() (int, int) {
+pub fn (pic &Picture) size() (int, int) {
 	return pic.width, pic.height
 }
 
@@ -172,8 +177,11 @@ pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.ui.gg.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height,
-		pic.image)
+	pic.draw_device(pic.ui.gg)
+}
+
+fn (mut pic Picture) draw_device(d DrawDevice) {
+	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)
 }
 
 fn (mut pic Picture) set_visible(state bool) {
@@ -182,4 +190,17 @@ fn (mut pic Picture) set_visible(state bool) {
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {
 	return point_inside(pic, x, y)
+}
+
+// method implemented in Draggable
+fn (pic &Picture) get_window() &Window {
+	return pic.ui.window
+}
+
+fn (pic &Picture) drag_type() string {
+	return pic.drag_type
+}
+
+fn (pic &Picture) drag_bounds() gg.Rect {
+	return gg.Rect{pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height}
 }

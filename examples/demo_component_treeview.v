@@ -28,7 +28,7 @@ fn main() {
 				scrollview: true
 				heights: ui.compact
 				children: [
-					uic.treeview(
+					uic.treeview_stack(
 						id: 'demo'
 						incr_mode: true
 						trees: [
@@ -76,7 +76,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeView) {
+fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	selected := c.id
 	println('$selected selected with title: ${tv.titles[selected]}!')
 }

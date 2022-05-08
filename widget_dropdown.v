@@ -35,21 +35,31 @@ pub mut:
 	is_focused           bool
 	on_selection_changed DropDownSelectionChangedFn
 	hidden               bool
-	bg_color             gx.Color = ui.dropdown_color
+	// bg_color             gx.Color = ui.dropdown_color
+	// Style
+	theme_style  string
+	style        DropdownShapeStyle
+	style_params DropdownStyleParams
+	// text styles
+	text_styles TextStyles
+	// text_size   f64
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct DropdownParams {
-	id                   string
-	def_text             string
-	x                    int
-	y                    int
-	width                int = 150
-	height               int = 25
-	z_index              int = 10
-	selected_index       int = -1
+	DropdownStyleParams
+	id             string
+	def_text       string
+	x              int
+	y              int
+	width          int = 150
+	height         int = 25
+	z_index        int = 10
+	selected_index int = -1
+	// text_size            f64
+	theme                string = no_style
 	on_selection_changed DropDownSelectionChangedFn
 	items                []DropdownItem
 	texts                []string
@@ -69,9 +79,11 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 		items: c.items
 		selected_index: c.selected_index
 		on_selection_changed: c.on_selection_changed
+		style_params: c.DropdownStyleParams
 		def_text: c.def_text
 		ui: 0
 	}
+	dd.style_params.style = c.theme
 	if c.texts.len > 0 {
 		for t in c.texts {
 			dd.add_item(t)
@@ -84,6 +96,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
 	ui := parent.get_ui()
 	dd.ui = ui
+	dd.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
@@ -130,6 +143,12 @@ pub fn (dd &Dropdown) free() {
 	}
 }
 
+// fn (mut dd Dropdown) init_style() {
+// 	mut dtw := DrawTextWidget(dd)
+// 	// dtw.init_style(align: .center, vertical_align: .middle)
+// 	dtw.update_text_size(dd.text_size)
+// }
+
 pub fn (mut dd Dropdown) set_pos(x int, y int) {
 	dd.x = x
 	dd.y = y
@@ -146,46 +165,50 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut dd Dropdown) draw() {
+	dd.draw_device(dd.ui.gg)
+}
+
+pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 	offset_start(mut dd)
-	gg := dd.ui.gg
+	dtw := DrawTextWidget(dd)
+	dtw.draw_device_load_style(d)
 	// draw the main dropdown
-	gg.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.bg_color)
-	gg.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
-		ui.dropdown_focus_color
+	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.style.bg_color)
+	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
+		dd.style.focus_color
 	} else {
-		ui.dropdown_border_color
+		dd.style.border_color
 	})
 	if dd.selected_index >= 0 {
-		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
-		gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.def_text)
 	}
-	dd.draw_open()
+	dd.draw_device_open(d)
 	// draw the arrow
-	gg.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
+	d.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 	offset_end(mut dd)
 }
 
-fn (dd &Dropdown) draw_open() {
+fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 	// draw the drawer
 	if dd.open {
-		gg := dd.ui.gg
-		gg.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.dropdown_drawer_color)
-		gg.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
+			dd.style.drawer_color)
+		d.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			ui.dropdown_border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
-			color := if i == dd.hover_index {
-				ui.dropdown_border_color
-			} else {
-				ui.dropdown_drawer_color
-			}
-			gg.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+			color := if i == dd.hover_index { dd.style.border_color } else { dd.style.drawer_color }
+			d.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
-			gg.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
-				ui.dropdown_border_color)
-			gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
+				dd.style.border_color)
+			// dd.ui.gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			DrawTextWidget(dd).draw_device_text(d, dd.x + 5, y + i * dd.dropdown_height + 5,
+				item.text)
 		}
 	}
 }
