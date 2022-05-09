@@ -76,4 +76,9 @@ fn main() {
 fn win_init(w &ui.Window) {
 	// mut g := uic.grid_component_from_id(w, "grid")
 	// g.init_ranked_grid_data([2, 0], [1, 2])
+
+	// gc := uic.GridCell{12,1208}
+	// ac := gc.alphacell()
+	// gc2 := ac.gridcell()
+	// println("$gc -> $ac -> $gc2")
 }
