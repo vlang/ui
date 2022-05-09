@@ -913,7 +913,7 @@ fn (item &ListItem) free() {
 		print('\tlistbox item $item.id')
 	}
 	unsafe {
-		item.id.free()
+		// Failing: item.id.free()
 		item.text.free()
 		// Failing: free(item)
 	}
