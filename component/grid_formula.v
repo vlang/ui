@@ -26,7 +26,7 @@ pub fn (ac AlphaCell) gridcell() GridCell {
 		l := acj.len
 		mut j := 0
 		for k in 0 .. l {
-			j += (acj[k] - u8(64)) * int(math.pow(26, l - k - 1))
+			j += (acj[k] - u8(65)) * int(math.pow(26, l - k - 1))
 		}
 		return GridCell{aci, j}
 	} else {
@@ -34,15 +34,17 @@ pub fn (ac AlphaCell) gridcell() GridCell {
 	}
 }
 
-pub fn (gc GridCell) alphacell() AlphaCell {
+pub fn (gc GridCell) alphacell() string {
 	mut acj, mut z, mut r := []u8{}, gc.j, 0
 	for {
 		r = int(math.mod(z, 26))
 		z /= 26
-		println('$z, $r')
-		acj << u8(64 + r)
-		if z < 26 {
-			acj << u8(64 + z)
+		// println('$z, $r')
+		acj << u8(65 + r)
+		if z <= 26 {
+			if z > 0 {
+				acj << u8(65 + z)
+			}
 			break
 		}
 	}
@@ -62,4 +64,13 @@ struct GridCells {
 	to   GridCell
 }
 
-type Formulas = map[AlphaCell]GridFormula
+pub fn gridformulas(formulas map[string]string) map[string]GridFormula {
+	mut res := map[string]GridFormula{}
+	for k, v in formulas {
+		res[k] = GridFormula{
+			cell: AlphaCell(k).gridcell()
+			formula: v
+		}
+	}
+	return res
+}

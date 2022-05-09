@@ -28,6 +28,7 @@ pub mut:
 	layout    &ui.CanvasLayout
 	vars      []GridVar
 	types     []GridType
+	formulas  map[string]GridFormula
 	headers   []string
 	widths    []int
 	heights   []int
@@ -56,8 +57,9 @@ pub mut:
 	pos_x int
 	pos_y int
 	// selection
-	sel_i int = -1
-	sel_j int = -1
+	sel_i       int = -1
+	sel_j       int = -1
+	sel_formula string
 	// from
 	from_x int
 	from_y int
@@ -72,9 +74,10 @@ pub mut:
 [params]
 pub struct GridParams {
 	vars         map[string]GridData
-	width        int = 100
-	height       int = 25
-	scrollview   bool
+	formulas     map[string]string
+	width        int  = 100
+	height       int  = 25
+	scrollview   bool = true
 	is_focused   bool
 	fixed_height bool = true
 mut:
@@ -105,6 +108,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
+		formulas: gridformulas(p.formulas)
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -158,6 +162,15 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 			}
 		}
 	}
+	// textbox formula
+	mut tb_formula := ui.textbox(
+		id: ui.component_id(p.id, 'tb_formula')
+		on_entered: grid_tb_formula_entered
+	)
+	tb_formula.set_visible(false)
+	layout.children << tb_formula
+	g.selectors << tb_formula
+	ui.component_connect(g, tb_formula)
 	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
@@ -252,9 +265,10 @@ fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 		g.colbar_selected()
 	} else if rowbar {
 		println('rowbar $g.sel_i')
+	} else if g.is_formula() {
+		g.show_formula()
 	} else {
-		//
-		println('selected: $g.sel_i, $g.sel_j')
+		// println('selected: $g.sel_i, $g.sel_j')
 		g.show_selected()
 		$if grid_click ? {
 			println('${g.layout.get_children().map(it.id)}')
@@ -390,6 +404,22 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 }
 
 fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
+	mut g := grid_component(tb)
+	mut gtb := g.vars[g.sel_j]
+	if mut gtb is GridTextBox {
+		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
+		// println("gtb.var = ${gtb.var}")
+	}
+	unsafe {
+		*tb.text = ''
+	}
+	tb.set_visible(false)
+	tb.z_index = ui.z_index_hidden
+	g.layout.update_layout()
+	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
+}
+
+fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
 	mut gtb := g.vars[g.sel_j]
 	if mut gtb is GridTextBox {
@@ -567,6 +597,38 @@ fn (mut g GridComponent) unselect() {
 }
 
 fn (mut g GridComponent) colbar_selected() {
+}
+
+fn (mut g GridComponent) is_formula() bool {
+	ac := GridCell{g.sel_i, g.sel_j}.alphacell()
+	// println("is_formula sel = ($g.sel_i, $g.sel_j) <$ac> in ${g.formulas.keys()}")
+	is_f := ac in g.formulas.keys()
+	if is_f {
+		g.sel_formula = ac
+	} else {
+		g.sel_formula = ''
+	}
+	return is_f
+}
+
+fn (mut g GridComponent) show_formula() {
+	g.unselect()
+	g.cur_i, g.cur_j = g.sel_i, g.sel_j
+	id := ui.component_id(g.id, 'tb_formula')
+	// println('tb_sel $id selected')
+	mut tb := g.layout.ui.window.textbox(id)
+	tb.set_visible(true)
+	// println('tb $tb.id')
+	tb.z_index = 1000
+	pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
+	g.layout.set_child_relative_pos(id, pos_x, pos_y)
+	tb.propose_size(g.widths[g.sel_j], g.height(g.sel_i))
+	tb.focus()
+	unsafe {
+		*(tb.text) = g.formulas[g.sel_formula].formula
+	}
+	tb.style.bg_color = gx.yellow
+	g.layout.update_layout()
 }
 
 fn (mut g GridComponent) show_selected() {

@@ -37,7 +37,6 @@ fn main() {
 						children: [ui.rectangle(color: gx.red),
 							uic.datagrid_stack(
 								id: 'grid2'
-								scrollview: true
 								is_focused: true
 								settings_bg_color: gx.hex(0xfcf4e4ff)
 								// fixed_height: false
@@ -77,8 +76,9 @@ fn win_init(w &ui.Window) {
 	// mut g := uic.grid_component_from_id(w, "grid")
 	// g.init_ranked_grid_data([2, 0], [1, 2])
 
-	// gc := uic.GridCell{12,1208}
-	// ac := gc.alphacell()
-	// gc2 := ac.gridcell()
-	// println("$gc -> $ac -> $gc2")
+	gc := uic.GridCell{12, 1208}
+	// gc := uic.GridCell{0,1}
+	ac := gc.alphacell()
+	gc2 := uic.AlphaCell(ac).gridcell()
+	println('$gc -> $ac -> $gc2')
 }
