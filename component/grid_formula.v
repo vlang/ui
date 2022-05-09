@@ -23,15 +23,24 @@ pub fn (ac AlphaCell) gridcell() GridCell {
 		re.match_string(ac)
 		acj := re.get_group_by_name(ac, 'column')
 		aci := re.get_group_by_name(ac, 'row').int() - 1
-		l := acj.len
-		mut j := 0
-		for k in 0 .. l {
-			j += (acj[k] - u8(65)) * int(math.pow(26, l - k - 1))
-		}
-		return GridCell{aci, j}
+		// l := acj.len
+		// mut j := 0
+		// for k in 0 .. l {
+		// 	j += (acj[k] - u8(65)) * int(math.pow(26, l - k - 1))
+		// }
+		return GridCell{aci, base26_to_int(acj)}
 	} else {
 		return component.no_cell
 	}
+}
+
+pub fn base26_to_int(ac string) int {
+	l := ac.len
+	mut j := 0
+	for k in 0 .. l {
+		j += (ac[k] - u8(65)) * int(math.pow(26, l - k - 1))
+	}
+	return j
 }
 
 pub fn (gc GridCell) alphacell() string {
@@ -64,7 +73,7 @@ struct GridCells {
 	to   GridCell
 }
 
-pub fn gridformulas(formulas map[string]string) map[string]GridFormula {
+pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
 	mut res := map[string]GridFormula{}
 	for k, v in formulas {
 		res[k] = GridFormula{
@@ -73,4 +82,18 @@ pub fn gridformulas(formulas map[string]string) map[string]GridFormula {
 		}
 	}
 	return res
+}
+
+fn extract_cells_from_formula(formula string) (GridCell, GridCell) {
+	query := r'.*(?P<col_from>[A-Z]+)(?P<row_from>\d+)\:?(?P<col_to>[A-Z]+)(?P<row_to>\d+).*'
+	mut re := regex.regex_opt(query) or { panic(err) }
+	if re.matches_string(formula) {
+		re.match_string(formula)
+		from_acj := re.get_group_by_name(formula, 'col_from')
+		from_aci := re.get_group_by_name(formula, 'row_from').int() - 1
+		to_acj := re.get_group_by_name(formula, 'col_to')
+		to_aci := re.get_group_by_name(formula, 'row_to').int() - 1
+		return GridCell{from_aci, base26_to_int(from_acj)}, GridCell{to_aci, base26_to_int(to_acj)}
+	}
+	return component.no_cell, component.no_cell
 }

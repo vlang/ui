@@ -108,7 +108,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
-		formulas: gridformulas(p.formulas)
+		formulas: grid_formulas(p.formulas)
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -624,6 +624,7 @@ fn (mut g GridComponent) show_formula() {
 	g.layout.set_child_relative_pos(id, pos_x, pos_y)
 	tb.propose_size(g.widths[g.sel_j], g.height(g.sel_i))
 	tb.focus()
+	println(extract_cells_from_formula(g.formulas[g.sel_formula].formula))
 	unsafe {
 		*(tb.text) = g.formulas[g.sel_formula].formula
 	}
