@@ -641,45 +641,26 @@ fn (mut g GridComponent) show_selected() {
 
 fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 	mut sel_i, mut sel_j := -1, -1
-	$if gip_old ? {
-		mut cum := g.rowbar_width
-		for j, w in g.widths {
-			cum += w
-			if x > g.rowbar_width && x < cum {
-				sel_j = j
-				break
-			}
-		}
 
-		cum = g.colbar_height
-		for i, h in g.heights {
-			cum += h
-			if y > g.colbar_height && y < cum {
-				sel_i = i
-				break
-			}
+	mut cum := g.from_x
+	// println("dv $y")
+	for j in g.from_j .. g.to_j {
+		cum += g.widths[j]
+		// println("dv  $y > $g.colbar_height && $y < $cum ")
+		if x > g.from_x && x < cum {
+			sel_j = j
+			break
 		}
-	} $else {
-		mut cum := g.from_x
-		// println("dv $y")
-		for j in g.from_j .. g.to_j {
-			cum += g.widths[j]
-			// println("dv  $y > $g.colbar_height && $y < $cum ")
-			if x > g.from_x && x < cum {
-				sel_j = j
-				break
-			}
-		}
+	}
 
-		cum = g.from_y
-		// println("dv $y")
-		for i in g.from_i .. g.to_i {
-			cum += g.height(i)
-			// println("dv  $y > $g.colbar_height && $y < $cum ")
-			if y > g.from_y && y < cum {
-				sel_i = i
-				break
-			}
+	cum = g.from_y
+	// println("dv $y")
+	for i in g.from_i .. g.to_i {
+		cum += g.height(i)
+		// println("dv  $y > $g.colbar_height && $y < $cum ")
+		if y > g.from_y && y < cum {
+			sel_i = i
+			break
 		}
 	}
 
@@ -1028,45 +1009,3 @@ pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	}
 	g.index = rgd
 }
-
-// compare (TODO use sort_with_compare_context)
-
-// __global (
-// 	rgd_vars_   []int // all vars
-// 	rgd_orders_ []int // all orders
-// 	rgd_grid_   &GridComponent // the current grid
-// )
-
-// type RankedGridData = int
-
-// pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
-// 	rgd_vars_ = vars.clone()
-// 	rgd_orders_ = orders.clone()
-// 	rgd_grid_ = g
-// 	mut rgd := []int{len: g.nrow(), init: it}
-// 	if vars.len > 0 {
-// 		rgd.sort_with_compare(compare_grid_data)
-// 	}
-// 	g.index = rgd
-// }
-
-// fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
-// 	mut comp := 0
-// 	for i, j in rgd_vars_ {
-// 		if j == -1 {
-// 			comp = if f64(*a) < f64(*b) {
-// 				-rgd_orders_[i]
-// 			} else if f64(*a) > f64(*b) {
-// 				rgd_orders_[i]
-// 			} else {
-// 				0
-// 			}
-// 		} else {
-// 			comp = rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
-// 		}
-// 		if comp != 0 {
-// 			return comp
-// 		}
-// 	}
-// 	return 0
-// }
