@@ -416,7 +416,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 		*tb.text = ''
 	}
 	tb.set_visible(false)
-	g.formula_mngr.activate_cell(GridCell{g.sel_i, g.sel_j}.alphacell())
+	g.activate_cell(GridCell{g.sel_i, g.sel_j}.alphacell())
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
@@ -487,7 +487,12 @@ fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 // methods
 
 fn (g &GridComponent) value(i int, j int) (string, GridType) {
+	// println("g[$i, $j] = <${g.vars[j].value(i)}>")
 	return g.vars[j].value(i)
+}
+
+fn (mut g GridComponent) set_value(i int, j int, s string) {
+	g.vars[j].set_value(i, s)
 }
 
 fn (g &GridComponent) ind(i int) int {
@@ -833,6 +838,8 @@ interface GridVar {
 	compare(a int, b int) int
 	draw_device(d ui.DrawDevice, j int, mut g GridComponent)
 	value(i int) (string, GridType)
+mut:
+	set_value(i int, v string)
 }
 
 // TextBox GridVar
@@ -868,7 +875,11 @@ fn (gtb &GridTextBox) compare(a int, b int) int {
 }
 
 fn (gtb &GridTextBox) value(i int) (string, GridType) {
-	return '', GridType.tb_string
+	return gtb.var[i], GridType.tb_string
+}
+
+fn (mut gtb GridTextBox) set_value(i int, v string) {
+	gtb.var[i] = v
 }
 
 fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
@@ -932,7 +943,16 @@ fn (gdd &GridDropdown) compare(a int, b int) int {
 }
 
 fn (gdd &GridDropdown) value(i int) (string, GridType) {
-	return '', GridType.tb_string
+	return gdd.var.levels[gdd.var.values[i]], GridType.tb_string
+}
+
+fn (mut gdd GridDropdown) set_value(i int, v string) {
+	for k, level in gdd.var.levels {
+		if v == level {
+			gdd.var.values[i] = k
+			break
+		}
+	}
 }
 
 fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
@@ -985,7 +1005,13 @@ fn (gcb &GridCheckBox) compare(a int, b int) int {
 }
 
 fn (gcb &GridCheckBox) value(i int) (string, GridType) {
-	return '', GridType.tb_string
+	return gcb.var[i].str(), GridType.tb_string
+}
+
+fn (mut gcb GridCheckBox) set_value(i int, v string) {
+	if v in ['true', 'false'] {
+		gcb.var[i] = v.bool()
+	}
 }
 
 fn (gcb &GridCheckBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {

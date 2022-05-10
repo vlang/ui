@@ -26,8 +26,8 @@ pub struct GridCell {
 struct GridFormula {
 	cell GridCell
 mut:
-	formula     string
-	react_cells []GridCellBlock
+	formula      string
+	active_cells []ActiveCells
 }
 
 struct GridCellBlock {
@@ -58,9 +58,13 @@ pub fn (mut gfm GridFormulaMngr) init() {
 		active_cells := extract_alphacellblock_from_formula(formula.formula)
 		gfm.active_cell_to_formula[active_cells] = cell
 		if active_cells.contains(':') {
-			gfm.active_cells << ActiveCells(AlphaCellBlock(active_cells))
+			ac := ActiveCells(AlphaCellBlock(active_cells))
+			gfm.active_cells << ac
+			formula.active_cells << ac
 		} else {
-			gfm.active_cells << ActiveCells(AlphaCell(active_cells))
+			ac := ActiveCells(AlphaCell(active_cells))
+			gfm.active_cells << ac
+			formula.active_cells << ac
 		}
 		// println(extract_alphacells_from_formula(gfm.formulas[gfm.sel_formula].formula))
 	}
@@ -68,14 +72,17 @@ pub fn (mut gfm GridFormulaMngr) init() {
 	// println(gfm)
 }
 
-pub fn (mut gfm GridFormulaMngr) activate_cell(c AlphaCell) {
+pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
 	// only if c is an active cell (i.e. contained in some formula)
+	mut gfm := g.formula_mngr
 	active, active_cell := gfm.active_cells.which_contains(c)
 	if active {
 		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
 		// println(c)
 		// println(gfm.active_cell_to_formula[active_cell])
-		// println(formula)
+		println(formula)
+		// println(formula.active_cells[0])
+		println(g.values_at(formula.active_cells[0]))
 	}
 }
 
