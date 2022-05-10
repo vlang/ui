@@ -91,15 +91,25 @@ pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	active, active_cell := gfm.active_cells.which_contains(c)
 	if active {
 		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
-		// println(c)
-		// println(gfm.active_cell_to_formula[active_cell])
-		// println(formula)
-		// println(formula.active_cells[0])
-		vals := g.values_at(formula.active_cells[0]).map(it.f64())
-		// SUM FROM NOW
-		g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
-		g.formula_mngr.cells_to_activate << formula.cell.alphacell()
+		g.update_formula(formula)
 	}
+}
+
+pub fn (mut g GridComponent) update_formulas() {
+	for _, formula in g.formula_mngr.formulas {
+		g.update_formula(formula)
+	}
+}
+
+pub fn (mut g GridComponent) update_formula(formula GridFormula) {
+	// println(c)
+	// println(gfm.active_cell_to_formula[active_cell])
+	// println(formula)
+	// println(formula.active_cells[0])
+	vals := g.values_at(formula.active_cells[0]).map(it.f64())
+	// SUM FROM NOW
+	g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
+	g.formula_mngr.cells_to_activate << formula.cell.alphacell()
 }
 
 fn sum(a ...f64) f64 {
@@ -211,6 +221,7 @@ fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	}
 	tb.set_visible(false)
 	tb.z_index = ui.z_index_hidden
+	g.update_formula(g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()])
 	g.layout.update_layout()
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }

@@ -239,7 +239,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := grid_component(layout)
 	g.tb_string.init(layout)
 	g.cb_bool.init(layout)
-
+	g.update_formulas()
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
 		dd.set_visible(false)
