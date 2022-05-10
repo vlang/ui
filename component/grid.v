@@ -101,18 +101,14 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		on_scroll_change: grid_scroll_change
 	)
 	mut dd := map[string]&ui.Dropdown{}
-	mut gfm := GridFormulaMngr{
-		formulas: grid_formulas(p.formulas)
-	}
 	mut g := &GridComponent{
 		id: p.id
 		layout: layout
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
-		formula_mngr: gfm
+		formula_mngr: grid_formula_mngr(p.formulas)
 	}
-	gfm.init()
 	ui.component_connect(g, layout)
 	// check vars same length
 	g.nrow = -1
@@ -420,6 +416,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 		*tb.text = ''
 	}
 	tb.set_visible(false)
+	g.formula_mngr.activate_cell(GridCell{g.sel_i, g.sel_j}.alphacell())
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")

@@ -15,50 +15,12 @@ type AlphaCell = string
 // Spreadsheet-like (ex: A1:B4, Z12:AB13, ...)
 type AlphaCellBlock = string
 
+type ActiveCells = AlphaCell | AlphaCellBlock
+
 // Matrix-like (zero indexed)
 pub struct GridCell {
 	i int
 	j int
-}
-
-pub fn (ac AlphaCell) gridcell() GridCell {
-	query := r'(?P<column>[A-Z]+)(?P<row>\d+)'
-	mut re := regex.regex_opt(query) or { panic(err) }
-	if re.matches_string(ac) {
-		re.match_string(ac)
-		acj := re.get_group_by_name(ac, 'column')
-		aci := re.get_group_by_name(ac, 'row').int() - 1
-		return GridCell{aci, base26_to_int(acj)}
-	} else {
-		return component.no_cell
-	}
-}
-
-pub fn base26_to_int(ac string) int {
-	l := ac.len
-	mut j := 0
-	for k in 0 .. l {
-		j += (ac[k] - u8(65)) * int(math.pow(26, l - k - 1))
-	}
-	return j
-}
-
-pub fn (gc GridCell) alphacell() string {
-	mut acj, mut z, mut r := []u8{}, gc.j, 0
-	for {
-		r = int(math.mod(z, 26))
-		z /= 26
-		// println('$z, $r')
-		acj << u8(65 + r)
-		if z <= 26 {
-			if z > 0 {
-				acj << u8(65 + z)
-			}
-			break
-		}
-	}
-	acj = acj.reverse()
-	return acj.bytestr() + (gc.i + 1).str()
 }
 
 struct GridFormula {
@@ -75,19 +37,46 @@ struct GridCellBlock {
 
 struct GridFormulaMngr {
 mut:
-	formulas     map[string]GridFormula // list of formula: key string is the alphacell of the formula
-	active_cells map[string]string      // key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
-	cells_stack  []string
-	sel_formula  string
+	formulas               map[string]GridFormula // list of formula: key string is the alphacell of the formula
+	active_cell_to_formula map[string]string      // key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
+	active_cells           []ActiveCells
+	cells_stack            []string
+	sel_formula            string
+}
+
+// constructor
+pub fn grid_formula_mngr(formulas map[string]string) GridFormulaMngr {
+	mut gfm := GridFormulaMngr{
+		formulas: grid_formulas(formulas)
+	}
+	gfm.init()
+	return gfm
 }
 
 pub fn (mut gfm GridFormulaMngr) init() {
 	for cell, mut formula in gfm.formulas {
 		active_cells := extract_alphacellblock_from_formula(formula.formula)
-		gfm.active_cells[active_cells] = cell
+		gfm.active_cell_to_formula[active_cells] = cell
+		if active_cells.contains(':') {
+			gfm.active_cells << ActiveCells(AlphaCellBlock(active_cells))
+		} else {
+			gfm.active_cells << ActiveCells(AlphaCell(active_cells))
+		}
 		// println(extract_alphacells_from_formula(gfm.formulas[gfm.sel_formula].formula))
 	}
-	println(gfm)
+	// extract_alphacellblock_from_formula("A1")
+	// println(gfm)
+}
+
+pub fn (mut gfm GridFormulaMngr) activate_cell(c AlphaCell) {
+	// only if c is an active cell (i.e. contained in some formula)
+	active, active_cell := gfm.active_cells.which_contains(c)
+	if active {
+		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
+		// println(c)
+		// println(gfm.active_cell_to_formula[active_cell])
+		// println(formula)
+	}
 }
 
 pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
@@ -103,18 +92,48 @@ pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
 
 // TODO alphacell and alphacellblock
 fn extract_alphacellblock_from_formula(formula string) string {
-	query := r'.*(?P<col_from>[A-Z]+)(?P<row_from>\d+)\:?(?P<col_to>[A-Z]+)(?P<row_to>\d+).*'
+	query := r'.*(?P<colfrom>[A-Z]+)(?P<rowfrom>\d+)\:?(?P<colto>[A-Z]+)?(?P<rowto>\d+)?.*'
 	mut re := regex.regex_opt(query) or { panic(err) }
 	if re.matches_string(formula) {
 		re.match_string(formula)
-		return re.get_group_by_name(formula, 'col_from') +
-			re.get_group_by_name(formula, 'row_from') + ':' +
-			re.get_group_by_name(formula, 'col_to') + re.get_group_by_name(formula, 'row_to')
+		if re.get_group_by_name(formula, 'colto') + re.get_group_by_name(formula, 'rowto') == '' {
+			return AlphaCell(re.get_group_by_name(formula, 'colfrom') +
+				re.get_group_by_name(formula, 'rowfrom'))
+		} else {
+			return AlphaCellBlock(re.get_group_by_name(formula, 'colfrom') +
+				re.get_group_by_name(formula, 'rowfrom') + ':' +
+				re.get_group_by_name(formula, 'colto') + re.get_group_by_name(formula, 'rowto'))
+		}
 	}
 	return ''
 }
 
 // GridComponent methods
+
+fn (mut g GridComponent) value_at(c AlphaCell) string {
+	gc := c.gridcell()
+	res, _ := g.value(gc.i, gc.j)
+	return res
+}
+
+fn (mut g GridComponent) values_at(c ActiveCells) []string {
+	match c {
+		AlphaCell {
+			return [g.value_at(c)]
+		}
+		AlphaCellBlock {
+			mut res := []string{}
+			gcb := c.gridcellblock().sorted()
+			for i in gcb.from.i .. (gcb.to.i + 1) {
+				for j in gcb.from.j .. (gcb.to.j + 1) {
+					s, _ := g.value(i, j)
+					res << s
+				}
+			}
+			return res
+		}
+	}
+}
 
 fn (mut g GridComponent) is_formula() bool {
 	ac := GridCell{g.sel_i, g.sel_j}.alphacell()
@@ -165,22 +184,83 @@ fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
+// methods
+
+pub fn (ac AlphaCell) gridcell() GridCell {
+	query := r'(?P<column>[A-Z]+)(?P<row>\d+)'
+	mut re := regex.regex_opt(query) or { panic(err) }
+	if re.matches_string(ac) {
+		re.match_string(ac)
+		acj := re.get_group_by_name(ac, 'column')
+		aci := re.get_group_by_name(ac, 'row').int() - 1
+		return GridCell{aci, base26_to_int(acj)}
+	} else {
+		return component.no_cell
+	}
+}
+
+pub fn (gc GridCell) alphacell() string {
+	mut acj, mut z, mut r := []u8{}, gc.j, 0
+	for {
+		r = int(math.mod(z, 26))
+		z /= 26
+		// println('$z, $r')
+		acj << u8(65 + r)
+		if z <= 26 {
+			if z > 0 {
+				acj << u8(65 + z)
+			}
+			break
+		}
+	}
+	acj = acj.reverse()
+	return acj.bytestr() + (gc.i + 1).str()
+}
+
 fn (gcb GridCellBlock) contains(gc GridCell) bool {
+	gcbs := gcb.sorted()
+	return gc.i >= gcbs.from.i && gc.i <= gcbs.to.i && gc.j >= gcbs.from.j && gc.j <= gcbs.to.j
+}
+
+fn (gcb GridCellBlock) sorted() GridCellBlock {
 	from_i, to_i := math.min(gcb.from.i, gcb.to.i), math.max(gcb.from.i, gcb.to.i)
 	from_j, to_j := math.min(gcb.from.j, gcb.to.j), math.max(gcb.from.j, gcb.to.j)
-	return gc.i >= from_i && gc.i <= to_i && gc.j >= from_j && gc.j <= to_j
+	return GridCellBlock{GridCell{from_i, from_j}, GridCell{to_i, to_j}}
+}
+
+fn (acb AlphaCellBlock) gridcellblock() GridCellBlock {
+	a := acb.split(':')
+	return GridCellBlock{AlphaCell(a[0]).gridcell(), AlphaCell(a[1]).gridcell()}
 }
 
 fn (acb AlphaCellBlock) contains(ac AlphaCell) bool {
-	a := acb.split(':')
-	return GridCellBlock{AlphaCell(a[0]).gridcell(), AlphaCell(a[1]).gridcell()}.contains(ac.gridcell())
+	return acb.gridcellblock().contains(ac.gridcell())
 }
 
-fn (aacb []AlphaCellBlock) contains(ac AlphaCell) bool {
+fn (aacb []ActiveCells) which_contains(ac AlphaCell) (bool, string) {
 	for acb in aacb {
-		if acb.contains(ac) {
-			return true
+		match acb {
+			AlphaCell {
+				if acb == ac {
+					return true, acb
+				}
+			}
+			AlphaCellBlock {
+				if acb.contains(ac) {
+					return true, acb
+				}
+			}
 		}
 	}
-	return false
+	return false, ''
+}
+
+// base26 to int conversion
+pub fn base26_to_int(ac string) int {
+	l := ac.len
+	mut j := 0
+	for k in 0 .. l {
+		j += (ac[k] - u8(65)) * int(math.pow(26, l - k - 1))
+	}
+	return j
 }
