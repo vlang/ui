@@ -40,7 +40,7 @@ mut:
 	formulas               map[string]GridFormula // list of formula: key string is the alphacell of the formula
 	active_cell_to_formula map[string]string      // key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
 	active_cells           []ActiveCells
-	cells_stack            []string
+	cells_to_activate      []AlphaCell
 	sel_formula            string
 }
 
@@ -73,6 +73,19 @@ pub fn (mut gfm GridFormulaMngr) init() {
 }
 
 pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
+	g.formula_mngr.cells_to_activate.clear()
+	g.formula_mngr.cells_to_activate << c
+	for {
+		if g.formula_mngr.cells_to_activate.len > 0 {
+			ac := g.formula_mngr.cells_to_activate.pop()
+			g.propagate_cell(ac)
+		} else {
+			break
+		}
+	}
+}
+
+pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	// only if c is an active cell (i.e. contained in some formula)
 	mut gfm := g.formula_mngr
 	active, active_cell := gfm.active_cells.which_contains(c)
@@ -80,10 +93,21 @@ pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
 		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
 		// println(c)
 		// println(gfm.active_cell_to_formula[active_cell])
-		println(formula)
+		// println(formula)
 		// println(formula.active_cells[0])
-		println(g.values_at(formula.active_cells[0]))
+		vals := g.values_at(formula.active_cells[0]).map(it.f64())
+		// SUM FROM NOW
+		g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
+		g.formula_mngr.cells_to_activate << formula.cell.alphacell()
 	}
+}
+
+fn sum(a ...f64) f64 {
+	mut total := 0.0
+	for x in a {
+		total += x
+	}
+	return total
 }
 
 pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
