@@ -19,26 +19,26 @@ enum GridType {
 	dd_factor
 }
 
-type GridData = Factor | []bool | []int | []string
+type GridData = Factor | []bool | []f64 | []int | []string
 
 [heap]
 struct GridComponent {
 pub mut:
-	id        string
-	layout    &ui.CanvasLayout
-	vars      []GridVar
-	types     []GridType
-	formulas  map[string]GridFormula
-	headers   []string
-	widths    []int
-	heights   []int
-	nrow      int
-	ncol      int
-	tb_string &ui.TextBox  = 0
-	cb_bool   &ui.CheckBox = 0
-	dd_factor map[string]&ui.Dropdown
-	tb_colbar &ui.TextBox = 0
-	tb_rowbar &ui.TextBox = 0
+	id           string
+	layout       &ui.CanvasLayout
+	vars         []GridVar
+	types        []GridType
+	formula_mngr GridFormulaMngr
+	headers      []string
+	widths       []int
+	heights      []int
+	nrow         int
+	ncol         int
+	tb_string    &ui.TextBox  = 0
+	cb_bool      &ui.CheckBox = 0
+	dd_factor    map[string]&ui.Dropdown
+	tb_colbar    &ui.TextBox = 0
+	tb_rowbar    &ui.TextBox = 0
 	// selectors
 	selectors []ui.Widget
 	// sizes
@@ -57,9 +57,8 @@ pub mut:
 	pos_x int
 	pos_y int
 	// selection
-	sel_i       int = -1
-	sel_j       int = -1
-	sel_formula string
+	sel_i int = -1
+	sel_j int = -1
 	// from
 	from_x int
 	from_y int
@@ -102,14 +101,18 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		on_scroll_change: grid_scroll_change
 	)
 	mut dd := map[string]&ui.Dropdown{}
+	mut gfm := GridFormulaMngr{
+		formulas: grid_formulas(p.formulas)
+	}
 	mut g := &GridComponent{
 		id: p.id
 		layout: layout
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
-		formulas: grid_formulas(p.formulas)
+		formula_mngr: gfm
 	}
+	gfm.init()
 	ui.component_connect(g, layout)
 	// check vars same length
 	g.nrow = -1
@@ -127,6 +130,9 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 			}
 			[]int {
 				g.types << .tb_int
+			}
+			[]f64 {
+				g.types << .tb_float
 			}
 			[]string {
 				g.types << .tb_string
@@ -419,22 +425,6 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
-fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
-	mut g := grid_component(tb)
-	mut gtb := g.vars[g.sel_j]
-	if mut gtb is GridTextBox {
-		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
-		// println("gtb.var = ${gtb.var}")
-	}
-	unsafe {
-		*tb.text = ''
-	}
-	tb.set_visible(false)
-	tb.z_index = ui.z_index_hidden
-	g.layout.update_layout()
-	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
-}
-
 fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	// println('$dd.id  selection changed $dd.selected_index')
 	mut g := grid_component(dd)
@@ -498,6 +488,10 @@ fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 }
 
 // methods
+
+fn (g &GridComponent) value(i int, j int) (string, GridType) {
+	return g.vars[j].value(i)
+}
 
 fn (g &GridComponent) ind(i int) int {
 	return if g.index.len > 0 { g.index[i] } else { i }
@@ -597,39 +591,6 @@ fn (mut g GridComponent) unselect() {
 }
 
 fn (mut g GridComponent) colbar_selected() {
-}
-
-fn (mut g GridComponent) is_formula() bool {
-	ac := GridCell{g.sel_i, g.sel_j}.alphacell()
-	// println("is_formula sel = ($g.sel_i, $g.sel_j) <$ac> in ${g.formulas.keys()}")
-	is_f := ac in g.formulas.keys()
-	if is_f {
-		g.sel_formula = ac
-	} else {
-		g.sel_formula = ''
-	}
-	return is_f
-}
-
-fn (mut g GridComponent) show_formula() {
-	g.unselect()
-	g.cur_i, g.cur_j = g.sel_i, g.sel_j
-	id := ui.component_id(g.id, 'tb_formula')
-	// println('tb_sel $id selected')
-	mut tb := g.layout.ui.window.textbox(id)
-	tb.set_visible(true)
-	// println('tb $tb.id')
-	tb.z_index = 1000
-	pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
-	g.layout.set_child_relative_pos(id, pos_x, pos_y)
-	tb.propose_size(g.widths[g.sel_j], g.height(g.sel_i))
-	tb.focus()
-	println(extract_cells_from_formula(g.formulas[g.sel_formula].formula))
-	unsafe {
-		*(tb.text) = g.formulas[g.sel_formula].formula
-	}
-	tb.style.bg_color = gx.yellow
-	g.layout.update_layout()
 }
 
 fn (mut g GridComponent) show_selected() {
@@ -874,6 +835,7 @@ interface GridVar {
 	grid &GridComponent
 	compare(a int, b int) int
 	draw_device(d ui.DrawDevice, j int, mut g GridComponent)
+	value(i int) (string, GridType)
 }
 
 // TextBox GridVar
@@ -906,6 +868,10 @@ fn (gtb &GridTextBox) compare(a int, b int) int {
 	} else {
 		return 0
 	}
+}
+
+fn (gtb &GridTextBox) value(i int) (string, GridType) {
+	return '', GridType.tb_string
 }
 
 fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
@@ -968,6 +934,10 @@ fn (gdd &GridDropdown) compare(a int, b int) int {
 	}
 }
 
+fn (gdd &GridDropdown) value(i int) (string, GridType) {
+	return '', GridType.tb_string
+}
+
 fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
@@ -1015,6 +985,10 @@ fn (gcb &GridCheckBox) compare(a int, b int) int {
 	} else {
 		return 0
 	}
+}
+
+fn (gcb &GridCheckBox) value(i int) (string, GridType) {
+	return '', GridType.tb_string
 }
 
 fn (gcb &GridCheckBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {

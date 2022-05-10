@@ -2,6 +2,7 @@ import ui
 import ui.component as uic
 
 fn main() {
+	// A
 	mut vars := {
 		'A': uic.GridData([''].repeat(100))
 	}
@@ -9,6 +10,8 @@ fn main() {
 	for i in 66 .. (66 + 25) {
 		vars[[u8(i)].bytestr()] = uic.GridData([''].repeat(100))
 	}
+
+	// Init some values
 	mut v_a := vars['A'] or { []string{} }
 	if mut v_a is []string {
 		v_a[0] = 'Sum B2:C5 = '
@@ -25,7 +28,13 @@ fn main() {
 		v_c[1] = '13'
 		v_c[2] = '-1'
 		v_c[3] = '31'
-		v_c[4] = '2'
+	}
+	mut v_d := vars['D'] or { []string{} }
+	if mut v_d is []string {
+		v_d[1] = '3'
+		v_d[2] = '10'
+		v_d[3] = '1'
+		v_d[4] = '24'
 	}
 	window := ui.window(
 		width: 600
@@ -44,6 +53,7 @@ fn main() {
 						vars: vars
 						formulas: {
 							'B1': '=sum(B2:C5)'
+							'C5': '=sum(D2:D5)'
 						}
 						is_focused: true
 					),
