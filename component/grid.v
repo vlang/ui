@@ -177,6 +177,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
 		on_entered: grid_tb_entered
+		// on_char: grid_tb_char
 	)
 	// println("tb_sel $tb_sel.id created inside $p.id")
 	tb_sel.set_visible(false)
@@ -239,7 +240,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := grid_component(layout)
 	g.tb_string.init(layout)
 	g.cb_bool.init(layout)
-	g.update_formulas()
+	g.init_formulas()
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
 		dd.set_visible(false)
@@ -407,10 +408,17 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 
 fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
-	mut gtb := g.vars[g.sel_j]
-	if mut gtb is GridTextBox {
-		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
-		// println("gtb.var = ${gtb.var}")
+	new_text := (*tb.text).clone()
+	if new_text[0..1] == '=' {
+		println('new formula $new_text')
+		// new formula
+		g.new_formula(GridCell{g.sel_i, g.sel_j}, new_text)
+	} else {
+		mut gtb := g.vars[g.sel_j]
+		if mut gtb is GridTextBox {
+			gtb.var[g.ind(g.sel_i)] = new_text
+			// println("gtb.var = ${gtb.var}")
+		}
 	}
 	unsafe {
 		*tb.text = ''

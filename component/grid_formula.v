@@ -54,22 +54,66 @@ pub fn grid_formula_mngr(formulas map[string]string) GridFormulaMngr {
 }
 
 pub fn (mut gfm GridFormulaMngr) init() {
+	gfm.active_cells.clear()
 	for cell, mut formula in gfm.formulas {
-		active_cells := extract_alphacellblock_from_formula(formula.formula)
+		gfm.init_formula(cell, mut formula)
+	}
+	gfm.init_active_cells()
+}
+
+pub fn (mut gfm GridFormulaMngr) init_active_cells() {
+	gfm.active_cells.clear()
+	for _, formula in gfm.formulas {
+		gfm.active_cells << formula.active_cells
+	}
+}
+
+fn (mut gfm GridFormulaMngr) init_formula(cell string, mut formula GridFormula) {
+	_, active_cells_set := parse_formula(formula.formula)
+	formula.active_cells.clear()
+	// println("init formula: $cell $active_cells_set $formula.formula")
+	for active_cells in active_cells_set {
 		gfm.active_cell_to_formula[active_cells] = cell
 		if active_cells.contains(':') {
 			ac := ActiveCells(AlphaCellBlock(active_cells))
-			gfm.active_cells << ac
 			formula.active_cells << ac
 		} else {
 			ac := ActiveCells(AlphaCell(active_cells))
-			gfm.active_cells << ac
 			formula.active_cells << ac
 		}
-		// println(extract_alphacells_from_formula(gfm.formulas[gfm.sel_formula].formula))
 	}
-	// extract_alphacellblock_from_formula("A1")
+}
+
+// new formula
+
+pub fn (mut g GridComponent) new_formula(gc GridCell, formula string) {
+	ac := gc.alphacell()
+	g.formula_mngr.formulas[ac] = GridFormula{
+		cell: gc
+		formula: formula
+	}
+	g.formula_mngr.init_formula(ac, mut g.formula_mngr.formulas[ac])
 	// println(gfm)
+	g.update_formula(g.formula_mngr.formulas[ac], true)
+}
+
+// init
+
+pub fn (mut g GridComponent) init_formulas() {
+	g.update_formulas()
+	g.activate_formula_cells()
+}
+
+pub fn (mut g GridComponent) activate_formula_cells() {
+	for cell, _ in g.formula_mngr.formulas {
+		g.activate_cell(cell)
+	}
+}
+
+pub fn (mut g GridComponent) update_formulas() {
+	for _, formula in g.formula_mngr.formulas {
+		g.update_formula(formula, false)
+	}
 }
 
 pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
@@ -91,25 +135,25 @@ pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	active, active_cell := gfm.active_cells.which_contains(c)
 	if active {
 		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
-		g.update_formula(formula)
+		g.update_formula(formula, false)
 	}
 }
 
-pub fn (mut g GridComponent) update_formulas() {
-	for _, formula in g.formula_mngr.formulas {
-		g.update_formula(formula)
-	}
-}
-
-pub fn (mut g GridComponent) update_formula(formula GridFormula) {
+pub fn (mut g GridComponent) update_formula(formula GridFormula, activate bool) {
 	// println(c)
 	// println(gfm.active_cell_to_formula[active_cell])
 	// println(formula)
-	// println(formula.active_cells[0])
+	// println(formula.active_cells)
+
+	// TODO: extend to compute a more sophisticated
 	vals := g.values_at(formula.active_cells[0]).map(it.f64())
 	// SUM FROM NOW
 	g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
-	g.formula_mngr.cells_to_activate << formula.cell.alphacell()
+	if activate { // used to activate a formula cell
+		g.activate_cell(formula.cell.alphacell())
+	} else { // used for propagate_cell i.e. for reactive cell
+		g.formula_mngr.cells_to_activate << formula.cell.alphacell()
+	}
 }
 
 fn sum(a ...f64) f64 {
@@ -131,22 +175,41 @@ pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
 	return res
 }
 
-// TODO alphacell and alphacellblock
-fn extract_alphacellblock_from_formula(formula string) string {
-	query := r'.*(?P<colfrom>[A-Z]+)(?P<rowfrom>\d+)\:?(?P<colto>[A-Z]+)?(?P<rowto>\d+)?.*'
+pub fn parse_formula(formula string) (string, []string) {
+	query := r'(?P<colfrom>[A-Z]+)(?P<rowfrom>\d+)\:?(?P<colto>[A-Z]+)?(?P<rowto>\d+)?.*'
 	mut re := regex.regex_opt(query) or { panic(err) }
-	if re.matches_string(formula) {
-		re.match_string(formula)
-		if re.get_group_by_name(formula, 'colto') + re.get_group_by_name(formula, 'rowto') == '' {
-			return AlphaCell(re.get_group_by_name(formula, 'colfrom') +
-				re.get_group_by_name(formula, 'rowfrom'))
+	mut pos := 0
+	mut tmp := ''
+	mut res := []string{}
+	mut code := ''
+	mut new_f := ''
+	mut cpt, mut from, mut to := 0, 0, 0
+	for {
+		code = formula[pos..]
+		if re.matches_string(code) {
+			re.match_string(code)
+			if re.get_group_by_name(code, 'colto') + re.get_group_by_name(code, 'rowto') == '' {
+				tmp = re.get_group_by_name(code, 'colfrom') + re.get_group_by_name(code, 'rowfrom')
+			} else {
+				tmp = re.get_group_by_name(code, 'colfrom') +
+					re.get_group_by_name(code, 'rowfrom') + ':' +
+					re.get_group_by_name(code, 'colto') + re.get_group_by_name(code, 'rowto')
+			}
+			res << tmp
+			pos += tmp.len
+			new_f += formula[from..to] + 'x[$cpt]'
+			cpt += 1
+			from, to = pos, pos
 		} else {
-			return AlphaCellBlock(re.get_group_by_name(formula, 'colfrom') +
-				re.get_group_by_name(formula, 'rowfrom') + ':' +
-				re.get_group_by_name(formula, 'colto') + re.get_group_by_name(formula, 'rowto'))
+			pos += 1
+			to += 1
+		}
+		if pos >= formula.len {
+			break
 		}
 	}
-	return ''
+	new_f += formula[from..to]
+	return new_f, res
 }
 
 // GridComponent methods
@@ -178,7 +241,7 @@ fn (mut g GridComponent) values_at(c ActiveCells) []string {
 
 fn (mut g GridComponent) is_formula() bool {
 	ac := GridCell{g.sel_i, g.sel_j}.alphacell()
-	// println("is_formula sel = ($g.sel_i, $g.sel_j) <$ac> in ${g.formulas.keys()}")
+	// println("is_formula sel = ($g.sel_i, $g.sel_j) <$ac> in ${g.formula_mngr.formulas.keys()}")
 	is_f := ac in g.formula_mngr.formulas.keys()
 	if is_f {
 		g.formula_mngr.sel_formula = ac
@@ -211,19 +274,23 @@ fn (mut g GridComponent) show_formula() {
 // formula textbox callback
 fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
-	mut gtb := g.vars[g.sel_j]
-	if mut gtb is GridTextBox {
-		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
-		// println("gtb.var = ${gtb.var}")
+	new_text := (*tb.text).clone()
+	if new_text[0..1] == '=' {
+		g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()].formula = new_text
+		g.formula_mngr.init_formula(GridCell{g.sel_i, g.sel_j}.alphacell(), mut g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()])
+		g.formula_mngr.init_active_cells()
+		g.update_formula(g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()],
+			true)
+	} else {
+		// remove formula
+		g.formula_mngr.formulas.delete(GridCell{g.sel_i, g.sel_j}.alphacell())
 	}
 	unsafe {
 		*tb.text = ''
 	}
 	tb.set_visible(false)
 	tb.z_index = ui.z_index_hidden
-	g.update_formula(g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()])
 	g.layout.update_layout()
-	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
 // methods
