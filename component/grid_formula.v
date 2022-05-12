@@ -280,7 +280,7 @@ fn (mut g GridComponent) show_formula() {
 fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
-	if new_text[0..1] == '=' {
+	if new_text.len > 0 && new_text[0..1] == '=' {
 		g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()].formula = new_text
 		g.formula_mngr.init_formula(GridCell{g.sel_i, g.sel_j}.alphacell(), mut g.formula_mngr.formulas[GridCell{g.sel_i, g.sel_j}.alphacell()])
 		g.formula_mngr.init_active_cells()
