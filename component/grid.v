@@ -410,8 +410,8 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
 	if new_text.len > 0 && new_text[0..1] == '=' {
-		println('new formula $new_text')
 		// new formula
+		// println('new formula $new_text')
 		g.new_formula(GridCell{g.sel_i, g.sel_j}, new_text)
 	} else {
 		mut gtb := g.vars[g.sel_j]
