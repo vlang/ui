@@ -149,15 +149,16 @@ pub fn (mut g GridComponent) update_formula(formula GridFormula, activate bool) 
 	// println(formula.active_cells)
 
 	// TODO: extend to compute a more sophisticated
+	mut vals := []f64{}
 	for active_cells in formula.active_cells {
-		vals := g.values_at(active_cells).map(it.f64())
-		// SUM FROM NOW
-		g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
-		if activate { // used to activate a formula cell
-			g.activate_cell(formula.cell.alphacell())
-		} else { // used for propagate_cell i.e. for reactive cell
-			g.formula_mngr.cells_to_activate << formula.cell.alphacell()
-		}
+		vals << g.values_at(active_cells).map(it.f64())
+	}
+	// SUM FROM NOW
+	g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
+	if activate { // used to activate a formula cell
+		g.activate_cell(formula.cell.alphacell())
+	} else { // used for propagate_cell i.e. for reactive cell
+		g.formula_mngr.cells_to_activate << formula.cell.alphacell()
 	}
 }
 
