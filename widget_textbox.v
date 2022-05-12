@@ -376,6 +376,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
 						1)].string())
 				} else {
+					// TODO: with respect to tb.cursor_pos
 					skip_idx = tb.skip_index_from_end(ustr, dtw)
 					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
 				}
@@ -403,7 +404,15 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 				if tb.is_password {
 					cursor_x += dtw.text_width('*'.repeat(tb.cursor_pos))
 				} else if skip_idx > 0 {
-					cursor_x += dtw.text_width(text[skip_idx..])
+					// println("show cursor skip_idx $tb.ui.gg.frame")
+					// cursor_x += dtw.text_width(text[skip_idx..])
+					if tb.cursor_pos > text.runes().len {
+						tb.cursor_pos = text.runes().len
+					} else if tb.cursor_pos < skip_idx {
+						tb.cursor_pos = skip_idx
+					}
+					left := text.runes()[skip_idx..tb.cursor_pos].string()
+					cursor_x += dtw.text_width(left)
 				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
 					if tb.cursor_pos > text.runes().len {
