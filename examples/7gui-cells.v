@@ -54,6 +54,7 @@ fn main() {
 						formulas: {
 							'B1': '=sum(B2:C5)'
 							'C5': '=sum(D2:D5)'
+							'A4': '=sum(B4:D4)'
 						}
 						is_focused: true
 					),

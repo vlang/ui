@@ -95,6 +95,7 @@ pub fn (mut g GridComponent) new_formula(gc GridCell, formula string) {
 	g.formula_mngr.init_formula(ac, mut g.formula_mngr.formulas[ac])
 	// println(gfm)
 	g.update_formula(g.formula_mngr.formulas[ac], true)
+	g.formula_mngr.init_active_cells()
 }
 
 // init
@@ -131,11 +132,13 @@ pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
 
 pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	// only if c is an active cell (i.e. contained in some formula)
-	mut gfm := g.formula_mngr
-	active, active_cell := gfm.active_cells.which_contains(c)
-	if active {
-		formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
-		g.update_formula(formula, false)
+	gfm := g.formula_mngr
+	active_cell_set := gfm.active_cells.which_contains(c)
+	if active_cell_set.len > 0 {
+		for active_cell in active_cell_set {
+			formula := gfm.formulas[gfm.active_cell_to_formula[active_cell]]
+			g.update_formula(formula, false)
+		}
 	}
 }
 
@@ -146,13 +149,15 @@ pub fn (mut g GridComponent) update_formula(formula GridFormula, activate bool) 
 	// println(formula.active_cells)
 
 	// TODO: extend to compute a more sophisticated
-	vals := g.values_at(formula.active_cells[0]).map(it.f64())
-	// SUM FROM NOW
-	g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
-	if activate { // used to activate a formula cell
-		g.activate_cell(formula.cell.alphacell())
-	} else { // used for propagate_cell i.e. for reactive cell
-		g.formula_mngr.cells_to_activate << formula.cell.alphacell()
+	for active_cells in formula.active_cells {
+		vals := g.values_at(active_cells).map(it.f64())
+		// SUM FROM NOW
+		g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
+		if activate { // used to activate a formula cell
+			g.activate_cell(formula.cell.alphacell())
+		} else { // used for propagate_cell i.e. for reactive cell
+			g.formula_mngr.cells_to_activate << formula.cell.alphacell()
+		}
 	}
 }
 
@@ -284,6 +289,7 @@ fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	} else {
 		// remove formula
 		g.formula_mngr.formulas.delete(GridCell{g.sel_i, g.sel_j}.alphacell())
+		g.init_formulas()
 	}
 	unsafe {
 		*tb.text = ''
@@ -346,22 +352,24 @@ fn (acb AlphaCellBlock) contains(ac AlphaCell) bool {
 	return acb.gridcellblock().contains(ac.gridcell())
 }
 
-fn (aacb []ActiveCells) which_contains(ac AlphaCell) (bool, string) {
+fn (aacb []ActiveCells) which_contains(ac AlphaCell) []string {
+	mut res := []string{}
+	// println("which contains $ac => $aacb")
 	for acb in aacb {
 		match acb {
 			AlphaCell {
 				if acb == ac {
-					return true, acb
+					res << acb
 				}
 			}
 			AlphaCellBlock {
 				if acb.contains(ac) {
-					return true, acb
+					res << acb
 				}
 			}
 		}
 	}
-	return false, ''
+	return res
 }
 
 // base26 to int conversion
