@@ -54,7 +54,7 @@ pub fn grid_formula_mngr(formulas map[string]string) GridFormulaMngr {
 }
 
 pub fn (mut gfm GridFormulaMngr) init() {
-	gfm.active_cells.clear()
+	// gfm.active_cells.clear()
 	for cell, mut formula in gfm.formulas {
 		gfm.init_formula(cell, mut formula)
 	}
@@ -290,6 +290,7 @@ fn grid_tb_formula_entered(mut tb ui.TextBox, a voidptr) {
 	} else {
 		// remove formula
 		g.formula_mngr.formulas.delete(ac_sel)
+		g.formula_mngr.init_active_cells()
 		g.init_formulas()
 		g.set_value(g.sel_i, g.sel_j, new_text)
 		g.activate_cell(ac_sel)
