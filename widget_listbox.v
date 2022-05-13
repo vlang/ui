@@ -239,6 +239,10 @@ fn (mut lb ListBox) init_items() {
 	}
 }
 
+pub fn (mut lb ListBox) reset() {
+	lb.items.clear()
+}
+
 pub fn (mut lb ListBox) update_items(items []string) {
 	// unsafe { lb.items.free() }
 	lb.items.clear()
