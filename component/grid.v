@@ -304,7 +304,6 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	mut g := grid_component(c)
 	if g.is_selected() {
 		if e.key == .escape {
-			println('here')
 			g.unselect()
 			g.layout.update_layout()
 		}

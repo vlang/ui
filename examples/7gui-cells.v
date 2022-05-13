@@ -52,7 +52,7 @@ fn main() {
 						id: 'dgs'
 						vars: vars
 						formulas: {
-							'B1': '=sum(B2:C5)'
+							'B1': '=sum(B2:C5, D2)'
 							'C5': '=sum(D2:D5)'
 							'A4': '=sum(B4:D4)'
 						}

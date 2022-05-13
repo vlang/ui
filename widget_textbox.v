@@ -560,6 +560,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				unsafe {
 					*tb.text = u[..tb.cursor_pos].string() + u[tb.cursor_pos + 1..].string()
 				}
+				tb.check_cursor_pos()
 				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
 				if tb.on_change != TextBoxChangeFn(0) {
