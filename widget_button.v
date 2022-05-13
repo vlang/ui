@@ -215,7 +215,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 		println('btn_click $b.id movable $b.movable focused $b.is_focused top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	$if wpir ? {
@@ -336,7 +336,11 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
 	x, y, width, height := b.x + padding, b.y + padding, b.width - 2 * padding, b.height - 2 * padding
-	mut bg_color := match b.state {
+	mut state := b.state
+	if b.disabled {
+		state = .normal
+	}
+	mut bg_color := match state {
 		.normal {
 			if b.bg_color != voidptr(0) { *b.bg_color } else { b.style.bg_color }
 		}
