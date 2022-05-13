@@ -8,7 +8,11 @@ struct Person {
 
 struct App {
 mut:
-	people []Person
+	people     []Person
+	lb_people  &ui.ListBox = 0
+	tb_filter  &ui.TextBox = 0
+	tb_name    &ui.TextBox = 0
+	tb_surname &ui.TextBox = 0
 }
 
 fn main() {
@@ -111,39 +115,69 @@ fn main() {
 }
 
 fn win_init(win &ui.Window) {
-	app := &App(win.state)
-	mut lb := win.listbox('lb_people')
-	update_listbox(mut lb, app, '')
+	mut app := &App(win.state)
+	// init app fields
+	app.lb_people = win.listbox('lb_people')
+	app.tb_filter = win.textbox('tb_filter')
+	app.tb_name = win.textbox('tb_name')
+	app.tb_surname = win.textbox('tb_surname')
+	// init listbox content
+	app.update_listbox()
 }
 
-fn on_changed_filter(mut tb ui.TextBox, app &App) {
-	mut lb := tb.ui.window.listbox('lb_people')
-	update_listbox(mut lb, app, *(tb.text))
+fn on_changed_filter(mut tb ui.TextBox, mut app App) {
+	app.update_listbox()
 }
 
 fn btn_create_click(mut app App, btn &ui.Button) {
-	tb_filter := btn.ui.window.textbox('tb_filter')
-	tb_name := btn.ui.window.textbox('tb_name')
-	tb_surname := btn.ui.window.textbox('tb_surname')
-	app.people << person(tb_name.text, tb_surname.text)
-	mut lb := btn.ui.window.listbox('lb_people')
-	update_listbox(mut lb, app, tb_filter.text)
+	p := person(app.tb_name.text, app.tb_surname.text)
+	if p.id !in app.people.map(it.id) {
+		app.people << p
+	}
+	app.update_listbox()
 }
 
 fn btn_update_click(mut app App, btn &ui.Button) {
+	app.update_selected_person()
 }
 
 fn btn_delete_click(mut app App, btn &ui.Button) {
+	app.delete_selected_person()
 }
 
-fn update_listbox(mut lb ui.ListBox, app &App, filter string) {
+fn (mut app App) update_listbox() {
 	mut name := ''
-	lb.reset()
+	filter := *(app.tb_filter.text)
+	app.lb_people.reset()
 	for p in app.people {
 		name = person_name(p.name, p.surname)
 		if filter == '' || name[0..filter.len] == filter {
-			lb.add_item(p.id, name)
+			app.lb_people.add_item(p.id, name)
 		}
+	}
+}
+
+fn (mut app App) update_selected_person() {
+	id, _ := app.lb_people.selected_item()
+	if id != '' {
+		for i, p in app.people {
+			if p.id == id {
+				app.people[i] = person(app.tb_name.text, app.tb_surname.text)
+			}
+		}
+		app.update_listbox()
+	}
+}
+
+fn (mut app App) delete_selected_person() {
+	id, _ := app.lb_people.selected_item()
+	if id != '' {
+		for i, p in app.people {
+			if p.id == id {
+				app.people.delete(i)
+			}
+		}
+		app.update_listbox()
 	}
 }
 

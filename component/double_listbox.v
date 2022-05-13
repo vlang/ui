@@ -84,7 +84,7 @@ fn doublelistbox_clear(a voidptr, btn &ui.Button) {
 	mut dlb := doublelistbox_component(btn)
 	for item in dlb.lb_right.values() {
 		dlb.lb_left.add_item(item, item)
-		dlb.lb_right.remove_item(item)
+		dlb.lb_right.delete_item(item)
 	}
 }
 
@@ -94,7 +94,7 @@ fn doublelistbox_move_left(a voidptr, btn &ui.Button) {
 		_, item := dlb.lb_right.selected() or { '', '' }
 		if item !in dlb.lb_left.values() {
 			dlb.lb_left.add_item(item, item)
-			dlb.lb_right.remove_item(item)
+			dlb.lb_right.delete_item(item)
 		}
 	}
 }
@@ -106,7 +106,7 @@ fn doublelistbox_move_right(a voidptr, btn &ui.Button) {
 		// println("move >> $item")
 		if item !in dlb.lb_right.values() {
 			dlb.lb_right.add_item(item, item)
-			dlb.lb_left.remove_item(item)
+			dlb.lb_left.delete_item(item)
 		}
 	}
 }
