@@ -30,7 +30,7 @@ fn main() {
 		}
 		on_click: fn (e ui.MouseEvent, w &ui.Window) {
 			mut tb := w.textbox('info')
-			tb.set_text('${*tb.text} \nmouse_click:\n$e')
+			tb.set_text('${*tb.text} \nmouse_click:\n$e \nnb_click: $tb.ui.nb_click')
 		}
 		on_mouse_up: fn (e ui.MouseEvent, w &ui.Window) {
 			mut tb := w.textbox('info')
