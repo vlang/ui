@@ -29,7 +29,6 @@ fn main() {
 		children: [
 			uic.datagrid_stack(
 				id: 'grid'
-				scrollview: true
 				is_focused: true
 				vars: {
 					'v1':   ['toto', 'titi', 'tata'].repeat(n)

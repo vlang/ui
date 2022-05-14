@@ -1,12 +1,28 @@
 import ui
 import gx
+import time
+
+const (
+	no_time = time.Time{}
+)
+
+struct App {
+mut:
+	dd_flight &ui.Dropdown = 0
+	tb_oneway &ui.TextBox  = 0
+	tb_return &ui.TextBox  = 0
+	btn_book  &ui.Button   = 0
+}
 
 fn main() {
+	app := &App{}
 	window := ui.window(
 		width: 200
 		height: 110
 		title: 'Flight booker'
+		state: app
 		mode: .resizable
+		on_init: win_init
 		children: [
 			ui.column(
 				spacing: 5
@@ -15,9 +31,10 @@ fn main() {
 				// heights: ui.stretch
 				children: [
 					ui.dropdown(
-						id: 'dd'
+						id: 'dd_flight'
 						z_index: 10
 						selected_index: 0
+						on_selection_changed: dd_change
 						items: [
 							ui.DropdownItem{
 								text: 'one-way flight'
@@ -27,12 +44,79 @@ fn main() {
 							},
 						]
 					),
-					ui.textbox(id: 'tb1'),
-					ui.textbox(id: 'tb2'),
-					ui.button(id: 'btn', text: 'Book', radius: 5, bg_color: gx.light_gray),
+					ui.textbox(id: 'tb_oneway', on_changed: tb_changed),
+					ui.textbox(id: 'tb_return', read_only: true, on_changed: tb_changed),
+					ui.button(
+						id: 'btn_book'
+						text: 'Book'
+						radius: 5
+						bg_color: gx.light_gray
+						onclick: btn_book_click
+					),
 				]
 			),
 		]
 	)
 	ui.run(window)
+}
+
+fn win_init(win &ui.Window) {
+	mut app := &App(win.state)
+	app.dd_flight = win.dropdown('dd_flight')
+	app.tb_oneway = win.textbox('tb_oneway')
+	app.tb_return = win.textbox('tb_return')
+	app.btn_book = win.button('btn_book')
+	// init dates
+	t := time.now()
+	date := '${t.day}.${t.month}.$t.year'
+	app.tb_oneway.set_text(date.clone())
+	app.tb_return.set_text(date.clone())
+}
+
+fn dd_change(mut app App, dd &ui.Dropdown) {
+	match dd.selected().text {
+		'one-way flight' {
+			app.tb_return.read_only = true
+		}
+		else {
+			app.tb_return.read_only = false
+		}
+	}
+}
+
+fn tb_changed(mut tb ui.TextBox, mut app App) {
+	valid := valid_date(tb.text)
+	app.btn_book.disabled = !valid
+	tb.update_style(
+		bg_color: if valid { gx.white } else { gx.orange }
+	)
+}
+
+fn btn_book_click(app &App, btn &ui.Button) {
+	msg := if app.dd_flight.selected().text == 'one-way flight' {
+		'You have booked a one-way flight for ${*(app.tb_oneway.text)}'
+	} else {
+		'You have booked a return flight from ${*(app.tb_oneway.text)} to ${*(app.tb_return.text)}'
+	}
+	btn.ui.window.message(msg)
+}
+
+fn valid_date(date string) bool {
+	mut day, mut month, mut year := 'DDDDD', 'MMMMM', 'YYYYY'
+	dmy := date.split('.')
+	if dmy.len > 0 {
+		day = dmy[0]
+	}
+	if dmy.len > 1 {
+		month = dmy[1]
+	}
+	if dmy.len > 2 {
+		year = dmy[2]
+	}
+	// YYYY-MM-DD HH:mm:ss
+	ts := '$year-$month-$day 00:00:00'
+	t := time.parse(ts) or { no_time }
+	// println("$t.day/$t.month/$t.year")
+	nd := time.days_in_month(t.month, t.year) or { -1 }
+	return (t != no_time) && (t.day <= nd)
 }

@@ -7,6 +7,10 @@ import gg
 import time
 import sokol.sapp
 
+const (
+	click_interval = 200 // ms
+)
+
 pub enum MouseAction {
 	up
 	down

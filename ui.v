@@ -23,6 +23,7 @@ pub mut:
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
 	btn_down       [3]bool
+	nb_click       int
 	keymods        KeyMod
 	styles         map[string]Style
 mut:
