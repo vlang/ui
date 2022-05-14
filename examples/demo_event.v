@@ -28,6 +28,10 @@ fn main() {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_down:\n$e')
 		}
+		on_click: fn (e ui.MouseEvent, w &ui.Window) {
+			mut tb := w.textbox('info')
+			tb.set_text('${*tb.text} \nmouse_click:\n$e')
+		}
 		on_mouse_up: fn (e ui.MouseEvent, w &ui.Window) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_up:\n$e')

@@ -781,6 +781,11 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	window.tooltip.update(e)
 
 	window.eventbus.publish(events.on_mouse_move, window, e)
+
+	// mut gui := unsafe { ui }
+	// if int(event.mouse_button) < 3 {
+	// 	gui.btn_down[int(event.mouse_button)] = false
+	// }
 }
 
 fn window_mouse_up(event gg.Event, mut ui UI) {
