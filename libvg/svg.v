@@ -49,7 +49,7 @@ pub fn (mut s Svg) end() {
 
 pub fn (mut s Svg) save(filepath string) ? {
 	// write it to a file
-	os.write_file_array(filepath, *s.content) ?
+	os.write_file_array(filepath, *s.content)?
 }
 
 [params]

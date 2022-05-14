@@ -60,6 +60,9 @@ pub mut:
 	max_len     int
 	line_height int
 	cursor_pos  int
+	large_text  bool
+	draw_start  int
+	draw_end    int
 	sel_start   int
 	sel_end     int
 	// placeholder
@@ -356,9 +359,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 		if tb.placeholder_bind != 0 {
 			placeholder = *(tb.placeholder_bind)
 		}
-		width := if text_len == 0 { 0 } else { dtw.text_width(text) }
 		text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
-		mut skip_idx := 0
 
 		// Placeholder
 		if text == '' && placeholder != '' {
@@ -370,14 +371,13 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 			// Selection box
 			tb.draw_selection()
 			// The text doesn'tb fit, find the largest substring we can draw
-			if width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
+			if tb.large_text { // width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
 				if !tb.is_focused || tb.read_only {
-					skip_idx = tb.skip_index_from_start(ustr, dtw)
+					skip_idx := tb.skip_index_from_start(ustr, dtw)
 					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
 						1)].string())
 				} else {
-					skip_idx = tb.skip_index_from_end(ustr, dtw)
-					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[skip_idx..].string())
+					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[tb.draw_start..tb.draw_end].string())
 				}
 			} else {
 				if tb.is_password {
@@ -402,12 +402,13 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 			if text_len > 0 {
 				if tb.is_password {
 					cursor_x += dtw.text_width('*'.repeat(tb.cursor_pos))
-				} else if skip_idx > 0 {
-					cursor_x += dtw.text_width(text[skip_idx..])
+				} else if tb.large_text {
+					left := text.runes()[tb.draw_start..tb.cursor_pos].string()
+					cursor_x += dtw.text_width(left)
 				} else { // if text_len > 0 {
 					// left := tb.text[..tb.cursor_pos]
 					if tb.cursor_pos > text.runes().len {
-						tb.cursor_pos = text.runes().len
+						tb.set_cursor_pos(text.runes().len)
 					}
 					left := text.runes()[..tb.cursor_pos].string()
 					cursor_x += dtw.text_width(left)
@@ -423,36 +424,6 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	}
 	scrollview_draw_end(tb, d)
 	offset_end(mut tb)
-}
-
-fn (tb &TextBox) skip_index_from_end(ustr []rune, dtw DrawTextWidget) int {
-	text_len := ustr.len
-	mut skip_idx := 0
-	for i := text_len - 1; i >= 0; i-- {
-		if dtw.text_width(ustr[i..].string()) > tb.width - 2 * ui.textbox_padding_x {
-			skip_idx = i + 1
-			if skip_idx >= text_len - 1 {
-				skip_idx = text_len - 1
-			}
-			break
-		}
-	}
-	return skip_idx
-}
-
-fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
-	text_len := ustr.len
-	mut skip_idx := 0
-	for i in 0 .. text_len {
-		if dtw.text_width(ustr[0..(i + 1)].string()) > tb.width - 2 * ui.textbox_padding_x {
-			skip_idx = i - 1
-			if skip_idx < 0 {
-				skip_idx = 0
-			}
-			break
-		}
-	}
-	return skip_idx
 }
 
 fn (tb &TextBox) is_sel_active() bool {
@@ -500,7 +471,7 @@ pub fn (mut tb TextBox) delete_selection() {
 		*tb.text = u[..sel_start].string() + u[sel_end..].string()
 	}
 	// println('delete: <${*tb.text}>')
-	tb.cursor_pos = sel_start
+	tb.set_cursor_pos(sel_start)
 	tb.cancel_selection()
 }
 
@@ -559,13 +530,14 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 								break
 							}
 						}
-						tb.cursor_pos = i
+						tb.set_cursor_pos(i)
 					} else {
 						// Delete just one character
 						unsafe {
 							*tb.text = u[..tb.cursor_pos - 1].string() + u[tb.cursor_pos..].string()
 						}
 						tb.cursor_pos--
+						tb.check_cursor_pos()
 					}
 					// u.free() // TODO remove
 					// tb.text = tb.text[..tb.cursor_pos - 1] + tb.text[tb.cursor_pos..]
@@ -588,6 +560,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				unsafe {
 					*tb.text = u[..tb.cursor_pos].string() + u[tb.cursor_pos + 1..].string()
 				}
+				tb.check_cursor_pos()
 				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
 				if tb.on_change != TextBoxChangeFn(0) {
@@ -605,17 +578,13 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 						tb.ui.show_cursor = false
 					}
 					tb.cursor_pos--
-					if tb.cursor_pos < 0 {
-						tb.cursor_pos = 0
-					}
+					tb.check_cursor_pos()
 					tb.sel_end = tb.cursor_pos
 				} else {
 					tb.cancel_selection()
 					tb.ui.show_cursor = true // always show cursor when moving it (left, right, backspace etc)
 					tb.cursor_pos--
-					if tb.cursor_pos < 0 {
-						tb.cursor_pos = 0
-					}
+					tb.check_cursor_pos()
 				}
 			}
 			.right {
@@ -626,19 +595,13 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 						tb.ui.show_cursor = false
 					}
 					tb.cursor_pos++
-					ustr := tb.text.runes()
-					if tb.cursor_pos > ustr.len {
-						tb.cursor_pos = ustr.len
-					}
+					tb.check_cursor_pos()
 					tb.sel_end = tb.cursor_pos
 				} else {
 					tb.cancel_selection()
 					tb.ui.show_cursor = true
 					tb.cursor_pos++
-					text_len := text.runes().len
-					if tb.cursor_pos > text_len {
-						tb.cursor_pos = text_len
-					}
+					tb.check_cursor_pos()
 				}
 				// println("right: $tb.cursor_posj")
 			}
@@ -697,7 +660,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	} else {
 		mut text := *tb.text
 		if text.len == 0 {
-			tb.cursor_pos = 0
+			tb.set_cursor_pos(0)
 		}
 		s := utf32_to_str(e.codepoint)
 		// println("tb_char: $s $e.codepoint $e.mods")
@@ -928,7 +891,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.extend_selection(x, y)
 		} else {
-			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
+			tb.set_cursor_pos(tb.draw_start + tb.text_pos_from_x(*tb.text, x))
 			if tb.twosided_sel { // extend selection from both sides
 				// tv.sel_start and tv.sel_end can and have to be sorted
 				if tb.sel_start > tb.sel_end {
@@ -953,7 +916,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 		if tb.is_multiline {
 			tb.tv.start_selection(x, y)
 		} else {
-			tb.cursor_pos = tb.text_pos_from_x(*tb.text, x)
+			tb.set_cursor_pos(tb.draw_start + tb.text_pos_from_x(*tb.text, x))
 			if tb.dragging {
 				tb.sel_start = tb.cursor_pos
 			}
@@ -975,7 +938,7 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 			y := int(e.y - tb.y - ui.textbox_padding_y)
 			tb.tv.end_selection(x, y)
 		} else {
-			tb.sel_end = tb.text_pos_from_x(*tb.text, x)
+			tb.sel_end = tb.draw_start + tb.text_pos_from_x(*tb.text, x)
 			tb.ui.show_cursor = false
 		}
 		tb.sel_active = true
@@ -1052,6 +1015,7 @@ pub fn (mut tb TextBox) insert(s string) {
 		*tb.text = ustr.string()
 	}
 	tb.cursor_pos += sr.len
+	tb.check_cursor_pos()
 }
 
 // Normally useless but required for scrollview_draw_begin()
@@ -1096,4 +1060,94 @@ pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
 		prev_width = width
 	}
 	return ustr.len
+}
+
+fn (tb &TextBox) skip_index_from_end(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i := text_len - 1; i >= 0; i-- {
+		if dtw.text_width(ustr[i..].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i + 1
+			if skip_idx >= text_len - 1 {
+				skip_idx = text_len - 1
+			}
+			break
+		}
+	}
+	return skip_idx
+}
+
+fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
+	text_len := ustr.len
+	mut skip_idx := 0
+	for i in 0 .. text_len {
+		if dtw.text_width(ustr[0..(i + 1)].string()) > tb.width - 2 * ui.textbox_padding_x {
+			skip_idx = i - 1
+			if skip_idx < 0 {
+				skip_idx = 0
+			}
+			break
+		}
+	}
+	return skip_idx
+}
+
+fn (mut tb TextBox) skip_index_from_cursor(ustr []rune, dtw DrawTextWidget) {
+	text_len := ustr.len
+	width_max := tb.width - 2 * ui.textbox_padding_x
+	width := if text_len == 0 { 0 } else { dtw.text_width(*(tb.text)) }
+	tb.large_text = width > tb.width - 2 * ui.textbox_padding_x
+	if tb.large_text {
+		mut start, mut end := tb.cursor_pos, tb.cursor_pos
+		// println("sifc start ($start, $end) len: $text_len")
+		for {
+			if start > 0 {
+				start -= 1
+			}
+			if end < text_len {
+				end += 1
+			}
+			// println("sifc $start, $end")
+			if dtw.text_width(ustr[start..end].string()) > width_max {
+				// println("break")
+				break
+			}
+		}
+		mut mode, mut left_side := -1, true
+		d_start, d_end := tb.cursor_pos - 0, text_len - tb.cursor_pos
+		if dtw.text_width(ustr[start..(end - 1)].string()) < width_max {
+			mode = 1
+		}
+		if dtw.text_width(ustr[(start + 1)..end].string()) < width_max {
+			mode += 2
+		}
+		if mode == 2 || (mode == 3 && d_end < d_start) {
+			left_side = false
+		}
+		if left_side {
+			tb.draw_start, tb.draw_end = start, end - 1
+		} else {
+			tb.draw_start, tb.draw_end = start + 1, end
+		}
+	} else {
+		tb.draw_start, tb.draw_end = 0, text_len
+	}
+	// println("draw :  ($tb.draw_start, $tb.draw_end) <${*(tb.text)}> cursor: $tb.cursor_pos")
+}
+
+fn (mut tb TextBox) check_cursor_pos() {
+	ustr := tb.text.runes()
+	if tb.cursor_pos < 0 {
+		tb.cursor_pos = 0
+	} else if tb.cursor_pos > ustr.len {
+		tb.cursor_pos = ustr.len
+	}
+	dtw := DrawTextWidget(tb)
+	dtw.load_style()
+	tb.skip_index_from_cursor(ustr, dtw)
+}
+
+fn (mut tb TextBox) set_cursor_pos(pos int) {
+	tb.cursor_pos = pos
+	tb.check_cursor_pos()
 }

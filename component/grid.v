@@ -19,25 +19,26 @@ enum GridType {
 	dd_factor
 }
 
-type GridData = Factor | []bool | []int | []string
+type GridData = Factor | []bool | []f64 | []int | []string
 
 [heap]
 struct GridComponent {
 pub mut:
-	id        string
-	layout    &ui.CanvasLayout
-	vars      []GridVar
-	types     []GridType
-	headers   []string
-	widths    []int
-	heights   []int
-	nrow      int
-	ncol      int
-	tb_string &ui.TextBox  = 0
-	cb_bool   &ui.CheckBox = 0
-	dd_factor map[string]&ui.Dropdown
-	tb_colbar &ui.TextBox = 0
-	tb_rowbar &ui.TextBox = 0
+	id           string
+	layout       &ui.CanvasLayout
+	vars         []GridVar
+	types        []GridType
+	formula_mngr GridFormulaMngr
+	headers      []string
+	widths       []int
+	heights      []int
+	nrow         int
+	ncol         int
+	tb_string    &ui.TextBox  = 0
+	cb_bool      &ui.CheckBox = 0
+	dd_factor    map[string]&ui.Dropdown
+	tb_colbar    &ui.TextBox = 0
+	tb_rowbar    &ui.TextBox = 0
 	// selectors
 	selectors []ui.Widget
 	// sizes
@@ -72,9 +73,10 @@ pub mut:
 [params]
 pub struct GridParams {
 	vars         map[string]GridData
-	width        int = 100
-	height       int = 25
-	scrollview   bool
+	formulas     map[string]string
+	width        int  = 100
+	height       int  = 25
+	scrollview   bool = true
 	is_focused   bool
 	fixed_height bool = true
 mut:
@@ -105,6 +107,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		headers: p.vars.keys()
 		tb_string: ui.textbox(id: ui.component_id(p.id, 'tb_ro'))
 		cb_bool: ui.checkbox(id: ui.component_id(p.id, 'cb_ro'), justify: [0.5, 0.5])
+		formula_mngr: grid_formula_mngr(p.formulas)
 	}
 	ui.component_connect(g, layout)
 	// check vars same length
@@ -123,6 +126,9 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 			}
 			[]int {
 				g.types << .tb_int
+			}
+			[]f64 {
+				g.types << .tb_float
 			}
 			[]string {
 				g.types << .tb_string
@@ -158,10 +164,20 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 			}
 		}
 	}
+	// textbox formula
+	mut tb_formula := ui.textbox(
+		id: ui.component_id(p.id, 'tb_formula')
+		on_entered: grid_tb_formula_entered
+	)
+	tb_formula.set_visible(false)
+	layout.children << tb_formula
+	g.selectors << tb_formula
+	ui.component_connect(g, tb_formula)
 	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
 		on_entered: grid_tb_entered
+		// on_char: grid_tb_char
 	)
 	// println("tb_sel $tb_sel.id created inside $p.id")
 	tb_sel.set_visible(false)
@@ -224,7 +240,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 	mut g := grid_component(layout)
 	g.tb_string.init(layout)
 	g.cb_bool.init(layout)
-
+	g.init_formulas()
 	for _, mut dd in g.dd_factor {
 		dd.init(layout)
 		dd.set_visible(false)
@@ -252,9 +268,10 @@ fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 		g.colbar_selected()
 	} else if rowbar {
 		println('rowbar $g.sel_i')
+	} else if g.is_formula() {
+		g.show_formula()
 	} else {
-		//
-		println('selected: $g.sel_i, $g.sel_j')
+		// println('selected: $g.sel_i, $g.sel_j')
 		g.show_selected()
 		$if grid_click ? {
 			println('${g.layout.get_children().map(it.id)}')
@@ -287,7 +304,6 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	mut g := grid_component(c)
 	if g.is_selected() {
 		if e.key == .escape {
-			println('here')
 			g.unselect()
 			g.layout.update_layout()
 		}
@@ -391,15 +407,23 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 
 fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	mut g := grid_component(tb)
-	mut gtb := g.vars[g.sel_j]
-	if mut gtb is GridTextBox {
-		gtb.var[g.ind(g.sel_i)] = (*tb.text).clone()
-		// println("gtb.var = ${gtb.var}")
+	new_text := (*tb.text).clone()
+	if new_text.len > 0 && new_text[0..1] == '=' {
+		// new formula
+		// println('new formula $new_text')
+		g.new_formula(GridCell{g.sel_i, g.sel_j}, new_text)
+	} else {
+		mut gtb := g.vars[g.sel_j]
+		if mut gtb is GridTextBox {
+			gtb.var[g.ind(g.sel_i)] = new_text
+			// println("gtb.var = ${gtb.var}")
+		}
 	}
 	unsafe {
 		*tb.text = ''
 	}
 	tb.set_visible(false)
+	g.activate_cell(GridCell{g.sel_i, g.sel_j}.alphacell())
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
@@ -468,6 +492,15 @@ fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 }
 
 // methods
+
+fn (g &GridComponent) value(i int, j int) (string, GridType) {
+	// println("g[$i, $j] = <${g.vars[j].value(i)}>")
+	return g.vars[j].value(i)
+}
+
+fn (mut g GridComponent) set_value(i int, j int, s string) {
+	g.vars[j].set_value(i, s)
+}
 
 fn (g &GridComponent) ind(i int) int {
 	return if g.index.len > 0 { g.index[i] } else { i }
@@ -641,45 +674,26 @@ fn (mut g GridComponent) show_selected() {
 
 fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 	mut sel_i, mut sel_j := -1, -1
-	$if gip_old ? {
-		mut cum := g.rowbar_width
-		for j, w in g.widths {
-			cum += w
-			if x > g.rowbar_width && x < cum {
-				sel_j = j
-				break
-			}
-		}
 
-		cum = g.colbar_height
-		for i, h in g.heights {
-			cum += h
-			if y > g.colbar_height && y < cum {
-				sel_i = i
-				break
-			}
+	mut cum := g.from_x
+	// println("dv $y")
+	for j in g.from_j .. g.to_j {
+		cum += g.widths[j]
+		// println("dv  $y > $g.colbar_height && $y < $cum ")
+		if x > g.from_x && x < cum {
+			sel_j = j
+			break
 		}
-	} $else {
-		mut cum := g.from_x
-		// println("dv $y")
-		for j in g.from_j .. g.to_j {
-			cum += g.widths[j]
-			// println("dv  $y > $g.colbar_height && $y < $cum ")
-			if x > g.from_x && x < cum {
-				sel_j = j
-				break
-			}
-		}
+	}
 
-		cum = g.from_y
-		// println("dv $y")
-		for i in g.from_i .. g.to_i {
-			cum += g.height(i)
-			// println("dv  $y > $g.colbar_height && $y < $cum ")
-			if y > g.from_y && y < cum {
-				sel_i = i
-				break
-			}
+	cum = g.from_y
+	// println("dv $y")
+	for i in g.from_i .. g.to_i {
+		cum += g.height(i)
+		// println("dv  $y > $g.colbar_height && $y < $cum ")
+		if y > g.from_y && y < cum {
+			sel_i = i
+			break
 		}
 	}
 
@@ -830,6 +844,9 @@ interface GridVar {
 	grid &GridComponent
 	compare(a int, b int) int
 	draw_device(d ui.DrawDevice, j int, mut g GridComponent)
+	value(i int) (string, GridType)
+mut:
+	set_value(i int, v string)
 }
 
 // TextBox GridVar
@@ -862,6 +879,14 @@ fn (gtb &GridTextBox) compare(a int, b int) int {
 	} else {
 		return 0
 	}
+}
+
+fn (gtb &GridTextBox) value(i int) (string, GridType) {
+	return gtb.var[i], GridType.tb_string
+}
+
+fn (mut gtb GridTextBox) set_value(i int, v string) {
+	gtb.var[i] = v
 }
 
 fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
@@ -924,6 +949,19 @@ fn (gdd &GridDropdown) compare(a int, b int) int {
 	}
 }
 
+fn (gdd &GridDropdown) value(i int) (string, GridType) {
+	return gdd.var.levels[gdd.var.values[i]], GridType.tb_string
+}
+
+fn (mut gdd GridDropdown) set_value(i int, v string) {
+	for k, level in gdd.var.levels {
+		if v == level {
+			gdd.var.values[i] = k
+			break
+		}
+	}
+}
+
 fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
@@ -970,6 +1008,16 @@ fn (gcb &GridCheckBox) compare(a int, b int) int {
 		return 1
 	} else {
 		return 0
+	}
+}
+
+fn (gcb &GridCheckBox) value(i int) (string, GridType) {
+	return gcb.var[i].str(), GridType.tb_string
+}
+
+fn (mut gcb GridCheckBox) set_value(i int, v string) {
+	if v in ['true', 'false'] {
+		gcb.var[i] = v.bool()
 	}
 }
 
@@ -1028,45 +1076,3 @@ pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	}
 	g.index = rgd
 }
-
-// compare (TODO use sort_with_compare_context)
-
-// __global (
-// 	rgd_vars_   []int // all vars
-// 	rgd_orders_ []int // all orders
-// 	rgd_grid_   &GridComponent // the current grid
-// )
-
-// type RankedGridData = int
-
-// pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
-// 	rgd_vars_ = vars.clone()
-// 	rgd_orders_ = orders.clone()
-// 	rgd_grid_ = g
-// 	mut rgd := []int{len: g.nrow(), init: it}
-// 	if vars.len > 0 {
-// 		rgd.sort_with_compare(compare_grid_data)
-// 	}
-// 	g.index = rgd
-// }
-
-// fn compare_grid_data(a &RankedGridData, b &RankedGridData) int {
-// 	mut comp := 0
-// 	for i, j in rgd_vars_ {
-// 		if j == -1 {
-// 			comp = if f64(*a) < f64(*b) {
-// 				-rgd_orders_[i]
-// 			} else if f64(*a) > f64(*b) {
-// 				rgd_orders_[i]
-// 			} else {
-// 				0
-// 			}
-// 		} else {
-// 			comp = rgd_grid_.vars[j].compare(a, b) * rgd_orders_[i]
-// 		}
-// 		if comp != 0 {
-// 			return comp
-// 		}
-// 	}
-// 	return 0
-// }

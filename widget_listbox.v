@@ -239,6 +239,10 @@ fn (mut lb ListBox) init_items() {
 	}
 }
 
+pub fn (mut lb ListBox) reset() {
+	lb.items.clear()
+}
+
 pub fn (mut lb ListBox) update_items(items []string) {
 	// unsafe { lb.items.free() }
 	lb.items.clear()
@@ -263,17 +267,17 @@ pub fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 	)
 }
 
-pub fn (mut lb ListBox) remove_item(id string) {
+pub fn (mut lb ListBox) delete_item(id string) {
 	for i in 0 .. lb.items.len {
 		if lb.items[i].id == id {
-			lb.remove_at(i)
+			lb.delete_at(i)
 			lb.update_adj_size()
 			break
 		}
 	}
 }
 
-pub fn (mut lb ListBox) remove_at(i int) {
+pub fn (mut lb ListBox) delete_at(i int) {
 	if i < 0 || i >= lb.items.len {
 		return
 	}
@@ -406,12 +410,21 @@ pub fn (lb &ListBox) indices() []int {
 	return res
 }
 
-// Returns the ID and the text of the selected item
+// Returns the id and the text of the selected item
 pub fn (lb &ListBox) selected() ?(string, string) {
 	if !lb.is_selected() {
 		return error('Nothing is selected')
 	}
 	return lb.items[lb.selection].id, lb.items[lb.selection].text
+}
+
+// Returns id and text of the selected item. Empty id means that there is no selection.
+pub fn (lb &ListBox) selected_item() (string, string) {
+	if lb.is_selected() {
+		return lb.items[lb.selection].id, lb.items[lb.selection].text
+	} else {
+		return '', ''
+	}
 }
 
 pub fn (lb &ListBox) items() []&ListItem {
@@ -428,6 +441,15 @@ pub fn (lb &ListBox) selected_at() ?int {
 		return error('Nothing is selected')
 	}
 	return lb.selection
+}
+
+// Returns the index of the selected item and -1 if no selection.
+pub fn (lb &ListBox) selected_item_at() int {
+	if lb.is_selected() {
+		return lb.selection
+	} else {
+		return -1
+	}
 }
 
 pub fn (mut lb ListBox) set_text(id string, text string) {
@@ -449,7 +471,7 @@ pub fn (mut lb ListBox) clear() {
 	lb.selection = -1
 }
 
-fn (lb &ListBox) selected_item(y int) int {
+fn (lb &ListBox) get_selected_item(y int) int {
 	inx := lb.current_pos(y)
 	return if inx < 0 || inx >= lb.items.len { -1 } else { inx }
 }
@@ -594,7 +616,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 			}
 		}
 	} $else {
-		inx := lb.selected_item(e.y)
+		inx := lb.get_selected_item(e.y)
 		if inx >= 0 && lb.set_item_selected(inx, ctrl_key(lb.ui.keymods)) {
 			lb.call_on_change()
 		}
@@ -620,7 +642,7 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
 	if lb.point_inside(e.x, e.y) {
 		lb.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if lb.ordered {
-			dragged_item := lb.selected_item(e.y)
+			dragged_item := lb.get_selected_item(e.y)
 			if dragged_item >= 0 {
 				mut di := lb.items[dragged_item]
 				lb.just_dragged = drag_register(di, e)
@@ -668,7 +690,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 						println('lb mouse move reparent $lb.id from $dragged.list.id')
 					}
 					// remove previous lb N.B.: dragged.remove()
-					dragged.list.remove_at(lb.ui.window.dragger.extra_int)
+					dragged.list.delete_at(lb.ui.window.dragger.extra_int)
 					// reparent dragged item
 					j := lb.current_pos(int(e.y))
 					dragged.update_parent(mut lb, j)
@@ -679,7 +701,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 					// $if lb_move ? {
 					// 	println("lb mouse move swap inside $lb.id")
 					// }
-					j := lb.selected_item(int(e.y))
+					j := lb.get_selected_item(int(e.y))
 					dragged_item := lb.ui.window.dragger.extra_int
 					if j >= 0 && (j == dragged_item - 1 || j == dragged_item + 1) {
 						lb.move_by(dragged_item, j - dragged_item)
@@ -913,7 +935,7 @@ fn (item &ListItem) free() {
 		print('\tlistbox item $item.id')
 	}
 	unsafe {
-		item.id.free()
+		// Failing: item.id.free()
 		item.text.free()
 		// Failing: free(item)
 	}
@@ -960,9 +982,15 @@ pub fn (li &ListItem) is_enabled() bool {
 	return !li.disabled
 }
 
-pub fn (li &ListItem) remove() {
+pub fn (li &ListItem) delete() {
 	mut lb := li.list
-	lb.remove_item(li.id)
+	lb.delete_item(li.id)
+}
+
+pub fn (mut li ListItem) update(id string, text string) {
+	li.id = id
+	li.text = text
+	li.draw_to = li.list.get_draw_to(li.text)
 }
 
 pub fn (mut li ListItem) update_parent(mut lb ListBox, at int) {

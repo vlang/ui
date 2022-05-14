@@ -501,6 +501,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
+			prev_time := window.touch.start.time
 			window.touch.start = Touch{
 				pos: Pos{
 					x: int(e.mouse_x / window.ui.gg.scale)
@@ -508,6 +509,12 @@ fn on_event(e &gg.Event, mut window Window) {
 				}
 				time: time.now()
 			}
+			if window.touch.start.time - prev_time < click_interval * time.millisecond {
+				window.ui.nb_click += 1
+			} else {
+				window.ui.nb_click = 1
+			}
+			// println("nb_click = $window.ui.nb_click")
 		}
 		.mouse_up {
 			// println('mouseup')
@@ -970,6 +977,10 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 		window.eventbus.publish(events.on_swipe, window.child_window, e)
 	} else {
 		window.eventbus.publish(events.on_swipe, window, e)
+	}
+	mut gui := unsafe { ui }
+	if int(event.mouse_button) < 3 {
+		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
@@ -1527,6 +1538,15 @@ pub fn (w Window) radio(id string) &Radio {
 		return widget
 	} else {
 		return radio()
+	}
+}
+
+pub fn (w Window) slider(id string) &Slider {
+	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	if widget is Slider {
+		return widget
+	} else {
+		return slider()
 	}
 }
 
