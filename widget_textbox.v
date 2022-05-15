@@ -35,7 +35,7 @@ type TextBoxChangeFn = fn (string, voidptr)
 type TextBoxEnterFn = fn (string, voidptr)
 
 // The two previous one can be changed with
-type TextBoxValidatedFn = fn (&TextBox, voidptr)
+type TextBoxValidatedFn = fn (&TextBox)
 
 [heap]
 pub struct TextBox {
@@ -503,7 +503,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				if tb.on_entered != TextBoxValidatedFn(0) {
 					// println('tb_entered: <${*tb.text}>')
-					tb.on_entered(tb, window.state)
+					tb.on_entered(tb)
 				}
 			}
 			.backspace {
@@ -548,7 +548,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					// tb.on_change(*tb.text, window.state)
 				}
 				if tb.on_changed != TextBoxValidatedFn(0) {
-					tb.on_changed(tb, window.state)
+					tb.on_changed(tb)
 				}
 			}
 			.delete {
@@ -567,7 +567,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 					// tb.on_change(*tb.text, window.state)
 				}
 				if tb.on_changed != TextBoxValidatedFn(0) {
-					tb.on_changed(tb, window.state)
+					tb.on_changed(tb)
 				}
 			}
 			.left {
@@ -683,7 +683,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 			// TODO: Future replacement of the previous one
 			if tb.on_changed != TextBoxValidatedFn(0) {
-				tb.on_changed(tb, window.state)
+				tb.on_changed(tb)
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {
@@ -773,7 +773,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 			}
 			if tb.on_changed != TextBoxValidatedFn(0) {
-				tb.on_changed(tb, window.state)
+				tb.on_changed(tb)
 			}
 		}
 	}

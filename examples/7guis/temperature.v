@@ -36,7 +36,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn on_changed_celsius(mut tb_celsius ui.TextBox, a voidptr) {
+fn on_changed_celsius(mut tb_celsius ui.TextBox) {
 	mut tb_fahren := tb_celsius.ui.window.textbox('fahren')
 	if tb_celsius.text.len <= 0 {
 		tb_fahren.set_text('0')
@@ -52,7 +52,7 @@ fn on_changed_celsius(mut tb_celsius ui.TextBox, a voidptr) {
 	}
 }
 
-fn on_changed_fahren(mut tb_fahren ui.TextBox, a voidptr) {
+fn on_changed_fahren(mut tb_fahren ui.TextBox) {
 	mut tb_celsius := tb_fahren.ui.window.textbox('celsius')
 	if tb_fahren.text.len <= 0 {
 		tb_celsius.set_text('0')

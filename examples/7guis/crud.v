@@ -6,6 +6,7 @@ struct Person {
 	surname string
 }
 
+[heap]
 struct App {
 mut:
 	people     []Person
@@ -46,7 +47,7 @@ fn main() {
 							ui.row(
 								widths: [70.0, ui.stretch]
 								children: [ui.label(text: 'Filter prefix:', justify: ui.center_left),
-									ui.textbox(id: 'tb_filter', on_changed: on_changed_filter)]
+									ui.textbox(id: 'tb_filter', on_changed: app.on_changed_filter)]
 							),
 							ui.spacing(),
 						]
@@ -125,7 +126,7 @@ fn win_init(win &ui.Window) {
 	app.update_listbox()
 }
 
-fn on_changed_filter(mut tb ui.TextBox, mut app App) {
+fn (mut app App) on_changed_filter(mut tb ui.TextBox) {
 	app.update_listbox()
 }
 
