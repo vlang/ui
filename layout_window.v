@@ -18,15 +18,15 @@ const (
 
 pub type WindowFn = fn (window &Window)
 
-pub type ResizeFn = fn (w int, h int, window &Window)
+pub type WindowResizeFn = fn (window &Window, w int, h int)
 
-pub type KeyFn = fn (e KeyEvent, window &Window)
+pub type WindowKeyFn = fn (window &Window, e KeyEvent)
 
-pub type ClickFn = fn (e MouseEvent, window &Window)
+pub type WindowMouseFn = fn (window &Window, e MouseEvent)
 
-pub type MouseMoveFn = fn (e MouseMoveEvent, window &Window)
+pub type WindowMouseMoveFn = fn (window &Window, e MouseMoveEvent)
 
-pub type ScrollFn = fn (e ScrollEvent, window &Window)
+pub type WindowScrollFn = fn (window &Window, e ScrollEvent)
 
 [heap]
 pub struct Window {
@@ -43,16 +43,16 @@ pub mut:
 	title             string
 	width             int
 	height            int
-	click_fn          ClickFn
-	mouse_down_fn     ClickFn
-	mouse_up_fn       ClickFn
-	files_droped_fn   ClickFn
-	swipe_fn          ClickFn
-	mouse_move_fn     MouseMoveFn
-	scroll_fn         ScrollFn
-	key_down_fn       KeyFn
-	char_fn           KeyFn
-	resize_fn         ResizeFn
+	click_fn          WindowMouseFn
+	mouse_down_fn     WindowMouseFn
+	mouse_up_fn       WindowMouseFn
+	files_droped_fn   WindowMouseFn
+	swipe_fn          WindowMouseFn
+	mouse_move_fn     WindowMouseMoveFn
+	scroll_fn         WindowScrollFn
+	key_down_fn       WindowKeyFn
+	char_fn           WindowKeyFn
+	resize_fn         WindowResizeFn
 	iconified_fn      WindowFn
 	restored_fn       WindowFn
 	quit_requested_fn WindowFn
@@ -117,21 +117,21 @@ pub:
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
 
-	on_click              ClickFn
-	on_mouse_down         ClickFn
-	on_mouse_up           ClickFn
-	on_files_droped       ClickFn
-	on_swipe              ClickFn
-	on_key_down           KeyFn
-	on_char               KeyFn
-	on_scroll             ScrollFn
-	on_resize             ResizeFn
+	on_click              WindowMouseFn
+	on_mouse_down         WindowMouseFn
+	on_mouse_up           WindowMouseFn
+	on_files_droped       WindowMouseFn
+	on_swipe              WindowMouseFn
+	on_key_down           WindowKeyFn
+	on_char               WindowKeyFn
+	on_scroll             WindowScrollFn
+	on_resize             WindowResizeFn
 	on_iconify            WindowFn
 	on_restore            WindowFn
 	on_quit_request       WindowFn
 	on_suspend            WindowFn
 	on_resume             WindowFn
-	on_mouse_move         MouseMoveFn
+	on_mouse_move         WindowMouseMoveFn
 	on_init               WindowFn
 	on_draw               WindowFn
 	children              []Widget
@@ -361,7 +361,7 @@ fn gg_init(mut window Window) {
 	window.init_top_layer()
 
 	// last window init
-	if window.on_init != voidptr(0) {
+	if window.on_init != WindowFn(0) {
 		window.on_init(window)
 	}
 	// update theme style recursively
@@ -397,7 +397,7 @@ fn frame(mut w Window) {
 	// draw tooltip if active
 	w.tooltip.draw()
 
-	if w.on_draw != voidptr(0) {
+	if w.on_draw != WindowFn(0) {
 		w.on_draw(w)
 	}
 
@@ -436,7 +436,7 @@ fn frame_immediate(mut w Window) {
 	}
 	w.tooltip.draw()
 
-	if w.on_draw != voidptr(0) {
+	if w.on_draw != WindowFn(0) {
 		w.on_draw(w)
 	}
 
@@ -552,27 +552,27 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_resize(e, window.ui)
 		}
 		.iconified {
-			if window.iconified_fn != voidptr(0) {
+			if window.iconified_fn != WindowFn(0) {
 				window.iconified_fn(window)
 			}
 		}
 		.restored {
-			if window.restored_fn != voidptr(0) {
+			if window.restored_fn != WindowFn(0) {
 				window.restored_fn(window)
 			}
 		}
 		.quit_requested {
-			if window.quit_requested_fn != voidptr(0) {
+			if window.quit_requested_fn != WindowFn(0) {
 				window.quit_requested_fn(window)
 			}
 		}
 		.suspended {
-			if window.suspended_fn != voidptr(0) {
+			if window.suspended_fn != WindowFn(0) {
 				window.suspended_fn(window)
 			}
 		}
 		.resumed {
-			if window.resumed_fn != voidptr(0) {
+			if window.resumed_fn != WindowFn(0) {
 				window.resumed_fn(window)
 			}
 		}
@@ -646,8 +646,8 @@ fn window_resize(event gg.Event, ui &UI) {
 	window.resize(event.window_width, event.window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
-	if window.resize_fn != voidptr(0) {
-		window.resize_fn(event.window_width, event.window_height, window)
+	if window.resize_fn != WindowResizeFn(0) {
+		window.resize_fn(window, event.window_width, event.window_height)
 	}
 }
 
@@ -693,8 +693,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 		key_shortcut(e, window.shortcuts, window)
 	}
 
-	if window.key_down_fn != KeyFn(0) {
-		window.key_down_fn(e, window)
+	if window.key_down_fn != WindowKeyFn(0) {
+		window.key_down_fn(window, e)
 	}
 	// TODO
 	if true { // action == 2 || action == 1 {
@@ -721,8 +721,8 @@ fn window_char(event gg.Event, ui &UI) {
 		codepoint: event.char_code
 		mods: KeyMod(event.modifiers)
 	}
-	if window.char_fn != KeyFn(0) {
-		window.char_fn(e, window)
+	if window.char_fn != WindowKeyFn(0) {
+		window.char_fn(window, e)
 	}
 	char_shortcut(e, window.shortcuts, window)
 
@@ -743,8 +743,8 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	if int(event.mouse_button) < 3 {
 		ui.btn_down[int(event.mouse_button)] = true
 	}
-	if window.mouse_down_fn != voidptr(0) { // && action == voidptr(0) {
-		window.mouse_down_fn(e, window)
+	if window.mouse_down_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+		window.mouse_down_fn(window, e)
 	}
 	/*
 	for child in window.children {
@@ -781,8 +781,8 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	}
 
 	window.evt_mngr.point_inside_receivers_mouse_move(e)
-	if window.mouse_move_fn != voidptr(0) {
-		window.mouse_move_fn(e, window)
+	if window.mouse_move_fn != WindowMouseMoveFn(0) {
+		window.mouse_move_fn(window, e)
 	}
 
 	window.tooltip.update(e)
@@ -801,8 +801,8 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		mods: KeyMod(event.modifiers)
 	}
 
-	if window.child_window == 0 && window.mouse_up_fn != voidptr(0) { // && action == voidptr(0) {
-		window.mouse_up_fn(e, window)
+	if window.child_window == 0 && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+		window.mouse_up_fn(window, e)
 	}
 	/*
 	for child in window.children {
@@ -869,8 +869,8 @@ fn window_scroll(event gg.Event, ui &UI) {
 		x: event.scroll_x / ui.gg.scale
 		y: event.scroll_y / ui.gg.scale
 	}
-	if window.scroll_fn != voidptr(0) {
-		window.scroll_fn(e, window)
+	if window.scroll_fn != WindowScrollFn(0) {
+		window.scroll_fn(window, e)
 	}
 	window.evt_mngr.point_inside_receivers_scroll(e)
 	window.eventbus.publish(events.on_scroll, window, e)
@@ -884,8 +884,8 @@ fn window_touch_down(event gg.Event, ui &UI) {
 		y: window.touch.start.pos.y
 	}
 	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
-	if window.mouse_down_fn != voidptr(0) {
-		window.mouse_down_fn(e, window)
+	if window.mouse_down_fn != WindowMouseFn(0) {
+		window.mouse_down_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_down, window, e)
 }
@@ -897,8 +897,8 @@ fn window_touch_move(event gg.Event, ui &UI) {
 		y: f64(window.touch.move.pos.y)
 		mouse_button: window.touch.button
 	}
-	if window.mouse_move_fn != voidptr(0) {
-		window.mouse_move_fn(e, window)
+	if window.mouse_move_fn != WindowMouseMoveFn(0) {
+		window.mouse_move_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_move, window, e)
 }
@@ -910,8 +910,8 @@ fn window_touch_up(event gg.Event, ui &UI) {
 		x: window.touch.end.pos.x
 		y: window.touch.end.pos.y
 	}
-	if window.mouse_up_fn != voidptr(0) {
-		window.mouse_up_fn(e, window)
+	if window.mouse_up_fn != WindowMouseFn(0) {
+		window.mouse_up_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_up, window, e)
 }
@@ -926,8 +926,8 @@ fn window_click_or_touch_tap(event gg.Event, ui &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.click_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
-		window.click_fn(e, window)
+	if window.click_fn != WindowMouseFn(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.click_fn(window, e)
 	}
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
@@ -954,8 +954,8 @@ fn window_touch_scroll(event gg.Event, ui &UI) {
 		y: f64(ady) / 30.0
 	}
 	window.touch.start = window.touch.move
-	if window.scroll_fn != voidptr(0) {
-		window.scroll_fn(e, window)
+	if window.scroll_fn != WindowScrollFn(0) {
+		window.scroll_fn(window, e)
 	}
 	window.eventbus.publish(events.on_scroll, window, e)
 }
@@ -969,8 +969,8 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.swipe_fn != voidptr(0) && window.child_window == 0 { // && action == voidptr(0) {
-		window.swipe_fn(e, window)
+	if window.swipe_fn != WindowMouseFn(0) && window.child_window == 0 { // && action == voidptr(0) {
+		window.swipe_fn(window, e)
 	}
 	if window.child_window != 0 {
 		// If there's a child window, use it, so that the widget receives correct user pointer
@@ -1004,8 +1004,8 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
-	if window.files_droped_fn != voidptr(0) { // && action == voidptr(0) {
-		window.files_droped_fn(e, window)
+	if window.files_droped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+		window.files_droped_fn(window, e)
 	}
 	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_droped)
 	if window.child_window != 0 {
@@ -1043,15 +1043,15 @@ pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
 	return false
 }
 
-pub fn (mut w Window) on_click(func ClickFn) {
+pub fn (mut w Window) on_click(func WindowMouseFn) {
 	w.click_fn = func
 }
 
-pub fn (mut w Window) on_mousemove(func MouseMoveFn) {
+pub fn (mut w Window) on_mousemove(func WindowMouseMoveFn) {
 	w.mouse_move_fn = func
 }
 
-pub fn (mut w Window) on_scroll(func ScrollFn) {
+pub fn (mut w Window) on_scroll(func WindowScrollFn) {
 	w.scroll_fn = func
 }
 
