@@ -16,7 +16,7 @@ enum RadioState {
 	check
 }
 */
-type RadioClickFn = fn (state voidptr, radio &Radio)
+type RadioFn = fn (state voidptr, radio &Radio)
 
 [heap]
 pub struct Radio {
@@ -55,13 +55,13 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// selected_value string
-	on_click RadioClickFn
+	on_click RadioFn
 }
 
 [params]
 pub struct RadioParams {
 	id       string
-	on_click RadioClickFn
+	on_click RadioFn
 	values   []string
 	title    string
 	width    int
@@ -203,8 +203,8 @@ fn radio_click(mut r Radio, e &MouseEvent, window &Window) {
 			r.selected_index = r.values.len - 1
 		}
 	}
-	if r.on_click != voidptr(0) {
-		r.on_click(window.state, r)
+	if r.on_click != RadioFn(0) {
+		r.on_click(r)
 	}
 	// println(r.selected_index)
 }
