@@ -442,7 +442,7 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	g.layout.update_layout()
 }
 
-fn grid_cb_clicked(mut cb ui.CheckBox, state voidptr) {
+fn grid_cb_clicked(mut cb ui.CheckBox) {
 	mut g := grid_component(cb)
 	mut gcb := g.vars[g.sel_j]
 	if mut gcb is GridCheckBox {
