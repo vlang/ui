@@ -7,6 +7,7 @@ const (
 	win_height = 600
 )
 
+[heap]
 struct App {
 mut:
 	window &ui.Window
@@ -27,7 +28,7 @@ fn main() {
 			orientation: .horizontal
 			max: 100
 			val: 0
-			on_value_changed: on_hor_value_changed
+			on_value_changed: app.on_hor_value_changed
 		)
 		vert_slider: ui.slider(
 			width: 20
@@ -35,7 +36,7 @@ fn main() {
 			orientation: .vertical
 			max: 100
 			val: 0
-			on_value_changed: on_vert_value_changed
+			on_value_changed: app.on_vert_value_changed
 		)
 		window: 0
 	}
@@ -216,10 +217,10 @@ fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 }
 
-fn on_hor_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_hor_value_changed(slider &ui.Slider) {
 	app.hor_slider.val = app.hor_slider.val
 }
 
-fn on_vert_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_vert_value_changed(slider &ui.Slider) {
 	app.vert_slider.val = app.vert_slider.val
 }

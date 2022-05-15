@@ -16,7 +16,7 @@ enum RadioState {
 	check
 }
 */
-type RadioFn = fn (state voidptr, radio &Radio)
+type RadioFn = fn (radio &Radio)
 
 [heap]
 pub struct Radio {

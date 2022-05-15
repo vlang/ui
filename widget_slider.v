@@ -9,7 +9,7 @@ const (
 	slider_focused_bg_border_color = gx.rgb(255, 0, 0)
 )
 
-type SliderValueChangedFn = fn (arg_1 voidptr, arg_2 voidptr)
+type SliderFn = fn (&Slider)
 
 pub enum Orientation {
 	vertical = 0
@@ -38,7 +38,7 @@ pub mut:
 	max                  int = 100
 	is_focused           bool
 	dragging             bool
-	on_value_changed     SliderValueChangedFn
+	on_value_changed     SliderFn
 	focus_on_thumb_only  bool
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -66,7 +66,7 @@ pub struct SliderParams {
 	val                  f32
 	orientation          Orientation
 	theme                string = no_style
-	on_value_changed     SliderValueChangedFn
+	on_value_changed     SliderFn
 	focus_on_thumb_only  bool = true
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -284,10 +284,8 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 		}
 		else {}
 	}
-	if s.on_value_changed != voidptr(0) {
-		parent := s.parent
-		state := parent.get_state()
-		s.on_value_changed(state, s)
+	if s.on_value_changed != SliderFn(0) {
+		s.on_value_changed(s)
 	}
 }
 
@@ -419,10 +417,8 @@ fn (mut s Slider) change_value(x int, y int) {
 	} else if int(s.val) > s.max {
 		s.val = f32(s.max)
 	}
-	if s.on_value_changed != voidptr(0) {
-		parent := s.parent
-		state := parent.get_state()
-		s.on_value_changed(state, s)
+	if s.on_value_changed != SliderFn(0) {
+		s.on_value_changed(s)
 	}
 }
 

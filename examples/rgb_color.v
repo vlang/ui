@@ -9,6 +9,7 @@ const (
 	slider_val = (slider_max + slider_min) / 2
 )
 
+[heap]
 struct App {
 mut:
 	window         &ui.Window = 0
@@ -46,19 +47,19 @@ fn main() {
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_char: on_r_char
+			on_char: app.on_r_char
 		)
 		g_textbox: ui.textbox(
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_char: on_g_char
+			on_char: app.on_g_char
 		)
 		b_textbox: ui.textbox(
 			max_len: 3
 			read_only: false
 			is_numeric: true
-			on_char: on_b_char
+			on_char: app.on_b_char
 		)
 		r_slider: ui.slider(
 			orientation: .vertical
@@ -67,7 +68,7 @@ fn main() {
 			val: slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_r_value_changed
+			on_value_changed: app.on_r_value_changed
 			entering: entering
 			thumb_color: gx.light_red
 		)
@@ -78,7 +79,7 @@ fn main() {
 			val: slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_g_value_changed
+			on_value_changed: app.on_g_value_changed
 			entering: entering
 			thumb_color: gx.light_green
 		)
@@ -89,7 +90,7 @@ fn main() {
 			val: slider_val
 			focus_on_thumb_only: true
 			rev_min_max_pos: true
-			on_value_changed: on_b_value_changed
+			on_value_changed: app.on_b_value_changed
 			entering: entering
 			thumb_color: gx.light_blue
 		)
@@ -148,26 +149,25 @@ fn main() {
 	ui.run(app.window)
 }
 
-// on_.... functions
-fn on_r_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_r_value_changed(slider &ui.Slider) {
 	app.r_textbox_text = int(app.r_slider.val).str()
 	app.r_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn on_g_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_g_value_changed(slider &ui.Slider) {
 	app.g_textbox_text = int(app.g_slider.val).str()
 	app.g_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn on_b_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_b_value_changed(slider &ui.Slider) {
 	app.b_textbox_text = int(app.b_slider.val).str()
 	app.b_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_r_char(textbox &ui.TextBox, keycode u32) {
 	if ui.is_rgb_valid(app.r_textbox.text.int()) {
 		app.r_slider.val = app.r_textbox_text.f32()
 		app.r_textbox.border_accentuated = false
@@ -177,7 +177,7 @@ fn on_r_char(mut app App, textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_g_char(textbox &ui.TextBox, keycode u32) {
 	if ui.is_rgb_valid(app.g_textbox.text.int()) {
 		app.g_slider.val = app.g_textbox_text.f32()
 		app.g_textbox.border_accentuated = false
@@ -187,7 +187,7 @@ fn on_g_char(mut app App, textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn on_b_char(mut app App, textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_b_char(textbox &ui.TextBox, keycode u32) {
 	if ui.is_rgb_valid(app.b_textbox.text.int()) {
 		app.b_slider.val = app.b_textbox_text.f32()
 		app.b_textbox.border_accentuated = false

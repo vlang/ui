@@ -24,13 +24,9 @@ const (
 	selection_color               = gx.rgb(186, 214, 251)
 )
 
-type TextBoxKeyDownFn = fn (voidptr, &TextBox, u32)
-
-type TextBoxCharFn = fn (voidptr, &TextBox, u32)
+type TextBoxU32Fn = fn (&TextBox, u32)
 
 // type KeyUpFn = fn (voidptr, voidptr, u32)
-
-type TextBoxChangeFn = fn (string, voidptr)
 
 // The two previous one can be changed with
 type TextBoxFn = fn (&TextBox)
@@ -78,8 +74,8 @@ pub mut:
 	is_password   bool
 	read_only     bool
 	fitted_height bool // if true fit height in propose_size
-	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
-	on_char       TextBoxCharFn    = TextBoxCharFn(0)
+	on_key_down   TextBoxU32Fn = TextBoxU32Fn(0)
+	on_char       TextBoxU32Fn = TextBoxU32Fn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	is_selectable bool // for read_only textbox
 	sel_active    bool // to deal with show cursor when selection active
@@ -150,8 +146,8 @@ pub struct TextBoxParams {
 	// text_size          f64
 	theme         string = no_style
 	fitted_height bool
-	on_key_down   TextBoxKeyDownFn
-	on_char       TextBoxCharFn
+	on_key_down   TextBoxU32Fn
+	on_char       TextBoxU32Fn
 	// on_key_up          KeyUpFn
 	on_enter         TextBoxFn = TextBoxFn(0)
 	on_change        TextBoxFn = TextBoxFn(0)
@@ -477,8 +473,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.on_key_down != TextBoxKeyDownFn(0) {
-		tb.on_key_down(window.state, tb, e.codepoint)
+	if tb.on_key_down != TextBoxU32Fn(0) {
+		tb.on_key_down(tb, e.codepoint)
 	}
 	// println("tb key_down $e.key ${int(e.codepoint)}")
 	if tb.is_multiline {
@@ -630,8 +626,8 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println("tab $tb.id  $e.mods return")
 		return
 	}
-	if tb.on_char != TextBoxCharFn(0) {
-		tb.on_char(window.state, tb, e.codepoint)
+	if tb.on_char != TextBoxU32Fn(0) {
+		tb.on_char(tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
 	// Entering text
