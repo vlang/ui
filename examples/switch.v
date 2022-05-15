@@ -5,19 +5,19 @@ const (
 	win_height = 250
 )
 
+[heap]
 struct App {
 mut:
 	label    &ui.Label
-	switcher &ui.Switch
-	window   &ui.Window
+	switcher &ui.Switch = 0
+	window   &ui.Window = 0
 }
 
 fn main() {
 	mut app := &App{
-		window: 0
 		label: ui.label(text: 'Enabled')
-		switcher: ui.switcher(open: true, onclick: on_switch_click)
 	}
+	app.switcher = ui.switcher(open: true, onclick: app.on_switch_click)
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -40,7 +40,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_switch_click(switcher &ui.Switch) {
+fn (mut app App) on_switch_click(switcher &ui.Switch) {
 	switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	app.label.set_text(switcher_state)
 }
