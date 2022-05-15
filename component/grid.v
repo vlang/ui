@@ -405,7 +405,7 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
+fn grid_tb_entered(mut tb ui.TextBox) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
 	if new_text.len > 0 && new_text[0..1] == '=' {
