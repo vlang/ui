@@ -278,7 +278,7 @@ fn (mut g GridComponent) show_formula() {
 }
 
 // formula textbox callback
-fn grid_tb_formula_entered(mut tb ui.TextBox) {
+fn grid_tb_formula_enter(mut tb ui.TextBox) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
 	ac_sel := GridCell{g.sel_i, g.sel_j}.alphacell()

@@ -32,10 +32,8 @@ type TextBoxCharFn = fn (voidptr, &TextBox, u32)
 
 type TextBoxChangeFn = fn (string, voidptr)
 
-type TextBoxEnterFn = fn (string, voidptr)
-
 // The two previous one can be changed with
-type TextBoxValidatedFn = fn (&TextBox)
+type TextBoxFn = fn (&TextBox)
 
 [heap]
 pub struct TextBox {
@@ -88,10 +86,9 @@ pub mut:
 	dragging      bool
 	sel_direction SelectionDirection
 	is_error      &bool = voidptr(0)
-	on_change     TextBoxChangeFn    = TextBoxChangeFn(0)
-	on_enter      TextBoxEnterFn     = TextBoxEnterFn(0)
-	on_changed    TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered    TextBoxValidatedFn = TextBoxValidatedFn(0)
+	on_change     TextBoxChangeFn = TextBoxChangeFn(0)
+	on_enter      TextBoxFn       = TextBoxFn(0)
+	on_changed    TextBoxFn       = TextBoxFn(0)
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -160,9 +157,8 @@ pub struct TextBoxParams {
 	on_change voidptr
 	on_enter  voidptr
 	// TODO replacement of signature later
-	on_changed       TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered       TextBoxValidatedFn = TextBoxValidatedFn(0)
-	scrollview       bool = true
+	on_changed       TextBoxFn = TextBoxFn(0)
+	scrollview       bool      = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
@@ -204,7 +200,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		on_enter: c.on_enter
 		// TODO
 		on_changed: c.on_changed
-		on_entered: c.on_entered
 		on_scroll_change: c.on_scroll_change
 	}
 	tb.style_params.style = c.theme
@@ -497,13 +492,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		mut text := *tb.text
 		match e.key {
 			.enter {
-				if tb.on_enter != TextBoxEnterFn(0) {
+				if tb.on_enter != TextBoxFn(0) {
 					// println('tb_enter: <${*tb.text}>')
-					tb.on_enter(*tb.text, window.state)
-				}
-				if tb.on_entered != TextBoxValidatedFn(0) {
-					// println('tb_entered: <${*tb.text}>')
-					tb.on_entered(tb)
+					tb.on_enter(tb)
 				}
 			}
 			.backspace {
@@ -547,7 +538,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
 				}
-				if tb.on_changed != TextBoxValidatedFn(0) {
+				if tb.on_changed != TextBoxFn(0) {
 					tb.on_changed(tb)
 				}
 			}
@@ -566,7 +557,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				if tb.on_change != TextBoxChangeFn(0) {
 					// tb.on_change(*tb.text, window.state)
 				}
-				if tb.on_changed != TextBoxValidatedFn(0) {
+				if tb.on_changed != TextBoxFn(0) {
 					tb.on_changed(tb)
 				}
 			}
@@ -682,7 +673,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 				tb.on_change(*tb.text, window.state)
 			}
 			// TODO: Future replacement of the previous one
-			if tb.on_changed != TextBoxValidatedFn(0) {
+			if tb.on_changed != TextBoxFn(0) {
 				tb.on_changed(tb)
 			}
 			return
@@ -772,7 +763,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 					tb.on_change(*tb.text, window.state)
 				}
 			}
-			if tb.on_changed != TextBoxValidatedFn(0) {
+			if tb.on_changed != TextBoxFn(0) {
 				tb.on_changed(tb)
 			}
 		}

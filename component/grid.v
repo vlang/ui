@@ -167,7 +167,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// textbox formula
 	mut tb_formula := ui.textbox(
 		id: ui.component_id(p.id, 'tb_formula')
-		on_entered: grid_tb_formula_entered
+		on_enter: grid_tb_formula_enter
 	)
 	tb_formula.set_visible(false)
 	layout.children << tb_formula
@@ -176,7 +176,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
-		on_entered: grid_tb_entered
+		on_enter: grid_tb_enter
 		// on_char: grid_tb_char
 	)
 	// println("tb_sel $tb_sel.id created inside $p.id")
@@ -405,7 +405,7 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn grid_tb_entered(mut tb ui.TextBox) {
+fn grid_tb_enter(mut tb ui.TextBox) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
 	if new_text.len > 0 && new_text[0..1] == '=' {
