@@ -6,6 +6,7 @@ const (
 	no_time = time.Time{}
 )
 
+[heap]
 struct App {
 mut:
 	dd_flight &ui.Dropdown = 0
@@ -44,8 +45,8 @@ fn main() {
 							},
 						]
 					),
-					ui.textbox(id: 'tb_oneway', on_changed: tb_changed),
-					ui.textbox(id: 'tb_return', read_only: true, on_changed: tb_changed),
+					ui.textbox(id: 'tb_oneway', on_change: app.tb_change),
+					ui.textbox(id: 'tb_return', read_only: true, on_change: app.tb_change),
 					ui.button(
 						id: 'btn_book'
 						text: 'Book'
@@ -84,7 +85,7 @@ fn dd_change(mut app App, dd &ui.Dropdown) {
 	}
 }
 
-fn tb_changed(mut tb ui.TextBox, mut app App) {
+fn (mut app App) tb_change(mut tb ui.TextBox) {
 	valid := valid_date(tb.text)
 	app.btn_book.disabled = !valid
 	tb.update_style(

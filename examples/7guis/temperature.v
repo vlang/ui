@@ -22,12 +22,12 @@ fn main() {
 				heights: 20.0
 				children: [ui.textbox(
 					id: 'celsius'
-					on_changed: on_changed_celsius
+					on_change: on_change_celsius
 				),
 					ui.label(text: 'Celsius = '),
 					ui.textbox(
 						id: 'fahren'
-						on_changed: on_changed_fahren
+						on_change: on_change_fahren
 					),
 					ui.label(text: 'Fahrenheit')]
 			),
@@ -36,7 +36,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn on_changed_celsius(mut tb_celsius ui.TextBox) {
+fn on_change_celsius(mut tb_celsius ui.TextBox) {
 	mut tb_fahren := tb_celsius.ui.window.textbox('fahren')
 	if tb_celsius.text.len <= 0 {
 		tb_fahren.set_text('0')
@@ -52,7 +52,7 @@ fn on_changed_celsius(mut tb_celsius ui.TextBox) {
 	}
 }
 
-fn on_changed_fahren(mut tb_fahren ui.TextBox) {
+fn on_change_fahren(mut tb_fahren ui.TextBox) {
 	mut tb_celsius := tb_fahren.ui.window.textbox('celsius')
 	if tb_fahren.text.len <= 0 {
 		tb_celsius.set_text('0')

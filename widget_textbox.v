@@ -85,10 +85,9 @@ pub mut:
 	sel_active    bool // to deal with show cursor when selection active
 	dragging      bool
 	sel_direction SelectionDirection
-	is_error      &bool = voidptr(0)
-	on_change     TextBoxChangeFn = TextBoxChangeFn(0)
-	on_enter      TextBoxFn       = TextBoxFn(0)
-	on_changed    TextBoxFn       = TextBoxFn(0)
+	is_error      &bool     = voidptr(0)
+	on_enter      TextBoxFn = TextBoxFn(0)
+	on_change     TextBoxFn = TextBoxFn(0)
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -154,10 +153,8 @@ pub struct TextBoxParams {
 	on_key_down   TextBoxKeyDownFn
 	on_char       TextBoxCharFn
 	// on_key_up          KeyUpFn
-	on_change voidptr
-	on_enter  voidptr
-	// TODO replacement of signature later
-	on_changed       TextBoxFn = TextBoxFn(0)
+	on_enter         TextBoxFn = TextBoxFn(0)
+	on_change        TextBoxFn = TextBoxFn(0)
 	scrollview       bool      = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
@@ -198,8 +195,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// on_key_up: c.on_key_up
 		on_change: c.on_change
 		on_enter: c.on_enter
-		// TODO
-		on_changed: c.on_changed
 		on_scroll_change: c.on_scroll_change
 	}
 	tb.style_params.style = c.theme
@@ -535,11 +530,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// RO REMOVE?
 				// tb.update_text()
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-				if tb.on_changed != TextBoxFn(0) {
-					tb.on_changed(tb)
+				if tb.on_change != TextBoxFn(0) {
+					tb.on_change(tb)
 				}
 			}
 			.delete {
@@ -554,11 +546,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				tb.check_cursor_pos()
 				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-				if tb.on_changed != TextBoxFn(0) {
-					tb.on_changed(tb)
+				if tb.on_change != TextBoxFn(0) {
+					tb.on_change(tb)
 				}
 			}
 			.left {
@@ -669,12 +658,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
 			tb.insert(s)
-			if tb.on_change != TextBoxChangeFn(0) {
-				tb.on_change(*tb.text, window.state)
-			}
 			// TODO: Future replacement of the previous one
-			if tb.on_changed != TextBoxFn(0) {
-				tb.on_changed(tb)
+			if tb.on_change != TextBoxFn(0) {
+				tb.on_change(tb)
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {
@@ -758,13 +744,10 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println(e.key)
 		// println('mods=$e.mods')
 		defer {
-			if tb.on_change != TextBoxChangeFn(0) {
+			if tb.on_change != TextBoxFn(0) {
 				if e.key == .backspace {
-					tb.on_change(*tb.text, window.state)
+					tb.on_change(tb)
 				}
-			}
-			if tb.on_changed != TextBoxFn(0) {
-				tb.on_changed(tb)
 			}
 		}
 	}
