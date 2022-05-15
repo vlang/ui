@@ -55,7 +55,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn example_pic_click(mut app App, pic &ui.Picture) {
+fn example_pic_click(pic &ui.Picture) {
 	println('Clicked pic')
 }
 
