@@ -183,7 +183,7 @@ fn dd_change(dd &ui.Dropdown) {
 	b.update_theme_style(dd.selected().text)
 }
 
-fn lb_change(app voidptr, lb &ui.ListBox) {
+fn lb_change(lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
@@ -191,7 +191,7 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 	b.update_theme_style(id)
 }
 
-fn lb_change_multi(app voidptr, lb &ui.ListBox) {
+fn lb_change_multi(lb &ui.ListBox) {
 	println(lb.items.map('$it.text: $it.selected $it.disabled'))
 }
 

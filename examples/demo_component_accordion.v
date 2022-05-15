@@ -212,7 +212,7 @@ fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
 	switcher.ui.window.update_layout()
 }
 
-fn dd_change(mut app App, dd &ui.Dropdown) {
+fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 }
 
