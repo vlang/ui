@@ -47,7 +47,7 @@ fn main() {
 									),
 									ui.button(
 										text: 'More ipsum!'
-										onclick: fn (a voidptr, b voidptr) {
+										on_click: fn (b &ui.Button) {
 											ui.open_url('https://lipsum.com/feed/html')
 										}
 									),
