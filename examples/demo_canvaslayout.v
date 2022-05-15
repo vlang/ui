@@ -176,7 +176,7 @@ fn menu_click(item &ui.MenuItem, app voidptr) {
 	println('menu here $item.text')
 }
 
-fn dd_change(app voidptr, dd &ui.Dropdown) {
+fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
 	mut b := win.button('b_thm')

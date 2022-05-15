@@ -35,7 +35,7 @@ fn main() {
 						id: 'dd_flight'
 						z_index: 10
 						selected_index: 0
-						on_selection_changed: dd_change
+						on_selection_changed: app.dd_change
 						items: [
 							ui.DropdownItem{
 								text: 'one-way flight'
@@ -74,7 +74,7 @@ fn win_init(win &ui.Window) {
 	app.tb_return.set_text(date.clone())
 }
 
-fn dd_change(mut app App, dd &ui.Dropdown) {
+fn (mut app App) dd_change(dd &ui.Dropdown) {
 	match dd.selected().text {
 		'one-way flight' {
 			app.tb_return.read_only = true

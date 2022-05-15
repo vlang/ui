@@ -429,7 +429,7 @@ fn grid_tb_enter(mut tb ui.TextBox) {
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
-fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
+fn grid_dd_changed(mut dd ui.Dropdown) {
 	// println('$dd.id  selection changed $dd.selected_index')
 	mut g := grid_component(dd)
 	mut gdd := g.vars[g.sel_j]
