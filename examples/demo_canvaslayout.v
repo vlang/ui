@@ -172,7 +172,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click(item &ui.MenuItem, app voidptr) {
+fn menu_click(item &ui.MenuItem) {
 	println('menu here $item.text')
 }
 
@@ -195,12 +195,12 @@ fn lb_change_multi(lb &ui.ListBox) {
 	println(lb.items.map('$it.text: $it.selected $it.disabled'))
 }
 
-fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.full_width, c.full_height
 	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 }
 
-fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut l := c.ui.window.label('l_mm')
 	l.set_text('($e.x,$e.y)')
 }

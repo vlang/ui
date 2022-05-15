@@ -37,7 +37,7 @@ fn main() {
 							ui.canvas_plus(
 								id: 'c'
 								height: 200
-								on_draw: on_draw
+								on_draw: app.on_draw
 							),
 						]
 					),
@@ -97,7 +97,7 @@ fn window_init(mut w ui.Window) {
 	// dtw.set_style('arial')
 }
 
-fn on_draw(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
+fn (app &App) on_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)

@@ -3,6 +3,7 @@ module main
 import ui
 import time
 
+[heap]
 struct App {
 mut:
 	window &ui.Window = 0
@@ -39,7 +40,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn wait_complete(mut app App, mut tb ui.TextBox) {
+fn (mut app App) wait_complete(mut tb ui.TextBox) {
 	for task in 0 .. 10000 {
 		app.log += 'processing ... task $task complete\n'
 		time.sleep(500 * time.millisecond)
@@ -49,5 +50,5 @@ fn wait_complete(mut app App, mut tb ui.TextBox) {
 
 fn btn_connect(mut app App, btn &ui.Button) {
 	mut tb := app.window.textbox('tb')
-	go wait_complete(mut app, mut tb)
+	go app.wait_complete(mut tb)
 }

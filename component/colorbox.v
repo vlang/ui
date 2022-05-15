@@ -193,13 +193,13 @@ pub fn (mut cb ColorBoxComponent) connect_colorbutton(b &ColorButtonComponent) {
 	cb.colbtn = unsafe { b }
 }
 
-fn cv_h_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn cv_h_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut cb := colorbox_component(c)
 	cb.h = f64(e.y) / 256
 	cb.update_buffer()
 }
 
-fn cv_h_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn cv_h_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	if c.ui.btn_down[0] {
 		mut cb := colorbox_component(c)
 		cb.h = f64(e.y) / 256
@@ -207,7 +207,7 @@ fn cv_h_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn cv_h_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn cv_h_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	cb := colorbox_component(c)
 	for j in 0 .. 255 {
 		c.draw_device_rect_empty(d, 0, j, 30, 1, cb.hsv_to_rgb(f64(j) / 256.0, .75, .75))
@@ -223,7 +223,7 @@ fn cv_h_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 	})
 }
 
-fn cv_sv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn cv_sv_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut cb := colorbox_component(c)
 	cb.s = f64(e.x) / 255.0
 	cb.v = 1.0 - f64(e.y) / 255.0
@@ -231,7 +231,7 @@ fn cv_sv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	cb.update_sel_color()
 }
 
-fn cv_sv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn cv_sv_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	if c.ui.btn_down[0] {
 		mut cb := colorbox_component(c)
 		cb.s = f64(e.x) / 255.0
@@ -240,7 +240,7 @@ fn cv_sv_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn cv_sv_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
+fn cv_sv_draw(d ui.DrawDevice, mut c ui.CanvasLayout) {
 	mut cb := colorbox_component(c)
 
 	// TODO: check extra_draw c.draw_device_texture
@@ -252,7 +252,7 @@ fn cv_sv_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
 		14, 14, 7, cb.hsv_to_rgb(cb.h, cb.s, cb.v))
 }
 
-fn cv_sel_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+fn cv_sel_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	mut cb := colorbox_component(c)
 	if e.key in [.up, .down] {
 		cb.hsl = !cb.hsl
@@ -269,7 +269,7 @@ fn cv_sel_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn cv_sel_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn cv_sel_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut cb := colorbox_component(c)
 	i := (e.x - component.cb_sp) / (component.cb_sp + component.cb_hsv_col)
 	j := (e.y - component.cb_sp) / (component.cb_sp + component.cb_hsv_col)
@@ -281,7 +281,7 @@ fn cv_sel_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	cb.update_cur_color(true)
 }
 
-fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout, app voidptr) {
+fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout) {
 	cb := colorbox_component(c)
 	mut hsv := HSVColor{}
 	mut h, mut s, mut v := 0.0, 0.0, 0.0
@@ -352,7 +352,7 @@ pub fn (mut cb ColorBoxComponent) update_buffer() {
 	}
 }
 
-fn tb_char(a voidptr, tb &ui.TextBox, cp u32) {
+fn tb_char(tb &ui.TextBox, cp u32) {
 	mut cb := colorbox_component(tb)
 	r, g, b := cb.txt_r.int(), cb.txt_g.int(), cb.txt_b.int()
 	cb.update_from_rgb(r, g, b)

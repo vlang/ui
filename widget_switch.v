@@ -14,9 +14,9 @@ const (
 	sw_focus_bg_color = gx.rgb(50, 50, 50)
 )
 
-type SwitchFn = fn (voidptr, &Switch)
+type SwitchFn = fn (&Switch)
 
-type SwitchU32Fn = fn (voidptr, &Switch, u32)
+type SwitchU32Fn = fn (&Switch, u32)
 
 [heap]
 pub struct Switch {

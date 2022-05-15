@@ -14,57 +14,56 @@ const (
 [heap]
 struct App {
 mut:
-	window       &ui.Window
-	vert_slider  &ui.Slider
-	vert_textbox &ui.TextBox
-	vert_text    string = ((vert_slider_max + vert_slider_min) / 2).str()
-	hor_slider   &ui.Slider
-	hor_text     string = ((hor_slider_max + hor_slider_min) / 2).str()
-	hor_textbox  &ui.TextBox
+	window       &ui.Window  = 0
+	vert_slider  &ui.Slider  = 0
+	vert_textbox &ui.TextBox = 0
+	vert_text    string      = ((vert_slider_max + vert_slider_min) / 2).str()
+	hor_slider   &ui.Slider  = 0
+	hor_text     string      = ((hor_slider_max + hor_slider_min) / 2).str()
+	hor_textbox  &ui.TextBox = 0
 }
 
 fn main() {
-	mut app := &App{
-		window: 0
-		hor_slider: ui.slider(
-			width: 200
-			height: 10
-			orientation: .horizontal
-			min: hor_slider_min
-			max: hor_slider_max
-			val: hor_slider_val
-			focus_on_thumb_only: true
-			rev_min_max_pos: true
-			on_value_changed: app.on_value_changed_hor
-		)
-		vert_slider: ui.slider(
-			width: 10
-			height: 200
-			orientation: .vertical
-			min: vert_slider_min
-			max: vert_slider_max
-			val: vert_slider_val
-			focus_on_thumb_only: true
-			rev_min_max_pos: true
-			on_value_changed: app.on_value_changed_vert
-		)
-		hor_textbox: ui.textbox(
-			width: 40
-			height: 20
-			max_len: 20
-			read_only: false
-			is_numeric: true
-			on_char: app.on_char_hor
-		)
-		vert_textbox: ui.textbox(
-			width: 40
-			height: 20
-			max_len: 20
-			read_only: false
-			is_numeric: true
-			on_char: app.on_char_vert
-		)
-	}
+	mut app := &App{}
+	app.hor_slider = ui.slider(
+		width: 200
+		height: 10
+		orientation: .horizontal
+		min: hor_slider_min
+		max: hor_slider_max
+		val: hor_slider_val
+		focus_on_thumb_only: true
+		rev_min_max_pos: true
+		on_value_changed: app.on_value_changed_hor
+	)
+	app.vert_slider = ui.slider(
+		width: 10
+		height: 200
+		orientation: .vertical
+		min: vert_slider_min
+		max: vert_slider_max
+		val: vert_slider_val
+		focus_on_thumb_only: true
+		rev_min_max_pos: true
+		on_value_changed: app.on_value_changed_vert
+	)
+	app.hor_textbox = ui.textbox(
+		width: 40
+		height: 20
+		max_len: 20
+		read_only: false
+		is_numeric: true
+		on_char: app.on_char_hor
+	)
+	app.vert_textbox = ui.textbox(
+		width: 40
+		height: 20
+		max_len: 20
+		read_only: false
+		is_numeric: true
+		on_char: app.on_char_vert
+	)
+
 	app.hor_textbox.text = &app.hor_text
 	app.vert_textbox.text = &app.vert_text
 	app.window = ui.window(

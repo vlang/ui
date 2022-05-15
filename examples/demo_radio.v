@@ -60,7 +60,7 @@ fn main() {
 	ui.run(w)
 }
 
-fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
+fn on_switch_click(switcher &ui.Switch) {
 	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	// app.label.set_text(switcher_state)
 	mut rh1 := switcher.ui.window.radio('rh1')

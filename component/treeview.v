@@ -250,7 +250,7 @@ fn treeview_init(layout &ui.Stack) {
 	}
 }
 
-fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
+fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	tv := treeview_component(c)
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
@@ -267,7 +267,7 @@ fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
 	)
 }
 
-fn treeview_click(e ui.MouseEvent, mut c ui.CanvasLayout) {
+fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	mut tv := treeview_component(c)
 	if !tv.point_inside(e.x, e.y) {
 		return

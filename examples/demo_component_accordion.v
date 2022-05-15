@@ -10,36 +10,34 @@ const (
 [heap]
 struct App {
 mut:
-	window &ui.Window
+	window &ui.Window = 0
 	// group
 	first_ipsum  string
 	second_ipsum string
 	full_name    string
 	// slider
-	hor_slider  &ui.Slider
-	vert_slider &ui.Slider
+	hor_slider  &ui.Slider = 0
+	vert_slider &ui.Slider = 0
 }
 
 fn main() {
-	mut app := &App{
-		hor_slider: ui.slider(
-			width: 200
-			height: 20
-			orientation: .horizontal
-			max: 100
-			val: 0
-			on_value_changed: app.on_hor_value_changed
-		)
-		vert_slider: ui.slider(
-			width: 20
-			height: 200
-			orientation: .vertical
-			max: 100
-			val: 0
-			on_value_changed: app.on_vert_value_changed
-		)
-		window: 0
-	}
+	mut app := &App{}
+	app.hor_slider = ui.slider(
+		width: 200
+		height: 20
+		orientation: .horizontal
+		max: 100
+		val: 0
+		on_value_changed: app.on_hor_value_changed
+	)
+	app.vert_slider = ui.slider(
+		width: 20
+		height: 200
+		orientation: .vertical
+		max: 100
+		val: 0
+		on_value_changed: app.on_vert_value_changed
+	)
 	cr := ui.column(
 		id: 'col_radio'
 		widths: ui.stretch
@@ -203,7 +201,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
+fn on_switch_click(switcher &ui.Switch) {
 	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	// app.label.set_text(switcher_state)
 	mut rh1 := switcher.ui.window.radio('rh1')

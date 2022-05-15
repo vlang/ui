@@ -19,6 +19,7 @@ struct User {
 	country    string
 }
 
+[heap]
 struct State {
 mut:
 	first_name string
@@ -163,7 +164,7 @@ fn main() {
 							ui.canvas(
 								width: 400
 								height: 275
-								draw_fn: canvas_draw
+								draw_fn: app.canvas_draw
 							),
 							ui.picture(
 								width: 100
@@ -184,8 +185,8 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click() {
-}
+// fn menu_click() {
+// }
 
 fn btn_help_click(a voidptr, b voidptr) {
 	ui.message_box('Built with V UI')
@@ -224,7 +225,7 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { // x_offset int, y_offset int) {
+fn (app &State) canvas_draw(gg &gg.Context, c &ui.Canvas) { // x_offset int, y_offset int) {
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset

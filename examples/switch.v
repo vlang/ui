@@ -40,7 +40,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_switch_click(mut app App, switcher &ui.Switch) {
+fn on_switch_click(switcher &ui.Switch) {
 	switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	app.label.set_text(switcher_state)
 }

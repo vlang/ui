@@ -17,6 +17,7 @@ struct User {
 	country    string
 }
 
+[heap]
 struct State {
 mut:
 	first_name string
@@ -179,7 +180,7 @@ fn main() {
 							ui.canvas_plus(
 								width: 400
 								height: 275
-								on_draw: draw
+								on_draw: app.draw
 								bg_color: gx.Color{255, 220, 220, 150}
 								bg_radius: 10
 								// text_size: 20
@@ -242,7 +243,7 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app &State) {
+fn (app &State) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height
