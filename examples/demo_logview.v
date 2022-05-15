@@ -32,7 +32,7 @@ fn main() {
 						read_only: true
 						// text_size: 20
 					),
-					ui.button(text: 'start scan', onclick: btn_connect),
+					ui.button(text: 'start scan', on_click: app.btn_connect),
 				]
 			),
 		]
@@ -48,7 +48,7 @@ fn (mut app App) wait_complete(mut tb ui.TextBox) {
 	}
 }
 
-fn btn_connect(mut app App, btn &ui.Button) {
+fn (mut app App) btn_connect(btn &ui.Button) {
 	mut tb := app.window.textbox('tb')
 	go app.wait_complete(mut tb)
 }

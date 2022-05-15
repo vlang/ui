@@ -48,7 +48,7 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(text: 'Compact'),
-					ui.switcher(open: true, onclick: on_switch_click),
+					ui.switcher(open: true, on_click: on_switch_click),
 				]
 			),
 			ui.radio(
@@ -140,7 +140,7 @@ fn main() {
 					),
 					ui.button(
 						text: 'More ipsum!'
-						onclick: fn (a voidptr, b voidptr) {
+						on_click: fn (b &ui.Button) {
 							ui.open_url('https://lipsum.com/feed/html')
 						}
 					),

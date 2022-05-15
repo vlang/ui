@@ -35,8 +35,8 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(text: 'Word wrap'),
-					ui.switcher(open: false, id: 'sw2', onclick: on_switch_click),
-					ui.switcher(open: false, id: 'sw3', onclick: on_switch_click),
+					ui.switcher(open: false, id: 'sw2', on_click: on_switch_click),
+					ui.switcher(open: false, id: 'sw3', on_click: on_switch_click),
 				]
 			),
 			ui.textbox(

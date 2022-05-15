@@ -35,7 +35,7 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 		bg_color: c.bg_color
 		// theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
-		onclick: font_button_click
+		on_click: font_button_click
 		style_params: ui.button_style(radius: f32(c.radius))
 		padding: f32(c.padding)
 		ui: 0
@@ -56,7 +56,7 @@ pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent
 	return fontbutton_component(w.button(id))
 }
 
-fn font_button_click(a voidptr, mut b ui.Button) {
+fn font_button_click(mut b ui.Button) {
 	fb := fontbutton_component(b)
 	// println('fb_click $fb.dtw.id')
 	fontchooser_connect(b.ui.window, fb.dtw)

@@ -22,9 +22,9 @@ enum ButtonState {
 	hovering
 }
 
-type ButtonClickFn = fn (voidptr, &Button) // state, btn
+type ButtonFn = fn (&Button)
 
-type ButtonKeyDownFn = fn (voidptr, &Button, u32)
+type ButtonU32Fn = fn (&Button, u32)
 
 [heap]
 pub struct Button {
@@ -46,9 +46,9 @@ pub mut:
 	parent      Layout = empty_stack
 	is_focused  bool
 	ui          &UI = 0
-	onclick     ButtonClickFn
+	on_click    ButtonFn
 	// TODO: same convention for all callback
-	on_key_down  ButtonKeyDownFn = ButtonKeyDownFn(0)
+	on_key_down  ButtonU32Fn = ButtonU32Fn(0)
 	text         string
 	icon_path    string
 	image        gg.Image
@@ -85,8 +85,8 @@ pub struct ButtonParams {
 	id           string
 	text         string
 	icon_path    string
-	onclick      ButtonClickFn
-	on_key_down  ButtonKeyDownFn
+	on_click     ButtonFn
+	on_key_down  ButtonU32Fn
 	height       int
 	width        int
 	z_index      int
@@ -112,7 +112,7 @@ pub fn button(c ButtonParams) &Button {
 		use_icon: c.icon_path != ''
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
 		style_params: c.ButtonStyleParams
-		onclick: c.onclick
+		on_click: c.on_click
 		on_key_down: c.on_key_down
 		// text_size: c.text_size
 		// radius: f32(c.radius)
@@ -171,7 +171,7 @@ pub fn (b &Button) free() {
 		b.id.free()
 		b.text.free()
 		b.icon_path.free()
-		// s.onclick   ButtonClickFn
+		// s.on_click   ButtonClickFn
 		b.tooltip.free()
 		// s.theme     ColorThemeCfg = 'classic'
 
@@ -197,14 +197,14 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	if !b.is_focused {
 		return
 	}
-	if b.on_key_down != ButtonKeyDownFn(0) {
-		b.on_key_down(window.state, b, e.codepoint)
+	if b.on_key_down != ButtonU32Fn(0) {
+		b.on_key_down(b, e.codepoint)
 	} else {
 		// default behavior like click for space and enter
 		if e.key in [.enter, .space] {
 			// println("btn key as a click")
-			if b.onclick != ButtonClickFn(0) {
-				b.onclick(window.state, b)
+			if b.on_click != ButtonFn(0) {
+				b.on_click(b)
 			}
 		}
 	}
@@ -237,11 +237,11 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.onclick != ButtonClickFn(0) && b.is_focused {
+			if b.on_click != ButtonFn(0) && b.is_focused {
 				$if btn_onclick ? {
 					println('onclick $b.id')
 				}
-				b.onclick(window.state, b)
+				b.on_click(b)
 			}
 		}
 	}

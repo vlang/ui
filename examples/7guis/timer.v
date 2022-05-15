@@ -69,7 +69,7 @@ fn main() {
 						widths: [left, ui.stretch]
 						children: [ui.label(text: 'Duration:', text_size: 1.0 / 10), app.slider]
 					),
-					ui.button(text: 'Reset', onclick: on_reset),
+					ui.button(text: 'Reset', on_click: app.on_reset),
 				]
 			),
 		]
@@ -83,7 +83,7 @@ fn (mut app App) on_value_changed(slider &ui.Slider) {
 	app.duration = app.slider.val
 }
 
-fn on_reset(mut app App, button &ui.Button) {
+fn (mut app App) on_reset(button &ui.Button) {
 	app.elapsed_time = 0.0
 	go app.timer()
 }

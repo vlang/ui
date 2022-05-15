@@ -150,8 +150,18 @@ fn main() {
 						spacing: 20
 						widths: [ui.stretch, 40, 40, ui.stretch]
 						children: [ui.spacing(),
-							ui.button(id: 'btn_undo', text: 'Undo', radius: 5, onclick: click_undo),
-							ui.button(id: 'btn_redo', text: 'Redo', radius: 5, onclick: click_redo),
+							ui.button(
+								id: 'btn_undo'
+								text: 'Undo'
+								radius: 5
+								on_click: app.click_undo
+							),
+							ui.button(
+								id: 'btn_redo'
+								text: 'Redo'
+								radius: 5
+								on_click: app.click_redo
+							),
 							ui.spacing()]
 					),
 					ui.canvas_plus(
@@ -220,7 +230,7 @@ fn mouse_move_circles(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	app.hover = app.state.point_inside(f32(e.x), f32(e.y))
 }
 
-fn click_undo(mut a App, mut b ui.Button) {
+fn (mut a App) click_undo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
@@ -230,7 +240,7 @@ fn click_undo(mut a App, mut b ui.Button) {
 	check_redo_disabled(a.state, mut redo)
 }
 
-fn click_redo(mut a App, mut b ui.Button) {
+fn (mut a App) click_redo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}

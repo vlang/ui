@@ -34,7 +34,7 @@ pub mut:
 	is_focused  bool
 	open        bool
 	ui          &UI
-	onclick     SwitchFn
+	on_click    SwitchFn
 	on_key_down SwitchU32Fn
 	hidden      bool
 	// component state for composable widget
@@ -45,7 +45,7 @@ pub mut:
 pub struct SwitchParams {
 	id          string
 	z_index     int
-	onclick     SwitchFn
+	on_click    SwitchFn
 	on_key_down SwitchU32Fn
 	open        bool
 }
@@ -57,7 +57,7 @@ pub fn switcher(c SwitchParams) &Switch {
 		width: ui.sw_width
 		z_index: c.z_index
 		open: c.open
-		onclick: c.onclick
+		on_click: c.on_click
 		on_key_down: c.on_key_down
 		ui: 0
 	}
@@ -156,8 +156,8 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 		if e.key in [.enter, .space] {
 			// println("sw key as a click")
 			s.open = !s.open
-			if s.onclick != SwitchFn(0) {
-				s.onclick(s)
+			if s.on_click != SwitchFn(0) {
+				s.on_click(s)
 			}
 		}
 	}
@@ -173,8 +173,8 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 	// <===== mouse position test added
 	if int(e.action) == 0 {
 		s.open = !s.open
-		if s.onclick != SwitchFn(0) {
-			s.onclick(s)
+		if s.on_click != SwitchFn(0) {
+			s.on_click(s)
 		}
 	}
 }

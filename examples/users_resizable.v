@@ -133,13 +133,13 @@ fn main() {
 									ui.button(
 										text: 'Add user'
 										tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
-										onclick: btn_add_click
+										on_click: app.btn_add_click
 										radius: .0
 									),
 									ui.button(
 										tooltip: 'about'
 										text: '?'
-										onclick: btn_help_click
+										on_click: btn_help_click
 										radius: .3
 									),
 								]
@@ -205,7 +205,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn btn_help_click(a voidptr, b &ui.Button) {
+fn btn_help_click(b &ui.Button) {
 	// ui.message_box('Built with V UI')
 	b.ui.window.message('  Built with V UI\n  Thus \n  And')
 }
@@ -215,7 +215,7 @@ fn (mut app App) btn_add_click(b &Button) {
 
 }
 */
-fn btn_add_click(mut app State, x voidptr) {
+fn (mut app State) btn_add_click(b &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)

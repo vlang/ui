@@ -10,7 +10,7 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(text: 'Compact'),
-					ui.switcher(open: true, onclick: on_switch_click),
+					ui.switcher(open: true, on_click: on_switch_click),
 				]
 			),
 			ui.radio(

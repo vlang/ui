@@ -60,7 +60,7 @@ fn main() {
 								z_index: 10
 								movable: true
 								hoverable: true
-								onclick: fn (a voidptr, b voidptr) {
+								on_click: fn (b &ui.Button) {
 									ui.message_box('Built with V UI')
 								}
 							)),
@@ -158,7 +158,7 @@ fn main() {
 							ui.at(150, 80, ui.button(
 								text: 'hide/show menu'
 								z_index: 10
-								onclick: fn (a voidptr, b &ui.Button) {
+								on_click: fn (b &ui.Button) {
 									mut menu := b.ui.window.menu('menu')
 									menu.hidden = !menu.hidden
 								}

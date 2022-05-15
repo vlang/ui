@@ -126,11 +126,11 @@ fn main() {
 								children: [
 									ui.button(
 										text: 'Add user'
-										onclick: btn_add_click
+										on_click: app.btn_add_click
 									),
 									ui.button(
 										text: '?'
-										onclick: btn_help_click
+										on_click: btn_help_click
 									),
 								]
 							),
@@ -188,7 +188,7 @@ fn main() {
 // fn menu_click() {
 // }
 
-fn btn_help_click(a voidptr, b voidptr) {
+fn btn_help_click(b voidptr) {
 	ui.message_box('Built with V UI')
 }
 
@@ -197,7 +197,7 @@ fn (mut app App) btn_add_click(b &Button) {
 
 }
 */
-fn btn_add_click(mut app State, x voidptr) {
+fn (mut app State) btn_add_click(b &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)

@@ -52,7 +52,7 @@ fn main() {
 						text: 'Book'
 						radius: 5
 						bg_color: gx.light_gray
-						onclick: btn_book_click
+						on_click: app.btn_book_click
 					),
 				]
 			),
@@ -93,7 +93,7 @@ fn (mut app App) tb_change(mut tb ui.TextBox) {
 	)
 }
 
-fn btn_book_click(app &App, btn &ui.Button) {
+fn (app &App) btn_book_click(btn &ui.Button) {
 	msg := if app.dd_flight.selected().text == 'one-way flight' {
 		'You have booked a one-way flight for ${*(app.tb_oneway.text)}'
 	} else {

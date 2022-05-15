@@ -119,10 +119,7 @@ fn main() {
 					ui.button(
 						id: 'rgb_btn'
 						text: 'Show rgb color'
-						onclick: fn (app &App, b voidptr) {
-							txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
-							ui.message_box(txt)
-						}
+						on_click: app.btn_click
 					),
 					app.rgb_rectangle,
 					ui.row(
@@ -146,6 +143,11 @@ fn main() {
 		]
 	)
 	ui.run(app.window)
+}
+
+fn (app &App) btn_click(b &ui.Button) {
+	txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+	ui.message_box(txt)
 }
 
 fn (mut app App) on_r_value_changed(slider &ui.Slider) {
