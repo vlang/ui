@@ -42,7 +42,7 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 		bg_color: c.bg_color
 		// theme_cfg: ui.no_theme
 		tooltip: ui.TooltipMessage{c.tooltip, c.tooltip_side}
-		onclick: colorbutton_click
+		on_click: colorbutton_click
 		style_params: ui.button_style(radius: f32(c.radius))
 		padding: f32(c.padding)
 		// ui: 0
@@ -69,7 +69,7 @@ pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonCompone
 	return colorbutton_component(w.button(id))
 }
 
-fn colorbutton_click(a voidptr, mut b ui.Button) {
+fn colorbutton_click(mut b ui.Button) {
 	cbc := colorbutton_component(b)
 	// println("here $b.ui.keymods")
 	if b.ui.btn_down[1] {

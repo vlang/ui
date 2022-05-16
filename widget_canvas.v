@@ -5,7 +5,7 @@ module ui
 
 import gg
 
-pub type DrawFn = fn (ctx &gg.Context, state voidptr, c &Canvas) // x_offset int, y_offset int)
+pub type DrawFn = fn (ctx &gg.Context, c &Canvas) // x_offset int, y_offset int)
 
 [heap]
 pub struct Canvas {
@@ -89,15 +89,15 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c Canvas) draw() {
-	offset_start(mut c)
-	state := c.parent.get_state()
-	if c.draw_fn != voidptr(0) {
-		c.draw_fn(c.gg, state, c)
-	}
-	offset_end(mut c)
+	c.draw_device(c.ui.gg)
 }
 
 fn (mut c Canvas) draw_device(d DrawDevice) {
+	offset_start(mut c)
+	if c.draw_fn != voidptr(0) {
+		c.draw_fn(c.gg, c)
+	}
+	offset_end(mut c)
 }
 
 fn (mut c Canvas) set_visible(state bool) {

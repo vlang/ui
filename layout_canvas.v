@@ -7,15 +7,15 @@ import gg
 import gx
 import eventbus
 
-pub type CanvasLayoutDrawDeviceFn = fn (d DrawDevice, c &CanvasLayout, state voidptr) // x_offset int, y_offset int)
+pub type CanvasLayoutDrawDeviceFn = fn (d DrawDevice, c &CanvasLayout) // x_offset int, y_offset int)
 
-pub type CanvasLayoutScrollFn = fn (e ScrollEvent, c &CanvasLayout)
+pub type CanvasLayoutScrollFn = fn (c &CanvasLayout, e ScrollEvent)
 
-pub type CanvasLayoutMouseMoveFn = fn (e MouseMoveEvent, c &CanvasLayout)
+pub type CanvasLayoutMouseMoveFn = fn (c &CanvasLayout, e MouseMoveEvent)
 
-pub type CanvasLayoutMouseFn = fn (e MouseEvent, c &CanvasLayout)
+pub type CanvasLayoutMouseFn = fn (c &CanvasLayout, e MouseEvent)
 
-pub type CanvasLayoutKeyFn = fn (e KeyEvent, c &CanvasLayout)
+pub type CanvasLayoutKeyFn = fn (c &CanvasLayout, e KeyEvent)
 
 pub type CanvasLayoutSizeFn = fn (c &CanvasLayout) (int, int)
 
@@ -291,7 +291,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			mods: e.mods
 		}
 		// println('$c.id $e2.x $e2.y')
-		c.click_fn(e2, c)
+		c.click_fn(c, e2)
 	}
 }
 
@@ -310,7 +310,7 @@ fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			action: e.action
 			mods: e.mods
 		}
-		c.mouse_down_fn(e2, c)
+		c.mouse_down_fn(c, e2)
 	}
 }
 
@@ -326,7 +326,7 @@ fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			action: e.action
 			mods: e.mods
 		}
-		c.mouse_up_fn(e2, c)
+		c.mouse_up_fn(c, e2)
 	}
 }
 
@@ -340,7 +340,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 			y: e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
-		c.mouse_move_fn(e2, c)
+		c.mouse_move_fn(c, e2)
 	}
 }
 
@@ -352,7 +352,7 @@ pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
 			y: e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
-		c.mouse_enter_fn(e2, c)
+		c.mouse_enter_fn(c, e2)
 	}
 }
 
@@ -364,7 +364,7 @@ pub fn (mut c CanvasLayout) on_mouse_leave(e &MouseMoveEvent) {
 			y: e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
-		c.mouse_leave_fn(e2, c)
+		c.mouse_leave_fn(c, e2)
 	}
 }
 
@@ -376,7 +376,7 @@ fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 			x: e.x
 			y: e.y
 		}
-		c.scroll_fn(e2, c)
+		c.scroll_fn(c, e2)
 	}
 }
 
@@ -388,8 +388,8 @@ fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	if !c.is_focused {
 		return
 	}
-	if c.key_down_fn != voidptr(0) {
-		c.key_down_fn(*e, c)
+	if c.key_down_fn != CanvasLayoutKeyFn(0) {
+		c.key_down_fn(c, *e)
 	}
 }
 
@@ -401,8 +401,8 @@ fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	if !c.is_focused {
 		return
 	}
-	if c.char_fn != voidptr(0) {
-		c.char_fn(*e, c)
+	if c.char_fn != CanvasLayoutKeyFn(0) {
+		c.char_fn(c, *e)
 	}
 }
 
@@ -583,8 +583,6 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		return
 	}
 	offset_start(mut c)
-	parent := c.parent
-	state := parent.get_state()
 	dtw := DrawTextWidget(c)
 	dtw.draw_device_load_style(d)
 	// if scrollview_clip(mut c) {
@@ -609,8 +607,8 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 	}
 
-	if c.draw_device_fn != voidptr(0) {
-		c.draw_device_fn(d, c, state)
+	if c.draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
+		c.draw_device_fn(d, c)
 	}
 	$if cdraw_scroll ? {
 		if Layout(c).has_scrollview_or_parent_scrollview() {
@@ -645,8 +643,8 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		}
 	}
 
-	if c.post_draw_device_fn != voidptr(0) {
-		c.post_draw_device_fn(d, c, state)
+	if c.post_draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
+		c.post_draw_device_fn(d, c)
 	}
 
 	// scrollview_draw(c)

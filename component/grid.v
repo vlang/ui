@@ -167,7 +167,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// textbox formula
 	mut tb_formula := ui.textbox(
 		id: ui.component_id(p.id, 'tb_formula')
-		on_entered: grid_tb_formula_entered
+		on_enter: grid_tb_formula_enter
 	)
 	tb_formula.set_visible(false)
 	layout.children << tb_formula
@@ -176,7 +176,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
-		on_entered: grid_tb_entered
+		on_enter: grid_tb_enter
 		// on_char: grid_tb_char
 	)
 	// println("tb_sel $tb_sel.id created inside $p.id")
@@ -253,7 +253,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 
 // callbacks
 
-fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	// println('grid_click $e.x $e.y')
 	mut g := grid_component(c)
 	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
@@ -279,14 +279,14 @@ fn grid_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn grid_mouse_down(e ui.MouseEvent, c &ui.CanvasLayout) {}
+fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {}
 
-fn grid_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {}
+fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {}
 
-fn grid_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
+fn grid_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 }
 
-fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn grid_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut g := grid_component(c)
 	colbar := e.y < g.colbar_height - c.y - c.offset_y
 	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
@@ -297,7 +297,7 @@ fn grid_mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+fn grid_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	$if grid_key ? {
 		println('key_down $e')
 	}
@@ -369,7 +369,7 @@ fn grid_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	g.cur_allways_visible()
 }
 
-fn grid_char(e ui.KeyEvent, c &ui.CanvasLayout) {
+fn grid_char(c &ui.CanvasLayout, e ui.KeyEvent) {
 	mut g := grid_component(c)
 	s := utf32_to_str(e.codepoint)
 	$if grid_char ? {
@@ -405,7 +405,7 @@ fn grid_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
+fn grid_tb_enter(mut tb ui.TextBox) {
 	mut g := grid_component(tb)
 	new_text := (*tb.text).clone()
 	if new_text.len > 0 && new_text[0..1] == '=' {
@@ -429,7 +429,7 @@ fn grid_tb_entered(mut tb ui.TextBox, a voidptr) {
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
-fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
+fn grid_dd_changed(mut dd ui.Dropdown) {
 	// println('$dd.id  selection changed $dd.selected_index')
 	mut g := grid_component(dd)
 	mut gdd := g.vars[g.sel_j]
@@ -442,7 +442,7 @@ fn grid_dd_changed(a voidptr, mut dd ui.Dropdown) {
 	g.layout.update_layout()
 }
 
-fn grid_cb_clicked(mut cb ui.CheckBox, state voidptr) {
+fn grid_cb_clicked(mut cb ui.CheckBox) {
 	mut g := grid_component(cb)
 	mut gcb := g.vars[g.sel_j]
 	if mut gcb is GridCheckBox {
@@ -456,7 +456,7 @@ fn grid_cb_clicked(mut cb ui.CheckBox, state voidptr) {
 
 // main actions
 
-fn grid_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn grid_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("draw begin")
 	mut g := grid_component(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
@@ -478,7 +478,7 @@ fn grid_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 	// println("draw end")
 }
 
-fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("post draw begin")
 	mut g := grid_component(c)
 

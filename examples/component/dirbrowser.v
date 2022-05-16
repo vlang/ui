@@ -36,10 +36,10 @@ fn main() {
 	ui.run(window)
 }
 
-fn on_click_ok(state voidptr, b &ui.Button) {
+fn on_click_ok(b &ui.Button) {
 	println(uic.filebrowser_component(b).selected_full_title())
 }
 
-fn on_click_cancel(state voidptr, b &ui.Button) {
+fn on_click_cancel(b &ui.Button) {
 	b.ui.gg.quit()
 }

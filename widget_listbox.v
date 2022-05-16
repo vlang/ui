@@ -3,7 +3,7 @@ module ui
 import gx
 import gg
 
-type ListBoxSelectionChangedFn = fn (voidptr, &ListBox) // The second arg is ListBox
+type ListBoxFn = fn (&ListBox)
 
 const (
 	listbox_item_height    = 20
@@ -32,7 +32,7 @@ pub mut:
 	selectable    bool
 	multi         bool
 	draw_count    int
-	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
+	on_change     ListBoxFn = ListBoxFn(0)
 	is_focused    bool
 	item_height   int = ui.listbox_item_height
 	text_offset_y int = ui.listbox_text_offset_y
@@ -79,9 +79,9 @@ mut:
 	width         int
 	height        int
 	z_index       int
-	on_change     ListBoxSelectionChangedFn = ListBoxSelectionChangedFn(0)
-	item_height   int = ui.listbox_item_height
-	text_offset_y int = ui.listbox_text_offset_y
+	on_change     ListBoxFn = ListBoxFn(0)
+	item_height   int       = ui.listbox_item_height
+	text_offset_y int       = ui.listbox_text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// TODO
 	draw_lines     bool     // Draw a rectangle around every item?
@@ -624,8 +624,8 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 }
 
 pub fn (lb &ListBox) call_on_change() {
-	if lb.on_change != ListBoxSelectionChangedFn(0) {
-		lb.on_change(lb.ui.window.state, lb)
+	if lb.on_change != ListBoxFn(0) {
+		lb.on_change(lb)
 	}
 }
 
@@ -762,8 +762,8 @@ fn lb_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 			return
 		}
 	}
-	if lb.on_change != ListBoxSelectionChangedFn(0) {
-		lb.on_change(window.state, lb)
+	if lb.on_change != ListBoxFn(0) {
+		lb.on_change(lb)
 	}
 }
 

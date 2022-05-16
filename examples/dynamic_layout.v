@@ -5,6 +5,7 @@ const (
 	win_height = 600
 )
 
+[heap]
 struct State {
 mut:
 	cpt int
@@ -31,18 +32,18 @@ fn main() {
 						spacing: 10
 						margin_: 10
 						children: [
-							ui.button(text: 'add last', onclick: btn_add_click),
-							ui.button(text: 'add two', onclick: btn_add_two_click),
-							ui.button(text: 'remove last', onclick: btn_remove_click),
-							ui.button(text: 'remove second', onclick: btn_remove_second_click),
-							ui.button(text: 'hide', onclick: btn_show_hide_click),
-							ui.button(text: 'deactivate', onclick: btn_show_activate_click),
-							ui.button(text: 'move', onclick: btn_move_click),
-							ui.button(text: 'text last', onclick: btn_last_text_click),
-							ui.button(text: 'text third', onclick: btn_third_text_click),
-							ui.button(text: 'text below', onclick: btn_text_below_click),
-							ui.button(text: 'switch', onclick: btn_switch_click),
-							ui.button(text: 'migrate', onclick: btn_migrate_click),
+							ui.button(text: 'add last', on_click: app.btn_add_click),
+							ui.button(text: 'add two', on_click: app.btn_add_two_click),
+							ui.button(text: 'remove last', on_click: btn_remove_click),
+							ui.button(text: 'remove second', on_click: btn_remove_second_click),
+							ui.button(text: 'hide', on_click: btn_show_hide_click),
+							ui.button(text: 'deactivate', on_click: btn_show_activate_click),
+							ui.button(text: 'move', on_click: btn_move_click),
+							ui.button(text: 'text last', on_click: btn_last_text_click),
+							ui.button(text: 'text third', on_click: btn_third_text_click),
+							ui.button(text: 'text below', on_click: btn_text_below_click),
+							ui.button(text: 'switch', on_click: btn_switch_click),
+							ui.button(text: 'migrate', on_click: btn_migrate_click),
 						]
 					),
 					ui.column(
@@ -60,7 +61,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn btn_switch_click(mut app State, btn &ui.Button) {
+fn btn_switch_click(btn &ui.Button) {
 	window := btn.ui.window
 	// Without id:
 	// mut s := window.child() //root_layout
@@ -71,7 +72,7 @@ fn btn_switch_click(mut app State, btn &ui.Button) {
 	s.move(from: 0, to: -1)
 }
 
-fn btn_migrate_click(mut app State, btn &ui.Button) {
+fn btn_migrate_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.child(0)
 	mut t := window.child(1)
@@ -86,7 +87,7 @@ fn btn_migrate_click(mut app State, btn &ui.Button) {
 	}
 }
 
-fn btn_add_click(mut app State, btn &ui.Button) {
+fn (mut app State) btn_add_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	app.cpt++
@@ -98,7 +99,7 @@ fn btn_add_click(mut app State, btn &ui.Button) {
 	)
 }
 
-fn btn_add_two_click(mut app State, btn &ui.Button) {
+fn (mut app State) btn_add_two_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	app.cpt++
@@ -110,13 +111,13 @@ fn btn_add_two_click(mut app State, btn &ui.Button) {
 	)
 }
 
-fn btn_remove_click(mut app State, btn &ui.Button) {
+fn btn_remove_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	s.remove(at: -1)
 }
 
-fn btn_show_hide_click(mut app State, btn &ui.Button) {
+fn btn_show_hide_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	state := btn.text == 'show'
@@ -125,7 +126,7 @@ fn btn_show_hide_click(mut app State, btn &ui.Button) {
 	b.text = if state { 'hide' } else { 'show' }
 }
 
-fn btn_show_activate_click(mut app State, btn &ui.Button) {
+fn btn_show_activate_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	state := btn.text == 'deactivate'
@@ -139,7 +140,7 @@ fn btn_show_activate_click(mut app State, btn &ui.Button) {
 	window.update_layout()
 }
 
-fn btn_remove_second_click(mut app State, btn &ui.Button) {
+fn btn_remove_second_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	if s.get_children().len > 1 {
@@ -149,7 +150,7 @@ fn btn_remove_second_click(mut app State, btn &ui.Button) {
 	}
 }
 
-fn btn_move_click(mut app State, btn &ui.Button) {
+fn btn_move_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	s.move(
@@ -158,7 +159,7 @@ fn btn_move_click(mut app State, btn &ui.Button) {
 	)
 }
 
-fn btn_last_text_click(mut app State, btn &ui.Button) {
+fn btn_last_text_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut w := window.child(1, -1)
 	if mut w is ui.Button {
@@ -168,7 +169,7 @@ fn btn_last_text_click(mut app State, btn &ui.Button) {
 	}
 }
 
-fn btn_third_text_click(mut app State, btn &ui.Button) {
+fn btn_third_text_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut w := window.child(1, 2)
 	if mut w is ui.Button {
@@ -178,7 +179,7 @@ fn btn_third_text_click(mut app State, btn &ui.Button) {
 	}
 }
 
-fn btn_text_below_click(mut app State, btn &ui.Button) {
+fn btn_text_below_click(btn &ui.Button) {
 	mut s := btn.parent
 	if mut s is ui.Stack {
 		// An example of extracting child from stack

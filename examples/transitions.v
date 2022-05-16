@@ -7,13 +7,14 @@ const (
 	picture_width_and_height = 100
 )
 
+[heap]
 struct App {
 mut:
-	window       &ui.Window
+	window       &ui.Window = 0
 	x_transition &ui.Transition
 	y_transition &ui.Transition
 	picture      &ui.Picture
-	button       &ui.Button
+	button       &ui.Button = 0
 	state        int
 }
 
@@ -23,8 +24,6 @@ fn main() {
 		logo = 'img/logo.png'
 	}
 	mut app := &App{
-		state: 0
-		window: 0
 		x_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_cubic))
 		y_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_quart))
 		picture: ui.picture(
@@ -34,8 +33,8 @@ fn main() {
 			movable: true
 			on_click: example_pic_click
 		)
-		button: ui.button(text: 'Slide', onclick: btn_toggle_click, movable: true)
 	}
+	app.button = ui.button(text: 'Slide', on_click: app.btn_toggle_click, movable: true)
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -55,11 +54,11 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn example_pic_click(mut app App, pic &ui.Picture) {
+fn example_pic_click(pic &ui.Picture) {
 	println('Clicked pic')
 }
 
-fn btn_toggle_click(mut app App, button &ui.Button) {
+fn (mut app App) btn_toggle_click(button &ui.Button) {
 	if app.x_transition.animated_value == 0 || app.y_transition.animated_value == 0 {
 		app.x_transition.set_value(&app.picture.offset_x)
 		app.y_transition.set_value(&app.picture.offset_y)

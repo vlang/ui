@@ -76,7 +76,7 @@ pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
 	fc.dtw = dtw
 }
 
-fn fontchooser_lb_change(a voidptr, lb &ui.ListBox) {
+fn fontchooser_lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
 	fc := fontchooser_component(lb)
 	// println('fc_lb_change: $lb.id')

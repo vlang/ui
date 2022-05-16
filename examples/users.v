@@ -19,6 +19,7 @@ struct User {
 	country    string
 }
 
+[heap]
 struct State {
 mut:
 	first_name string
@@ -125,11 +126,11 @@ fn main() {
 								children: [
 									ui.button(
 										text: 'Add user'
-										onclick: btn_add_click
+										on_click: app.btn_add_click
 									),
 									ui.button(
 										text: '?'
-										onclick: btn_help_click
+										on_click: btn_help_click
 									),
 								]
 							),
@@ -163,7 +164,7 @@ fn main() {
 							ui.canvas(
 								width: 400
 								height: 275
-								draw_fn: canvas_draw
+								draw_fn: app.canvas_draw
 							),
 							ui.picture(
 								width: 100
@@ -184,10 +185,10 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click() {
-}
+// fn menu_click() {
+// }
 
-fn btn_help_click(a voidptr, b voidptr) {
+fn btn_help_click(b voidptr) {
 	ui.message_box('Built with V UI')
 }
 
@@ -196,7 +197,7 @@ fn (mut app App) btn_add_click(b &Button) {
 
 }
 */
-fn btn_add_click(mut app State, x voidptr) {
+fn (mut app State) btn_add_click(b &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)
@@ -224,7 +225,7 @@ fn btn_add_click(mut app State, x voidptr) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn canvas_draw(gg &gg.Context, app &State, c &ui.Canvas) { // x_offset int, y_offset int) {
+fn (app &State) canvas_draw(gg &gg.Context, c &ui.Canvas) { // x_offset int, y_offset int) {
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset

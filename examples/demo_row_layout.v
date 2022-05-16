@@ -10,6 +10,7 @@ const (
 	lb_height  = 0
 )
 
+[heap]
 struct App {
 mut:
 	sizes map[string]f64
@@ -57,7 +58,7 @@ fn main() {
 										id: 'lb1w'
 										height: lb_height
 										selection: 0
-										on_change: lb_change
+										on_change: app.lb_change
 										items: {
 											'.3':             '.3'
 											'100':            '100'
@@ -72,7 +73,7 @@ fn main() {
 										id: 'lb1h'
 										height: lb_height
 										selection: 0
-										on_change: lb_change
+										on_change: app.lb_change
 										items: {
 											'.3':         '.3'
 											'20':         '20'
@@ -94,7 +95,7 @@ fn main() {
 										id: 'lb2w'
 										height: lb_height
 										selection: 1
-										on_change: lb_change
+										on_change: app.lb_change
 										items: {
 											'.3':             '.3'
 											'100':            '100'
@@ -109,7 +110,7 @@ fn main() {
 										id: 'lb2h'
 										height: lb_height
 										selection: 1
-										on_change: lb_change
+										on_change: app.lb_change
 										items: {
 											'.3':         '.3'
 											'20':         '20'
@@ -211,7 +212,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn lb_change(app &App, lb &ui.ListBox) {
+fn (app &App) lb_change(lb &ui.ListBox) {
 	key, _ := lb.selected() or { '100', '' }
 
 	// mut sw, mut sh := lb.size()
@@ -267,7 +268,7 @@ fn lb_change(app &App, lb &ui.ListBox) {
 	// }
 }
 
-fn lb_change_sp(app &App, lb &ui.ListBox) {
+fn lb_change_sp(lb &ui.ListBox) {
 	key, _ := lb.selected() or { '10', '' }
 
 	win := lb.ui.window
@@ -316,7 +317,7 @@ fn set_sizes_labels(win &ui.Window) {
 	row_btn2.title = 'Btn2: ($w, $h)'
 }
 
-fn win_resize(w int, h int, win &ui.Window) {
+fn win_resize(win &ui.Window, w int, h int) {
 	set_sizes_labels(win)
 }
 

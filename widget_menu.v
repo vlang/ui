@@ -192,10 +192,8 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		if selected >= 0 && selected != m.selected {
 			m.close()
 		}
-		if item.action != voidptr(0) {
-			parent := m.parent
-			state := parent.get_state()
-			item.action(item, state)
+		if item.action != MenuItemFn(0) {
+			item.action(item)
 		}
 		if item.has_menu() {
 			// println('toggle menu $item.id')
@@ -352,7 +350,7 @@ pub fn (m &Menu) show_all_states() {
 	println('')
 }
 
-pub type MenuItemFn = fn (item &MenuItem, state voidptr)
+pub type MenuItemFn = fn (item &MenuItem)
 
 [heap]
 pub struct MenuItem {

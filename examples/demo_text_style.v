@@ -2,6 +2,7 @@ import ui
 import gx
 import os
 
+[heap]
 struct App {
 mut:
 	window    &ui.Window = 0
@@ -25,7 +26,7 @@ fn main() {
 						id: 'lb'
 						draw_lines: true
 						// scrollview: false
-						on_change: lb_change
+						on_change: app.lb_change
 					),
 					ui.column(
 						children: [
@@ -36,7 +37,7 @@ fn main() {
 							ui.canvas_plus(
 								id: 'c'
 								height: 200
-								on_draw: on_draw
+								on_draw: app.on_draw
 							),
 						]
 					),
@@ -96,7 +97,7 @@ fn window_init(mut w ui.Window) {
 	// dtw.set_style('arial')
 }
 
-fn on_draw(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
+fn (app &App) on_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)
@@ -105,7 +106,7 @@ fn on_draw(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
 	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: ($w, $h)')
 }
 
-fn lb_change(mut app App, lb &ui.ListBox) {
+fn (mut app App) lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
 	c := w.canvas_layout('c')
 	mut dtw := ui.DrawTextWidget(c)

@@ -6,7 +6,7 @@ module ui
 import os
 import gg
 
-type PictureClickFn = fn (arg_1 voidptr, arg_2 voidptr) // userptr, picture
+type PictureFn = fn (&Picture)
 
 [heap]
 pub struct Picture {
@@ -30,7 +30,7 @@ mut:
 	path      string
 	ui        &UI
 	image     gg.Image
-	on_click  PictureClickFn
+	on_click  PictureFn
 	use_cache bool
 	tooltip   TooltipMessage
 }
@@ -43,7 +43,7 @@ pub struct PictureParams {
 	height       int
 	z_index      int
 	movable      bool
-	on_click     PictureClickFn
+	on_click     PictureFn
 	use_cache    bool     = true
 	ref          &Picture = voidptr(0)
 	image        gg.Image
@@ -143,8 +143,8 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 	if pic.point_inside(e.x, e.y) {
 		if int(e.action) == 0 {
-			if pic.on_click != voidptr(0) {
-				pic.on_click(window.state, pic)
+			if pic.on_click != PictureFn(0) {
+				pic.on_click(pic)
 			}
 		}
 	}

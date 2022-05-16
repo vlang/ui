@@ -3,6 +3,7 @@ import os
 import gx
 import ui
 
+[heap]
 struct App {
 mut:
 	text       string
@@ -43,7 +44,7 @@ fn main() {
 		for op in row_ops {
 			row_children << ui.button(
 				text: op
-				onclick: btn_click
+				on_click: app.btn_click
 				text_size: 1.0 / 20
 				radius: .25
 				// theme: 'blue'
@@ -80,7 +81,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_click(mut app App, btn &ui.Button) {
+fn (mut app App) btn_click(btn &ui.Button) {
 	op := btn.text
 	number := app.text
 	if op == 'C' {

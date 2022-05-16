@@ -100,6 +100,7 @@ fn (a ActionSetCircleRadius) undo(mut state State) {
 
 // App
 
+[heap]
 struct App {
 mut:
 	sel        int
@@ -127,9 +128,7 @@ fn main() {
 					orientation: .horizontal
 					max: 50
 					val: 20
-					on_value_changed: fn (mut a App, sl &ui.Slider) {
-						a.state.circles[a.sel].radius = sl.val
-					}
+					on_value_changed: app.slider_changed
 				),
 			]
 		)
@@ -151,14 +150,24 @@ fn main() {
 						spacing: 20
 						widths: [ui.stretch, 40, 40, ui.stretch]
 						children: [ui.spacing(),
-							ui.button(id: 'btn_undo', text: 'Undo', radius: 5, onclick: click_undo),
-							ui.button(id: 'btn_redo', text: 'Redo', radius: 5, onclick: click_redo),
+							ui.button(
+								id: 'btn_undo'
+								text: 'Undo'
+								radius: 5
+								on_click: app.click_undo
+							),
+							ui.button(
+								id: 'btn_redo'
+								text: 'Redo'
+								radius: 5
+								on_click: app.click_redo
+							),
 							ui.spacing()]
 					),
 					ui.canvas_plus(
 						bg_color: gx.white
 						bg_radius: .025
-						on_draw: draw_circles
+						on_draw: app.draw_circles
 						on_click: click_circles
 						on_mouse_move: mouse_move_circles
 					),
@@ -170,7 +179,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn draw_circles(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
+fn (app &App) draw_circles(d ui.DrawDevice, c &ui.CanvasLayout) {
 	for i, circle in app.state.circles {
 		if i == app.hover {
 			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gx.light_gray)
@@ -179,7 +188,7 @@ fn draw_circles(d ui.DrawDevice, c &ui.CanvasLayout, app &App) {
 	}
 }
 
-fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut app := &App(c.ui.window.state)
 	mut sw := c.ui.window.subwindow('sw_radius')
 	if c.ui.btn_down[0] {
@@ -216,12 +225,12 @@ fn click_circles(e ui.MouseEvent, c &ui.CanvasLayout) {
 	check_redo_disabled(app.state, mut btn_redo)
 }
 
-fn mouse_move_circles(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn mouse_move_circles(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut app := &App(c.ui.window.state)
 	app.hover = app.state.point_inside(f32(e.x), f32(e.y))
 }
 
-fn click_undo(mut a App, mut b ui.Button) {
+fn (mut a App) click_undo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
@@ -231,7 +240,7 @@ fn click_undo(mut a App, mut b ui.Button) {
 	check_redo_disabled(a.state, mut redo)
 }
 
-fn click_redo(mut a App, mut b ui.Button) {
+fn (mut a App) click_redo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
@@ -247,4 +256,8 @@ fn check_undo_disabled(state State, mut undo ui.Button) {
 
 fn check_redo_disabled(state State, mut redo ui.Button) {
 	redo.disabled = state.current_action == state.history.len - 1
+}
+
+fn (mut app App) slider_changed(sl &ui.Slider) {
+	app.state.circles[app.sel].radius = sl.val
 }

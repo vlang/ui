@@ -4,8 +4,8 @@
 *.exe
 *.ilk
 *.pdb
-examples/*
-!examples/*.*
+# examples/*
+!examples/*/*.v
 fmt_verify_all
 
 # Ignore editor files

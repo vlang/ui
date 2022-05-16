@@ -23,7 +23,7 @@ fn (mut win Window) add_message_dialog() {
 				width: 100
 				radius: .3
 				z_index: 1000
-				onclick: message_dialog_click
+				on_click: message_dialog_click
 			),
 		]
 	)
@@ -32,7 +32,7 @@ fn (mut win Window) add_message_dialog() {
 	dlg.set_visible(false)
 }
 
-fn message_dialog_click(app voidptr, b &Button) {
+fn message_dialog_click(b &Button) {
 	mut dlg := b.ui.window.stack('_msg_dlg_col')
 	dlg.set_visible(false)
 }
