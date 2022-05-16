@@ -39,15 +39,13 @@ fn main() {
 						bg_color: gx.light_gray
 						radius: 5
 						border_color: gx.gray
-						on_click: app.btn_count_click
+						on_click: fn [mut app] (btn &ui.Button) {
+							app.counter = (app.counter.int() + 1).str()
+						}
 					),
 				]
 			),
 		]
 	)
 	ui.run(window)
-}
-
-fn (mut app App) btn_count_click(btn &ui.Button) {
-	app.counter = (app.counter.int() + 1).str()
 }

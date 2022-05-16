@@ -481,6 +481,12 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 	// window.ui.needs_refresh = true
 	// window.refresh()
+
+	// delegation
+	if window.evt_mngr.has_delegation(e) {
+		return
+	}
+	
 	$if macos {
 		if window.ui.gg.native_rendering {
 			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {

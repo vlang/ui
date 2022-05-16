@@ -1,5 +1,7 @@
 module ui
 
+import gg
+
 struct EventNames {
 pub:
 	on_click        string = 'on_click'
@@ -18,6 +20,7 @@ pub:
 	on_resize       string = 'on_resize'
 	on_mouse_enter  string = 'on_mouse_enter'
 	on_mouse_leave  string = 'on_mouse_leave'
+	on_all			string = "on_all"
 }
 
 pub const events = EventNames{}
@@ -195,4 +198,10 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 		print('($i)[$id: $ch.z_index] ')
 	}
 	println('\n')
+}
+
+// delegation (useful for iui interconnection)
+
+fn (em &EventMngr) has_delegation(e &gg.Event) bool {
+	return false
 }
