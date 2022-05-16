@@ -14,9 +14,9 @@ const (
 	sw_focus_bg_color = gx.rgb(50, 50, 50)
 )
 
-type SwitchClickFn = fn (voidptr, &Switch)
+type SwitchFn = fn (&Switch)
 
-type SwitchKeyDownFn = fn (voidptr, &Switch, u32)
+type SwitchU32Fn = fn (&Switch, u32)
 
 [heap]
 pub struct Switch {
@@ -34,8 +34,8 @@ pub mut:
 	is_focused  bool
 	open        bool
 	ui          &UI
-	onclick     SwitchClickFn
-	on_key_down SwitchKeyDownFn
+	on_click    SwitchFn
+	on_key_down SwitchU32Fn
 	hidden      bool
 	// component state for composable widget
 	component voidptr
@@ -45,8 +45,8 @@ pub mut:
 pub struct SwitchParams {
 	id          string
 	z_index     int
-	onclick     SwitchClickFn
-	on_key_down SwitchKeyDownFn
+	on_click    SwitchFn
+	on_key_down SwitchU32Fn
 	open        bool
 }
 
@@ -57,7 +57,7 @@ pub fn switcher(c SwitchParams) &Switch {
 		width: ui.sw_width
 		z_index: c.z_index
 		open: c.open
-		onclick: c.onclick
+		on_click: c.on_click
 		on_key_down: c.on_key_down
 		ui: 0
 	}
@@ -149,15 +149,15 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 	if !s.is_focused {
 		return
 	}
-	if s.on_key_down != SwitchKeyDownFn(0) {
-		s.on_key_down(window.state, s, e.codepoint)
+	if s.on_key_down != SwitchU32Fn(0) {
+		s.on_key_down(s, e.codepoint)
 	} else {
 		// default behavior like click for space and enter
 		if e.key in [.enter, .space] {
 			// println("sw key as a click")
 			s.open = !s.open
-			if s.onclick != SwitchClickFn(0) {
-				s.onclick(window.state, s)
+			if s.on_click != SwitchFn(0) {
+				s.on_click(s)
 			}
 		}
 	}
@@ -173,8 +173,8 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 	// <===== mouse position test added
 	if int(e.action) == 0 {
 		s.open = !s.open
-		if s.onclick != SwitchClickFn(0) {
-			s.onclick(w.state, s)
+		if s.on_click != SwitchFn(0) {
+			s.on_click(s)
 		}
 	}
 }

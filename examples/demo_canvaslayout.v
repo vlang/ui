@@ -60,7 +60,7 @@ fn main() {
 								z_index: 10
 								movable: true
 								hoverable: true
-								onclick: fn (a voidptr, b voidptr) {
+								on_click: fn (b &ui.Button) {
 									ui.message_box('Built with V UI')
 								}
 							)),
@@ -158,7 +158,7 @@ fn main() {
 							ui.at(150, 80, ui.button(
 								text: 'hide/show menu'
 								z_index: 10
-								onclick: fn (a voidptr, b &ui.Button) {
+								on_click: fn (b &ui.Button) {
 									mut menu := b.ui.window.menu('menu')
 									menu.hidden = !menu.hidden
 								}
@@ -172,18 +172,18 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click(item &ui.MenuItem, app voidptr) {
+fn menu_click(item &ui.MenuItem) {
 	println('menu here $item.text')
 }
 
-fn dd_change(app voidptr, dd &ui.Dropdown) {
+fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
 	mut b := win.button('b_thm')
 	b.update_theme_style(dd.selected().text)
 }
 
-fn lb_change(app voidptr, lb &ui.ListBox) {
+fn lb_change(lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
@@ -191,16 +191,16 @@ fn lb_change(app voidptr, lb &ui.ListBox) {
 	b.update_theme_style(id)
 }
 
-fn lb_change_multi(app voidptr, lb &ui.ListBox) {
+fn lb_change_multi(lb &ui.ListBox) {
 	println(lb.items.map('$it.text: $it.selected $it.disabled'))
 }
 
-fn draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.full_width, c.full_height
 	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 }
 
-fn mouse_move(e ui.MouseMoveEvent, c &ui.CanvasLayout) {
+fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut l := c.ui.window.label('l_mm')
 	l.set_text('($e.x,$e.y)')
 }

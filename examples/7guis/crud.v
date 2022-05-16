@@ -6,6 +6,7 @@ struct Person {
 	surname string
 }
 
+[heap]
 struct App {
 mut:
 	people     []Person
@@ -46,7 +47,7 @@ fn main() {
 							ui.row(
 								widths: [70.0, ui.stretch]
 								children: [ui.label(text: 'Filter prefix:', justify: ui.center_left),
-									ui.textbox(id: 'tb_filter', on_changed: on_changed_filter)]
+									ui.textbox(id: 'tb_filter', on_change: app.on_change_filter)]
 							),
 							ui.spacing(),
 						]
@@ -91,19 +92,19 @@ fn main() {
 								id: 'btn_create'
 								text: 'Create'
 								radius: 5
-								onclick: btn_create_click
+								on_click: app.btn_create_click
 							),
 							ui.button(
 								id: 'btn_update'
 								text: 'Update'
 								radius: 5
-								onclick: btn_update_click
+								on_click: app.btn_update_click
 							),
 							ui.button(
 								id: 'btn_delete'
 								text: 'Delete'
 								radius: 5
-								onclick: btn_delete_click
+								on_click: app.btn_delete_click
 							),
 						]
 					),
@@ -125,11 +126,11 @@ fn win_init(win &ui.Window) {
 	app.update_listbox()
 }
 
-fn on_changed_filter(mut tb ui.TextBox, mut app App) {
+fn (mut app App) on_change_filter(mut tb ui.TextBox) {
 	app.update_listbox()
 }
 
-fn btn_create_click(mut app App, btn &ui.Button) {
+fn (mut app App) btn_create_click(btn &ui.Button) {
 	p := person(app.tb_name.text, app.tb_surname.text)
 	if p.id !in app.people.map(it.id) {
 		app.people << p
@@ -137,11 +138,11 @@ fn btn_create_click(mut app App, btn &ui.Button) {
 	app.update_listbox()
 }
 
-fn btn_update_click(mut app App, btn &ui.Button) {
+fn (mut app App) btn_update_click(btn &ui.Button) {
 	app.update_selected_person()
 }
 
-fn btn_delete_click(mut app App, btn &ui.Button) {
+fn (mut app App) btn_delete_click(btn &ui.Button) {
 	app.delete_selected_person()
 }
 

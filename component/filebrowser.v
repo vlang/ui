@@ -28,8 +28,8 @@ pub struct FileBrowserParams {
 	with_fpath      bool
 	hidden          bool
 	bg_color        gx.Color = gx.red // gx.hex(0xfcf4e4ff)
-	on_click_ok     ui.ButtonClickFn
-	on_click_cancel ui.ButtonClickFn
+	on_click_ok     ui.ButtonFn
+	on_click_cancel ui.ButtonFn
 }
 
 pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
@@ -38,14 +38,14 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 		text: p.text_cancel
 		radius: 5
 		z_index: 100
-		onclick: p.on_click_cancel
+		on_click: p.on_click_cancel
 	)
 	btn_ok := ui.button(
 		id: ui.component_id(p.id, 'btn_ok')
 		text: p.text_ok
 		radius: 5
 		z_index: 100
-		onclick: p.on_click_ok
+		on_click: p.on_click_ok
 	)
 	tv_layout := dirtreeview_stack(
 		id: ui.component_id(p.id, 'tvd')

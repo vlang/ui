@@ -12,7 +12,7 @@ const (
 	dropdown_drawer_color = gx.rgb(255, 255, 255)
 )
 
-pub type DropDownSelectionChangedFn = fn (voidptr, &Dropdown)
+pub type DropDownFn = fn (&Dropdown)
 
 [heap]
 pub struct Dropdown {
@@ -33,7 +33,7 @@ pub mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed DropDownSelectionChangedFn
+	on_selection_changed DropDownFn
 	hidden               bool
 	// bg_color             gx.Color = ui.dropdown_color
 	// Style
@@ -60,7 +60,7 @@ pub struct DropdownParams {
 	selected_index int = -1
 	// text_size            f64
 	theme                string = no_style
-	on_selection_changed DropDownSelectionChangedFn
+	on_selection_changed DropDownFn
 	items                []DropdownItem
 	texts                []string
 }
@@ -253,10 +253,8 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		}
 		.enter {
 			dd.selected_index = dd.hover_index
-			if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
-				parent := dd.parent
-				state := parent.get_state()
-				dd.on_selection_changed(state, dd)
+			if dd.on_selection_changed != DropDownFn(0) {
+				dd.on_selection_changed(dd)
 			}
 			dd.unfocus()
 		}
@@ -283,10 +281,8 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		index := int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
 		// println("$index : ($e.y - $dd.y) / dd.dropdown_height - 1")
 		dd.selected_index = index
-		if dd.on_selection_changed != DropDownSelectionChangedFn(0) {
-			parent := dd.parent
-			state := parent.get_state()
-			dd.on_selection_changed(state, dd)
+		if dd.on_selection_changed != DropDownFn(0) {
+			dd.on_selection_changed(dd)
 		}
 		dd.unfocus()
 	}

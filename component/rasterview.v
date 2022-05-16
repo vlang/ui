@@ -127,7 +127,7 @@ fn rv_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
+fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	// N.B.: rv.size = rv.pixel_size + rv.inter
@@ -146,7 +146,7 @@ fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout, app voidptr) {
 	rv.draw_device_current(d)
 }
 
-fn rv_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+fn rv_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	mut rv := rasterview_component(c)
 	mut paint := false
 	match e.key {
@@ -205,7 +205,7 @@ fn rv_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn rv_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut rv := rasterview_component(c)
 	rv.sel_i, rv.sel_j = rv.get_index_pos(e.x, e.y)
 	if rv.on_click != RasterViewFn(0) {
@@ -213,14 +213,14 @@ fn rv_click(e ui.MouseEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn rv_mouse_down(e ui.MouseEvent, mut c ui.CanvasLayout) {
+fn rv_mouse_down(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	c.focus()
 }
 
-fn rv_mouse_up(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn rv_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
 }
 
-fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
+fn rv_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 	// TODO: to fix
 	mut rv := rasterview_component(c)
 	// println("scroll: ${int(e.mouse_x)}, ${int(e.mouse_y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
@@ -231,7 +231,7 @@ fn rv_scroll(e ui.ScrollEvent, c &ui.CanvasLayout) {
 	}
 }
 
-fn rv_mouse_move(e ui.MouseMoveEvent, mut c ui.CanvasLayout) {
+fn rv_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut rv := rasterview_component(c)
 	// println("move $c.id: ${int(e.x)}, ${int(e.y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
 	if rv.point_inside(int(e.x), int(e.y)) {
@@ -244,14 +244,14 @@ fn rv_mouse_move(e ui.MouseMoveEvent, mut c ui.CanvasLayout) {
 	}
 }
 
-fn rv_mouse_enter(e ui.MouseMoveEvent, mut c ui.CanvasLayout) {
+fn rv_mouse_enter(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 && rv.cur_j != -1 {
 	c.ui.window.mouse.start(ui.mouse_hidden)
 	// }
 }
 
-fn rv_mouse_leave(e ui.MouseMoveEvent, mut c ui.CanvasLayout) {
+fn rv_mouse_leave(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 || rv.cur_j != -1 {
 	c.ui.window.mouse.stop_last(ui.mouse_hidden)

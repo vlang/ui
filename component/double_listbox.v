@@ -35,10 +35,10 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	mut btn_right := ui.button(
 		id: c.id + '_btn_right'
 		text: '>>'
-		onclick: doublelistbox_move_right
+		on_click: doublelistbox_move_right
 	)
-	mut btn_left := ui.button(id: c.id + '_btn_left', text: '<<', onclick: doublelistbox_move_left)
-	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', onclick: doublelistbox_clear)
+	mut btn_left := ui.button(id: c.id + '_btn_left', text: '<<', on_click: doublelistbox_move_left)
+	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', on_click: doublelistbox_clear)
 	mut layout := ui.row(
 		title: c.title
 		id: ui.component_id(c.id, 'layout')
@@ -80,7 +80,7 @@ pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxCom
 }
 
 // callback
-fn doublelistbox_clear(a voidptr, btn &ui.Button) {
+fn doublelistbox_clear(btn &ui.Button) {
 	mut dlb := doublelistbox_component(btn)
 	for item in dlb.lb_right.values() {
 		dlb.lb_left.add_item(item, item)
@@ -88,7 +88,7 @@ fn doublelistbox_clear(a voidptr, btn &ui.Button) {
 	}
 }
 
-fn doublelistbox_move_left(a voidptr, btn &ui.Button) {
+fn doublelistbox_move_left(btn &ui.Button) {
 	mut dlb := doublelistbox_component(btn)
 	if dlb.lb_right.is_selected() {
 		_, item := dlb.lb_right.selected() or { '', '' }
@@ -99,7 +99,7 @@ fn doublelistbox_move_left(a voidptr, btn &ui.Button) {
 	}
 }
 
-fn doublelistbox_move_right(a voidptr, btn &ui.Button) {
+fn doublelistbox_move_right(btn &ui.Button) {
 	mut dlb := doublelistbox_component(btn)
 	if dlb.lb_left.is_selected() {
 		_, item := dlb.lb_left.selected() or { '', '' }

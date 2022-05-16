@@ -6,6 +6,7 @@ const (
 	no_time = time.Time{}
 )
 
+[heap]
 struct App {
 mut:
 	dd_flight &ui.Dropdown = 0
@@ -34,7 +35,7 @@ fn main() {
 						id: 'dd_flight'
 						z_index: 10
 						selected_index: 0
-						on_selection_changed: dd_change
+						on_selection_changed: app.dd_change
 						items: [
 							ui.DropdownItem{
 								text: 'one-way flight'
@@ -44,14 +45,14 @@ fn main() {
 							},
 						]
 					),
-					ui.textbox(id: 'tb_oneway', on_changed: tb_changed),
-					ui.textbox(id: 'tb_return', read_only: true, on_changed: tb_changed),
+					ui.textbox(id: 'tb_oneway', on_change: app.tb_change),
+					ui.textbox(id: 'tb_return', read_only: true, on_change: app.tb_change),
 					ui.button(
 						id: 'btn_book'
 						text: 'Book'
 						radius: 5
 						bg_color: gx.light_gray
-						onclick: btn_book_click
+						on_click: app.btn_book_click
 					),
 				]
 			),
@@ -73,7 +74,7 @@ fn win_init(win &ui.Window) {
 	app.tb_return.set_text(date.clone())
 }
 
-fn dd_change(mut app App, dd &ui.Dropdown) {
+fn (mut app App) dd_change(dd &ui.Dropdown) {
 	match dd.selected().text {
 		'one-way flight' {
 			app.tb_return.read_only = true
@@ -84,7 +85,7 @@ fn dd_change(mut app App, dd &ui.Dropdown) {
 	}
 }
 
-fn tb_changed(mut tb ui.TextBox, mut app App) {
+fn (mut app App) tb_change(mut tb ui.TextBox) {
 	valid := valid_date(tb.text)
 	app.btn_book.disabled = !valid
 	tb.update_style(
@@ -92,7 +93,7 @@ fn tb_changed(mut tb ui.TextBox, mut app App) {
 	)
 }
 
-fn btn_book_click(app &App, btn &ui.Button) {
+fn (app &App) btn_book_click(btn &ui.Button) {
 	msg := if app.dd_flight.selected().text == 'one-way flight' {
 		'You have booked a one-way flight for ${*(app.tb_oneway.text)}'
 	} else {

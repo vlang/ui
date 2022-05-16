@@ -149,14 +149,14 @@ fn tabs_init(layout &ui.Stack) {
 	// tabs.print_styles()
 }
 
-fn tab_key_down(e ui.KeyEvent, c &ui.CanvasLayout) {
+fn tab_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	if e.key in [.up, .down] {
 		mut tabs := tabs_component(c)
 		tabs.transpose()
 	}
 }
 
-fn tab_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn tab_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut tabs := tabs_component(c)
 	// println("selected $c.id")
 	tabs.layout.children[1] = tabs.pages[c.id]

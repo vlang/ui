@@ -10,7 +10,7 @@ mut:
 	window &ui.Window = 0
 }
 
-fn dd_change(mut app App, dd &ui.Dropdown) {
+fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 }
 

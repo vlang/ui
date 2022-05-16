@@ -11,59 +11,59 @@ const (
 	hor_slider_val  = (hor_slider_max + hor_slider_min) / 2
 )
 
+[heap]
 struct App {
 mut:
-	window       &ui.Window
-	vert_slider  &ui.Slider
-	vert_textbox &ui.TextBox
-	vert_text    string = ((vert_slider_max + vert_slider_min) / 2).str()
-	hor_slider   &ui.Slider
-	hor_text     string = ((hor_slider_max + hor_slider_min) / 2).str()
-	hor_textbox  &ui.TextBox
+	window       &ui.Window  = 0
+	vert_slider  &ui.Slider  = 0
+	vert_textbox &ui.TextBox = 0
+	vert_text    string      = ((vert_slider_max + vert_slider_min) / 2).str()
+	hor_slider   &ui.Slider  = 0
+	hor_text     string      = ((hor_slider_max + hor_slider_min) / 2).str()
+	hor_textbox  &ui.TextBox = 0
 }
 
 fn main() {
-	mut app := &App{
-		window: 0
-		hor_slider: ui.slider(
-			width: 200
-			height: 10
-			orientation: .horizontal
-			min: hor_slider_min
-			max: hor_slider_max
-			val: hor_slider_val
-			focus_on_thumb_only: true
-			rev_min_max_pos: true
-			on_value_changed: on_value_changed_hor
-		)
-		vert_slider: ui.slider(
-			width: 10
-			height: 200
-			orientation: .vertical
-			min: vert_slider_min
-			max: vert_slider_max
-			val: vert_slider_val
-			focus_on_thumb_only: true
-			rev_min_max_pos: true
-			on_value_changed: on_value_changed_vert
-		)
-		hor_textbox: ui.textbox(
-			width: 40
-			height: 20
-			max_len: 20
-			read_only: false
-			is_numeric: true
-			on_char: on_char_hor
-		)
-		vert_textbox: ui.textbox(
-			width: 40
-			height: 20
-			max_len: 20
-			read_only: false
-			is_numeric: true
-			on_char: on_char_vert
-		)
-	}
+	mut app := &App{}
+	app.hor_slider = ui.slider(
+		width: 200
+		height: 10
+		orientation: .horizontal
+		min: hor_slider_min
+		max: hor_slider_max
+		val: hor_slider_val
+		focus_on_thumb_only: true
+		rev_min_max_pos: true
+		on_value_changed: app.on_value_changed_hor
+	)
+	app.vert_slider = ui.slider(
+		width: 10
+		height: 200
+		orientation: .vertical
+		min: vert_slider_min
+		max: vert_slider_max
+		val: vert_slider_val
+		focus_on_thumb_only: true
+		rev_min_max_pos: true
+		on_value_changed: app.on_value_changed_vert
+	)
+	app.hor_textbox = ui.textbox(
+		width: 40
+		height: 20
+		max_len: 20
+		read_only: false
+		is_numeric: true
+		on_char: app.on_char_hor
+	)
+	app.vert_textbox = ui.textbox(
+		width: 40
+		height: 20
+		max_len: 20
+		read_only: false
+		is_numeric: true
+		on_char: app.on_char_vert
+	)
+
 	app.hor_textbox.text = &app.hor_text
 	app.vert_textbox.text = &app.vert_text
 	app.window = ui.window(
@@ -94,17 +94,17 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_value_changed_hor(mut app App, slider &ui.Slider) {
+fn (mut app App) on_value_changed_hor(slider &ui.Slider) {
 	app.hor_text = int(app.hor_slider.val).str()
 	app.hor_textbox.border_accentuated = false
 }
 
-fn on_value_changed_vert(mut app App, slider &ui.Slider) {
+fn (mut app App) on_value_changed_vert(slider &ui.Slider) {
 	app.vert_text = int(app.vert_slider.val).str()
 	app.vert_textbox.border_accentuated = false
 }
 
-fn on_char_hor(mut app App, textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_char_hor(textbox &ui.TextBox, keycode u32) {
 	val := app.hor_text.int()
 	min := app.hor_slider.min
 	max := app.hor_slider.max
@@ -116,7 +116,7 @@ fn on_char_hor(mut app App, textbox &ui.TextBox, keycode u32) {
 	}
 }
 
-fn on_char_vert(mut app App, textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_char_vert(textbox &ui.TextBox, keycode u32) {
 	val := app.vert_text.int()
 	min := app.vert_slider.min
 	max := app.vert_slider.max

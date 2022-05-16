@@ -8,6 +8,7 @@ const (
 	bpadding        = 5
 )
 
+[heap]
 struct App {
 mut:
 	text       string
@@ -45,7 +46,7 @@ fn main() {
 			spacing: 5
 			height: 30
 			widths: ui.stretch
-			children: get_row(op)
+			children: get_row(app, op)
 		)
 	}
 	app.window = ui.window(
@@ -64,7 +65,7 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_click(mut app App, btn &ui.Button) {
+fn (mut app App) btn_click(btn &ui.Button) {
 	op := btn.text
 	number := app.text
 	if op == 'C' {
@@ -193,7 +194,7 @@ fn (mut app App) calculate() {
 	// eprintln('-------- result: $result | i: $i -------------------')
 }
 
-fn get_row(ops []string) []ui.Widget {
+fn get_row(app &App, ops []string) []ui.Widget {
 	mut children := []ui.Widget{}
 	for op in ops {
 		if op == ' ' {
@@ -201,30 +202,10 @@ fn get_row(ops []string) []ui.Widget {
 		}
 		children << ui.button(
 			text: op
-			onclick: btn_click
+			on_click: app.btn_click
 			width: bwidth
 			height: bheight
 		)
 	}
 	return children
 }
-
-/*
-fn (mut app App) add_button(text string, button_idx int) {
-	// Calculate button's coordinates from its index
-	x := bpadding + (button_idx % buttons_per_row) * (bwidth + bpadding)
-	y := bpadding + bheight + (button_idx / buttons_per_row) * (bwidth + bpadding)
-	// Skip empty buttons
-	if text != ' ' {
-		app.btns << ui.new_button({
-			text: text
-			x: x
-			y: y
-			parent: app.window
-			onclick: btn_click
-			width: bwidth
-			height: bheight
-		})
-	}
-}
-*/

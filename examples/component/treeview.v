@@ -66,7 +66,7 @@ fn main() {
 							'file':   'toto'
 						}
 						text_color: gx.blue
-						on_click: treeview_onclick
+						on_click: treeview_on_click
 					),
 				]
 			),
@@ -76,7 +76,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn treeview_onclick(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
+fn treeview_on_click(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	selected := c.id
 	println('$selected selected with title: ${tv.titles[selected]}!')
 }

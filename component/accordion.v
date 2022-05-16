@@ -83,7 +83,7 @@ pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
 	return accordion_component(w.stack(ui.component_id(id, 'layout')))
 }
 
-fn accordion_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
+fn accordion_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	acc := accordion_component(c)
 	if acc.selected[c.id] {
 		c.draw_device_triangle_filled(d, 5, 8, 12, 8, 8, 14, gx.black)
@@ -94,7 +94,7 @@ fn accordion_draw(d ui.DrawDevice, c &ui.CanvasLayout, state voidptr) {
 	c.draw_device_styled_text(d, 16, 4, acc.titles[c.id], color: acc.text_color, size: acc.text_size)
 }
 
-fn accordion_click(e ui.MouseEvent, c &ui.CanvasLayout) {
+fn accordion_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut acc := accordion_component(c)
 	// println("accordion clicked $c.id")
 	acc.selected[c.id] = !acc.selected[c.id]

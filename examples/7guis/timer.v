@@ -10,11 +10,12 @@ const (
 	left       = 60.0
 )
 
+[heap]
 struct App {
 mut:
 	lbl_elapsed_value &ui.Label
 	progress_bar      &ui.ProgressBar
-	slider            &ui.Slider
+	slider            &ui.Slider = 0
 	window            &ui.Window
 	duration          f64 = 15.0
 	elapsed_time      f64 = 0.0
@@ -22,15 +23,6 @@ mut:
 
 fn main() {
 	mut app := &App{
-		slider: ui.slider(
-			width: 180
-			height: 20
-			orientation: .horizontal
-			max: 30
-			min: 0
-			val: 15.0
-			on_value_changed: on_value_changed
-		)
 		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1.0 / 10)
 		progress_bar: ui.progressbar(
 			height: 20
@@ -41,6 +33,15 @@ fn main() {
 		)
 		window: 0
 	}
+	app.slider = ui.slider(
+		width: 180
+		height: 20
+		orientation: .horizontal
+		max: 30
+		min: 0
+		val: 15.0
+		on_value_changed: app.on_value_changed
+	)
 	window := ui.window(
 		width: win_width
 		height: win_height
@@ -68,7 +69,7 @@ fn main() {
 						widths: [left, ui.stretch]
 						children: [ui.label(text: 'Duration:', text_size: 1.0 / 10), app.slider]
 					),
-					ui.button(text: 'Reset', onclick: on_reset),
+					ui.button(text: 'Reset', on_click: app.on_reset),
 				]
 			),
 		]
@@ -78,11 +79,11 @@ fn main() {
 	ui.run(window)
 }
 
-fn on_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_value_changed(slider &ui.Slider) {
 	app.duration = app.slider.val
 }
 
-fn on_reset(mut app App, button &ui.Button) {
+fn (mut app App) on_reset(button &ui.Button) {
 	app.elapsed_time = 0.0
 	go app.timer()
 }

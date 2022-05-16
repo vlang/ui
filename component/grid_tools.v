@@ -37,7 +37,7 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	btn := ui.button(
 		id: ui.component_id(p.id, 'btn_sort')
 		text: 'sort'
-		onclick: gs_sort_click
+		on_click: gs_sort_click
 		radius: .3
 		z_index: p.z_index + 10
 	)
@@ -78,7 +78,7 @@ pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsCompo
 	return gridsettings_component(w.stack(ui.component_id(id, 'layout')))
 }
 
-fn gs_sort_click(a voidptr, mut b ui.Button) {
+fn gs_sort_click(mut b ui.Button) {
 	gs := gridsettings_component(b)
 	mut g := gs.grid
 	mut vars, mut orders := []int{}, []int{}

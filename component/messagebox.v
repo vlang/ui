@@ -33,7 +33,7 @@ pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 	ok_btn := ui.button(
 		id: ui.component_id(p.id, 'ok_btn')
 		text: 'Ok'
-		onclick: messagebox_ok_click
+		on_click: messagebox_ok_click
 	)
 	layout := ui.column(
 		id: ui.component_id(p.id, 'layout')
@@ -66,7 +66,7 @@ pub fn messagebox_component_from_id(w ui.Window, id string) &MessageBoxComponent
 	return messagebox_component(w.stack(ui.component_id(id, 'layout')))
 }
 
-fn messagebox_ok_click(a voidptr, b &ui.Button) {
+fn messagebox_ok_click(b &ui.Button) {
 	hc := messagebox_component(b)
 	if hc.on_click != MessageBoxFn(0) {
 		hc.on_click(hc)

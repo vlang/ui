@@ -5,33 +5,32 @@ const (
 	win_height = 250
 )
 
+[heap]
 struct App {
 mut:
-	hor_slider  &ui.Slider
-	vert_slider &ui.Slider
-	window      &ui.Window
+	hor_slider  &ui.Slider = 0
+	vert_slider &ui.Slider = 0
+	window      &ui.Window = 0
 }
 
 fn main() {
-	mut app := &App{
-		hor_slider: ui.slider(
-			width: 200
-			height: 20
-			orientation: .horizontal
-			max: 100
-			val: 0
-			on_value_changed: on_hor_value_changed
-		)
-		vert_slider: ui.slider(
-			width: 20
-			height: 200
-			orientation: .vertical
-			max: 100
-			val: 0
-			on_value_changed: on_vert_value_changed
-		)
-		window: 0
-	}
+	mut app := &App{}
+	app.hor_slider = ui.slider(
+		width: 200
+		height: 20
+		orientation: .horizontal
+		max: 100
+		val: 0
+		on_value_changed: app.on_hor_value_changed
+	)
+	app.vert_slider = ui.slider(
+		width: 20
+		height: 200
+		orientation: .vertical
+		max: 100
+		val: 0
+		on_value_changed: app.on_vert_value_changed
+	)
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -51,10 +50,10 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn on_hor_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_hor_value_changed(slider &ui.Slider) {
 	app.hor_slider.val = app.hor_slider.val
 }
 
-fn on_vert_value_changed(mut app App, slider &ui.Slider) {
+fn (mut app App) on_vert_value_changed(slider &ui.Slider) {
 	app.vert_slider.val = app.vert_slider.val
 }

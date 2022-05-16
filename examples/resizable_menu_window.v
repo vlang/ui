@@ -117,6 +117,6 @@ fn main() {
 	ui.run(window)
 }
 
-fn menu_click(item &ui.MenuItem, a voidptr) {
+fn menu_click(item &ui.MenuItem) {
 	println('$item.text selected (id: $item.id)')
 }

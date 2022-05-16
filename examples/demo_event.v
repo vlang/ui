@@ -15,40 +15,40 @@ fn main() {
 		height: 600
 		title: 'V UI: Event'
 		mode: .resizable
-		on_key_down: fn (e ui.KeyEvent, w &ui.Window) {
+		on_key_down: fn (w &ui.Window, e ui.KeyEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('key_down:\n$e')
 		}
-		on_char: fn (e ui.KeyEvent, w &ui.Window) {
+		on_char: fn (w &ui.Window, e ui.KeyEvent) {
 			mut tb := w.textbox('info')
 			s := utf32_to_str(e.codepoint)
 			tb.set_text('${*tb.text} \nchar: <$s>\n$e')
 		}
-		on_mouse_down: fn (e ui.MouseEvent, w &ui.Window) {
+		on_mouse_down: fn (w &ui.Window, e ui.MouseEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_down:\n$e')
 		}
-		on_click: fn (e ui.MouseEvent, w &ui.Window) {
+		on_click: fn (w &ui.Window, e ui.MouseEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('${*tb.text} \nmouse_click:\n$e \nnb_click: $tb.ui.nb_click')
 		}
-		on_mouse_up: fn (e ui.MouseEvent, w &ui.Window) {
+		on_mouse_up: fn (w &ui.Window, e ui.MouseEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_up:\n$e')
 		}
-		on_mouse_move: fn (e ui.MouseMoveEvent, w &ui.Window) {
+		on_mouse_move: fn (w &ui.Window, e ui.MouseMoveEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_move:\n$e')
 		}
-		on_swipe: fn (e ui.MouseEvent, w &ui.Window) {
+		on_swipe: fn (w &ui.Window, e ui.MouseEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('swipe:\n$e')
 		}
-		on_scroll: fn (e ui.ScrollEvent, w &ui.Window) {
+		on_scroll: fn (w &ui.Window, e ui.ScrollEvent) {
 			mut tb := w.textbox('info')
 			tb.set_text('mouse_scroll\n$e')
 		}
-		on_resize: fn (w int, h int, win &ui.Window) {
+		on_resize: fn (win &ui.Window, w int, h int) {
 			mut tb := win.textbox('info')
 			tb.set_text('resize:\n ($w, $h)')
 		}

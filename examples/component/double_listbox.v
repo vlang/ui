@@ -52,8 +52,8 @@ fn main() {
 							),
 						]
 					),
-					ui.button(id: 'btn1', text: 'get values for dlb1', onclick: btn_click),
-					ui.button(id: 'btn2', text: 'get values for dlb2', onclick: btn_click),
+					ui.button(id: 'btn1', text: 'get values for dlb1', on_click: btn_click),
+					ui.button(id: 'btn2', text: 'get values for dlb2', on_click: btn_click),
 				]
 			),
 		]
@@ -62,7 +62,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn btn_click(a voidptr, b &ui.Button) {
+fn btn_click(b &ui.Button) {
 	dlb := uic.doublelistbox_component_from_id(b.ui.window, if b.id == 'btn1' {
 		'dlb1'
 	} else {

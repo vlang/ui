@@ -11,9 +11,9 @@ const (
 	cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
 )
 
-type CheckChangedFn = fn (voidptr, bool)
+// type CheckChangedFn = fn (voidptr, bool)
 
-type CheckBowClickFn = fn (&CheckBox, voidptr)
+type CheckBoxFn = fn (&CheckBox)
 
 [heap]
 pub struct CheckBox {
@@ -32,8 +32,8 @@ pub mut:
 	is_focused       bool
 	checked          bool
 	ui               &UI
-	on_click         CheckBowClickFn
-	on_check_changed CheckChangedFn
+	on_click         CheckBoxFn
+	on_check_changed CheckBoxFn
 	text             string
 	justify          []f64
 	disabled         bool
@@ -58,8 +58,8 @@ pub struct CheckBoxParams {
 	y                int
 	z_index          int
 	text             string
-	on_click         CheckBowClickFn
-	on_check_changed CheckChangedFn
+	on_click         CheckBoxFn
+	on_check_changed CheckBoxFn
 	checked          bool
 	disabled         bool
 	justify          []f64  = [0.0, 0.0]
@@ -138,11 +138,11 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	if e.key in [.enter, .space] {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
-		if cb.on_check_changed != CheckChangedFn(0) {
-			cb.on_check_changed(window.state, cb.checked)
+		if cb.on_check_changed != CheckBoxFn(0) {
+			cb.on_check_changed(cb)
 		}
-		if cb.on_click != CheckBowClickFn(0) {
-			cb.on_click(cb, window.state)
+		if cb.on_click != CheckBoxFn(0) {
+			cb.on_click(cb)
 		}
 	}
 }
@@ -154,11 +154,11 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
-		if cb.on_check_changed != CheckChangedFn(0) {
-			cb.on_check_changed(window.state, cb.checked)
+		if cb.on_check_changed != CheckBoxFn(0) {
+			cb.on_check_changed(cb)
 		}
-		if cb.on_click != CheckBowClickFn(0) {
-			cb.on_click(cb, window.state)
+		if cb.on_click != CheckBoxFn(0) {
+			cb.on_click(cb)
 		}
 	}
 }

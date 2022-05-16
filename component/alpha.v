@@ -92,7 +92,7 @@ pub fn (mut ac AlphaComponent) set_alpha(alpha int) {
 	}
 }
 
-fn alpha_on_value_changed(app voidptr, slider &ui.Slider) {
+fn alpha_on_value_changed(slider &ui.Slider) {
 	mut ac := alpha_component(slider)
 	ac.alpha = int(slider.val)
 	ac.textbox.set_text(ac.alpha.str())
@@ -102,7 +102,7 @@ fn alpha_on_value_changed(app voidptr, slider &ui.Slider) {
 	}
 }
 
-fn alpha_on_char(app voidptr, textbox &ui.TextBox, keycode u32) {
+fn alpha_on_char(textbox &ui.TextBox, keycode u32) {
 	mut ac := alpha_component(textbox)
 	if ui.is_rgb_valid(textbox.text.int()) {
 		ac.alpha = textbox.text.int()

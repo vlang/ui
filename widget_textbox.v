@@ -24,18 +24,12 @@ const (
 	selection_color               = gx.rgb(186, 214, 251)
 )
 
-type TextBoxKeyDownFn = fn (voidptr, &TextBox, u32)
-
-type TextBoxCharFn = fn (voidptr, &TextBox, u32)
+type TextBoxU32Fn = fn (&TextBox, u32)
 
 // type KeyUpFn = fn (voidptr, voidptr, u32)
 
-type TextBoxChangeFn = fn (string, voidptr)
-
-type TextBoxEnterFn = fn (string, voidptr)
-
 // The two previous one can be changed with
-type TextBoxValidatedFn = fn (&TextBox, voidptr)
+type TextBoxFn = fn (&TextBox)
 
 [heap]
 pub struct TextBox {
@@ -80,18 +74,16 @@ pub mut:
 	is_password   bool
 	read_only     bool
 	fitted_height bool // if true fit height in propose_size
-	on_key_down   TextBoxKeyDownFn = TextBoxKeyDownFn(0)
-	on_char       TextBoxCharFn    = TextBoxCharFn(0)
+	on_key_down   TextBoxU32Fn = TextBoxU32Fn(0)
+	on_char       TextBoxU32Fn = TextBoxU32Fn(0)
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	is_selectable bool // for read_only textbox
 	sel_active    bool // to deal with show cursor when selection active
 	dragging      bool
 	sel_direction SelectionDirection
-	is_error      &bool = voidptr(0)
-	on_change     TextBoxChangeFn    = TextBoxChangeFn(0)
-	on_enter      TextBoxEnterFn     = TextBoxEnterFn(0)
-	on_changed    TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered    TextBoxValidatedFn = TextBoxValidatedFn(0)
+	is_error      &bool     = voidptr(0)
+	on_enter      TextBoxFn = TextBoxFn(0)
+	on_change     TextBoxFn = TextBoxFn(0)
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -154,15 +146,12 @@ pub struct TextBoxParams {
 	// text_size          f64
 	theme         string = no_style
 	fitted_height bool
-	on_key_down   TextBoxKeyDownFn
-	on_char       TextBoxCharFn
+	on_key_down   TextBoxU32Fn
+	on_char       TextBoxU32Fn
 	// on_key_up          KeyUpFn
-	on_change voidptr
-	on_enter  voidptr
-	// TODO replacement of signature later
-	on_changed       TextBoxValidatedFn = TextBoxValidatedFn(0)
-	on_entered       TextBoxValidatedFn = TextBoxValidatedFn(0)
-	scrollview       bool = true
+	on_enter         TextBoxFn = TextBoxFn(0)
+	on_change        TextBoxFn = TextBoxFn(0)
+	scrollview       bool      = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
@@ -202,9 +191,6 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// on_key_up: c.on_key_up
 		on_change: c.on_change
 		on_enter: c.on_enter
-		// TODO
-		on_changed: c.on_changed
-		on_entered: c.on_entered
 		on_scroll_change: c.on_scroll_change
 	}
 	tb.style_params.style = c.theme
@@ -487,8 +473,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.on_key_down != TextBoxKeyDownFn(0) {
-		tb.on_key_down(window.state, tb, e.codepoint)
+	if tb.on_key_down != TextBoxU32Fn(0) {
+		tb.on_key_down(tb, e.codepoint)
 	}
 	// println("tb key_down $e.key ${int(e.codepoint)}")
 	if tb.is_multiline {
@@ -497,13 +483,9 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		mut text := *tb.text
 		match e.key {
 			.enter {
-				if tb.on_enter != TextBoxEnterFn(0) {
+				if tb.on_enter != TextBoxFn(0) {
 					// println('tb_enter: <${*tb.text}>')
-					tb.on_enter(*tb.text, window.state)
-				}
-				if tb.on_entered != TextBoxValidatedFn(0) {
-					// println('tb_entered: <${*tb.text}>')
-					tb.on_entered(tb, window.state)
+					tb.on_enter(tb)
 				}
 			}
 			.backspace {
@@ -544,11 +526,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// RO REMOVE?
 				// tb.update_text()
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-				if tb.on_changed != TextBoxValidatedFn(0) {
-					tb.on_changed(tb, window.state)
+				if tb.on_change != TextBoxFn(0) {
+					tb.on_change(tb)
 				}
 			}
 			.delete {
@@ -563,11 +542,8 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				tb.check_cursor_pos()
 				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
-				if tb.on_change != TextBoxChangeFn(0) {
-					// tb.on_change(*tb.text, window.state)
-				}
-				if tb.on_changed != TextBoxValidatedFn(0) {
-					tb.on_changed(tb, window.state)
+				if tb.on_change != TextBoxFn(0) {
+					tb.on_change(tb)
 				}
 			}
 			.left {
@@ -650,8 +626,8 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println("tab $tb.id  $e.mods return")
 		return
 	}
-	if tb.on_char != TextBoxCharFn(0) {
-		tb.on_char(window.state, tb, e.codepoint)
+	if tb.on_char != TextBoxU32Fn(0) {
+		tb.on_char(tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
 	// Entering text
@@ -678,12 +654,9 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			}
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
 			tb.insert(s)
-			if tb.on_change != TextBoxChangeFn(0) {
-				tb.on_change(*tb.text, window.state)
-			}
 			// TODO: Future replacement of the previous one
-			if tb.on_changed != TextBoxValidatedFn(0) {
-				tb.on_changed(tb, window.state)
+			if tb.on_change != TextBoxFn(0) {
+				tb.on_change(tb)
 			}
 			return
 		} else if e.mods in [.ctrl, .super] {
@@ -767,13 +740,10 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println(e.key)
 		// println('mods=$e.mods')
 		defer {
-			if tb.on_change != TextBoxChangeFn(0) {
+			if tb.on_change != TextBoxFn(0) {
 				if e.key == .backspace {
-					tb.on_change(*tb.text, window.state)
+					tb.on_change(tb)
 				}
-			}
-			if tb.on_changed != TextBoxValidatedFn(0) {
-				tb.on_changed(tb, window.state)
 			}
 		}
 	}

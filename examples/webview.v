@@ -1,6 +1,7 @@
-import ui
 import ui.webview
+import ui
 
+[heap]
 struct App {
 mut:
 	webview &webview.WebView
@@ -21,36 +22,33 @@ fn main() {
 		children: [
 			ui.row(
 				// stretch: true
-				margin: ui.Margin{10, 10, 10, 10}
+				margin_: 10
 				height: 100
 				children: [
 					ui.button(
 						text: 'Open'
 						width: 70
 						height: 100
-						onclick: fn (mut a App, b voidptr) {
-							// println("onclick open")
-							a.webview.navigate('https://github.com/revosw/ui/tree/master')
-						}
+						on_click: app.btn_open_click
 					),
 					ui.button(
 						text: 'Navigate to google'
-						onclick: fn (a voidptr, b voidptr) {
-							// println("onclick google")
+						on_click: fn (b &ui.Button) {
+							// println("on_click google")
 							// app.webview.navigate("https://google.com")
 						}
 					),
 					ui.button(
 						text: 'Navigate to steam'
-						onclick: fn (a voidptr, b voidptr) {
-							// println("onclick steam")
+						on_click: fn (b &ui.Button) {
+							// println("on_click steam")
 							// app.webview.navigate("https://steampowered.com")
 						}
 					),
 					ui.button(
 						text: 'Rig on_navigate'
-						onclick: fn (a voidptr, b voidptr) {
-							// println("onclick rig")
+						on_click: fn (b &ui.Button) {
+							// println("on_click rig")
 							// app.webview.on_navigate(fn (url string) {
 							// 	exit(0)
 							// })
@@ -58,8 +56,8 @@ fn main() {
 					),
 					ui.button(
 						text: 'Run javascript'
-						onclick: fn (a voidptr, b voidptr) {
-							// println("onclick javascript")
+						on_click: fn (b &ui.Button) {
+							// println("on_click javascript")
 							// app.webview.exec("alert('Ran some javascript')")
 						}
 					),
@@ -68,4 +66,9 @@ fn main() {
 		]
 	)
 	ui.run(window)
+}
+
+fn (mut app App) btn_open_click(b &ui.Button) {
+	// println("on_click open")
+	app.webview.navigate('https://github.com/revosw/ui/tree/master')
 }

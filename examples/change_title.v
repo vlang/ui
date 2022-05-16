@@ -5,6 +5,7 @@ const (
 	win_height = 120
 )
 
+[heap]
 struct App {
 mut:
 	window         &ui.Window = 0
@@ -39,7 +40,7 @@ fn main() {
 							),
 						]
 					),
-					ui.button(text: 'Change title', onclick: btn_change_title, width: 150),
+					ui.button(text: 'Change title', on_click: app.btn_change_title, width: 150),
 				]
 			),
 		]
@@ -47,6 +48,6 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn btn_change_title(mut app App, btn &ui.Button) {
+fn (mut app App) btn_change_title(btn &ui.Button) {
 	app.window.set_title(app.title_box_text)
 }

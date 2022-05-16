@@ -35,8 +35,8 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(text: 'Word wrap'),
-					ui.switcher(open: false, id: 'sw2', onclick: on_switch_click),
-					ui.switcher(open: false, id: 'sw3', onclick: on_switch_click),
+					ui.switcher(open: false, id: 'sw2', on_click: on_switch_click),
+					ui.switcher(open: false, id: 'sw3', on_click: on_switch_click),
 				]
 			),
 			ui.textbox(
@@ -67,7 +67,7 @@ fn main() {
 	ui.run(w)
 }
 
-fn on_switch_click(mut app voidptr, switcher &ui.Switch) {
+fn on_switch_click(switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
 	mut tb := switcher.ui.window.textbox(tbs)
 	tb.tv.switch_wordwrap()
