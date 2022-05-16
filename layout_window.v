@@ -487,7 +487,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		window.eventbus.publish(events.on_delegate, window, e)
 		return
 	}
-	
+
 	$if macos {
 		if window.ui.gg.native_rendering {
 			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {

@@ -51,11 +51,11 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	// component state for composable widget
-	component       voidptr
-	active_evt_mngr bool
+	component         voidptr
+	active_evt_mngr   bool
 	delegate_evt_mngr bool
-	on_build        BuildFn
-	on_init         InitFn
+	on_build          BuildFn
+	on_init           InitFn
 	// scrollview
 	has_scrollview       bool
 	scrollview           &ScrollView = 0
@@ -74,7 +74,7 @@ pub mut:
 	char_fn             CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
 	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
-	on_delegate 	 CanvasLayoutDelegateFn
+	on_delegate         CanvasLayoutDelegateFn
 	parent              Layout = empty_stack
 mut:
 	// To keep track of original position
@@ -87,34 +87,34 @@ mut:
 [params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
-	id              string
-	width           int
-	height          int
-	full_width      int = -1
-	full_height     int = -1
-	z_index         int
-	text            string
-	scrollview      bool
-	is_focused      bool
-	justify         []f64  = [0.0, 0.0]
-	theme           string = no_style
-	active_evt_mngr bool   = true
+	id                string
+	width             int
+	height            int
+	full_width        int = -1
+	full_height       int = -1
+	z_index           int
+	text              string
+	scrollview        bool
+	is_focused        bool
+	justify           []f64  = [0.0, 0.0]
+	theme             string = no_style
+	active_evt_mngr   bool   = true
 	delegate_evt_mngr bool
-	on_draw         CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_post_draw    CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_click        CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_down   CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_up     CanvasLayoutMouseFn      = voidptr(0)
-	on_scroll       CanvasLayoutScrollFn     = voidptr(0)
-	on_mouse_move   CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_enter  CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_leave  CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_draw           CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_post_draw      CanvasLayoutDrawDeviceFn = voidptr(0)
+	on_click          CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_down     CanvasLayoutMouseFn      = voidptr(0)
+	on_mouse_up       CanvasLayoutMouseFn      = voidptr(0)
+	on_scroll         CanvasLayoutScrollFn     = voidptr(0)
+	on_mouse_move     CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_enter    CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_mouse_leave    CanvasLayoutMouseMoveFn  = voidptr(0)
 	// resize_fn     ResizeFn
-	on_key_down      CanvasLayoutKeyFn   = voidptr(0)
-	on_char          CanvasLayoutKeyFn   = voidptr(0)
-	full_size_fn     CanvasLayoutSizeFn  = voidptr(0)
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
-	on_delegate 	 CanvasLayoutDelegateFn = voidptr(0)
+	on_key_down      CanvasLayoutKeyFn      = voidptr(0)
+	on_char          CanvasLayoutKeyFn      = voidptr(0)
+	full_size_fn     CanvasLayoutSizeFn     = voidptr(0)
+	on_scroll_change ScrollViewChangedFn    = ScrollViewChangedFn(0)
+	on_delegate      CanvasLayoutDelegateFn = voidptr(0)
 	children         []Widget
 }
 

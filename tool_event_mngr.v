@@ -20,7 +20,7 @@ pub:
 	on_resize       string = 'on_resize'
 	on_mouse_enter  string = 'on_mouse_enter'
 	on_mouse_leave  string = 'on_mouse_leave'
-	on_delegate			string = "on_delegate"
+	on_delegate     string = 'on_delegate'
 }
 
 pub const events = EventNames{}
