@@ -331,12 +331,9 @@ fn gg_init(mut window Window) {
 	window.init_text_styles()
 	window.load_style()
 	window.dpi_scale = gg.dpi_scale()
-	window_size := gg.window_size_real_pixels()
-	w := int(f32(window_size.width) / window.dpi_scale)
-	h := int(f32(window_size.height) / window.dpi_scale)
-	window.width, window.height = w, h
-	window.orig_width, window.orig_height = w, h
-	// println('gg_init: $w, $h')
+	window_size := gg.window_size()
+	window.width, window.height = window_size.width, window_size.height
+	window.orig_width, window.orig_height = window.width, window.height
 
 	// This add experimental ui message system
 	if !window.native_message {
@@ -481,6 +478,13 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 	// window.ui.needs_refresh = true
 	// window.refresh()
+
+	// delegation
+	if window.evt_mngr.has_delegation(e, window.ui) {
+		window.eventbus.publish(events.on_delegate, window, e)
+		return
+	}
+
 	$if macos {
 		if window.ui.gg.native_rendering {
 			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
@@ -636,18 +640,20 @@ fn on_event(e &gg.Event, mut window Window) {
 
 fn window_resize(event gg.Event, ui &UI) {
 	mut window := ui.window
-	$if resize ? {
-		println('window resize ($event.window_width ,$event.window_height)')
-	}
 	if !window.resizable {
 		return
 	}
 
-	window.resize(event.window_width, event.window_height)
+	window_size := gg.window_size()
+	window_width, window_height := window_size.width, window_size.height
+	$if resize ? {
+		println('window resize ($window_width ,$window_height)')
+	}
+	window.resize(window_width, window_height)
 	window.eventbus.publish(events.on_resize, window, voidptr(0))
 
 	if window.resize_fn != WindowResizeFn(0) {
-		window.resize_fn(window, event.window_width, event.window_height)
+		window.resize_fn(window, window_width, window_height)
 	}
 }
 

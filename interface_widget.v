@@ -58,6 +58,10 @@ pub fn (w &Widget) has_parent_deactivated() bool {
 	return false
 }
 
+pub fn (w Widget) get_state() voidptr {
+	return w.parent.get_state()
+}
+
 // returns the bounds of a Widget
 pub fn (mut w Widget) bounds() gg.Rect {
 	sw, sh := w.size()
