@@ -19,6 +19,8 @@ pub type CanvasLayoutKeyFn = fn (c &CanvasLayout, e KeyEvent)
 
 pub type CanvasLayoutSizeFn = fn (c &CanvasLayout) (int, int)
 
+pub type CanvasLayoutDelegateFn = fn (c &CanvasLayout, e &gg.Event)
+
 [heap]
 pub struct CanvasLayout {
 pub mut:
@@ -51,6 +53,7 @@ pub mut:
 	// component state for composable widget
 	component       voidptr
 	active_evt_mngr bool
+	delegate_evt_mngr bool
 	on_build        BuildFn
 	on_init         InitFn
 	// scrollview
@@ -71,6 +74,7 @@ pub mut:
 	char_fn             CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
 	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
+	on_delegate 	 CanvasLayoutDelegateFn
 	parent              Layout = empty_stack
 mut:
 	// To keep track of original position
@@ -95,6 +99,7 @@ pub struct CanvasLayoutParams {
 	justify         []f64  = [0.0, 0.0]
 	theme           string = no_style
 	active_evt_mngr bool   = true
+	delegate_evt_mngr bool
 	on_draw         CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_post_draw    CanvasLayoutDrawDeviceFn = voidptr(0)
 	on_click        CanvasLayoutMouseFn      = voidptr(0)
@@ -109,6 +114,7 @@ pub struct CanvasLayoutParams {
 	on_char          CanvasLayoutKeyFn   = voidptr(0)
 	full_size_fn     CanvasLayoutSizeFn  = voidptr(0)
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_delegate 	 CanvasLayoutDelegateFn = voidptr(0)
 	children         []Widget
 }
 
@@ -138,7 +144,8 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		is_focused: c.is_focused
 		justify: c.justify
 		style_params: c.CanvasLayoutStyleParams
-		active_evt_mngr: c.active_evt_mngr
+		active_evt_mngr: c.active_evt_mngr && !c.delegate_evt_mngr
+		delegate_evt_mngr: c.delegate_evt_mngr
 		draw_device_fn: c.on_draw
 		post_draw_device_fn: c.on_post_draw
 		click_fn: c.on_click
@@ -152,6 +159,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		full_size_fn: c.full_size_fn
 		char_fn: c.on_char
 		on_scroll_change: c.on_scroll_change
+		on_delegate: c.on_delegate
 	}
 	canvas.style_params.style = c.theme
 	if c.scrollview {
@@ -188,6 +196,10 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	}
 	if c.active_evt_mngr {
 		c.ui.window.evt_mngr.add_receiver(c, [events.on_mouse_down, events.on_mouse_move])
+	}
+	if c.delegate_evt_mngr {
+		c.ui.window.evt_mngr.add_receiver(c, [events.on_delegate])
+		subscriber.subscribe_method(events.on_delegate, canvas_layout_delegate, c)
 	}
 	for mut child in c.children {
 		child.init(c)
@@ -227,6 +239,10 @@ pub fn (mut c CanvasLayout) cleanup() {
 	if c.active_evt_mngr {
 		c.ui.window.evt_mngr.rm_receiver(c, [events.on_mouse_down, events.on_mouse_move])
 	}
+	if c.delegate_evt_mngr {
+		c.ui.window.evt_mngr.rm_receiver(c, [events.on_delegate])
+		subscriber.unsubscribe_method(events.on_delegate, c)
+	}
 	if has_scrollview(c) {
 		c.ui.window.evt_mngr.rm_receiver(c, [events.on_scroll])
 	}
@@ -264,6 +280,12 @@ fn (mut c CanvasLayout) init_size() {
 		c.width, c.height = parent.size()
 	}
 	scrollview_update(c)
+}
+
+fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
+	if c.on_delegate != CanvasLayoutDelegateFn(0) {
+		c.on_delegate(c, e)
+	}
 }
 
 fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {

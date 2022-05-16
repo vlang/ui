@@ -483,7 +483,8 @@ fn on_event(e &gg.Event, mut window Window) {
 	// window.refresh()
 
 	// delegation
-	if window.evt_mngr.has_delegation(e) {
+	if window.evt_mngr.has_delegation(e, window.ui) {
+		window.eventbus.publish(events.on_delegate, window, e)
 		return
 	}
 	
