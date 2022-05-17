@@ -83,6 +83,10 @@ pub fn style_toml_file(style_id string) string {
 
 pub fn (mut gui UI) load_styles() {
 	// ensure some theme styles are predefined
+	$if no_load_styles ? {
+		gui.styles['default'] = default_style()
+		return
+	}
 	create_theme_styles()
 	for style_id in ['default', 'red', 'blue'] {
 		gui.load_style_from_file(style_id)
