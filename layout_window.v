@@ -198,11 +198,6 @@ pub fn window(cfg WindowParams) &Window {
 		// size: int(m / cfg.lines)
 	}
 
-	mut screenshot := false
-	$if screenshot ? {
-		screenshot = true
-	}
-
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		state: cfg.state
@@ -243,7 +238,7 @@ pub fn window(cfg WindowParams) &Window {
 		width: width
 		height: height
 		use_ortho: true // This is needed for 2D drawing
-		create_window: !screenshot
+		create_window: true // TODO: Unused ?
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
@@ -251,8 +246,6 @@ pub fn window(cfg WindowParams) &Window {
 			frame_immediate
 		} else if cfg.native_rendering {
 			native_frame
-		} else if screenshot {
-			frame_screenshot
 		} else {
 			frame
 		}
@@ -268,7 +261,7 @@ pub fn window(cfg WindowParams) &Window {
 		bg_color: window.bg_color // gx.rgb(230,230,230)
 		// window_state: ui
 		native_rendering: cfg.native_rendering
-		ui_mode: !cfg.immediate && !screenshot
+		ui_mode: !cfg.immediate
 		// drag & drop
 		enable_dragndrop: cfg.enable_dragndrop
 		max_dropped_files: cfg.max_dropped_files
@@ -335,12 +328,10 @@ fn gg_init(mut window Window) {
 	window.mouse.init(window)
 	window.tooltip.init(window.ui)
 	load_settings()
+	window.init_text_styles()
+	window.load_style()
 	$if screenshot ? {
-		window.init_screenshot_text_styles()
-		window.load_style()
 	} $else {
-		window.init_text_styles()
-		window.load_style()
 		window.dpi_scale = gg.dpi_scale()
 		window_size := gg.window_size()
 		window.width, window.height = window_size.width, window_size.height
@@ -420,10 +411,6 @@ fn frame(mut w Window) {
 	*/
 
 	w.ui.gg.end()
-}
-
-fn frame_screenshot(mut w Window) {
-	w.svg_screenshot('screenshot-${os.file_name(os.executable())}.svg')
 }
 
 fn frame_immediate(mut w Window) {

@@ -152,7 +152,7 @@ pub fn run(window &Window) {
 	$if screenshot ? {
 		mut w := window
 		gg_init(mut w)
-		frame_screenshot(mut w)
+		w.svg_screenshot('screenshot-${os.file_name(os.executable())}.svg')
 	} $else {
 		mut gui := window.ui
 		gui.window = window // TODO: this can be removed since now in the window constructor
