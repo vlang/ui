@@ -219,3 +219,8 @@ pub fn (mut w Window) init_text_styles() {
 		w.add_font('fixed_bold_italic', fs.search('LiberationMono-BoldItalic.ttf'))
 	}
 }
+
+pub fn (mut w Window) init_screenshot_text_styles() {
+	// init default style
+	w.ui.add_style(id: '_default_')
+}

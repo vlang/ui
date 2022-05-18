@@ -149,16 +149,22 @@ pub fn (gui &UI) free() {
 }
 
 pub fn run(window &Window) {
-	mut gui := window.ui
-	gui.window = window // TODO: this can be removed since now in the window constructor
-	go gui.idle_loop()
-	gui.gg.run()
-	gui.closed = true
+	$if screenshot ? {
+		mut w := window
+		gg_init(mut w)
+		frame_screenshot(mut w)
+	} $else {
+		mut gui := window.ui
+		gui.window = window // TODO: this can be removed since now in the window constructor
+		go gui.idle_loop()
+		gui.gg.run()
+		gui.closed = true
 
-	// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
-	// waiting 2x this time should be enough to ensure the gui.loop
-	// thread will exit before us, without using a waitgroup here too
-	time.sleep(20 * time.millisecond)
+		// the gui.idle_loop thread checks every 10 ms if gui.closed is true;
+		// waiting 2x this time should be enough to ensure the gui.loop
+		// thread will exit before us, without using a waitgroup here too
+		time.sleep(20 * time.millisecond)
+	}
 }
 
 pub fn open_url(url string) {
