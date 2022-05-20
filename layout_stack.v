@@ -1431,7 +1431,7 @@ pub fn (mut s Stack) remove(cfg ChildrenParams) {
 }
 
 pub fn (mut s Stack) move(cfg ChildrenParams) {
-	if cfg.target == 0 {
+	if unsafe { cfg.target == 0 } {
 		// move (inside same stack s)
 		from_pos := if cfg.from == -1 { s.children.len - 1 } else { cfg.from }
 		mut to_pos := if cfg.to == -1 { s.children.len } else { cfg.to }
