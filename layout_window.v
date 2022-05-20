@@ -975,7 +975,7 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.swipe_fn != WindowMouseFn(0) && window.child_window == 0 { // && action == voidptr(0) {
+	if window.swipe_fn != WindowMouseFn(0) && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
 		window.swipe_fn(window, e)
 	}
 	if unsafe { window.child_window != 0 } {
