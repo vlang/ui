@@ -91,7 +91,7 @@ pub fn has_scrollview(w ScrollableWidget) bool {
 }
 
 pub fn has_scrollview_or_parent_scrollview(w ScrollableWidget) bool {
-	return w.scrollview != 0
+	return unsafe { w.scrollview != 0 }
 }
 
 pub fn scrollview_is_active(w ScrollableWidget) bool {

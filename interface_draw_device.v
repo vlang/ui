@@ -34,7 +34,7 @@ interface DrawDevice {
 }
 
 fn (d DrawDevice) draw_window(mut w Window) {
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
 	for mut child in children {
 		child.draw_device(d)

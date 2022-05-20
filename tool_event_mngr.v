@@ -177,7 +177,7 @@ pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 
 pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 	mut pi := w.evt_mngr.point_inside[evt_type]
-	if w.child_window != 0 {
+	if unsafe { w.child_window != 0 } {
 		pi = pi.filter(Layout(w.child_window).has_child_id(it.id))
 	}
 	$if em_itw ? {
