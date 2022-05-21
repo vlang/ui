@@ -199,7 +199,7 @@ fn rv_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 		}
 		else {}
 	}
-	if paint && rv.palette != 0 && ui.shift_key(e.mods) {
+	if paint && unsafe { rv.palette != 0 } && ui.shift_key(e.mods) {
 		cbc := colorbutton_component_from_id(c.ui.window, rv.palette.selected)
 		rv.r.set_pixel(rv.sel_i, rv.sel_j, cbc.bg_color)
 	}

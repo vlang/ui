@@ -302,7 +302,7 @@ fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout) {
 
 pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	cb.r_rgb_cur.style.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
-	if cb.linked != 0 {
+	if unsafe { cb.linked != 0 } {
 		// attach a component
 		unsafe {
 			*cb.linked = cb.r_rgb_cur.style.color
@@ -312,7 +312,7 @@ pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 		id := if cb.colbtn != 0 { cb.colbtn.widget.id } else { 'id_none' }
 		println('update cur color $id ${cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0)}')
 	}
-	if cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0) {
+	if unsafe { cb.colbtn != 0 } && cb.colbtn.on_changed != ColorButtonFn(0) {
 		cb.colbtn.on_changed(cb.colbtn)
 	}
 	if reactive {
