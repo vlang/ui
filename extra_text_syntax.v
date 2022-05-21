@@ -107,7 +107,7 @@ fn (mut sh SyntaxHighLighter) load_default_style() {
 fn (mut sh SyntaxHighLighter) load_v() {
 	sh.keywords['v'] = {
 		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,u8,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
-		'decl':    '[,],{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
+		'decl':    '],[,{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
 			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
 			',$' + 'if,$' + 'else').split(',')
