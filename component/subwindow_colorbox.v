@@ -30,13 +30,13 @@ pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButt
 	mut s := w.subwindow(component.colorbox_subwindow_id)
 	cb_layout := w.stack(component.colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)
-	if col != 0 {
+	if unsafe { col != 0 } {
 		cb.connect(col)
 		cb.update_from_rgb(col.r, col.g, col.b)
 		cb.update_cur_color(true)
 	}
 	// connect also the colbtn of cb
-	if colbtn != 0 {
+	if unsafe { colbtn != 0 } {
 		// println("connect ${colbtn.widget.id} ${colbtn.on_changed != ColorButtonChangedFn(0)}")
 		cb.connect_colorbutton(colbtn)
 	}

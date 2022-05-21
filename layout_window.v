@@ -238,7 +238,7 @@ pub fn window(cfg WindowParams) &Window {
 		width: width
 		height: height
 		use_ortho: true // This is needed for 2D drawing
-		create_window: true
+		create_window: true // TODO: Unused ?
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
@@ -330,11 +330,12 @@ fn gg_init(mut window Window) {
 	load_settings()
 	window.init_text_styles()
 	window.load_style()
-	window.dpi_scale = gg.dpi_scale()
-	window_size := gg.window_size()
-	window.width, window.height = window_size.width, window_size.height
-	window.orig_width, window.orig_height = window.width, window.height
-
+	$if !screenshot ? {
+		window.dpi_scale = gg.dpi_scale()
+		window_size := gg.window_size()
+		window.width, window.height = window_size.width, window_size.height
+		window.orig_width, window.orig_height = window.width, window.height
+	}
 	// This add experimental ui message system
 	if !window.native_message {
 		window.add_message_dialog()
@@ -379,7 +380,7 @@ fn gg_cleanup(mut window Window) {
 fn frame(mut w Window) {
 	w.ui.gg.begin()
 
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
 	for mut child in children {
 		child.draw()
@@ -426,7 +427,7 @@ fn frame_immediate(mut w Window) {
 		}
 	}
 
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
 	for mut child in children {
 		child.draw()
@@ -453,7 +454,7 @@ fn native_frame(mut w Window) {
 		}
 	}
 	*/
-	mut children := if w.child_window == 0 { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 	// if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for mut child in children {
@@ -679,7 +680,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 		}
 	} else if e.key == .escape {
 		// println('escape')
-		if window.child_window != 0 {
+		if unsafe { window.child_window != 0 } {
 			// Close the child window on Escape
 			for mut child in window.child_window.children {
 				// println('cleanup ${child.id()}')
@@ -762,7 +763,7 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	*/
 
 	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
-	if window.child_window != 0 {
+	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_down, window.child_window, e)
 	} else {
@@ -807,7 +808,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		mods: KeyMod(event.modifiers)
 	}
 
-	if window.child_window == 0 && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+	if unsafe { window.child_window == 0 } && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.mouse_up_fn(window, e)
 	}
 	/*
@@ -818,7 +819,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		}
 	}
 	*/
-	if window.child_window != 0 {
+	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
 		// window.eventbus.unsubscribe()
@@ -932,10 +933,10 @@ fn window_click_or_touch_tap(event gg.Event, ui &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.click_fn != WindowMouseFn(0) && window.child_window == 0 { // && action == voidptr(0) {
+	if window.click_fn != WindowMouseFn(0) && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
 		window.click_fn(window, e)
 	}
-	if window.child_window != 0 {
+	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_click, window.child_window, e)
 	} else {
@@ -975,10 +976,10 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.swipe_fn != WindowMouseFn(0) && window.child_window == 0 { // && action == voidptr(0) {
+	if window.swipe_fn != WindowMouseFn(0) && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
 		window.swipe_fn(window, e)
 	}
-	if window.child_window != 0 {
+	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_swipe, window.child_window, e)
 	} else {
@@ -1014,7 +1015,7 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 		window.files_droped_fn(window, e)
 	}
 	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_droped)
-	if window.child_window != 0 {
+	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_files_droped, window.child_window, e)
 	} else {
