@@ -238,7 +238,7 @@ pub fn window(cfg WindowParams) &Window {
 		width: width
 		height: height
 		use_ortho: true // This is needed for 2D drawing
-		create_window: true
+		create_window: true // TODO: Unused ?
 		window_title: cfg.title
 		resizable: resizable
 		fullscreen: fullscreen
@@ -330,11 +330,12 @@ fn gg_init(mut window Window) {
 	load_settings()
 	window.init_text_styles()
 	window.load_style()
-	window.dpi_scale = gg.dpi_scale()
-	window_size := gg.window_size()
-	window.width, window.height = window_size.width, window_size.height
-	window.orig_width, window.orig_height = window.width, window.height
-
+	$if !screenshot ? {
+		window.dpi_scale = gg.dpi_scale()
+		window_size := gg.window_size()
+		window.width, window.height = window_size.width, window_size.height
+		window.orig_width, window.orig_height = window.width, window.height
+	}
 	// This add experimental ui message system
 	if !window.native_message {
 		window.add_message_dialog()

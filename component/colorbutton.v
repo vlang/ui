@@ -53,7 +53,7 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 		on_changed: c.on_changed
 		left_side: c.left_side
 	}
-	if b.bg_color == 0 {
+	if unsafe { b.bg_color == 0 } {
 		b.bg_color = &cbc.bg_color
 	}
 	ui.component_connect(cbc, b)

@@ -136,24 +136,26 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 		d.set_text_style(ts.font_name, w.ui.font_paths[ts.font_name], ts.size, ts.color,
 			int(ts.align), int(ts.vertical_align))
 	}
-	gg := w.ui.gg
-	fons := gg.ft.fons
-	fons.set_font(w.ui.fonts.hash[ts.font_name])
+	$if !screenshot ? {
+		gg := w.ui.gg
+		fons := gg.ft.fons
+		fons.set_font(w.ui.fonts.hash[ts.font_name])
 
-	scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
-	size := if ts.mono { ts.size - 2 } else { ts.size }
-	fons.set_size(scale * f32(size))
-	gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
-	color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
-	if ts.color.a != 255 {
-		sgl.load_pipeline(gg.timage_pip)
+		scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
+		size := if ts.mono { ts.size - 2 } else { ts.size }
+		fons.set_size(scale * f32(size))
+		gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
+		color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
+		if ts.color.a != 255 {
+			sgl.load_pipeline(gg.timage_pip)
+		}
+		gg.ft.fons.set_color(color)
+		ascender := f32(0.0)
+		descender := f32(0.0)
+		lh := f32(0.0)
+		fons.vert_metrics(&ascender, &descender, &lh)
+		// println("load style $ascender, $descender ${}")
 	}
-	gg.ft.fons.set_color(color)
-	ascender := f32(0.0)
-	descender := f32(0.0)
-	lh := f32(0.0)
-	fons.vert_metrics(&ascender, &descender, &lh)
-	// println("load style $ascender, $descender ${}")
 }
 
 pub fn (w DrawTextWidget) font_size() int {
