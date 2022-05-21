@@ -136,8 +136,7 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 		d.set_text_style(ts.font_name, w.ui.font_paths[ts.font_name], ts.size, ts.color,
 			int(ts.align), int(ts.vertical_align))
 	}
-	$if screenshot ? {
-	} $else {
+	$if !screenshot ? {
 		gg := w.ui.gg
 		fons := gg.ft.fons
 		fons.set_font(w.ui.fonts.hash[ts.font_name])
