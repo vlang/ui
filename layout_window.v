@@ -330,8 +330,7 @@ fn gg_init(mut window Window) {
 	load_settings()
 	window.init_text_styles()
 	window.load_style()
-	$if screenshot ? {
-	} $else {
+	$if !screenshot ? {
 		window.dpi_scale = gg.dpi_scale()
 		window_size := gg.window_size()
 		window.width, window.height = window_size.width, window_size.height
