@@ -154,7 +154,7 @@ pub fn (m &Menu) free() {
 }
 
 pub fn (m &Menu) is_root_menu() bool {
-	return m.root_menu != 0 && m.id == m.root_menu.id
+	return unsafe { m.root_menu != 0 } && m.id == m.root_menu.id
 }
 
 pub fn (m &Menu) is_top_layer_menu() bool {
@@ -222,7 +222,7 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 			item.submenu.set_all_children_visible(false)
 			item.set_menu_visible(true)
 		}
-		if item.menu != 0 {
+		if unsafe { item.menu != 0 } {
 			// println('hover close $item.menu.id ${item.menu.items.map(it.id)}')
 			for mut mi in item.menu.items {
 				if mi.id != item.id && mi.has_menu() {
@@ -385,7 +385,7 @@ pub fn menuitem(p MenuItemParams) &MenuItem {
 
 fn (mut mi MenuItem) build(mut win Window) {
 	mi.id = mi.menu.id + '/' + mi.id
-	if mi.submenu != 0 {
+	if unsafe { mi.submenu != 0 } {
 		mi.submenu.id = '$mi.id'
 		mi.submenu.build(mut win)
 		win.add_top_layer(mi.submenu)
@@ -411,7 +411,7 @@ fn (mut mi MenuItem) set_menu_root_menu() {
 }
 
 pub fn (mi &MenuItem) has_menu() bool {
-	return mi.submenu != 0
+	return unsafe { mi.submenu != 0 }
 }
 
 pub fn (mut mi MenuItem) set_menu(state bool) {
