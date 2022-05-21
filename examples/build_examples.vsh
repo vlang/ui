@@ -1,28 +1,18 @@
-fn is_v_code_dir(path string) bool {
-	entries := ls(path) or { return false }
-	for entry in entries {
-		if entry.ends_with('.v') && is_file(join_path(path, entry)) {
-			return true
-		}
-	}
-	return false
-}
-
 fn println_one_of_many(msg string, entry_idx int, entries_len int) {
 	println('${entry_idx + 1:2}/${entries_len:-2} $msg')
 }
 
 examples_dir := resource_abs_path('.')
-mut all_entries := ls(examples_dir) or { return }
+mut all_entries := walk_ext(examples_dir, '.v')
 all_entries.sort()
 mut entries := []string{}
 for entry in all_entries {
-	is_dir_project := (is_dir(entry) && is_v_code_dir(entry))
-	if !is_dir_project && !entry.ends_with('.v') {
-		println('skipping $entry')
+	fname := file_name(entry)
+	if entry.contains('textbox_input') {
+		println('skipping $entry, part of the folder based `textbox_input` example')
 		continue
 	}
-	if entry == 'webview.v' {
+	if fname == 'webview.v' {
 		$if !macos {
 			println('skipping $entry on !macos')
 			continue
@@ -30,10 +20,12 @@ for entry in all_entries {
 	}
 	entries << entry
 }
+entries << join_path(examples_dir, 'textbox_input')
+
 mut err := 0
 mut failures := []string{}
 for entry_idx, entry in entries {
-	cmd := 'v $examples_dir/$entry'
+	cmd := 'v -no-parallel $entry'
 	println_one_of_many('compile with: $cmd', entry_idx, entries.len)
 	ret := system(cmd)
 	if ret != 0 {
