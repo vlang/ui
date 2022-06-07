@@ -695,6 +695,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 				window.png_screenshot('screenshot-${os.file_name(os.executable())}.png')
 			}
 		}
+	} else if e.key == .f10 && super_key(e.mods) {
+		window.layout_print()
 	} else {
 		// add user shortcuts for window
 		key_shortcut(e, window.shortcuts, window)
@@ -1628,4 +1630,11 @@ pub fn (mut w Window) svg_screenshot(filename string) {
 pub fn (mut w Window) png_screenshot(filename string) {
 	mut d := w.ui.bmp
 	d.png_screenshot_window(filename, mut w)
+}
+
+pub fn (mut w Window) layout_print() {
+	mut d := draw_device_print()
+	w.ui.layout_print = true
+	DrawDevice(d).draw_window(mut w)
+	w.ui.layout_print = false
 }
