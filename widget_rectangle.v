@@ -141,6 +141,11 @@ fn (mut r Rectangle) draw() {
 
 fn (mut r Rectangle) draw_device(d DrawDevice) {
 	offset_start(mut r)
+	$if layout ? {
+		if r.ui.layout_print {
+			println('Rectangle($r.id): ($r.x, $r.y, $r.width, $r.height)')
+		}
+	}
 	if r.radius > 0 {
 		d.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.style.color)
 		if r.border {
