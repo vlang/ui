@@ -193,6 +193,7 @@ pub fn (mut s Stack) init(parent Layout) {
 		mut window := unsafe { parent }
 		if s.is_root_layout {
 			window.root_layout = s
+			s.real_x, s.real_y = 0, 0
 			window.update_layout() // i.e s.update_all_children_recursively(parent)
 		} else {
 			s.update_layout()
@@ -1097,6 +1098,11 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		return
 	}
 	offset_start(mut s)
+	$if layout ? {
+		if s.ui.layout_print {
+			println('Stack($s.id): ($s.real_x, $s.real_y, $s.real_width, $s.real_height)')
+		}
+	}
 	if s.style.bg_color != no_color {
 		if s.style.bg_radius > 0 {
 			radius := relative_size(s.style.bg_radius, s.real_width, s.real_height)

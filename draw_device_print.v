@@ -47,27 +47,27 @@ pub fn (d &DrawDevicePrint) draw_text_default(x int, y int, text string) {
 }
 
 pub fn (d &DrawDevicePrint) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
+	println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, $color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
+	println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, $color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
-	println('$d.id draw_rect_empty($x, $y, $w, $h, color gx.Color)')
+	println('$d.id draw_rect_empty($x, $y, $w, $h, $color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
-	println('$d.id draw_rect_filled($x, $y, $w, $h, color gx.Color)')
+	println('$d.id draw_rect_filled($x, $y, $w, $h, $color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gx.Color)')
+	println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, $color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, border_color gx.Color) {
-	println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gx.Color)')
+	println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, $border_color)')
 }
 
 pub fn (d &DrawDevicePrint) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {

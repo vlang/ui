@@ -321,6 +321,11 @@ pub fn (mut tb TextBox) draw() {
 
 pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	offset_start(mut tb)
+	$if layout ? {
+		if tb.ui.layout_print {
+			println('TextBox($tb.id): ($tb.x, $tb.y, $tb.width, $tb.height)')
+		}
+	}
 	scrollview_draw_begin(mut tb, d)
 	// draw background
 	if tb.has_scrollview {

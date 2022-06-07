@@ -332,6 +332,11 @@ fn (mut b Button) draw() {
 
 fn (mut b Button) draw_device(d DrawDevice) {
 	offset_start(mut b)
+	$if layout ? {
+		if b.ui.layout_print {
+			println('Button($b.id): ($b.x, $b.y, $b.width, $b.height)')
+		}
+	}
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)

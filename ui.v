@@ -19,6 +19,7 @@ pub mut:
 	window         &Window           = voidptr(0)
 	svg            &DrawDeviceSVG    = voidptr(0)
 	bmp            &DrawDeviceBitmap = voidptr(0)
+	layout_print   bool
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v
 	clipboard      &clipboard.Clipboard
