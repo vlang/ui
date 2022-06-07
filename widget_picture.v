@@ -181,6 +181,11 @@ fn (mut pic Picture) draw() {
 }
 
 fn (mut pic Picture) draw_device(d DrawDevice) {
+	$if layout ? {
+		if pic.ui.layout_print {
+			println('Picture($pic.id): ($pic.x, $pic.y, $pic.width, $pic.height)')
+		}
+	}
 	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)
 }
 

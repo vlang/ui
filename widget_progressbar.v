@@ -109,6 +109,11 @@ fn (mut pb ProgressBar) draw() {
 
 fn (mut pb ProgressBar) draw_device(d DrawDevice) {
 	offset_start(mut pb)
+	$if layout ? {
+		if pb.ui.layout_print {
+			println('ProgressBar($pb.id): ($pb.x, $pb.y, $pb.width, $pb.height)')
+		}
+	}
 	// Draw the gray background
 	d.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, pb.style.bg_color)
 	d.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, pb.style.bg_border_color)

@@ -292,6 +292,11 @@ fn (mut r Radio) draw() {
 
 fn (mut r Radio) draw_device(d DrawDevice) {
 	offset_start(mut r)
+	$if layout ? {
+		if r.ui.layout_print {
+			println('Radio($r.id): ($r.x, $r.y, $r.width, $r.height)')
+		}
+	}
 	dtw := DrawTextWidget(r)
 	dtw.draw_device_load_style(d)
 	if r.title != '' {

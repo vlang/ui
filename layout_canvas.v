@@ -605,6 +605,12 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		return
 	}
 	offset_start(mut c)
+	$if layout ? {
+		if c.ui.layout_print {
+			fw, fh := c.full_size()
+			println('CanvasLayout($s.id): ($c.x, $c.y, $fw, $fh)')
+		}
+	}
 	dtw := DrawTextWidget(c)
 	dtw.draw_device_load_style(d)
 	// if scrollview_clip(mut c) {

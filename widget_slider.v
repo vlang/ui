@@ -195,6 +195,11 @@ fn (mut s Slider) draw() {
 
 fn (mut s Slider) draw_device(d DrawDevice) {
 	offset_start(mut s)
+	$if layout ? {
+		if s.ui.layout_print {
+			println('Slider($s.id): ($s.x, $s.y, $s.width, $s.height)')
+		}
+	}
 	// Draw the track
 	x, y, w, h := if s.orientation == .horizontal {
 		s.x, s.y + (s.height - s.slider_size) / 2, s.width, s.slider_size
