@@ -70,7 +70,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Slider & textbox Example'
-		state: app
 		children: [
 			ui.column(
 				heights: [.1, .9]

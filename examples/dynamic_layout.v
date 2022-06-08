@@ -17,7 +17,6 @@ fn main() {
 	window := ui.window(
 		width: win_width
 		height: win_height
-		state: app
 		title: 'Dynamic layout'
 		mode: .resizable
 		children: [

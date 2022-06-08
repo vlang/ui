@@ -138,7 +138,6 @@ fn main() {
 		height: 400
 		title: 'Circle drawer'
 		mode: .resizable
-		state: app
 		children: [
 			ui.column(
 				spacing: 10

@@ -17,7 +17,6 @@ fn main() {
 	window := ui.window(
 		width: 800
 		height: 100
-		state: voidptr(0)
 		title: 'V ui.webview demo'
 		children: [
 			ui.row(

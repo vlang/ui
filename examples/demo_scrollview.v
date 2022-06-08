@@ -17,7 +17,6 @@ fn main() {
 	}
 	app.text = s
 	app.window = ui.window(
-		state: app
 		width: 800
 		height: 600
 		title: 'V UI: Scrollview'

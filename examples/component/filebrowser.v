@@ -20,7 +20,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: File Browser'
-		state: app
 		native_message: false
 		mode: .resizable
 		children: [

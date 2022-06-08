@@ -21,7 +21,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Grid 2'
-		state: app
 		native_message: false
 		mode: .resizable
 		bg_color: gx.white

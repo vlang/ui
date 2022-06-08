@@ -71,7 +71,6 @@ fn main() {
 	window := ui.window(
 		width: win_width
 		height: win_height
-		state: app
 		title: 'V UI Demo'
 		// bg_color: gx.light_blue
 		children: [
@@ -192,11 +191,6 @@ fn btn_help_click(b voidptr) {
 	ui.message_box('Built with V UI')
 }
 
-/*
-fn (mut app App) btn_add_click(b &Button) {
-
-}
-*/
 fn (mut app State) btn_add_click(b &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')

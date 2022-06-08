@@ -19,7 +19,6 @@ fn main() {
 		height: win_height
 		title: 'Counter'
 		mode: .resizable
-		state: app
 		children: [
 			ui.row(
 				spacing: 5

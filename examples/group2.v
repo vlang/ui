@@ -19,7 +19,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Group 2 Demo'
-		state: app
 		children: [
 			ui.column(
 				margin: ui.Margin{10, 10, 10, 10}
