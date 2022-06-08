@@ -102,6 +102,8 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
+	mx        f64 // do not remove this, temporary
+	my        f64
 }
 
 [params]
