@@ -85,6 +85,7 @@ mut:
 	states []string
 	active bool
 	size   int = 20
+	adj    [2]f32
 }
 
 pub const (
@@ -100,6 +101,12 @@ pub fn (mut m Mouse) update() {
 	m.active = m.states.len > 0
 	if m.active {
 		m.id = m.states.last()
+		if m.id == 'text' {
+			m.adj[0], m.adj[1] = 0.5, 0.5
+		} else {
+			m.adj[0], m.adj[1] = 0.0, 0.0
+		}
+
 		// println("update current mouse: $m.id")
 	}
 	sapp.show_mouse(m.id == ui.mouse_system || !m.active)
@@ -150,7 +157,8 @@ pub fn (mut m Mouse) draw() {
 
 pub fn (mut m Mouse) draw_device(d DrawDevice) {
 	if m.active {
-		m.window.ui.draw_device_img(d, m.id, m.pos.x, m.pos.y, m.size, m.size)
+		m.window.ui.draw_device_img(d, m.id, m.pos.x - int(m.size * m.adj[0]), m.pos.y - int(m.size * m.adj[1]),
+			m.size, m.size)
 	}
 }
 
