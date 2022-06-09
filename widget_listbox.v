@@ -510,6 +510,11 @@ fn (mut lb ListBox) draw() {
 
 fn (mut lb ListBox) draw_device(d DrawDevice) {
 	offset_start(mut lb)
+	$if layout ? {
+		if lb.ui.layout_print {
+			println('ListBox($lb.id): ($lb.x, $lb.y, $lb.width, $lb.height)')
+		}
+	}
 	DrawTextWidget(lb).draw_device_load_style(d)
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb, d)

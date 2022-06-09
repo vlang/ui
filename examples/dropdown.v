@@ -5,22 +5,15 @@ const (
 	win_height = 250
 )
 
-struct App {
-mut:
-	window &ui.Window = 0
-}
-
 fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 }
 
 fn main() {
-	mut app := &App{}
 	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'Dropdown'
-		state: app
 		children: [
 			ui.column(
 				margin: ui.Margin{5, 5, 5, 5}
@@ -45,6 +38,5 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }

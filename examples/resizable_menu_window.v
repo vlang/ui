@@ -6,13 +6,7 @@ const (
 	win_height = 600
 )
 
-struct App {
-mut:
-	window &ui.Window = 0
-}
-
 fn main() {
-	mut app := &App{}
 	menu_items := [
 		ui.menuitem(
 			text: 'Delete'
@@ -99,7 +93,6 @@ fn main() {
 		height: win_height
 		title: 'Resizable Window'
 		resizable: true
-		state: app
 		children: [
 			ui.column(
 				margin_: 0
@@ -113,7 +106,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }
 

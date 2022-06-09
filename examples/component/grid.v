@@ -7,21 +7,12 @@ const (
 	win_height = 600
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	n := 1000000
 	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'V UI: Grid'
-		state: app
 		native_message: false
 		mode: .resizable
 		bg_color: gx.white
@@ -55,7 +46,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }
 

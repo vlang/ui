@@ -4,20 +4,11 @@ import gg
 import ui.component as uic
 import os.font
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	mut window := ui.window(
 		width: 800
 		height: 600
 		title: 'V UI Settings'
-		state: app
 		mode: .resizable
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
@@ -36,7 +27,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	uic.fontchooser_subwindow_add(mut window)
 	println(font.default())
 	ui.run(window)

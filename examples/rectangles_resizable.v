@@ -6,15 +6,7 @@ const (
 	win_height = 74
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	rect := ui.rectangle(
 		height: 64
 		width: 64
@@ -26,7 +18,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Rectangles'
-		state: app
 		mode: .max_size
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
@@ -46,6 +37,5 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }

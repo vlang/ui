@@ -70,7 +70,6 @@ fn main() {
 	mut window := ui.window(
 		width: win_width
 		height: win_height
-		state: app
 		title: 'V UI Demo'
 		mode: .resizable
 		// bg_color: ui.color_solaris

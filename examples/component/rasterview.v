@@ -7,20 +7,11 @@ const (
 	win_height = 500
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
-	app.window = ui.window(
+	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'Grid'
-		state: app
 		mode: .resizable
 		on_init: win_init
 		children: [
@@ -33,7 +24,7 @@ fn main() {
 			),
 		]
 	)
-	ui.run(app.window)
+	ui.run(window)
 }
 
 fn win_init(mut w ui.Window) {

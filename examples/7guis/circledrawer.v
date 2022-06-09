@@ -138,7 +138,6 @@ fn main() {
 		height: 400
 		title: 'Circle drawer'
 		mode: .resizable
-		state: app
 		children: [
 			ui.column(
 				spacing: 10
@@ -168,8 +167,8 @@ fn main() {
 						bg_color: gx.white
 						bg_radius: .025
 						on_draw: app.draw_circles
-						on_click: click_circles
-						on_mouse_move: mouse_move_circles
+						on_click: app.click_circles
+						on_mouse_move: app.mouse_move_circles
 					),
 				]
 			),
@@ -188,8 +187,7 @@ fn (app &App) draw_circles(d ui.DrawDevice, c &ui.CanvasLayout) {
 	}
 }
 
-fn click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
-	mut app := &App(c.ui.window.state)
+fn (mut app App) click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut sw := c.ui.window.subwindow('sw_radius')
 	if c.ui.btn_down[0] {
 		if sw.is_visible() {
@@ -225,29 +223,28 @@ fn click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 	check_redo_disabled(app.state, mut btn_redo)
 }
 
-fn mouse_move_circles(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
-	mut app := &App(c.ui.window.state)
+fn (mut app App) mouse_move_circles(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	app.hover = app.state.point_inside(f32(e.x), f32(e.y))
 }
 
-fn (mut a App) click_undo(mut b ui.Button) {
+fn (mut app App) click_undo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
-	a.state.undo()
-	check_undo_disabled(a.state, mut b)
+	app.state.undo()
+	check_undo_disabled(app.state, mut b)
 	mut redo := b.ui.window.button('btn_redo')
-	check_redo_disabled(a.state, mut redo)
+	check_redo_disabled(app.state, mut redo)
 }
 
-fn (mut a App) click_redo(mut b ui.Button) {
+fn (mut app App) click_redo(mut b ui.Button) {
 	if !b.ui.btn_down[0] {
 		return
 	}
-	a.state.redo()
-	check_redo_disabled(a.state, mut b)
+	app.state.redo()
+	check_redo_disabled(app.state, mut b)
 	mut undo := b.ui.window.button('btn_undo')
-	check_undo_disabled(a.state, mut undo)
+	check_undo_disabled(app.state, mut undo)
 }
 
 fn check_undo_disabled(state State, mut undo ui.Button) {

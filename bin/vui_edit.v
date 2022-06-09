@@ -45,7 +45,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI Edit: ${dirs[0]}'
-		state: app
 		native_message: false
 		mode: .resizable
 		on_init: init
@@ -60,7 +59,7 @@ fn main() {
 						layout: uic.menufile_stack(
 							id: 'menu'
 							dirs: dirs
-							on_file_changed: fn (mut mf uic.MenuFileComponent) {
+							on_file_changed: fn [mut app] (mut mf uic.MenuFileComponent) {
 								mf.layout.ui.window.set_title('V UI Edit: $mf.file')
 								// reinit textbox scrollview
 								mut tb := mf.layout.ui.window.textbox('edit')
@@ -68,7 +67,6 @@ fn main() {
 								ui.scrollview_reset(mut tb)
 								tv := mf.treeview_component()
 								tb.read_only = tv.types[mf.item_selected] == 'root'
-								mut app := &App(mf.layout.ui.window.state)
 								if app.line_numbers {
 									tb.is_line_number = tv.types[mf.item_selected] != 'root'
 								}
@@ -94,7 +92,6 @@ fn main() {
 						id: 'edit'
 						z_index: 20
 						height: 200
-						// text: &app.text
 						text_size: 24
 						text_font_name: 'fixed'
 						bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)

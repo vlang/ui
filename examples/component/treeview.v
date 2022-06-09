@@ -7,20 +7,11 @@ const (
 	win_height = 600
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	window := ui.window(
 		width: win_width
 		height: win_height
 		title: 'V UI: TreeView'
-		state: app
 		native_message: false
 		mode: .resizable
 		children: [
@@ -72,7 +63,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }
 

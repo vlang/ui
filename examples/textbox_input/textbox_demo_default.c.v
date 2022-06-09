@@ -1,13 +1,13 @@
 import ui
 
-fn init(window &ui.Window) {
+fn (mut a App) init(window &ui.Window) {
 	// Stub
 }
 
-fn show_soft_input(mut a App) {
+fn (mut a App) show_soft_input() {
 	// Stub
 }
 
-fn hide_soft_input(mut a App) {
+fn (mut a App) hide_soft_input() {
 	// Stub
 }

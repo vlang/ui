@@ -31,7 +31,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Stack widths and heights management'
-		state: app
 		mode: .resizable
 		on_resize: win_resize
 		on_init: win_init

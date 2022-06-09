@@ -31,9 +31,8 @@ fn main() {
 		width: 400
 		height: 300
 		title: 'CRUD'
-		state: app
 		mode: .resizable
-		on_init: win_init
+		on_init: app.win_init
 		children: [
 			ui.column(
 				spacing: 5
@@ -115,8 +114,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn win_init(win &ui.Window) {
-	mut app := &App(win.state)
+fn (mut app App) win_init(win &ui.Window) {
 	// init app fields
 	app.lb_people = win.listbox('lb_people')
 	app.tb_filter = win.textbox('tb_filter')

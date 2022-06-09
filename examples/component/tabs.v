@@ -7,15 +7,7 @@ const (
 	win_height = 400
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)
 	rect := ui.rectangle(
 		text: 'Here a simple ui rectangle '
@@ -27,7 +19,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Toolbar'
-		state: app
 		mode: .resizable
 		native_message: false
 		children: [
@@ -79,6 +70,5 @@ fn main() {
 	)
 	mut cb := uic.colorbox_component(cb_layout)
 	cb.connect(&rect.style.color)
-	app.window = window
 	ui.run(window)
 }

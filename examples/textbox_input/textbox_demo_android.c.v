@@ -6,15 +6,16 @@ const (
 	pkg = 'io.v.android.ui.VUIActivity'
 )
 
-fn init(window &ui.Window) {
+fn (mut app App) init(window &ui.Window) {
 	// Pass app reference off to Java so we
 	// can get it back in the V callback "on_soft_input"
-	app_ref := i64(window.state)
+
+	// TODO: test if this is still valid
+	app_ref := i64(&app) // OLD: i64(window.state)
 	auto.call_static_method(pkg + '.setVAppPointer(long) void', app_ref)
 
-	mut app := &App(window.state)
-	// app.show_soft_input()
-	show_soft_input(mut app)
+	app.show_soft_input()
+	// show_soft_input(mut app)
 }
 
 [export: 'JNI_OnLoad']
@@ -63,13 +64,13 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 	app.window.refresh()
 }
 
-fn show_soft_input(mut a App) {
+fn (mut a App) show_soft_input() {
 	auto.call_static_method(pkg + '.showSoftInput()')
 	auto.call_static_method(pkg + '.setSoftInputBuffer(string)', a.soft_input_buffer)
 	a.soft_input_visible = true
 }
 
-fn hide_soft_input(mut a App) {
+fn (mut a App) hide_soft_input() {
 	auto.call_static_method(pkg + '.hideSoftInput()')
 	a.soft_input_visible = false
 }

@@ -269,6 +269,11 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	if m.hidden {
 		return
 	}
+	$if layout ? {
+		if m.ui.layout_print {
+			println('Menu($m.id): ($m.x, $m.y, $m.width, $m.height)')
+		}
+	}
 	dtw := DrawTextWidget(m)
 	dtw.draw_device_load_style(d)
 

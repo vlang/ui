@@ -10,7 +10,6 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		state: app
 		width: 600
 		height: 600
 		title: 'V UI: Event'

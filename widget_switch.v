@@ -114,6 +114,11 @@ fn (mut s Switch) draw() {
 
 fn (mut s Switch) draw_device(d DrawDevice) {
 	offset_start(mut s)
+	$if layout ? {
+		if s.ui.layout_print {
+			println('Switch($s.id): ($s.x, $s.y, $s.width, $s.height)')
+		}
+	}
 	padding := (s.height - ui.sw_dot_size) / 2
 	if s.open {
 		d.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)

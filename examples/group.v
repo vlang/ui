@@ -18,7 +18,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Group Demo'
-		state: app
 		children: [
 			ui.group(
 				x: 20

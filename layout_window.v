@@ -39,7 +39,6 @@ pub mut:
 	parent_window     &Window = voidptr(0)
 	has_textbox       bool // for initial focus
 	just_tabbed       bool
-	state             voidptr
 	title             string
 	width             int
 	height            int
@@ -102,6 +101,8 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
+	mx        f64 // do not remove this, temporary
+	my        f64
 }
 
 [params]
@@ -112,7 +113,6 @@ pub:
 	font_path     string
 	title         string
 	always_on_top bool
-	state         voidptr
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -200,7 +200,6 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		state: cfg.state
 		title: cfg.title
 		width: width
 		height: height
@@ -296,7 +295,7 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	mut window := &Window{
 		parent_window: parent_window
 		// state: parent_window.state
-		state: cfg.state
+		// state: cfg.state
 		ui: parent_window.ui
 		// glfw_obj: parent_window.ui.gg.window
 		// draw_fn: cfg.draw_fn
@@ -445,6 +444,8 @@ fn frame_immediate(mut w Window) {
 
 fn native_frame(mut w Window) {
 	// println('ui.native_frame()')
+	// C.printf(c'w=%p\n', w)
+	// println(w)
 	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
@@ -460,6 +461,7 @@ fn native_frame(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
+	// println('ui.native_frame() done')
 	//}
 	// w.ui.needs_refresh = false
 }
@@ -695,6 +697,8 @@ fn window_key_down(event gg.Event, ui &UI) {
 				window.png_screenshot('screenshot-${os.file_name(os.executable())}.png')
 			}
 		}
+	} else if e.key == .f10 && super_key(e.mods) {
+		window.layout_print()
 	} else {
 		// add user shortcuts for window
 		key_shortcut(e, window.shortcuts, window)
@@ -1149,10 +1153,6 @@ pub fn (w &Window) free() {
 
 pub fn (w &Window) get_ui() &UI {
 	return w.ui
-}
-
-pub fn (w &Window) get_state() voidptr {
-	return w.state
 }
 
 pub fn (w &Window) size() (int, int) {
@@ -1628,4 +1628,11 @@ pub fn (mut w Window) svg_screenshot(filename string) {
 pub fn (mut w Window) png_screenshot(filename string) {
 	mut d := w.ui.bmp
 	d.png_screenshot_window(filename, mut w)
+}
+
+pub fn (mut w Window) layout_print() {
+	mut d := draw_device_print()
+	w.ui.layout_print = true
+	DrawDevice(d).draw_window(mut w)
+	w.ui.layout_print = false
 }

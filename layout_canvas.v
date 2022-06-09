@@ -605,6 +605,12 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		return
 	}
 	offset_start(mut c)
+	$if layout ? {
+		if c.ui.layout_print {
+			fw, fh := c.full_size()
+			println('CanvasLayout($s.id): ($c.x, $c.y, $fw, $fh)')
+		}
+	}
 	dtw := DrawTextWidget(c)
 	dtw.draw_device_load_style(d)
 	// if scrollview_clip(mut c) {
@@ -701,11 +707,6 @@ fn (c &CanvasLayout) get_ui() &UI {
 
 fn (mut c CanvasLayout) resize(width int, height int) {
 	c.propose_size(width, height)
-}
-
-pub fn (c &CanvasLayout) get_state() voidptr {
-	parent := c.parent
-	return parent.get_state()
 }
 
 fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber {
