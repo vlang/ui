@@ -27,7 +27,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Toolbar'
-		state: app
 		mode: .resizable
 		native_message: false
 		children: [

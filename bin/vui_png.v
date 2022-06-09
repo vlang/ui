@@ -37,7 +37,6 @@ fn main() {
 		height: win_height
 		bg_color: gx.yellow
 		title: 'V UI Png Edit: ${dirs[0]}'
-		state: app
 		native_message: false
 		mode: .resizable
 		on_init: init

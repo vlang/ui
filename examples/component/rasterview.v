@@ -20,7 +20,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Grid'
-		state: app
 		mode: .resizable
 		on_init: win_init
 		children: [

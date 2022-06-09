@@ -45,7 +45,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI Edit: ${dirs[0]}'
-		state: app
 		native_message: false
 		mode: .resizable
 		on_init: init

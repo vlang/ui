@@ -24,7 +24,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Toolbar'
-		state: app
 		native_message: false
 		children: [
 			ui.column(

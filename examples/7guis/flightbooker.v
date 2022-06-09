@@ -21,7 +21,6 @@ fn main() {
 		width: 200
 		height: 110
 		title: 'Flight booker'
-		state: app
 		mode: .resizable
 		on_init: win_init
 		children: [

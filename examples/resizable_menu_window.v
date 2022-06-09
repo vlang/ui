@@ -99,7 +99,6 @@ fn main() {
 		height: win_height
 		title: 'Resizable Window'
 		resizable: true
-		state: app
 		children: [
 			ui.column(
 				margin_: 0

@@ -19,7 +19,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI: Composable Widget'
-		state: app
 		mode: .resizable
 		native_message: false
 		children: [

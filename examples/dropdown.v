@@ -20,7 +20,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Dropdown'
-		state: app
 		children: [
 			ui.column(
 				margin: ui.Margin{5, 5, 5, 5}

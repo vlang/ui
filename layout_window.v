@@ -102,6 +102,8 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
+	mx        f64 // do not remove this, temporary
+	my        f64
 }
 
 [params]
@@ -112,7 +114,7 @@ pub:
 	font_path     string
 	title         string
 	always_on_top bool
-	state         voidptr
+	// state         voidptr
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -200,7 +202,7 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		state: cfg.state
+		// state: cfg.state
 		title: cfg.title
 		width: width
 		height: height
@@ -296,7 +298,7 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	mut window := &Window{
 		parent_window: parent_window
 		// state: parent_window.state
-		state: cfg.state
+		// state: cfg.state
 		ui: parent_window.ui
 		// glfw_obj: parent_window.ui.gg.window
 		// draw_fn: cfg.draw_fn
@@ -445,6 +447,8 @@ fn frame_immediate(mut w Window) {
 
 fn native_frame(mut w Window) {
 	// println('ui.native_frame()')
+	// C.printf(c'w=%p\n', w)
+	// println(w)
 	/*
 	if !w.ui.needs_refresh {
 		// Draw 3 more frames after the "stop refresh" command
@@ -460,6 +464,7 @@ fn native_frame(mut w Window) {
 	for mut child in children {
 		child.draw()
 	}
+	// println('ui.native_frame() done')
 	//}
 	// w.ui.needs_refresh = false
 }

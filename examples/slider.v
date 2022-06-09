@@ -35,7 +35,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Slider Example'
-		state: app
 		children: [
 			ui.row(
 				alignment: .center

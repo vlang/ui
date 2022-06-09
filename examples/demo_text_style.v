@@ -14,7 +14,6 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		state: app
 		mode: .resizable
 		height: 240
 		on_init: window_init

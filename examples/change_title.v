@@ -18,7 +18,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Name'
-		state: app
 		children: [
 			ui.column(
 				spacing: 20

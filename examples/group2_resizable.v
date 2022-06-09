@@ -20,7 +20,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Group 2 Demo'
-		state: app
 		mode: .resizable
 		children: [
 			ui.column(

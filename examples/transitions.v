@@ -39,7 +39,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'V UI Demo'
-		state: app
 		mode: .resizable
 		children: [
 			ui.column(

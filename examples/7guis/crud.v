@@ -31,7 +31,6 @@ fn main() {
 		width: 400
 		height: 300
 		title: 'CRUD'
-		state: app
 		mode: .resizable
 		on_init: win_init
 		children: [

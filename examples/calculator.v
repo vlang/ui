@@ -53,7 +53,6 @@ fn main() {
 		width: 145
 		height: 210
 		title: 'V Calc'
-		state: app
 		children: [
 			ui.column(
 				margin: ui.Margin{5, 5, 5, 5}

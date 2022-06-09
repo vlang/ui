@@ -19,7 +19,6 @@ fn main() {
 		width: win_width
 		height: win_height
 		title: 'Child window'
-		state: app
 		children: [
 			ui.column(
 				margin_: 10
@@ -35,7 +34,6 @@ fn main() {
 
 fn (mut app App) btn_click(btn &ui.Button) {
 	app.window.child_window(
-		state: app
 		children: [
 			ui.column(
 				margin_: 10
