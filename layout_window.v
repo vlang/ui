@@ -114,7 +114,7 @@ pub:
 	font_path     string
 	title         string
 	always_on_top bool
-	// state         voidptr
+	state         voidptr
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -202,7 +202,7 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		// state: cfg.state
+		state: cfg.state
 		title: cfg.title
 		width: width
 		height: height
