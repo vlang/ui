@@ -6,13 +6,13 @@ const (
 )
 
 [heap]
-struct State {
+struct App {
 mut:
 	cpt int
 }
 
 fn main() {
-	mut app := &State{}
+	mut app := &App{}
 
 	window := ui.window(
 		width: win_width
@@ -86,7 +86,7 @@ fn btn_migrate_click(btn &ui.Button) {
 	}
 }
 
-fn (mut app State) btn_add_click(btn &ui.Button) {
+fn (mut app App) btn_add_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	app.cpt++
@@ -98,7 +98,7 @@ fn (mut app State) btn_add_click(btn &ui.Button) {
 	)
 }
 
-fn (mut app State) btn_add_two_click(btn &ui.Button) {
+fn (mut app App) btn_add_two_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut s := window.stack('col2')
 	app.cpt++

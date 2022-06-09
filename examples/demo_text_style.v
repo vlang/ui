@@ -48,7 +48,6 @@ fn main() {
 }
 
 fn window_init(mut w ui.Window) {
-	// app := &App(w.state)
 	// w.ui.add_font('arial', '/System/Library/Fonts/Supplemental/Arial.ttf')
 	// w.ui.add_font('arial-bold', '/System/Library/Fonts/Supplemental/Arial Bold.ttf')
 	// // w.ui.add_font("hira", "/Users/rcqls/Downloads/HIRAGANA.ttf")

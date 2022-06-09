@@ -185,11 +185,6 @@ fn (g &Group) get_ui() &UI {
 fn (g &Group) resize(width int, height int) {
 }
 
-fn (g &Group) get_state() voidptr {
-	parent := g.parent
-	return parent.get_state()
-}
-
 fn (g &Group) get_subscriber() &eventbus.Subscriber {
 	parent := g.parent
 	return parent.get_subscriber()

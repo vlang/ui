@@ -263,11 +263,6 @@ fn (s &SubWindow) get_ui() &UI {
 	return s.ui
 }
 
-pub fn (s &SubWindow) get_state() voidptr {
-	parent := s.parent
-	return parent.get_state()
-}
-
 fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
 	parent := s.parent
 	return parent.get_subscriber()

@@ -22,7 +22,7 @@ fn main() {
 		height: 110
 		title: 'Flight booker'
 		mode: .resizable
-		on_init: win_init
+		on_init: app.win_init
 		children: [
 			ui.column(
 				spacing: 5
@@ -60,8 +60,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn win_init(win &ui.Window) {
-	mut app := &App(win.state)
+fn (mut app App) win_init(win &ui.Window) {
 	app.dd_flight = win.dropdown('dd_flight')
 	app.tb_oneway = win.textbox('tb_oneway')
 	app.tb_return = win.textbox('tb_return')
