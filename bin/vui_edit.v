@@ -48,6 +48,7 @@ fn main() {
 		native_message: false
 		mode: .resizable
 		on_init: init
+		state: app
 		// on_char: on_char
 		children: [
 			ui.row(
