@@ -6,11 +6,6 @@ const (
 	win_height = 74
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
 	mut app := &App{
 		window: 0

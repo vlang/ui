@@ -7,15 +7,7 @@ const (
 	win_height = 600
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	n := 300
 	window := ui.window(
 		width: win_width
@@ -67,7 +59,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }
 

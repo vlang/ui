@@ -39,7 +39,6 @@ pub mut:
 	parent_window     &Window = voidptr(0)
 	has_textbox       bool // for initial focus
 	just_tabbed       bool
-	state             voidptr
 	title             string
 	width             int
 	height            int
@@ -114,7 +113,6 @@ pub:
 	font_path     string
 	title         string
 	always_on_top bool
-	state         voidptr
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -202,7 +200,6 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		state: cfg.state
 		title: cfg.title
 		width: width
 		height: height
@@ -1156,10 +1153,6 @@ pub fn (w &Window) free() {
 
 pub fn (w &Window) get_ui() &UI {
 	return w.ui
-}
-
-pub fn (w &Window) get_state() voidptr {
-	return w.state
 }
 
 pub fn (w &Window) size() (int, int) {

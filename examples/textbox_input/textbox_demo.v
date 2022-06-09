@@ -40,7 +40,7 @@ fn main() {
 		width: 500
 		height: 300
 		mode: .resizable
-		on_init: init
+		on_init: app.init
 		children: [c]
 	)
 	app.window = w

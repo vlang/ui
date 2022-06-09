@@ -8,7 +8,6 @@ import eventbus
 pub interface Layout {
 	id string
 	get_ui() &UI
-	get_state() voidptr
 	size() (int, int)
 	get_children() []Widget
 	get_subscriber() &eventbus.Subscriber

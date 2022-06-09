@@ -6,15 +6,7 @@ const (
 	win_height = 74
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	rect := ui.rectangle(
 		height: 64
 		width: 64
@@ -45,6 +37,5 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	ui.run(window)
 }

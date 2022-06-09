@@ -9,15 +9,7 @@ const (
 	help_text  = $embed_file('help/vui_png.help').to_string()
 )
 
-struct App {
-mut:
-	window &ui.Window
-}
-
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	// TODO: use a proper parser loop, or even better - the `flag` module
 	mut args := os.args#[1..]
 	mut hidden_files := false
@@ -112,7 +104,6 @@ fn main() {
 			),
 		]
 	)
-	app.window = window
 	uic.colorbox_subwindow_add(mut window)
 	uic.messagebox_subwindow_add(mut window, id: 'help', text: help_text)
 	ui.run(window)

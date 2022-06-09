@@ -1,10 +1,5 @@
 import ui
 
-struct App {
-mut:
-	window &ui.Window = 0
-}
-
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
