@@ -7,9 +7,6 @@ const (
 )
 
 fn main() {
-	mut app := &App{
-		window: 0
-	}
 	rect := ui.rectangle(
 		height: 64
 		width: 64

@@ -1,8 +1,7 @@
 import ui
 
 fn main() {
-	mut app := &App{}
-	app.window = ui.window(
+	window := ui.window(
 		mode: .resizable
 		height: 240
 		children: [
@@ -18,5 +17,5 @@ fn main() {
 			),
 		]
 	)
-	ui.run(app.window)
+	ui.run(window)
 }
