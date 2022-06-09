@@ -231,7 +231,7 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
 	subscriber.subscribe_method(events.on_touch_up, tb_mouse_up, tb)
-	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_scroll])
+	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 }
 
 [manualfree]
@@ -246,7 +246,7 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
 	subscriber.unsubscribe_method(events.on_touch_up, tb)
-	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down, events.on_scroll])
+	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 	unsafe { tb.free() }
 }
 
@@ -918,6 +918,14 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 		}
 		tb.sel_active = true
 	}
+}
+
+pub fn (mut tb TextBox) on_mouse_enter(e &MouseMoveEvent) {
+	tb.ui.window.mouse.start('text')
+}
+
+pub fn (mut tb TextBox) on_mouse_leave(e &MouseMoveEvent) {
+	tb.ui.window.mouse.stop()
 }
 
 fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
