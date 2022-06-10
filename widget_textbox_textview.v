@@ -253,6 +253,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
 	}
+	// TODO: only parse chunks when resizing or scrolling
 	tv.sh.reset_chunks()
 	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
 		tv.draw_device_visible_line(d, j, y, line)
