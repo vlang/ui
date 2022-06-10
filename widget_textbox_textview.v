@@ -5,7 +5,8 @@ import gx
 // import encoding.utf8
 
 const (
-	textview_margin = 10
+	textview_margin             = 10
+	textview_line_height_factor = 1.0 // line_height * ( 1.0 + textview_line_height_factor)
 )
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
@@ -16,7 +17,8 @@ pub mut:
 	sel_start  int
 	sel_end    int
 	// text style
-	line_height int
+	line_height        int
+	line_height_factor f64 = ui.textview_line_height_factor
 	// synchronised lines for the text (or maybe a part)
 	tlv TextLinesView
 	// textbox
@@ -1079,7 +1081,7 @@ fn (tv &TextView) text_size(text string) (int, int) {
 
 fn (mut tv TextView) update_line_height() {
 	tv.load_style()
-	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
+	tv.line_height = int(f64(tv.text_height('W')) * (1.0 + tv.line_height_factor))
 }
 
 pub fn (tv &TextView) update_style(ts TextStyleParams) {
