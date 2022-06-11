@@ -200,7 +200,6 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 		for keyword, _ in sh.keywords[sh.lang] {
 			sh.parse_chunk_keyword(keyword)
 		}
-		// sh.i++
 	}
 }
 
@@ -332,6 +331,21 @@ fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 	sh.chunks[typ] << chunk
 }
 
+// Not used yet since one needs to find out how to use it to compute chunks only once when needed
+fn (mut sh SyntaxHighLighter) parse_all_lines() {
+	tv := sh.tv
+	// only visible text lines
+	mut y := tv.tb.y + textbox_padding_y
+	if tv.tb.has_scrollview {
+		y += (tv.tlv.from_j) * tv.line_height
+	}
+	sh.reset_chunks()
+	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
+		sh.parse_chunks(j, y, line)
+		y += tv.line_height
+	}
+}
+
 fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 	if !sh.is_lang_loaded() {
 		return
@@ -349,6 +363,7 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 				color: color
 				font_name: font
 			)
+			tv.load_style()
 		}
 	}
 }

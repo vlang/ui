@@ -22,6 +22,7 @@ const (
 	textbox_padding_y             = 2
 	// selection_color = gx.rgb(226, 233, 241)
 	selection_color               = gx.rgb(186, 214, 251)
+	textbox_line_height_factor    = 0.5 // line_height * ( 1.0 + textview_line_height_factor)
 )
 
 type TextBoxU32Fn = fn (&TextBox, u32)
@@ -49,16 +50,17 @@ pub mut:
 	// gg &gg.GG
 	ui &UI = 0
 	// text               string
-	text        &string = voidptr(0)
-	text_       string // This is the internal string content when not provided by the user
-	max_len     int
-	line_height int
-	cursor_pos  int
-	large_text  bool
-	draw_start  int
-	draw_end    int
-	sel_start   int
-	sel_end     int
+	text               &string = voidptr(0)
+	text_              string // This is the internal string content when not provided by the user
+	max_len            int
+	line_height        int
+	line_height_factor f64
+	cursor_pos         int
+	large_text         bool
+	draw_start         int
+	draw_end           int
+	sel_start          int
+	sel_end            int
 	// placeholder
 	placeholder      string
 	placeholder_bind &string = voidptr(0)
@@ -116,29 +118,30 @@ pub enum TextBoxMode {
 [params]
 pub struct TextBoxParams {
 	TextBoxStyleParams
-	id               string
-	width            int
-	height           int = 22
-	read_only        bool
-	is_multiline     bool
-	is_wordwrap      bool
-	is_line_number   bool
-	mode             TextBoxMode // to summarize the three previous logical
-	is_sync          bool = true
-	twosided_sel     bool
-	z_index          int
-	justify          []f64 = top_left
-	min              int
-	max              int
-	val              int
-	placeholder      string
-	placeholder_bind &string = voidptr(0)
-	max_len          int
-	is_numeric       bool
-	is_password      bool
-	text             &string = voidptr(0)
-	is_error         &bool   = voidptr(0)
-	is_focused       bool
+	id                 string
+	width              int
+	height             int = 22
+	line_height_factor f64 = ui.textbox_line_height_factor
+	read_only          bool
+	is_multiline       bool
+	is_wordwrap        bool
+	is_line_number     bool
+	mode               TextBoxMode // to summarize the three previous logical
+	is_sync            bool = true
+	twosided_sel       bool
+	z_index            int
+	justify            []f64 = top_left
+	min                int
+	max                int
+	val                int
+	placeholder        string
+	placeholder_bind   &string = voidptr(0)
+	max_len            int
+	is_numeric         bool
+	is_password        bool
+	text               &string = voidptr(0)
+	is_error           &bool   = voidptr(0)
+	is_focused         bool
 	// is_error bool
 	// bg_color           gx.Color = gx.white
 	borderless         bool
@@ -162,6 +165,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		width: if c.width < 30 { 30 } else { c.width }
 		z_index: c.z_index
 		justify: c.justify
+		line_height_factor: c.line_height_factor
 		// sel_start_i: 0
 		placeholder: c.placeholder
 		placeholder_bind: c.placeholder_bind
@@ -209,8 +213,6 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	tb.ui = ui
 	// tb.init_style()
 	tb.load_style()
-	{
-	}
 	// TODO: Maybe in a method later to allow font size update
 	tb.update_line_height()
 	if tb.is_multiline {
@@ -312,7 +314,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 fn (mut tb TextBox) update_line_height() {
 	dtw := DrawTextWidget(tb)
 	dtw.load_style()
-	tb.line_height = int(f64(dtw.text_height('W')) * 1.5)
+	tb.line_height = int(f64(dtw.text_height('W')) * (1.0 + tb.line_height_factor))
 }
 
 pub fn (mut tb TextBox) draw() {
