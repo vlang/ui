@@ -60,13 +60,13 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.tb = tb
 	tv.text = tb.text // delegate text from tb
 	tv.update_line_height()
+	tv.sh = syntaxhighlighter()
+	tv.sh.init(tv)
 	// println('line height: $tv.line_height')
 	tv.refresh_visible_lines()
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
-	tv.sh = syntaxhighlighter()
-	tv.sh.init(tv)
 	lock_scrollview_key(tv.tb)
 }
 
@@ -251,6 +251,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
 	}
+	// TODO: only parse chunks when resizing or scrolling
 	tv.sh.reset_chunks()
 	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
 		tv.draw_device_visible_line(d, j, y, line)
@@ -258,7 +259,6 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 			tv.draw_device_line_number(d, j, y)
 		}
 		tv.sh.parse_chunks(j, y, line)
-		// tv.sh.parse_chunks(j, y, line)
 		y += tv.line_height
 	}
 	tv.sh.draw_device_chunks(d)
@@ -787,6 +787,7 @@ pub fn (mut tv TextView) do_zoom_down() {
 	}
 	tv.update_style(size: text_size)
 	tv.update_line_height()
+	tv.refresh_visible_lines()
 	tv.update_lines()
 }
 
@@ -801,6 +802,7 @@ pub fn (mut tv TextView) do_zoom_up() {
 	}
 	tv.update_style(size: text_size)
 	tv.update_line_height()
+	tv.refresh_visible_lines()
 	tv.update_lines()
 }
 
@@ -1001,6 +1003,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		xx = x - tv.left_margin
 	}
 	tv.load_style()
+	// println(DrawTextWidget(tv.tb).current_style().size)
 	mut prev_width := 0.0
 	ustr := text.runes()
 	mut width, mut width_cur := 0.0, 0.0
@@ -1079,7 +1082,8 @@ fn (tv &TextView) text_size(text string) (int, int) {
 
 fn (mut tv TextView) update_line_height() {
 	tv.load_style()
-	tv.line_height = int(f64(tv.text_height('W')) * 1.5)
+	tv.line_height = int(f64(tv.text_height('W')) * (1.0 + tv.tb.line_height_factor))
+	// println("line_height = $tv.line_height (${DrawTextWidget(tv.tb).current_style().size})")
 }
 
 pub fn (tv &TextView) update_style(ts TextStyleParams) {

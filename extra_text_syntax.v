@@ -2,10 +2,15 @@ module ui
 
 import gx
 
+const (
+	numeric_set = '0123456789.'.runes()
+)
+
 struct Chunk {
-	x    int
-	y    int
-	text string
+	x     int
+	y     int
+	text  string
+	width int
 }
 
 struct SyntaxChunk {
@@ -100,6 +105,7 @@ fn (mut sh SyntaxHighLighter) load_default_style() {
 		'string':  SyntaxChunk{gx.dark_green, 'fixed_bold_italic'}
 		'symbols': SyntaxChunk{gx.red, 'fixed_bold'}
 		'numeric': SyntaxChunk{gx.blue, 'fixed_bold'}
+		'func':    SyntaxChunk{gx.blue, 'fixed'}
 	}
 }
 
@@ -109,11 +115,11 @@ fn (mut sh SyntaxHighLighter) load_v() {
 		'types':   'int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64,bool,u8,byteptr,charptr,voidptr,string,ustring,rune'.split(',')
 		'decl':    '],[,{,},mut:,pub:,pub mut:,mut,pub,unsafe,default,struct,type,enum,struct,union,const'.split(',')
 		'control': (
-			'in,is,or,as,in,is,or,break,continue,match,if,else,for,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
+			'for,in,is,or,as,in,is,or,break,continue,match,if,else,go,goto,defer,return,shared,select,rlock,lock,atomic,asm' +
 			',$' + 'if,$' + 'else').split(',')
 		'keyword': 'fn,module,import,interface,map,assert,sizeof,typeof,__offsetof'.split(',')
 		'symbols': '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
-		'numeric': '0,1,2,3,4,5,6,7,8,9,.'.split(',')
+		'func':    'print,println'.split(',')
 	}
 	sh.singleline['v'] = {
 		'comment': ['//', '#']
@@ -188,17 +194,12 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 	sh.i = 0
 	for sh.i < sh.ustr.len {
 		sh.start = sh.i
-		// String or betwwen one same rune
-		for typ, vals in sh.between_one_rune[sh.lang] {
-			for val in vals {
-				sh.parse_chunk_between_one_rune(typ, val)
-			}
-		}
+		sh.parse_chunk_numeric()
+		sh.parse_chunk_between()
 		// Keyword
 		for keyword, _ in sh.keywords[sh.lang] {
 			sh.parse_chunk_keyword(keyword)
 		}
-		sh.i++
 	}
 }
 
@@ -231,6 +232,15 @@ fn (mut sh SyntaxHighLighter) parse_chunk_multiline_comment(typ string, comment_
 	return false
 }
 
+fn (mut sh SyntaxHighLighter) parse_chunk_between() {
+	// String or betwwen one same rune
+	for typ, vals in sh.between_one_rune[sh.lang] {
+		for val in vals {
+			sh.parse_chunk_between_one_rune(typ, val)
+		}
+	}
+}
+
 fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune) {
 	if sh.ustr[sh.i] == sep {
 		sh.i++
@@ -241,28 +251,99 @@ fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune)
 			sh.i = sh.ustr.len - 1
 		}
 		sh.add_chunk(typ, sh.y, sh.start, sh.i + 1)
+		if sh.i < sh.ustr.len - 1 {
+			sh.i++
+			sh.start = sh.i
+		}
+	}
+}
+
+fn (mut sh SyntaxHighLighter) parse_chunk_numeric() {
+	if !sh.is_alpha_underscore_before(sh.start) && ((sh.ustr[sh.i] in ui.numeric_set)
+		|| sh.ustr[sh.i] == `-`) {
+		sh.i++
+		for {
+			if sh.i == sh.ustr.len {
+				sh.i--
+				break
+			}
+			if sh.ustr[sh.i] in ui.numeric_set {
+				sh.i++
+			} else {
+				sh.i--
+				break
+			}
+		}
+		if sh.i == sh.start && sh.ustr[sh.i] in [`-`, `.`] {
+			// sh.i--
+		} else {
+			sh.add_chunk('numeric', sh.y, sh.start, sh.i + 1)
+			// println("numeric ${sh.ustr[sh.start..(sh.i + 1)].string()}")
+			if sh.i < sh.ustr.len - 1 {
+				sh.i++
+			}
+			sh.start = sh.i
+		}
 	}
 }
 
 fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ string) {
+	mut i := -1
 	for sh.i < sh.ustr.len && is_alpha_and_symbols(int(sh.ustr[sh.i])) {
 		sh.i++
+		word := sh.ustr[sh.start..sh.i].string()
+		if word in sh.keywords[sh.lang][typ] && sh.is_not_included(sh.start, sh.i) {
+			// println("$typ $word ") // ${sh.keywords[sh.lang][typ]}")
+			i = sh.i
+		}
 	}
-	word := sh.ustr[sh.start..sh.i].string()
-	if word in sh.keywords[sh.lang][typ] {
+	if i > 0 {
+		sh.i = i
 		sh.add_chunk(typ, sh.y, sh.start, sh.i)
+		// println("$typ ${sh.ustr[sh.start..sh.i].string()} ") // ${sh.keywords[sh.lang][typ]}")
+		sh.start = sh.i
+	} else {
+		sh.i = sh.start + 1
 	}
 }
 
+fn (sh &SyntaxHighLighter) is_alpha_underscore_before(i int) bool {
+	return i > 0 && is_alpha_underscore(int(sh.ustr[i - 1]))
+}
+
+fn (sh &SyntaxHighLighter) is_alpha_underscore_after(i int) bool {
+	return i < sh.ustr.len - 1 && is_alpha_underscore(int(sh.ustr[i + 1]))
+}
+
+fn (sh &SyntaxHighLighter) is_not_included(from int, to int) bool {
+	return !sh.is_alpha_underscore_before(from) && !sh.is_alpha_underscore_after(to - 1)
+}
+
 fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
-	x := sh.tv.tb.x + sh.tv.left_margin + sh.tv.text_width(sh.ustr[0..start].string())
+	x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width_additive(sh.ustr[0..start].string()))
 	text := sh.ustr[start..end].string()
 	chunk := Chunk{
 		x: x
 		y: y
 		text: text
+		width: int(sh.tv.text_width_additive(text))
 	}
 	sh.chunks[typ] << chunk
+}
+
+// Not used yet since one needs to find out how to use it to compute chunks only once when needed
+fn (mut sh SyntaxHighLighter) parse_all_lines() {
+	tv := sh.tv
+	// only visible text lines
+	mut y := tv.tb.y + textbox_padding_y
+	if tv.tb.has_scrollview {
+		y += (tv.tlv.from_j) * tv.line_height
+	}
+	sh.reset_chunks()
+	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
+		sh.parse_chunks(j, y, line)
+		y += tv.line_height
+	}
 }
 
 fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
@@ -277,12 +358,12 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 		for chunk in sh.chunks[typ] {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
 			// fix background (not needed with real fixed font)
-			// d.draw_rect_filled(chunk.x, chunk.y, tv.text_width(chunk.text), tv.line_height,
-			// 	tv.tb.bg_color)
+			// d.draw_rect_filled(chunk.x, chunk.y, chunk.width, tv.line_height, tv.tb.style.bg_color)
 			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
 				color: color
 				font_name: font
 			)
+			tv.load_style()
 		}
 	}
 }
@@ -306,8 +387,7 @@ fn is_whitespace(r u8) bool {
 }
 
 fn is_alpha_underscore(r int) bool {
-	return is_alpha(u8(r)) || u8(r) == `_` || u8(r) == `#` || u8(r) == `$` || u8(r) == `:`
-		|| u8(r) == `=` || u8(r) == `&` || u8(r) == `<` || u8(r) == `>` || u8(r) == `!`
+	return is_alpha(u8(r)) || u8(r) == `_`
 }
 
 fn is_alpha_and_symbols(r int) bool {
