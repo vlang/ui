@@ -216,6 +216,9 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		} else {
 			int((e.x - m.x - m.offset_y) / m.item_width)
 		}
+		if m.hovered < 0 || m.hovered >= m.items.len {
+			return
+		}
 		mut item := m.items[m.hovered]
 		if item.has_menu() {
 			// println('open submenu $item.id')
