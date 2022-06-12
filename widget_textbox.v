@@ -923,11 +923,15 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 }
 
 pub fn (mut tb TextBox) on_mouse_enter(e &MouseMoveEvent) {
-	tb.ui.window.mouse.start('text')
+	if !tb.read_only {
+		tb.ui.window.mouse.start('text')
+	}
 }
 
 pub fn (mut tb TextBox) on_mouse_leave(e &MouseMoveEvent) {
-	tb.ui.window.mouse.stop()
+	if !tb.read_only {
+		tb.ui.window.mouse.stop_last('text')
+	}
 }
 
 fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
