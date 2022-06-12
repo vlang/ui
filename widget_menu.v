@@ -214,7 +214,10 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		m.hovered = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			int((e.x - m.x - m.offset_y) / m.item_width)
+			int((e.x - m.x - m.offset_x) / m.item_width)
+		}
+		if m.hovered < 0 || m.hovered >= m.items.len {
+			return
 		}
 		mut item := m.items[m.hovered]
 		if item.has_menu() {

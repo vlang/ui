@@ -92,6 +92,7 @@ fn main() {
 						id: 'edit'
 						z_index: 20
 						height: 200
+						line_height_factor: 1.0 // double the line_height
 						text_size: 24
 						text_font_name: 'fixed'
 						bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
