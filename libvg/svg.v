@@ -3,7 +3,7 @@ module libvg
 import strings
 import os
 
-struct Svg {
+pub struct Svg {
 pub mut:
 	height   int
 	width    int
