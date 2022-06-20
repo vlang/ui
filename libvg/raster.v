@@ -15,7 +15,7 @@ import x.ttf
 // }
 
 [heap]
-struct Raster {
+pub struct Raster {
 pub mut:
 	width     int
 	height    int
