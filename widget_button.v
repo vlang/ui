@@ -304,8 +304,10 @@ pub fn (mut b Button) set_pos(x int, y int) {
 
 pub fn (b &Button) size() (int, int) {
 	if b.width == 0 || b.height == 0 {
-		mut b2 := unsafe { b }
-		b2.set_text_size()
+		unsafe {
+			mut b2 := b
+			b2.set_text_size()
+		}
 	}
 	return b.width, b.height
 }
