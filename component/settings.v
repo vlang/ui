@@ -6,7 +6,7 @@ import ui
 pub fn setting_color(param string) {
 }
 
-struct SettingFont {
+pub struct SettingFont {
 	param   string
 	lb_text string
 mut:

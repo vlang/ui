@@ -3,7 +3,7 @@ module component
 import ui
 
 [heap]
-struct DoubleListBoxComponent {
+pub struct DoubleListBoxComponent {
 pub mut:
 	layout    &ui.Stack // required
 	lb_left   &ui.ListBox

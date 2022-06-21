@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct AccordionComponent {
+pub struct AccordionComponent {
 pub mut:
 	layout     &ui.Stack // required
 	titles     map[string]string

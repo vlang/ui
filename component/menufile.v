@@ -7,7 +7,7 @@ import os
 pub type MenuFileFn = fn (&MenuFileComponent)
 
 [heap]
-struct MenuFileComponent {
+pub struct MenuFileComponent {
 pub mut:
 	id              string
 	layout          &ui.Stack

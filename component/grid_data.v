@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct DataGridComponent {
+pub struct DataGridComponent {
 pub mut:
 	layout   &ui.Stack
 	grid     &GridComponent
