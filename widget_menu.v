@@ -9,6 +9,7 @@ const (
 	menu_height         = 30
 	menu_width          = 150
 	menu_padding        = 10
+	menu_bar_color      = gx.rgb(230, 230, 230)
 	menu_bg_color       = gx.rgb(240, 240, 240)
 	menu_bg_color_hover = gx.rgb(220, 220, 220)
 	menu_border_color   = gx.rgb(123, 123, 123)
@@ -33,6 +34,7 @@ pub mut:
 	height      int
 	item_width  int
 	item_height int
+	real_width  int // expanded_width
 	fixed_width int
 	hovered     int = -1
 	selected    int = -1
@@ -308,7 +310,9 @@ pub fn (mut m Menu) size() (int, int) {
 
 pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	m.width = w
+	m.real_width = w
 	m.height = h
+	// println("w=$m.width h=$m.height")
 	return m.width, m.height
 }
 
@@ -329,6 +333,10 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	dtw := DrawTextWidget(m)
 	dtw.draw_device_load_style(d)
 
+	if m.dx == 1 && m.dy == 0 {
+		d.draw_rect_filled(m.x, m.y, m.real_width, m.height, m.style.bar_color)
+		d.draw_rect_empty(m.x, m.y, m.real_width, m.height, m.style.border_color)
+	}
 	if m.root_menu.fixed_width >= 0 {
 		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.bg_color)
 		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.border_color)
