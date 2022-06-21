@@ -9,7 +9,7 @@ const (
 )
 
 [heap]
-struct FontChooserComponent {
+pub struct FontChooserComponent {
 pub mut:
 	layout &ui.Stack // required
 	dtw    ui.DrawTextWidget

@@ -12,6 +12,8 @@ const (
 	menu_bg_color       = gx.rgb(240, 240, 240)
 	menu_bg_color_hover = gx.rgb(220, 220, 220)
 	menu_border_color   = gx.rgb(123, 123, 123)
+	menu_font_size      = 10
+	menu_fixed_width    = false
 )
 
 [heap]
@@ -36,15 +38,16 @@ pub mut:
 	hovered     int = -1
 	selected    int = -1
 mut:
-	text        string
-	parent      Layout = empty_stack
-	x           int
-	y           int
-	dx          int
-	dy          int = 1
-	z_index     int
-	items       []&MenuItem
-	root_menu   &Menu       = 0 // for submenu
+	text      string
+	parent    Layout = empty_stack
+	x         int
+	y         int
+	dx        int
+	dy        int = 1
+	z_index   int
+	items     []&MenuItem
+	root_menu &Menu = 0
+	// for submenu
 	parent_item &MenuItem   = 0
 	orientation Orientation = Orientation.vertical
 }
@@ -79,6 +82,7 @@ pub fn menu(c MenuParams) &Menu {
 	}
 	m.root_menu = m
 	m.style_params.style = c.theme
+
 	// connect parent menu
 	for i, mut item in m.items {
 		item.pos = i
@@ -182,7 +186,11 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		m.selected = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			int((e.x - m.x - m.offset_y) / m.item_width)
+			if ui.menu_fixed_width {
+				int((e.x - m.x - m.offset_y) / m.item_width)
+			} else {
+				id_hovered(e.x, e.y, mut m)
+			}
 		}
 		mut item := m.items[m.selected]
 		mut submenu_to_open := false
@@ -214,7 +222,11 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		m.hovered = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			int((e.x - m.x - m.offset_x) / m.item_width)
+			if ui.menu_fixed_width {
+				int((e.x - m.x - m.offset_x) / m.item_width)
+			} else {
+				id_hovered(e.x, e.y, mut m)
+			}
 		}
 		if m.hovered < 0 || m.hovered >= m.items.len {
 			return
@@ -238,6 +250,17 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 	}
 }
 
+pub fn id_hovered(x f64, y f64, mut m Menu) int {
+	mut w := 0
+	for i, item in m.items {
+		if x > w && x < (w + item.width) {
+			return i
+		}
+		w = w + item.width
+	}
+	return 0
+}
+
 pub fn (mut m Menu) set_pos(x int, y int) {
 	// println('set_pos $m.id $x, $y')
 	m.x = x
@@ -247,8 +270,29 @@ pub fn (mut m Menu) set_pos(x int, y int) {
 fn (mut m Menu) update_size() {
 	if m.orientation == .vertical {
 		m.height = m.items.len * m.item_height
+		if !ui.menu_fixed_width {
+			mut mw := 0
+			for item in m.items {
+				if item.width > mw {
+					mw = item.width
+				}
+
+				// println("$item.width $item.text")
+			}
+			for mut item in m.items {
+				item.width = mw
+			}
+		}
 	} else {
-		m.width = m.items.len * m.item_width
+		if ui.menu_fixed_width {
+			m.width = m.items.len * m.item_width
+		} else {
+			mut w := 0
+			for item in m.items {
+				w = w + item.width
+			}
+			m.width = w
+		}
 	}
 }
 
@@ -280,18 +324,78 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	dtw := DrawTextWidget(m)
 	dtw.draw_device_load_style(d)
 
-	d.draw_rect_filled(m.x, m.y, m.width, m.height, m.style.bg_color)
-	d.draw_rect_empty(m.x, m.y, m.width, m.height, m.style.border_color)
+	if ui.menu_fixed_width {
+		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.bg_color)
+		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.border_color)
 
-	for i, item in m.items {
-		// println("item <$m.id> $m.x, $m.y")
-		if m.hovered >= 0 && i == m.hovered {
-			d.draw_rect_filled(m.x + i * m.dx * m.item_width, m.y + i * m.dy * m.item_height,
-				m.item_width, m.item_height, m.style.bg_color_hover)
+		for i, item in m.items {
+			//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
+			if m.hovered >= 0 && i == m.hovered {
+				d.draw_rect_filled(m.x + i * m.dx * m.item_width + 1, m.y +
+					i * m.dy * m.item_height + 1, m.item_width - 1, m.item_height - 2,
+					m.style.bg_color_hover)
+			}
+
+			dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
+				i * m.dy * m.item_height + ui.menu_padding, item.text)
 		}
-		dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
-			i * m.dy * m.item_height + ui.menu_padding, item.text)
+	} else { // compact menu
+		if m.orientation == .vertical {
+			mut mw := 0 // find submenu max width
+			for item in m.items {
+				if item.width > mw {
+					mw = item.width
+				}
+			}
+
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.border_color)
+
+			for i, item in m.items {
+				//	println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
+				if m.hovered >= 0 && i == m.hovered {
+					d.draw_rect_filled(m.x + 1, m.y + i * m.dy * m.item_height + 1, mw - 2,
+						m.item_height - 2, m.style.bg_color_hover)
+
+					// println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
+				}
+
+				dtw.draw_device_text(d, m.x + ui.menu_padding, m.y + i * m.dy * m.item_height +
+					ui.menu_padding, item.text)
+			}
+		} else { // horizontal
+			mut mw := 0 // find submenu max width
+			if m.orientation == .vertical {
+				for item in m.items {
+					if item.width > mw {
+						mw = item.width
+					}
+				}
+			} else {
+				mw = m.width
+			}
+
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.border_color)
+
+			mut w := 0
+			for i, item in m.items {
+				//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
+				if m.hovered >= 0 && i == m.hovered {
+					d.draw_rect_filled(m.x + i * m.dx + w + 1, m.y + i * m.dy * m.item_height,
+						item.width, m.item_height - 1, m.style.bg_color_hover)
+
+					// println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
+				}
+
+				dtw.draw_device_text(d, m.x + i * m.dx + w + ui.menu_padding, m.y +
+					i * m.dy * m.item_height + ui.menu_padding, item.text)
+
+				w = w + item.width
+			}
+		}
 	}
+
 	offset_end(mut m)
 }
 
@@ -369,6 +473,7 @@ pub mut:
 	submenu     &Menu     = 0
 	menu        &Menu     = 0
 	parent_item &MenuItem = 0
+	width       int
 mut:
 	action MenuItemFn
 }
@@ -387,6 +492,7 @@ pub fn menuitem(p MenuItemParams) &MenuItem {
 		id: p.id
 		action: p.action
 		submenu: p.submenu
+		width: p.text.len * ui.menu_font_size
 	}
 	return mi
 }
@@ -398,6 +504,7 @@ fn (mut mi MenuItem) build(mut win Window) {
 		mi.submenu.build(mut win)
 		win.add_top_layer(mi.submenu)
 		mi.submenu.set_visible(false)
+
 		// println("$mi.submenu.id $mi.submenu.parent_menu.id")
 		// println('add_top_layer $mi.submenu.id')
 		// println('<$mi.submenu.id> $mi.submenu.x, $mi.submenu.y')
@@ -444,9 +551,31 @@ pub fn (mut mi MenuItem) set_menu_pos() {
 	if mi.submenu == voidptr(0) {
 		return
 	}
-	if mi.menu.orientation == .horizontal {
-		mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y + mi.menu.item_height)
+	if ui.menu_fixed_width {
+		if mi.menu.orientation == .horizontal {
+			mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y +
+				mi.menu.item_height)
+		} else {
+			mi.submenu.set_pos(mi.menu.x + mi.menu.item_width, mi.menu.y +
+				mi.pos * mi.menu.item_height)
+		}
 	} else {
-		mi.submenu.set_pos(mi.menu.x + mi.menu.item_width, mi.menu.y + mi.pos * mi.menu.item_height)
+		if mi.menu.orientation == .horizontal {
+			mut dx := 0
+			for i, item in mi.menu.items {
+				if i < mi.pos {
+					dx = dx + item.width
+				}
+			}
+			mi.submenu.set_pos(mi.menu.x + dx + mi.pos * mi.menu.dx, mi.menu.y + mi.menu.item_height)
+		} else {
+			mut dx := 0
+			for item in mi.menu.items {
+				if item.width > dx {
+					dx = item.width
+				}
+			}
+			mi.submenu.set_pos(mi.menu.x + dx, mi.menu.y + mi.pos * mi.menu.item_height)
+		}
 	}
 }

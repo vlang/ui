@@ -5,7 +5,7 @@ import ui
 type AlphaFn = fn (ac &AlphaComponent)
 
 [heap]
-struct AlphaComponent {
+pub struct AlphaComponent {
 pub mut:
 	id         string
 	alpha      int

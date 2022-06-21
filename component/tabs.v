@@ -9,7 +9,7 @@ enum TabsMode {
 }
 
 [heap]
-struct TabsComponent {
+pub struct TabsComponent {
 pub mut:
 	id                 string
 	layout             &ui.Stack // required

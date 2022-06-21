@@ -5,7 +5,7 @@ import gx
 import math
 
 [heap]
-struct ColorPaletteComponent {
+pub struct ColorPaletteComponent {
 pub mut:
 	id       string
 	layout   &ui.Stack  // required

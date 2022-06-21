@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct GridSettingsComponent {
+pub struct GridSettingsComponent {
 pub mut:
 	id       string
 	layout   &ui.Stack      = 0
