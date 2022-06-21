@@ -5,7 +5,7 @@ import ui
 type MessageBoxFn = fn (&MessageBoxComponent)
 
 [heap]
-struct MessageBoxComponent {
+pub struct MessageBoxComponent {
 	id       string
 	layout   &ui.Stack
 	tb       &ui.TextBox

@@ -9,7 +9,7 @@ import ui.libvg
 type RasterViewFn = fn (rv &RasterViewComponent)
 
 [heap]
-struct RasterViewComponent {
+pub struct RasterViewComponent {
 pub mut:
 	id     string
 	layout &ui.CanvasLayout

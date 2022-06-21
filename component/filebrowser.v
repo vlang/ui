@@ -5,7 +5,7 @@ import ui
 import os
 
 [heap]
-struct FileBrowserComponent {
+pub struct FileBrowserComponent {
 pub mut:
 	layout     &ui.Stack
 	btn_cancel &ui.Button

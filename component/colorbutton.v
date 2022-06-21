@@ -6,7 +6,7 @@ import gx
 type ColorButtonFn = fn (b &ColorButtonComponent)
 
 [heap]
-struct ColorButtonComponent {
+pub struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button
 	bg_color   gx.Color = gx.white

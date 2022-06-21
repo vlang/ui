@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct HideableComponent {
+pub struct HideableComponent {
 pub mut:
 	id              string
 	layout          &ui.Stack

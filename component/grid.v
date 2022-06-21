@@ -22,7 +22,7 @@ enum GridType {
 type GridData = Factor | []bool | []f64 | []int | []string
 
 [heap]
-struct GridComponent {
+pub struct GridComponent {
 pub mut:
 	id           string
 	layout       &ui.CanvasLayout
