@@ -47,7 +47,7 @@ N.B.:
 ***********************************/
 
 [heap]
-struct Stack {
+pub struct Stack {
 	cache CachedSizes
 pub mut:
 	id                   string
