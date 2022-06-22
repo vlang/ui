@@ -35,7 +35,7 @@ pub mut:
 	item_width  int
 	item_height int
 	real_width  int // expanded_width
-	fixed_width int
+	fixed_width bool
 	hovered     int = -1
 	selected    int = -1
 mut:
@@ -59,7 +59,7 @@ pub struct MenuParams {
 	id          string
 	width       int = ui.menu_width
 	height      int = ui.menu_height
-	fixed_width int = -1
+	fixed_width bool
 	z_index     int = 1000
 	// text_size f64
 	text   string
@@ -189,7 +189,7 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		m.selected = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			if m.root_menu.fixed_width >= 0 {
+			if m.root_menu.fixed_width {
 				int((e.x - m.x - m.offset_y) / m.item_width)
 			} else {
 				id_hovered(e.x, e.y, mut m)
@@ -225,7 +225,7 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 		m.hovered = if m.orientation == .vertical {
 			int((e.y - m.y - m.offset_y) / m.item_height)
 		} else {
-			if m.root_menu.fixed_width >= 0 {
+			if m.root_menu.fixed_width {
 				int((e.x - m.x - m.offset_x) / m.item_width)
 			} else {
 				id_hovered(e.x, e.y, mut m)
@@ -273,7 +273,7 @@ pub fn (mut m Menu) set_pos(x int, y int) {
 fn (mut m Menu) update_size() {
 	if m.orientation == .vertical {
 		m.height = m.items.len * m.item_height
-		if m.root_menu.fixed_width < 0 {
+		if !m.root_menu.fixed_width {
 			mut mw := 0
 			dtw := DrawTextWidget(m)
 			for mut item in m.items {
@@ -289,7 +289,7 @@ fn (mut m Menu) update_size() {
 			}
 		}
 	} else {
-		if m.root_menu.fixed_width >= 0 {
+		if m.root_menu.fixed_width {
 			m.width = m.items.len * m.item_width
 		} else {
 			mut w := 0
@@ -337,7 +337,7 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 		d.draw_rect_filled(m.x, m.y, m.real_width, m.height, m.style.bar_color)
 		d.draw_rect_empty(m.x, m.y, m.real_width, m.height, m.style.border_color)
 	}
-	if m.root_menu.fixed_width >= 0 {
+	if m.root_menu.fixed_width {
 		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.bg_color)
 		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.border_color)
 
@@ -564,7 +564,7 @@ pub fn (mut mi MenuItem) set_menu_pos() {
 	if mi.submenu == voidptr(0) {
 		return
 	}
-	if mi.menu.root_menu.fixed_width >= 0 {
+	if mi.menu.root_menu.fixed_width {
 		if mi.menu.orientation == .horizontal {
 			mi.submenu.set_pos(mi.menu.x + mi.pos * mi.menu.item_width, mi.menu.y +
 				mi.menu.item_height)

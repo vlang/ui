@@ -127,10 +127,6 @@ fn on_switch_click(switcher &ui.Switch) {
 	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	// app.label.set_text(switcher_state)
 	mut mb := switcher.ui.window.menu('menubar')
-	if mb.fixed_width < 0 {
-		mb.fixed_width = 150
-	} else {
-		mb.fixed_width = -1
-	}
+	mb.fixed_width = !mb.fixed_width
 	switcher.ui.window.update_layout()
 }
