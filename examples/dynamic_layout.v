@@ -121,7 +121,7 @@ fn btn_show_hide_click(btn &ui.Button) {
 	mut s := window.stack('col2')
 	state := btn.text == 'show'
 	s.set_children_visible(state, 0)
-	mut b := btn
+	mut b := unsafe { btn }
 	b.text = if state { 'hide' } else { 'show' }
 }
 
@@ -134,7 +134,7 @@ fn btn_show_activate_click(btn &ui.Button) {
 	} else {
 		s.set_children_depth(0, 0)
 	}
-	mut b := btn
+	mut b := unsafe { btn }
 	b.text = if state { 'activate' } else { 'deactivate' }
 	window.update_layout()
 }

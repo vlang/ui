@@ -4,7 +4,7 @@ import ui
 import gx
 
 [heap]
-struct FontButtonComponent {
+pub struct FontButtonComponent {
 pub mut:
 	btn &ui.Button
 	dtw ui.DrawTextWidget

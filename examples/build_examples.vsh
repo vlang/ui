@@ -1,5 +1,5 @@
 fn println_one_of_many(msg string, entry_idx int, entries_len int) {
-	println('${entry_idx + 1:2}/${entries_len:-2} $msg')
+	eprintln('${entry_idx + 1:2}/${entries_len:-2} $msg')
 }
 
 examples_dir := resource_abs_path('.')
@@ -9,12 +9,12 @@ mut entries := []string{}
 for entry in all_entries {
 	fname := file_name(entry)
 	if entry.contains('textbox_input') {
-		println('skipping $entry, part of the folder based `textbox_input` example')
+		eprintln('skipping $entry, part of the folder based `textbox_input` example')
 		continue
 	}
 	if fname == 'webview.v' {
 		$if !macos {
-			println('skipping $entry on !macos')
+			eprintln('skipping $entry on !macos')
 			continue
 		}
 	}

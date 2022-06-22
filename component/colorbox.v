@@ -26,7 +26,7 @@ struct HSVColor {
 }
 
 [heap]
-struct ColorBoxComponent {
+pub struct ColorBoxComponent {
 mut:
 	simg       C.sg_image
 	h          f64 = 0.0

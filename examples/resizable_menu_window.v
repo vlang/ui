@@ -96,13 +96,23 @@ fn main() {
 		children: [
 			ui.column(
 				margin_: 0
-				widths: [ui.stretch, .4]
-				heights: [ui.compact, .4]
+				widths: [ui.stretch, ui.stretch, .4]
+				heights: [ui.compact, ui.compact, .4]
 				bg_color: gx.rgba(255, 0, 0, 20)
-				children: [ui.menubar(
-					items: menu_items
-				),
-					ui.button(text: 'Add user')]
+				children: [
+					ui.row(
+						spacing: 5
+						children: [
+							ui.label(text: 'Compact'),
+							ui.switcher(open: true, on_click: on_switch_click),
+						]
+					),
+					ui.menubar(
+						id: 'menubar'
+						items: menu_items
+					),
+					ui.button(text: 'Add user'),
+				]
 			),
 		]
 	)
@@ -111,4 +121,12 @@ fn main() {
 
 fn menu_click(item &ui.MenuItem) {
 	println('$item.text selected (id: $item.id)')
+}
+
+fn on_switch_click(switcher &ui.Switch) {
+	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
+	// app.label.set_text(switcher_state)
+	mut mb := switcher.ui.window.menu('menubar')
+	mb.fixed_width = !mb.fixed_width
+	switcher.ui.window.update_layout()
 }

@@ -9,7 +9,7 @@ const (
 )
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
-struct TextView {
+pub struct TextView {
 pub mut:
 	text       &string
 	cursor_pos int
