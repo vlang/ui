@@ -34,7 +34,7 @@ mut:
 	v          f64 = 0.75
 	rgb        gx.Color
 	linked     &gx.Color = &gx.Color(0)
-	colbtn     &ColorButtonComponent = 0
+	colbtn     &ColorButtonComponent = voidptr(0)
 	ind_sel    int
 	hsv_sel    []HSVColor = []HSVColor{len: component.cb_nc * component.cb_nr}
 	txt_r      string
