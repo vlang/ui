@@ -48,7 +48,7 @@ pub mut:
 	is_focused bool
 	is_typing  bool
 	// gg &gg.GG
-	ui &UI = 0
+	ui &UI = voidptr(0)
 	// text               string
 	text               &string = voidptr(0)
 	text_              string // This is the internal string content when not provided by the user
@@ -103,7 +103,7 @@ pub mut:
 	component voidptr
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = 0
+	scrollview       &ScrollView = voidptr(0)
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
