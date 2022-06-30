@@ -47,9 +47,9 @@ mut:
 	dy        int = 1
 	z_index   int
 	items     []&MenuItem
-	root_menu &Menu = 0
+	root_menu &Menu = voidptr(0)
 	// for submenu
-	parent_item &MenuItem   = 0
+	parent_item &MenuItem   = voidptr(0)
 	orientation Orientation = Orientation.vertical
 }
 
@@ -483,9 +483,9 @@ pub mut:
 	id          string
 	text        string
 	pos         int
-	submenu     &Menu     = 0
-	menu        &Menu     = 0
-	parent_item &MenuItem = 0
+	submenu     &Menu     = voidptr(0)
+	menu        &Menu     = voidptr(0)
+	parent_item &MenuItem = voidptr(0)
 	width       int
 mut:
 	action MenuItemFn
@@ -495,7 +495,7 @@ mut:
 pub struct MenuItemParams {
 	id      string
 	text    string
-	submenu &Menu      = 0
+	submenu &Menu      = voidptr(0)
 	action  MenuItemFn = MenuItemFn(0)
 }
 

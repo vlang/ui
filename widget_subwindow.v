@@ -21,7 +21,7 @@ pub mut:
 	offset_x              int
 	offset_y              int
 	hidden                bool
-	ui                    &UI = 0
+	ui                    &UI = voidptr(0)
 	// dragging
 	drag     bool
 	dragging bool

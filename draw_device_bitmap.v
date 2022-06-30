@@ -6,9 +6,9 @@ import ui.libvg
 
 struct DrawDeviceBitmap {
 	id string = 'dd_bitmap'
-	ts &libvg.BitmapTextStyle = 0
+	ts &libvg.BitmapTextStyle = voidptr(0)
 pub mut:
-	r &libvg.Raster = 0
+	r &libvg.Raster = voidptr(0)
 }
 
 [params]

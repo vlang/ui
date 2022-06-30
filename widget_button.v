@@ -45,7 +45,7 @@ pub mut:
 	text_height int
 	parent      Layout = empty_stack
 	is_focused  bool
-	ui          &UI = 0
+	ui          &UI = voidptr(0)
 	on_click    ButtonFn
 	// TODO: same convention for all callback
 	on_key_down  ButtonU32Fn = ButtonU32Fn(0)
@@ -64,7 +64,7 @@ pub mut:
 	tooltip      TooltipMessage
 	// style
 	// radius   f32
-	bg_color &gx.Color = 0
+	bg_color &gx.Color = voidptr(0)
 	// Style
 	theme_style  string
 	style        ButtonShapeStyle

@@ -31,7 +31,7 @@ type SyntaxMapRunes = map[string][]rune
 [heap]
 struct SyntaxHighLighter {
 mut:
-	tv               &TextView = 0
+	tv               &TextView = voidptr(0)
 	ustr             []rune
 	chunks           map[string][]Chunk
 	lang             string

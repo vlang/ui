@@ -34,7 +34,7 @@ pub mut:
 pub struct TransitionParams {
 	z_index        int
 	duration       int
-	animated_value &int = 0
+	animated_value &int = voidptr(0)
 	easing         EasingFunction
 	ref            &Transition = voidptr(0)
 }
