@@ -41,7 +41,7 @@ pub mut:
 	to_j   int
 	// current color
 	color   gx.Color = gx.black
-	palette &ColorPaletteComponent = 0
+	palette &ColorPaletteComponent = voidptr(0)
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts

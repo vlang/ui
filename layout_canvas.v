@@ -36,7 +36,7 @@ pub mut:
 	z_index          int
 	deactivated      bool
 	is_focused       bool
-	ui               &UI = 0
+	ui               &UI = voidptr(0)
 	hidden           bool
 	adj_width        int
 	adj_height       int
@@ -58,7 +58,7 @@ pub mut:
 	on_init           InitFn
 	// scrollview
 	has_scrollview       bool
-	scrollview           &ScrollView = 0
+	scrollview           &ScrollView = voidptr(0)
 	point_inside_visible bool // to avoid point_inside_adj
 	// callbacks
 	draw_device_fn      CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)

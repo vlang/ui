@@ -7,10 +7,10 @@ import gx
 pub struct GridSettingsComponent {
 pub mut:
 	id       string
-	layout   &ui.Stack      = 0
-	grid     &GridComponent = 0
-	lb_left  &ui.ListBox    = 0
-	lb_right &ui.ListBox    = 0
+	layout   &ui.Stack      = voidptr(0)
+	grid     &GridComponent = voidptr(0)
+	lb_left  &ui.ListBox    = voidptr(0)
+	lb_right &ui.ListBox    = voidptr(0)
 }
 
 [params]

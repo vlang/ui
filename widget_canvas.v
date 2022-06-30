@@ -18,14 +18,14 @@ pub mut:
 	offset_x int
 	offset_y int
 	z_index  int
-	ui       &UI = 0
+	ui       &UI = voidptr(0)
 	hidden   bool
 	// component state for composable widget
 	component voidptr
 mut:
 	parent  Layout      = empty_stack
 	draw_fn DrawFn      = voidptr(0)
-	gg      &gg.Context = 0
+	gg      &gg.Context = voidptr(0)
 }
 
 [params]

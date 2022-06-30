@@ -7,9 +7,9 @@ import ui.libvg
 struct DrawDeviceSVG {
 mut:
 	id string = 'dd_svg'
-	ts &libvg.SvgTextStyle = 0
+	ts &libvg.SvgTextStyle = voidptr(0)
 pub mut:
-	s &libvg.Svg = 0
+	s &libvg.Svg = voidptr(0)
 }
 
 [params]

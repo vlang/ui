@@ -12,7 +12,7 @@ pub mut:
 	colbtn   &ui.Button // current
 	ncolors  int
 	alpha    &AlphaComponent
-	color    &gx.Color = 0
+	color    &gx.Color = voidptr(0)
 	selected string
 }
 

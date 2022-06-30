@@ -405,7 +405,7 @@ pub mut:
 	adj_height int
 	win_width  int
 	win_height int
-	ui         &UI = 0
+	ui         &UI = voidptr(0)
 	// scissor
 	scissor_rect gg.Rect
 	parent       Layout
