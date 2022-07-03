@@ -16,30 +16,30 @@ ui.window(
     height: 400
     title: 'V UI Demo'
     children: [
-		ui.row(
-			margin: ui.Margin{10, 10, 10, 10}
-			children: [
-				ui.column(
-					width: 200
-					spacing: 13
-					children: [
-						ui.textbox(
-							max_len: 20
-							width: 200
-							placeholder: 'First name'
-							text: &app.first_name
-						),
-						ui.textbox(
-							max_len: 50
-							width: 200
-							placeholder: 'Last name'
-							text: &app.last_name
-						)
-					]
-				)
-			]
-		)
-	]
+        ui.row(
+            margin: ui.Margin{10, 10, 10, 10}
+            children: [
+                ui.column(
+                    width: 200
+                    spacing: 13
+                    children: [
+                        ui.textbox(
+                            max_len: 20
+                            width: 200
+                            placeholder: 'First name'
+                            text: &app.first_name
+                        ),
+                        ui.textbox(
+                            max_len: 50
+                            width: 200
+                            placeholder: 'Last name'
+                            text: &app.last_name
+                        )
+                    ]
+                )
+            ]
+        )
+    ]
 )
 ````
 
