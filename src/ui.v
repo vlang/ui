@@ -108,7 +108,7 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes(),
 		'assets/img/icons8-text-cursor-50.png')
 	// v-logo
-	gui.load_img('v-logo', $embed_file('examples/assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
+	gui.load_img('v-logo', $embed_file('assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
 }
 
 // complete the drawing system
