@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-#include "@VROOT/ui_darwin.m"
+#include "@VROOT/src/ui_darwin.m"
 
 fn C.vui_message_box(s string)
 
