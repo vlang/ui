@@ -26,6 +26,10 @@ type ButtonFn = fn (&Button)
 
 type ButtonU32Fn = fn (&Button, u32)
 
+type ButtonMouseFn = fn (&Button, &MouseEvent)
+
+type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
+
 [heap]
 pub struct Button {
 	// init size read-only
@@ -48,20 +52,23 @@ pub mut:
 	ui          &UI = voidptr(0)
 	on_click    ButtonFn
 	// TODO: same convention for all callback
-	on_key_down  ButtonU32Fn = ButtonU32Fn(0)
-	text         string
-	icon_path    string
-	image        gg.Image
-	use_icon     bool
-	alpha_mode   bool
-	padding      f32
-	hidden       bool
-	disabled     bool
-	movable      bool // drag, transition or anything allowing offset yo be updated
-	just_dragged bool
-	drag_type    string = 'btn'
-	hoverable    bool
-	tooltip      TooltipMessage
+	on_key_down   ButtonU32Fn
+	on_mouse_down ButtonMouseFn
+	on_mouse_up   ButtonMouseFn
+	on_mouse_move ButtonMouseMoveFn
+	text          string
+	icon_path     string
+	image         gg.Image
+	use_icon      bool
+	alpha_mode    bool
+	padding       f32
+	hidden        bool
+	disabled      bool
+	movable       bool // drag, transition or anything allowing offset yo be updated
+	just_dragged  bool
+	drag_type     string = 'btn'
+	hoverable     bool
+	tooltip       TooltipMessage
 	// style
 	// radius   f32
 	bg_color &gx.Color = voidptr(0)
@@ -82,19 +89,22 @@ pub mut:
 [params]
 pub struct ButtonParams {
 	ButtonStyleParams
-	id           string
-	text         string
-	icon_path    string
-	on_click     ButtonFn
-	on_key_down  ButtonU32Fn
-	height       int
-	width        int
-	z_index      int
-	movable      bool
-	hoverable    bool
-	tooltip      string
-	tooltip_side Side = .top
-	padding      f64
+	id            string
+	text          string
+	icon_path     string
+	on_click      ButtonFn
+	on_key_down   ButtonU32Fn
+	on_mouse_down ButtonMouseFn
+	on_mouse_up   ButtonMouseFn
+	on_mouse_move ButtonMouseMoveFn
+	height        int
+	width         int
+	z_index       int
+	movable       bool
+	hoverable     bool
+	tooltip       string
+	tooltip_side  Side = .top
+	padding       f64
 	// text_size    f64
 	theme string = no_style
 }
@@ -114,6 +124,9 @@ pub fn button(c ButtonParams) &Button {
 		style_params: c.ButtonStyleParams
 		on_click: c.on_click
 		on_key_down: c.on_key_down
+		on_mouse_down: c.on_mouse_down
+		on_mouse_up: c.on_mouse_up
+		on_mouse_move: c.on_mouse_move
 		// text_size: c.text_size
 		// radius: f32(c.radius)
 		padding: f32(c.padding)
@@ -266,6 +279,9 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 		if !b.just_dragged {
 			b.state = .pressed
 		}
+		if b.on_mouse_down != ButtonMouseFn(0) {
+			b.on_mouse_down(b, e)
+		}
 	}
 }
 
@@ -277,6 +293,9 @@ fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
 		return
 	}
 	b.state = .normal
+	if b.on_mouse_up != ButtonMouseFn(0) {
+		b.on_mouse_up(b, e)
+	}
 }
 
 fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
@@ -293,6 +312,11 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 			}
 		} else {
 			b.state = .normal
+		}
+	} else {
+		// to use button as a splitter (no test point_inside)
+		if b.on_mouse_move != ButtonMouseMoveFn(0) {
+			b.on_mouse_move(b, e)
 		}
 	}
 }
