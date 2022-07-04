@@ -15,6 +15,7 @@ pub mut:
 	direction ui.Direction
 	active    bool
 	weight    f32
+	btn_size  int
 }
 
 [params]
@@ -23,6 +24,8 @@ pub struct SplitPanelParams {
 	child1    &ui.Widget
 	child2    &ui.Widget
 	direction ui.Direction = .row
+	weight    f64 = 50.0
+	btn_size  int = component.splitpanel_btn_size
 }
 
 pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
@@ -35,7 +38,7 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	)
 	mut layout := if p.direction == .row {
 		ui.row(
-			widths: [ui.stretch, component.splitpanel_btn_size, ui.stretch]
+			widths: [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
 			heights: ui.stretch
 			id: ui.component_id(p.id, 'layout')
 			children: [p.child1, splitbtn, p.child2]
@@ -43,7 +46,7 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	} else {
 		ui.column(
 			widths: ui.stretch
-			heights: [ui.stretch, component.splitpanel_btn_size, ui.stretch]
+			heights: [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
 			id: ui.component_id(p.id, 'layout')
 			children: [p.child1, splitbtn, p.child2]
 		)
@@ -55,6 +58,8 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 		child1: p.child1
 		child2: p.child2
 		direction: p.direction
+		weight: f32(p.weight)
+		btn_size: p.btn_size
 	}
 	ui.component_connect(sp, layout, splitbtn)
 	return layout
@@ -91,8 +96,7 @@ fn splitpanel_btn_mouse_move(b &ui.Button, e &ui.MouseMoveEvent) {
 				sp.weight = f32(e.x - sp.layout.x) / f32(w) * 100.0
 			}
 			// println("$e.x $sp.layout.x $w = > $sp.weight")
-			sp.layout.widths = [sp.weight * ui.stretch, component.splitpanel_btn_size,
-				(100.0 - sp.weight) * ui.stretch]
+			sp.layout.widths = [sp.weight * ui.stretch, sp.btn_size, (100.0 - sp.weight) * ui.stretch]
 			// sp.layout.widths = [ui.stretch ]
 		} else {
 			_, h := sp.layout.size()
@@ -104,10 +108,11 @@ fn splitpanel_btn_mouse_move(b &ui.Button, e &ui.MouseMoveEvent) {
 				sp.weight = f32(e.y - sp.layout.y) / f32(h) * 100.0
 			}
 			// println("${e.y - sp.layout.y} / $h")
-			sp.layout.heights = [sp.weight * ui.stretch, component.splitpanel_btn_size,
+			sp.layout.heights = [sp.weight * ui.stretch, sp.btn_size,
 				(100.0 - sp.weight) * ui.stretch]
 		}
 		// println("toto $sp.weight")
 		sp.layout.update_layout()
+		// b.ui.window.update_layout()
 	}
 }
