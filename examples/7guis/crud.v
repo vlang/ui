@@ -10,10 +10,10 @@ struct Person {
 struct App {
 mut:
 	people     []Person
-	lb_people  &ui.ListBox = 0
-	tb_filter  &ui.TextBox = 0
-	tb_name    &ui.TextBox = 0
-	tb_surname &ui.TextBox = 0
+	lb_people  &ui.ListBox = unsafe { nil }
+	tb_filter  &ui.TextBox = unsafe { nil }
+	tb_name    &ui.TextBox = unsafe { nil }
+	tb_surname &ui.TextBox = unsafe { nil }
 }
 
 fn main() {

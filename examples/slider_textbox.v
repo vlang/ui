@@ -14,13 +14,13 @@ const (
 [heap]
 struct App {
 mut:
-	window       &ui.Window  = 0
-	vert_slider  &ui.Slider  = 0
-	vert_textbox &ui.TextBox = 0
+	window       &ui.Window  = unsafe { nil }
+	vert_slider  &ui.Slider  = unsafe { nil }
+	vert_textbox &ui.TextBox = unsafe { nil }
 	vert_text    string      = ((vert_slider_max + vert_slider_min) / 2).str()
-	hor_slider   &ui.Slider  = 0
+	hor_slider   &ui.Slider  = unsafe { nil }
 	hor_text     string      = ((hor_slider_max + hor_slider_min) / 2).str()
-	hor_textbox  &ui.TextBox = 0
+	hor_textbox  &ui.TextBox = unsafe { nil }
 }
 
 fn main() {
