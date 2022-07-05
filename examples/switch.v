@@ -9,8 +9,8 @@ const (
 struct App {
 mut:
 	label    &ui.Label
-	switcher &ui.Switch = 0
-	window   &ui.Window = 0
+	switcher &ui.Switch = unsafe { nil }
+	window   &ui.Window = unsafe { nil }
 }
 
 fn main() {

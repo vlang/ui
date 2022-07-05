@@ -8,7 +8,7 @@ const (
 [heap]
 struct App {
 mut:
-	window         &ui.Window = 0
+	window         &ui.Window = unsafe { nil }
 	title_box_text string
 	name           string
 }

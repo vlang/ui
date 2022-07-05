@@ -6,7 +6,7 @@ import time
 [heap]
 struct App {
 mut:
-	window &ui.Window = 0
+	window &ui.Window = unsafe { nil }
 	task   int
 	log    string
 }

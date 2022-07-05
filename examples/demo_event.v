@@ -3,7 +3,7 @@ import gx
 
 struct App {
 mut:
-	window &ui.Window = 0
+	window &ui.Window = unsafe { nil }
 	info   string     = '....'
 }
 
