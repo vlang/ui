@@ -10,14 +10,14 @@ const (
 [heap]
 struct App {
 mut:
-	window &ui.Window = 0
+	window &ui.Window = unsafe { nil }
 	// group
 	first_ipsum  string
 	second_ipsum string
 	full_name    string
 	// slider
-	hor_slider  &ui.Slider = 0
-	vert_slider &ui.Slider = 0
+	hor_slider  &ui.Slider = unsafe { nil }
+	vert_slider &ui.Slider = unsafe { nil }
 }
 
 fn main() {

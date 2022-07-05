@@ -7,7 +7,7 @@ const (
 
 struct App {
 mut:
-	window     &ui.Window = 0
+	window     &ui.Window = unsafe { nil }
 	first_name string
 	last_name  string
 }

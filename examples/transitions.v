@@ -10,11 +10,11 @@ const (
 [heap]
 struct App {
 mut:
-	window       &ui.Window = 0
+	window       &ui.Window = unsafe { nil }
 	x_transition &ui.Transition
 	y_transition &ui.Transition
 	picture      &ui.Picture
-	button       &ui.Button = 0
+	button       &ui.Button = unsafe { nil }
 	state        int
 }
 

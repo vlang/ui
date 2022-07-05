@@ -15,7 +15,7 @@ struct App {
 mut:
 	lbl_elapsed_value &ui.Label
 	progress_bar      &ui.ProgressBar
-	slider            &ui.Slider = 0
+	slider            &ui.Slider = unsafe { nil }
 	window            &ui.Window
 	duration          f64 = 15.0
 	elapsed_time      f64 = 0.0
