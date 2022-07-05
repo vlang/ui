@@ -1,9 +1,9 @@
 module component
 
 import ui
-// import gx
+import gx
 
-const splitpanel_btn_size = 4
+const splitpanel_btn_size = 6
 
 [heap]
 pub struct SplitPanelComponent {
@@ -35,6 +35,16 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 		on_mouse_up: splitpanel_btn_mouse_up
 		on_mouse_move: splitpanel_btn_mouse_move
 		hoverable: true
+		// TODO: to adapt to chosen style
+		bg_color_hover: gx.gray
+		bg_color: gx.light_gray
+		bg_color_pressed: gx.black
+		on_mouse_enter: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
+			b.ui.window.mouse.start('vmove')
+		}
+		on_mouse_leave: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
+			b.ui.window.mouse.stop_last('vmove')
+		}
 	)
 	mut layout := if p.direction == .row {
 		ui.row(

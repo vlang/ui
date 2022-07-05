@@ -52,23 +52,25 @@ pub mut:
 	ui          &UI = voidptr(0)
 	on_click    ButtonFn
 	// TODO: same convention for all callback
-	on_key_down   ButtonU32Fn
-	on_mouse_down ButtonMouseFn
-	on_mouse_up   ButtonMouseFn
-	on_mouse_move ButtonMouseMoveFn
-	text          string
-	icon_path     string
-	image         gg.Image
-	use_icon      bool
-	alpha_mode    bool
-	padding       f32
-	hidden        bool
-	disabled      bool
-	movable       bool // drag, transition or anything allowing offset yo be updated
-	just_dragged  bool
-	drag_type     string = 'btn'
-	hoverable     bool
-	tooltip       TooltipMessage
+	on_key_down    ButtonU32Fn
+	on_mouse_down  ButtonMouseFn
+	on_mouse_up    ButtonMouseFn
+	on_mouse_move  ButtonMouseMoveFn
+	on_mouse_enter ButtonMouseMoveFn
+	on_mouse_leave ButtonMouseMoveFn
+	text           string
+	icon_path      string
+	image          gg.Image
+	use_icon       bool
+	alpha_mode     bool
+	padding        f32
+	hidden         bool
+	disabled       bool
+	movable        bool // drag, transition or anything allowing offset yo be updated
+	just_dragged   bool
+	drag_type      string = 'btn'
+	hoverable      bool
+	tooltip        TooltipMessage
 	// style
 	// radius   f32
 	bg_color &gx.Color = voidptr(0)
@@ -89,22 +91,24 @@ pub mut:
 [params]
 pub struct ButtonParams {
 	ButtonStyleParams
-	id            string
-	text          string
-	icon_path     string
-	on_click      ButtonFn
-	on_key_down   ButtonU32Fn
-	on_mouse_down ButtonMouseFn
-	on_mouse_up   ButtonMouseFn
-	on_mouse_move ButtonMouseMoveFn
-	height        int
-	width         int
-	z_index       int
-	movable       bool
-	hoverable     bool
-	tooltip       string
-	tooltip_side  Side = .top
-	padding       f64
+	id             string
+	text           string
+	icon_path      string
+	on_click       ButtonFn
+	on_key_down    ButtonU32Fn
+	on_mouse_down  ButtonMouseFn
+	on_mouse_up    ButtonMouseFn
+	on_mouse_move  ButtonMouseMoveFn
+	on_mouse_enter ButtonMouseMoveFn
+	on_mouse_leave ButtonMouseMoveFn
+	height         int
+	width          int
+	z_index        int
+	movable        bool
+	hoverable      bool
+	tooltip        string
+	tooltip_side   Side = .top
+	padding        f64
 	// text_size    f64
 	theme string = no_style
 }
@@ -127,6 +131,8 @@ pub fn button(c ButtonParams) &Button {
 		on_mouse_down: c.on_mouse_down
 		on_mouse_up: c.on_mouse_up
 		on_mouse_move: c.on_mouse_move
+		on_mouse_enter: c.on_mouse_enter
+		on_mouse_leave: c.on_mouse_leave
 		// text_size: c.text_size
 		// radius: f32(c.radius)
 		padding: f32(c.padding)
@@ -160,7 +166,7 @@ fn (mut b Button) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, btn_mouse_move, b)
 	subscriber.subscribe_method(events.on_mouse_up, btn_mouse_up, b)
 	subscriber.subscribe_method(events.on_touch_up, btn_mouse_up, b)
-	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down])
+	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down, events.on_mouse_move])
 }
 
 [manualfree]
@@ -171,7 +177,7 @@ fn (mut b Button) cleanup() {
 	subscriber.unsubscribe_method(events.on_click, b)
 	subscriber.unsubscribe_method(events.on_touch_down, b)
 	subscriber.unsubscribe_method(events.on_mouse_move, b)
-	b.ui.window.evt_mngr.rm_receiver(b, [events.on_mouse_down])
+	b.ui.window.evt_mngr.rm_receiver(b, [events.on_mouse_down, events.on_mouse_move])
 	unsafe { b.free() }
 }
 
@@ -318,6 +324,18 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 		if b.on_mouse_move != ButtonMouseMoveFn(0) {
 			b.on_mouse_move(b, e)
 		}
+	}
+}
+
+pub fn (mut b Button) do_mouse_enter(e &MouseMoveEvent) {
+	if b.on_mouse_enter != ButtonMouseMoveFn(0) {
+		b.on_mouse_enter(b, e)
+	}
+}
+
+pub fn (mut b Button) do_mouse_leave(e &MouseMoveEvent) {
+	if b.on_mouse_leave != ButtonMouseMoveFn(0) {
+		b.on_mouse_leave(b, e)
 	}
 }
 
