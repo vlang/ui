@@ -25,7 +25,7 @@ pub mut:
 	thumb_width          int
 	thumb_height         int
 	slider_size          int // fixed size (width) of the slider
-	orientation          Orientation = Orientation.horizontal
+	orientation          Orientation
 	x                    int
 	y                    int
 	offset_x             int
