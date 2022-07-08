@@ -8,6 +8,10 @@ const (
 )
 
 fn main() {
+	mut orientation := ui.Orientation.vertical
+	$if horiz ? {
+		orientation = .horizontal
+	}
 	color := gx.rgb(128, 128, 128)
 	rect := ui.rectangle(
 		id: 'rgb_rect'
@@ -34,7 +38,7 @@ fn main() {
 					uic.colorsliders_stack(
 						id: 'colorsliders'
 						color: color
-						// orientation: .horizontal
+						orientation: orientation
 						on_changed: on_rgb_changed
 					),
 				]
