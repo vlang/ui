@@ -695,6 +695,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 				// println("screenshot screenshot-${os.file_name(os.executable())}.svg")
 				window.svg_screenshot('screenshot-${os.file_name(os.executable())}.svg')
 				window.png_screenshot('screenshot-${os.file_name(os.executable())}.png')
+				take_snapshot('toto.png')
 			}
 		}
 	} else if e.key == .f10 && super_key(e.mods) {

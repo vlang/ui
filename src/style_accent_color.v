@@ -3,9 +3,14 @@ module ui
 import gx
 import math
 
-pub fn load_style_from_accent_color(accent_color []int) Style {
-	// colors := color_scheme_from_accent_color(accent_color)
-	return Style{
+pub fn (mut gui UI) update_style_from_accent_color(accent_color []int) {
+	gui.accent_color = accent_color
+	gui.load_style_from_accent_color()
+}
+
+pub fn (mut gui UI) load_style_from_accent_color() {
+	colors := color_scheme_from_accent_color(gui.accent_color)
+	gui.styles['accent_color'] = Style{
 		// window
 		win: WindowStyle{
 			bg_color: default_window_color
@@ -14,7 +19,7 @@ pub fn load_style_from_accent_color(accent_color []int) Style {
 		btn: ButtonStyle{
 			radius: .1
 			border_color: button_border_color
-			bg_color: gx.white
+			bg_color: colors[1]
 			bg_color_pressed: gx.rgb(119, 119, 119)
 			bg_color_hover: gx.rgb(219, 219, 219)
 		}

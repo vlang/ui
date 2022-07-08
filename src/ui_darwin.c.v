@@ -13,7 +13,7 @@ fn C.vui_wait_events()
 
 fn C.vui_bundle_path() string
 
-fn C.vui_take_screenshot(string)
+// fn C.vui_take_screenshot(string)
 
 fn C.vui_screenshot(voidptr, string)
 
