@@ -23,16 +23,11 @@ pub mut:
 
 [params]
 pub struct CanvasLayoutStyleParams {
+	WidgetTextStyleParams
 pub mut:
 	style     string = no_style
 	bg_radius f32
 	bg_color  gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
 }
 
 pub fn canvaslayout_style(p CanvasLayoutStyleParams) CanvasLayoutStyleParams {

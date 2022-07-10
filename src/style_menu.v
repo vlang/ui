@@ -25,18 +25,13 @@ pub mut:
 
 [params]
 pub struct MenuStyleParams {
+	WidgetTextStyleParams
 mut:
 	style          string   = no_style
 	border_color   gx.Color = no_color
 	bar_color      gx.Color = no_color
 	bg_color       gx.Color = no_color
 	bg_color_hover gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
 }
 
 pub fn menu_style(p MenuStyleParams) MenuStyleParams {

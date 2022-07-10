@@ -62,7 +62,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		max: component.slider_max
 		val: p.color.r
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
+		rev_min_max_pos: p.orientation == .vertical
 		on_value_changed: on_r_value_changed
 		thumb_color: gx.light_red
 	)
@@ -72,7 +72,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		max: component.slider_max
 		val: p.color.g
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
+		rev_min_max_pos: p.orientation == .vertical
 		on_value_changed: on_g_value_changed
 		thumb_color: gx.light_green
 	)
@@ -82,7 +82,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		max: component.slider_max
 		val: p.color.b
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
+		rev_min_max_pos: p.orientation == .vertical
 		on_value_changed: on_b_value_changed
 		thumb_color: gx.light_blue
 	)

@@ -13,15 +13,16 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 	gui.styles['accent_color'] = Style{
 		// window
 		win: WindowStyle{
-			bg_color: default_window_color
+			bg_color: colors[0]
 		}
 		// button
 		btn: ButtonStyle{
 			radius: .1
 			border_color: button_border_color
 			bg_color: colors[1]
-			bg_color_pressed: gx.rgb(119, 119, 119)
-			bg_color_hover: gx.rgb(219, 219, 219)
+			bg_color_pressed: colors[0]
+			bg_color_hover: colors[2]
+			text_color: colors[3]
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
