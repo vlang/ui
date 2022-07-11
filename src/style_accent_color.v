@@ -40,7 +40,7 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 
 // Inspiration from mui project made by @malisipi
 
-fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
+pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
 	mut font_color := [0, 0, 0]
 	if accent_color[0] + accent_color[1] + accent_color[2] / 3 < 255 * 3 / 2 {
 		font_color = [255, 255, 255]
@@ -62,4 +62,8 @@ fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
 		}
 	}
 	return gx_colors
+}
+
+pub fn (gui &UI) accent_colors() []gx.Color {
+	return color_scheme_from_accent_color(gui.accent_color)
 }

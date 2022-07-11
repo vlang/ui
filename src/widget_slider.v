@@ -219,7 +219,7 @@ fn (mut s Slider) draw_device(d DrawDevice) {
 		}
 	}
 
-	d.draw_rect_empty(x, y, w, h, if s.is_focused {
+	d.draw_rounded_rect_empty(x, y, w, h, s.radius, if s.is_focused {
 		s.style.focused_bg_border_color
 	} else {
 		s.style.bg_border_color

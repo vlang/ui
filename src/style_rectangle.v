@@ -99,7 +99,7 @@ fn (mut rect Rectangle) update_shape_style(p RectangleStyleParams) {
 	}
 }
 
-fn (mut rect Rectangle) update_style_params(p RectangleStyleParams) {
+pub fn (mut rect Rectangle) update_style_params(p RectangleStyleParams) {
 	if p.border_color != no_color {
 		rect.style_params.border_color = p.border_color
 	}
