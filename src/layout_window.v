@@ -1620,6 +1620,10 @@ pub fn (w Window) subwindow(id string) &SubWindow {
 	}
 }
 
+pub fn (w &Window) run() {
+	run(w)
+}
+
 pub fn (mut w Window) svg_screenshot(filename string) {
 	mut d := w.ui.svg
 	d.screenshot_window(filename, mut w)

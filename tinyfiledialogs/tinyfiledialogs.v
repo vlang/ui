@@ -65,18 +65,18 @@ pub fn selectfolder(title string) string {
 	}
 }
 
-pub fn colorchooser(title string, default_color string) string {
-	temp := C.tinyfd_colorChooser(title.str, default_color.str, ''.str, ''.str)
-	if temp != &char(0) {
-		return unsafe { temp.vstring() }
-	} else {
-		return ''
-	}
-}
+// pub fn colorchooser(title string, default_color string) string {
+// 	temp := C.tinyfd_colorChooser(title.str, default_color.str, ''.str, ''.str)
+// 	if temp != &char(0) {
+// 		return unsafe { temp.vstring() }
+// 	} else {
+// 		return ''
+// 	}
+// }
 
-pub fn notifypopup(title string, text string, icon_type string) { // "info", "warning", "error"
-	C.tinyfd_notifyPopup(title.str, text.str, icon_type.str)
-}
+// pub fn notifypopup(title string, text string, icon_type string) { // "info", "warning", "error"
+// 	C.tinyfd_notifyPopup(title.str, text.str, icon_type.str)
+// }
 
 pub fn beep() {
 	C.tinyfd_beep()
