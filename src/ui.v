@@ -27,7 +27,7 @@ pub mut:
 	nb_click       int
 	keymods        KeyMod
 	styles         map[string]Style
-	accent_color   []int
+	accent_color   []int = [100, 40, 150]
 mut:
 	cb_image             gg.Image // used only in checkbox.v
 	circle_image         gg.Image // used in radio.v but no use, in idle_loop()

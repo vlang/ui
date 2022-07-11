@@ -86,9 +86,10 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		on_value_changed: on_b_value_changed
 		thumb_color: gx.light_blue
 	)
-	r_label := ui.label(text: 'R', justify: ui.top_center)
-	g_label := ui.label(text: 'G', justify: ui.top_center)
-	b_label := ui.label(text: 'B', justify: ui.top_center)
+	valign := ui.TextVerticalAlign.top // if p.orientation == .vertical {ui.TextVerticalAlign.middle} else {ui.TextVerticalAlign.top}
+	r_label := ui.label(text: 'R', justify: ui.top_center, text_vertical_align: valign)
+	g_label := ui.label(text: 'G', justify: ui.top_center, text_vertical_align: valign)
+	b_label := ui.label(text: 'B', justify: ui.top_center, text_vertical_align: valign)
 	mut layout := if p.orientation == .vertical {
 		w := [ui.stretch, 40.0, 2 * ui.stretch, 40, 2 * ui.stretch, 40, ui.stretch]
 		ui.column(
@@ -132,10 +133,10 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 			widths: [40.0, ui.stretch, 40.0]
 			children: [
 				ui.column(
-					id: ui.component_id(p.id, 'r_row')
+					id: ui.component_id(p.id, 'b_row')
 					heights: h
-					children: [ui.spacing(), r_textbox, ui.spacing(), g_textbox, ui.spacing(),
-						b_textbox, ui.spacing()]
+					children: [ui.spacing(), r_label, ui.spacing(), g_label, ui.spacing(),
+						b_label, ui.spacing()]
 				),
 				ui.column(
 					id: ui.component_id(p.id, 'g_row')
@@ -144,10 +145,10 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 						b_slider, ui.spacing()]
 				),
 				ui.column(
-					id: ui.component_id(p.id, 'b_row')
+					id: ui.component_id(p.id, 'r_row')
 					heights: h
-					children: [ui.spacing(), r_label, ui.spacing(), g_label, ui.spacing(),
-						b_label, ui.spacing()]
+					children: [ui.spacing(), r_textbox, ui.spacing(), g_textbox, ui.spacing(),
+						b_textbox, ui.spacing()]
 				),
 			]
 		)
@@ -187,8 +188,17 @@ pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersCompo
 	return colorsliders_component(w.stack(ui.component_id(id, 'layout')))
 }
 
-pub fn (cs ColorSlidersComponent) color() gx.Color {
+pub fn (cs &ColorSlidersComponent) color() gx.Color {
 	return gx.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()), u8(cs.b_textbox.text.int()))
+}
+
+pub fn (mut cs ColorSlidersComponent) set_color(color gx.Color) {
+	cs.r_textbox_text = color.r.str()
+	cs.g_textbox_text = color.g.str()
+	cs.b_textbox_text = color.b.str()
+	cs.r_slider.val = f32(color.r)
+	cs.g_slider.val = f32(color.g)
+	cs.b_slider.val = f32(color.b)
 }
 
 fn on_r_value_changed(slider &ui.Slider) {

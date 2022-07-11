@@ -45,6 +45,7 @@ pub mut:
 	track_line_displayed bool
 	entering             bool
 	hidden               bool
+	radius               int
 	// Style
 	theme_style  string
 	style        SliderStyle
@@ -66,6 +67,7 @@ pub struct SliderParams {
 	val                  f32
 	orientation          Orientation
 	theme                string = no_style
+	radius               int    = 5
 	on_value_changed     SliderFn
 	focus_on_thumb_only  bool = true
 	rev_min_max_pos      bool
@@ -93,6 +95,7 @@ pub fn slider(c SliderParams) &Slider {
 		z_index: c.z_index
 		entering: c.entering
 		style_params: c.SliderStyleParams
+		radius: c.radius
 	}
 	s.style_params.style = c.theme
 	s.set_thumb_size()
@@ -207,7 +210,7 @@ fn (mut s Slider) draw_device(d DrawDevice) {
 		s.x + (s.width - s.slider_size) / 2, s.y, s.slider_size, s.height
 	}
 
-	d.draw_rect_filled(x, y, w, h, s.style.bg_color)
+	d.draw_rounded_rect_filled(x, y, w, h, s.radius, s.style.bg_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
@@ -249,11 +252,11 @@ fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	}
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
-		d.draw_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width, s.thumb_height,
-			s.style.thumb_color)
+		d.draw_rounded_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
+			s.thumb_height, s.radius, s.style.thumb_color)
 	} else {
-		d.draw_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width, s.thumb_height,
-			s.style.thumb_color)
+		d.draw_rounded_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
+			s.thumb_height, s.radius, s.style.thumb_color)
 	}
 }
 

@@ -27,6 +27,7 @@ pub mut:
 	slider SliderStyle
 	dd     DropdownStyle
 	menu   MenuStyle
+	label  LabelStyle
 }
 
 pub fn (s Style) to_toml() string {
@@ -51,6 +52,10 @@ pub fn (s Style) to_toml() string {
 	toml += s.cl.to_toml()
 	toml += '\n[stack]\n'
 	toml += s.stack.to_toml()
+	toml += '\n[textbox]\n'
+	toml += s.tb.to_toml()
+	toml += '\n[label]\n'
+	toml += s.label.to_toml()
 	return toml
 }
 
@@ -67,6 +72,8 @@ pub fn parse_style_toml_file(path string) Style {
 	s.menu.from_toml(doc.value('menu'))
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
+	s.tb.from_toml(doc.value('textbox'))
+	s.label.from_toml(doc.value('label'))
 	return s
 }
 

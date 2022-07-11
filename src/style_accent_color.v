@@ -15,6 +15,10 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 		win: WindowStyle{
 			bg_color: colors[0]
 		}
+		// label
+		label: LabelStyle{
+			text_color: colors[3]
+		}
 		// button
 		btn: ButtonStyle{
 			radius: .1

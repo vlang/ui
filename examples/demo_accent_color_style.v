@@ -17,14 +17,7 @@ fn main() {
 						color: gx.white
 						on_changed: on_accent_color_changed
 					),
-					ui.column(
-						id: 'col'
-						margin_: 10
-						widths: ui.compact
-						children: [
-							ui.button(text: 'Ok', hoverable: true),
-						]
-					),
+					uic.demo_stack(),
 				]
 			),
 		]
@@ -41,5 +34,7 @@ fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 
 fn win_init(w &ui.Window) {
 	mut cs := uic.colorsliders_component_from_id(w, 'cs')
+	ac := cs.layout.ui.accent_color
+	cs.set_color(gx.rgb(u8(ac[0]), u8(ac[1]), u8(ac[2])))
 	on_accent_color_changed(mut cs)
 }

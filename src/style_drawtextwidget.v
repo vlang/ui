@@ -2,7 +2,7 @@ module ui
 
 import gx
 
-//
+// Embedded in most Widget Styles
 
 pub struct WidgetTextStyle {
 pub mut:
