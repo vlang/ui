@@ -205,9 +205,9 @@ pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	}
 	if cb.style.bg_color != no_color {
 		d.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
-			cb.width, cb.height, cb.style.bg_color)
+			cb.width, cb.height, cb.ui.window.bg_color) // cb.style.bg_color)
 	}
-	d.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, gx.white) // progress_bar_color)
+	d.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, cb.style.bg_color) // progress_bar_color)
 	draw_device_inner_border(false, d, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {

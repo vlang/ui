@@ -28,6 +28,17 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 			bg_color_hover: colors[2]
 			text_color: colors[3]
 		}
+		// textbox
+		tb: TextBoxStyle{
+			bg_color: colors[2]
+			text_color: colors[3]
+		}
+		// checkbox
+		cb: CheckBoxStyle{
+			border_color: colors[1]
+			bg_color: colors[2]
+			text_color: colors[3]
+		}
 		// progressbar
 		pgbar: ProgressBarStyle{
 			color: gx.rgb(87, 153, 245)

@@ -96,7 +96,8 @@ fn (mut gui UI) load_imgs() {
 	// 	bytes_selected_radio_png.len)
 	// gui.selected_radio_image.path = 'assets/img/selected_radio.png'
 	// images
-	gui.load_img('check', $embed_file('assets/img/check.png').to_bytes(), 'assets/img/check.png')
+	gui.load_img('check', $embed_file('assets/img/check_transparent.png').to_bytes(),
+		'assets/img/check.png')
 	gui.cb_image = gui.img('check')
 	gui.load_img('selected_radio', $embed_file('assets/img/selected_radio.png').to_bytes(),
 		'assets/img/selected_radio.png')
