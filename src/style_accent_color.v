@@ -10,6 +10,7 @@ pub fn (mut gui UI) update_style_from_accent_color(accent_color []int) {
 
 pub fn (mut gui UI) load_style_from_accent_color() {
 	colors := color_scheme_from_accent_color(gui.accent_color)
+	check_mode := if colors[3] == gx.black { 'check' } else { 'check_white' }
 	gui.styles['accent_color'] = Style{
 		// window
 		win: WindowStyle{
@@ -37,6 +38,7 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 		cb: CheckBoxStyle{
 			border_color: colors[1]
 			bg_color: colors[2]
+			check_mode: check_mode
 			text_color: colors[3]
 		}
 		// progressbar
@@ -47,6 +49,7 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
 	}
+	gui.cb_image = gui.img(check_mode)
 }
 
 // Inspiration from mui project made by @malisipi
