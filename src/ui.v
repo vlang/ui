@@ -30,8 +30,8 @@ pub mut:
 	accent_color   []int = [100, 40, 150]
 mut:
 	cb_image             gg.Image // used only in checkbox.v
-	circle_image         gg.Image // used in radio.v but no use, in idle_loop()
-	selected_radio_image gg.Image // used only in radio.v
+	radio_image          gg.Image // used in radio.v but no use, in idle_loop()
+	radio_selected_image gg.Image // used only in radio.v
 	down_arrow           gg.Image // used only in dropdown.v
 	resource_cache       map[string]gg.Image // used only in picture.v
 	imgs                 map[string]gg.Image
@@ -85,12 +85,12 @@ fn (mut gui UI) idle_loop() {
 fn (mut gui UI) load_imgs() {
 	// gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
 	// gui.cb_image.path = 'assets/img/check.png'
-	$if macos {
-		gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
-			bytes_darwin_circle_png.len)
-	} $else {
-		gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
-	}
+	// $if macos {
+	// 	gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
+	// 		bytes_darwin_circle_png.len)
+	// } $else {
+	// 	gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
+	// }
 	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
 	// gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
 	// 	bytes_selected_radio_png.len)
@@ -100,9 +100,13 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('check_white', $embed_file('assets/img/check_white.png').to_bytes(),
 		'assets/img/check_white.png')
 	gui.cb_image = gui.img('check')
-	gui.load_img('selected_radio', $embed_file('assets/img/selected_radio.png').to_bytes(),
-		'assets/img/selected_radio.png')
-	gui.selected_radio_image = gui.img('selected_radio')
+	gui.load_img('radio_selected', $embed_file('assets/img/radio_selected.png').to_bytes(),
+		'assets/img/radio_selected.png')
+	gui.load_img('radio_white_selected', $embed_file('assets/img/radio_white_selected.png').to_bytes(),
+		'assets/img/radio_white_selected.png')
+	gui.load_img('radio', $embed_file('assets/img/radio.png').to_bytes(), 'assets/img/radio.png')
+	gui.radio_image = gui.img('radio')
+	gui.radio_selected_image = gui.img('radio_selected')
 	// load mouse
 	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
 	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),

@@ -27,6 +27,11 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 			ui.textbox(id: 'tb', text: &dc.tb_text, width: 100),
 			ui.checkbox(id: 'cb_true', checked: true, text: 'checkbox checked'),
 			ui.checkbox(id: 'cb', text: 'checkbox unchecked'),
+			ui.radio(
+				width: 200
+				values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+				title: 'Country'
+			),
 		]
 	)
 	dc.layout = layout

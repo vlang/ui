@@ -46,12 +46,16 @@ pub mut:
 	is_focused bool
 	is_checked bool
 	ui         &UI
+	// Style
+	theme_style  string
+	style        RadioShapeStyle
+	style_params RadioStyleParams
 	// text styles
 	text_styles TextStyles
-	text_size   f64
-	hidden      bool
-	horizontal  bool
-	compact     bool
+	// text_size   f64
+	hidden     bool
+	horizontal bool
+	compact    bool
 	// component state for composable widget
 	component voidptr
 	// selected_value string
@@ -60,6 +64,7 @@ pub mut:
 
 [params]
 pub struct RadioParams {
+	RadioStyleParams
 	id       string
 	on_click RadioFn
 	values   []string
@@ -67,9 +72,9 @@ pub struct RadioParams {
 	width    int
 	z_index  int
 	// ref       &Radio = voidptr(0)
-	text_size  f64
 	horizontal bool
 	compact    bool
+	theme      string = no_style
 }
 
 pub fn radio(c RadioParams) &Radio {
@@ -80,12 +85,13 @@ pub fn radio(c RadioParams) &Radio {
 		values: c.values
 		title: c.title
 		width: c.width
-		text_size: c.text_size
+		style_params: c.RadioStyleParams
 		horizontal: c.horizontal
 		compact: c.compact
 		ui: 0
 		on_click: c.on_click
 	}
+	r.style_params.style = c.theme
 	r.update_size()
 	/*
 	if c.ref != 0 {
@@ -105,7 +111,8 @@ fn (mut r Radio) init(parent Layout) {
 	if r.width == 0 {
 		r.set_size_from_values()
 	}
-	r.init_style()
+	r.load_style()
+	// r.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
 	subscriber.subscribe_method(events.on_click, radio_click, r)
@@ -138,11 +145,11 @@ pub fn (r &Radio) free() {
 	}
 }
 
-fn (mut r Radio) init_style() {
-	mut dtw := DrawTextWidget(r)
-	dtw.init_style()
-	dtw.update_text_size(r.text_size)
-}
+// fn (mut r Radio) init_style() {
+// 	mut dtw := DrawTextWidget(r)
+// 	dtw.init_style()
+// 	dtw.update_text_size(r.text_size)
+// }
 
 fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
@@ -323,11 +330,16 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 				y += r.height
 			}
 		}
-		d.draw_image(x, y - 1, 16, 16, r.ui.selected_radio_image)
-		if i != r.selected_index {
-			d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
-			// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
-		}
+		d.draw_circle_filled(x + 8, y + 8, 7, r.style.bg_color)
+		d.draw_image(x, y - 1, 16, 16, if i == r.selected_index {
+			r.ui.radio_selected_image
+		} else {
+			r.ui.radio_image
+		})
+		// if i != r.selected_index {
+		// 	d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
+		// 	// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
+		// }
 		// Text
 		dtw.draw_device_text(d, x + check_mark_size + 5, y, val)
 	}
