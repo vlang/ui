@@ -55,6 +55,14 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 			bg_color: gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
+		// menu
+		menu: MenuStyle{
+			border_color: colors[0]
+			bar_color: colors[2]
+			bg_color: colors[1]
+			bg_color_hover: colors[0]
+			text_color: colors[3]
+		}
 	}
 	gui.cb_image = gui.img('check' + mode)
 	gui.radio_selected_image = gui.img('radio' + mode + '_selected')

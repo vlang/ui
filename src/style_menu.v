@@ -76,7 +76,7 @@ pub fn (mut m Menu) load_style() {
 }
 
 pub fn (mut m Menu) update_theme_style(theme string) {
-	// println("update_style <$p.style>")
+	// println("update_style $m.id")
 	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in m.ui.styles {
 		ms := m.ui.styles[style].menu
