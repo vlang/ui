@@ -9,10 +9,10 @@ const (
 [heap]
 struct App {
 mut:
-	dd_flight &ui.Dropdown = 0
-	tb_oneway &ui.TextBox  = 0
-	tb_return &ui.TextBox  = 0
-	btn_book  &ui.Button   = 0
+	dd_flight &ui.Dropdown = unsafe { nil }
+	tb_oneway &ui.TextBox  = unsafe { nil }
+	tb_return &ui.TextBox  = unsafe { nil }
+	btn_book  &ui.Button   = unsafe { nil }
 }
 
 fn main() {

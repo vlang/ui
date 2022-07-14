@@ -34,11 +34,11 @@ pub mut:
 	heights      []int
 	nrow         int
 	ncol         int
-	tb_string    &ui.TextBox  = 0
-	cb_bool      &ui.CheckBox = 0
+	tb_string    &ui.TextBox  = voidptr(0)
+	cb_bool      &ui.CheckBox = voidptr(0)
 	dd_factor    map[string]&ui.Dropdown
-	tb_colbar    &ui.TextBox = 0
-	tb_rowbar    &ui.TextBox = 0
+	tb_colbar    &ui.TextBox = voidptr(0)
+	tb_rowbar    &ui.TextBox = voidptr(0)
 	// selectors
 	selectors []ui.Widget
 	// sizes

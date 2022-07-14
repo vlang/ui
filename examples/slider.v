@@ -8,9 +8,9 @@ const (
 [heap]
 struct App {
 mut:
-	hor_slider  &ui.Slider = 0
-	vert_slider &ui.Slider = 0
-	window      &ui.Window = 0
+	hor_slider  &ui.Slider = unsafe { nil }
+	vert_slider &ui.Slider = unsafe { nil }
+	window      &ui.Window = unsafe { nil }
 }
 
 fn main() {

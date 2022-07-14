@@ -124,9 +124,8 @@ fn menu_click(item &ui.MenuItem) {
 }
 
 fn on_switch_click(switcher &ui.Switch) {
-	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
-	// app.label.set_text(switcher_state)
-	mut mb := switcher.ui.window.menu('menubar')
+	window := ui.Widget(switcher).window()
+	mut mb := window.menu('menubar')
 	mb.fixed_width = !mb.fixed_width
-	switcher.ui.window.update_layout()
+	window.update_layout()
 }

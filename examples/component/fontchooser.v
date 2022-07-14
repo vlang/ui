@@ -4,7 +4,7 @@ import gx
 
 struct App {
 mut:
-	window &ui.Window = 0
+	window &ui.Window = unsafe { nil }
 	log    string
 	text   string = 'il était une fois V ....\nLa vie est belle...'
 }

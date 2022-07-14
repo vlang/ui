@@ -22,7 +22,7 @@ pub struct FontButtonParams {
 	tooltip_side ui.Side = .top
 	radius       f64     = .25
 	padding      f64
-	bg_color     &gx.Color = 0
+	bg_color     &gx.Color = voidptr(0)
 }
 
 pub fn fontbutton(c FontButtonParams) &ui.Button {

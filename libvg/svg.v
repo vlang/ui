@@ -10,7 +10,7 @@ pub mut:
 	offset_x int
 	offset_y int
 	buffer   strings.Builder  = strings.new_builder(32768)
-	content  &strings.Builder = 0
+	content  &strings.Builder = voidptr(0)
 }
 
 [params]

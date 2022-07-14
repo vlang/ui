@@ -12,17 +12,17 @@ const (
 [heap]
 struct App {
 mut:
-	window         &ui.Window    = 0
-	r_slider       &ui.Slider    = 0
-	r_textbox      &ui.TextBox   = 0
-	r_label        &ui.Label     = 0
-	g_slider       &ui.Slider    = 0
-	g_textbox      &ui.TextBox   = 0
-	g_label        &ui.Label     = 0
-	b_slider       &ui.Slider    = 0
-	b_textbox      &ui.TextBox   = 0
-	b_label        &ui.Label     = 0
-	rgb_rectangle  &ui.Rectangle = 0
+	window         &ui.Window    = unsafe { nil }
+	r_slider       &ui.Slider    = unsafe { nil }
+	r_textbox      &ui.TextBox   = unsafe { nil }
+	r_label        &ui.Label     = unsafe { nil }
+	g_slider       &ui.Slider    = unsafe { nil }
+	g_textbox      &ui.TextBox   = unsafe { nil }
+	g_label        &ui.Label     = unsafe { nil }
+	b_slider       &ui.Slider    = unsafe { nil }
+	b_textbox      &ui.TextBox   = unsafe { nil }
+	b_label        &ui.Label     = unsafe { nil }
+	rgb_rectangle  &ui.Rectangle = unsafe { nil }
 	r_textbox_text string        = slider_val.str()
 	g_textbox_text string        = slider_val.str()
 	b_textbox_text string        = slider_val.str()

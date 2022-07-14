@@ -8,7 +8,7 @@ const (
 
 struct App {
 mut:
-	window       &ui.Window = 0
+	window       &ui.Window = unsafe { nil }
 	first_ipsum  string
 	second_ipsum string
 	full_name    string
