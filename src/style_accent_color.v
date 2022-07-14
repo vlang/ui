@@ -50,10 +50,17 @@ pub fn (mut gui UI) load_style_from_accent_color() {
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color: gx.rgb(87, 153, 245)
-			border_color: gx.rgb(76, 133, 213)
-			bg_color: gx.rgb(219, 219, 219)
-			bg_border_color: gx.rgb(191, 191, 191)
+			color: colors[2]
+			border_color: colors[3]
+			bg_color: colors[1]
+			bg_border_color: colors[0]
+		}
+		// slider
+		slider: SliderStyle{
+			thumb_color: colors[3]
+			bg_color: colors[1]
+			bg_border_color: colors[0]
+			focused_bg_border_color: colors[2]
 		}
 		// menu
 		menu: MenuStyle{

@@ -2,6 +2,8 @@ module component
 
 import ui
 
+// demo component to test all the widgets
+
 [heap]
 pub struct DemoComponent {
 pub mut:
@@ -99,33 +101,56 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 		),
 	]
 	layout := ui.column(
-		scrollview: true
 		id: ui.component_id(p.id, 'layout')
 		margin_: 10
 		spacing: 10
-		widths: ui.compact
+		widths: ui.stretch
 		children: [
 			ui.menubar(
-				id: 'menubar'
+				id: 'mb'
 				items: menu_items
 			),
-			ui.button(id: 'btn', text: 'Ok', hoverable: true),
-			ui.label(id: 'lbl', text: 'Label'),
-			ui.textbox(id: 'tb', text: &dc.tb_text, width: 100),
-			ui.checkbox(id: 'cb_true', checked: true, text: 'checkbox checked'),
-			ui.checkbox(id: 'cb', text: 'checkbox unchecked'),
-			ui.radio(
-				width: 200
-				values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-				title: 'Country'
-			),
-			ui.textbox(
-				mode: .multiline
-				id: 'tbm'
-				text: &dc.tbm_text
-				height: 200
-				width: 400
-				text_size: 18
+			ui.row(
+				widths: ui.stretch
+				spacing: 10
+				children: [
+					ui.column(
+						margin_: 10
+						spacing: 10
+						children: [
+							ui.button(id: 'btn', text: 'Ok', hoverable: true),
+							ui.label(id: 'lbl', text: 'Label'),
+							ui.checkbox(id: 'cb_true', checked: true, text: 'checkbox checked'),
+							ui.checkbox(id: 'cb', text: 'checkbox unchecked'),
+							ui.radio(
+								width: 200
+								values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+								title: 'Country'
+							),
+							ui.progressbar(
+								id: 'pb'
+								max: 10
+								val: 2
+							),
+							ui.slider(id: 'sl', orientation: .horizontal, min: 0, max: 10, val: 2),
+						]
+					),
+					ui.column(
+						margin_: 10
+						spacing: 10
+						children: [
+							ui.textbox(id: 'tb', text: &dc.tb_text, width: 100),
+							ui.textbox(
+								mode: .multiline
+								id: 'tbm'
+								text: &dc.tbm_text
+								height: 200
+								width: 400
+								text_size: 18
+							),
+						]
+					),
+				]
 			),
 		]
 	)
