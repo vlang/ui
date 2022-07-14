@@ -18,9 +18,9 @@ pub:
 	on_key_up       string = 'on_key_up'
 	on_scroll       string = 'on_scroll'
 	on_resize       string = 'on_resize'
-	on_mouse_enter  string = 'on_mouse_enter'
-	on_mouse_leave  string = 'on_mouse_leave'
-	on_delegate     string = 'on_delegate'
+	// on_mouse_enter  string = 'on_mouse_enter'
+	// on_mouse_leave  string = 'on_mouse_leave'
+	on_delegate string = 'on_delegate'
 }
 
 pub const events = EventNames{}
@@ -136,7 +136,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 			if w.id !in point_inside_ids {
 				if mut w is EnterLeaveWidget {
 					mut elw := w as EnterLeaveWidget
-					elw.on_mouse_enter(e)
+					elw.do_mouse_enter(e)
 				}
 			}
 			em.point_inside[evt_type] << w
@@ -144,7 +144,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 			if w.id in point_inside_ids {
 				if mut w is EnterLeaveWidget {
 					mut elw := w as EnterLeaveWidget
-					elw.on_mouse_leave(e)
+					elw.do_mouse_leave(e)
 				}
 			}
 		}

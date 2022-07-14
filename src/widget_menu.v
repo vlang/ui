@@ -122,11 +122,11 @@ fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
 	ui := parent.get_ui()
 	m.ui = ui
-	m.load_style()
 	m.update_size()
 	if m.is_root_menu() {
 		m.propagate_connection()
 	}
+	m.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
@@ -330,23 +330,23 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 			println('Menu($m.id): ($m.x, $m.y, $m.width, $m.height)')
 		}
 	}
-	dtw := DrawTextWidget(m)
+	dtw := DrawTextWidget(m.root_menu)
 	dtw.draw_device_load_style(d)
 
 	if m.dx == 1 && m.dy == 0 {
-		d.draw_rect_filled(m.x, m.y, m.real_width, m.height, m.style.bar_color)
-		d.draw_rect_empty(m.x, m.y, m.real_width, m.height, m.style.border_color)
+		d.draw_rect_filled(m.x, m.y, m.real_width, m.height, m.root_menu.style.bar_color)
+		d.draw_rect_empty(m.x, m.y, m.real_width, m.height, m.root_menu.style.border_color)
 	}
 	if m.root_menu.fixed_width {
-		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.bg_color)
-		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.style.border_color)
+		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
+		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
 
 		for i, item in m.items {
 			//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 			if m.hovered >= 0 && i == m.hovered {
 				d.draw_rect_filled(m.x + i * m.dx * m.item_width + 1, m.y +
 					i * m.dy * m.item_height + 1, m.item_width - 1, m.item_height - 2,
-					m.style.bg_color_hover)
+					m.root_menu.style.bg_color_hover)
 			}
 
 			dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
@@ -361,14 +361,14 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 				}
 			}
 
-			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.bg_color)
-			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.border_color)
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
 
 			for i, item in m.items {
 				//	println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
 				if m.hovered >= 0 && i == m.hovered {
 					d.draw_rect_filled(m.x + 1, m.y + i * m.dy * m.item_height + 1, mw - 2,
-						m.item_height - 2, m.style.bg_color_hover)
+						m.item_height - 2, m.root_menu.style.bg_color_hover)
 
 					// println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
 				}
@@ -388,15 +388,15 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 				mw = m.width
 			}
 
-			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.bg_color)
-			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.style.border_color)
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
 
 			mut w := 0
 			for i, item in m.items {
 				//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 				if m.hovered >= 0 && i == m.hovered {
 					d.draw_rect_filled(m.x + i * m.dx + w + 1, m.y + i * m.dy * m.item_height,
-						item.width, m.item_height - 1, m.style.bg_color_hover)
+						item.width, m.item_height - 1, m.root_menu.style.bg_color_hover)
 
 					// println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 				}

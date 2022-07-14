@@ -26,6 +26,7 @@ pub mut:
 
 [params]
 pub struct ListBoxStyleParams {
+	WidgetTextStyleParams
 mut:
 	style            string = no_style
 	radius           f32
@@ -33,12 +34,6 @@ mut:
 	bg_color         gx.Color = no_color
 	bg_color_pressed gx.Color = no_color
 	bg_color_hover   gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
 }
 
 pub fn listbox_style(p ListBoxStyleParams) ListBoxStyleParams {

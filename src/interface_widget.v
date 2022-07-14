@@ -134,3 +134,7 @@ pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
 		return false
 	}
 }
+
+pub fn (w Widget) window() &Window {
+	return w.ui.window
+}

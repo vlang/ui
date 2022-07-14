@@ -25,18 +25,13 @@ pub mut:
 
 [params]
 pub struct MenuStyleParams {
+	WidgetTextStyleParams
 mut:
 	style          string   = no_style
 	border_color   gx.Color = no_color
 	bar_color      gx.Color = no_color
 	bg_color       gx.Color = no_color
 	bg_color_hover gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
 }
 
 pub fn menu_style(p MenuStyleParams) MenuStyleParams {
@@ -81,7 +76,7 @@ pub fn (mut m Menu) load_style() {
 }
 
 pub fn (mut m Menu) update_theme_style(theme string) {
-	// println("update_style <$p.style>")
+	// println("update_style $m.id")
 	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in m.ui.styles {
 		ms := m.ui.styles[style].menu

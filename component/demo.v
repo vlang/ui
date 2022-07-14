@@ -1,12 +1,24 @@
+module component
+
 import ui
-import gx
 
-const (
-	win_width  = 800
-	win_height = 600
-)
+// demo component to test all the widgets
 
-fn main() {
+[heap]
+pub struct DemoComponent {
+pub mut:
+	layout   &ui.Stack = unsafe { nil } // required
+	tb_text  string    = 'textbox text'
+	tbm_text string    = 'textbox multilines text\nsecond line'
+}
+
+[params]
+pub struct DemoParams {
+	id string = 'demo'
+}
+
+pub fn demo_stack(p DemoParams) &ui.Stack {
+	mut dc := &DemoComponent{}
 	menu_items := [
 		ui.menuitem(
 			text: 'Delete'
@@ -88,44 +100,64 @@ fn main() {
 			)
 		),
 	]
-	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'Resizable Window'
-		resizable: true
+	layout := ui.column(
+		id: ui.component_id(p.id, 'layout')
+		margin_: 10
+		spacing: 10
+		widths: ui.stretch
 		children: [
-			ui.column(
-				margin_: 0
-				widths: [ui.stretch, ui.stretch, .4]
-				heights: [ui.compact, ui.compact, .4]
-				bg_color: gx.rgba(255, 0, 0, 20)
+			ui.menubar(
+				id: 'mb'
+				items: menu_items
+			),
+			ui.row(
+				widths: ui.stretch
+				spacing: 10
 				children: [
-					ui.row(
-						spacing: 5
+					ui.column(
+						margin_: 10
+						spacing: 10
 						children: [
-							ui.label(text: 'Compact'),
-							ui.switcher(open: true, on_click: on_switch_click),
+							ui.button(id: 'btn', text: 'Ok', hoverable: true),
+							ui.label(id: 'lbl', text: 'Label'),
+							ui.checkbox(id: 'cb_true', checked: true, text: 'checkbox checked'),
+							ui.checkbox(id: 'cb', text: 'checkbox unchecked'),
+							ui.radio(
+								width: 200
+								values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+								title: 'Country'
+							),
+							ui.progressbar(
+								id: 'pb'
+								max: 10
+								val: 2
+							),
+							ui.slider(id: 'sl', orientation: .horizontal, min: 0, max: 10, val: 2),
 						]
 					),
-					ui.menubar(
-						id: 'menubar'
-						items: menu_items
+					ui.column(
+						margin_: 10
+						spacing: 10
+						children: [
+							ui.textbox(id: 'tb', text: &dc.tb_text, width: 100),
+							ui.textbox(
+								mode: .multiline
+								id: 'tbm'
+								text: &dc.tbm_text
+								height: 200
+								width: 400
+								text_size: 18
+							),
+						]
 					),
-					ui.button(text: 'Add user'),
 				]
 			),
 		]
 	)
-	ui.run(window)
+	dc.layout = layout
+	return layout
 }
 
 fn menu_click(item &ui.MenuItem) {
 	println('$item.text selected (id: $item.id)')
-}
-
-fn on_switch_click(switcher &ui.Switch) {
-	window := ui.Widget(switcher).window()
-	mut mb := window.menu('menubar')
-	mb.fixed_width = !mb.fixed_width
-	window.update_layout()
 }

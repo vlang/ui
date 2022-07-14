@@ -7,8 +7,9 @@ import toml
 
 pub struct CheckBoxShapeStyle {
 pub mut:
+	check_mode   string   = 'check' // or "check_white" and maybe one day "square" and "square_white"
 	border_color gx.Color = cb_border_color
-	bg_color     gx.Color = transparent
+	bg_color     gx.Color = gx.white
 }
 
 pub struct CheckBoxStyle {
@@ -23,16 +24,12 @@ pub mut:
 
 [params]
 pub struct CheckBoxStyleParams {
+	WidgetTextStyleParams
 mut:
 	style        string   = no_style
 	border_color gx.Color = no_color
 	bg_color     gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
+	check_mode   string
 }
 
 pub fn checkbox_style(p CheckBoxStyleParams) CheckBoxStyleParams {
@@ -43,6 +40,7 @@ pub fn (cbs CheckBoxStyle) to_toml() string {
 	mut toml := map[string]toml.Any{}
 	toml['border_color'] = hex_color(cbs.border_color)
 	toml['bg_color'] = hex_color(cbs.bg_color)
+	toml['check_mode'] = cbs.check_mode
 	toml['text_font_name'] = cbs.text_font_name
 	toml['text_color'] = hex_color(cbs.text_color)
 	toml['text_size'] = cbs.text_size
@@ -54,6 +52,7 @@ pub fn (cbs CheckBoxStyle) to_toml() string {
 pub fn (mut cbs CheckBoxStyle) from_toml(a toml.Any) {
 	cbs.border_color = HexColor(a.value('border_color').string()).color()
 	cbs.bg_color = HexColor(a.value('bg_color').string()).color()
+	cbs.check_mode = a.value('check_mode').string()
 	cbs.text_font_name = a.value('text_font_name').string()
 	cbs.text_color = HexColor(a.value('text_color').string()).color()
 	cbs.text_size = a.value('text_size').int()
@@ -70,6 +69,7 @@ pub fn (mut cb CheckBox) load_style() {
 	cb.update_theme_style(style)
 	// forced overload default style
 	cb.update_style(cb.style_params)
+	cb.ui.cb_image = cb.ui.img(cb.style.check_mode)
 }
 
 pub fn (mut cb CheckBox) update_theme_style(theme string) {
@@ -93,6 +93,7 @@ pub fn (mut cb CheckBox) update_style(p CheckBoxStyleParams) {
 fn (mut cb CheckBox) update_shape_theme_style(cbs CheckBoxStyle) {
 	cb.style.border_color = cbs.border_color
 	cb.style.bg_color = cbs.bg_color
+	cb.style.check_mode = cbs.check_mode
 }
 
 fn (mut cb CheckBox) update_shape_style(p CheckBoxStyleParams) {
@@ -102,6 +103,9 @@ fn (mut cb CheckBox) update_shape_style(p CheckBoxStyleParams) {
 	if p.bg_color != no_color {
 		cb.style.bg_color = p.bg_color
 	}
+	if p.check_mode != '' {
+		cb.style.check_mode = p.check_mode
+	}
 }
 
 fn (mut cb CheckBox) update_style_params(p CheckBoxStyleParams) {
@@ -110,6 +114,9 @@ fn (mut cb CheckBox) update_style_params(p CheckBoxStyleParams) {
 	}
 	if p.bg_color != no_color {
 		cb.style_params.bg_color = p.bg_color
+	}
+	if p.check_mode != '' {
+		cb.style_params.check_mode = p.check_mode
 	}
 	mut dtw := DrawTextWidget(cb)
 	dtw.update_theme_style_params(p)

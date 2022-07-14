@@ -25,18 +25,13 @@ pub mut:
 
 [params]
 pub struct DropdownStyleParams {
+	WidgetTextStyleParams
 pub mut:
 	style        string   = no_style
 	bg_color     gx.Color = no_color
 	border_color gx.Color = no_color
 	focus_color  gx.Color = no_color
 	drawer_color gx.Color = no_color
-	// text_style TextStyle
-	text_font_name      string
-	text_color          gx.Color = no_color
-	text_size           f64
-	text_align          TextHorizontalAlign = .@none
-	text_vertical_align TextVerticalAlign   = .@none
 }
 
 pub fn dropdown_style(p DropdownStyleParams) DropdownStyleParams {

@@ -22,43 +22,52 @@ pub mut:
 	adj_height int
 	justify    []f64
 	ui         &UI
+	// Style
+	theme_style  string
+	style        LabelStyle
+	style_params LabelStyleParams
 	// text styles
 	text_styles TextStyles
-	text_size   f64
-	hidden      bool
+	// text_size   f64
+	hidden bool
 	// component state for composable widget
 	component voidptr
 }
 
 [params]
 pub struct LabelParams {
-	id        string
-	width     int
-	height    int
-	z_index   int
-	justify   []f64 = [0.0, 0.0]
-	text      string
-	text_size f64
+	LabelStyleParams
+	id      string
+	width   int
+	height  int
+	z_index int
+	justify []f64 = [0.0, 0.0]
+	text    string
+	// text_size f64
+	theme string = no_style
 }
 
 pub fn label(c LabelParams) &Label {
-	lbl := &Label{
+	mut lbl := &Label{
 		id: c.id
 		text: c.text
 		width: c.width
 		height: c.height
 		ui: 0
 		z_index: c.z_index
-		text_size: c.text_size
+		// text_size: c.text_size
 		justify: c.justify
+		style_params: c.LabelStyleParams
 	}
+	lbl.style_params.style = c.theme
 	return lbl
 }
 
 fn (mut l Label) init(parent Layout) {
 	ui := parent.get_ui()
 	l.ui = ui
-	l.init_style()
+	l.load_style()
+	// l.init_style()
 	l.init_size()
 }
 
@@ -82,11 +91,11 @@ pub fn (l &Label) free() {
 	}
 }
 
-fn (mut l Label) init_style() {
-	mut dtw := DrawTextWidget(l)
-	dtw.init_style()
-	dtw.update_text_size(l.text_size)
-}
+// fn (mut l Label) init_style() {
+// 	mut dtw := DrawTextWidget(l)
+// 	dtw.init_style()
+// 	dtw.update_text_size(l.text_size)
+// }
 
 pub fn (mut l Label) set_pos(x int, y int) {
 	l.x = x

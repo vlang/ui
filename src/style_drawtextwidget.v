@@ -2,6 +2,28 @@ module ui
 
 import gx
 
+// Embedded in most Widget Styles
+
+pub struct WidgetTextStyle {
+pub mut:
+	text_font_name      string = 'system'
+	text_color          gx.Color
+	text_size           int = 16
+	text_align          TextHorizontalAlign = .center
+	text_vertical_align TextVerticalAlign   = .middle
+}
+
+[params]
+pub struct WidgetTextStyleParams {
+pub mut:
+	// text_style TextStyle
+	text_font_name      string
+	text_color          gx.Color = no_color
+	text_size           f64
+	text_align          TextHorizontalAlign = .@none
+	text_vertical_align TextVerticalAlign   = .@none
+}
+
 // Style with Text
 
 interface DrawTextWidgetStyle {

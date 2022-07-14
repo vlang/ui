@@ -101,13 +101,16 @@ pub fn (mut m Mouse) update() {
 	m.active = m.states.len > 0
 	if m.active {
 		m.id = m.states.last()
-		if m.id == 'text' {
+		if m.id in ['text', 'vmove'] {
 			m.adj[0], m.adj[1] = 0.5, 0.5
 		} else {
 			m.adj[0], m.adj[1] = 0.0, 0.0
 		}
 
 		// println("update current mouse: $m.id")
+	}
+	if m.id == ui.mouse_system {
+		m.states.clear()
 	}
 	sapp.show_mouse(m.id == ui.mouse_system || !m.active)
 }
@@ -127,6 +130,7 @@ pub fn (mut m Mouse) stop() {
 	if m.active {
 		// println("stop mouse")
 		m.states.delete_last()
+		m.start('_system_')
 		// println("${m.states}")
 		m.update()
 	}
@@ -136,6 +140,7 @@ pub fn (mut m Mouse) stop_last(id string) {
 	if m.active && id == m.states.last() {
 		// println("stop last mouse $id")
 		m.states.delete_last()
+		m.start('_system_')
 		// println("${m.states}")
 		m.update()
 	}
