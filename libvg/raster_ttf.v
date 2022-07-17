@@ -28,7 +28,8 @@ pub fn (mut r Raster) add_ttf(ttf_filename string) {
 }
 
 pub fn (mut r Raster) attach_ttf(ttf_filename string) {
-	r.ttf_font = &(r.ttf_fonts[ttf_filename])
+	the_font_ptr := r.ttf_fonts[ttf_filename]
+	r.ttf_font = &the_font_ptr
 	r.bmp.tf = r.ttf_font
 }
 
