@@ -40,10 +40,14 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 		bg_color: gx.light_gray
 		bg_color_pressed: gx.black
 		on_mouse_enter: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
-			b.ui.window.mouse.start('vmove')
+			sp := splitpanel_component(b)
+			b.ui.window.mouse.start('_system_:resize_' +
+				(if sp.direction == .row { 'ew' } else { 'ns' }))
 		}
 		on_mouse_leave: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
-			b.ui.window.mouse.stop_last('vmove')
+			sp := splitpanel_component(b)
+			b.ui.window.mouse.stop_last('_system_:resize_' +
+				(if sp.direction == .row { 'ew' } else { 'ns' }))
 		}
 	)
 	mut layout := if p.direction == .row {
