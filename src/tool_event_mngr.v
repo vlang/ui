@@ -136,7 +136,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 			if w.id !in point_inside_ids {
 				if mut w is EnterLeaveWidget {
 					mut elw := w as EnterLeaveWidget
-					elw.do_mouse_enter(e)
+					elw.mouse_enter(e)
 				}
 			}
 			em.point_inside[evt_type] << w
@@ -144,7 +144,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 			if w.id in point_inside_ids {
 				if mut w is EnterLeaveWidget {
 					mut elw := w as EnterLeaveWidget
-					elw.do_mouse_leave(e)
+					elw.mouse_leave(e)
 				}
 			}
 		}
