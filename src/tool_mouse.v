@@ -8,7 +8,20 @@ import time
 import sokol.sapp
 
 const (
-	click_interval = 200 // ms
+	click_interval      = 200 // ms
+	system_mouse_cursor = {
+		'default':       sapp.MouseCursor.default
+		'arrow':         sapp.MouseCursor.arrow
+		'ibeam':         sapp.MouseCursor.ibeam
+		'crosshair':     sapp.MouseCursor.crosshair
+		'pointing_hand': sapp.MouseCursor.pointing_hand
+		'resize_ew':     sapp.MouseCursor.resize_ew
+		'resize_ns':     sapp.MouseCursor.resize_ns
+		'resize_nwse':   sapp.MouseCursor.resize_nwse
+		'resize_nesw':   sapp.MouseCursor.resize_nesw
+		'resize_all':    sapp.MouseCursor.resize_all
+		'not_allowed':   sapp.MouseCursor.not_allowed
+	}
 )
 
 pub enum MouseAction {
@@ -109,15 +122,18 @@ pub fn (mut m Mouse) update() {
 
 		// println("update current mouse: $m.id")
 	}
+	ids := m.id.split(':')
 	if m.id == ui.mouse_system {
 		m.states.clear()
 	}
-	sapp.show_mouse(m.id == ui.mouse_system || !m.active)
+	sapp.set_mouse_cursor(ui.system_mouse_cursor[if ids.len > 1 { ids[1] } else { 'default' }])
+	sapp.show_mouse(ids[0] == ui.mouse_system || !m.active)
 }
 
 pub fn (mut m Mouse) start(id string) {
 	if m.states.len == 0 || id != m.states.last() {
-		m.states << if m.window.ui.has_img(id) || id == ui.mouse_hidden {
+		m.states << if m.window.ui.has_img(id) || id == ui.mouse_hidden
+			|| id.starts_with('_system_:') {
 			id
 		} else {
 			ui.mouse_system

@@ -327,13 +327,13 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 	}
 }
 
-pub fn (mut b Button) do_mouse_enter(e &MouseMoveEvent) {
+pub fn (mut b Button) mouse_enter(e &MouseMoveEvent) {
 	if b.on_mouse_enter != ButtonMouseMoveFn(0) {
 		b.on_mouse_enter(b, e)
 	}
 }
 
-pub fn (mut b Button) do_mouse_leave(e &MouseMoveEvent) {
+pub fn (mut b Button) mouse_leave(e &MouseMoveEvent) {
 	if b.on_mouse_leave != ButtonMouseMoveFn(0) {
 		b.on_mouse_leave(b, e)
 	}

@@ -922,15 +922,15 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-pub fn (mut tb TextBox) do_mouse_enter(e &MouseMoveEvent) {
+pub fn (mut tb TextBox) mouse_enter(e &MouseMoveEvent) {
 	if !tb.read_only {
-		tb.ui.window.mouse.start('text')
+		tb.ui.window.mouse.start('_system_:ibeam')
 	}
 }
 
-pub fn (mut tb TextBox) do_mouse_leave(e &MouseMoveEvent) {
+pub fn (mut tb TextBox) mouse_leave(e &MouseMoveEvent) {
 	if !tb.read_only {
-		tb.ui.window.mouse.stop_last('text')
+		tb.ui.window.mouse.stop_last('_system_:ibeam')
 	}
 }
 

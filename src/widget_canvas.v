@@ -89,7 +89,7 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c Canvas) draw() {
-	c.draw_device(c.ui.gg)
+	c.draw_device(c.gg)
 }
 
 fn (mut c Canvas) draw_device(d DrawDevice) {
