@@ -4,10 +4,9 @@
 
 #import <WebKit/WebKit.h>
 
-NSString* nsstring(string);
-
+NSString *nsstring(string);
 @interface MyBrowserDelegate : NSObject <WKNavigationDelegate> {
-@public
+  //@public
   // NSWindow *parent_window;
   // void (*nav_finished_fn)(string);
   // string js_on_init;
@@ -17,15 +16,15 @@ NSString* nsstring(string);
 @implementation MyBrowserDelegate
 @end
 
-NSWindow* g_webview_window;
+NSWindow *g_webview_window;
 
-void* new_darwin_web_view(string url, string title) {
+void *new_darwin_web_view(string url, string title) {
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
   bool enable_js = 1;
   WKPreferences *prefs = [[WKPreferences alloc] init];
-//  if (!enable_js) {
-//    prefs.javaScriptEnabled = NO;
-//  }
+  //  if (!enable_js) {
+  //    prefs.javaScriptEnabled = NO;
+  //  }
   // Create a configuration for the preferences
   WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
   config.preferences = prefs;
@@ -35,7 +34,9 @@ void* new_darwin_web_view(string url, string title) {
                          // MyBrowser* webView = [[MyBrowser alloc]
                          // initWithFrame:frame //ns->view.frame
                          configuration:config];
-webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
+  webView.customUserAgent =
+      @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 "
+      @"(KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
 
   //[webView retain];
   // Create a new window
@@ -72,49 +73,48 @@ webView.customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) Appl
   //[NSApp activateIgnoringOtherApps:YES];
   [g_webview_window setContentView:webView];
   [g_webview_window makeKeyAndOrderFront:nil];
-return         (__bridge void *)(  webView );
+  return (__bridge void *)(webView);
 }
 
-void darwin_webview_eval_js(void* web_view_, string js, string* resultt) {
-	WKWebView* web_view = (__bridge WKWebView*)(web_view_);
+void darwin_webview_eval_js(void *web_view_, string js, string *resultt) {
+  WKWebView *web_view = (__bridge WKWebView *)(web_view_);
 
-	//__block NSString *resultString = nil;
-//    __block BOOL finished = NO;
+  //__block NSString *resultString = nil;
+  //    __block BOOL finished = NO;
 
-	//[web_view evaluateJavaScript:@"document.body.hidden=true;" completionHandler:nil];
-	[web_view evaluateJavaScript:nsstring(js) completionHandler:^(id result, NSError *error) {
-        NSLog(@"DA RESULT = %@", result);
-//       finished = YES;
-if (result != nil) {
-    *resultt = string_clone(tos2([result UTF8String]));
-   }
-}];
+  //[web_view evaluateJavaScript:@"document.body.hidden=true;"
+  // completionHandler:nil];
+  [web_view evaluateJavaScript:nsstring(js)
+             completionHandler:^(id result, NSError *error) {
+               NSLog(@"DA RESULT = %@", result);
+               //       finished = YES;
+               if (result != nil) {
+                 *resultt = string_clone(tos2([result UTF8String]));
+               }
+             }];
 
-//while (!finished)
-//    {
-//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-//    }
+  // while (!finished)
+  //     {
+  //         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+  //         beforeDate:[NSDate distantFuture]];
+  //     }
 }
 
-void darwin_webview_load(void* web_view_, string url) {
-	WKWebView* web_view = (__bridge WKWebView*)(web_view_);
+void darwin_webview_load(void *web_view_, string url) {
+  WKWebView *web_view = (__bridge WKWebView *)(web_view_);
   NSURL *nsurl = [NSURL URLWithString:nsstring(url)];
   NSURLRequest *nsrequest = [NSURLRequest requestWithURL:nsurl];
   [web_view loadRequest:nsrequest];
- }
-
-void darwin_webview_close() {
-	[g_webview_window close];
 }
 
+void darwin_webview_close() { [g_webview_window close]; }
 
 void darwin_delete_all_cookies() {
-	NSHTTPCookie *cookie;
-NSHTTPCookieStorage *cookieJar =
-[NSHTTPCookieStorage sharedHTTPCookieStorage];
-NSArray *cookies = [cookieJar cookies];
-for (cookie in cookies) {
-[cookieJar deleteCookie:cookie];
-}
-
+  NSHTTPCookie *cookie;
+  NSHTTPCookieStorage *cookieJar =
+      [NSHTTPCookieStorage sharedHTTPCookieStorage];
+  NSArray *cookies = [cookieJar cookies];
+  for (cookie in cookies) {
+    [cookieJar deleteCookie:cookie];
+  }
 }
