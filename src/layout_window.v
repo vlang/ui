@@ -33,10 +33,10 @@ pub struct Window {
 	id string = '_window_'
 pub mut:
 	// pub:
-	ui                &UI = voidptr(0)
+	ui                &UI = unsafe { nil }
 	children          []Widget
-	child_window      &Window = voidptr(0)
-	parent_window     &Window = voidptr(0)
+	child_window      &Window = unsafe { nil }
+	parent_window     &Window = unsafe { nil }
 	has_textbox       bool // for initial focus
 	just_tabbed       bool
 	title             string
@@ -653,7 +653,7 @@ fn window_resize(event gg.Event, ui &UI) {
 		println('window resize ($window_width ,$window_height)')
 	}
 	window.resize(window_width, window_height)
-	window.eventbus.publish(events.on_resize, window, voidptr(0))
+	window.eventbus.publish(events.on_resize, window, unsafe { nil })
 
 	if window.resize_fn != WindowResizeFn(0) {
 		window.resize_fn(window, window_width, window_height)

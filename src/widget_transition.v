@@ -22,7 +22,7 @@ mut:
 	parent           Layout = empty_stack
 	start_value      int
 	last_draw_target int
-	ui               &UI = voidptr(0)
+	ui               &UI = unsafe { nil }
 	hidden           bool
 pub mut:
 	id             string
@@ -34,9 +34,9 @@ pub mut:
 pub struct TransitionParams {
 	z_index        int
 	duration       int
-	animated_value &int = voidptr(0)
+	animated_value &int = unsafe { nil }
 	easing         EasingFunction
-	ref            &Transition = voidptr(0)
+	ref            &Transition = unsafe { nil }
 }
 
 pub fn transition(c TransitionParams) &Transition {

@@ -31,7 +31,7 @@ type SyntaxMapRunes = map[string][]rune
 [heap]
 struct SyntaxHighLighter {
 mut:
-	tv               &TextView = voidptr(0)
+	tv               &TextView = unsafe { nil }
 	ustr             []rune
 	chunks           map[string][]Chunk
 	lang             string

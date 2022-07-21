@@ -23,7 +23,7 @@ mut:
 }
 
 pub fn new_window(cfg Config) &WebView {
-	mut obj := voidptr(0)
+	mut obj := unsafe { nil }
 	$if macos {
 		obj = C.new_darwin_web_view(cfg.url, cfg.title)
 	}

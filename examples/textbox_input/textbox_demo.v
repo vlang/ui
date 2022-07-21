@@ -7,7 +7,7 @@ mut:
 	soft_input_visible     bool
 	soft_input_buffer      string
 	soft_input_parsed_char string
-	window                 &ui.Window = voidptr(0)
+	window                 &ui.Window = unsafe { nil }
 }
 
 fn main() {

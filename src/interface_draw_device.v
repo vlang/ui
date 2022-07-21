@@ -49,7 +49,7 @@ fn (d DrawDevice) draw_window(mut w Window) {
 	// draw tooltip if active
 	w.tooltip.draw_device(d)
 
-	if w.on_draw != voidptr(0) {
+	if w.on_draw != unsafe { nil } {
 		w.on_draw(w)
 	}
 

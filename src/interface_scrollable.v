@@ -405,7 +405,7 @@ pub mut:
 	adj_height int
 	win_width  int
 	win_height int
-	ui         &UI = voidptr(0)
+	ui         &UI = unsafe { nil }
 	// scissor
 	scissor_rect gg.Rect
 	parent       Layout
@@ -466,7 +466,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 	mut ox, mut oy := 0, 0
 	parent := sv.parent
 	if parent is Stack {
-		if parent.scrollview != voidptr(0) {
+		if parent.scrollview != unsafe { nil } {
 			psv := parent.scrollview
 			if psv.active_x {
 				ox += psv.offset_x
@@ -479,7 +479,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 			oy += poy
 		}
 	} else if parent is CanvasLayout {
-		if parent.scrollview != voidptr(0) {
+		if parent.scrollview != unsafe { nil } {
 			psv := parent.scrollview
 			if psv.active_x {
 				ox += psv.offset_x
@@ -505,12 +505,12 @@ fn (sv &ScrollView) parent_scissor_rect() gg.Rect {
 	size := gg.window_size() //_real_pixels()
 	mut scissor_rect := gg.Rect{f32(0), f32(0), f32(size.width), f32(size.height)}
 	if parent is Stack {
-		if parent.scrollview != voidptr(0) {
+		if parent.scrollview != unsafe { nil } {
 			psv := parent.scrollview
 			scissor_rect = psv.scissor_rect
 		}
 	} else if parent is CanvasLayout {
-		if parent.scrollview != voidptr(0) {
+		if parent.scrollview != unsafe { nil } {
 			psv := parent.scrollview
 			scissor_rect = psv.scissor_rect
 		}

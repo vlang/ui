@@ -49,7 +49,7 @@ pub mut:
 	text_height int
 	parent      Layout = empty_stack
 	is_focused  bool
-	ui          &UI = voidptr(0)
+	ui          &UI = unsafe { nil }
 	on_click    ButtonFn
 	// TODO: same convention for all callback
 	on_key_down    ButtonU32Fn
@@ -73,7 +73,7 @@ pub mut:
 	tooltip        TooltipMessage
 	// style
 	// radius   f32
-	bg_color &gx.Color = voidptr(0)
+	bg_color &gx.Color = unsafe { nil }
 	// Style
 	theme_style  string
 	style        ButtonShapeStyle
@@ -391,7 +391,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	}
 	mut bg_color := match state {
 		.normal {
-			if b.bg_color != voidptr(0) { *b.bg_color } else { b.style.bg_color }
+			if b.bg_color != unsafe { nil } { *b.bg_color } else { b.style.bg_color }
 		}
 		.hovering {
 			b.style.bg_color_hover

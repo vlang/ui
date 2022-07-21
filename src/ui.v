@@ -15,10 +15,10 @@ const (
 
 pub struct UI {
 pub mut:
-	gg             &gg.Context       = voidptr(0)
-	window         &Window           = voidptr(0)
-	svg            &DrawDeviceSVG    = voidptr(0)
-	bmp            &DrawDeviceBitmap = voidptr(0)
+	gg             &gg.Context       = unsafe { nil }
+	window         &Window           = unsafe { nil }
+	svg            &DrawDeviceSVG    = unsafe { nil }
+	bmp            &DrawDeviceBitmap = unsafe { nil }
 	layout_print   bool
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v

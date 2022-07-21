@@ -47,9 +47,9 @@ mut:
 	dy        int = 1
 	z_index   int
 	items     []&MenuItem
-	root_menu &Menu = voidptr(0)
+	root_menu &Menu = unsafe { nil }
 	// for submenu
-	parent_item &MenuItem   = voidptr(0)
+	parent_item &MenuItem   = unsafe { nil }
 	orientation Orientation = Orientation.vertical
 }
 
@@ -483,9 +483,9 @@ pub mut:
 	id          string
 	text        string
 	pos         int
-	submenu     &Menu     = voidptr(0)
-	menu        &Menu     = voidptr(0)
-	parent_item &MenuItem = voidptr(0)
+	submenu     &Menu     = unsafe { nil }
+	menu        &Menu     = unsafe { nil }
+	parent_item &MenuItem = unsafe { nil }
 	width       int
 mut:
 	action MenuItemFn
@@ -495,7 +495,7 @@ mut:
 pub struct MenuItemParams {
 	id      string
 	text    string
-	submenu &Menu      = voidptr(0)
+	submenu &Menu      = unsafe { nil }
 	action  MenuItemFn = MenuItemFn(0)
 }
 
@@ -561,7 +561,7 @@ pub fn (mut mi MenuItem) set_menu_visible(state bool) {
 }
 
 pub fn (mut mi MenuItem) set_menu_pos() {
-	if mi.submenu == voidptr(0) {
+	if mi.submenu == unsafe { nil } {
 		return
 	}
 	if mi.menu.root_menu.fixed_width {
