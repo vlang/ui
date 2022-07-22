@@ -67,10 +67,11 @@ pub mut:
 	from_j int
 	to_j   int
 	// edge selection
-	edge_size int = 5
-	edge_i    int = -1
-	edge_j    int = -1
-	edge_x    f64
+	edge_size   int = 5
+	edge_i      int = -1
+	edge_j      int = -1
+	edge_x_orig int
+	edge_w_orig int = -1
 	// shortcuts
 	shortcuts ui.Shortcuts
 }
@@ -284,9 +285,19 @@ fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	}
 }
 
-fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {}
+fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {
+	mut g := grid_component(c)
+	if g.edge_j >= 0 {
+		g.edge_x_orig = e.x
+		g.edge_w_orig = g.widths[g.edge_j]
+	}
+}
 
-fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {}
+fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
+	mut g := grid_component(c)
+	g.edge_w_orig = -1
+	g.edge_x_orig = 0
+}
 
 fn grid_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 }
@@ -299,15 +310,28 @@ fn grid_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	rowbar := ex < rx
 	if colbar {
 		// println('move colbar ($e.x, $e.y) ${g.get_index_edge_x(int(e.x))}')
-		edge_j := g.get_index_edge_x(int(e.x))
-		if edge_j < 0 {
-			if g.edge_j >= 0 {
-				c.ui.window.mouse.stop_last('_system_:resize_ew')
-				g.edge_j = -1
+		if g.edge_w_orig > 0 {
+			w := g.edge_w_orig + int(e.x) - g.edge_x_orig
+			if w > g.edge_size {
+				g.widths[g.edge_j] = w
+				if g.edge_j == g.sel_j {
+					id := ui.component_id(g.id, 'tb_sel')
+					// println('tb_sel $id selected')
+					mut tb := g.layout.ui.window.textbox(id)
+					tb.width = w
+				}
 			}
 		} else {
-			g.edge_j = edge_j
-			c.ui.window.mouse.start('_system_:resize_ew')
+			edge_j := g.get_index_edge_x(int(e.x))
+			if edge_j < 0 {
+				if g.edge_j >= 0 {
+					c.ui.window.mouse.stop_last('_system_:resize_ew')
+					g.edge_j = -1
+				}
+			} else {
+				g.edge_j = edge_j
+				c.ui.window.mouse.start('_system_:resize_ew')
+			}
 		}
 	} else if rowbar {
 		// println("move rowbar ($e.x, $e.y)")
