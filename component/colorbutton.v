@@ -28,7 +28,7 @@ pub struct ColorButtonParams {
 	radius       f64 // = 5.0
 	padding      f64
 	left_side    bool
-	bg_color     &gx.Color = voidptr(0)
+	bg_color     &gx.Color = unsafe { nil }
 	on_click     ColorButtonFn
 	on_changed   ColorButtonFn
 }

@@ -21,7 +21,7 @@ pub mut:
 	offset_x              int
 	offset_y              int
 	hidden                bool
-	ui                    &UI = voidptr(0)
+	ui                    &UI = unsafe { nil }
 	// dragging
 	drag     bool
 	dragging bool

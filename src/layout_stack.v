@@ -98,7 +98,7 @@ pub mut:
 	on_init   InitFn
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = voidptr(0)
+	scrollview       &ScrollView = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	// debug stuff to be removed
 	debug_ids          []string
@@ -1376,7 +1376,7 @@ mut:
 	from int = -1
 	to   int = -1
 	// migrate
-	target          &Stack = voidptr(0)
+	target          &Stack = unsafe { nil }
 	target_widths   Size   = Size(-1.0)
 	target_heights  Size   = Size(-1.0)
 	target_spacing  f64    = -1.0

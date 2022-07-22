@@ -45,7 +45,7 @@ pub struct PictureParams {
 	movable      bool
 	on_click     PictureFn
 	use_cache    bool     = true
-	ref          &Picture = voidptr(0)
+	ref          &Picture = unsafe { nil }
 	image        gg.Image
 	tooltip      string
 	tooltip_side Side = .top
