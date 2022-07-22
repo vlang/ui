@@ -48,9 +48,9 @@ pub mut:
 	is_focused bool
 	is_typing  bool
 	// gg &gg.GG
-	ui &UI = voidptr(0)
+	ui &UI = unsafe { nil }
 	// text               string
-	text               &string = voidptr(0)
+	text               &string = unsafe { nil }
 	text_              string // This is the internal string content when not provided by the user
 	max_len            int
 	line_height        int
@@ -63,7 +63,7 @@ pub mut:
 	sel_end            int
 	// placeholder
 	placeholder      string
-	placeholder_bind &string = voidptr(0)
+	placeholder_bind &string = unsafe { nil }
 	// multiline mode
 	is_multiline   bool
 	tv             TextView
@@ -83,7 +83,7 @@ pub mut:
 	sel_active    bool // to deal with show cursor when selection active
 	dragging      bool
 	sel_direction SelectionDirection
-	is_error      &bool     = voidptr(0)
+	is_error      &bool     = unsafe { nil }
 	on_enter      TextBoxFn = TextBoxFn(0)
 	on_change     TextBoxFn = TextBoxFn(0)
 	// text styles
@@ -103,7 +103,7 @@ pub mut:
 	component voidptr
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = voidptr(0)
+	scrollview       &ScrollView = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
@@ -135,12 +135,12 @@ pub struct TextBoxParams {
 	max                int
 	val                int
 	placeholder        string
-	placeholder_bind   &string = voidptr(0)
+	placeholder_bind   &string = unsafe { nil }
 	max_len            int
 	is_numeric         bool
 	is_password        bool
-	text               &string = voidptr(0)
-	is_error           &bool   = voidptr(0)
+	text               &string = unsafe { nil }
+	is_error           &bool   = unsafe { nil }
 	is_focused         bool
 	// is_error bool
 	// bg_color           gx.Color = gx.white
@@ -624,7 +624,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.is_error != voidptr(0) {
+	if tb.is_error != unsafe { nil } {
 		unsafe {
 			*tb.is_error = false
 		}

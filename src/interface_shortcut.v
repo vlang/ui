@@ -63,7 +63,7 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	if s in shortcuts.chars {
 		sc := shortcuts.chars[s]
 		if has_key_mods(e.mods, sc.mods) {
-			if sc.context != voidptr(0) {
+			if sc.context != unsafe { nil } {
 				sc.key_fn(sc.context)
 			} else {
 				sc.key_fn(context)
@@ -76,7 +76,7 @@ pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	if int(e.key) in shortcuts.keys {
 		sc := shortcuts.keys[int(e.key)]
 		if has_key_mods(e.mods, sc.mods) {
-			if sc.context != voidptr(0) {
+			if sc.context != unsafe { nil } {
 				sc.key_fn(sc.context)
 			} else {
 				sc.key_fn(context)

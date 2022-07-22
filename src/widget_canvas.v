@@ -18,14 +18,14 @@ pub mut:
 	offset_x int
 	offset_y int
 	z_index  int
-	ui       &UI = voidptr(0)
+	ui       &UI = unsafe { nil }
 	hidden   bool
 	// component state for composable widget
 	component voidptr
 mut:
 	parent  Layout      = empty_stack
-	draw_fn DrawFn      = voidptr(0)
-	gg      &gg.Context = voidptr(0)
+	draw_fn DrawFn      = unsafe { nil }
+	gg      &gg.Context = unsafe { nil }
 }
 
 [params]
@@ -35,7 +35,7 @@ pub struct CanvasParams {
 	height  int
 	z_index int
 	text    string
-	draw_fn DrawFn = voidptr(0)
+	draw_fn DrawFn = unsafe { nil }
 }
 
 pub fn canvas(c CanvasParams) &Canvas {
@@ -94,7 +94,7 @@ fn (mut c Canvas) draw() {
 
 fn (mut c Canvas) draw_device(d DrawDevice) {
 	offset_start(mut c)
-	if c.draw_fn != voidptr(0) {
+	if c.draw_fn != unsafe { nil } {
 		c.draw_fn(c.gg, c)
 	}
 	offset_end(mut c)

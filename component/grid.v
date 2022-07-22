@@ -34,11 +34,11 @@ pub mut:
 	heights      []int
 	nrow         int
 	ncol         int
-	tb_string    &ui.TextBox  = voidptr(0)
-	cb_bool      &ui.CheckBox = voidptr(0)
+	tb_string    &ui.TextBox  = unsafe { nil }
+	cb_bool      &ui.CheckBox = unsafe { nil }
 	dd_factor    map[string]&ui.Dropdown
-	tb_colbar    &ui.TextBox = voidptr(0)
-	tb_rowbar    &ui.TextBox = voidptr(0)
+	tb_colbar    &ui.TextBox = unsafe { nil }
+	tb_rowbar    &ui.TextBox = unsafe { nil }
 	// selectors
 	selectors []ui.Widget
 	// sizes
@@ -66,6 +66,12 @@ pub mut:
 	to_i   int
 	from_j int
 	to_j   int
+	// edge selection
+	edge_size   int = 5
+	edge_i      int = -1
+	edge_j      int = -1
+	edge_x_orig int
+	edge_w_orig int = -1
 	// shortcuts
 	shortcuts ui.Shortcuts
 }
@@ -279,19 +285,51 @@ fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	}
 }
 
-fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {}
+fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {
+	mut g := grid_component(c)
+	if g.edge_j >= 0 {
+		g.edge_x_orig = e.x
+		g.edge_w_orig = g.widths[g.edge_j]
+	}
+}
 
-fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {}
+fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
+	mut g := grid_component(c)
+	g.edge_w_orig = -1
+	g.edge_x_orig = 0
+}
 
 fn grid_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 }
 
-fn grid_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
+fn grid_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut g := grid_component(c)
-	colbar := e.y < g.colbar_height - c.y - c.offset_y
-	rowbar := e.x < g.rowbar_width - c.x - c.offset_x
+	rx, ry := g.layout.abs_pos(g.rowbar_width, g.colbar_height)
+	ex, ey := g.layout.orig_pos(e.x, e.y)
+	colbar := ey < ry
+	rowbar := ex < rx
 	if colbar {
-		// println("move colbar ($e.x, $e.y)")
+		// println('move colbar ($e.x, $e.y) ${g.get_index_edge_x(int(e.x))}')
+		if g.edge_w_orig > 0 {
+			w := g.edge_w_orig + int(e.x) - g.edge_x_orig
+			if w > g.edge_size {
+				g.widths[g.edge_j] = w
+				if g.edge_j <= g.sel_j {
+					g.show_selected()
+				}
+			}
+		} else {
+			edge_j := g.get_index_edge_x(int(e.x))
+			if edge_j < 0 {
+				if g.edge_j >= 0 {
+					c.ui.window.mouse.stop_last('_system_:resize_ew')
+					g.edge_j = -1
+				}
+			} else {
+				g.edge_j = edge_j
+				c.ui.window.mouse.start('_system_:resize_ew')
+			}
+		}
 	} else if rowbar {
 		// println("move rowbar ($e.x, $e.y)")
 	}
@@ -672,8 +710,8 @@ fn (mut g GridComponent) show_selected() {
 
 // depending on g.index
 
-fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
-	mut sel_i, mut sel_j := -1, -1
+fn (g &GridComponent) get_index_pos_x(x int) int {
+	mut sel_j := -1
 
 	mut cum := g.from_x
 	// println("dv $y")
@@ -686,7 +724,13 @@ fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 		}
 	}
 
-	cum = g.from_y
+	return sel_j
+}
+
+fn (g &GridComponent) get_index_pos_y(y int) int {
+	mut sel_i := -1
+
+	mut cum := g.from_y
 	// println("dv $y")
 	for i in g.from_i .. g.to_i {
 		cum += g.height(i)
@@ -697,7 +741,11 @@ fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 		}
 	}
 
-	return sel_i, sel_j
+	return sel_i
+}
+
+fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
+	return g.get_index_pos_y(y), g.get_index_pos_x(x)
 }
 
 fn (g &GridComponent) get_pos(i int, j int) (int, int) {
@@ -714,6 +762,23 @@ fn (g &GridComponent) get_pos(i int, j int) (int, int) {
 
 fn (g &GridComponent) height(i int) int {
 	return if g.cell_height > 0 { g.cell_height } else { g.heights[g.ind(i)] }
+}
+
+fn (g &GridComponent) get_index_edge_x(x int) int {
+	mut sel_j := -1
+
+	mut cum := g.from_x
+	// println("dv $y")
+	for j in g.from_j .. g.to_j {
+		cum += g.widths[j]
+		// println("dv  $y > $g.colbar_height && $y < $cum ")
+		if x > g.from_x && x > cum - g.edge_size && x < cum {
+			sel_j = j
+			break
+		}
+	}
+
+	return sel_j
 }
 
 fn (mut g GridComponent) visible_cells() {

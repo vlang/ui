@@ -26,7 +26,7 @@ pub mut:
 	offset_y      int
 	z_index       int
 	parent        Layout      = empty_stack
-	ui            &UI         = voidptr(0)
+	ui            &UI         = unsafe { nil }
 	items         []&ListItem = []&ListItem{}
 	selection     int = -1
 	selectable    bool
@@ -66,7 +66,7 @@ pub mut:
 	component voidptr
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = voidptr(0)
+	scrollview       &ScrollView = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 

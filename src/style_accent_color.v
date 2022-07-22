@@ -3,12 +3,24 @@ module ui
 import gx
 import math
 
-pub fn (mut gui UI) update_style_from_accent_color(accent_color []int) {
-	gui.accent_color = accent_color
-	gui.load_style_from_accent_color()
+pub fn (mut w Window) load_accent_color_style(accent_color []int) {
+	w.ui.update_accent_color_style(accent_color)
+	mut l := Layout(w)
+	l.update_theme_style('accent_color')
 }
 
-pub fn (mut gui UI) load_style_from_accent_color() {
+pub fn (mut l Layout) load_accent_color_style(accent_color []int) {
+	mut gui := l.get_ui()
+	gui.update_accent_color_style(accent_color)
+	l.update_theme_style('accent_color')
+}
+
+pub fn (mut gui UI) update_accent_color_style(accent_color []int) {
+	gui.accent_color = accent_color
+	gui.update_style_from_accent_color()
+}
+
+pub fn (mut gui UI) update_style_from_accent_color() {
 	colors := color_scheme_from_accent_color(gui.accent_color)
 	mode := if colors[3] == gx.black { '' } else { '_white' }
 	gui.styles['accent_color'] = Style{

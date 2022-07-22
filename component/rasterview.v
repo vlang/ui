@@ -41,7 +41,7 @@ pub mut:
 	to_j   int
 	// current color
 	color   gx.Color = gx.black
-	palette &ColorPaletteComponent = voidptr(0)
+	palette &ColorPaletteComponent = unsafe { nil }
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts

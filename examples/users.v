@@ -28,7 +28,7 @@ mut:
 	password   string
 	pbar       &ui.ProgressBar
 	users      []User
-	window     &ui.Window = voidptr(0)
+	window     &ui.Window = unsafe { nil }
 	label      &ui.Label
 	country    &ui.Radio
 	txt_pos    int

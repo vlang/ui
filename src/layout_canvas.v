@@ -36,7 +36,7 @@ pub mut:
 	z_index          int
 	deactivated      bool
 	is_focused       bool
-	ui               &UI = voidptr(0)
+	ui               &UI = unsafe { nil }
 	hidden           bool
 	adj_width        int
 	adj_height       int
@@ -58,7 +58,7 @@ pub mut:
 	on_init           InitFn
 	// scrollview
 	has_scrollview       bool
-	scrollview           &ScrollView = voidptr(0)
+	scrollview           &ScrollView = unsafe { nil }
 	point_inside_visible bool // to avoid point_inside_adj
 	// callbacks
 	draw_device_fn      CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)
@@ -100,21 +100,21 @@ pub struct CanvasLayoutParams {
 	theme             string = no_style
 	active_evt_mngr   bool   = true
 	delegate_evt_mngr bool
-	on_draw           CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_post_draw      CanvasLayoutDrawDeviceFn = voidptr(0)
-	on_click          CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_down     CanvasLayoutMouseFn      = voidptr(0)
-	on_mouse_up       CanvasLayoutMouseFn      = voidptr(0)
-	on_scroll         CanvasLayoutScrollFn     = voidptr(0)
-	on_mouse_move     CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_enter    CanvasLayoutMouseMoveFn  = voidptr(0)
-	on_mouse_leave    CanvasLayoutMouseMoveFn  = voidptr(0)
+	on_draw           CanvasLayoutDrawDeviceFn = unsafe { nil }
+	on_post_draw      CanvasLayoutDrawDeviceFn = unsafe { nil }
+	on_click          CanvasLayoutMouseFn      = unsafe { nil }
+	on_mouse_down     CanvasLayoutMouseFn      = unsafe { nil }
+	on_mouse_up       CanvasLayoutMouseFn      = unsafe { nil }
+	on_scroll         CanvasLayoutScrollFn     = unsafe { nil }
+	on_mouse_move     CanvasLayoutMouseMoveFn  = unsafe { nil }
+	on_mouse_enter    CanvasLayoutMouseMoveFn  = unsafe { nil }
+	on_mouse_leave    CanvasLayoutMouseMoveFn  = unsafe { nil }
 	// resize_fn     ResizeFn
-	on_key_down      CanvasLayoutKeyFn      = voidptr(0)
-	on_char          CanvasLayoutKeyFn      = voidptr(0)
-	full_size_fn     CanvasLayoutSizeFn     = voidptr(0)
+	on_key_down      CanvasLayoutKeyFn      = unsafe { nil }
+	on_char          CanvasLayoutKeyFn      = unsafe { nil }
+	full_size_fn     CanvasLayoutSizeFn     = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn    = ScrollViewChangedFn(0)
-	on_delegate      CanvasLayoutDelegateFn = voidptr(0)
+	on_delegate      CanvasLayoutDelegateFn = unsafe { nil }
 	children         []Widget
 }
 
@@ -303,7 +303,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 		return
 	}
 	c.is_focused = c.point_inside(e.x, e.y)
-	if c.is_focused && c.click_fn != voidptr(0) {
+	if c.is_focused && c.click_fn != unsafe { nil } {
 		// c.is_focused
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
@@ -324,7 +324,7 @@ fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if !c.ui.window.is_top_widget(c, events.on_mouse_down) {
 		return
 	}
-	if c.point_inside(e.x, e.y) && c.mouse_down_fn != voidptr(0) {
+	if c.point_inside(e.x, e.y) && c.mouse_down_fn != unsafe { nil } {
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
@@ -340,7 +340,7 @@ fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.hidden {
 		return
 	}
-	if c.point_inside(e.x, e.y) && c.mouse_up_fn != voidptr(0) {
+	if c.point_inside(e.x, e.y) && c.mouse_up_fn != unsafe { nil } {
 		e2 := MouseEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
@@ -356,7 +356,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 	if c.hidden {
 		return
 	}
-	if c.point_inside(e.x, e.y) && c.mouse_move_fn != voidptr(0) {
+	if c.point_inside(e.x, e.y) && c.mouse_move_fn != unsafe { nil } {
 		e2 := MouseMoveEvent{
 			x: e.x - c.x - c.offset_x
 			y: e.y - c.y - c.offset_y
@@ -548,7 +548,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 	mut fw, mut fh := c.full_width, c.full_height
 	// println('full_size $fw, $fh')
 	if c.full_width == -1 || c.full_height == -1 {
-		if c.full_size_fn == voidptr(0) {
+		if c.full_size_fn == unsafe { nil } {
 			return 0, 0
 		} else {
 			w, h := c.full_size_fn(c)

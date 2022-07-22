@@ -34,7 +34,7 @@ mut:
 	color    gx.Color = gx.black
 	bg_color gx.Color = gx.Color{255, 220, 127, 220}
 	side     Side     = .right
-	ui       &UI      = voidptr(0)
+	ui       &UI      = unsafe { nil }
 	widgets  []Widget
 	tooltips []TooltipMessage
 }

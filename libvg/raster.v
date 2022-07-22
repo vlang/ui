@@ -21,9 +21,9 @@ pub mut:
 	height    int
 	channels  int = 4
 	data      []byte
-	ttf_font  &ttf.TTF_File = voidptr(0)
+	ttf_font  &ttf.TTF_File = unsafe { nil }
 	ttf_fonts map[string]ttf.TTF_File
-	bmp       &ttf.BitMap = voidptr(0)
+	bmp       &ttf.BitMap = unsafe { nil }
 	color     gx.Color
 	// to remove
 	filler [][]int

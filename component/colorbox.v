@@ -34,7 +34,7 @@ mut:
 	v          f64 = 0.75
 	rgb        gx.Color
 	linked     &gx.Color = &gx.Color(0)
-	colbtn     &ColorButtonComponent = voidptr(0)
+	colbtn     &ColorButtonComponent = unsafe { nil }
 	ind_sel    int
 	hsv_sel    []HSVColor = []HSVColor{len: component.cb_nc * component.cb_nr}
 	txt_r      string
@@ -413,6 +413,6 @@ pub fn (mut cb ColorBoxComponent) update_drag_mode() {
 	if cb.drag {
 		cb.cv_h.mouse_move_fn = cv_h_mouse_move
 	} else {
-		cb.cv_h.mouse_move_fn = voidptr(0)
+		cb.cv_h.mouse_move_fn = unsafe { nil }
 	}
 }
