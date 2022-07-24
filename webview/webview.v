@@ -19,13 +19,13 @@ pub struct Config {
 	// parent          &ui.Window
 mut:
 	nav_finished_fn NavFinishedFn
-	// js_on_init      string
+	js_on_init      string
 }
 
 pub fn new_window(cfg Config) &WebView {
 	mut obj := unsafe { nil }
 	$if macos {
-		obj = C.new_darwin_web_view(cfg.url, cfg.title)
+		obj = C.new_darwin_web_view(cfg.url, cfg.title, cfg.js_on_init)
 	}
 	$if linux {
 		create_linux_web_view(cfg.url, cfg.title)
@@ -44,6 +44,10 @@ pub fn exec(scriptSource string) {
 	$if windows {
 		C.exec(scriptSource.str)
 	}
+}
+
+pub fn get_global_js_val() string {
+	return C.darwin_get_webview_js_val()
 }
 
 pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
