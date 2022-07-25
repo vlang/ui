@@ -5,6 +5,8 @@
 #import <WebKit/WebKit.h>
 
 NSString *nsstring(string);
+string g_vui_webview_js_val;
+
 @interface MyBrowserDelegate : NSObject <WKNavigationDelegate> {
   //@public
   // NSWindow *parent_window;
@@ -16,9 +18,27 @@ NSString *nsstring(string);
 @implementation MyBrowserDelegate
 @end
 
+@interface MyScriptHandler : NSObject <WKScriptMessageHandler> {
+
+}
+@end
+
+@implementation MyScriptHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+//    [_ObjcLog logWithFile:"[WKWebView]" function:[message.name UTF8String] line:0 color:[UIColor whiteColor] message:message.body];
+NSLog(message.body);
+g_vui_webview_js_val = string_clone(tos2([message.body UTF8String]));
+//                 *resultt = string_clone(tos2([result UTF8String]));
+}
+@end
+
 NSWindow *g_webview_window;
 
-void *new_darwin_web_view(string url, string title) {
+string darwin_get_webview_js_val() {
+	return g_vui_webview_js_val;
+}
+
+void *new_darwin_web_view(string url, string title, string js_on_init) {
   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
   bool enable_js = 1;
   WKPreferences *prefs = [[WKPreferences alloc] init];
@@ -63,6 +83,23 @@ void *new_darwin_web_view(string url, string title) {
   NSURL *nsurl = [NSURL URLWithString:nsstring(url)];
   NSURLRequest *nsrequest = [NSURLRequest requestWithURL:nsurl];
   //[ns->view addSubview:webView];
+
+  if (js_on_init.len > 0) {
+  	NSLog(@"adding js on init");
+  	[webView.configuration.userContentController addUserScript:[[WKUserScript alloc]
+    initWithSource:nsstring(js_on_init)
+injectionTime:WKUserScriptInjectionTimeAtDocumentStart
+ forMainFrameOnly:NO]];
+
+MyScriptHandler*  script_handler = [MyScriptHandler alloc];
+
+    [webView.configuration.userContentController addScriptMessageHandler:script_handler
+name:@"vui"];
+
+
+  }
+
+
   [webView loadRequest:nsrequest];
   NSLog([webView title]);
 
