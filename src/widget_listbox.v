@@ -8,8 +8,8 @@ type ListBoxFn = fn (&ListBox)
 const (
 	listbox_item_height    = 20
 	listbox_bg_color       = gx.white
-	listbox_selected_color = gx.light_blue
-	listbox_disabled_color = gx.light_gray
+	listbox_color_pressed = gx.light_blue
+	listbox_color_disabled = gx.light_gray
 	listbox_border_color   = gx.gray
 	listbox_text_offset_y  = 3
 	listbox_text_offset_x  = 5
@@ -40,8 +40,8 @@ pub mut:
 	// TODO
 	draw_lines     bool
 	bg_color       gx.Color = ui.listbox_bg_color
-	selected_color gx.Color = ui.listbox_selected_color
-	disabled_color gx.Color = ui.listbox_disabled_color
+	color_pressed gx.Color = ui.listbox_color_pressed
+	color_disabled gx.Color = ui.listbox_color_disabled
 	border_color   gx.Color = ui.listbox_border_color
 	// Style
 	theme_style  string
@@ -87,7 +87,7 @@ mut:
 	draw_lines     bool     // Draw a rectangle around every item?
 	border_color   gx.Color = ui.listbox_border_color // Item and list border color
 	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
-	selected_color gx.Color = ui.listbox_selected_color // Selected item background color
+	color_pressed gx.Color = ui.listbox_color_pressed // Selected item background color
 	theme          string   = no_style
 	// related to text drawing
 	text_size  f64
@@ -116,7 +116,7 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		on_change: c.on_change
 		draw_lines: c.draw_lines
 		bg_color: c.bg_color
-		selected_color: c.selected_color
+		color_pressed: c.color_pressed
 		border_color: c.border_color
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
@@ -1020,7 +1020,7 @@ fn (li &ListItem) draw() {
 
 fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
-	col := if li.is_selected() { lb.selected_color } else { lb.bg_color }
+	col := if li.is_selected() { lb.color_pressed } else { lb.bg_color }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
@@ -1035,7 +1035,7 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	} else {
 		li.text()
 	},
-		color: if li.is_enabled() { gx.black } else { lb.disabled_color }
+		color: if li.is_enabled() { gx.black } else { lb.color_disabled }
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")

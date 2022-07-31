@@ -3,14 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
-
-const (
-	dropdown_color        = gx.rgb(240, 240, 240)
-	dropdown_border_color = gx.rgb(223, 223, 223)
-	dropdown_focus_color  = gx.rgb(50, 50, 50)
-	dropdown_drawer_color = gx.rgb(255, 255, 255)
-)
 
 pub type DropDownFn = fn (&Dropdown)
 
@@ -203,7 +195,7 @@ fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
 			dd.style.drawer_color)
 		d.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			ui.dropdown_border_color)
+			dd.style.border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
 			color := if i == dd.hover_index { dd.style.border_color } else { dd.style.drawer_color }

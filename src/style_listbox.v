@@ -8,9 +8,9 @@ import toml
 pub struct ListBoxShapeStyle {
 pub mut:
 	radius           f32
-	border_color     gx.Color
-	bg_color         gx.Color
-	bg_color_pressed gx.Color
+	border_color     gx.Color = gx.gray
+	bg_color         gx.Color = gx.white
+	bg_color_pressed gx.Color = gx.light_blue
 	bg_color_hover   gx.Color
 }
 
