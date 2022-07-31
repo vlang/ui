@@ -95,7 +95,7 @@ pub fn (mut gui UI) update_style_from_accent_color() {
 			bg_color: colors[1]
 			border_color: colors[0]
 			focus_color: colors[2]
-			drawer_color: colors[3]
+			drawer_color: colors[2]
 			text_color: colors[3]
 		}
 	}
