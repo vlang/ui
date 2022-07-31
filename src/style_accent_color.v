@@ -86,8 +86,8 @@ pub fn (mut gui UI) update_style_from_accent_color() {
 		lb: ListBoxStyle{
 			border_color: colors[0]
 			bg_color: colors[1]
-			bg_color_pressed: colors[2]
-			bg_color_hover: colors[0]
+			bg_color_pressed: colors[0]
+			bg_color_hover: colors[2]
 			text_color: colors[3]
 		}
 		// dropdown

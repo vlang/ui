@@ -526,7 +526,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	$if lb_draw ? {
 		println('draw $lb.id scrollview=$lb.has_scrollview $lb.x, $lb.y, $lb.width $lb.height $height')
 	}
-	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.bg_color)
+	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.style.bg_color)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -550,7 +550,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 		}
 	}
 	if !lb.draw_lines {
-		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.border_color)
+		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.style.border_color)
 	}
 
 	// scrollview_draw(lb)
@@ -1020,7 +1020,7 @@ fn (li &ListItem) draw() {
 
 fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
-	col := if li.is_selected() { lb.color_pressed } else { lb.bg_color }
+	col := if li.is_selected() { lb.style.bg_color_pressed } else { lb.style.bg_color }
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
@@ -1035,7 +1035,7 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	} else {
 		li.text()
 	},
-		color: if li.is_enabled() { gx.black } else { lb.color_disabled }
+		color: if li.is_enabled() { lb.text_styles.current.color } else { lb.color_disabled }
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
