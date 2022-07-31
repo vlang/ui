@@ -8,7 +8,7 @@ type ListBoxFn = fn (&ListBox)
 const (
 	listbox_item_height    = 20
 	listbox_bg_color       = gx.white
-	listbox_color_pressed = gx.light_blue
+	listbox_color_pressed  = gx.light_blue
 	listbox_color_disabled = gx.light_gray
 	listbox_border_color   = gx.gray
 	listbox_text_offset_y  = 3
@@ -40,7 +40,7 @@ pub mut:
 	// TODO
 	draw_lines     bool
 	bg_color       gx.Color = ui.listbox_bg_color
-	color_pressed gx.Color = ui.listbox_color_pressed
+	color_pressed  gx.Color = ui.listbox_color_pressed
 	color_disabled gx.Color = ui.listbox_color_disabled
 	border_color   gx.Color = ui.listbox_border_color
 	// Style
@@ -84,11 +84,11 @@ mut:
 	text_offset_y int       = ui.listbox_text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// TODO
-	draw_lines     bool     // Draw a rectangle around every item?
-	border_color   gx.Color = ui.listbox_border_color // Item and list border color
-	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
+	draw_lines    bool     // Draw a rectangle around every item?
+	border_color  gx.Color = ui.listbox_border_color // Item and list border color
+	bg_color      gx.Color = ui.listbox_bg_color // ListBox background color
 	color_pressed gx.Color = ui.listbox_color_pressed // Selected item background color
-	theme          string   = no_style
+	theme         string   = no_style
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
