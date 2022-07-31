@@ -38,11 +38,8 @@ pub mut:
 	text_offset_y int = ui.listbox_text_offset_y
 	id            string
 	// TODO
-	draw_lines bool
-	// bg_color       gx.Color = ui.listbox_bg_color
-	// color_pressed  gx.Color = ui.listbox_color_pressed
+	draw_lines     bool
 	color_disabled gx.Color = ui.listbox_color_disabled
-	// border_color   gx.Color = ui.listbox_border_color
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
@@ -85,10 +82,7 @@ mut:
 	id            string // To use one callback for multiple ListBoxes
 	// TODO
 	draw_lines bool // Draw a rectangle around every item?
-	// border_color  gx.Color = ui.listbox_border_color // Item and list border color
-	// bg_color      gx.Color = ui.listbox_bg_color // ListBox background color
-	// color_pressed gx.Color = ui.listbox_color_pressed // Selected item background color
-	theme string = no_style
+	theme      string = no_style
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
