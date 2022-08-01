@@ -11,7 +11,7 @@ pub mut:
 	border_color     gx.Color = gx.gray
 	bg_color         gx.Color = gx.white
 	bg_color_pressed gx.Color = gx.light_blue
-	bg_color_hover   gx.Color
+	bg_color_hover   gx.Color = gx.light_gray
 }
 
 pub struct ListBoxStyle {
