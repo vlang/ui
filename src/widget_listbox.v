@@ -31,7 +31,7 @@ pub mut:
 	selection     int = -1
 	selectable    bool
 	multi         bool
-	hovering      bool
+	hovering      int = -1
 	draw_count    int
 	on_change     ListBoxFn = ListBoxFn(0)
 	is_focused    bool
@@ -710,10 +710,10 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 				}
 			}
 		} else {
-			lb.hovering = true
+			lb.hovering = lb.get_selected_item(int(e.y))
 		}
 	} else {
-		lb.hovering = false
+		lb.hovering = -1
 	}
 }
 
@@ -1019,7 +1019,13 @@ fn (li &ListItem) draw() {
 
 fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
-	col := if li.is_selected() { lb.style.bg_color_pressed } else { lb.style.bg_color }
+	col := if li.is_selected() {
+		lb.style.bg_color_pressed
+	} else if lb.hovering >= 0 && li == lb.items[lb.hovering] {
+		lb.style.bg_color_hover
+	} else {
+		lb.style.bg_color
+	}
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
