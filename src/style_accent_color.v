@@ -100,6 +100,7 @@ pub fn (mut gui UI) update_style_from_accent_color() {
 		}
 	}
 	gui.cb_image = gui.img('check' + mode)
+	gui.down_arrow = gui.img('arrow' + mode)
 	gui.radio_selected_image = gui.img('radio' + mode + '_selected')
 }
 

@@ -83,19 +83,12 @@ fn (mut gui UI) idle_loop() {
 }
 
 fn (mut gui UI) load_imgs() {
-	// gui.cb_image = gui.gg.create_image_from_memory(&bytes_check_png[0], bytes_check_png.len)
-	// gui.cb_image.path = 'assets/img/check.png'
-	// $if macos {
-	// 	gui.circle_image = gui.gg.create_image_from_memory(&bytes_darwin_circle_png[0],
-	// 		bytes_darwin_circle_png.len)
-	// } $else {
-	// 	gui.circle_image = gui.gg.create_image_from_memory(&bytes_circle_png[0], bytes_circle_png.len)
-	// }
-	gui.down_arrow = gui.gg.create_image_from_memory(&bytes_arrow_png[0], bytes_arrow_png.len)
-	// gui.selected_radio_image = gui.gg.create_image_from_memory(&bytes_selected_radio_png[0],
-	// 	bytes_selected_radio_png.len)
-	// gui.selected_radio_image.path = 'assets/img/selected_radio.png'
 	// images
+	gui.load_img('arrow_black', $embed_file('assets/img/arrow_black.png').to_bytes(),
+		'assets/img/arrow_black.png')
+	gui.load_img('arrow_white', $embed_file('assets/img/arrow_white.png').to_bytes(),
+		'assets/img/arrow_white.png')
+	gui.down_arrow = gui.img('arrow_black')
 	gui.load_img('check', $embed_file('assets/img/check_black.png').to_bytes(), 'assets/img/check_black.png')
 	gui.load_img('check_white', $embed_file('assets/img/check_white.png').to_bytes(),
 		'assets/img/check_white.png')

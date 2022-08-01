@@ -31,6 +31,7 @@ pub mut:
 	selection     int = -1
 	selectable    bool
 	multi         bool
+	hovering      bool
 	draw_count    int
 	on_change     ListBoxFn = ListBoxFn(0)
 	is_focused    bool
@@ -708,7 +709,11 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 					}
 				}
 			}
+		} else {
+			lb.hovering = true
 		}
+	} else {
+		lb.hovering = false
 	}
 }
 
