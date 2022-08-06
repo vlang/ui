@@ -21,8 +21,8 @@ pub fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 			println('aw gao: $w.id ($width, $height) vs ($adj_width, $adj_height)')
 		}
 	}
-	dw := math.max(width - adj_width, 0.0)
-	dh := math.max(height - adj_height, 0.0)
+	dw := math.max(width - adj_width, 0)
+	dh := math.max(height - adj_height, 0)
 	return int(aw * dw), int(ah * dh)
 }
 
