@@ -133,6 +133,19 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 								val: 2
 							),
 							ui.slider(id: 'sl', orientation: .horizontal, min: 0, max: 10, val: 2),
+							ui.dropdown(
+								id: 'dd'
+								width: 140
+								def_text: 'Select an option'
+								// on_selection_changed: dd_change
+								items: [ui.DropdownItem{
+									text: 'Delete all users'
+								}, ui.DropdownItem{
+									text: 'Export users'
+								}, ui.DropdownItem{
+									text: 'Exit'
+								}]
+							),
 						]
 					),
 					ui.column(
@@ -147,6 +160,23 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 								height: 200
 								width: 400
 								text_size: 18
+							),
+							ui.listbox(
+								id: 'lb'
+								width: 100
+								height: 100
+								z_index: 10
+								// on_change: lb_change_multi
+								scrollview: false
+								// selectable: false
+								ordered: true
+								multi: true
+								draw_lines: true
+								items: {
+									'classic': 'Classic'
+									'blue':    'Blue'
+									'red':     'Red'
+								}
 							),
 						]
 					),
