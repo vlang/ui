@@ -1,6 +1,7 @@
 module ui
 
 import gx
+import math
 
 pub fn (mut w Window) load_4colors_style(colors []gx.Color) {
 	w.ui.update_4colors_style(colors)
@@ -101,4 +102,48 @@ pub fn (mut gui UI) update_style_from_4colors() {
 	gui.cb_image = gui.img('check' + mode)
 	gui.down_arrow = gui.img('arrow' + mode)
 	gui.radio_selected_image = gui.img('radio' + mode + '_selected')
+}
+
+// Accent colors as a particular case of 4 colors style
+
+pub fn (mut w Window) load_accent_color_style(accent_color []int) {
+	w.ui.update_accent_color_style(accent_color)
+	mut l := Layout(w)
+	l.update_theme_style('4colors')
+}
+
+pub fn (mut l Layout) load_accent_color_style(accent_color []int) {
+	mut gui := l.get_ui()
+	gui.update_accent_color_style(accent_color)
+	l.update_theme_style('4colors')
+}
+
+pub fn (mut gui UI) update_accent_color_style(accent_color []int) {
+	// gui.accent_color = accent_color
+	gui.style_colors = color_scheme_from_accent_color(accent_color)
+	gui.update_style_from_4colors()
+}
+
+pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
+	mut font_color := [0, 0, 0]
+	if accent_color[0] + accent_color[1] + accent_color[2] / 3 < 255 * 3 / 2 {
+		font_color = [255, 255, 255]
+	}
+
+	color_scheme := [
+		[accent_color[0] / 3, accent_color[1] / 3, accent_color[2] / 3],
+		accent_color,
+		[accent_color[0] * 5 / 3, accent_color[1] * 5 / 3, accent_color[2] * 5 / 3],
+		font_color,
+	]
+
+	mut gx_colors := []gx.Color{}
+	for color in color_scheme {
+		gx_colors << gx.Color{
+			r: u8(math.max(math.min(color[0], 255), 0))
+			g: u8(math.max(math.min(color[1], 255), 0))
+			b: u8(math.max(math.min(color[2], 255), 0))
+		}
+	}
+	return gx_colors
 }

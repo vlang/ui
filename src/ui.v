@@ -28,7 +28,6 @@ pub mut:
 	nb_click       int
 	keymods        KeyMod
 	styles         map[string]Style
-	accent_color   []int = [100, 40, 150]
 	style_colors   []gx.Color
 mut:
 	cb_image             gg.Image // used only in checkbox.v

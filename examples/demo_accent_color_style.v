@@ -49,7 +49,7 @@ fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 	// load accnt color for the window
 	gui.window.load_accent_color_style([int(color.r), color.g, color.b])
 	// get current accent colors
-	colors := gui.accent_colors()
+	colors := gui.style_colors
 	// show the 4 accent colors
 	for i in 0 .. 4 {
 		mut rect := gui.window.rectangle('rect$i')
@@ -59,7 +59,7 @@ fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 
 fn win_init(w &ui.Window) {
 	mut cs := uic.colorsliders_component_from_id(w, 'cs')
-	ac := cs.layout.ui.accent_color
+	ac := [100, 40, 150]
 	cs.set_color(gx.rgb(u8(ac[0]), u8(ac[1]), u8(ac[2])))
 	on_accent_color_changed(mut cs)
 }
