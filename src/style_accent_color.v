@@ -82,8 +82,25 @@ pub fn (mut gui UI) update_style_from_accent_color() {
 			bg_color_hover: colors[0]
 			text_color: colors[3]
 		}
+		// listbox
+		lb: ListBoxStyle{
+			border_color: colors[0]
+			bg_color: colors[1]
+			bg_color_pressed: colors[0]
+			bg_color_hover: colors[2]
+			text_color: colors[3]
+		}
+		// dropdown
+		dd: DropdownStyle{
+			bg_color: colors[1]
+			border_color: colors[0]
+			focus_color: colors[2]
+			drawer_color: colors[2]
+			text_color: colors[3]
+		}
 	}
 	gui.cb_image = gui.img('check' + mode)
+	gui.down_arrow = gui.img('arrow' + mode)
 	gui.radio_selected_image = gui.img('radio' + mode + '_selected')
 }
 

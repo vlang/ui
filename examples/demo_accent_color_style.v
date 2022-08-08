@@ -7,6 +7,7 @@ fn main() {
 		title: 'Accent color'
 		mode: .resizable
 		on_init: win_init
+		height: 600
 		children: [
 			ui.column(
 				heights: [100.0, ui.stretch]

@@ -8,8 +8,8 @@ type ListBoxFn = fn (&ListBox)
 const (
 	listbox_item_height    = 20
 	listbox_bg_color       = gx.white
-	listbox_selected_color = gx.light_blue
-	listbox_disabled_color = gx.light_gray
+	listbox_color_pressed  = gx.light_blue
+	listbox_color_disabled = gx.light_gray
 	listbox_border_color   = gx.gray
 	listbox_text_offset_y  = 3
 	listbox_text_offset_x  = 5
@@ -31,6 +31,7 @@ pub mut:
 	selection     int = -1
 	selectable    bool
 	multi         bool
+	hovering      int = -1
 	draw_count    int
 	on_change     ListBoxFn = ListBoxFn(0)
 	is_focused    bool
@@ -39,10 +40,7 @@ pub mut:
 	id            string
 	// TODO
 	draw_lines     bool
-	bg_color       gx.Color = ui.listbox_bg_color
-	selected_color gx.Color = ui.listbox_selected_color
-	disabled_color gx.Color = ui.listbox_disabled_color
-	border_color   gx.Color = ui.listbox_border_color
+	color_disabled gx.Color = ui.listbox_color_disabled
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
@@ -84,11 +82,8 @@ mut:
 	text_offset_y int       = ui.listbox_text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// TODO
-	draw_lines     bool     // Draw a rectangle around every item?
-	border_color   gx.Color = ui.listbox_border_color // Item and list border color
-	bg_color       gx.Color = ui.listbox_bg_color // ListBox background color
-	selected_color gx.Color = ui.listbox_selected_color // Selected item background color
-	theme          string   = no_style
+	draw_lines bool // Draw a rectangle around every item?
+	theme      string = no_style
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
@@ -115,9 +110,9 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		multi: c.multi
 		on_change: c.on_change
 		draw_lines: c.draw_lines
-		bg_color: c.bg_color
-		selected_color: c.selected_color
-		border_color: c.border_color
+		// bg_color: c.bg_color
+		// color_pressed: c.color_pressed
+		// border_color: c.border_color
 		item_height: c.item_height
 		text_offset_y: c.text_offset_y
 		text_size: c.text_size
@@ -526,7 +521,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	$if lb_draw ? {
 		println('draw $lb.id scrollview=$lb.has_scrollview $lb.x, $lb.y, $lb.width $lb.height $height')
 	}
-	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.bg_color)
+	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.style.bg_color)
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -550,7 +545,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 		}
 	}
 	if !lb.draw_lines {
-		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.border_color)
+		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.style.border_color)
 	}
 
 	// scrollview_draw(lb)
@@ -714,7 +709,11 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 					}
 				}
 			}
+		} else {
+			lb.hovering = lb.get_selected_item(int(e.y))
 		}
+	} else {
+		lb.hovering = -1
 	}
 }
 
@@ -1020,7 +1019,13 @@ fn (li &ListItem) draw() {
 
 fn (li &ListItem) draw_device(d DrawDevice) {
 	lb := li.list
-	col := if li.is_selected() { lb.selected_color } else { lb.bg_color }
+	col := if li.is_selected() {
+		lb.style.bg_color_pressed
+	} else if lb.hovering >= 0 && li == lb.items[lb.hovering] {
+		lb.style.bg_color_hover
+	} else {
+		lb.style.bg_color
+	}
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
 		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
@@ -1035,12 +1040,12 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	} else {
 		li.text()
 	},
-		color: if li.is_enabled() { gx.black } else { lb.disabled_color }
+		color: if li.is_enabled() { lb.text_styles.current.color } else { lb.color_disabled }
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
 		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
 			lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
-			lb.border_color)
+			lb.style.border_color)
 	}
 }

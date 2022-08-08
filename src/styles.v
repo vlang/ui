@@ -57,6 +57,8 @@ pub fn (s Style) to_toml() string {
 	toml += s.stack.to_toml()
 	toml += '\n[textbox]\n'
 	toml += s.tb.to_toml()
+	toml += '\n[listbox]\n'
+	toml += s.lb.to_toml()
 	toml += '\n[label]\n'
 	toml += s.label.to_toml()
 	return toml
@@ -77,6 +79,7 @@ pub fn parse_style_toml_file(path string) Style {
 	s.cl.from_toml(doc.value('canvaslayout'))
 	s.stack.from_toml(doc.value('stack'))
 	s.tb.from_toml(doc.value('textbox'))
+	s.lb.from_toml(doc.value('listbox'))
 	s.label.from_toml(doc.value('label'))
 	return s
 }
