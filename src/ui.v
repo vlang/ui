@@ -5,6 +5,7 @@ module ui
 
 import time
 import gg
+import gx
 import os
 import clipboard
 
@@ -28,6 +29,7 @@ pub mut:
 	keymods        KeyMod
 	styles         map[string]Style
 	accent_color   []int = [100, 40, 150]
+	style_colors   []gx.Color
 mut:
 	cb_image             gg.Image // used only in checkbox.v
 	radio_image          gg.Image // used in radio.v but no use, in idle_loop()
