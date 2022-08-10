@@ -22,6 +22,7 @@ pub fn (mut gui UI) update_4colors_style(colors []gx.Color) {
 
 pub fn (mut gui UI) update_style_from_4colors() {
 	colors := gui.style_colors
+	println(gui.style_colors)
 	mode := if colors[3] == gx.black { '' } else { '_white' }
 	gui.styles['4colors'] = Style{
 		// window
