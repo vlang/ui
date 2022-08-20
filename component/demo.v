@@ -74,7 +74,7 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 		),
 		ui.menuitem(text: 'Exit', action: menu_click),
 		ui.menuitem(
-			text: 'devel'
+			text: 'Devel'
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
