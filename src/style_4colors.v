@@ -3,27 +3,28 @@ module ui
 import gx
 import math
 
-pub fn (mut w Window) load_accent_color_style(accent_color []int) {
-	w.ui.update_accent_color_style(accent_color)
+pub fn (mut w Window) load_4colors_style(colors []gx.Color) {
+	w.ui.update_4colors_style(colors)
 	mut l := Layout(w)
-	l.update_theme_style('accent_color')
+	l.update_theme_style('4colors')
 }
 
-pub fn (mut l Layout) load_accent_color_style(accent_color []int) {
+pub fn (mut l Layout) load_4colors_style(colors []gx.Color) {
 	mut gui := l.get_ui()
-	gui.update_accent_color_style(accent_color)
-	l.update_theme_style('accent_color')
+	gui.update_4colors_style(colors)
+	l.update_theme_style('4colors')
 }
 
-pub fn (mut gui UI) update_accent_color_style(accent_color []int) {
-	gui.accent_color = accent_color
-	gui.update_style_from_accent_color()
+pub fn (mut gui UI) update_4colors_style(colors []gx.Color) {
+	gui.style_colors = colors
+	gui.update_style_from_4colors()
 }
 
-pub fn (mut gui UI) update_style_from_accent_color() {
-	colors := color_scheme_from_accent_color(gui.accent_color)
+pub fn (mut gui UI) update_style_from_4colors() {
+	colors := gui.style_colors
+	println(gui.style_colors)
 	mode := if colors[3] == gx.black { '' } else { '_white' }
-	gui.styles['accent_color'] = Style{
+	gui.styles['4colors'] = Style{
 		// window
 		win: WindowStyle{
 			bg_color: colors[0]
@@ -104,7 +105,25 @@ pub fn (mut gui UI) update_style_from_accent_color() {
 	gui.radio_selected_image = gui.img('radio' + mode + '_selected')
 }
 
-// Inspiration from mui project made by @malisipi
+// Accent colors as a particular case of 4 colors style
+
+pub fn (mut w Window) load_accent_color_style(accent_color []int) {
+	w.ui.update_accent_color_style(accent_color)
+	mut l := Layout(w)
+	l.update_theme_style('4colors')
+}
+
+pub fn (mut l Layout) load_accent_color_style(accent_color []int) {
+	mut gui := l.get_ui()
+	gui.update_accent_color_style(accent_color)
+	l.update_theme_style('4colors')
+}
+
+pub fn (mut gui UI) update_accent_color_style(accent_color []int) {
+	// gui.accent_color = accent_color
+	gui.style_colors = color_scheme_from_accent_color(accent_color)
+	gui.update_style_from_4colors()
+}
 
 pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
 	mut font_color := [0, 0, 0]
@@ -128,8 +147,4 @@ pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
 		}
 	}
 	return gx_colors
-}
-
-pub fn (gui &UI) accent_colors() []gx.Color {
-	return color_scheme_from_accent_color(gui.accent_color)
 }

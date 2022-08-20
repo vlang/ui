@@ -254,14 +254,14 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
 }
 
 pub fn id_hovered(x f64, y f64, mut m Menu) int {
-	mut w := 0
+	mut w := m.x
 	for i, item in m.items {
 		if x > w && x < (w + item.width) {
 			return i
 		}
 		w = w + item.width
 	}
-	return 0
+	return -1
 }
 
 pub fn (mut m Menu) set_pos(x int, y int) {
@@ -276,6 +276,7 @@ fn (mut m Menu) update_size() {
 		if !m.root_menu.fixed_width {
 			mut mw := 0
 			dtw := DrawTextWidget(m)
+			dtw.load_style()
 			for mut item in m.items {
 				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
 				if item.width > mw {
@@ -294,6 +295,7 @@ fn (mut m Menu) update_size() {
 		} else {
 			mut w := 0
 			dtw := DrawTextWidget(m)
+			dtw.load_style()
 			for mut item in m.items {
 				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
 				w = w + item.width
@@ -313,6 +315,7 @@ pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	m.real_width = w
 	m.height = h
 	// println("w=$m.width h=$m.height")
+	m.update_size()
 	return m.width, m.height
 }
 
