@@ -125,7 +125,7 @@ fn (mut g Group) calculate_child_positions() {
 			println('group ccp $g.id size: ($g.width, $g.height)')
 		}
 	}
-	mut widgets := g.children
+	mut widgets := g.children.clone()
 	mut start_x := g.x + g.margin_left
 	mut start_y := g.y + g.margin_top
 	for mut widget in widgets {
