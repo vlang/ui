@@ -128,8 +128,8 @@ fn (mut app App) calculate() {
 	mut a := f64(0)
 	mut b := f64(0)
 	mut op := ''
-	mut operands := app.operands
-	mut operations := app.operations
+	mut operands := app.operands.clone()
+	mut operations := app.operations.clone()
 	mut result := if operands.len == 0 { f64(0.0) } else { operands.last() }
 	mut i := 0
 	for {

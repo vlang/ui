@@ -35,7 +35,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	if c.heights.len == 2 {
 		heights = c.heights.repeat(c.children.len)
 	} else {
-		heights = c.heights
+		heights = c.heights.clone()
 	}
 	mut layout := ui.column(
 		id: ui.component_id(c.id, 'layout')
