@@ -1567,20 +1567,20 @@ pub fn (mut s Stack) update_spacings(cfg ChildrenParams, mode ChildUpdateType) {
 
 pub fn (s &Stack) child(from ...int) Widget {
 	if from.len > 0 {
-		mut children := s.children
+		mut children := s.children.clone()
 		for i, ind in from {
 			if i < from.len - 1 {
 				if ind >= 0 && ind < children.len {
 					widget := children[ind]
 					if widget is Stack {
-						children = widget.children
+						children = widget.children.clone()
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 					}
 				} else if i == -1 {
 					widget := children[children.len - 1]
 					if widget is Stack {
-						children = widget.children
+						children = widget.children.clone()
 					}
 				} else {
 					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
