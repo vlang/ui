@@ -1075,11 +1075,11 @@ pub fn (w &Window) child(from ...int) Widget {
 				if ind >= 0 && ind < children.len {
 					widget := children[ind]
 					if widget is Stack {
-						children = widget.children
+						children = widget.children.clone()
 					} else if widget is Group {
-						children = widget.children
+						children = widget.children.clone()
 					} else if widget is CanvasLayout {
-						children = widget.children
+						children = widget.children.clone()
 					} else {
 						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
 						root := w.root_layout
@@ -1090,9 +1090,9 @@ pub fn (w &Window) child(from ...int) Widget {
 				} else if i == -1 {
 					widget := children[children.len - 1]
 					if widget is Stack {
-						children = widget.children
+						children = widget.children.clone()
 					} else if widget is Group {
-						children = widget.children
+						children = widget.children.clone()
 					}
 				} else {
 					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
