@@ -57,6 +57,8 @@ pub mut:
 	quit_requested_fn WindowFn
 	suspended_fn      WindowFn
 	resumed_fn        WindowFn
+	focused_fn        WindowFn
+	unfocused_fn      WindowFn
 	on_init           WindowFn
 	on_draw           WindowFn
 	eventbus          &eventbus.EventBus = eventbus.new()
@@ -131,6 +133,8 @@ pub:
 	on_quit_request       WindowFn
 	on_suspend            WindowFn
 	on_resume             WindowFn
+	on_focus              WindowFn
+	on_unfocus            WindowFn
 	on_mouse_move         WindowMouseMoveFn
 	on_init               WindowFn
 	on_draw               WindowFn
@@ -230,6 +234,8 @@ pub fn window(cfg WindowParams) &Window {
 		quit_requested_fn: cfg.on_quit_request
 		suspended_fn: cfg.on_suspend
 		resumed_fn: cfg.on_resume
+		focused_fn: cfg.on_focus
+		unfocused_fn: cfg.on_unfocus
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
@@ -566,6 +572,16 @@ fn on_event(e &gg.Event, mut window Window) {
 		.restored {
 			if window.restored_fn != WindowFn(0) {
 				window.restored_fn(window)
+			}
+		}
+		.focused {
+			if window.focused_fn != WindowFn(0) {
+				window.focused_fn(window)
+			}
+		}
+		.unfocused {
+			if window.unfocused_fn != WindowFn(0) {
+				window.unfocused_fn(window)
 			}
 		}
 		.quit_requested {
