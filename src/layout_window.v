@@ -307,10 +307,10 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 		children: cfg.children
 		click_fn: cfg.on_click
 	}
-	window.widgets = &parent_window.widgets
-	window.widgets_counts = &parent_window.widgets_counts
+	window.widgets = unsafe { &parent_window.widgets }
+	window.widgets_counts = unsafe { &parent_window.widgets_counts }
 	parent_window.child_window = window
-	window.evt_mngr = &parent_window.evt_mngr
+	window.evt_mngr = unsafe { &parent_window.evt_mngr }
 	for _, mut child in window.children {
 		// using `parent_window` here so that all events handled by the main window are redirected
 		// to parent_window.child_window.child
