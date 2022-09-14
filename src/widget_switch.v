@@ -33,7 +33,7 @@ pub mut:
 	parent      Layout = empty_stack
 	is_focused  bool
 	open        bool
-	ui          &UI
+	ui          &UI = unsafe { nil }
 	on_click    SwitchFn
 	on_key_down SwitchU32Fn
 	hidden      bool

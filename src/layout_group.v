@@ -22,7 +22,7 @@ pub mut:
 	z_index       int
 	is_focused    bool
 	parent        Layout = empty_stack
-	ui            &UI
+	ui            &UI    = unsafe { nil }
 	children      []Widget
 	margin_left   int = 5
 	margin_top    int = 10

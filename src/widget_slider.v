@@ -32,7 +32,7 @@ pub mut:
 	offset_y             int
 	z_index              int
 	parent               Layout = empty_stack
-	ui                   &UI
+	ui                   &UI    = unsafe { nil }
 	val                  f32
 	min                  int
 	max                  int = 100

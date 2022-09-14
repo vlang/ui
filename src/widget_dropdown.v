@@ -18,7 +18,7 @@ pub mut:
 	offset_x             int
 	offset_y             int
 	z_index              int
-	ui                   &UI
+	ui                   &UI = unsafe { nil }
 	items                []DropdownItem
 	open                 bool
 	selected_index       int

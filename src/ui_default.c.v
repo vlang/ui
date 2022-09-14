@@ -27,7 +27,7 @@ pub fn message_box(s string) {
 // ///////////////////////////////////////////////////////////
 struct MessageApp {
 mut:
-	window    &Window
+	window    &Window = unsafe { nil }
 	waitgroup &sync.WaitGroup
 }
 

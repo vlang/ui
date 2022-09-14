@@ -889,7 +889,7 @@ fn (lb &ListBox) fit_at(at int) int {
 struct ListItem {
 mut:
 	id       string
-	list     &ListBox
+	list     &ListBox = unsafe { nil }
 	x        int
 	y        int
 	offset_x int
@@ -905,7 +905,7 @@ pub mut:
 [params]
 struct ListItemParams {
 	id       string
-	list     &ListBox
+	list     &ListBox = unsafe { nil }
 	x        int
 	y        int
 	offset_x int

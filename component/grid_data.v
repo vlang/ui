@@ -6,9 +6,9 @@ import gx
 [heap]
 pub struct DataGridComponent {
 pub mut:
-	layout   &ui.Stack
-	grid     &GridComponent
-	settings &GridSettingsComponent
+	layout   &ui.Stack      = unsafe { nil }
+	grid     &GridComponent = unsafe { nil }
+	settings &GridSettingsComponent = unsafe { nil }
 }
 
 [params]

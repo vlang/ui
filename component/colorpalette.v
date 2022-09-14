@@ -11,8 +11,8 @@ pub mut:
 	layout   &ui.Stack  // required
 	colbtn   &ui.Button // current
 	ncolors  int
-	alpha    &AlphaComponent
-	color    &gx.Color = unsafe { nil }
+	alpha    &AlphaComponent = unsafe { nil }
+	color    &gx.Color       = unsafe { nil }
 	selected string
 }
 

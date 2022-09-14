@@ -13,7 +13,7 @@ pub mut:
 	offset_y int
 	height   int
 	width    int
-	ui       &UI
+	ui       &UI    = unsafe { nil }
 	parent   Layout = empty_stack
 	// Style
 	theme_style  string
