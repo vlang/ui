@@ -80,7 +80,7 @@ struct TextView {
 	y       int
 	width   int
 	height  int
-	context &TextContext
+	context &TextContext = unsafe { nil }
 }
 
 

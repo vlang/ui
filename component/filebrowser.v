@@ -10,7 +10,7 @@ pub mut:
 	layout     &ui.Stack
 	btn_cancel &ui.Button
 	btn_ok     &ui.Button
-	tv         &TreeViewComponent
+	tv         &TreeViewComponent = unsafe { nil }
 	dir        string
 }
 

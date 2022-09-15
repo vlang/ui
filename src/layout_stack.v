@@ -60,7 +60,7 @@ pub mut:
 	z_index              int
 	deactivated          bool
 	parent               Layout = ui.empty_stack
-	ui                   &UI
+	ui                   &UI    = unsafe { nil }
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
 	spacings             []f32 // []int // int

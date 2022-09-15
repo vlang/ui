@@ -92,7 +92,7 @@ mut:
 
 struct Mouse {
 mut:
-	window &Window
+	window &Window = unsafe { nil }
 	pos    Pos
 	id     string
 	states []string

@@ -10,7 +10,7 @@ const (
 
 struct App {
 mut:
-	window       &ui.Window
+	window       &ui.Window = unsafe { nil }
 	line_numbers bool
 }
 

@@ -11,7 +11,7 @@ const (
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 pub struct TextView {
 pub mut:
-	text       &string
+	text       &string = unsafe { nil }
 	cursor_pos int
 	sel_start  int
 	sel_end    int
@@ -20,11 +20,11 @@ pub mut:
 	// synchronised lines for the text (or maybe a part)
 	tlv TextLinesView
 	// textbox
-	tb &TextBox // needed for textwidth and for is_wordwrap
+	tb &TextBox = unsafe { nil } // needed for textwidth and for is_wordwrap
 	// line_number
 	left_margin int
 	// Syntax Highlighter
-	sh &SyntaxHighLighter
+	sh &SyntaxHighLighter = unsafe { nil }
 }
 
 // Structure to help for drawing text line by line and cursor update between lines

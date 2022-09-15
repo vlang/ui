@@ -31,7 +31,7 @@ pub mut:
 	parent           Layout = empty_stack
 	is_focused       bool
 	checked          bool
-	ui               &UI
+	ui               &UI = unsafe { nil }
 	on_click         CheckBoxFn
 	on_check_changed CheckBoxFn
 	text             string
