@@ -917,7 +917,7 @@ mut:
 // TextBox GridVar
 [heap]
 struct GridTextBox {
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 mut:
 	id  string
 	var []string
@@ -925,7 +925,7 @@ mut:
 
 pub struct GridTextBoxParams {
 	id   string
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 	var  []string
 }
 
@@ -982,7 +982,7 @@ fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
 // Dropdown GridVar
 [heap]
 struct GridDropdown {
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 mut:
 	id   string
 	name string
@@ -991,7 +991,7 @@ mut:
 
 pub struct GridDropdownParams {
 	id   string
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 	name string
 	var  Factor
 }
@@ -1046,7 +1046,7 @@ fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) 
 // CheckBox GridVar
 [heap]
 struct GridCheckBox {
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 mut:
 	id  string
 	var []bool
@@ -1054,7 +1054,7 @@ mut:
 
 pub struct GridCheckBoxParams {
 	id   string
-	grid &GridComponent
+	grid &GridComponent = unsafe { nil }
 	var  []bool
 }
 

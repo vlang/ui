@@ -19,7 +19,7 @@ pub mut:
 	cell_height f32
 	cell_width  f32    = 40
 	parent      Layout = empty_stack
-	ui          &UI
+	ui          &UI    = unsafe { nil }
 	hidden      bool
 }
 

@@ -22,7 +22,7 @@ pub mut:
 	offset_x int
 	offset_y int
 	hidden   bool
-	ui       &UI
+	ui       &UI = unsafe { nil }
 	// Style
 	theme_style  string
 	style        MenuShapeStyle

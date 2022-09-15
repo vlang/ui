@@ -28,7 +28,7 @@ mut:
 	movable   bool
 	drag_type string = 'pic'
 	path      string
-	ui        &UI
+	ui        &UI = unsafe { nil }
 	image     gg.Image
 	on_click  PictureFn
 	use_cache bool

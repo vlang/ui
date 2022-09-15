@@ -23,7 +23,7 @@ pub mut:
 	layout_print   bool
 	show_cursor    bool
 	last_type_time i64 // used only in textbox.v
-	clipboard      &clipboard.Clipboard
+	clipboard      &clipboard.Clipboard = unsafe { nil }
 	btn_down       [3]bool
 	nb_click       int
 	keymods        KeyMod

@@ -21,7 +21,7 @@ pub mut:
 	adj_width  int
 	adj_height int
 	justify    []f64
-	ui         &UI
+	ui         &UI = unsafe { nil }
 	// Style
 	theme_style  string
 	style        LabelStyle

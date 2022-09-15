@@ -15,7 +15,7 @@ pub mut:
 	offset_y int
 	z_index  int
 	parent   Layout = empty_stack
-	ui       &UI
+	ui       &UI    = unsafe { nil }
 	val      int
 	min      int
 	max      int

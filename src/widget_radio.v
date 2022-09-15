@@ -45,7 +45,7 @@ pub mut:
 	parent     Layout = empty_stack
 	is_focused bool
 	is_checked bool
-	ui         &UI
+	ui         &UI = unsafe { nil }
 	// Style
 	theme_style  string
 	style        RadioShapeStyle
