@@ -205,7 +205,7 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
 	if em.receivers[ui.events.on_delegate].len > 0 {
 		mut w := em.receivers[ui.events.on_delegate][0]
-		x, y := e.mouse_x / gui.gg.scale, e.mouse_y / gui.gg.scale
+		x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
 		return w.point_inside(x, y)
 	} else {
 		return false

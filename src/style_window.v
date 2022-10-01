@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 import toml
 
 // Window
@@ -38,7 +37,7 @@ pub fn (mut w Window) load_style() {
 	w.update_style(w.style_params)
 	// println("w2 bg: $w.bg_color")
 	mut gui := w.ui
-	gui.gg.set_bg_color(w.bg_color)
+	gui.dd.set_bg_color(w.bg_color)
 	// mut l := Layout(w)
 	// l.update_theme_style(style)
 }

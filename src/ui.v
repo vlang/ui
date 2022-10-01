@@ -16,7 +16,7 @@ const (
 
 pub struct UI {
 pub mut:
-	gg             &gg.Context       = unsafe { nil }
+	dd             &DrawDevice       = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
@@ -56,12 +56,14 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-		gui.gg.refresh_ui()
-		$if macos {
-			if gui.gg.native_rendering {
-				C.darwin_window_refresh()
-			}
-		}
+        if mut gui.dd is gg.Context {
+		    gui.dd.refresh_ui()
+		    $if macos {
+			    if gui.dd.native_rendering {
+				    C.darwin_window_refresh()
+			    }
+		    }
+        }
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
@@ -114,8 +116,10 @@ fn (mut gui UI) load_imgs() {
 
 // complete the drawing system
 pub fn (mut gui UI) load_img(id string, b []u8, path string) {
-	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
-	gui.imgs[id].path = path
+    if mut gui.dd is gg.Context {
+	    gui.imgs[id] = gui.dd.create_image_from_byte_array(b)
+	    gui.imgs[id].path = path
+    }
 }
 
 pub fn (gui &UI) img(id string) gg.Image {
@@ -159,7 +163,9 @@ pub fn run(window &Window) {
 		mut gui := window.ui
 		gui.window = window // TODO: this can be removed since now in the window constructor
 		go gui.idle_loop()
-		gui.gg.run()
+        if mut gui.dd is gg.Context {
+		    gui.dd.run()
+        }
 		gui.closed = true
 
 		// the gui.idle_loop thread checks every 10 ms if gui.closed is true;

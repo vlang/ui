@@ -94,14 +94,16 @@ fn (mut pic Picture) init(parent Layout) {
 		}
 		if !pic.use_cache && pic.path in ui.resource_cache {
 			pic.image = ui.resource_cache[pic.path]
-		} else {
-			pic.image = pic.ui.gg.create_image(pic.path)
+		} else if mut pic.ui.dd is gg.Context {
+			pic.image = pic.ui.dd.create_image(pic.path)
 			ui.resource_cache[pic.path] = pic.image
 		}
 	}
 	$if android {
 		byte_ary := os.read_apk_asset(pic.path) or { panic(err) }
-		pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary)
+        if mut pic.ui.dd is gg.Context {
+		    pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary)
+        }
 	}
 	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
 	if pic.width == 0 || pic.height == 0 {
@@ -177,7 +179,7 @@ pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.draw_device(pic.ui.gg)
+	pic.draw_device(pic.ui.dd)
 }
 
 fn (mut pic Picture) draw_device(d DrawDevice) {

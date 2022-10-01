@@ -151,7 +151,9 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		b.image = b.ui.gg.create_image(b.icon_path)
+        if mut b.ui.dd is gg.Context {
+		    b.image = b.ui.dd.create_image(b.icon_path)
+        }
 	}
 	b.load_style()
 	if b.tooltip.text != '' {
@@ -371,7 +373,7 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	b.draw_device(b.ui.gg)
+	b.draw_device(b.ui.dd)
 }
 
 fn (mut b Button) draw_device(d DrawDevice) {
@@ -435,7 +437,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	if b.use_icon {
 		d.draw_image(x, y, width, height, b.image)
 	} else {
-		dtw := DrawTextWidget(b)
+		mut dtw := DrawTextWidget(b)
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, bcenter_x, bcenter_y, b.text)
 	}
@@ -462,7 +464,7 @@ pub fn (mut b Button) set_text_size() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else {
-		dtw := DrawTextWidget(b)
+		mut dtw := DrawTextWidget(b)
 		dtw.load_style()
 		b.text_width, b.text_height = dtw.text_size(b.text)
 		// b.text_width, b.text_height = text_size(b, b.text)

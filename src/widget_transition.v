@@ -97,7 +97,7 @@ fn (mut t Transition) size() (int, int) {
 }
 
 fn (mut t Transition) draw() {
-	t.draw_device(t.ui.gg)
+	t.draw_device(t.ui.dd)
 }
 
 fn (mut t Transition) draw_device(d DrawDevice) {

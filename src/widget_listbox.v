@@ -138,7 +138,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	ui := parent.get_ui()
 	lb.ui = ui
 	lb.init_style()
-	dtw := DrawTextWidget(lb)
+	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	lb.draw_count = lb.height / lb.item_height
 	lb.text_offset_y = (lb.item_height - dtw.text_height('W')) / 2
@@ -500,7 +500,7 @@ fn (lb &ListBox) visible_items() (int, int) {
 }
 
 fn (mut lb ListBox) draw() {
-	lb.draw_device(lb.ui.gg)
+	lb.draw_device(lb.ui.dd)
 }
 
 fn (mut lb ListBox) draw_device(d DrawDevice) {
@@ -510,7 +510,8 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 			println('ListBox($lb.id): ($lb.x, $lb.y, $lb.width, $lb.height)')
 		}
 	}
-	DrawTextWidget(lb).draw_device_load_style(d)
+	mut dtw := DrawTextWidget(lb)
+    dtw.draw_device_load_style(d)
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb, d)
 	height := if lb.has_scrollview && lb.adj_height > lb.height {
@@ -525,7 +526,8 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
-		DrawTextWidget(lb).draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x,
+		dtw = DrawTextWidget(lb)
+        dtw.draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x,
 			lb.y + lb.text_offset_y, if lb.files_droped {
 			'Empty listbox. Drop files here ...'
 		} else {
@@ -557,7 +559,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 	if lb.has_scrollview {
 		return 0
 	}
-	dtw := DrawTextWidget(lb)
+	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	width := dtw.text_width(text)
 	real_w := lb.width + ui.listbox_text_offset_x * 2
@@ -796,7 +798,7 @@ fn (mut lb ListBox) unfocus() {
 fn (mut lb ListBox) adj_size() (int, int) {
 	if lb.adj_width == 0 {
 		mut width := 0
-		dtw := DrawTextWidget(lb)
+		mut dtw := DrawTextWidget(lb)
 		dtw.load_style()
 		for item in lb.items {
 			width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
@@ -816,7 +818,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 
 fn (mut lb ListBox) update_adj_size() {
 	mut width := 0
-	dtw := DrawTextWidget(lb)
+	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	for item in lb.items {
 		width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
@@ -1014,7 +1016,7 @@ pub fn (mut li ListItem) update_parent(mut lb ListBox, at int) {
 }
 
 fn (li &ListItem) draw() {
-	li.draw_device(li.list.ui.gg)
+	li.draw_device(li.list.ui.dd)
 }
 
 fn (li &ListItem) draw_device(d DrawDevice) {
@@ -1034,7 +1036,8 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 		lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
 		col)
 
-	DrawTextWidget(lb).draw_device_styled_text(d, li.x + li.offset_x + lb.x +
+	mut dtw := DrawTextWidget(lb)
+    dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x +
 		ui.listbox_text_offset_x, li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text
 	} else {

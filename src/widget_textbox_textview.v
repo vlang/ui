@@ -323,7 +323,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-		
+
 		color: gx.gray
 	)
 }
@@ -552,7 +552,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
-	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
+	// println('${wui.dd.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		if tv.tb.read_only {
 			return
@@ -1012,7 +1012,8 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
-		width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		//width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		width_cur = tv.text_width(ustr[i..(i + 1)].string())
 		width2 := if i < ustr.len { width + width_cur } else { width }
 		if (prev_width + width) / 2 <= xx && xx <= (width + width2) / 2 {
 			return i
@@ -1056,21 +1057,22 @@ fn (tv &TextView) fix_tab_char(txt string) string {
 // }
 
 fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	tv.draw_device_styled_text(tv.tb.ui.gg, x, y, text, ts)
+	tv.draw_device_styled_text(tv.tb.ui.dd, x, y, text, ts)
 }
 
 fn (tv &TextView) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
-	DrawTextWidget(tv.tb).draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
+	mut dtw := DrawTextWidget(tv.tb)
+    dtw.draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
 }
 
 fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(tv.fix_tab_char(text))
 }
 
-// Added to have mostly additive text width function
-fn (tv &TextView) text_width_additive(text string) f64 {
-	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
-}
+//// Added to have mostly additive text width function
+//fn (tv &TextView) text_width_additive(text string) f64 {
+//	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
+//}
 
 fn (tv &TextView) text_height(text string) int {
 	return DrawTextWidget(tv.tb).text_width(text)
@@ -1093,20 +1095,22 @@ pub fn (tv &TextView) update_style(ts TextStyleParams) {
 
 // Not called automatically as it is in gg
 pub fn (tv &TextView) load_style() {
-	DrawTextWidget(tv.tb).load_style()
+	mut dtw := DrawTextWidget(tv.tb)
+    dtw.load_style()
 }
 
-// that's weird text_width is not additive function
-pub fn (tv &TextView) test_textwidth(text string) {
-	ustr := text.runes()
-	mut width, mut width_bad := 0.0, 0.0
-	println('(text_width_additive vs text_width)')
-	for i in 0 .. ustr.len {
-		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i..(i + 1)].string())
-		width += tmp
-		tmp_bad := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
-		width_bad += tmp_bad
-		tmp2, _ := tv.text_size(ustr[..i + 1].string())
-		println('${ustr[..i + 1].string()} -> $i) ${ustr[i..(i + 1)].string()}  ($tmp vs $tmp_bad)  ($width == $tmp2 vs $width_bad == $tmp2)')
-	}
-}
+//// that's weird text_width is not additive function
+//pub fn (tv &TextView) test_textwidth(text string) {
+//	ustr := text.runes()
+//	mut width, mut width_bad := 0.0, 0.0
+//	println('(text_width_additive vs text_width)')
+//	for i in 0 .. ustr.len {
+////		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i..(i + 1)].string())
+//		tmp := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
+//		width += tmp
+//		tmp_bad := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
+//		width_bad += tmp_bad
+//		tmp2, _ := tv.text_size(ustr[..i + 1].string())
+//		println('${ustr[..i + 1].string()} -> $i) ${ustr[i..(i + 1)].string()}  ($tmp vs $tmp_bad)  ($width == $tmp2 vs $width_bad == $tmp2)')
+//	}
+//}

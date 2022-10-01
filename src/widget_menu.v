@@ -275,7 +275,7 @@ fn (mut m Menu) update_size() {
 		m.height = m.items.len * m.item_height
 		if !m.root_menu.fixed_width {
 			mut mw := 0
-			dtw := DrawTextWidget(m)
+			mut dtw := DrawTextWidget(m)
 			dtw.load_style()
 			for mut item in m.items {
 				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
@@ -294,7 +294,7 @@ fn (mut m Menu) update_size() {
 			m.width = m.items.len * m.item_width
 		} else {
 			mut w := 0
-			dtw := DrawTextWidget(m)
+			mut dtw := DrawTextWidget(m)
 			dtw.load_style()
 			for mut item in m.items {
 				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
@@ -320,7 +320,7 @@ pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut m Menu) draw() {
-	m.draw_device(m.ui.gg)
+	m.draw_device(m.ui.dd)
 }
 
 fn (mut m Menu) draw_device(d DrawDevice) {
@@ -333,7 +333,7 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 			println('Menu($m.id): ($m.x, $m.y, $m.width, $m.height)')
 		}
 	}
-	dtw := DrawTextWidget(m.root_menu)
+	mut dtw := DrawTextWidget(m.root_menu)
 	dtw.draw_device_load_style(d)
 
 	if m.dx == 1 && m.dy == 0 {

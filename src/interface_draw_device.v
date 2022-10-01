@@ -7,14 +7,20 @@ interface DrawDevice {
 	// text style
 	has_text_style() bool
 	set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int)
-	// clip
+	draw_text_default(x int, y int, text string) // (ui) default ui TextStyle
+    // text
+    draw_text(x int, y int, text string, cfg gx.TextCfg)
+	draw_text_def(x int, y int, text string) // (gg.Context) use set_text_cfg
+    set_text_cfg(gx.TextCfg)
+    text_size(string) (int,int)
+    text_width(string) int
+    text_height(string) int
+	// clipping
 	scissor_rect(x int, y int, w int, h int)
 	// drawing methods
-	// draw_pixel(x f32, y f32, c gx.Color)
-	// draw_pixels(points []f32, c gx.Color)
+	//draw_pixel(x f32, y f32, c gx.Color)
+	//draw_pixels(points []f32, c gx.Color)
 	draw_image(x f32, y f32, width f32, height f32, img &gg.Image)
-	// draw_text_def(x int, y int, text string)
-	draw_text_default(x int, y int, text string)
 	draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color)
 	draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color)
 	draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color)
@@ -31,6 +37,8 @@ interface DrawDevice {
 	draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color)
 	draw_convex_poly(points []f32, color gx.Color)
 	draw_poly_empty(points []f32, color gx.Color)
+mut:
+    set_bg_color(color gx.Color)
 }
 
 fn (d DrawDevice) draw_window(mut w Window) {

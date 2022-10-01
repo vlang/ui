@@ -59,6 +59,8 @@ pub fn (d &DrawDeviceSVG) save(filepath string) {
 
 // interface DrawDevice
 
+pub fn (d DrawDeviceSVG) set_bg_color(color gx.Color) {}
+
 pub fn (d &DrawDeviceSVG) has_text_style() bool {
 	return true
 }
@@ -74,6 +76,35 @@ pub fn (d &DrawDeviceSVG) set_text_style(font_name string, font_path string, siz
 	// println('set_text_style: $d.ts')
 }
 
+pub fn (d &DrawDeviceSVG) draw_text(x int, y int, text string, cfg gx.TextCfg) {
+	// println('$d.id draw_text($x, $y, $text)')
+	mut s := d.s
+	s.text(x, y, text, 'none', d.ts)
+}
+
+//pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {
+pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
+	// println('$d.id draw_text_default($x, $y, $text)')
+	mut s := d.s
+	s.text(x, y, text, 'none', d.ts)
+}
+
+pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {}
+
+pub fn (d &DrawDeviceSVG) set_text_cfg(c gx.TextCfg) {}
+
+pub fn (d &DrawDeviceSVG) text_size(s string) (int,int) {
+    return 0, 0
+}
+
+pub fn (d &DrawDeviceSVG) text_width(s string) int {
+    return 0
+}
+
+pub fn (d &DrawDeviceSVG) text_height(s string) int {
+    return 0
+}
+
 pub fn (d &DrawDeviceSVG) scissor_rect(x int, y int, w int, h int) {
 }
 
@@ -81,13 +112,6 @@ pub fn (d &DrawDeviceSVG) draw_image(x f32, y f32, width f32, height f32, img &g
 	// println('$d.id draw_image($x, $y, $width, $height, img)')
 	mut s := d.s
 	s.image(int(x), int(y), int(width), int(height), img.path)
-}
-
-// pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string)
-pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
-	// println('$d.id draw_text_default($x, $y, $text)')
-	mut s := d.s
-	s.text(x, y, text, 'none', d.ts)
 }
 
 pub fn (d &DrawDeviceSVG) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {

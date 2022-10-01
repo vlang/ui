@@ -5,7 +5,6 @@ module ui
 
 import math
 import gx
-import gg
 import eventbus
 
 [heap]
@@ -141,7 +140,7 @@ fn (mut g Group) calculate_child_positions() {
 }
 
 fn (mut g Group) draw() {
-	g.draw_device(g.ui.gg)
+	g.draw_device(g.ui.dd)
 }
 
 fn (mut g Group) draw_device(d DrawDevice) {
@@ -154,16 +153,16 @@ fn (mut g Group) draw_device(d DrawDevice) {
 	}
 	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
 	mut title := g.title
-	mut text_width := g.ui.gg.text_width(title)
+	mut text_width := g.ui.dd.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {
 		proportion := f32(g.width) / f32(text_width)
 		target_len := int(math.floor(title.len * proportion)) - 5
 		title = if target_len < 0 { '' } else { title.substr(0, target_len) + '..' }
-		text_width = g.ui.gg.text_width(title)
+		text_width = g.ui.dd.text_width(title)
 	}
 	// Title
 	d.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
-	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
+	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
 	for mut child in g.children {
 		child.draw_device(d)
 	}

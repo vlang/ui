@@ -104,7 +104,7 @@ pub fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pb ProgressBar) draw() {
-	pb.draw_device(pb.ui.gg)
+	pb.draw_device(pb.ui.dd)
 }
 
 fn (mut pb ProgressBar) draw_device(d DrawDevice) {

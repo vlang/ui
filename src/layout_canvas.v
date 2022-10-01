@@ -597,7 +597,7 @@ fn (mut c CanvasLayout) set_drawing_children() {
 }
 
 fn (mut c CanvasLayout) draw() {
-	c.draw_device(c.ui.gg)
+	c.draw_device(c.ui.dd)
 }
 
 fn (mut c CanvasLayout) draw_device(d DrawDevice) {
@@ -611,7 +611,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 			println('CanvasLayout($s.id): ($c.x, $c.y, $fw, $fh)')
 		}
 	}
-	dtw := DrawTextWidget(c)
+	mut dtw := DrawTextWidget(c)
 	dtw.draw_device_load_style(d)
 	// if scrollview_clip(mut c) {
 	// 	c.set_children_pos()
@@ -624,7 +624,8 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		mut w, mut h := c.width, c.height
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
-			w, h = int(f32(fw) * c.ui.gg.scale), int(f32(fh) * c.ui.gg.scale)
+			w = int(f32(fw) * c.ui.window.dpi_scale)
+            h = int(f32(fh) * c.ui.window.dpi_scale)
 		}
 		// println("$c.id ($w, $h)")
 		if c.style.bg_radius > 0 {
@@ -765,7 +766,7 @@ pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
 // ---- text
 
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
-	c.draw_device_text(c.ui.gg, x, y, text)
+	c.draw_device_text(c.ui.dd, x, y, text)
 }
 
 pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
@@ -776,7 +777,7 @@ pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text strin
 
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(c)
-	dtw.draw_device_styled_text(c.ui.gg, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
+	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
 		ts)
 }
 

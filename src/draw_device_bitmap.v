@@ -54,6 +54,8 @@ pub fn (mut d DrawDeviceBitmap) png_screenshot_window(filename string, mut w Win
 
 // interface DrawDevice
 
+pub fn (d &DrawDeviceBitmap) set_bg_color(color gx.Color) {}
+
 pub fn (d &DrawDeviceBitmap) has_text_style() bool {
 	return true
 }
@@ -73,6 +75,56 @@ pub fn (d &DrawDeviceBitmap) set_text_style(font_name string, font_path string, 
 	}
 }
 
+fn (d &DrawDeviceBitmap) apply_text_config(mut ts &libvg.BitmapTextStyle, cfg gx.TextCfg) {
+	ts.font_name = if cfg.family == 'system' { 'Systemfont' } else { cfg.family }
+	ts.font_path = d.ts.font_path
+	ts.size = cfg.size
+	ts.color = cfg.color
+    ts.set_align( int( cfg.align ) )
+    ts.set_vertical_align( int( cfg.vertical_align ) )
+}
+
+pub fn (d &DrawDeviceBitmap) draw_text(x int, y int, text string, cfg gx.TextCfg) {
+	// println('$d.id draw_text_default($x, $y, $text) $d.ts')
+    mut ts := libvg.BitmapTextStyle{}
+    d.apply_text_config(mut &ts, cfg)
+	mut r := d.r
+	r.init_style(ts)
+	// r.get_info_string()
+	dy := int(r.get_y_base() * d.ts.vertical_align)
+	println('draw text bmp ($text) ($x, $y) dy := $dy = $r.get_y_base() * $d.ts.vertical_align} ')
+	r.draw_text_block(text, x: x, y: y + dy, w: r.width, h: r.height)
+}
+
+pub fn (d &DrawDeviceBitmap) draw_text_default(x int, y int, text string) {
+	// println('$d.id draw_text_default($x, $y, $text) $d.ts')
+	mut r := d.r
+	r.init_style(d.ts)
+	// r.get_info_string()
+	dy := int(r.get_y_base() * d.ts.vertical_align)
+	println('draw text bmp ($text) ($x, $y) dy := $dy = $r.get_y_base() * $d.ts.vertical_align} ')
+	r.draw_text_block(text, x: x, y: y + dy, w: r.width, h: r.height)
+}
+
+pub fn (d &DrawDeviceBitmap) draw_text_def(x int, y int, text string) {}
+
+pub fn (d &DrawDeviceBitmap) set_text_cfg(cfg gx.TextCfg) {
+    mut ts := d.ts
+    d.apply_text_config(mut &ts, cfg)
+}
+
+pub fn (d &DrawDeviceBitmap) text_size(s string) (int,int) {
+    return 0, 0
+}
+
+pub fn (d &DrawDeviceBitmap) text_width(s string) int {
+    return 0
+}
+
+pub fn (d &DrawDeviceBitmap) text_height(s string) int {
+    return 0
+}
+
 pub fn (d &DrawDeviceBitmap) scissor_rect(x int, y int, w int, h int) {}
 
 // pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, c gx.Color) {
@@ -87,17 +139,6 @@ pub fn (d &DrawDeviceBitmap) draw_image(x f32, y f32, width f32, height f32, img
 	mut r2 := libvg.raster()
 	r2.load(img)
 	r.copy(r2, int(x), int(y), int(width), int(height))
-}
-
-// pub fn (d &DrawDeviceBitmap) draw_text_def(x int, y int, text string)
-pub fn (d &DrawDeviceBitmap) draw_text_default(x int, y int, text string) {
-	// println('$d.id draw_text_default($x, $y, $text) $d.ts')
-	mut r := d.r
-	r.init_style(d.ts)
-	// r.get_info_string()
-	dy := int(r.get_y_base() * d.ts.vertical_align)
-	println('draw text bmp ($text) ($x, $y) dy := $dy = $r.get_y_base() * $d.ts.vertical_align} ')
-	r.draw_text_block(text, x: x, y: y + dy, w: r.width, h: r.height)
 }
 
 pub fn (d &DrawDeviceBitmap) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {

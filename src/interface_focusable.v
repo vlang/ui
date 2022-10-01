@@ -1,5 +1,7 @@
 module ui
 
+import gg
+
 // Contains all the methods related to focus management
 // that is to say:
 // * Focusable interface and its methods
@@ -29,22 +31,26 @@ pub fn (f Focusable) has_focusable() bool {
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) set_focus() {
-	w := f.ui.window
+	mut w := f.ui.window
 	if !w.unlocked_focus() {
 		return
 	}
 	if f.is_focused {
-		$if focus ? {
-			println('$f.id already has focus at $w.ui.gg.frame')
-		}
+        if mut w.ui.dd is gg.Context {
+		    $if focus ? {
+			    println('$f.id already has focus at $w.ui.dd.frame')
+		    }
+        }
 		return
 	}
 	Layout(w).unfocus_all()
 	if f.has_focusable() {
 		f.is_focused = true
-		$if focus ? {
-			println('$f.id has focus at $w.ui.gg.frame')
-		}
+        if mut w.ui.dd is gg.Context {
+		    $if focus ? {
+			    println('$f.id has focus at $w.ui.dd.frame')
+		    }
+        }
 	}
 	// update drawing_children when focus is taken
 	f.update_parent_drawing_children()
@@ -52,18 +58,22 @@ pub fn (mut f Focusable) set_focus() {
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) force_focus() {
-	w := f.ui.window
+	mut w := f.ui.window
 	if f.is_focused {
-		$if focus ? {
-			println('$f.id already has focus at $w.ui.gg.frame')
-		}
+        if mut w.ui.dd is gg.Context {
+		    $if focus ? {
+			    println('$f.id already has focus at $w.ui.dd.frame')
+		    }
+        }
 		return
 	}
 	Layout(w).unfocus_all()
 	f.is_focused = true
-	$if focus ? {
-		println('$f.id has focus at $w.ui.gg.frame')
-	}
+    if mut w.ui.dd is gg.Context {
+	    $if focus ? {
+		    println('$f.id has focus at $w.ui.dd.frame')
+	    }
+    }
 }
 
 pub fn (f Focusable) lock_focus() {

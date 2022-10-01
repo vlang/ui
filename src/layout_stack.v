@@ -1090,7 +1090,7 @@ pub fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	s.draw_device(s.ui.gg)
+	s.draw_device(s.ui.dd)
 }
 
 fn (mut s Stack) draw_device(d DrawDevice) {
@@ -1152,7 +1152,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 	}
 	scrollview_draw_end(s, d)
 	if s.title != '' {
-		text_width, text_height := s.ui.gg.text_size(s.title)
+		text_width, text_height := s.ui.dd.text_size(s.title)
 		// draw rectangle around stack
 		d.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height,
 			s.real_height + int(f32(text_height) * .75), gx.black)
@@ -1161,7 +1161,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		ty := s.y - int(f32(text_height) * 1.25)
 		d.draw_rect_filled(tx, ty, text_width + 5, text_height, s.style.bg_color)
 		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
-		dtw := DrawTextWidget(s)
+		mut dtw := DrawTextWidget(s)
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, tx, ty - 2, s.title)
 	}
@@ -1187,7 +1187,7 @@ fn (s &Stack) margin(side Side) int {
 		println('margin($side) = $isize')
 	}
 	if s.title != '' {
-		text_height := s.ui.gg.text_height(s.title)
+		text_height := s.ui.dd.text_height(s.title)
 		match side {
 			.top { isize += int(f32(text_height) * 1.25) }
 			.bottom { isize += int(f32(text_height) * 0.75) }

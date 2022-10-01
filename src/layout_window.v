@@ -274,7 +274,7 @@ pub fn window(cfg WindowParams) &Window {
 	)
 
 	mut ui_ctx := &UI{
-		gg: gcontext
+		dd: &DrawDevice(gcontext)
 		window: window
 		svg: draw_device_svg()
 		bmp: draw_device_bitmap()
@@ -347,16 +347,17 @@ fn gg_init(mut window Window) {
 	}
 
 	for mut child in window.children {
-		// println('init <$child.id>')
+		//println('init <$child.id>')
 		window.register_child(*child)
 		child.init(window)
 	}
 	// then subwindows
 	for mut sw in window.subwindows {
-		// println('init $child.id')
+		//println('init $child.id')
 		window.register_child(*sw)
 		sw.init(window)
 	}
+
 	// refresh the layout
 	window.update_layout()
 
@@ -383,7 +384,9 @@ fn gg_cleanup(mut window Window) {
 }
 
 fn frame(mut w Window) {
-	w.ui.gg.begin()
+    if mut w.ui.dd is gg.Context {
+	    w.ui.dd.begin()
+    }
 
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
@@ -414,11 +417,15 @@ fn frame(mut w Window) {
 	}
 	*/
 
-	w.ui.gg.end()
+    if mut w.ui.dd is gg.Context {
+	    w.ui.dd.end()
+    }
 }
 
 fn frame_immediate(mut w Window) {
-	w.ui.gg.begin()
+    if mut w.ui.dd is gg.Context {
+	    w.ui.dd.begin()
+    }
 
 	for mut child in w.children_immediate {
 		child.draw()
@@ -445,7 +452,9 @@ fn frame_immediate(mut w Window) {
 
 	w.needs_refresh = false
 
-	w.ui.gg.end()
+    if mut w.ui.dd is gg.Context {
+	    w.ui.dd.end()
+    }
 }
 
 fn native_frame(mut w Window) {
@@ -495,13 +504,11 @@ fn on_event(e &gg.Event, mut window Window) {
 	}
 
 	$if macos {
-		if window.ui.gg.native_rendering {
-			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
-				C.darwin_window_refresh()
-			} else {
-				C.darwin_window_refresh()
-			}
-		}
+        if mut window.ui.dd is gg.Context {
+		    if window.ui.dd.native_rendering {
+			    C.darwin_window_refresh()
+		    }
+        }
 	}
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
@@ -517,8 +524,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			prev_time := window.touch.start.time
 			window.touch.start = Touch{
 				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
+					x: int(e.mouse_x / window.dpi_scale)
+					y: int(e.mouse_y / window.dpi_scale)
 				}
 				time: time.now()
 			}
@@ -536,8 +543,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			// touch-like
 			window.touch.end = Touch{
 				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
+					x: int(e.mouse_x / window.dpi_scale)
+					y: int(e.mouse_y / window.dpi_scale)
 				}
 				time: time.now()
 			}
@@ -604,8 +611,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.start = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -619,8 +626,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.end = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -635,8 +642,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.move = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -761,8 +768,8 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
@@ -795,8 +802,8 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	// println("typ mouse move $event.typ")
 	mut window := ui.window
 	e := MouseMoveEvent{
-		x: event.mouse_x / ui.gg.scale
-		y: event.mouse_y / ui.gg.scale
+		x: event.mouse_x / window.dpi_scale
+		y: event.mouse_y / window.dpi_scale
 		mouse_button: int(event.mouse_button)
 	}
 
@@ -822,8 +829,8 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .up
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
@@ -863,8 +870,8 @@ fn window_click(event gg.Event, mut ui UI) {
 	// println("typ click $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
@@ -891,10 +898,10 @@ fn window_scroll(event gg.Event, ui &UI) {
 	mut window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
-		mouse_x: event.mouse_x / ui.gg.scale
-		mouse_y: event.mouse_y / ui.gg.scale
-		x: event.scroll_x / ui.gg.scale
-		y: event.scroll_y / ui.gg.scale
+		mouse_x: event.mouse_x / window.dpi_scale
+		mouse_y: event.mouse_y / window.dpi_scale
+		x: event.scroll_x / window.dpi_scale
+		y: event.scroll_y / window.dpi_scale
 	}
 	if window.scroll_fn != WindowScrollFn(0) {
 		window.scroll_fn(window, e)
@@ -1026,8 +1033,8 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
@@ -1060,7 +1067,9 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 pub fn (mut w Window) refresh() {
-	w.ui.gg.refresh_ui()
+    if mut w.ui.dd is gg.Context {
+	    w.ui.dd.refresh_ui()
+    }
 	$if macos {
 		C.darwin_window_refresh()
 	}
@@ -1185,7 +1194,9 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 
 pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
-	window.ui.gg.resize(w, h)
+    if mut window.ui.dd is gg.Context {
+	    window.ui.dd.resize(w, h)
+    }
 	for mut child in window.children {
 		if mut child is Stack {
 			child.resize(w, h)

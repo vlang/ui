@@ -2,7 +2,7 @@ module ui
 
 import gx
 import math
-import sokol.sgl
+//import sokol.sgl
 
 // const (
 // 	empty_text_cfg = gx.TextCfg{}
@@ -16,18 +16,18 @@ import sokol.sgl
 
 // T is Widget with text_cfg field
 // fn text_size<T>(widget &T, text string) (int, int) {
-// 	widget.ui.gg.set_cfg(widget.text_cfg)
-// 	return widget.ui.gg.text_size(text)
+// 	widget.ui.dd.set_cfg(widget.text_cfg)
+// 	return widget.ui.dd.text_size(text)
 // }
 
 // fn text_width<T>(w &T, text string) int {
-// 	w.ui.gg.set_cfg(w.text_cfg)
-// 	return w.ui.gg.text_width(text)
+// 	w.ui.dd.set_cfg(w.text_cfg)
+// 	return w.ui.dd.text_width(text)
 // }
 
 // fn text_height<T>(w &T, text string) int {
-// 	w.ui.gg.set_cfg(w.text_cfg)
-// 	return w.ui.gg.text_height(text)
+// 	w.ui.dd.set_cfg(w.text_cfg)
+// 	return w.ui.dd.text_height(text)
 // }
 
 // T is a widget Type with text_cfg field
@@ -39,10 +39,10 @@ import sokol.sgl
 // 			...w.text_cfg
 // 			size: text_size_as_int(w.text_size, win_height)
 // 		}
-// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 		w.ui.dd.draw_text(x, y, text_, tc)
 // 	} else {
 // 		// println("draw_text: $text_ $w.text_cfg.color")
-// 		w.ui.gg.draw_text(x, y, text_, w.text_cfg)
+// 		w.ui.dd.draw_text(x, y, text_, w.text_cfg)
 // 	}
 // }
 
@@ -54,13 +54,13 @@ import sokol.sgl
 // 			size: text_size_as_int(w.text_size, win_height)
 // 			color: color
 // 		}
-// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 		w.ui.dd.draw_text(x, y, text_, tc)
 // 	} else {
 // 		tc := gx.TextCfg{
 // 			...w.text_cfg
 // 			color: color
 // 		}
-// 		w.ui.gg.draw_text(x, y, text_, tc)
+// 		w.ui.dd.draw_text(x, y, text_, tc)
 // 	}
 // }
 
@@ -89,8 +89,8 @@ mut:
 
 // No text_size to not conflict with
 fn get_text_size(w DrawText, text_ string) (int, int) {
-	w.ui.gg.set_cfg(w.text_cfg)
-	return w.ui.gg.text_size(text_)
+	w.ui.dd.set_text_cfg(w.text_cfg)
+	return w.ui.dd.text_size(text_)
 }
 
 fn set_text_cfg_color(mut w DrawText, color gx.Color) {
@@ -131,7 +131,7 @@ fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
 }
 
 // pub fn draw_text_line(w DrawText, x int, y int, text_ string) {
-// 	w.ui.gg.draw_text(x, y, text_, w.text_cfg)
+// 	w.ui.dd.draw_text(x, y, text_, w.text_cfg)
 // }
 
 // pub fn draw_text_line_with_color(w DrawText, x int, y int, text_ string, color gx.Color) {
@@ -139,13 +139,13 @@ fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
 // 		...w.text_cfg
 // 		color: color
 // 	}
-// 	w.ui.gg.draw_text(x, y, text_, tc)
+// 	w.ui.dd.draw_text(x, y, text_, tc)
 // }
 
 pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
 	mut th := 0
 	for line in lines {
-		w.ui.gg.draw_text(x, y + th, line, w.text_cfg)
+		w.ui.dd.draw_text(x, y + th, line, w.text_cfg)
 		_, tmp := get_text_size(w, line)
 		th += tmp
 	}
@@ -360,26 +360,28 @@ pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &u8) {
 	C.sg_update_image(sg_img, &tmp_sbc)
 }
 
-pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
-	ctx := c.ui.gg
-	cx, cy := c.x + c.offset_x, c.y + c.offset_y
-	u0 := f32(0.0)
-	v0 := f32(0.0)
-	u1 := f32(1.0)
-	v1 := f32(1.0)
-	x0 := f32(cx * ctx.scale)
-	y0 := f32(cy * ctx.scale)
-	x1 := f32((cx + c.width) * ctx.scale)
-	y1 := f32((cy + c.height) * ctx.scale)
-	sgl.load_pipeline(ctx.timage_pip)
-	sgl.enable_texture()
-	sgl.texture(simg)
-	sgl.begin_quads()
-	sgl.c4b(255, 255, 255, 255)
-	sgl.v2f_t2f(x0, y0, u0, v0)
-	sgl.v2f_t2f(x1, y0, u1, v0)
-	sgl.v2f_t2f(x1, y1, u1, v1)
-	sgl.v2f_t2f(x0, y1, u0, v1)
-	sgl.end()
-	sgl.disable_texture()
-}
+// REMOVED: this function uses internals of gg.Context which we probably do not
+// want to reproduce in the DrawDevice interface
+//pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
+//	ctx := c.ui.gg
+//	cx, cy := c.x + c.offset_x, c.y + c.offset_y
+//	u0 := f32(0.0)
+//	v0 := f32(0.0)
+//	u1 := f32(1.0)
+//	v1 := f32(1.0)
+//	x0 := f32(cx * ctx.scale)
+//	y0 := f32(cy * ctx.scale)
+//	x1 := f32((cx + c.width) * ctx.scale)
+//	y1 := f32((cy + c.height) * ctx.scale)
+//	sgl.load_pipeline(ctx.timage_pip)
+//	sgl.enable_texture()
+//	sgl.texture(simg)
+//	sgl.begin_quads()
+//	sgl.c4b(255, 255, 255, 255)
+//	sgl.v2f_t2f(x0, y0, u0, v0)
+//	sgl.v2f_t2f(x1, y0, u1, v0)
+//	sgl.v2f_t2f(x1, y1, u1, v1)
+//	sgl.v2f_t2f(x0, y1, u0, v1)
+//	sgl.end()
+//	sgl.disable_texture()
+//}

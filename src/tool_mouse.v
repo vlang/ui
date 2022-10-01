@@ -169,11 +169,11 @@ pub fn (mut m Mouse) update_pos(x f64, y f64) {
 }
 
 pub fn (mut m Mouse) update_event(e &gg.Event) {
-	m.pos.x, m.pos.y = int(e.mouse_x / m.window.ui.gg.scale), int(e.mouse_y / m.window.ui.gg.scale)
+	m.pos.x, m.pos.y = int(e.mouse_x / m.window.dpi_scale), int(e.mouse_y / m.window.dpi_scale)
 }
 
 pub fn (mut m Mouse) draw() {
-	m.draw_device(m.window.ui.gg)
+	m.draw_device(m.window.ui.dd)
 }
 
 pub fn (mut m Mouse) draw_device(d DrawDevice) {

@@ -98,7 +98,7 @@ pub fn (mut s SubWindow) cleanup() {
 }
 
 fn (mut s SubWindow) draw() {
-	s.draw_device(s.ui.gg)
+	s.draw_device(s.ui.dd)
 }
 
 fn (mut s SubWindow) draw_device(d DrawDevice) {

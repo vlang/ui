@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 
 const (
 	radio_focus_color = gx.rgb(50, 50, 50)
@@ -258,7 +257,7 @@ pub fn (mut r Radio) set_size_from_values() {
 	} else {
 		r.adj_width, r.adj_height = 0, (r.height + 5) * r.values.len
 	}
-	dtw := DrawTextWidget(r)
+	mut dtw := DrawTextWidget(r)
 	dtw.load_style()
 	for value in r.values {
 		width := dtw.text_width(value)
@@ -294,7 +293,7 @@ pub fn (mut r Radio) update_size() {
 }
 
 fn (mut r Radio) draw() {
-	r.draw_device(r.ui.gg)
+	r.draw_device(r.ui.dd)
 }
 
 fn (mut r Radio) draw_device(d DrawDevice) {
@@ -304,7 +303,7 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 			println('Radio($r.id): ($r.x, $r.y, $r.width, $r.height)')
 		}
 	}
-	dtw := DrawTextWidget(r)
+	mut dtw := DrawTextWidget(r)
 	dtw.draw_device_load_style(d)
 	if r.title != '' {
 		// Border
@@ -314,7 +313,7 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 			gx.gray
 		})
 		// Title
-		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.gg.text_width(r.title) + 5,
+		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.dd.text_width(r.title) + 5,
 			10, r.parent.bg_color()) // r.ui.window.bg_color)
 
 		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
@@ -338,7 +337,7 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 		})
 		// if i != r.selected_index {
 		// 	d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
-		// 	// r.ui.gg.draw_image(x, y-3, 16, 16, r.ui.circle_image)
+		// 	// r.ui.dd.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		// }
 		// Text
 		dtw.draw_device_text(d, x + check_mark_size + 5, y, val)

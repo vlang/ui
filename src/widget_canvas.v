@@ -25,7 +25,6 @@ pub mut:
 mut:
 	parent  Layout      = empty_stack
 	draw_fn DrawFn      = unsafe { nil }
-	gg      &gg.Context = unsafe { nil }
 }
 
 [params]
@@ -51,7 +50,8 @@ pub fn canvas(c CanvasParams) &Canvas {
 
 fn (mut c Canvas) init(parent Layout) {
 	c.parent = parent
-	c.gg = parent.get_ui().gg
+	ui := parent.get_ui()
+	c.ui = ui
 }
 
 [manualfree]
@@ -89,13 +89,15 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c Canvas) draw() {
-	c.draw_device(c.gg)
+	c.draw_device(c.ui.dd)
 }
 
 fn (mut c Canvas) draw_device(d DrawDevice) {
 	offset_start(mut c)
 	if c.draw_fn != unsafe { nil } {
-		c.draw_fn(c.gg, c)
+        if mut c.ui.dd is gg.Context {
+		    c.draw_fn(c.ui.dd, c)
+        }
 	}
 	offset_end(mut c)
 }
