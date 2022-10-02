@@ -827,7 +827,7 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 			sv.offset_y = sv.orig_offset + int(f32(e.y - sv.drag_offset) / a_y)
 			// println("move: $sv.offset_y = $sv.orig_offset + ($e.y - $sv.drag_offset) /  $a_y")
 		}
-		sv.change_value(ScrollViewPart(sv.dragging))
+		sv.change_value(unsafe { ScrollViewPart(sv.dragging) })
 	}
 }
 

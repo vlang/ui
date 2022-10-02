@@ -32,8 +32,8 @@ pub fn (mut ls LabelStyle) from_toml(a toml.Any) {
 	ls.text_font_name = a.value('text_font_name').string()
 	ls.text_color = HexColor(a.value('text_color').string()).color()
 	ls.text_size = a.value('text_size').int()
-	ls.text_align = TextHorizontalAlign(a.value('text_align').int())
-	ls.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	ls.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	ls.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut l Label) load_style() {

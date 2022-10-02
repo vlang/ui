@@ -64,8 +64,8 @@ pub fn (mut lbs ListBoxStyle) from_toml(a toml.Any) {
 	lbs.text_font_name = a.value('text_font_name').string()
 	lbs.text_color = HexColor(a.value('text_color').string()).color()
 	lbs.text_size = a.value('text_size').int()
-	lbs.text_align = TextHorizontalAlign(a.value('text_align').int())
-	lbs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	lbs.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	lbs.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut lb ListBox) load_style() {

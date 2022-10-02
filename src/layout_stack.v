@@ -524,7 +524,7 @@ fn (mut s Stack) set_cache_sizes() {
 	c.adj_widths, c.adj_heights = [0].repeat(len), [0].repeat(len)
 	c.fixed_widths, c.fixed_heights = [0].repeat(len), [0].repeat(len)
 	c.weight_widths, c.weight_heights = [0.0].repeat(len), [0.0].repeat(len)
-	c.width_type, c.height_type = [ChildSize(0)].repeat(len), [ChildSize(0)].repeat(len)
+	c.width_type, c.height_type = [ChildSize.compact].repeat(len), [ChildSize.compact].repeat(len)
 
 	$if s_scas ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
