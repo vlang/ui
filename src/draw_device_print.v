@@ -58,12 +58,14 @@ pub fn (d &DrawDevicePrint) text_height(s string) int {
 
 pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}
 
-// pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, c gx.Color) {
-// 	println("$d.id draw_pixel($x, $y, $c)")
-// }
-// pub fn (d &DrawDevicePrint)	draw_pixels(points []f32, c gx.Color) {
-// 	println("$d.id ")
-// }
+pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color) {
+	println('$d.id draw_pixel($x, $y, $color)')
+}
+
+pub fn (d &DrawDevicePrint) draw_pixels(points []f32, color gx.Color) {
+	println('$d.id draw_pixels($points, $color)')
+}
+
 pub fn (d &DrawDevicePrint) draw_image(x f32, y f32, width f32, height f32, img &gg.Image) {
 	println('$d.id draw_image($x, $y, $width, $height, img)')
 }
@@ -112,11 +114,15 @@ pub fn (d &DrawDevicePrint) draw_slice_filled(x f32, y f32, r f32, start_angle f
 	println('$d.id ')
 }
 
-pub fn (d &DrawDevicePrint) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	println('$d.id ')
 }
 
-pub fn (d &DrawDevicePrint) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	println('$d.id ')
+}
+
+pub fn (d &DrawDevicePrint) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	println('$d.id ')
 }
 

@@ -863,14 +863,19 @@ pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r 
 
 // ---- arc
 
-pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	d.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
-		thickness, start_angle, end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
+		start_angle, end_angle, segments, color)
 }
 
-pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
-	d.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), inner_radius,
-		thickness, start_angle, end_angle, segments, color)
+pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
+		start_angle, end_angle, segments, color)
+}
+
+pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	d.draw_arc_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, start_angle,
+		end_angle, segments, color)
 }
 
 // ---- line

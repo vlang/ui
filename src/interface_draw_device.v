@@ -18,8 +18,8 @@ interface DrawDevice {
 	// clipping
 	scissor_rect(x int, y int, w int, h int)
 	// drawing methods
-	// draw_pixel(x f32, y f32, c gx.Color)
-	// draw_pixels(points []f32, c gx.Color)
+	draw_pixel(x f32, y f32, c gx.Color)
+	draw_pixels(points []f32, c gx.Color)
 	draw_image(x f32, y f32, width f32, height f32, img &gg.Image)
 	draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color)
 	draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color)
@@ -32,8 +32,9 @@ interface DrawDevice {
 	draw_circle_filled(x f32, y f32, r f32, color gx.Color)
 	draw_slice_empty(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color)
 	draw_slice_filled(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color)
-	draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color)
-	draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color)
+	draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color)
+	draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color)
+	draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color)
 	draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color)
 	draw_convex_poly(points []f32, color gx.Color)
 	draw_poly_empty(points []f32, color gx.Color)

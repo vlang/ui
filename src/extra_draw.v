@@ -17,17 +17,17 @@ import sokol.sgl
 
 // T is Widget with text_cfg field
 // fn text_size<T>(widget &T, text string) (int, int) {
-// 	widget.ui.dd.set_cfg(widget.text_cfg)
+// 	widget.ui.dd.set_text_cfg(widget.text_cfg)
 // 	return widget.ui.dd.text_size(text)
 // }
 
 // fn text_width<T>(w &T, text string) int {
-// 	w.ui.dd.set_cfg(w.text_cfg)
+// 	w.ui.dd.set_text_cfg(w.text_cfg)
 // 	return w.ui.dd.text_width(text)
 // }
 
 // fn text_height<T>(w &T, text string) int {
-// 	w.ui.dd.set_cfg(w.text_cfg)
+// 	w.ui.dd.set_text_cfg(w.text_cfg)
 // 	return w.ui.dd.text_height(text)
 // }
 

@@ -108,6 +108,18 @@ pub fn (d &DrawDeviceSVG) text_height(s string) int {
 pub fn (d &DrawDeviceSVG) scissor_rect(x int, y int, w int, h int) {
 }
 
+pub fn (d &DrawDeviceSVG) draw_pixel(x f32, y f32, color gx.Color) {
+	mut s := d.s
+	s.rectangle(int(x), int(y), 1, 1, fill: hex_color(color))
+}
+
+pub fn (d &DrawDeviceSVG) draw_pixels(points []f32, color gx.Color) {
+	mut s := d.s
+	for i in 0 .. points.len / 2 {
+		s.rectangle(int(points[i * 2]), int(points[i * 2 + 1]), 1, 1, fill: hex_color(color))
+	}
+}
+
 pub fn (d &DrawDeviceSVG) draw_image(x f32, y f32, width f32, height f32, img &gg.Image) {
 	// println('$d.id draw_image($x, $y, $width, $height, img)')
 	mut s := d.s
@@ -183,11 +195,15 @@ pub fn (d &DrawDeviceSVG) draw_slice_filled(x f32, y f32, r f32, start_angle f32
 	// println('$d.id ')
 }
 
-pub fn (d &DrawDeviceSVG) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceSVG) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	// println('$d.id ')
 }
 
-pub fn (d &DrawDeviceSVG) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceSVG) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	// println('$d.id ')
+}
+
+pub fn (d &DrawDeviceSVG) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	// println('$d.id ')
 }
 
