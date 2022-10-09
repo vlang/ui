@@ -683,7 +683,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 	// println('window_keydown $event')
 	e := KeyEvent{
 		key: Key(event.key_code)
-		mods: KeyMod(event.modifiers)
+		mods: unsafe { KeyMod(event.modifiers) }
 		codepoint: event.char_code
 		code: int(event.key_code)
 		// action: action
@@ -746,7 +746,7 @@ fn window_char(event gg.Event, ui &UI) {
 	window := ui.window
 	e := KeyEvent{
 		codepoint: event.char_code
-		mods: KeyMod(event.modifiers)
+		mods: unsafe { KeyMod(event.modifiers) }
 	}
 	if window.char_fn != WindowKeyFn(0) {
 		window.char_fn(window, e)
@@ -764,9 +764,9 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
+		mods: unsafe { KeyMod(event.modifiers) }
 	}
-	ui.keymods = KeyMod(event.modifiers)
+	ui.keymods = unsafe { KeyMod(event.modifiers) }
 	if int(event.mouse_button) < 3 {
 		ui.btn_down[int(event.mouse_button)] = true
 	}
@@ -825,7 +825,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
+		mods: unsafe { KeyMod(event.modifiers) }
 	}
 
 	if unsafe { window.child_window == 0 } && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
@@ -853,7 +853,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		drag_child_dropped(mut window)
 	}
 	mut gui := unsafe { ui }
-	gui.keymods = KeyMod(0)
+	gui.keymods = unsafe { KeyMod(0) }
 }
 
 // OBSOLETE see window_click_or_touch_pad
@@ -1029,7 +1029,7 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 		x: int(event.mouse_x / ui.gg.scale)
 		y: int(event.mouse_y / ui.gg.scale)
 		button: MouseButton(event.mouse_button)
-		mods: KeyMod(event.modifiers)
+		mods: unsafe { KeyMod(event.modifiers) }
 	}
 	if window.files_droped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.files_droped_fn(window, e)
