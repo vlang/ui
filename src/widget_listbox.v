@@ -406,7 +406,7 @@ pub fn (lb &ListBox) indices() []int {
 }
 
 // Returns the id and the text of the selected item
-pub fn (lb &ListBox) selected() ?(string, string) {
+pub fn (lb &ListBox) selected() !(string, string) {
 	if !lb.is_selected() {
 		return error('Nothing is selected')
 	}
@@ -431,7 +431,7 @@ pub fn (lb &ListBox) items() []&ListItem {
 }
 
 // Returns the index of the selected item
-pub fn (lb &ListBox) selected_at() ?int {
+pub fn (lb &ListBox) selected_at() !int {
 	if !lb.is_selected() {
 		return error('Nothing is selected')
 	}
