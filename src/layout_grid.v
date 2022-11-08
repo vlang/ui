@@ -62,8 +62,8 @@ pub fn grid_layout(c GridLayoutParams) &GridLayout {
 }
 
 fn (mut g GridLayout) parse_child(key string, child Widget) {
-	tmp := key.split("@")
-	sizes := tmp[1].split("x").map(it.f32())
+	tmp := key.split('@')
+	sizes := tmp[1].split('x').map(it.f32())
 	rect := gg.Rect{sizes[0], sizes[1], sizes[2], sizes[3]}
 	g.child_ids << tmp[0]
 	g.child_rects << rect
@@ -228,4 +228,3 @@ fn (g &GridLayout) get_children() []Widget {
 }
 
 fn (g &GridLayout) update_layout() {}
-

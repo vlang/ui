@@ -158,7 +158,7 @@ pub fn run(window &Window) {
 	} $else {
 		mut gui := window.ui
 		gui.window = window // TODO: this can be removed since now in the window constructor
-		go gui.idle_loop()
+		spawn gui.idle_loop()
 		gui.gg.run()
 		gui.closed = true
 
