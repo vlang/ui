@@ -74,13 +74,13 @@ pub fn (mut w Widget) scaled_bounds() gg.Rect {
 pub fn (w Widget) subwindow_parent() (bool, Layout) {
 	mut p := w.parent
 	for {
-		if p is Window {
+		if mut p is Window {
 			break
 		}
-		if p is SubWindow {
+		if mut p is SubWindow {
 			return true, p
 		}
-		if p is Widget {
+		if mut p is Widget {
 			wp := p as Widget
 			p = wp.parent
 			continue
