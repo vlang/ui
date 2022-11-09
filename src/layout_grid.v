@@ -1,29 +1,37 @@
 module ui
 
-import math
 import gx
 import gg
 import eventbus
 
+/*
+Goal:
+1) Children are located relatively to the size of the parent grid_layout
+2) Two options:
+	a) size of grid_layout is fixed (=> use of srollview if parent does not allocate enough space)
+	b) size of grid_layout is not fixed and then only deduced from the parent.
+*/
+
 [heap]
 pub struct GridLayout {
 pub mut:
-	id            string
-	height        int
-	width         int
-	x             int
-	y             int
-	offset_x      int
-	offset_y      int
-	z_index       int
-	is_focused    bool
-	parent        Layout = empty_stack
-	ui            &UI    = unsafe { nil }
+	id         string
+	height     int
+	width      int
+	x          int
+	y          int
+	offset_x   int
+	offset_y   int
+	z_index    int
+	is_focused bool
+	parent     Layout = empty_stack
+	ui         &UI    = unsafe { nil }
+	// children
 	child_rects   []gg.Rect
 	child_ids     []string
 	children      []Widget
 	margin_left   int = 5
-	margin_top    int = 10
+	margin_top    int = 5
 	margin_right  int = 5
 	margin_bottom int = 5
 	adj_height    int
@@ -98,6 +106,8 @@ pub fn (g &GridLayout) free() {
 	}
 	unsafe {
 		g.id.free()
+		g.child_ids.free()
+		g.child_rects.free()
 		g.children.free()
 		free(g)
 	}
@@ -123,22 +133,23 @@ fn (mut g GridLayout) set_pos(x int, y int) {
 }
 
 fn (mut g GridLayout) calculate_child_positions() {
-	$if gccp ? {
+	$if glccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp $g.id size: ($g.width, $g.height)')
+			println('gridlayout ccp $g.id size: ($g.width, $g.height)')
 		}
 	}
 	mut widgets := g.children.clone()
 	mut start_x := g.x + g.margin_left
 	mut start_y := g.y + g.margin_top
-	for mut widget in widgets {
-		_, wid_h := widget.size()
-		widget.set_pos(start_x, start_y)
-		start_y = start_y + wid_h
+	w := g.width - g.margin_right - g.margin_left
+	h := g.height - g.margin_top - g.margin_bottom
+	for i, mut widget in widgets {
+		widget.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
+		widget.propose_size(int(w * g.child_rects[i].width), int(h * g.child_rects[i].height))
 	}
-	$if gccp ? {
+	$if glccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp2 $g.id size: ($g.width, $g.height)')
+			println('gridlayout ccp2 $g.id size: ($g.width, $g.height)')
 		}
 	}
 }
