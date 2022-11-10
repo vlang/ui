@@ -76,8 +76,9 @@ fn (mut g GridLayout) parse_child(key string, child Widget) {
 	} else {
 		g.id + '_' + key, tmp[0]
 	}
+	println('$tmp_sizes')
 	sizes := tmp_sizes.split('x').map(it.f32())
-	rect := if tmp.len == 4 {
+	rect := if sizes.len == 4 {
 		gg.Rect{sizes[0], sizes[1], sizes[2], sizes[3]}
 	} else {
 		gg.Rect{0.0, 0.0, 0.0, 0.0}
@@ -95,7 +96,7 @@ fn (mut g GridLayout) init(parent Layout) {
 	for mut child in g.children {
 		child.init(g)
 	}
-	g.calculate_child_positions()
+	g.calculate_children()
 }
 
 [manualfree]
@@ -138,21 +139,24 @@ fn (mut g GridLayout) decode_size() {
 fn (mut g GridLayout) set_pos(x int, y int) {
 	g.x = x
 	g.y = y
-	g.calculate_child_positions()
+	g.calculate_children()
 }
 
-fn (mut g GridLayout) calculate_child_positions() {
+fn (mut g GridLayout) calculate_children() {
 	$if glccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
 			println('gridlayout ccp $g.id size: ($g.width, $g.height)')
 		}
 	}
-	mut widgets := g.children.clone()
-	mut start_x := g.x + g.margin_left
-	mut start_y := g.y + g.margin_top
-	w := g.width - g.margin_right - g.margin_left
-	h := g.height - g.margin_top - g.margin_bottom
-	for i, mut widget in widgets {
+	// mut widgets := g.children.clone()
+	mut start_x := f32(g.x + g.margin_left)
+	mut start_y := f32(g.y + g.margin_top)
+	w := f32(g.width - g.margin_right - g.margin_left) / 100.0
+	h := f32(g.height - g.margin_top - g.margin_bottom) / 100.0
+	println('size: $g.width, $g.height $w, $h $g.child_rects')
+	for i, mut widget in g.children {
+		println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
+			start_y + h * g.child_rects[i].y)})')
 		widget.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
 		widget.propose_size(int(w * g.child_rects[i].width), int(h * g.child_rects[i].height))
 	}
@@ -170,12 +174,13 @@ fn (mut g GridLayout) draw() {
 fn (mut g GridLayout) draw_device(d DrawDevice) {
 	offset_start(mut g)
 	// Border
-	$if gdraw ? {
+	$if gldraw ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
 			println('grid_layout $g.id size: ($g.width, $g.height)')
 		}
 	}
 	for mut child in g.children {
+		// println("${child.id} drawn at ${child.x}, ${child.y} ${child.size()}")
 		child.draw_device(d)
 	}
 	offset_end(mut g)
@@ -202,24 +207,11 @@ fn (g &GridLayout) get_subscriber() &eventbus.Subscriber {
 }
 
 fn (mut g GridLayout) set_adjusted_size(i int, ui &UI) {
-	mut h, mut w := 0, 0
-	for mut child in g.children {
-		mut child_width, mut child_height := child.size()
-
-		$if ui_group ? {
-			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
-		}
-
-		h += child_height // height of vertical stack means adding children's height
-		if child_width > w { // width of vertical stack means greatest children's width
-			w = child_width
-		}
-	}
-	g.adj_width = w
-	g.adj_height = h
-	$if adj_size_group ? {
-		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
-	}
+	g.adj_width = g.width
+	g.adj_height = g.height
+	// $if adj_size_group ? {
+	// 	println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
+	// }
 }
 
 fn (g &GridLayout) adj_size() (int, int) {
@@ -232,9 +224,10 @@ fn (mut g GridLayout) propose_size(w int, h int) (int, int) {
 	// println('g prop size: ($w, $h)')
 	$if gps ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id propose size: ($g.width, $g.height)')
+			println('grid_layout $g.id propose size: ($g.width, $g.height)')
 		}
 	}
+	g.calculate_children()
 	return g.width, g.height
 }
 
