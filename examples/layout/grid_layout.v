@@ -13,11 +13,6 @@ fn main() {
 		title: 'V UI: Rectangles inside GridLayout'
 		mode: .resizable
 		children: [
-			// ui.row(
-			// 	margin: ui.Margin{5, 5, 5, 5}
-			// 	widths: ui.stretch
-			// 	heights: ui.stretch
-			// 	children: [
 			ui.grid_layout(
 				id: 'gl'
 				children: {
@@ -32,8 +27,6 @@ fn main() {
 					)
 				}
 			),
-			// 	]
-			// ),
 		]
 	)
 	ui.run(window)
