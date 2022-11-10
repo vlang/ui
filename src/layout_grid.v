@@ -71,9 +71,18 @@ pub fn grid_layout(c GridLayoutParams) &GridLayout {
 
 fn (mut g GridLayout) parse_child(key string, child Widget) {
 	tmp := key.split('@')
-	sizes := tmp[1].split('x').map(it.f32())
-	rect := gg.Rect{sizes[0], sizes[1], sizes[2], sizes[3]}
-	g.child_ids << tmp[0]
+	id, tmp_sizes := if tmp.len > 1 {
+		tmp[0], tmp[1]
+	} else {
+		g.id + '_' + key, tmp[0]
+	}
+	sizes := tmp_sizes.split('x').map(it.f32())
+	rect := if tmp.len == 4 {
+		gg.Rect{sizes[0], sizes[1], sizes[2], sizes[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	g.child_ids << id
 	g.child_rects << rect
 	g.children << child
 }
