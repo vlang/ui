@@ -1,6 +1,6 @@
 module ui
 
-import gx
+// import gx
 import gg
 import eventbus
 
@@ -163,10 +163,9 @@ fn (mut g GridLayout) draw_device(d DrawDevice) {
 	// Border
 	$if gdraw ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id size: ($g.width, $g.height)')
+			println('grid_layout $g.id size: ($g.width, $g.height)')
 		}
 	}
-	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
 	for mut child in g.children {
 		child.draw_device(d)
 	}
