@@ -27,16 +27,17 @@ pub mut:
 	parent     Layout = empty_stack
 	ui         &UI    = unsafe { nil }
 	// children
-	child_rects   []gg.Rect
-	child_ids     []string
-	children      []Widget
-	margin_left   int = 5
-	margin_top    int = 5
-	margin_right  int = 5
-	margin_bottom int = 5
-	adj_height    int
-	adj_width     int
-	hidden        bool
+	child_rects    []gg.Rect
+	child_ids      []string
+	children       []Widget
+	margin_left    int = 5
+	margin_top     int = 5
+	margin_right   int = 5
+	margin_bottom  int = 5
+	adj_height     int
+	adj_width      int
+	hidden         bool
+	is_root_layout bool = true
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed
@@ -89,12 +90,25 @@ fn (mut g GridLayout) parse_child(key string, child Widget) {
 
 fn (mut g GridLayout) init(parent Layout) {
 	g.parent = parent
-	ui := parent.get_ui()
+	mut ui := parent.get_ui()
 	g.ui = ui
-	g.decode_size()
+	if parent is Window {
+		ui.window = unsafe { parent }
+		mut window := unsafe { parent }
+		if g.is_root_layout {
+			window.root_layout = g
+			window.update_layout() // i.e s.update_all_children_recursively(parent)
+		} else {
+			g.update_layout()
+		}
+	} else {
+		g.is_root_layout = false
+	}
+
 	for mut child in g.children {
 		child.init(g)
 	}
+	g.decode_size()
 	g.calculate_children()
 }
 
@@ -127,6 +141,9 @@ pub fn (g &GridLayout) free() {
 
 fn (mut g GridLayout) decode_size() {
 	parent_width, parent_height := g.parent.size()
+	if g.is_root_layout {
+		g.width, g.height = -100, -100
+	}
 	// Relative sizes
 	g.width = relative_size_from_parent(g.width, parent_width)
 	g.height = relative_size_from_parent(g.height, parent_height)
@@ -197,7 +214,9 @@ fn (g &GridLayout) get_ui() &UI {
 	return g.ui
 }
 
-fn (g &GridLayout) resize(width int, height int) {
+fn (mut g GridLayout) resize(width int, height int) {
+	// println("resize ${width}, ${height}")
+	g.propose_size(width, height)
 }
 
 fn (g &GridLayout) get_subscriber() &eventbus.Subscriber {
@@ -238,4 +257,16 @@ fn (g &GridLayout) get_children() []Widget {
 	return g.children
 }
 
-fn (g &GridLayout) update_layout() {}
+fn (mut g GridLayout) update_layout() {
+	if g.is_root_layout {
+		window := g.ui.window
+		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
+		$if android {
+			to_resize = true
+		}
+		if to_resize {
+			g.resize(window.width, window.height)
+		}
+	}
+	g.calculate_children()
+}

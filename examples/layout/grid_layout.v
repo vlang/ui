@@ -13,23 +13,27 @@ fn main() {
 		title: 'V UI: Rectangles inside GridLayout'
 		mode: .resizable
 		children: [
-			ui.row(
-				margin: ui.Margin{5, 5, 5, 5}
-				widths: ui.stretch
-				heights: ui.stretch
-				children: [
-					ui.grid_layout(
-						children: {
-							'id1@0x0x30x30':   ui.Widget(ui.rectangle(color: gx.rgb(255,
-								100, 100)))
-							'id2@30x30x40x40': ui.Widget(ui.rectangle(color: gx.rgb(100,
-								255, 100)))
-							'id3@70x70x30x30': ui.Widget(ui.rectangle(color: gx.rgb(100,
-								100, 255)))
-						}
-					),
-				]
+			// ui.row(
+			// 	margin: ui.Margin{5, 5, 5, 5}
+			// 	widths: ui.stretch
+			// 	heights: ui.stretch
+			// 	children: [
+			ui.grid_layout(
+				id: 'gl'
+				children: {
+					'id1@0x0x30x30':   ui.rectangle(
+						color: gx.rgb(255, 100, 100)
+					)
+					'id2@30x30x40x40': ui.rectangle(
+						color: gx.rgb(100, 255, 100)
+					)
+					'id3@70x70x30x30': ui.rectangle(
+						color: gx.rgb(100, 100, 255)
+					)
+				}
 			),
+			// 	]
+			// ),
 		]
 	)
 	ui.run(window)

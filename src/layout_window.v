@@ -388,6 +388,7 @@ fn frame(mut w Window) {
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
 	for mut child in children {
+		// println("child ${child.id} draw")
 		child.draw()
 	}
 
@@ -1193,6 +1194,9 @@ pub fn (mut window Window) resize(w int, h int) {
 		if mut child is CanvasLayout {
 			child.resize(w, h)
 		}
+		if mut child is GridLayout {
+			child.resize(w, h)
+		}
 	}
 }
 
@@ -1204,6 +1208,8 @@ pub fn (w &Window) update_layout() {
 		if s.id != empty_stack.id {
 			s.update_layout()
 		}
+	} else if mut s is GridLayout {
+		s.update_layout()
 	}
 	// for mut s in w.get_children() {
 	// 	if mut s is Stack {
