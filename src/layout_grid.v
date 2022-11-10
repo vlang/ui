@@ -155,7 +155,7 @@ fn (mut g GridLayout) calculate_children() {
 	// println('size: $g.width, $g.height $w, $h $g.child_rects')
 	for i, mut widget in g.children {
 		// println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
-			// start_y + h * g.child_rects[i].y)})')
+		// start_y + h * g.child_rects[i].y)})')
 		widget.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
 		widget.propose_size(int(w * g.child_rects[i].width), int(h * g.child_rects[i].height))
 	}
