@@ -76,7 +76,6 @@ fn (mut g GridLayout) parse_child(key string, child Widget) {
 	} else {
 		g.id + '_' + key, tmp[0]
 	}
-	println('$tmp_sizes')
 	sizes := tmp_sizes.split('x').map(it.f32())
 	rect := if sizes.len == 4 {
 		gg.Rect{sizes[0], sizes[1], sizes[2], sizes[3]}
@@ -153,10 +152,10 @@ fn (mut g GridLayout) calculate_children() {
 	mut start_y := f32(g.y + g.margin_top)
 	w := f32(g.width - g.margin_right - g.margin_left) / 100.0
 	h := f32(g.height - g.margin_top - g.margin_bottom) / 100.0
-	println('size: $g.width, $g.height $w, $h $g.child_rects')
+	// println('size: $g.width, $g.height $w, $h $g.child_rects')
 	for i, mut widget in g.children {
-		println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
-			start_y + h * g.child_rects[i].y)})')
+		// println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
+			// start_y + h * g.child_rects[i].y)})')
 		widget.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
 		widget.propose_size(int(w * g.child_rects[i].width), int(h * g.child_rects[i].height))
 	}
