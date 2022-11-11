@@ -24,26 +24,26 @@ pub mut:
 	show_cursor    bool
 	last_type_time i64
 	// used only in textbox.v
-	clipboard      &clipboard.Clipboard = unsafe { nil }
-	btn_down       [3]bool
-	nb_click       int
-	keymods        KeyMod
-	styles         map[string]Style
-	style_colors   []gx.Color
+	clipboard    &clipboard.Clipboard = unsafe { nil }
+	btn_down     [3]bool
+	nb_click     int
+	keymods      KeyMod
+	styles       map[string]Style
+	style_colors []gx.Color
 mut:
-	cb_image             gg.Image
+	cb_image gg.Image
 	// used only in checkbox.v
-	radio_image          gg.Image
+	radio_image gg.Image
 	// used in radio.v but no use, in idle_loop()
 	radio_selected_image gg.Image
 	// used only in radio.v
-	down_arrow           gg.Image
+	down_arrow gg.Image
 	// used only in dropdown.v
-	resource_cache       map[string]gg.Image
+	resource_cache map[string]gg.Image
 	// used only in picture.v
-	imgs                 map[string]gg.Image
-	closed               bool
-	ticks                int
+	imgs   map[string]gg.Image
+	closed bool
+	ticks  int
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
