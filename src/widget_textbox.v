@@ -336,8 +336,12 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	} else {
 		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.style.bg_color)
 		if !tb.borderless {
+			mut is_error := false
+			if tb.is_error != 0 {
+				is_error = *(tb.is_error)
+			}
 			draw_device_inner_border(tb.border_accentuated, d, tb.x, tb.y, tb.width, tb.height,
-				tb.is_error != 0 && *tb.is_error)
+				is_error)
 		}
 	}
 	if tb.is_multiline {
@@ -345,7 +349,10 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	} else {
 		dtw := DrawTextWidget(tb)
 		dtw.draw_device_load_style(d)
-		text := *(tb.text)
+		mut text := ''
+		if tb.text != 0 {
+			text = *(tb.text)
+		}
 		ustr := text.runes()
 		text_len := ustr.len
 		mut placeholder := tb.placeholder
