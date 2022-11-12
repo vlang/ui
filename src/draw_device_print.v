@@ -35,7 +35,7 @@ pub fn (d &DrawDevicePrint) draw_text(x int, y int, text string, cfg gx.TextCfg)
 	println('$d.id draw_text($x, $y, $text, $cfg)')
 }
 
-//pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string) {
+// pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string) {
 pub fn (d &DrawDevicePrint) draw_text_default(x int, y int, text string) {
 	println('$d.id draw_text_default($x, $y, $text)')
 }
@@ -44,16 +44,16 @@ pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string) {}
 
 pub fn (d &DrawDevicePrint) set_text_cfg(c_ gx.TextCfg) {}
 
-pub fn (d &DrawDevicePrint) text_size(s string) (int,int) {
-    return 0, 0
+pub fn (d &DrawDevicePrint) text_size(s string) (int, int) {
+	return 0, 0
 }
 
 pub fn (d &DrawDevicePrint) text_width(s string) int {
-    return 0
+	return 0
 }
 
 pub fn (d &DrawDevicePrint) text_height(s string) int {
-    return 0
+	return 0
 }
 
 pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}

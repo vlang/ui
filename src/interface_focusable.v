@@ -36,21 +36,21 @@ pub fn (mut f Focusable) set_focus() {
 		return
 	}
 	if f.is_focused {
-        if mut w.ui.dd is gg.Context {
-		    $if focus ? {
-			    println('$f.id already has focus at $w.ui.dd.frame')
-		    }
-        }
+		if mut w.ui.dd is gg.Context {
+			$if focus ? {
+				println('$f.id already has focus at $w.ui.dd.frame')
+			}
+		}
 		return
 	}
 	Layout(w).unfocus_all()
 	if f.has_focusable() {
 		f.is_focused = true
-        if mut w.ui.dd is gg.Context {
-		    $if focus ? {
-			    println('$f.id has focus at $w.ui.dd.frame')
-		    }
-        }
+		if mut w.ui.dd is gg.Context {
+			$if focus ? {
+				println('$f.id has focus at $w.ui.dd.frame')
+			}
+		}
 	}
 	// update drawing_children when focus is taken
 	f.update_parent_drawing_children()
@@ -60,20 +60,20 @@ pub fn (mut f Focusable) set_focus() {
 pub fn (mut f Focusable) force_focus() {
 	mut w := f.ui.window
 	if f.is_focused {
-        if mut w.ui.dd is gg.Context {
-		    $if focus ? {
-			    println('$f.id already has focus at $w.ui.dd.frame')
-		    }
-        }
+		if mut w.ui.dd is gg.Context {
+			$if focus ? {
+				println('$f.id already has focus at $w.ui.dd.frame')
+			}
+		}
 		return
 	}
 	Layout(w).unfocus_all()
 	f.is_focused = true
-    if mut w.ui.dd is gg.Context {
-	    $if focus ? {
-		    println('$f.id has focus at $w.ui.dd.frame')
-	    }
-    }
+	if mut w.ui.dd is gg.Context {
+		$if focus ? {
+			println('$f.id has focus at $w.ui.dd.frame')
+		}
+	}
 }
 
 pub fn (f Focusable) lock_focus() {

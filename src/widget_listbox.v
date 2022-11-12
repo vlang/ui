@@ -511,7 +511,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 		}
 	}
 	mut dtw := DrawTextWidget(lb)
-    dtw.draw_device_load_style(d)
+	dtw.draw_device_load_style(d)
 	// scrollview_clip(mut lb)
 	scrollview_draw_begin(mut lb, d)
 	height := if lb.has_scrollview && lb.adj_height > lb.height {
@@ -527,8 +527,8 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
 		dtw = DrawTextWidget(lb)
-        dtw.draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x,
-			lb.y + lb.text_offset_y, if lb.files_droped {
+		dtw.draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x, lb.y + lb.text_offset_y,
+			if lb.files_droped {
 			'Empty listbox. Drop files here ...'
 		} else {
 			''
@@ -1037,8 +1037,8 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 		col)
 
 	mut dtw := DrawTextWidget(lb)
-    dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x +
-		ui.listbox_text_offset_x, li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + ui.listbox_text_offset_x,
+		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text
 	} else {
 		li.text()

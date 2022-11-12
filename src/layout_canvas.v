@@ -625,7 +625,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		fw, fh := c.full_size()
 		if fw > 0 && fh > 0 {
 			w = int(f32(fw) * c.ui.window.dpi_scale)
-            h = int(f32(fh) * c.ui.window.dpi_scale)
+			h = int(f32(fh) * c.ui.window.dpi_scale)
 		}
 		// println("$c.id ($w, $h)")
 		if c.style.bg_radius > 0 {

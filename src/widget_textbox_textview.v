@@ -323,7 +323,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-
+		
 		color: gx.gray
 	)
 }
@@ -1012,7 +1012,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
-		//width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		// width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
 		width_cur = tv.text_width(ustr[i..(i + 1)].string())
 		width2 := if i < ustr.len { width + width_cur } else { width }
 		if (prev_width + width) / 2 <= xx && xx <= (width + width2) / 2 {
@@ -1062,7 +1062,7 @@ fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams
 
 fn (tv &TextView) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(tv.tb)
-    dtw.draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
+	dtw.draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
 }
 
 fn (tv &TextView) text_width(text string) int {
@@ -1070,7 +1070,7 @@ fn (tv &TextView) text_width(text string) int {
 }
 
 //// Added to have mostly additive text width function
-//fn (tv &TextView) text_width_additive(text string) f64 {
+// fn (tv &TextView) text_width_additive(text string) f64 {
 //	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
 //}
 
@@ -1096,11 +1096,11 @@ pub fn (tv &TextView) update_style(ts TextStyleParams) {
 // Not called automatically as it is in gg
 pub fn (tv &TextView) load_style() {
 	mut dtw := DrawTextWidget(tv.tb)
-    dtw.load_style()
+	dtw.load_style()
 }
 
 //// that's weird text_width is not additive function
-//pub fn (tv &TextView) test_textwidth(text string) {
+// pub fn (tv &TextView) test_textwidth(text string) {
 //	ustr := text.runes()
 //	mut width, mut width_bad := 0.0, 0.0
 //	println('(text_width_additive vs text_width)')

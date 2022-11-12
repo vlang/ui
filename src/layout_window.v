@@ -347,13 +347,13 @@ fn gg_init(mut window Window) {
 	}
 
 	for mut child in window.children {
-		//println('init <$child.id>')
+		// println('init <$child.id>')
 		window.register_child(*child)
 		child.init(window)
 	}
 	// then subwindows
 	for mut sw in window.subwindows {
-		//println('init $child.id')
+		// println('init $child.id')
 		window.register_child(*sw)
 		sw.init(window)
 	}
@@ -384,9 +384,9 @@ fn gg_cleanup(mut window Window) {
 }
 
 fn frame(mut w Window) {
-    if mut w.ui.dd is gg.Context {
-	    w.ui.dd.begin()
-    }
+	if mut w.ui.dd is gg.Context {
+		w.ui.dd.begin()
+	}
 
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
@@ -417,15 +417,15 @@ fn frame(mut w Window) {
 	}
 	*/
 
-    if mut w.ui.dd is gg.Context {
-	    w.ui.dd.end()
-    }
+	if mut w.ui.dd is gg.Context {
+		w.ui.dd.end()
+	}
 }
 
 fn frame_immediate(mut w Window) {
-    if mut w.ui.dd is gg.Context {
-	    w.ui.dd.begin()
-    }
+	if mut w.ui.dd is gg.Context {
+		w.ui.dd.begin()
+	}
 
 	for mut child in w.children_immediate {
 		child.draw()
@@ -452,9 +452,9 @@ fn frame_immediate(mut w Window) {
 
 	w.needs_refresh = false
 
-    if mut w.ui.dd is gg.Context {
-	    w.ui.dd.end()
-    }
+	if mut w.ui.dd is gg.Context {
+		w.ui.dd.end()
+	}
 }
 
 fn native_frame(mut w Window) {
@@ -504,11 +504,11 @@ fn on_event(e &gg.Event, mut window Window) {
 	}
 
 	$if macos {
-        if mut window.ui.dd is gg.Context {
-		    if window.ui.dd.native_rendering {
-			    C.darwin_window_refresh()
-		    }
-        }
+		if mut window.ui.dd is gg.Context {
+			if window.ui.dd.native_rendering {
+				C.darwin_window_refresh()
+			}
+		}
 	}
 	window.ui.ticks = 0
 	// window.ui.ticks_since_refresh = 0
@@ -1067,9 +1067,9 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 pub fn (mut w Window) refresh() {
-    if mut w.ui.dd is gg.Context {
-	    w.ui.dd.refresh_ui()
-    }
+	if mut w.ui.dd is gg.Context {
+		w.ui.dd.refresh_ui()
+	}
 	$if macos {
 		C.darwin_window_refresh()
 	}
@@ -1194,9 +1194,9 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 
 pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
-    if mut window.ui.dd is gg.Context {
-	    window.ui.dd.resize(w, h)
-    }
+	if mut window.ui.dd is gg.Context {
+		window.ui.dd.resize(w, h)
+	}
 	for mut child in window.children {
 		if mut child is Stack {
 			child.resize(w, h)

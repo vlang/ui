@@ -23,8 +23,8 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 mut:
-	parent  Layout      = empty_stack
-	draw_fn DrawFn      = unsafe { nil }
+	parent  Layout = empty_stack
+	draw_fn DrawFn = unsafe { nil }
 }
 
 [params]
@@ -95,9 +95,9 @@ fn (mut c Canvas) draw() {
 fn (mut c Canvas) draw_device(d DrawDevice) {
 	offset_start(mut c)
 	if c.draw_fn != unsafe { nil } {
-        if mut c.ui.dd is gg.Context {
-		    c.draw_fn(c.ui.dd, c)
-        }
+		if mut c.ui.dd is gg.Context {
+			c.draw_fn(c.ui.dd, c)
+		}
 	}
 	offset_end(mut c)
 }

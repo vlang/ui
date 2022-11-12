@@ -137,26 +137,26 @@ pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			int(ts.align), int(ts.vertical_align))
 	}
 	$if !screenshot ? {
-        if mut w.ui.dd is gg.Context {
-		    gg := w.ui.dd
-		    fons := gg.ft.fons
-		    fons.set_font(w.ui.fonts.hash[ts.font_name])
+		if mut w.ui.dd is gg.Context {
+			gg := w.ui.dd
+			fons := gg.ft.fons
+			fons.set_font(w.ui.fonts.hash[ts.font_name])
 
-		    scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
-		    size := if ts.mono { ts.size - 2 } else { ts.size }
-		    fons.set_size(scale * f32(size))
-		    gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
-		    color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
-		    if ts.color.a != 255 {
-			    sgl.load_pipeline(gg.timage_pip)
-		    }
-		    gg.ft.fons.set_color(color)
-		    ascender := f32(0.0)
-		    descender := f32(0.0)
-		    lh := f32(0.0)
-		    fons.vert_metrics(&ascender, &descender, &lh)
-		    // println("load style $ascender, $descender ${}")
-        }
+			scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
+			size := if ts.mono { ts.size - 2 } else { ts.size }
+			fons.set_size(scale * f32(size))
+			gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
+			color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
+			if ts.color.a != 255 {
+				sgl.load_pipeline(gg.timage_pip)
+			}
+			gg.ft.fons.set_color(color)
+			ascender := f32(0.0)
+			descender := f32(0.0)
+			lh := f32(0.0)
+			fons.vert_metrics(&ascender, &descender, &lh)
+			// println("load style $ascender, $descender ${}")
+		}
 	}
 }
 
@@ -195,7 +195,7 @@ pub fn (w DrawTextWidget) text_width(text string) int {
 
 // REMOVED: this function uses internals of gg.Context which we probably do not
 // want to reproduce in the DrawDevice interface
-//pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
+// pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 //	ctx := w.ui.gg
 //	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 //	return adv / ctx.scale
