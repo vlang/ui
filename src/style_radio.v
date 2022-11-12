@@ -56,8 +56,8 @@ pub fn (mut rs RadioStyle) from_toml(a toml.Any) {
 	rs.text_font_name = a.value('text_font_name').string()
 	rs.text_color = HexColor(a.value('text_color').string()).color()
 	rs.text_size = a.value('text_size').int()
-	rs.text_align = TextHorizontalAlign(a.value('text_align').int())
-	rs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	rs.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	rs.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut r Radio) load_style() {

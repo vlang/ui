@@ -38,9 +38,7 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 	mut height := 40
 	mut widgets := []Widget{}
 	widgets = [
-		// TODO: add hspace and vspace separators
-		label(text: ''),
-	]
+		/* TODO: add hspace and vspace separators */ label(text: '')]
 	for tline in text_lines {
 		widgets << label(text: tline)
 		height += 14

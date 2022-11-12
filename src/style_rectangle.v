@@ -52,8 +52,8 @@ pub fn (mut rects RectangleStyle) from_toml(a toml.Any) {
 	rects.text_font_name = a.value('text_font_name').string()
 	rects.text_color = HexColor(a.value('text_color').string()).color()
 	rects.text_size = a.value('text_size').int()
-	rects.text_align = TextHorizontalAlign(a.value('text_align').int())
-	rects.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	rects.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	rects.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut rect Rectangle) load_style() {

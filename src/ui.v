@@ -22,22 +22,28 @@ pub mut:
 	bmp            &DrawDeviceBitmap = unsafe { nil }
 	layout_print   bool
 	show_cursor    bool
-	last_type_time i64 // used only in textbox.v
-	clipboard      &clipboard.Clipboard = unsafe { nil }
-	btn_down       [3]bool
-	nb_click       int
-	keymods        KeyMod
-	styles         map[string]Style
-	style_colors   []gx.Color
+	last_type_time i64
+	// used only in textbox.v
+	clipboard    &clipboard.Clipboard = unsafe { nil }
+	btn_down     [3]bool
+	nb_click     int
+	keymods      KeyMod
+	styles       map[string]Style
+	style_colors []gx.Color
 mut:
-	cb_image             gg.Image // used only in checkbox.v
-	radio_image          gg.Image // used in radio.v but no use, in idle_loop()
-	radio_selected_image gg.Image // used only in radio.v
-	down_arrow           gg.Image // used only in dropdown.v
-	resource_cache       map[string]gg.Image // used only in picture.v
-	imgs                 map[string]gg.Image
-	closed               bool
-	ticks                int
+	cb_image gg.Image
+	// used only in checkbox.v
+	radio_image gg.Image
+	// used in radio.v but no use, in idle_loop()
+	radio_selected_image gg.Image
+	// used only in radio.v
+	down_arrow gg.Image
+	// used only in dropdown.v
+	resource_cache map[string]gg.Image
+	// used only in picture.v
+	imgs   map[string]gg.Image
+	closed bool
+	ticks  int
 	// text styles and font set
 	text_styles map[string]TextStyle
 	fonts       FontSet
@@ -103,6 +109,7 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('radio', $embed_file('assets/img/radio.png').to_bytes(), 'assets/img/radio.png')
 	gui.radio_image = gui.img('radio')
 	gui.radio_selected_image = gui.img('radio_selected')
+
 	// load mouse
 	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
 	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),
@@ -110,6 +117,7 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes(), 'assets/img/icons8-cursor-67.png')
 	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes(),
 		'assets/img/icons8-text-cursor-50.png')
+
 	// v-logo
 	gui.load_img('v-logo', $embed_file('assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
 }

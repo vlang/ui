@@ -37,7 +37,7 @@ pub struct Button {
 	height_ int
 pub mut:
 	id          string
-	state       ButtonState = ButtonState(1)
+	state       ButtonState = .normal
 	height      int
 	width       int
 	z_index     int

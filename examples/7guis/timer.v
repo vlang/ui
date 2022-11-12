@@ -74,6 +74,7 @@ fn main() {
 		]
 	)
 	app.window = window
+
 	// go app.timer()
 	ui.run(window)
 }
