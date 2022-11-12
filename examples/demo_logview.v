@@ -49,5 +49,5 @@ fn (mut app App) wait_complete(mut tb ui.TextBox) {
 
 fn (mut app App) btn_connect(btn &ui.Button) {
 	mut tb := app.window.textbox('tb')
-	go app.wait_complete(mut tb)
+	spawn app.wait_complete(mut tb)
 }
