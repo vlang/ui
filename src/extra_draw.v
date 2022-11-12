@@ -371,7 +371,7 @@ pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 	y0 := f32(cy * ctx.scale)
 	x1 := f32((cx + c.width) * ctx.scale)
 	y1 := f32((cy + c.height) * ctx.scale)
-	sgl.load_pipeline(ctx.timage_pip)
+	sgl.load_pipeline(ctx.pipeline.alpha)
 	sgl.enable_texture()
 	sgl.texture(simg)
 	sgl.begin_quads()
