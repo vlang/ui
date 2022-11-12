@@ -110,7 +110,7 @@ pub fn (d &DrawDeviceBitmap) draw_text_def(x int, y int, text string) {}
 
 pub fn (d &DrawDeviceBitmap) set_text_cfg(cfg gx.TextCfg) {
 	mut ts := d.ts
-	d.apply_text_config(mut &ts, cfg)
+	d.apply_text_config(mut ts, cfg)
 }
 
 pub fn (d &DrawDeviceBitmap) text_size(s string) (int, int) {

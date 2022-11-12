@@ -89,7 +89,7 @@ mut:
 
 // No text_size to not conflict with
 fn get_text_size(w DrawText, text_ string) (int, int) {
-	w.ui.dd.set_text_text_cfg(w.text_cfg)
+	w.ui.dd.set_text_cfg(w.text_cfg)
 	return w.ui.dd.text_size(text_)
 }
 
