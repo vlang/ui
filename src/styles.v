@@ -65,7 +65,10 @@ pub fn (s Style) to_toml() string {
 }
 
 pub fn parse_style_toml_file(path string) Style {
-	doc := toml.parse_file(path) or { panic(err) }
+	doc := toml.parse_file(path) or {
+		eprintln('UI: using the default UI style, since the .toml file `$path` was invalid. TOML parse error: $err')
+		return default_style()
+	}
 	mut s := Style{}
 	s.win.from_toml(doc.value('window'))
 	s.btn.from_toml(doc.value('button'))

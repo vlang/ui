@@ -2,7 +2,7 @@ module ui
 
 import gx
 import math
-//import sokol.sgl
+// import sokol.sgl
 
 // const (
 // 	empty_text_cfg = gx.TextCfg{}
@@ -362,7 +362,7 @@ pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &u8) {
 
 // REMOVED: this function uses internals of gg.Context which we probably do not
 // want to reproduce in the DrawDevice interface
-//pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
+// pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 //	ctx := c.ui.gg
 //	cx, cy := c.x + c.offset_x, c.y + c.offset_y
 //	u0 := f32(0.0)

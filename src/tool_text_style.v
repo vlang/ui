@@ -66,39 +66,39 @@ mut:
 }
 
 pub fn (mut ui UI) add_font(font_name string, font_path string) {
- 	$if fontset ? {
+	$if fontset ? {
 		println('add font $font_name at $font_path')
 	}
-    if mut ui.dd is gg.Context {
-	    // IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
-	    // (in fons__getGlyph, added becomes 0)
-	    ui.dd.ft.fons.reset_atlas(512, 512)
-	    bytes := os.read_bytes(font_path) or { []u8{} }
-	    // gg := ui.gg
-	    // mut f := ui.fonts
-	    if bytes.len > 0 {
-		    font := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
-		    if font >= 0 {
-			    ui.font_paths[font_name] = font_path
-			    ui.fonts.hash[font_name] = font
-			    $if fontset ? {
-				    println('font $font $font_name added ($font_path)')
-			    }
-		    } else {
-			    $if fontset ? {
-				    println('font $font_name NOT added ($font_path)')
-			    }
-		    }
-	    } else {
-		    $if fontset ? {
-			    println('font bytes unreadable')
-		    }
-	    }
-    } else {
+	if mut ui.dd is gg.Context {
+		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
+		// (in fons__getGlyph, added becomes 0)
+		ui.dd.ft.fons.reset_atlas(512, 512)
+		bytes := os.read_bytes(font_path) or { []u8{} }
+		// gg := ui.gg
+		// mut f := ui.fonts
+		if bytes.len > 0 {
+			font := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
+			if font >= 0 {
+				ui.font_paths[font_name] = font_path
+				ui.fonts.hash[font_name] = font
+				$if fontset ? {
+					println('font $font $font_name added ($font_path)')
+				}
+			} else {
+				$if fontset ? {
+					println('font $font_name NOT added ($font_path)')
+				}
+			}
+		} else {
+			$if fontset ? {
+				println('font bytes unreadable')
+			}
+		}
+	} else {
 		$if fontset ? {
 			println('DrawDevice is not a gg.Context')
 		}
-    }
+	}
 	$if fontset ? {
 		println('$ui.fonts')
 	}

@@ -82,7 +82,7 @@ pub fn (d &DrawDeviceSVG) draw_text(x int, y int, text string, cfg gx.TextCfg) {
 	s.text(x, y, text, 'none', d.ts)
 }
 
-//pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {
+// pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {
 pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
 	// println('$d.id draw_text_default($x, $y, $text)')
 	mut s := d.s
@@ -93,16 +93,16 @@ pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {}
 
 pub fn (d &DrawDeviceSVG) set_text_cfg(c gx.TextCfg) {}
 
-pub fn (d &DrawDeviceSVG) text_size(s string) (int,int) {
-    return 0, 0
+pub fn (d &DrawDeviceSVG) text_size(s string) (int, int) {
+	return 0, 0
 }
 
 pub fn (d &DrawDeviceSVG) text_width(s string) int {
-    return 0
+	return 0
 }
 
 pub fn (d &DrawDeviceSVG) text_height(s string) int {
-    return 0
+	return 0
 }
 
 pub fn (d &DrawDeviceSVG) scissor_rect(x int, y int, w int, h int) {

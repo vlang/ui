@@ -37,7 +37,7 @@ pub struct Button {
 	height_ int
 pub mut:
 	id          string
-	state       ButtonState = ButtonState(1)
+	state       ButtonState = .normal
 	height      int
 	width       int
 	z_index     int
@@ -151,9 +151,9 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-        if mut b.ui.dd is gg.Context {
-		    b.image = b.ui.dd.create_image(b.icon_path)
-        }
+		if mut b.ui.dd is gg.Context {
+			b.image = b.ui.dd.create_image(b.icon_path)
+		}
 	}
 	b.load_style()
 	if b.tooltip.text != '' {

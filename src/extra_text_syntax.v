@@ -320,14 +320,14 @@ fn (sh &SyntaxHighLighter) is_not_included(from int, to int) bool {
 }
 
 fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
-	//x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width_additive(sh.ustr[0..start].string()))
+	// x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width_additive(sh.ustr[0..start].string()))
 	x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width(sh.ustr[0..start].string()))
 	text := sh.ustr[start..end].string()
 	chunk := Chunk{
 		x: x
 		y: y
 		text: text
-		//width: int(sh.tv.text_width_additive(text))
+		// width: int(sh.tv.text_width_additive(text))
 		width: int(sh.tv.text_width(text))
 	}
 	sh.chunks[typ] << chunk

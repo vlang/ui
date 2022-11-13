@@ -60,8 +60,8 @@ pub fn (mut ms MenuStyle) from_toml(a toml.Any) {
 	ms.text_font_name = a.value('text_font_name').string()
 	ms.text_color = HexColor(a.value('text_color').string()).color()
 	ms.text_size = a.value('text_size').int()
-	ms.text_align = TextHorizontalAlign(a.value('text_align').int())
-	ms.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	ms.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	ms.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut m Menu) load_style() {
