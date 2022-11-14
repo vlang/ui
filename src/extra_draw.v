@@ -1,8 +1,9 @@
 module ui
 
 import gx
+import gg
 import math
-// import sokol.sgl
+import sokol.sgl
 
 // const (
 // 	empty_text_cfg = gx.TextCfg{}
@@ -362,26 +363,28 @@ pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &u8) {
 
 // REMOVED: this function uses internals of gg.Context which we probably do not
 // want to reproduce in the DrawDevice interface
-// pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
-//	ctx := c.ui.gg
-//	cx, cy := c.x + c.offset_x, c.y + c.offset_y
-//	u0 := f32(0.0)
-//	v0 := f32(0.0)
-//	u1 := f32(1.0)
-//	v1 := f32(1.0)
-//	x0 := f32(cx * ctx.scale)
-//	y0 := f32(cy * ctx.scale)
-//	x1 := f32((cx + c.width) * ctx.scale)
-//	y1 := f32((cy + c.height) * ctx.scale)
-//	sgl.load_pipeline(ctx.timage_pip)
-//	sgl.enable_texture()
-//	sgl.texture(simg)
-//	sgl.begin_quads()
-//	sgl.c4b(255, 255, 255, 255)
-//	sgl.v2f_t2f(x0, y0, u0, v0)
-//	sgl.v2f_t2f(x1, y0, u1, v0)
-//	sgl.v2f_t2f(x1, y1, u1, v1)
-//	sgl.v2f_t2f(x0, y1, u0, v1)
-//	sgl.end()
-//	sgl.disable_texture()
-//}
+pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
+	ctx := c.ui.dd
+	if ctx is gg.Context {
+		cx, cy := c.x + c.offset_x, c.y + c.offset_y
+		u0 := f32(0.0)
+		v0 := f32(0.0)
+		u1 := f32(1.0)
+		v1 := f32(1.0)
+		x0 := f32(cx * ctx.scale)
+		y0 := f32(cy * ctx.scale)
+		x1 := f32((cx + c.width) * ctx.scale)
+		y1 := f32((cy + c.height) * ctx.scale)
+		sgl.load_pipeline(ctx.timage_pip)
+		sgl.enable_texture()
+		sgl.texture(simg)
+		sgl.begin_quads()
+		sgl.c4b(255, 255, 255, 255)
+		sgl.v2f_t2f(x0, y0, u0, v0)
+		sgl.v2f_t2f(x1, y0, u1, v0)
+		sgl.v2f_t2f(x1, y1, u1, v1)
+		sgl.v2f_t2f(x0, y1, u0, v1)
+		sgl.end()
+		sgl.disable_texture()
+	}
+}
