@@ -275,6 +275,7 @@ pub fn window(cfg WindowParams) &Window {
 
 	mut ui_ctx := &UI{
 		dd: &DrawDevice(gcontext)
+        gg: gcontext
 		window: window
 		svg: draw_device_svg()
 		bmp: draw_device_bitmap()

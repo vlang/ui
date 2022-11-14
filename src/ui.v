@@ -17,6 +17,7 @@ const (
 pub struct UI {
 pub mut:
 	dd             &DrawDevice       = unsafe { nil }
+    gg             &gg.Context [deprecated: 'use `UI.dd` instead (and smart cast to `gg.Context` if necessary)'] = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
