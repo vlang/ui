@@ -1,4 +1,5 @@
 import ui
+import gg
 import ui.component as uic
 // import gx
 
@@ -30,5 +31,7 @@ fn on_click_ok(b &ui.Button) {
 }
 
 fn on_click_cancel(b &ui.Button) {
-	b.ui.gg.quit()
+	if b.ui.dd is gg.Context {
+		b.ui.dd.quit()
+	}
 }
