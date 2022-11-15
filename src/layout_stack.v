@@ -210,7 +210,7 @@ pub fn (mut s Stack) init(parent Layout) {
 	}
 	$if sscroll ? {
 		swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
-		println('$s.id stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} $swid ($parent.id)')
+		println('${s.id} stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} ${swid} (${parent.id})')
 	}
 }
 
@@ -230,7 +230,7 @@ pub fn (mut s Stack) cleanup() {
 [unsafe]
 pub fn (s &Stack) free() {
 	$if free ? {
-		print('stack $s.id')
+		print('stack ${s.id}')
 	}
 	unsafe {
 		// s.cache.free()
@@ -300,7 +300,7 @@ fn (mut s Stack) init_size() {
 	$if s_is ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
 		if s.id in s.debug_ids {
-			println('parent size: $s.id ($parent_width, $parent_height) root_layout? $s.is_root_layout')
+			println('parent size: ${s.id} (${parent_width}, ${parent_height}) root_layout? ${s.is_root_layout}')
 			// debug_show_sizes(mut s, "decode before -> ")
 		}
 	}
@@ -309,7 +309,7 @@ fn (mut s Stack) init_size() {
 		if s.parent is SubWindow {
 			$if s_is ? {
 				if s.id in s.debug_ids {
-					println('Init_size $s.id: $s.width, $s.height $s.adj_size()')
+					println('Init_size ${s.id}: ${s.width}, ${s.height} ${s.adj_size()}')
 				}
 			}
 			s.real_width, s.real_height = s.adj_size()
@@ -346,7 +346,7 @@ fn (mut s Stack) set_children_sizes() {
 		$if s_scs ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
-				println('scs ($s.id): propose_size $i) $child.id ($child.type_name()) ($wt: $w, $ht:$h)')
+				println('scs (${s.id}): propose_size ${i}) ${child.id} (${child.type_name()}) (${wt}: ${w}, ${ht}:${h})')
 			}
 		}
 		child.propose_size(w, h)
@@ -380,12 +380,12 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
 			println('----------------------------------------')
-			println('| First pass: children_size: $s.id s.widths:  $s.widths s.heights:  $s.heights ')
-			println('|    width [weight: widths: $c.weight_widths, mass: $c.width_mass]  fixed: [widths: $c.fixed_widths, width: $c.fixed_width, min: $c.min_width]')
-			println('|    height [weight: (heights: $c.weight_heights, mass: $c.height_mass)]  fixed: [heights: $c.fixed_heights, height: $c.fixed_height, min: $c.min_height]')
-			println('|    type (w: $c.width_type, h: $c.height_type)')
-			println('|    real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
-			println('| Parent: $s.parent.id Children: ${s.children.map(it.id)}')
+			println('| First pass: children_size: ${s.id} s.widths:  ${s.widths} s.heights:  ${s.heights} ')
+			println('|    width [weight: widths: ${c.weight_widths}, mass: ${c.width_mass}]  fixed: [widths: ${c.fixed_widths}, width: ${c.fixed_width}, min: ${c.min_width}]')
+			println('|    height [weight: (heights: ${c.weight_heights}, mass: ${c.height_mass})]  fixed: [heights: ${c.fixed_heights}, height: ${c.fixed_height}, min: ${c.min_height}]')
+			println('|    type (w: ${c.width_type}, h: ${c.height_type})')
+			println('|    real size: (${s.real_width}, ${s.real_height}) free size: (w: ${free_width}, h: ${free_height})')
+			println('| Parent: ${s.parent.id} Children: ${s.children.map(it.id)}')
 			println('|---------------------------------------')
 		}
 	}
@@ -441,14 +441,14 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 			if (s.debug_ids.len == 0 || s.id in s.debug_ids)
 				&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
-				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
+				println('| ${i}) ${child.id} ${child.type_name()} (${mcw[i]}, ${mch[i]}) typ: (${wt}, ${ht})')
 				println('|----------------------------------------')
 			}
 		}
 	}
 	$if s_cs ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('| Second pass:   real size: ($s.real_width, $s.real_height) free size: (w: $free_width, h: $free_height)')
+			println('| Second pass:   real size: (${s.real_width}, ${s.real_height}) free size: (w: ${free_width}, h: ${free_height})')
 		}
 	}
 	for i, child in s.children {
@@ -479,7 +479,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 					$if s_cs ? {
 						if (s.debug_ids.len == 0 || s.id in s.debug_ids)
 							&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
-							println('stretch: $weight (=${c.weight_heights[i]} / $c.height_mass) * $free_height = ${mch[i]}')
+							println('stretch: ${weight} (=${c.weight_heights[i]} / ${c.height_mass}) * ${free_height} = ${mch[i]}')
 						}
 					} $else {
 					}
@@ -500,7 +500,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 			if (s.debug_ids.len == 0 || s.id in s.debug_ids)
 				&& (s.debug_children_ids.len == 0 || child.id in s.debug_children_ids) {
 				wt, ht := c.width_type[i].str(), c.height_type[i].str()
-				println('| $i) $child.id $child.type_name() (${mcw[i]}, ${mch[i]}) typ: ($wt, $ht)')
+				println('| ${i}) ${child.id} ${child.type_name()} (${mcw[i]}, ${mch[i]}) typ: (${wt}, ${ht})')
 				println('|----------------------------------------')
 			}
 		}
@@ -547,7 +547,7 @@ fn (mut s Stack) set_cache_sizes() {
 
 		$if s_scas ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
-				println('scas ($s.id): $i) adj_child ($child.id, $child.type_name()) size -> ($adj_child_width, $adj_child_height) cw, ch = $cw, $ch')
+				println('scas (${s.id}): ${i}) adj_child (${child.id}, ${child.type_name()}) size -> (${adj_child_width}, ${adj_child_height}) cw, ch = ${cw}, ${ch}')
 			}
 		}
 
@@ -567,7 +567,7 @@ fn (mut s Stack) set_cache_sizes() {
 
 		$if s_scas ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
-				println('scas ($s.id): $i) cw, ch = $cw, $ch')
+				println('scas (${s.id}): ${i}) cw, ch = ${cw}, ${ch}')
 			}
 		}
 
@@ -801,7 +801,7 @@ pub fn (s &Stack) adj_size() (int, int) {
 		mut s2 := s
 		s2.debug_ids = env('UI_IDS').split(',').clone()
 		if s2.debug_ids.len == 0 || s2.id in s.debug_ids {
-			println('adj_size $s.id: fixed: ($s.fixed_width, $s.fixed_height) adj: ($s.adj_width, $s.adj_height) ')
+			println('adj_size ${s.id}: fixed: (${s.fixed_width}, ${s.fixed_height}) adj: (${s.adj_width}, ${s.adj_height}) ')
 		}
 	}
 	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
@@ -815,7 +815,7 @@ pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	$if sps ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('propose_size $s.id : ($w, $h) from $s.parent.id')
+			println('propose_size ${s.id} : (${w}, ${h}) from ${s.parent.id}')
 		}
 	}
 	s.real_width, s.real_height = w, h
@@ -853,7 +853,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	for mut child in s.children {
 		$if s_adj_size ? {
 			if s.debug_ids.len == 0 || s.id in s.debug_ids {
-				println('set_adj_size $child.id) z_index:  $child.z_index > $z_index_hidden')
+				println('set_adj_size ${child.id}) z_index:  ${child.z_index} > ${z_index_hidden}')
 			}
 		}
 		if child.z_index > z_index_hidden { // taking into account only visible widgets
@@ -862,7 +862,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				if force || child.adj_width == 0 {
 					$if s_adj_size ? {
 						if s.debug_ids.len == 0 || s.id in s.debug_ids {
-							println('set_adj_size : stack $child.id set_adjusted_size(${i + 1}, $force, gui)')
+							println('set_adj_size : stack ${child.id} set_adjusted_size(${i + 1}, ${force}, gui)')
 						}
 					}
 					child.set_adjusted_size(i + 1, force, gui)
@@ -872,8 +872,8 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					child.margin(.bottom)
 				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('set_adj_size $s.id (stack): child($child.id}) child_width = $child_width (=$child.adj_width + ${child.margin(.left)} + ${child.margin(.right)})')
-						println('                      child($child.id) child_height = $child_height (=$child.adj_height + ${child.margin(.top)} + ${child.margin(.bottom)})')
+						println('set_adj_size ${s.id} (stack): child(${child.id}}) child_width = ${child_width} (=${child.adj_width} + ${child.margin(.left)} + ${child.margin(.right)})')
+						println('                      child(${child.id}) child_height = ${child_height} (=${child.adj_height} + ${child.margin(.top)} + ${child.margin(.bottom)})')
 					}
 				} $else {
 				} // because of a bug mixing $if and else
@@ -885,7 +885,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					child.adj_height + child.margin_top + child.margin_bottom
 				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('set_adj_size $s.id (group): child($child.id) child_width = $child_width  child_height = $child_height)')
+						println('set_adj_size ${s.id} (group): child(${child.id}) child_width = ${child_width}  child_height = ${child_height})')
 					}
 				} $else {
 				} // because of a bug mixing $if and else
@@ -896,7 +896,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				child_width, child_height = child.adj_width, child.adj_height
 				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('set_adj_size $s.id (cvl): child($child.id) child_width = $child_width  child_height = $child_height)')
+						println('set_adj_size ${s.id} (cvl): child(${child.id}) child_width = ${child_width}  child_height = ${child_height})')
 					}
 				} $else {
 				} // because of a bug mixing $if and else
@@ -904,7 +904,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 				child_width, child_height = child.size()
 				$if s_adj_size ? {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
-						println('set_adj_size $s.id (widget): child ($child.id) size $child.type_name(): ($child_width, $child_height) ')
+						println('set_adj_size ${s.id} (widget): child (${child.id}) size ${child.type_name()}: (${child_width}, ${child_height}) ')
 					}
 				}
 			}
@@ -923,7 +923,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	}
 	$if s_adj_size ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('set_adj_size ($s.id) (before spacing): ($w, $h)')
+			println('set_adj_size (${s.id}) (before spacing): (${w}, ${h})')
 		}
 	}
 	// adding total spacing between children
@@ -936,14 +936,14 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	s.adj_height = h
 	$if s_adj_size ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
-			println('set_adj_size ($s.id) end: ($s.adj_width, $s.adj_height) vs real: ($s.width, $s.height)')
+			println('set_adj_size (${s.id}) end: (${s.adj_width}, ${s.adj_height}) vs real: (${s.width}, ${s.height})')
 		}
 	}
 }
 
 fn (mut s Stack) update_pos() {
 	$if poss ? {
-		println('update_pos($s.id):  $($s.real_x, $s.real_y) + (${s.margin(.left)}, ${s.margin(.top)})')
+		println('update_pos(${s.id}):  $(${s.real_x}, ${s.real_y}) + (${s.margin(.left)}, ${s.margin(.top)})')
 	}
 	s.x = s.real_x + s.margin(.left)
 	s.y = s.real_y + s.margin(.top)
@@ -954,7 +954,7 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 		// could depend on anchor in the future
 		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
 		$if stack_pos ? {
-			println('set_pos($s.id): $($x, $y)')
+			println('set_pos(${s.id}): $(${x}, ${y})')
 		}
 		s.real_x, s.real_y = x, y
 	}
@@ -965,7 +965,7 @@ pub fn (mut s Stack) set_children_pos() {
 	mut x := s.x
 	mut y := s.y
 	$if scp ? {
-		println('Stack  $s.id pos: ($x, $y)')
+		println('Stack  ${s.id} pos: (${x}, ${y})')
 	}
 	// z_index < ui.z_index_ hidden => hidden and without positionning
 	mut children := s.children.filter(it.z_index > z_index_hidden)
@@ -974,18 +974,18 @@ pub fn (mut s Stack) set_children_pos() {
 		s.set_child_pos(mut child, i, x, y)
 		if s.direction == .row {
 			$if scp ? {
-				println('$.row $i): child_width=$child_width x => $x')
+				println('$.row ${i}): child_width=${child_width} x => ${x}')
 			}
 			x += child_width
 			if i < s.children.len - 1 {
 				x += s.spacing(i)
 				$if scp ? {
-					println('spacing($i): ${s.spacing(i)} x => $x')
+					println('spacing(${i}): ${s.spacing(i)} x => ${x}')
 				}
 			}
 		} else {
 			$if scp ? {
-				println('$.column $i): child_height=$child_height y => $y')
+				println('$.column ${i}): child_height=${child_height} y => ${y}')
 			}
 			y += child_height
 			if i < s.children.len - 1 {
@@ -1005,7 +1005,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	// TODO: alignment in the direct direction
 	// (for these different cases, container size in the direct direction is more complicated to compute)
 	$if scp ? {
-		println('set_child_pos: $i) ${typeof(s).name}-$child.type_name()')
+		println('set_child_pos: ${i}) ${typeof(s).name}-${child.type_name()}')
 	}
 	mut aw, mut ah := 0.0, 0.0
 	aw = match s.get_horizontal_alignment(i) {
@@ -1039,7 +1039,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	} else {
 		$if scp ? {
 			if child.id in env('UI_IDS').split(',') {
-				println('$child.id: $x + $offset_x, $y + $offset_y')
+				println('${child.id}: ${x} + ${offset_x}, ${y} + ${offset_y}')
 			}
 		}
 		child.set_pos(x + offset_x, y + offset_y)
@@ -1100,7 +1100,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {
-			println('Stack($s.id): ($s.real_x, $s.real_y, $s.real_width, $s.real_height)')
+			println('Stack(${s.id}): (${s.real_x}, ${s.real_y}, ${s.real_width}, ${s.real_height})')
 		}
 	}
 	if s.style.bg_color != no_color {
@@ -1126,7 +1126,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 					&& is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
 					sr := s.scrollview.scissor_rect
 					cr := child.bounds()
-					println('sdraw $s.id ($sr.x, $sr.y, $sr.width, $sr.height)  $i) $child.type_name() $child.id ($cr.x, $cr.y, $cr.width, $cr.height) clipped')
+					println('sdraw ${s.id} (${sr.x}, ${sr.y}, ${sr.width}, ${sr.height})  ${i}) ${child.type_name()} ${child.id} (${cr.x}, ${cr.y}, ${cr.width}, ${cr.height}) clipped')
 				}
 			}
 		}
@@ -1143,7 +1143,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		}
 	} else {
 		$if s_draw_children ? {
-			println('draw $s.id: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+			println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 		}
 		for mut child in s.drawing_children {
 			// println("$child.type_name() $child.id")
@@ -1179,12 +1179,12 @@ fn (s &Stack) margin(side Side) int {
 	if 0.0 < size && size < 1.0 {
 		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
 		$if margin ? {
-			println('margin($side) = $size * $psize')
+			println('margin(${side}) = ${size} * ${psize}')
 		}
 		isize = int(size * f32(psize))
 	}
 	$if margin ? {
-		println('margin($side) = $isize')
+		println('margin(${side}) = ${isize}')
 	}
 	if s.title != '' {
 		text_height := s.ui.dd.text_height(s.title)
@@ -1203,12 +1203,12 @@ fn (s &Stack) spacing(i int) int {
 	if 0.0 < size && size < 1.0 {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
 		$if spacing ? {
-			println('spacing($i) = $size * $psize')
+			println('spacing(${i}) = ${size} * ${psize}')
 		}
 		isize = int(size * f32(psize))
 	}
 	$if spacing ? {
-		println('spacing($i) = $isize')
+		println('spacing(${i}) = ${isize}')
 	}
 	return isize
 }
@@ -1455,7 +1455,7 @@ pub fn (mut s Stack) move(cfg ChildrenParams) {
 		target_pos := if cfg.to == -1 { target_s.children.len } else { cfg.to }
 		if 0 <= from_pos && from_pos < s.children.len && 0 <= target_pos
 			&& target_pos <= target_s.children.len {
-			println('migrate from $from_pos to $target_pos')
+			println('migrate from ${from_pos} to ${target_pos}')
 			child := s.children[from_pos]
 			// remove
 			s.children.delete(from_pos)
@@ -1575,7 +1575,7 @@ pub fn (s &Stack) child(from ...int) Widget {
 					if widget is Stack {
 						children = widget.children.clone()
 					} else {
-						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+						eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} does not correspond to a Layout')
 					}
 				} else if i == -1 {
 					widget := children[children.len - 1]
@@ -1583,7 +1583,7 @@ pub fn (s &Stack) child(from ...int) Widget {
 						children = widget.children.clone()
 					}
 				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} out of bounds')
 				}
 			} else {
 				if ind >= 0 && ind < children.len {
@@ -1591,7 +1591,7 @@ pub fn (s &Stack) child(from ...int) Widget {
 				} else if ind == -1 {
 					return children[children.len - 1]
 				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} out of bounds')
 				}
 			}
 		}

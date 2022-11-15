@@ -185,9 +185,9 @@ fn person(name string, surname string) Person {
 }
 
 fn person_name(name string, surname string) string {
-	return '$surname, $name'
+	return '${surname}, ${name}'
 }
 
 fn id_name(name string, surname string) string {
-	return '${name}_$surname'
+	return '${name}_${surname}'
 }

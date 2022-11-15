@@ -90,7 +90,7 @@ fn (mut pic Picture) init(parent Layout) {
 		pic.image = ui.img(pic.path)
 	} else {
 		if !os.exists(pic.path) {
-			eprintln('V UI: picture file "$pic.path" not found')
+			eprintln('V UI: picture file "${pic.path}" not found')
 		}
 		if !pic.use_cache && pic.path in ui.resource_cache {
 			pic.image = ui.resource_cache[pic.path]
@@ -128,7 +128,7 @@ pub fn (mut p Picture) cleanup() {
 [unsafe]
 pub fn (p &Picture) free() {
 	$if free ? {
-		print('picture $p.id')
+		print('picture ${p.id}')
 	}
 	unsafe {
 		// p.image.free()
@@ -185,7 +185,7 @@ fn (mut pic Picture) draw() {
 fn (mut pic Picture) draw_device(d DrawDevice) {
 	$if layout ? {
 		if pic.ui.layout_print {
-			println('Picture($pic.id): ($pic.x, $pic.y, $pic.width, $pic.height)')
+			println('Picture(${pic.id}): (${pic.x}, ${pic.y}, ${pic.width}, ${pic.height})')
 		}
 	}
 	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)

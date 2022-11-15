@@ -67,7 +67,7 @@ fn (mut app App) win_init(win &ui.Window) {
 	app.btn_book = win.button('btn_book')
 	// init dates
 	t := time.now()
-	date := '${t.day}.${t.month}.$t.year'
+	date := '${t.day}.${t.month}.${t.year}'
 	app.tb_oneway.set_text(date.clone())
 	app.tb_return.set_text(date.clone())
 }
@@ -113,7 +113,7 @@ fn valid_date(date string) bool {
 		year = dmy[2]
 	}
 	// YYYY-MM-DD HH:mm:ss
-	ts := '$year-$month-$day 00:00:00'
+	ts := '${year}-${month}-${day} 00:00:00'
 	t := time.parse(ts) or { no_time }
 	// println("$t.day/$t.month/$t.year")
 	nd := time.days_in_month(t.month, t.year) or { -1 }

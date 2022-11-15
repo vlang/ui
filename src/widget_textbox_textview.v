@@ -89,8 +89,8 @@ pub fn (tv &TextView) size() (int, int) {
 }
 
 pub fn (tv &TextView) info() {
-	println('cursor: $tv.cursor_pos -> ($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j)')
-	println('sel: ($tv.sel_start, $tv.sel_end) -> ($tv.tlv.sel_start_i, $tv.tlv.sel_start_j, $tv.tlv.sel_end_i, $tv.tlv.sel_end_j)')
+	println('cursor: ${tv.cursor_pos} -> (${tv.tlv.cursor_pos_i}, ${tv.tlv.cursor_pos_j})')
+	println('sel: (${tv.sel_start}, ${tv.sel_end}) -> (${tv.tlv.sel_start_i}, ${tv.tlv.sel_start_j}, ${tv.tlv.sel_end_i}, ${tv.tlv.sel_end_j})')
 }
 
 pub fn (mut tv TextView) is_wordwrap() bool {

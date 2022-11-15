@@ -128,7 +128,7 @@ pub fn (mut r Radio) cleanup() {
 [unsafe]
 pub fn (r &Radio) free() {
 	$if free ? {
-		print('radio $r.id')
+		print('radio ${r.id}')
 	}
 	unsafe {
 		r.id.free()
@@ -154,7 +154,7 @@ fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if radio_keydown ? {
-		println('radio_keydown: $r.id  -> $r.hidden $r.is_focused')
+		println('radio_keydown: ${r.id}  -> ${r.hidden} ${r.is_focused}')
 	}
 	if r.hidden {
 		return
@@ -300,7 +300,7 @@ fn (mut r Radio) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {
-			println('Radio($r.id): ($r.x, $r.y, $r.width, $r.height)')
+			println('Radio(${r.id}): (${r.x}, ${r.y}, ${r.width}, ${r.height})')
 		}
 	}
 	mut dtw := DrawTextWidget(r)

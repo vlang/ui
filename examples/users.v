@@ -215,7 +215,7 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 	app.last_name = ''
 	app.age = ''
 	app.password = ''
-	app.label.set_text('$app.users.len/10')
+	app.label.set_text('${app.users.len}/10')
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 

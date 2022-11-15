@@ -254,7 +254,7 @@ fn (mut tb TextBox) cleanup() {
 [unsafe]
 pub fn (tb &TextBox) free() {
 	$if free ? {
-		print('textbox $tb.id')
+		print('textbox ${tb.id}')
 	}
 	unsafe {
 		tb.id.free()
@@ -324,7 +324,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	offset_start(mut tb)
 	$if layout ? {
 		if tb.ui.layout_print {
-			println('TextBox($tb.id): ($tb.x, $tb.y, $tb.width, $tb.height)')
+			println('TextBox(${tb.id}): (${tb.x}, ${tb.y}, ${tb.width}, ${tb.height})')
 		}
 	}
 	scrollview_draw_begin(mut tb, d)
@@ -476,7 +476,7 @@ pub fn (mut tb TextBox) delete_selection() {
 
 fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	$if tb_keydown ? {
-		println('tb_keydown id:$tb.id  -> hidden:$tb.hidden focused:$tb.is_focused')
+		println('tb_keydown id:${tb.id}  -> hidden:${tb.hidden} focused:${tb.is_focused}')
 		println(e)
 	}
 	if tb.hidden {
@@ -621,7 +621,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_char ? {
-		println('tb_char: $tb.id  -> $tb.hidden $tb.is_focused')
+		println('tb_char: ${tb.id}  -> ${tb.hidden} ${tb.is_focused}')
 	}
 	if tb.hidden {
 		return
@@ -847,7 +847,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 	$if top_widget_md ? {
 		if tb.ui.window.is_top_widget(tb, events.on_mouse_down) {
-			println('tb_md: $tb.id ${tb.ui.window.point_inside_receivers(events.on_mouse_down)}')
+			println('tb_md: ${tb.id} ${tb.ui.window.point_inside_receivers(events.on_mouse_down)}')
 		}
 	}
 	if tb.has_scrollview && tb.scrollview.point_inside(e.x, e.y, .bar) {
@@ -1001,7 +1001,7 @@ pub fn (mut tb TextBox) insert(s string) {
 	}
 	mut ustr := tb.text.runes()
 	$if tb_insert ? {
-		println('tb_insert: $tb.id $ustr $tb.cursor_pos')
+		println('tb_insert: ${tb.id} ${ustr} ${tb.cursor_pos}')
 	}
 	// Insert s
 	sr := s.runes()

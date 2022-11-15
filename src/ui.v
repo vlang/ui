@@ -16,8 +16,8 @@ const (
 
 pub struct UI {
 pub mut:
-	dd             &DrawDevice       = unsafe { nil }
-    gg             &gg.Context [deprecated: 'use `UI.dd` instead (and smart cast to `gg.Context` if necessary)'] = unsafe { nil }
+	dd             &DrawDevice = unsafe { nil }
+	gg             &gg.Context       [deprecated: 'use `UI.dd` instead (and smart cast to `gg.Context` if necessary)'] = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
@@ -189,13 +189,13 @@ pub fn open_url(url string) {
 		return
 	}
 	$if windows {
-		os.execute('start "$url"')
+		os.execute('start "${url}"')
 	}
 	$if macos {
-		os.execute('open "$url"')
+		os.execute('open "${url}"')
 	}
 	$if linux {
-		os.execute('xdg-open "$url"')
+		os.execute('xdg-open "${url}"')
 	}
 }
 

@@ -72,7 +72,7 @@ pub fn (mut pb ProgressBar) cleanup() {
 [unsafe]
 pub fn (pb &ProgressBar) free() {
 	$if free ? {
-		print('progress_bar $pb.id')
+		print('progress_bar ${pb.id}')
 	}
 	unsafe {
 		pb.id.free()
@@ -111,7 +111,7 @@ fn (mut pb ProgressBar) draw_device(d DrawDevice) {
 	offset_start(mut pb)
 	$if layout ? {
 		if pb.ui.layout_print {
-			println('ProgressBar($pb.id): ($pb.x, $pb.y, $pb.width, $pb.height)')
+			println('ProgressBar(${pb.id}): (${pb.x}, ${pb.y}, ${pb.width}, ${pb.height})')
 		}
 	}
 	// Draw the gray background

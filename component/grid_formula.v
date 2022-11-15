@@ -203,7 +203,7 @@ pub fn parse_formula(formula string) (string, []string) {
 			}
 			res << tmp
 			pos += tmp.len
-			new_f += formula[from..to] + 'x[$cpt]'
+			new_f += formula[from..to] + 'x[${cpt}]'
 			cpt += 1
 			from, to = pos, pos
 		} else {

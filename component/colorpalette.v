@@ -36,7 +36,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	children << [ui.label(text: 'colors', justify: ui.top_center), colbtn, ui.spacing()]
 	for i in 0 .. p.ncolors {
 		mut cb := colorbutton(
-			id: ui.component_id(p.id, 'palette$i')
+			id: ui.component_id(p.id, 'palette${i}')
 			on_click: colorpalette_click
 			left_side: true
 		)

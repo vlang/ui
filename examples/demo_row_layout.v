@@ -301,19 +301,19 @@ fn set_output_label(win &ui.Window) {
 	_, marg := lbm.selected() or { '100', '' }
 	_, sp := lbs.selected() or { '100', '' }
 	mut lss := win.label('l_stack_sizes')
-	lss.set_text('Row (Stack) declaration: ui.row( $marg, $sp, widths: [$w1, $w2], heights: [$h1, $h2])')
+	lss.set_text('Row (Stack) declaration: ui.row( ${marg}, ${sp}, widths: [${w1}, ${w2}], heights: [${h1}, ${h2}])')
 }
 
 fn set_sizes_labels(win &ui.Window) {
 	mut btn1 := win.button('btn1')
 	mut row_btn1 := win.stack('row_btn1')
 	mut w, mut h := btn1.size()
-	row_btn1.title = 'Btn1: ($w, $h)'
+	row_btn1.title = 'Btn1: (${w}, ${h})'
 
 	mut row_btn2 := win.stack('row_btn2')
 	mut btn2 := win.button('btn2')
 	w, h = btn2.size()
-	row_btn2.title = 'Btn2: ($w, $h)'
+	row_btn2.title = 'Btn2: (${w}, ${h})'
 }
 
 fn win_resize(win &ui.Window, w int, h int) {
@@ -326,7 +326,7 @@ fn win_init(win &ui.Window) {
 	sw, sh := lb.size()
 	mut row := win.stack('row_btn1')
 	rw, rh := row.size()
-	println('win init ($sw, $sh) ($row.x, $row.y ,$rw, $rh)')
+	println('win init (${sw}, ${sh}) (${row.x}, ${row.y} ,${rw}, ${rh})')
 	set_output_label(win)
 	win.update_layout()
 }

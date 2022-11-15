@@ -52,7 +52,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	ui.component_connect(acc, layout)
 	mut title_id := ''
 	for i, title in c.titles {
-		title_id = c.id + '_$i'
+		title_id = c.id + '_${i}'
 		title_cp := ui.canvas_plus(
 			id: title_id
 			on_draw: accordion_draw

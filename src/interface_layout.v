@@ -97,7 +97,7 @@ pub fn (layout Layout) set_focus_next() bool {
 	mut window := layout.get_ui().window
 	for mut child in layout.get_children() {
 		$if focus ? {
-			println('child to focus_next $child.id() ${child is Focusable}  ')
+			println('child to focus_next ${child.id()} ${child is Focusable}  ')
 		}
 		focused_found = if mut child is Layout {
 			l := child as Layout
@@ -131,7 +131,7 @@ pub fn (layout Layout) set_focus_prev() bool {
 	mut window := layout.get_ui().window
 	for mut child in layout.get_children().reverse() {
 		$if focus ? {
-			println('child to focus_prev $child.id() $child.type_name() ${child is Focusable}')
+			println('child to focus_prev ${child.id()} ${child.type_name()} ${child is Focusable}')
 		}
 		focused_found = if mut child is Layout {
 			l := child as Layout
@@ -233,11 +233,11 @@ pub fn (l Layout) debug_show_children_tree(level int) {
 	if level == 0 {
 		println('_'.repeat(80))
 		if l is Stack {
-			println('${' '.repeat(level)} root Stack $l.id $l.size()')
+			println('${' '.repeat(level)} root Stack ${l.id} ${l.size()}')
 		}
 	}
 	for i, mut child in l.get_children() {
-		println('${' '.repeat(level)} $level:$i -> $child.id ($child.type_name()) ($child.x, $child.y) $child.size() z_index: $child.z_index')
+		println('${' '.repeat(level)} ${level}:${i} -> ${child.id} (${child.type_name()}) (${child.x}, ${child.y}) ${child.size()} z_index: ${child.z_index}')
 		if mut child is Layout {
 			c := child as Layout
 			c.debug_show_children_tree(level + 1)

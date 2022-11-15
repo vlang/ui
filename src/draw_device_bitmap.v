@@ -92,7 +92,7 @@ pub fn (d &DrawDeviceBitmap) draw_text(x int, y int, text string, cfg gx.TextCfg
 	r.init_style(ts)
 	// r.get_info_string()
 	dy := int(r.get_y_base() * d.ts.vertical_align)
-	println('draw text bmp ($text) ($x, $y) dy := $dy = $r.get_y_base() * $d.ts.vertical_align} ')
+	println('draw text bmp (${text}) (${x}, ${y}) dy := ${dy} = ${r.get_y_base()} * ${d.ts.vertical_align}} ')
 	r.draw_text_block(text, x: x, y: y + dy, w: r.width, h: r.height)
 }
 
@@ -102,7 +102,7 @@ pub fn (d &DrawDeviceBitmap) draw_text_default(x int, y int, text string) {
 	r.init_style(d.ts)
 	// r.get_info_string()
 	dy := int(r.get_y_base() * d.ts.vertical_align)
-	println('draw text bmp ($text) ($x, $y) dy := $dy = $r.get_y_base() * $d.ts.vertical_align} ')
+	println('draw text bmp (${text}) (${x}, ${y}) dy := ${dy} = ${r.get_y_base()} * ${d.ts.vertical_align}} ')
 	r.draw_text_block(text, x: x, y: y + dy, w: r.width, h: r.height)
 }
 

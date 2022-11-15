@@ -67,7 +67,7 @@ mut:
 
 pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
-		println('add font $font_name at $font_path')
+		println('add font ${font_name} at ${font_path}')
 	}
 	if mut ui.dd is gg.Context {
 		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
@@ -82,11 +82,11 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 				ui.font_paths[font_name] = font_path
 				ui.fonts.hash[font_name] = font
 				$if fontset ? {
-					println('font $font $font_name added ($font_path)')
+					println('font ${font} ${font_name} added (${font_path})')
 				}
 			} else {
 				$if fontset ? {
-					println('font $font_name NOT added ($font_path)')
+					println('font ${font_name} NOT added (${font_path})')
 				}
 			}
 		} else {
@@ -100,7 +100,7 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		}
 	}
 	$if fontset ? {
-		println('$ui.fonts')
+		println('${ui.fonts}')
 	}
 }
 
@@ -153,7 +153,7 @@ pub fn font_path_list() []string {
 	$if android {
 		font_root_path = '/system/fonts/*'
 	}
-	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
+	font_paths := os.glob('${font_root_path}/*.ttf') or { panic(err) }
 	return font_paths
 }
 
@@ -189,8 +189,8 @@ pub fn font_default() string {
 // font_path differs depending on os
 pub fn (mut w Window) add_font(id string, font_path string) {
 	$if windows {
-		if os.exists('C:/windows/fonts/$font_path') {
-			w.ui.add_font(id, 'C:/windows/fonts/$font_path')
+		if os.exists('C:/windows/fonts/${font_path}') {
+			w.ui.add_font(id, 'C:/windows/fonts/${font_path}')
 			return
 		}
 	} $else {

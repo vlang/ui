@@ -531,7 +531,7 @@ fn (mut sv ScrollView) update() {
 	sv.update_active()
 
 	$if svu ? {
-		println('scroll $sv.widget.id: ($sv.active_x = $sv.width < $sv.adj_width, $sv.active_y = $sv.height < $sv.adj_height)')
+		println('scroll ${sv.widget.id}: (${sv.active_x} = ${sv.width} < ${sv.adj_width}, ${sv.active_y} = ${sv.height} < ${sv.adj_height})')
 	}
 
 	if sv.active_x {

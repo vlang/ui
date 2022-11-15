@@ -91,7 +91,7 @@ fn (mut app App) btn_add_click(btn &ui.Button) {
 	mut s := window.stack('col2')
 	app.cpt++
 	s.add(
-		child: ui.button(text: 'Button $app.cpt')
+		child: ui.button(text: 'Button ${app.cpt}')
 		widths: ui.stretch
 		heights: ui.compact
 		spacing: 10
@@ -103,7 +103,7 @@ fn (mut app App) btn_add_two_click(btn &ui.Button) {
 	mut s := window.stack('col2')
 	app.cpt++
 	s.add(
-		children: [ui.button(text: 'Button ${app.cpt++}'), ui.button(text: 'Button $app.cpt')]
+		children: [ui.button(text: 'Button ${app.cpt++}'), ui.button(text: 'Button ${app.cpt}')]
 		widths: ui.stretch
 		heights: ui.compact
 		spacing: 10
@@ -162,7 +162,7 @@ fn btn_last_text_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut w := window.child(1, -1)
 	if mut w is ui.Button {
-		ui.message_box('Last text button: $w.text')
+		ui.message_box('Last text button: ${w.text}')
 	} else {
 		ui.message_box('Third text button not found')
 	}
@@ -172,7 +172,7 @@ fn btn_third_text_click(btn &ui.Button) {
 	window := btn.ui.window
 	mut w := window.child(1, 2)
 	if mut w is ui.Button {
-		ui.message_box('Third text button: $w.text')
+		ui.message_box('Third text button: ${w.text}')
 	} else {
 		ui.message_box('Third text button not found')
 	}
@@ -184,7 +184,7 @@ fn btn_text_below_click(btn &ui.Button) {
 		// An example of extracting child from stack
 		mut w := s.child(s.get_children().len - 2)
 		if mut w is ui.Button {
-			ui.message_box('Text below button: $w.text')
+			ui.message_box('Text below button: ${w.text}')
 		}
 	}
 }

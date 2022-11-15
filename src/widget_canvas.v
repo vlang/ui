@@ -62,7 +62,7 @@ pub fn (mut c Canvas) cleanup() {
 [unsafe]
 pub fn (c &Canvas) free() {
 	$if free ? {
-		print('canvas $c.id')
+		print('canvas ${c.id}')
 	}
 	unsafe {
 		c.id.free()
