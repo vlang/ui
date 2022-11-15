@@ -491,14 +491,14 @@ pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 	}
 
 	$if rv_mp ? {
-		println('di=$di for i := $from_i * $step_i; i >= $to_i * $step_i; i -= 1')
-		println('dj=$dj for j := $from_j * $step_j; j >= $to_j * $step_j; j -= 1')
+		println('di=${di} for i := ${from_i} * ${step_i}; i >= ${to_i} * ${step_i}; i -= 1')
+		println('dj=${dj} for j := ${from_j} * ${step_j}; j >= ${to_j} * ${step_j}; j -= 1')
 		if from_i + di >= rv.height() || from_i + di < 0 || to_i + di >= rv.height()
 			|| to_i + di < 0 {
-			println('erroooorr : $from_i + $di >= $rv.height() || $from_i + $di < 0 || $to_i + $di >= $rv.height() || $to_i + $di < 0')
+			println('erroooorr : ${from_i} + ${di} >= ${rv.height()} || ${from_i} + ${di} < 0 || ${to_i} + ${di} >= ${rv.height()} || ${to_i} + ${di} < 0')
 		}
 		if from_j + dj >= rv.width() || from_j + dj < 0 || to_j + dj >= rv.width() || to_j + dj < 0 {
-			println('erroooorr : $from_j + $dj >= $rv.width() || $from_j + $dj < 0 || $to_j + $dj >= $rv.width() || $to_j + $dj < 0')
+			println('erroooorr : ${from_j} + ${dj} >= ${rv.width()} || ${from_j} + ${dj} < 0 || ${to_j} + ${dj} >= ${rv.width()} || ${to_j} + ${dj} < 0')
 		}
 	}
 	for i := from_i * step_i; i >= to_i * step_i; i -= 1 {

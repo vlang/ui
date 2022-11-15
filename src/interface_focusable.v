@@ -24,7 +24,7 @@ pub fn (f Focusable) has_focusable() bool {
 		focusable = !f.read_only
 	}
 	$if focus ? {
-		println('${f.id}.has_focusable(): $focusable && ${!f.hidden} && $f.ui.window.unlocked_focus() (locked_focus=<$f.ui.window.locked_focus>)')
+		println('${f.id}.has_focusable(): ${focusable} && ${!f.hidden} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
 	}
 	return focusable && !f.hidden && f.ui.window.unlocked_focus()
 }
@@ -38,7 +38,7 @@ pub fn (mut f Focusable) set_focus() {
 	if f.is_focused {
 		if mut w.ui.dd is gg.Context {
 			$if focus ? {
-				println('$f.id already has focus at $w.ui.dd.frame')
+				println('${f.id} already has focus at ${w.ui.dd.frame}')
 			}
 		}
 		return
@@ -48,7 +48,7 @@ pub fn (mut f Focusable) set_focus() {
 		f.is_focused = true
 		if mut w.ui.dd is gg.Context {
 			$if focus ? {
-				println('$f.id has focus at $w.ui.dd.frame')
+				println('${f.id} has focus at ${w.ui.dd.frame}')
 			}
 		}
 	}
@@ -62,7 +62,7 @@ pub fn (mut f Focusable) force_focus() {
 	if f.is_focused {
 		if mut w.ui.dd is gg.Context {
 			$if focus ? {
-				println('$f.id already has focus at $w.ui.dd.frame')
+				println('${f.id} already has focus at ${w.ui.dd.frame}')
 			}
 		}
 		return
@@ -71,7 +71,7 @@ pub fn (mut f Focusable) force_focus() {
 	f.is_focused = true
 	if mut w.ui.dd is gg.Context {
 		$if focus ? {
-			println('$f.id has focus at $w.ui.dd.frame')
+			println('${f.id} has focus at ${w.ui.dd.frame}')
 		}
 	}
 }
@@ -79,7 +79,7 @@ pub fn (mut f Focusable) force_focus() {
 pub fn (f Focusable) lock_focus() {
 	mut w := f.ui.window
 	$if focus ? {
-		println('$f.id lock focus')
+		println('${f.id} lock focus')
 	}
 	w.locked_focus = f.id
 }
@@ -88,7 +88,7 @@ pub fn (f Focusable) unlock_focus() {
 	mut w := f.ui.window
 	if w.locked_focus == f.id {
 		$if focus ? {
-			println('$f.id unlock focus')
+			println('${f.id} unlock focus')
 		}
 		w.locked_focus = ''
 	}

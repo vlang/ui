@@ -50,7 +50,7 @@ fn main() {
 
 fn btn_click(b &ui.Button) {
 	cs := uic.colorsliders_component_from_id(b.ui.window, 'colorsliders')
-	txt := 'gx.rgb($cs.r_textbox_text,$cs.g_textbox_text,$cs.b_textbox_text)'
+	txt := 'gx.rgb(${cs.r_textbox_text},${cs.g_textbox_text},${cs.b_textbox_text})'
 	ui.message_box(txt)
 }
 

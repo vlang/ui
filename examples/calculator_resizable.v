@@ -194,7 +194,7 @@ fn (mut app App) calculate() {
 				operands << a
 				operands << b
 				result = b
-				eprintln('Unknown op: $op ')
+				eprintln('Unknown op: ${op} ')
 				break
 			}
 		}

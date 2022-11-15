@@ -45,7 +45,7 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 	mut app := &App(app_ptr)
 
 	buffer := jni.j2v_string(env, jstr)
-	println(@MOD + '.' + @FN + ': "$buffer" ($start,$before,$count)')
+	println(@MOD + '.' + @FN + ': "${buffer}" (${start},${before},${count})')
 
 	mut char_code := u8(0)
 	mut char_literal := ''
@@ -55,7 +55,7 @@ fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaSt
 		char_code = u8(buffer[pos])
 		char_literal = char_code.ascii_str()
 	}
-	println(@MOD + '.' + @FN + ': input "$char_literal"')
+	println(@MOD + '.' + @FN + ': input "${char_literal}"')
 
 	app.soft_input_buffer = buffer
 	app.soft_input_parsed_char = char_literal

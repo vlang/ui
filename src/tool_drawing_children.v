@@ -30,10 +30,10 @@ fn (mut s Stack) sorted_drawing_children() {
 	mut dc := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if sdc ? {
-		println('(Z_INDEX) drawing_children[$s.id]: ')
+		println('(Z_INDEX) drawing_children[${s.id}]: ')
 		for i, ch in s.drawing_children {
 			id := ch.id()
-			print('($i)[$id -> $ch.z_index] ')
+			print('(${i})[${id} -> ${ch.z_index}] ')
 		}
 		println('\n')
 	}
@@ -46,10 +46,10 @@ fn (mut s Stack) sorted_drawing_children() {
 	}
 	s.drawing_children = sorted
 	$if sdc ? {
-		println('(SORTED) drawing_children[$s.id]: ')
+		println('(SORTED) drawing_children[${s.id}]: ')
 		for i, ch in s.drawing_children {
 			id := ch.id()
-			print('($i)[$id -> $ch.z_index] ')
+			print('(${i})[${id} -> ${ch.z_index}] ')
 		}
 		println('\n')
 	}
@@ -60,10 +60,10 @@ fn (mut c CanvasLayout) sorted_drawing_children() {
 	mut sorted := []Widget{}
 
 	$if sdc ? {
-		println('(Z_INDEX) drawing_children[$c.id]: ')
+		println('(Z_INDEX) drawing_children[${c.id}]: ')
 		for i, ch in c.drawing_children {
 			id := ch.id()
-			print('($i)[$id -> $ch.z_index] ')
+			print('(${i})[${id} -> ${ch.z_index}] ')
 		}
 		println('\n')
 	}
@@ -76,10 +76,10 @@ fn (mut c CanvasLayout) sorted_drawing_children() {
 	}
 	c.drawing_children = sorted
 	$if sdc ? {
-		println('(SORTED) drawing_children[$c.id]: ')
+		println('(SORTED) drawing_children[${c.id}]: ')
 		for i, ch in c.drawing_children {
 			id := ch.id()
-			print('($i)[$id-> $ch.z_index] ')
+			print('(${i})[${id}-> ${ch.z_index}] ')
 		}
 		println('\n')
 	}

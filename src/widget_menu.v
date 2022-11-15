@@ -90,7 +90,7 @@ pub fn menu(c MenuParams) &Menu {
 	for i, mut item in m.items {
 		item.pos = i
 		if item.id == '' {
-			item.id = '$i'
+			item.id = '${i}'
 		}
 	}
 	return m
@@ -144,7 +144,7 @@ pub fn (mut m Menu) cleanup() {
 [unsafe]
 pub fn (m &Menu) free() {
 	$if free ? {
-		print('menu $m.id')
+		print('menu ${m.id}')
 	}
 	unsafe {
 		m.id.free()
@@ -330,7 +330,7 @@ fn (mut m Menu) draw_device(d DrawDevice) {
 	}
 	$if layout ? {
 		if m.ui.layout_print {
-			println('Menu($m.id): ($m.x, $m.y, $m.width, $m.height)')
+			println('Menu(${m.id}): (${m.x}, ${m.y}, ${m.width}, ${m.height})')
 		}
 	}
 	mut dtw := DrawTextWidget(m.root_menu)
@@ -465,11 +465,11 @@ pub fn (mut m Menu) set_text(s string) {
 }
 
 pub fn (m &Menu) show_all_states() {
-	println('Show states: $m.id')
+	println('Show states: ${m.id}')
 	for i, item in m.items {
-		print('$i) $item.id $item.text')
+		print('${i}) ${item.id} ${item.text}')
 		if item.has_menu() {
-			println(' with submenu $item.submenu.id hidden $item.submenu.hidden')
+			println(' with submenu ${item.submenu.id} hidden ${item.submenu.hidden}')
 			item.submenu.show_all_states()
 		} else {
 			println('')
@@ -516,7 +516,7 @@ pub fn menuitem(p MenuItemParams) &MenuItem {
 fn (mut mi MenuItem) build(mut win Window) {
 	mi.id = mi.menu.id + '/' + mi.id
 	if unsafe { mi.submenu != 0 } {
-		mi.submenu.id = '$mi.id'
+		mi.submenu.id = '${mi.id}'
 		mi.submenu.build(mut win)
 		win.add_top_layer(mi.submenu)
 		mi.submenu.set_visible(false)
@@ -532,9 +532,9 @@ fn (mut mi MenuItem) set_menu_root_menu() {
 	if mi.has_menu() {
 		$if mi_smpm ? {
 			if mi.menu.root_menu == 0 {
-				println("item $mi.id submenu can't inherit root menu")
+				println("item ${mi.id} submenu can't inherit root menu")
 			} else {
-				println('item $mi.id submenu inherit root menu from parent $mi.menu.parent_menu.id')
+				println('item ${mi.id} submenu inherit root menu from parent ${mi.menu.parent_menu.id}')
 			}
 		}
 		mi.submenu.root_menu = mi.menu.root_menu

@@ -50,7 +50,7 @@ fn (mut t Tree) create_root(mut tv TreeViewComponent, mut layout ui.Stack, id_ro
 fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_root string, level int) {
 	root_id := tv.id + '_' + id_root
 	for i, mut item in t.items {
-		treeitem_id := root_id + '$component.tree_sep$i'
+		treeitem_id := root_id + '${component.tree_sep}${i}'
 		tv.parents[treeitem_id] = root_id
 		mut to_expand := ''
 		if mut item is string {
@@ -79,9 +79,10 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 		if to_expand != '' {
 			if mut item is Tree {
 				if tv.incr_mode {
-					l.children << item.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+					l.children << item.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
 				} else {
-					l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+					l.children << item.create_layout(mut tv, mut l, id_root + ':${i}',
+						level + 1)
 				}
 			} else {
 				// finalize the incr_mode tree
@@ -91,7 +92,7 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 				// update tree
 				mut new_tree := treedir(path, fpath, true, tv.hidden_files)
 				t.items[i] = TreeItem(new_tree)
-				l.children << new_tree.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+				l.children << new_tree.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
 				// update scrollview field
 				ui.scrollview_delegate_parent_scrollview(mut l)
 			}
@@ -188,9 +189,9 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	}
 	for i, mut tree in tv.trees {
 		if tv.incr_mode {
-			layout.children << tree.create_root(mut tv, mut layout, 'root$i', 0)
+			layout.children << tree.create_root(mut tv, mut layout, 'root${i}', 0)
 		} else {
-			layout.children << tree.create_layout(mut tv, mut layout, 'root$i', 0)
+			layout.children << tree.create_layout(mut tv, mut layout, 'root${i}', 0)
 		}
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
@@ -419,12 +420,12 @@ pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tre
 		title: path
 		items: files.map(if os.is_dir(os.join_path(fpath, it)) {
 			if incr_mode {
-				TreeItem('root: $it$component.root_sep${os.join_path(fpath, it)}')
+				TreeItem('root: ${it}${component.root_sep}${os.join_path(fpath, it)}')
 			} else {
 				TreeItem(treedir(it, os.join_path(fpath, it), false, hidden_files))
 			}
 		} else {
-			TreeItem('file: $it')
+			TreeItem('file: ${it}')
 		})
 	}
 	return t

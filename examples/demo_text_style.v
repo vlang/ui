@@ -63,7 +63,7 @@ fn window_init(mut w ui.Window) {
 	$if linux {
 		font_root_path = '/usr/share/fonts/truetype/*'
 	}
-	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
+	font_paths := os.glob('${font_root_path}/*.ttf') or { panic(err) }
 
 	// c := w.canvas_layout('c')
 	mut lb := w.listbox('lb')
@@ -101,7 +101,7 @@ fn (app &App) on_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	c.draw_device_text(d, 10, 10, app.text)
 	w, h := dtw.text_size(app.text)
 	c.draw_device_rect_empty(d, 10, 11, w + 2, h + 2, gx.black)
-	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: ($w, $h)')
+	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: (${w}, ${h})')
 }
 
 fn (mut app App) lb_change(lb &ui.ListBox) {
@@ -111,7 +111,7 @@ fn (mut app App) lb_change(lb &ui.ListBox) {
 	fp, id := lb.selected() or { 'classic', '' }
 	// println("$id, $fp")
 	$if windows {
-		w.ui.add_font(id, 'C:/windows/fonts/$fp')
+		w.ui.add_font(id, 'C:/windows/fonts/${fp}')
 	} $else {
 		w.ui.add_font(id, fp)
 	}

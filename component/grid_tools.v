@@ -95,7 +95,7 @@ fn gs_sort_click(mut b ui.Button) {
 			}
 		}
 	}
-	println('sort: $vars, $orders')
+	println('sort: ${vars}, ${orders}')
 	g.unselect()
 	g.init_ranked_grid_data(vars, orders)
 }

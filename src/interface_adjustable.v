@@ -18,7 +18,7 @@ pub fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 	adj_width, adj_height := w.adj_size()
 	$if aw_gao ? {
 		if w.id in env('UI_IDS').split(',') {
-			println('aw gao: $w.id ($width, $height) vs ($adj_width, $adj_height)')
+			println('aw gao: ${w.id} (${width}, ${height}) vs (${adj_width}, ${adj_height})')
 		}
 	}
 	dw := math.max(width - adj_width, 0)

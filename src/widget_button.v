@@ -140,7 +140,7 @@ pub fn button(c ButtonParams) &Button {
 	}
 	b.style_params.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {
-		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
+		println('Invalid icon path "${c.icon_path}". The alternate text will be used.')
 		b.use_icon = false
 	}
 	return b
@@ -186,7 +186,7 @@ fn (mut b Button) cleanup() {
 [unsafe]
 pub fn (b &Button) free() {
 	$if free ? {
-		print('button $b.id')
+		print('button ${b.id}')
 	}
 	unsafe {
 		b.id.free()
@@ -210,7 +210,7 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if btn_keydown ? {
-		println('btn_keydown: $b.id  -> $b.hidden $b.is_focused')
+		println('btn_keydown: ${b.id}  -> ${b.hidden} ${b.is_focused}')
 	}
 	if b.hidden {
 		return
@@ -233,14 +233,14 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_click ? {
-		println('btn_click $b.id movable $b.movable focused $b.is_focused top_widget ${b.ui.window.is_top_widget(b,
+		println('btn_click ${b.id} movable ${b.movable} focused ${b.is_focused} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
 	if b.hidden || b.disabled {
 		return
 	}
 	$if wpir ? {
-		println('btn click: $b.id ${b.ui.window.point_inside_receivers(events.on_mouse_down)}')
+		println('btn click: ${b.id} ${b.ui.window.point_inside_receivers(events.on_mouse_down)}')
 	}
 	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
 		return
@@ -260,7 +260,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .normal
 			if b.on_click != ButtonFn(0) && b.is_focused {
 				$if btn_onclick ? {
-					println('onclick $b.id')
+					println('onclick ${b.id}')
 				}
 				b.on_click(b)
 			}
@@ -270,7 +270,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_md ? {
-		println('btn_mouse_down $b.id movable $b.movable top_widget ${b.ui.window.is_top_widget(b,
+		println('btn_mouse_down ${b.id} movable ${b.movable} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
 	if b.hidden {
@@ -295,7 +295,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_mu ? {
-		println('btn_mu $b.id')
+		println('btn_mu ${b.id}')
 	}
 	if b.hidden {
 		return
@@ -380,7 +380,7 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	offset_start(mut b)
 	$if layout ? {
 		if b.ui.layout_print {
-			println('Button($b.id): ($b.x, $b.y, $b.width, $b.height)')
+			println('Button(${b.id}): (${b.x}, ${b.y}, ${b.width}, ${b.height})')
 		}
 	}
 	bcenter_x := b.x + b.width / 2
@@ -442,10 +442,10 @@ fn (mut b Button) draw_device(d DrawDevice) {
 		dtw.draw_device_text(d, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
-		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
-		println('bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
-		println('draw_text(b, bcenter_x($bcenter_x), bcenter_y($bcenter_y), b.text($b.text))')
-		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
+		println('bcenter_x(${bcenter_x}) = b.x(${b.x}) + b.width(${b.width}) / 2')
+		println('bcenter_y(${bcenter_y}) = b.y(${b.y}) + b.height(${b.height}) / 2')
+		println('draw_text(b, bcenter_x(${bcenter_x}), bcenter_y(${bcenter_y}), b.text(${b.text}))')
+		println('draw_rect(b.x(${b.x}), b.y(${b.y}), b.width(${b.width}), b.height(${b.height}), bg_color)')
 		debug_draw_bb_text(bcenter_x, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {

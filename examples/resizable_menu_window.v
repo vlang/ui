@@ -120,7 +120,7 @@ fn main() {
 }
 
 fn menu_click(item &ui.MenuItem) {
-	println('$item.text selected (id: $item.id)')
+	println('${item.text} selected (id: ${item.id})')
 }
 
 fn on_switch_click(switcher &ui.Switch) {

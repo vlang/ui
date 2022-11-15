@@ -84,7 +84,7 @@ pub fn (mut s Switch) cleanup() {
 [unsafe]
 pub fn (s &Switch) free() {
 	$if free ? {
-		print('switch $s.id')
+		print('switch ${s.id}')
 	}
 	unsafe {
 		s.id.free()
@@ -116,7 +116,7 @@ fn (mut s Switch) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {
-			println('Switch($s.id): ($s.x, $s.y, $s.width, $s.height)')
+			println('Switch(${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height})')
 		}
 	}
 	padding := (s.height - ui.sw_dot_size) / 2
@@ -146,7 +146,7 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if sw_keydown ? {
-		println('sw_keydown: $s.id  -> $s.hidden $s.is_focused')
+		println('sw_keydown: ${s.id}  -> ${s.hidden} ${s.is_focused}')
 	}
 	if s.hidden {
 		return

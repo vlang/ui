@@ -39,5 +39,5 @@ pub fn (mut ts SvgTextStyle) set_vertical_align(align int) {
 
 // Color (because of cycle modules copy here)
 pub fn hex_color(c gx.Color) string {
-	return '#$c.r.hex()$c.g.hex()$c.b.hex()$c.a.hex()'
+	return '#${c.r.hex()}${c.g.hex()}${c.b.hex()}${c.a.hex()}'
 }

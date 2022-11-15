@@ -139,7 +139,7 @@ fn drag_child(mut window Window, x f64, y f64) {
 fn drag_child_dropped(mut window Window) {
 	$if drag ? {
 		w := window.dragger.widget
-		println('drop $w.type_name()')
+		println('drop ${w.type_name()}')
 	}
 	window.mouse.stop()
 	window.dragger.activated = false

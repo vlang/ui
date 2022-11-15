@@ -190,7 +190,7 @@ fn (mut lb ListBox) cleanup() {
 [unsafe]
 pub fn (lb &ListBox) free() {
 	$if free ? {
-		print('listbox $lb.id')
+		print('listbox ${lb.id}')
 	}
 	unsafe {
 		lb.id.free()
@@ -473,7 +473,7 @@ fn (lb &ListBox) get_selected_item(y int) int {
 
 fn (lb &ListBox) current_pos(y int) int {
 	$if lb_selitem ? {
-		println('lb sel item ${(y - lb.y) / lb.item_height} := ($y - $lb.y) / $lb.item_height')
+		println('lb sel item ${(y - lb.y) / lb.item_height} := (${y} - ${lb.y}) / ${lb.item_height}')
 	}
 	return (y - lb.y) / lb.item_height
 }
@@ -507,7 +507,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 	offset_start(mut lb)
 	$if layout ? {
 		if lb.ui.layout_print {
-			println('ListBox($lb.id): ($lb.x, $lb.y, $lb.width, $lb.height)')
+			println('ListBox(${lb.id}): (${lb.x}, ${lb.y}, ${lb.width}, ${lb.height})')
 		}
 	}
 	mut dtw := DrawTextWidget(lb)
@@ -520,7 +520,7 @@ fn (mut lb ListBox) draw_device(d DrawDevice) {
 		lb.height
 	}
 	$if lb_draw ? {
-		println('draw $lb.id scrollview=$lb.has_scrollview $lb.x, $lb.y, $lb.width $lb.height $height')
+		println('draw ${lb.id} scrollview=${lb.has_scrollview} ${lb.x}, ${lb.y}, ${lb.width} ${lb.height} ${height}')
 	}
 	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.style.bg_color)
 	// println("draw rect")
@@ -633,7 +633,7 @@ pub fn (lb &ListBox) call_on_change() {
 
 fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
 	$if lb_md ? {
-		println('lb_mouse_down $lb.id top_widget ${lb.ui.window.is_top_widget(lb, events.on_mouse_down)}')
+		println('lb_mouse_down ${lb.id} top_widget ${lb.ui.window.is_top_widget(lb, events.on_mouse_down)}')
 	}
 	if lb.hidden {
 		return
@@ -665,7 +665,7 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 	if lb.has_dragger_active() {
 		dragged_item := lb.ui.window.dragger.extra_int
 		$if lb_up ? {
-			println('lb $lb.id mouse up $dragged_item ($lb.items.len)')
+			println('lb ${lb.id} mouse up ${dragged_item} (${lb.items.len})')
 		}
 		lb.items[dragged_item].x, lb.items[dragged_item].y = 0, dragged_item * lb.item_height
 		lb.items[dragged_item].offset_x, lb.items[dragged_item].offset_y = 0, 0
@@ -689,7 +689,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 			if mut dragged is ListItem {
 				if dragged.list.id != lb.id {
 					$if lb_move ? {
-						println('lb mouse move reparent $lb.id from $dragged.list.id')
+						println('lb mouse move reparent ${lb.id} from ${dragged.list.id}')
 					}
 					// remove previous lb N.B.: dragged.remove()
 					dragged.list.delete_at(lb.ui.window.dragger.extra_int)
@@ -938,7 +938,7 @@ pub fn listitem(p ListItemParams) &ListItem {
 [unsafe]
 fn (item &ListItem) free() {
 	$if free ? {
-		print('\tlistbox item $item.id')
+		print('\tlistbox item ${item.id}')
 	}
 	unsafe {
 		// Failing: item.id.free()
@@ -1006,7 +1006,7 @@ pub fn (mut li ListItem) update_parent(mut lb ListBox, at int) {
 	// insert
 	j := lb.fit_at(at)
 	$if li_upar ? {
-		println('update parent $li.id in $lb.id insert_at $j')
+		println('update parent ${li.id} in ${lb.id} insert_at ${j}')
 	}
 	lb.insert_at(j, li)
 	// recompute offset
@@ -1030,7 +1030,7 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	}
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
-		println('draw item  $lb.id $li.id $li.text() $li.x + $lb.x + $li.offset_x + $ui.listbox_text_offset_x, $li.y + $li.offset_y + $lb.y + $lb.text_offset_y, $lb.width, $lb.item_height')
+		println('draw item  ${lb.id} ${li.id} ${li.text()} ${li.x} + ${lb.x} + ${li.offset_x} + ${ui.listbox_text_offset_x}, ${li.y} + ${li.offset_y} + ${lb.y} + ${lb.text_offset_y}, ${lb.width}, ${lb.item_height}')
 	}
 	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
 		lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,

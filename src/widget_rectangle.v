@@ -109,7 +109,7 @@ pub fn (mut r Rectangle) cleanup() {
 [unsafe]
 pub fn (r &Rectangle) free() {
 	$if free ? {
-		print('rectangle $r.id')
+		print('rectangle ${r.id}')
 	}
 	unsafe {
 		r.text.free()
@@ -143,7 +143,7 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {
-			println('Rectangle($r.id): ($r.x, $r.y, $r.width, $r.height)')
+			println('Rectangle(${r.id}): (${r.x}, ${r.y}, ${r.width}, ${r.height})')
 		}
 	}
 	if r.radius > 0 {

@@ -145,7 +145,7 @@ fn main() {
 }
 
 fn (app &App) btn_click(b &ui.Button) {
-	txt := 'gx.rgb($app.r_textbox_text,$app.g_textbox_text,$app.b_textbox_text)'
+	txt := 'gx.rgb(${app.r_textbox_text},${app.g_textbox_text},${app.b_textbox_text})'
 	ui.message_box(txt)
 }
 

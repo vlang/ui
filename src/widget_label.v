@@ -77,7 +77,7 @@ pub fn (mut l Label) cleanup() {
 [unsafe]
 pub fn (l &Label) free() {
 	$if free ? {
-		print('label $l.id')
+		print('label ${l.id}')
 	}
 	unsafe {
 		l.id.free()
@@ -151,7 +151,7 @@ fn (mut l Label) draw_device(d DrawDevice) {
 	offset_start(mut l)
 	$if layout ? {
 		if l.ui.layout_print {
-			println('Label($b.id): ($l.x, $l.y, $l.width, $l.height)')
+			println('Label(${b.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
 		}
 	}
 	splits := l.text.split('\n') // Split the text into an array of lines.
@@ -163,7 +163,7 @@ fn (mut l Label) draw_device(d DrawDevice) {
 		$if tbb ? {
 			w, h := l.ui.dd.text_size(split)
 			println('label: w, h := l.ui.dd.text_size(split)')
-			println('debug_draw_bb_text(l.x($l.x), l.y($l.y) + (height($height) * i($i)), w($w), h($h), l.ui)')
+			println('debug_draw_bb_text(l.x(${l.x}), l.y(${l.y}) + (height(${height}) * i(${i})), w(${w}), h(${h}), l.ui)')
 			debug_draw_bb_text(l.x, l.y + (height * i), w, h, l.ui)
 		}
 	}

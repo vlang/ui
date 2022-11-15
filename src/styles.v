@@ -66,7 +66,7 @@ pub fn (s Style) to_toml() string {
 
 pub fn parse_style_toml_file(path string) Style {
 	doc := toml.parse_file(path) or {
-		eprintln('UI: using the default UI style, since the .toml file `$path` was invalid. TOML parse error: $err')
+		eprintln('UI: using the default UI style, since the .toml file `${path}` was invalid. TOML parse error: ${err}')
 		return default_style()
 	}
 	mut s := Style{}
@@ -88,7 +88,7 @@ pub fn parse_style_toml_file(path string) Style {
 }
 
 pub fn (s Style) as_toml_file(path string) {
-	text := '# $path generated automatically\n' + s.to_toml()
+	text := '# ${path} generated automatically\n' + s.to_toml()
 	os.write_file(path, text) or { panic(err) }
 }
 

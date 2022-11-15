@@ -47,7 +47,7 @@ fn main() {
 							on_file_changed: fn (mut mf uic.MenuFileComponent) {
 								// println("hello $mf.file")
 								if os.file_ext(mf.file) == '.png' {
-									mf.layout.ui.window.set_title('V UI Png Edit: $mf.file')
+									mf.layout.ui.window.set_title('V UI Png Edit: ${mf.file}')
 									mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
 										'rv')
 									rv.load_image(mf.file)
