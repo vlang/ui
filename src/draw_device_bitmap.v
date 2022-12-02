@@ -3,6 +3,7 @@ module ui
 import gx
 import gg
 import ui.libvg
+import math
 
 struct DrawDeviceBitmap {
 	id string = 'dd_bitmap'
@@ -125,7 +126,14 @@ pub fn (d &DrawDeviceBitmap) text_height(s string) int {
 	return 0
 }
 
-pub fn (d &DrawDeviceBitmap) scissor_rect(x int, y int, w int, h int) {}
+pub fn (d &DrawDeviceBitmap) set_clipping(x int, y int, w int, h int) {
+	// TODO: implement
+}
+
+pub fn (d &DrawDeviceBitmap) get_clipping() (int, int, int, int) {
+	// TODO: implement
+	return 0, 0, math.max_i32, math.max_i32
+}
 
 pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, color gx.Color) {
 	// println("$d.id draw_pixel($x, $y, $color)")

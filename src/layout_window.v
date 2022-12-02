@@ -239,43 +239,45 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
-	gcontext := gg.new_context(
-		width: width
-		height: height
-		use_ortho: true // This is needed for 2D drawing
-		create_window: true // TODO: Unused ?
-		window_title: cfg.title
-		resizable: resizable
-		fullscreen: fullscreen
-		frame_fn: if cfg.immediate {
-			frame_immediate
-		} else if cfg.native_rendering {
-			native_frame
-		} else {
-			frame
-		}
-		// native_frame_fn: native_frame
-		event_fn: on_event
-		user_data: window
-		font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
-		custom_bold_font_path: cfg.custom_bold_font_path
-		init_fn: gg_init
-		cleanup_fn: gg_cleanup
-		// keydown_fn: window_key_down
-		// char_fn: window_char
-		bg_color: window.bg_color // gx.rgb(230,230,230)
-		// window_state: ui
-		native_rendering: cfg.native_rendering
-		ui_mode: !cfg.immediate
-		// drag & drop
-		enable_dragndrop: cfg.enable_dragndrop
-		max_dropped_files: cfg.max_dropped_files
-		max_dropped_file_path_length: cfg.max_dropped_file_path_length
-	)
 
+	mut dd := DrawDeviceContext{
+		Context: gg.new_context(
+			width: width
+			height: height
+			use_ortho: true // This is needed for 2D drawing
+			create_window: true // TODO: Unused ?
+			window_title: cfg.title
+			resizable: resizable
+			fullscreen: fullscreen
+			frame_fn: if cfg.immediate {
+				frame_immediate
+			} else if cfg.native_rendering {
+				native_frame
+			} else {
+				frame
+			}
+			// native_frame_fn: native_frame
+			event_fn: on_event
+			user_data: window
+			font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
+			custom_bold_font_path: cfg.custom_bold_font_path
+			init_fn: gg_init
+			cleanup_fn: gg_cleanup
+			// keydown_fn: window_key_down
+			// char_fn: window_char
+			bg_color: window.bg_color // gx.rgb(230,230,230)
+			// window_state: ui
+			native_rendering: cfg.native_rendering
+			ui_mode: !cfg.immediate
+			// drag & drop
+			enable_dragndrop: cfg.enable_dragndrop
+			max_dropped_files: cfg.max_dropped_files
+			max_dropped_file_path_length: cfg.max_dropped_file_path_length
+		)
+	}
 	mut ui_ctx := &UI{
-		dd: &DrawDevice(gcontext)
-		gg: gcontext
+		dd: &dd
+		gg: &dd.Context
 		window: window
 		svg: draw_device_svg()
 		bmp: draw_device_bitmap()
@@ -385,7 +387,7 @@ fn gg_cleanup(mut window Window) {
 }
 
 fn frame(mut w Window) {
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		w.ui.dd.begin()
 	}
 
@@ -418,13 +420,13 @@ fn frame(mut w Window) {
 	}
 	*/
 
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		w.ui.dd.end()
 	}
 }
 
 fn frame_immediate(mut w Window) {
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		w.ui.dd.begin()
 	}
 
@@ -453,7 +455,7 @@ fn frame_immediate(mut w Window) {
 
 	w.needs_refresh = false
 
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		w.ui.dd.end()
 	}
 }
@@ -505,7 +507,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	}
 
 	$if macos {
-		if mut window.ui.dd is gg.Context {
+		if mut window.ui.dd is DrawDeviceContext {
 			if window.ui.dd.native_rendering {
 				C.darwin_window_refresh()
 			}
@@ -1068,7 +1070,7 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 pub fn (mut w Window) refresh() {
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		w.ui.dd.refresh_ui()
 	}
 	$if macos {
@@ -1195,7 +1197,7 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 
 pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
-	if mut window.ui.dd is gg.Context {
+	if mut window.ui.dd is DrawDeviceContext {
 		window.ui.dd.resize(w, h)
 	}
 	for mut child in window.children {

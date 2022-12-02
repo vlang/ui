@@ -151,7 +151,7 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		if mut b.ui.dd is gg.Context {
+		if mut b.ui.dd is DrawDeviceContext {
 			b.image = b.ui.dd.create_image(b.icon_path)
 		}
 	}

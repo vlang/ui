@@ -659,8 +659,10 @@ pub fn (mut sv ScrollView) clip(d DrawDevice) {
 		}
 		psr := sv.parent_scissor_rect()
 		scissor_rect := intersection_rect(sr, psr)
-		d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-			int(scissor_rect.height))
+		if d is DrawDeviceContext {
+			d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
+				int(scissor_rect.height))
+		}
 		sv.scissor_rect = scissor_rect
 	} else {
 		if !sv.active_x {
@@ -674,8 +676,10 @@ pub fn (mut sv ScrollView) clip(d DrawDevice) {
 
 pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 	scissor_rect := sv.parent_scissor_rect()
-	d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-		int(scissor_rect.height))
+	if d is DrawDeviceContext {
+		d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
+			int(scissor_rect.height))
+	}
 
 	svx, svy := sv.orig_xy()
 

@@ -1,7 +1,5 @@
 module ui
 
-import gg
-
 // Contains all the methods related to focus management
 // that is to say:
 // * Focusable interface and its methods
@@ -36,7 +34,7 @@ pub fn (mut f Focusable) set_focus() {
 		return
 	}
 	if f.is_focused {
-		if mut w.ui.dd is gg.Context {
+		if mut w.ui.dd is DrawDeviceContext {
 			$if focus ? {
 				println('${f.id} already has focus at ${w.ui.dd.frame}')
 			}
@@ -46,7 +44,7 @@ pub fn (mut f Focusable) set_focus() {
 	Layout(w).unfocus_all()
 	if f.has_focusable() {
 		f.is_focused = true
-		if mut w.ui.dd is gg.Context {
+		if mut w.ui.dd is DrawDeviceContext {
 			$if focus ? {
 				println('${f.id} has focus at ${w.ui.dd.frame}')
 			}
@@ -60,7 +58,7 @@ pub fn (mut f Focusable) set_focus() {
 pub fn (mut f Focusable) force_focus() {
 	mut w := f.ui.window
 	if f.is_focused {
-		if mut w.ui.dd is gg.Context {
+		if mut w.ui.dd is DrawDeviceContext {
 			$if focus ? {
 				println('${f.id} already has focus at ${w.ui.dd.frame}')
 			}
@@ -69,7 +67,7 @@ pub fn (mut f Focusable) force_focus() {
 	}
 	Layout(w).unfocus_all()
 	f.is_focused = true
-	if mut w.ui.dd is gg.Context {
+	if mut w.ui.dd is DrawDeviceContext {
 		$if focus ? {
 			println('${f.id} has focus at ${w.ui.dd.frame}')
 		}

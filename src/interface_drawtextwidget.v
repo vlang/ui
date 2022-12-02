@@ -137,7 +137,7 @@ pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			int(ts.align), int(ts.vertical_align))
 	}
 	$if !screenshot ? {
-		if mut w.ui.dd is gg.Context {
+		if mut w.ui.dd is DrawDeviceContext {
 			gg := w.ui.dd
 			fons := gg.ft.fons
 			fons.set_font(w.ui.fonts.hash[ts.font_name])

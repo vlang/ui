@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 import os
 import os.font
 
@@ -69,10 +68,11 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
 		println('add font ${font_name} at ${font_path}')
 	}
-	if mut ui.dd is gg.Context {
+	if mut ui.dd is DrawDeviceContext {
 		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
 		// (in fons__getGlyph, added becomes 0)
 		ui.dd.ft.fons.reset_atlas(512, 512)
+
 		bytes := os.read_bytes(font_path) or { []u8{} }
 		// gg := ui.gg
 		// mut f := ui.fonts
@@ -96,7 +96,7 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		}
 	} else {
 		$if fontset ? {
-			println('DrawDevice is not a gg.Context')
+			println('DrawDevice has no gg.Context')
 		}
 	}
 	$if fontset ? {

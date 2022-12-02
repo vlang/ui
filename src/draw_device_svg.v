@@ -3,6 +3,7 @@ module ui
 import gx
 import gg
 import ui.libvg
+import math
 
 struct DrawDeviceSVG {
 mut:
@@ -105,7 +106,13 @@ pub fn (d &DrawDeviceSVG) text_height(s string) int {
 	return 0
 }
 
-pub fn (d &DrawDeviceSVG) scissor_rect(x int, y int, w int, h int) {
+pub fn (d &DrawDeviceSVG) set_clipping(x int, y int, w int, h int) {
+	// TODO: implement
+}
+
+pub fn (d &DrawDeviceSVG) get_clipping() (int, int, int, int) {
+	// TODO: implement
+	return 0, 0, math.max_i32, math.max_i32
 }
 
 pub fn (d &DrawDeviceSVG) draw_pixel(x f32, y f32, color gx.Color) {

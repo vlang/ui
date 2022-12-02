@@ -2,7 +2,6 @@ module component
 
 import ui
 import gx
-import gg
 import math
 import regex
 import ui.libvg
@@ -385,8 +384,8 @@ pub fn (mut rv RasterViewComponent) new_image() {
 }
 
 pub fn (mut rv RasterViewComponent) load_image(path string) {
-	if mut rv.layout.ui.dd is gg.Context {
-		rv.r.load_image(mut rv.layout.ui.dd, path)
+	if mut rv.layout.ui.dd is ui.DrawDeviceContext {
+		rv.r.load_image(mut rv.layout.ui.dd.Context, path)
 	}
 	rv.visible_pixels()
 	rv.update_bounds()

@@ -2,6 +2,7 @@ module ui
 
 import gx
 import gg
+import math
 
 struct DrawDevicePrint {
 	id       string = 'dd_print'
@@ -56,7 +57,14 @@ pub fn (d &DrawDevicePrint) text_height(s string) int {
 	return 0
 }
 
-pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}
+pub fn (d &DrawDevicePrint) set_clipping(x int, y int, w int, h int) {
+	// TODO: implement
+}
+
+pub fn (d &DrawDevicePrint) get_clipping() (int, int, int, int) {
+	// TODO: implement
+	return 0, 0, math.max_i32, math.max_i32
+}
 
 pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color) {
 	println('${d.id} draw_pixel(${x}, ${y}, ${color})')
