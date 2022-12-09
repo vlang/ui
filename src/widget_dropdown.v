@@ -156,10 +156,10 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut dd Dropdown) draw() {
-	dd.draw_device(dd.ui.dd)
+	dd.draw_device(mut dd.ui.dd)
 }
 
-pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
+pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	offset_start(mut dd)
 	$if layout ? {
 		if dd.ui.layout_print {

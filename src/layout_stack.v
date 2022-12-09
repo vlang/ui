@@ -1090,10 +1090,10 @@ pub fn (mut s Stack) set_drawing_children() {
 }
 
 fn (mut s Stack) draw() {
-	s.draw_device(s.ui.dd)
+	s.draw_device(mut s.ui.dd)
 }
 
-fn (mut s Stack) draw_device(d DrawDevice) {
+fn (mut s Stack) draw_device(mut d DrawDevice) {
 	if s.hidden {
 		return
 	}
@@ -1138,7 +1138,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 			// Widget(s).debug_gg_rect(child.bounds(), gx.green)
 			if mut child is Layout
 				|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
-				child.draw_device(d)
+				child.draw_device(mut d)
 			}
 		}
 	} else {
@@ -1147,7 +1147,7 @@ fn (mut s Stack) draw_device(d DrawDevice) {
 		}
 		for mut child in s.drawing_children {
 			// println("$child.type_name() $child.id")
-			child.draw_device(d)
+			child.draw_device(mut d)
 		}
 	}
 	scrollview_draw_end(s, d)

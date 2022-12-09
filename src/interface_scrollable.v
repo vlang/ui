@@ -104,7 +104,7 @@ pub fn scrollview_need_update(mut w ScrollableWidget) {
 	}
 }
 
-pub fn scrollview_add<T>(mut w T) {
+pub fn scrollview_add[T](mut w T) {
 	mut sv := &ScrollView{
 		parent: w.parent
 		widget: w
@@ -176,7 +176,7 @@ pub fn scrollview_widget_set_orig_xy(w Widget) {
 // 	}
 // }
 
-pub fn scrollview_set_orig_xy<T>(w &T) {
+pub fn scrollview_set_orig_xy[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// rest values
@@ -218,7 +218,7 @@ pub fn scrollview_widget_save_offset(w Widget) {
 	}
 }
 
-pub fn scrollview_save_offset<T>(w &T) {
+pub fn scrollview_save_offset[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// Save prev values
@@ -253,7 +253,7 @@ pub fn scrollview_widget_restore_offset(w Widget) {
 	}
 }
 
-pub fn scrollview_restore_offset<T>(w &T) {
+pub fn scrollview_restore_offset[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.orig_x, sv.orig_y = w.x, w.y
@@ -271,7 +271,7 @@ pub fn scrollview_restore_offset<T>(w &T) {
 	}
 }
 
-pub fn scrollview_delegate_parent_scrollview<T>(mut w T) {
+pub fn scrollview_delegate_parent_scrollview[T](mut w T) {
 	parent := w.parent
 	if parent is Stack {
 		w.scrollview = parent.scrollview
@@ -280,7 +280,7 @@ pub fn scrollview_delegate_parent_scrollview<T>(mut w T) {
 	}
 }
 
-pub fn scrollview_update<T>(w &T) {
+pub fn scrollview_update[T](w &T) {
 	if has_scrollview(w) {
 		mut sw := w.scrollview
 		sw.update()
@@ -298,7 +298,7 @@ pub fn scrollview_widget_update(w Widget) {
 	}
 }
 
-pub fn scrollview_update_active<T>(w &T) {
+pub fn scrollview_update_active[T](w &T) {
 	if has_scrollview(w) {
 		mut sw := w.scrollview
 		sw.update_active()
@@ -316,7 +316,7 @@ pub fn scrollview_widget_update_active(w Widget) {
 	}
 }
 
-pub fn scrollview_draw_begin<T>(mut w T, d DrawDevice) {
+pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 	if scrollview_is_active(w) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
@@ -335,14 +335,14 @@ pub fn scrollview_draw_begin<T>(mut w T, d DrawDevice) {
 	}
 }
 
-pub fn scrollview_draw_end<T>(w &T, d DrawDevice) {
+pub fn scrollview_draw_end[T](w &T, d DrawDevice) {
 	if has_scrollview(w) {
 		sv := w.scrollview
 		sv.draw_device(d)
 	}
 }
 
-pub fn scrollview_reset<T>(mut w T) {
+pub fn scrollview_reset[T](mut w T) {
 	mut sv := w.scrollview
 	svx, svy := sv.orig_xy()
 	if !sv.active_x {

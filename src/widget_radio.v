@@ -293,10 +293,10 @@ pub fn (mut r Radio) update_size() {
 }
 
 fn (mut r Radio) draw() {
-	r.draw_device(r.ui.dd)
+	r.draw_device(mut r.ui.dd)
 }
 
-fn (mut r Radio) draw_device(d DrawDevice) {
+fn (mut r Radio) draw_device(mut d DrawDevice) {
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {

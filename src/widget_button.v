@@ -373,10 +373,10 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	b.draw_device(b.ui.dd)
+	b.draw_device(mut b.ui.dd)
 }
 
-fn (mut b Button) draw_device(d DrawDevice) {
+fn (mut b Button) draw_device(mut d DrawDevice) {
 	offset_start(mut b)
 	$if layout ? {
 		if b.ui.layout_print {

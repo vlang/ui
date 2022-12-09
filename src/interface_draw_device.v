@@ -39,29 +39,30 @@ interface DrawDevice {
 	// clipping
 	get_clipping() (int, int, int, int)
 mut:
+	reset_clipping()
 	set_clipping(x int, y int, w int, h int)
 	set_bg_color(color gx.Color)
 }
 
-fn (d DrawDevice) draw_window(mut w Window) {
+fn (mut d DrawDevice) draw_window(mut w Window) {
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 
 	for mut child in children {
-		child.draw_device(d)
+		child.draw_device(mut d)
 	}
 
 	for mut sw in w.subwindows {
-		sw.draw_device(d)
+		sw.draw_device(mut d)
 	}
 
 	// draw dragger if active
 	draw_dragger(mut w)
 	// draw tooltip if active
-	w.tooltip.draw_device(d)
+	w.tooltip.draw_device(mut d)
 
 	if w.on_draw != unsafe { nil } {
 		w.on_draw(w)
 	}
 
-	w.mouse.draw_device(d)
+	w.mouse.draw_device(mut d)
 }

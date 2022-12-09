@@ -500,10 +500,10 @@ fn (lb &ListBox) visible_items() (int, int) {
 }
 
 fn (mut lb ListBox) draw() {
-	lb.draw_device(lb.ui.dd)
+	lb.draw_device(mut lb.ui.dd)
 }
 
-fn (mut lb ListBox) draw_device(d DrawDevice) {
+fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	offset_start(mut lb)
 	$if layout ? {
 		if lb.ui.layout_print {

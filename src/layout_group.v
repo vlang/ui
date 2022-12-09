@@ -140,10 +140,10 @@ fn (mut g Group) calculate_child_positions() {
 }
 
 fn (mut g Group) draw() {
-	g.draw_device(g.ui.dd)
+	g.draw_device(mut g.ui.dd)
 }
 
-fn (mut g Group) draw_device(d DrawDevice) {
+fn (mut g Group) draw_device(mut d DrawDevice) {
 	offset_start(mut g)
 	// Border
 	$if gdraw ? {
@@ -164,7 +164,7 @@ fn (mut g Group) draw_device(d DrawDevice) {
 	d.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
 	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
 	for mut child in g.children {
-		child.draw_device(d)
+		child.draw_device(mut d)
 	}
 	offset_end(mut g)
 }

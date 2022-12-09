@@ -20,6 +20,7 @@ pub mut:
 	z_index  int
 	ui       &UI = unsafe { nil }
 	hidden   bool
+	clipping bool
 	// component state for composable widget
 	component voidptr
 mut:
@@ -29,12 +30,13 @@ mut:
 
 [params]
 pub struct CanvasParams {
-	id      string
-	width   int
-	height  int
-	z_index int
-	text    string
-	draw_fn DrawFn = unsafe { nil }
+	id       string
+	width    int
+	height   int
+	z_index  int
+	text     string
+	draw_fn  DrawFn = unsafe { nil }
+	clipping bool   = true
 }
 
 pub fn canvas(c CanvasParams) &Canvas {
@@ -44,6 +46,7 @@ pub fn canvas(c CanvasParams) &Canvas {
 		height: c.height
 		z_index: c.z_index
 		draw_fn: c.draw_fn
+		clipping: c.clipping
 	}
 	return canvas
 }
@@ -89,17 +92,26 @@ fn (mut c Canvas) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut c Canvas) draw() {
-	c.draw_device(c.ui.dd)
+	c.draw_device(mut c.ui.dd)
 }
 
-fn (mut c Canvas) draw_device(d DrawDevice) {
+fn (mut c Canvas) draw_device(mut d DrawDevice) {
 	offset_start(mut c)
+	defer {
+		offset_end(mut c)
+	}
+	if c.clipping {
+		cx, cy, cw, ch := d.get_clipping()
+		d.set_clipping(c.x, c.y, c.width, c.height)
+		defer {
+			d.set_clipping(cx, cy, cw, ch)
+		}
+	}
 	if c.draw_fn != unsafe { nil } {
 		if mut c.ui.dd is DrawDeviceContext {
 			c.draw_fn(&c.ui.dd.Context, c)
 		}
 	}
-	offset_end(mut c)
 }
 
 fn (mut c Canvas) set_visible(state bool) {

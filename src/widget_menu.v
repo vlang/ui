@@ -320,10 +320,10 @@ pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut m Menu) draw() {
-	m.draw_device(m.ui.dd)
+	m.draw_device(mut m.ui.dd)
 }
 
-fn (mut m Menu) draw_device(d DrawDevice) {
+fn (mut m Menu) draw_device(mut d DrawDevice) {
 	offset_start(mut m)
 	if m.hidden {
 		return

@@ -144,10 +144,10 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut l Label) draw() {
-	l.draw_device(l.ui.dd)
+	l.draw_device(mut l.ui.dd)
 }
 
-fn (mut l Label) draw_device(d DrawDevice) {
+fn (mut l Label) draw_device(mut d DrawDevice) {
 	offset_start(mut l)
 	$if layout ? {
 		if l.ui.layout_print {

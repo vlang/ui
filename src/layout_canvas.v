@@ -38,6 +38,7 @@ pub mut:
 	is_focused       bool
 	ui               &UI = unsafe { nil }
 	hidden           bool
+	clipping         bool
 	adj_width        int
 	adj_height       int
 	full_width       int
@@ -93,6 +94,7 @@ pub struct CanvasLayoutParams {
 	full_width        int = -1
 	full_height       int = -1
 	z_index           int
+	clipping          bool = true
 	text              string
 	scrollview        bool
 	is_focused        bool
@@ -142,6 +144,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		// bg_radius: f32(c.bg_radius)
 		// bg_color: c.bg_color
 		is_focused: c.is_focused
+		clipping: c.clipping
 		justify: c.justify
 		style_params: c.CanvasLayoutStyleParams
 		active_evt_mngr: c.active_evt_mngr && !c.delegate_evt_mngr
@@ -597,14 +600,25 @@ fn (mut c CanvasLayout) set_drawing_children() {
 }
 
 fn (mut c CanvasLayout) draw() {
-	c.draw_device(c.ui.dd)
+	c.draw_device(mut c.ui.dd)
 }
 
-fn (mut c CanvasLayout) draw_device(d DrawDevice) {
+fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	if c.hidden {
 		return
 	}
 	offset_start(mut c)
+	defer {
+		offset_end(mut c)
+	}
+	if c.clipping {
+		cx, cy, cw, ch := d.get_clipping()
+		d.set_clipping(c.x, c.y, c.width, c.height)
+		defer {
+			d.set_clipping(cx, cy, cw, ch)
+		}
+	}
+
 	$if layout ? {
 		if c.ui.layout_print {
 			fw, fh := c.full_size()
@@ -618,6 +632,9 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	// 	c.scrollview.children_to_update = false
 	// }
 	scrollview_draw_begin(mut c, d)
+	defer {
+		scrollview_draw_end(c, d)
+	}
 
 	// println("$c.id $c.style")
 	if c.style.bg_color !in [no_color, transparent] {
@@ -637,7 +654,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 	}
 
 	if c.draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
-		c.draw_device_fn(d, c)
+		c.draw_device_fn(*d, c)
 	}
 	$if cdraw_scroll ? {
 		if Layout(c).has_scrollview_or_parent_scrollview() {
@@ -660,7 +677,7 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 		for mut child in c.drawing_children {
 			if mut child is Layout
 				|| !is_empty_intersection(c.scrollview.scissor_rect, child.bounds()) {
-				child.draw_device(d)
+				child.draw_device(mut d)
 			}
 		}
 	} else {
@@ -668,18 +685,13 @@ fn (mut c CanvasLayout) draw_device(d DrawDevice) {
 			println('draw <${c.id}>: ${c.drawing_children.map(it.id)} at ${c.drawing_children.map(it.x)}')
 		}
 		for mut child in c.drawing_children {
-			child.draw_device(d)
+			child.draw_device(mut d)
 		}
 	}
 
 	if c.post_draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
-		c.post_draw_device_fn(d, c)
+		c.post_draw_device_fn(*d, c)
 	}
-
-	// scrollview_draw(c)
-	scrollview_draw_end(c, d)
-
-	offset_end(mut c)
 }
 
 pub fn (mut c CanvasLayout) set_visible(state bool) {

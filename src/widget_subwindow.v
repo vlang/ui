@@ -98,10 +98,10 @@ pub fn (mut s SubWindow) cleanup() {
 }
 
 fn (mut s SubWindow) draw() {
-	s.draw_device(s.ui.dd)
+	s.draw_device(mut s.ui.dd)
 }
 
-fn (mut s SubWindow) draw_device(d DrawDevice) {
+fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 	if s.hidden {
 		return
 	}

@@ -32,7 +32,8 @@ pub fn (mut d DrawDeviceSVG) screenshot_window(filename string, mut w Window) {
 	// println("svg device")
 	d.s = libvg.svg(width: w.width, height: w.height)
 	d.begin(w.bg_color)
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 	d.end()
 	d.save(filename)
 	unsafe { d.s.free() }
@@ -104,6 +105,10 @@ pub fn (d &DrawDeviceSVG) text_width(s string) int {
 
 pub fn (d &DrawDeviceSVG) text_height(s string) int {
 	return 0
+}
+
+pub fn (d &DrawDeviceSVG) reset_clipping() {
+	// TODO: implement
 }
 
 pub fn (d &DrawDeviceSVG) set_clipping(x int, y int, w int, h int) {

@@ -21,7 +21,8 @@ pub fn draw_device_print(p DrawDevicePrintParams) &DrawDevicePrint {
 
 fn draw_device_draw_print(filename string, mut w Window) {
 	d := draw_device_print(id: 'test', filename: filename)
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 }
 
 pub fn (d &DrawDevicePrint) set_bg_color(color gx.Color) {}
@@ -55,6 +56,10 @@ pub fn (d &DrawDevicePrint) text_width(s string) int {
 
 pub fn (d &DrawDevicePrint) text_height(s string) int {
 	return 0
+}
+
+pub fn (d &DrawDevicePrint) reset_clipping() {
+    // TODO: implement
 }
 
 pub fn (d &DrawDevicePrint) set_clipping(x int, y int, w int, h int) {

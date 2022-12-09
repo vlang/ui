@@ -391,7 +391,14 @@ fn frame(mut w Window) {
 		w.ui.dd.begin()
 	}
 
-	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
+	// initial clipping
+	w.ui.dd.reset_clipping()
+
+	mut children := if unsafe { w.child_window == 0 } {
+		w.children
+	} else {
+		w.child_window.children
+	}
 
 	for mut child in children {
 		child.draw()
@@ -1667,6 +1674,7 @@ pub fn (mut w Window) png_screenshot(filename string) {
 pub fn (mut w Window) layout_print() {
 	mut d := draw_device_print()
 	w.ui.layout_print = true
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 	w.ui.layout_print = false
 }

@@ -193,10 +193,10 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut cb CheckBox) draw() {
-	cb.draw_device(cb.ui.dd)
+	cb.draw_device(mut cb.ui.dd)
 }
 
-pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
+pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	offset_start(mut cb)
 	$if layout ? {
 		if cb.ui.layout_print {

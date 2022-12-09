@@ -111,11 +111,11 @@ fn (mut t Tooltip) stop(id string) {
 	}
 }
 
-fn (t &Tooltip) draw() {
-	t.draw_device(t.ui.dd)
+fn (mut t Tooltip) draw() {
+	t.draw_device(mut t.ui.dd)
 }
 
-fn (t &Tooltip) draw_device(d DrawDevice) {
+fn (t &Tooltip) draw_device(mut d DrawDevice) {
 	if t.active {
 		// TODO:  add triangle to connect the rectangle
 		// win.ui.dd.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,

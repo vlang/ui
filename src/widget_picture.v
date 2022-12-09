@@ -179,10 +179,10 @@ pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.draw_device(pic.ui.dd)
+	pic.draw_device(mut pic.ui.dd)
 }
 
-fn (mut pic Picture) draw_device(d DrawDevice) {
+fn (mut pic Picture) draw_device(mut d DrawDevice) {
 	$if layout ? {
 		if pic.ui.layout_print {
 			println('Picture(${pic.id}): (${pic.x}, ${pic.y}, ${pic.width}, ${pic.height})')

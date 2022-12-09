@@ -317,10 +317,10 @@ fn (mut tb TextBox) update_line_height() {
 }
 
 pub fn (mut tb TextBox) draw() {
-	tb.draw_device(tb.ui.dd)
+	tb.draw_device(mut tb.ui.dd)
 }
 
-pub fn (mut tb TextBox) draw_device(d DrawDevice) {
+pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	offset_start(mut tb)
 	$if layout ? {
 		if tb.ui.layout_print {

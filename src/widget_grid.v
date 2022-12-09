@@ -76,10 +76,10 @@ pub fn (g &Grid) free() {
 }
 
 fn (mut gv Grid) draw() {
-	gv.draw_device(gv.ui.dd)
+	gv.draw_device(mut gv.ui.dd)
 }
 
-fn (mut gv Grid) draw_device(d DrawDevice) {
+fn (mut gv Grid) draw_device(mut d DrawDevice) {
 	offset_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width

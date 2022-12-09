@@ -29,7 +29,8 @@ pub fn (mut d DrawDeviceBitmap) png_screenshot_window(filename string, mut w Win
 	d.r = libvg.raster(width: w.width, height: w.height)
 	d.r.attach_bitmap()
 	d.r.rectangle_filled(0, 0, w.width, w.height, w.bg_color)
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 	d.r.save_image_as(filename)
 }
 
@@ -124,6 +125,10 @@ pub fn (d &DrawDeviceBitmap) text_width(s string) int {
 
 pub fn (d &DrawDeviceBitmap) text_height(s string) int {
 	return 0
+}
+
+pub fn (d &DrawDeviceBitmap) reset_clipping() {
+	// TODO: implement
 }
 
 pub fn (d &DrawDeviceBitmap) set_clipping(x int, y int, w int, h int) {
