@@ -36,7 +36,7 @@ pub struct CanvasParams {
 	z_index  int
 	text     string
 	draw_fn  DrawFn = unsafe { nil }
-	clipping bool   = true
+	clipping bool
 }
 
 pub fn canvas(c CanvasParams) &Canvas {

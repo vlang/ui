@@ -94,7 +94,7 @@ pub struct CanvasLayoutParams {
 	full_width        int = -1
 	full_height       int = -1
 	z_index           int
-	clipping          bool = true
+	clipping          bool
 	text              string
 	scrollview        bool
 	is_focused        bool
