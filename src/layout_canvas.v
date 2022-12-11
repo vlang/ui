@@ -611,12 +611,9 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	defer {
 		offset_end(mut c)
 	}
-	if c.clipping {
-		cx, cy, cw, ch := d.get_clipping()
-		d.set_clipping(c.x, c.y, c.width, c.height)
-		defer {
-			d.set_clipping(cx, cy, cw, ch)
-		}
+	clipping_state := clipping_start(c, mut d)
+	defer {
+		clipping_end(c, mut d, clipping_state)
 	}
 
 	$if layout ? {

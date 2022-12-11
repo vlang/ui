@@ -59,7 +59,7 @@ pub fn (d &DrawDevicePrint) text_height(s string) int {
 }
 
 pub fn (d &DrawDevicePrint) reset_clipping() {
-    // TODO: implement
+	// TODO: implement
 }
 
 pub fn (d &DrawDevicePrint) set_clipping(x int, y int, w int, h int) {

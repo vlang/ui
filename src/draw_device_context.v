@@ -10,8 +10,8 @@ mut:
 }
 
 pub fn (mut d DrawDeviceContext) reset_clipping() {
-    // no need to actually set scissor_rect, it is reset each frame anyway, but
-    // we do need to reset the clip_rect
+	// no need to actually set scissor_rect, it is reset each frame anyway, but
+	// we do need to reset the clip_rect
 	window_size := gg.window_size()
 	d.clip_rect = [0, 0, window_size.width, window_size.height]!
 }

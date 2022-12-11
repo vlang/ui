@@ -96,17 +96,18 @@ fn (mut c Canvas) draw() {
 }
 
 fn (mut c Canvas) draw_device(mut d DrawDevice) {
+	if c.hidden {
+		return
+	}
 	offset_start(mut c)
 	defer {
 		offset_end(mut c)
 	}
-	if c.clipping {
-		cx, cy, cw, ch := d.get_clipping()
-		d.set_clipping(c.x, c.y, c.width, c.height)
-		defer {
-			d.set_clipping(cx, cy, cw, ch)
-		}
+	clipping_state := clipping_start(c, mut d)
+	defer {
+		clipping_end(c, mut d, clipping_state)
 	}
+
 	if c.draw_fn != unsafe { nil } {
 		if mut c.ui.dd is DrawDeviceContext {
 			c.draw_fn(&c.ui.dd.Context, c)
