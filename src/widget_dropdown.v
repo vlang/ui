@@ -118,7 +118,7 @@ fn (mut dd Dropdown) cleanup() {
 [unsafe]
 pub fn (dd &Dropdown) free() {
 	$if free ? {
-		print('dropdown $dd.id')
+		print('dropdown ${dd.id}')
 	}
 	unsafe {
 		dd.id.free()
@@ -163,7 +163,7 @@ pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 	offset_start(mut dd)
 	$if layout ? {
 		if dd.ui.layout_print {
-			println('DropDown($dd.id): ($dd.x, $dd.y, $dd.width, $dd.height)')
+			println('DropDown(${dd.id}): (${dd.x}, ${dd.y}, ${dd.width}, ${dd.height})')
 		}
 	}
 	dtw := DrawTextWidget(dd)
@@ -260,7 +260,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 
 fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	$if dd_click ? {
-		println('$dd.id click $dd.hidden $dd.is_focused $dd.z_index')
+		println('${dd.id} click ${dd.hidden} ${dd.is_focused} ${dd.z_index}')
 	}
 	if dd.hidden {
 		return
@@ -304,7 +304,7 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, zzz voidptr) {
 	if dd.open {
 		dd.hover_index = int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
 		$if dd_mm_hover ? {
-			println('dd hover $dd.hover_index int(($e.y - $dd.y - $dd.offset_y) / $dd.dropdown_height) - 1 ')
+			println('dd hover ${dd.hover_index} int((${e.y} - ${dd.y} - ${dd.offset_y}) / ${dd.dropdown_height}) - 1 ')
 		}
 	}
 }

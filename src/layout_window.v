@@ -666,7 +666,7 @@ fn window_resize(event gg.Event, ui &UI) {
 	window_size := gg.window_size()
 	window_width, window_height := window_size.width, window_size.height
 	$if resize ? {
-		println('window resize ($window_width ,$window_height)')
+		println('window resize (${window_width} ,${window_height})')
 	}
 	window.resize(window_width, window_height)
 	window.eventbus.publish(events.on_resize, window, unsafe { nil })
@@ -802,7 +802,7 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 
 	if window.dragger.activated {
 		$if drag ? {
-			println('drag child ($e.x, $e.y)')
+			println('drag child (${e.x}, ${e.y})')
 		}
 		drag_child(mut window, e.x, e.y)
 	}
@@ -848,7 +848,7 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	}
 	if window.dragger.activated {
 		$if drag ? {
-			println('drop child ($e.x, $e.y)')
+			println('drop child (${e.x}, ${e.y})')
 		}
 		drag_child_dropped(mut window)
 	}
@@ -1097,7 +1097,7 @@ pub fn (w &Window) child(from ...int) Widget {
 					} else if widget is CanvasLayout {
 						children = widget.children.clone()
 					} else {
-						eprintln('(ui warning) $from uncorrect: $from[$i]=$ind does not correspond to a Layout')
+						eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} does not correspond to a Layout')
 						root := w.root_layout
 						if root is Stack {
 							return root
@@ -1111,7 +1111,7 @@ pub fn (w &Window) child(from ...int) Widget {
 						children = widget.children.clone()
 					}
 				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} out of bounds')
 					root := w.root_layout
 					if root is Stack {
 						return root
@@ -1123,7 +1123,7 @@ pub fn (w &Window) child(from ...int) Widget {
 				} else if ind == -1 {
 					return children[children.len - 1]
 				} else {
-					eprintln('(ui warning) $from uncorrect: $from[$i]=$ind out of bounds')
+					eprintln('(ui warning) ${from} uncorrect: ${from}[${i}]=${ind} out of bounds')
 				}
 			}
 		}
@@ -1148,7 +1148,7 @@ pub fn (w &Window) is_registred(widget &Widget) bool {
 [unsafe]
 pub fn (w &Window) free() {
 	$if free ? {
-		println('window $w.title')
+		println('window ${w.title}')
 	}
 	unsafe {
 		w.ui.free()
@@ -1230,7 +1230,7 @@ fn (w &Window) draw() {}
 
 pub fn (w &Window) unlocked_focus() bool {
 	$if focus ? {
-		println('locked focus = <$w.locked_focus>')
+		println('locked focus = <${w.locked_focus}>')
 	}
 	return w.locked_focus == ''
 }
@@ -1283,7 +1283,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		}
 		$if register ? {
 			if child.id != '' {
-				println('registered $child.id')
+				println('registered ${child.id}')
 			}
 		} $else { // required to avoid confusion with next else
 		}
@@ -1435,7 +1435,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		}
 		$if register ? {
 			if child.id != '' {
-				println('registered $child.id')
+				println('registered ${child.id}')
 			}
 		}
 		for child2 in child.children {
@@ -1453,7 +1453,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		}
 		$if register ? {
 			if child.id != '' {
-				println('registered $child.id')
+				println('registered ${child.id}')
 			}
 		}
 		for child2 in child.children {
@@ -1471,7 +1471,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		}
 		$if register ? {
 			if child.id != '' {
-				println('registered $child.id')
+				println('registered ${child.id}')
 			}
 		}
 		for child2 in child.children {
@@ -1488,7 +1488,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		}
 		$if register ? {
 			if child.id != '' {
-				println('registered $child.id')
+				println('registered ${child.id}')
 			}
 		}
 		if child.layout is Widget {
@@ -1510,7 +1510,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 
 // direct access of registered widget by id
 pub fn (w Window) button(id string) &Button {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Button {
 		return widget
 	} else {
@@ -1519,7 +1519,7 @@ pub fn (w Window) button(id string) &Button {
 }
 
 pub fn (w Window) label(id string) &Label {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Label {
 		return widget
 	} else {
@@ -1528,7 +1528,7 @@ pub fn (w Window) label(id string) &Label {
 }
 
 pub fn (w Window) listbox(id string) &ListBox {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is ListBox {
 		return widget
 	} else {
@@ -1537,7 +1537,7 @@ pub fn (w Window) listbox(id string) &ListBox {
 }
 
 pub fn (w Window) dropdown(id string) &Dropdown {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Dropdown {
 		return widget
 	} else {
@@ -1546,17 +1546,17 @@ pub fn (w Window) dropdown(id string) &Dropdown {
 }
 
 pub fn (w Window) textbox(id string) &TextBox {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is TextBox {
 		return widget
 	} else {
-		panic('widget $id is not a ui.TextBox but a $widget.type_name()')
+		panic('widget ${id} is not a ui.TextBox but a ${widget.type_name()}')
 		return textbox()
 	}
 }
 
 pub fn (w Window) radio(id string) &Radio {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Radio {
 		return widget
 	} else {
@@ -1565,7 +1565,7 @@ pub fn (w Window) radio(id string) &Radio {
 }
 
 pub fn (w Window) slider(id string) &Slider {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Slider {
 		return widget
 	} else {
@@ -1574,7 +1574,7 @@ pub fn (w Window) slider(id string) &Slider {
 }
 
 pub fn (w Window) checkbox(id string) &CheckBox {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is CheckBox {
 		return widget
 	} else {
@@ -1583,7 +1583,7 @@ pub fn (w Window) checkbox(id string) &CheckBox {
 }
 
 pub fn (w Window) stack(id string) &Stack {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Stack {
 		return widget
 	} else {
@@ -1592,7 +1592,7 @@ pub fn (w Window) stack(id string) &Stack {
 }
 
 pub fn (w Window) group(id string) &Group {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Group {
 		return widget
 	} else {
@@ -1601,7 +1601,7 @@ pub fn (w Window) group(id string) &Group {
 }
 
 pub fn (w Window) canvas_layout(id string) &CanvasLayout {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is CanvasLayout {
 		return widget
 	} else {
@@ -1610,7 +1610,7 @@ pub fn (w Window) canvas_layout(id string) &CanvasLayout {
 }
 
 pub fn (w Window) menu(id string) &Menu {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Menu {
 		return widget
 	} else {
@@ -1619,7 +1619,7 @@ pub fn (w Window) menu(id string) &Menu {
 }
 
 pub fn (w Window) rectangle(id string) &Rectangle {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Rectangle {
 		return widget
 	} else {
@@ -1628,7 +1628,7 @@ pub fn (w Window) rectangle(id string) &Rectangle {
 }
 
 pub fn (w Window) subwindow(id string) &SubWindow {
-	widget := w.widgets[id] or { panic('widget with id  $id does not exist') }
+	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is SubWindow {
 		return widget
 	} else {

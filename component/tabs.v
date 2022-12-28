@@ -133,7 +133,7 @@ fn tabs_init(layout &ui.Stack) {
 	mut tabs := tabs_component(layout)
 	tabs.update_pos(layout.ui.window)
 	for id, mut page in tabs.pages {
-		println('tab $id initialized')
+		println('tab ${id} initialized')
 		if id != tabs.active {
 			if mut page is ui.Layout {
 				mut pa := page as ui.Layout
@@ -172,7 +172,7 @@ fn tab_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 }
 
 fn tab_id(id string, i int) string {
-	return '${id}_tab_$i'
+	return '${id}_tab_${i}'
 }
 
 fn (mut tabs TabsComponent) on_top() {
@@ -222,7 +222,7 @@ fn (mut tabs TabsComponent) update_tab_colors() {
 fn (mut tabs TabsComponent) print_styles() {
 	for tab in tabs.tab_bar.children {
 		if tab is ui.CanvasLayout {
-			println('$tab.id $tab.style')
+			println('${tab.id} ${tab.style}')
 		}
 	}
 }

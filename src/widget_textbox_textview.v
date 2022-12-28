@@ -89,8 +89,8 @@ pub fn (tv &TextView) size() (int, int) {
 }
 
 pub fn (tv &TextView) info() {
-	println('cursor: $tv.cursor_pos -> ($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j)')
-	println('sel: ($tv.sel_start, $tv.sel_end) -> ($tv.tlv.sel_start_i, $tv.tlv.sel_start_j, $tv.tlv.sel_end_i, $tv.tlv.sel_end_j)')
+	println('cursor: ${tv.cursor_pos} -> (${tv.tlv.cursor_pos_i}, ${tv.tlv.cursor_pos_j})')
+	println('sel: (${tv.sel_start}, ${tv.sel_end}) -> (${tv.tlv.sel_start_i}, ${tv.tlv.sel_start_j}, ${tv.tlv.sel_end_i}, ${tv.tlv.sel_end_j})')
 }
 
 pub fn (mut tv TextView) is_wordwrap() bool {
@@ -1107,6 +1107,6 @@ pub fn (tv &TextView) test_textwidth(text string) {
 		tmp_bad := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
 		width_bad += tmp_bad
 		tmp2, _ := tv.text_size(ustr[..i + 1].string())
-		println('${ustr[..i + 1].string()} -> $i) ${ustr[i..(i + 1)].string()}  ($tmp vs $tmp_bad)  ($width == $tmp2 vs $width_bad == $tmp2)')
+		println('${ustr[..i + 1].string()} -> ${i}) ${ustr[i..(i + 1)].string()}  (${tmp} vs ${tmp_bad})  (${width} == ${tmp2} vs ${width_bad} == ${tmp2})')
 	}
 }

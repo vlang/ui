@@ -147,7 +147,7 @@ pub fn (mut s Slider) cleanup() {
 [unsafe]
 pub fn (s &Slider) free() {
 	$if free ? {
-		print('slider $s.id')
+		print('slider ${s.id}')
 	}
 	unsafe {
 		s.id.free()
@@ -179,7 +179,7 @@ pub fn (mut s Slider) size() (int, int) {
 
 pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	$if debug_slider ? {
-		println('slider propose_size: ($s.width,$s.height) -> ($w, $h) | s.orientation: $s.orientation')
+		println('slider propose_size: (${s.width},${s.height}) -> (${w}, ${h}) | s.orientation: ${s.orientation}')
 	}
 	// if s.orientation == .horizontal {
 	s.width = w
@@ -200,7 +200,7 @@ fn (mut s Slider) draw_device(d DrawDevice) {
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {
-			println('Slider($s.id): ($s.x, $s.y, $s.width, $s.height)')
+			println('Slider(${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height})')
 		}
 	}
 	// Draw the track

@@ -179,17 +179,17 @@ pub fn text_size_as_int(size f64, win_height int) int {
 }
 
 // This a a generic function
-fn point_inside<T>(w &T, x f64, y f64) bool {
+fn point_inside[T](w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
 }
 
-fn point_inside_adj<T>(w &T, x f64, y f64) bool {
+fn point_inside_adj[T](w &T, x f64, y f64) bool {
 	wx, wy := w.x + w.offset_x, w.y + w.offset_y
 	return x >= wx && x <= wx + w.adj_width && y >= wy && y <= wy + w.adj_height
 }
 
-fn point_inside_visible<T>(w &T, x f64, y f64) bool {
+fn point_inside_visible[T](w &T, x f64, y f64) bool {
 	xx, yy := if has_scrollview(w) { w.scrollview.orig_xy() } else { w.x, w.y }
 	wx, wy := xx + w.offset_x, yy + w.offset_y
 	return x >= wx && x <= wx + math.min(w.adj_width, w.width) && y >= wy

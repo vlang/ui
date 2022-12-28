@@ -41,7 +41,7 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 	} else if size < 0 {
 		percent := f32(-size) / 100
 		new_size := int(percent * parent_free_size)
-		println('relative size: $size $new_size -> $percent * $parent_free_size) ')
+		println('relative size: ${size} ${new_size} -> ${percent} * ${parent_free_size}) ')
 		new_size
 	} else {
 		size

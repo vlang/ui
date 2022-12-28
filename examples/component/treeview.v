@@ -68,5 +68,5 @@ fn main() {
 
 fn treeview_on_click(c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 	selected := c.id
-	println('$selected selected with title: ${tv.titles[selected]}!')
+	println('${selected} selected with title: ${tv.titles[selected]}!')
 }

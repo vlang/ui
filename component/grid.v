@@ -270,10 +270,10 @@ fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	if colbar && rowbar {
 		println('both')
 	} else if colbar {
-		println('colbar $g.sel_j')
+		println('colbar ${g.sel_j}')
 		g.colbar_selected()
 	} else if rowbar {
-		println('rowbar $g.sel_i')
+		println('rowbar ${g.sel_i}')
 	} else if g.is_formula() {
 		g.show_formula()
 	} else {
@@ -337,7 +337,7 @@ fn grid_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 
 fn grid_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	$if grid_key ? {
-		println('key_down $e')
+		println('key_down ${e}')
 	}
 	mut g := grid_component(c)
 	if g.is_selected() {
@@ -411,7 +411,7 @@ fn grid_char(c &ui.CanvasLayout, e ui.KeyEvent) {
 	mut g := grid_component(c)
 	s := utf32_to_str(e.codepoint)
 	$if grid_char ? {
-		println('char $e <$s>')
+		println('char ${e} <${s}>')
 	}
 	if ui.ctrl_key(e.mods) {
 		match e.codepoint {

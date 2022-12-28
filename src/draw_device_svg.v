@@ -93,13 +93,16 @@ pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
 pub fn (d &DrawDeviceSVG) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
 	// println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 	mut s := d.s
-	s.polyline('$x,$y $x2,$y2 $x3,$y3 $x,$y', stroke: hex_color(color), strokewidth: 1)
+	s.polyline('${x},${y} ${x2},${y2} ${x3},${y3} ${x},${y}',
+		stroke: hex_color(color)
+		strokewidth: 1
+	)
 }
 
 pub fn (d &DrawDeviceSVG) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
 	// println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 	mut s := d.s
-	s.polygon('$x,$y $x2,$y2 $x3,$y3 $x,$y', fill: hex_color(color))
+	s.polygon('${x},${y} ${x2},${y2} ${x3},${y3} ${x},${y}', fill: hex_color(color))
 }
 
 pub fn (d &DrawDeviceSVG) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
@@ -136,7 +139,7 @@ pub fn (d &DrawDeviceSVG) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, ra
 }
 
 pub fn (d &DrawDeviceSVG) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {
-	println('$d.id ')
+	println('${d.id} ')
 }
 
 pub fn (d &DrawDeviceSVG) draw_circle_empty(x f32, y f32, r f32, color gx.Color) {

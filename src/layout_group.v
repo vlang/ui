@@ -90,7 +90,7 @@ pub fn (mut g Group) cleanup() {
 [unsafe]
 pub fn (g &Group) free() {
 	$if free ? {
-		print('group $g.id')
+		print('group ${g.id}')
 	}
 	unsafe {
 		g.id.free()
@@ -122,7 +122,7 @@ fn (mut g Group) set_pos(x int, y int) {
 fn (mut g Group) calculate_child_positions() {
 	$if gccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp $g.id size: ($g.width, $g.height)')
+			println('group ccp ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
 	mut widgets := g.children.clone()
@@ -135,7 +135,7 @@ fn (mut g Group) calculate_child_positions() {
 	}
 	$if gccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp2 $g.id size: ($g.width, $g.height)')
+			println('group ccp2 ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
 }
@@ -149,7 +149,7 @@ fn (mut g Group) draw_device(d DrawDevice) {
 	// Border
 	$if gdraw ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id size: ($g.width, $g.height)')
+			println('group ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
 	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
@@ -196,7 +196,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 		mut child_width, mut child_height := child.size()
 
 		$if ui_group ? {
-			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
+			println('${i} ${child.type_name()} => child_width, child_height: ${child_width}, ${child_height}')
 		}
 
 		h += child_height // height of vertical stack means adding children's height
@@ -208,7 +208,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	g.adj_width = w
 	g.adj_height = h
 	$if adj_size_group ? {
-		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
+		println('group ${g.id} adj size: (${g.adj_width}, ${g.adj_height})')
 	}
 }
 
@@ -222,7 +222,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 	// println('g prop size: ($w, $h)')
 	$if gps ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id propose size: ($g.width, $g.height)')
+			println('group ${g.id} propose size: (${g.width}, ${g.height})')
 		}
 	}
 	return g.width, g.height

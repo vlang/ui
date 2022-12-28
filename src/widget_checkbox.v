@@ -108,7 +108,7 @@ pub fn (mut cb CheckBox) cleanup() {
 [unsafe]
 pub fn (cb &CheckBox) free() {
 	$if free ? {
-		print('checkbox $cb.id')
+		print('checkbox ${cb.id}')
 	}
 	unsafe { free(cb) }
 	$if free ? {
@@ -126,7 +126,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if cb_keydown ? {
-		println('cb_keydown: $cb.id  -> $cb.hidden $cb.is_focused')
+		println('cb_keydown: ${cb.id}  -> ${cb.hidden} ${cb.is_focused}')
 	}
 	if cb.hidden {
 		return
@@ -200,7 +200,7 @@ pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	offset_start(mut cb)
 	$if layout ? {
 		if cb.ui.layout_print {
-			println('CheckBox($cb.id): ($cb.x, $cb.y, $cb.width, $cb.height)')
+			println('CheckBox(${cb.id}): (${cb.x}, ${cb.y}, ${cb.width}, ${cb.height})')
 		}
 	}
 	// if cb.style.bg_color != no_color {

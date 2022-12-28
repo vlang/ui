@@ -58,7 +58,7 @@ fn btn_click(b &ui.Button) {
 	} else {
 		'dlb2'
 	})
-	res := 'result(s) : $dlb.values()'
+	res := 'result(s) : ${dlb.values()}'
 	println(res)
 	b.ui.window.message(res)
 }
