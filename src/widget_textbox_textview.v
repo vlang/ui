@@ -818,6 +818,7 @@ pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	}
 	if tv.tlv.to_j + cfg.nb_lines > tv.tlv.lines.len {
 		tv.scroll_y_to_end()
+		tv.tb.ui.refresh()
 	}
 }
 

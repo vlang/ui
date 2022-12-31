@@ -1060,10 +1060,7 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 pub fn (mut w Window) refresh() {
-	w.ui.gg.refresh_ui()
-	$if macos {
-		C.darwin_window_refresh()
-	}
+	w.ui.refresh()
 }
 
 pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {

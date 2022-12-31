@@ -50,6 +50,13 @@ mut:
 	font_paths  map[string]string
 }
 
+pub fn (mut gui UI) refresh() {
+	gui.gg.refresh_ui()
+	$if macos {
+		C.darwin_window_refresh()
+	}
+}
+
 fn (mut gui UI) idle_loop() {
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
