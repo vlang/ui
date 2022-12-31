@@ -250,11 +250,11 @@ pub fn window(cfg WindowParams) &Window {
 		frame_fn: if cfg.immediate {
 			frame_immediate
 		} else if cfg.native_rendering {
-			native_frame
+			frame_native
 		} else {
 			frame
 		}
-		// native_frame_fn: native_frame
+		// native_frame_fn: frame_native
 		event_fn: on_event
 		user_data: window
 		font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
@@ -383,6 +383,9 @@ fn gg_cleanup(mut window Window) {
 }
 
 fn frame(mut w Window) {
+	$if trace_ui_frame ? {
+		eprintln('> ${@FN} w.ui.gg.frame: ${w.ui.gg.frame}')
+	}
 	w.ui.gg.begin()
 
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
@@ -418,6 +421,9 @@ fn frame(mut w Window) {
 }
 
 fn frame_immediate(mut w Window) {
+	$if trace_ui_frame ? {
+		eprintln('> ${@FN} w.ui.gg.frame: ${w.ui.gg.frame}')
+	}
 	w.ui.gg.begin()
 
 	for mut child in w.children_immediate {
@@ -448,8 +454,12 @@ fn frame_immediate(mut w Window) {
 	w.ui.gg.end()
 }
 
-fn native_frame(mut w Window) {
-	// println('ui.native_frame()')
+fn frame_native(mut w Window) {
+	$if trace_ui_frame ? {
+		eprintln('> ${@FN}')
+	}
+
+	// println('ui.frame_native()')
 	// C.printf(c'w=%p\n', w)
 	// println(w)
 	/*
@@ -461,13 +471,14 @@ fn native_frame(mut w Window) {
 		}
 	}
 	*/
+
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 	// if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for mut child in children {
 		child.draw()
 	}
-	// println('ui.native_frame() done')
+	// println('ui.frame_native() done')
 	//}
 	// w.ui.needs_refresh = false
 }
