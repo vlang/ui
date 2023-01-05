@@ -1517,131 +1517,135 @@ pub fn (mut w Window) register_child(child_ Widget) {
 }
 
 // direct access of registered widget by id
-pub fn (w Window) button(id string) &Button {
+pub fn (w &Window) button(id string) &Button {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Button {
 		return widget
 	} else {
-		return button()
+		panic_widget_type_mismatch(id, 'ui.Button', widget.type_name())
 	}
 }
 
-pub fn (w Window) label(id string) &Label {
+pub fn (w &Window) label(id string) &Label {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Label {
 		return widget
 	} else {
-		return label()
+		panic_widget_type_mismatch(id, 'ui.Label', widget.type_name())
 	}
 }
 
-pub fn (w Window) listbox(id string) &ListBox {
+pub fn (w &Window) listbox(id string) &ListBox {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is ListBox {
 		return widget
 	} else {
-		return listbox()
+		panic_widget_type_mismatch(id, 'ui.ListBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) dropdown(id string) &Dropdown {
+pub fn (w &Window) dropdown(id string) &Dropdown {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Dropdown {
 		return widget
 	} else {
-		return dropdown()
+		panic_widget_type_mismatch(id, 'ui.Dropdown', widget.type_name())
 	}
 }
 
-pub fn (w Window) textbox(id string) &TextBox {
+pub fn (w &Window) textbox(id string) &TextBox {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is TextBox {
 		return widget
 	} else {
-		panic('widget ${id} is not a ui.TextBox but a ${widget.type_name()}')
-		return textbox()
+		panic_widget_type_mismatch(id, 'ui.TextBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) radio(id string) &Radio {
+pub fn (w &Window) radio(id string) &Radio {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Radio {
 		return widget
 	} else {
-		return radio()
+		panic_widget_type_mismatch(id, 'ui.Radio', widget.type_name())
 	}
 }
 
-pub fn (w Window) slider(id string) &Slider {
+pub fn (w &Window) slider(id string) &Slider {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Slider {
 		return widget
 	} else {
-		return slider()
+		panic_widget_type_mismatch(id, 'ui.Slider', widget.type_name())
 	}
 }
 
-pub fn (w Window) checkbox(id string) &CheckBox {
+pub fn (w &Window) checkbox(id string) &CheckBox {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is CheckBox {
 		return widget
 	} else {
-		return checkbox()
+		panic_widget_type_mismatch(id, 'ui.CheckBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) stack(id string) &Stack {
+pub fn (w &Window) stack(id string) &Stack {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Stack {
 		return widget
 	} else {
-		return stack()
+		panic_widget_type_mismatch(id, 'ui.Stack', widget.type_name())
 	}
 }
 
-pub fn (w Window) group(id string) &Group {
+pub fn (w &Window) group(id string) &Group {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Group {
 		return widget
 	} else {
-		return group()
+		panic_widget_type_mismatch(id, 'ui.Group', widget.type_name())
 	}
 }
 
-pub fn (w Window) canvas_layout(id string) &CanvasLayout {
+pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is CanvasLayout {
 		return widget
 	} else {
-		return canvas_layout()
+		panic_widget_type_mismatch(id, 'ui.CanvasLayout', widget.type_name())
 	}
 }
 
-pub fn (w Window) menu(id string) &Menu {
+pub fn (w &Window) menu(id string) &Menu {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Menu {
 		return widget
 	} else {
-		return menu()
+		panic_widget_type_mismatch(id, 'ui.Menu', widget.type_name())
 	}
 }
 
-pub fn (w Window) rectangle(id string) &Rectangle {
+pub fn (w &Window) rectangle(id string) &Rectangle {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is Rectangle {
 		return widget
 	} else {
-		return rectangle()
+		panic_widget_type_mismatch(id, 'ui.Rectangle', widget.type_name())
 	}
 }
 
-pub fn (w Window) subwindow(id string) &SubWindow {
+pub fn (w &Window) subwindow(id string) &SubWindow {
 	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
 	if widget is SubWindow {
 		return widget
 	} else {
-		return subwindow()
+		panic_widget_type_mismatch(id, 'ui.SubWindow', widget.type_name())
 	}
+}
+
+[noreturn]
+fn panic_widget_type_mismatch(id string, expected_type string, actual_type string) {
+	panic('widget ${id} is not a ${expected_type} but a ${actual_type}')
 }
 
 pub fn (w &Window) run() {
