@@ -1,6 +1,7 @@
 # Ignore build binaries
 *.so
 *.dll
+*.dylib
 *.exe
 *.ilk
 *.pdb
@@ -9,6 +10,7 @@
 fmt_verify_all
 
 # Ignore editor files
+.idea
 *.code-workspace
 .lite_workspace.lua
 
