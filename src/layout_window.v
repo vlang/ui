@@ -1516,15 +1516,15 @@ pub fn (mut w Window) register_child(child_ Widget) {
 	}
 }
 
-// get_widget_by_id_or_panic returns a widget with a given `id` or does panic if a widget was not found
-// or its type is mismatched with generic.
+// get_widget_by_id_or_panic returns the widget with the given id and type,
+// or does panic if the widget is not found or the widget with the given id is of a different type.
 // Example: w.get_widget_by_id_or_panic[ui.Button]('send_button')
 pub fn (w &Window) get_widget_by_id_or_panic[T](id string) &T {
 	return w.get_widget_by_id[T](id) or { panic(err) }
 }
 
-// get_widget_by_id returns a widget with a given `id` or an error if a widget was not found
-// or its type is mismatched with generic.
+// get_widget_by_id returns the widget with the given id and type,
+// or an error if the widget is not found or the widget with the given id is of a different type.
 // Example: get_widget_by_id[ui.Button]('send_button') or { create_button('send_button') }
 pub fn (w &Window) get_widget_by_id[T](id string) !&T {
 	widget := w.widgets[id] or { return error('Widget with id ${id} does not exist') }
