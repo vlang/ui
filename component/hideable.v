@@ -56,7 +56,8 @@ pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
 }
 
 pub fn hideable_component_from_id(w ui.Window, id string) &HideableComponent {
-	return hideable_component(w.stack(ui.component_id(id, 'layout')))
+	return hideable_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 fn hideable_init(layout &ui.Stack) {

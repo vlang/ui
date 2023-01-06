@@ -239,7 +239,8 @@ pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
 }
 
 pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
-	return treeview_component(w.stack(ui.component_id(id, 'layout')))
+	return treeview_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 // callbacks
@@ -281,7 +282,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 		if tv.incr_mode && !tv.root_created[c.id] {
 			tv.root_created[c.id] = true // no more need to recreate it once created
 			mut t := tv.root_trees[c.id]
-			mut l := c.ui.window.stack(tv.views[c.id])
+			mut l := c.ui.window.get_widget_by_id_or_panic[ui.Stack](tv.views[c.id])
 			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
 			// needs init for children
 			is_swp, swp := ui.Widget(l).subwindow_parent()
@@ -307,7 +308,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	if tv.sel_id != '' {
 		c.style.bg_color = tv.bg_sel_color
 		if tv.old_sel_id != '' && tv.old_sel_id != tv.sel_id {
-			mut old_sel_c := c.ui.window.canvas_layout(tv.old_sel_id)
+			mut old_sel_c := c.ui.window.get_widget_by_id_or_panic[ui.CanvasLayout](tv.old_sel_id)
 			old_sel_c.style.bg_color = tv.bg_color
 		}
 	}

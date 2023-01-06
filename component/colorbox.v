@@ -167,7 +167,8 @@ pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
 }
 
 pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {
-	return colorbox_component(w.stack(ui.component_id(id, 'layout')))
+	return colorbox_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 // equivalent of init method for widget

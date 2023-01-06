@@ -76,7 +76,8 @@ pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
 }
 
 pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxComponent {
-	return doublelistbox_component(w.stack(ui.component_id(id, 'layout')))
+	return doublelistbox_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 // callback
