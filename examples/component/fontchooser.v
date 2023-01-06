@@ -24,8 +24,8 @@ fn main() {
 		width: 800
 		height: 600
 		on_init: fn (win &ui.Window) {
-			mut btn := win.button('txt_color')
-			tb := win.textbox('tb')
+			mut btn := win.get_widget_by_id_or_panic[ui.Button]('txt_color')
+			tb := win.get_widget_by_id_or_panic[ui.TextBox]('tb')
 			(*btn.bg_color) = tb.text_styles.current.color
 		}
 		children: [
@@ -47,7 +47,7 @@ fn main() {
 								// bg_color: &tb.text_styles.current.color
 								// DO NOT REMOVE: more general alternative with callback
 								on_changed: fn (cbc &uic.ColorButtonComponent) {
-									mut tv := cbc.widget.ui.window.textbox('tb').tv
+									mut tv := cbc.widget.ui.window.get_widget_by_id_or_panic[ui.TextBox]('tb').tv
 									tv.update_style(color: cbc.bg_color)
 								}
 							),

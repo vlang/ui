@@ -26,8 +26,8 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	// add shortcut
 	mut sc := ui.Shortcutable(g)
 	sc.add_shortcut('ctrl + o', fn (g &GridComponent) {
-		l := g.layout.ui.window.stack(ui.component_id(ui.component_parent_id(g.id), 'hideable',
-			'layout'))
+		l := g.layout.ui.window.get_widget_by_id_or_panic[ui.Stack](ui.component_id(ui.component_parent_id(g.id),
+			'hideable', 'layout'))
 		mut h := hideable_component(l)
 		h.toggle()
 	})

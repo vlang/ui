@@ -239,7 +239,8 @@ pub fn grid_component(w ui.ComponentChild) &GridComponent {
 }
 
 pub fn grid_component_from_id(w ui.Window, id string) &GridComponent {
-	return grid_component(w.canvas_layout(ui.component_id(id, 'layout')))
+	return grid_component(w.get_widget_by_id_or_panic[ui.CanvasLayout](ui.component_id(id,
+		'layout')))
 }
 
 fn grid_init(mut layout ui.CanvasLayout) {
@@ -652,7 +653,7 @@ fn (mut g GridComponent) show_selected() {
 		.tb_string {
 			id := ui.component_id(g.id, 'tb_sel')
 			// println('tb_sel $id selected')
-			mut tb := g.layout.ui.window.textbox(id)
+			mut tb := g.layout.ui.window.get_widget_by_id_or_panic[ui.TextBox](id)
 			tb.set_visible(true)
 			// println('tb $tb.id')
 			tb.z_index = 1000
@@ -671,7 +672,7 @@ fn (mut g GridComponent) show_selected() {
 		.dd_factor {
 			id := ui.component_id(g.id, 'dd_sel' + '_' + name)
 			// println('dd_sel $id selected $g.sel_i, $g.sel_j')
-			mut dd := g.layout.ui.window.dropdown(id)
+			mut dd := g.layout.ui.window.get_widget_by_id_or_panic[ui.Dropdown](id)
 			dd.set_visible(true)
 			dd.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
@@ -687,7 +688,7 @@ fn (mut g GridComponent) show_selected() {
 		.cb_bool {
 			id := ui.component_id(g.id, 'cb_sel')
 			// println('cb_sel $id selected')
-			mut cb := g.layout.ui.window.checkbox(id)
+			mut cb := g.layout.ui.window.get_widget_by_id_or_panic[ui.CheckBox](id)
 			cb.set_visible(true)
 			// println('cb $cb.id')
 			cb.z_index = 1000

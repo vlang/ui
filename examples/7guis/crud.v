@@ -116,10 +116,10 @@ fn main() {
 
 fn (mut app App) win_init(win &ui.Window) {
 	// init app fields
-	app.lb_people = win.listbox('lb_people')
-	app.tb_filter = win.textbox('tb_filter')
-	app.tb_name = win.textbox('tb_name')
-	app.tb_surname = win.textbox('tb_surname')
+	app.lb_people = win.get_widget_by_id_or_panic[ui.ListBox]('lb_people')
+	app.tb_filter = win.get_widget_by_id_or_panic[ui.TextBox]('tb_filter')
+	app.tb_name = win.get_widget_by_id_or_panic[ui.TextBox]('tb_name')
+	app.tb_surname = win.get_widget_by_id_or_panic[ui.TextBox]('tb_surname')
 	// init listbox content
 	app.update_listbox()
 }

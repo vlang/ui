@@ -185,7 +185,8 @@ pub fn colorsliders_component(w ui.ComponentChild) &ColorSlidersComponent {
 }
 
 pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersComponent {
-	return colorsliders_component(w.stack(ui.component_id(id, 'layout')))
+	return colorsliders_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 pub fn (cs &ColorSlidersComponent) color() gx.Color {

@@ -50,11 +50,12 @@ pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
 }
 
 pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {
-	return fontchooser_component(w.stack(ui.component_id(id, 'layout')))
+	return fontchooser_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
-	return w.listbox(component.fontchooser_lb_id)
+	return w.get_widget_by_id_or_panic[ui.ListBox](component.fontchooser_lb_id)
 }
 
 fn fontchooser_init(mut layout ui.Stack) {
@@ -71,7 +72,7 @@ fn fontchooser_add_fonts_items(mut lb ui.ListBox) {
 }
 
 pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
-	fc_layout := w.stack(component.fontchooser_row_id)
+	fc_layout := w.get_widget_by_id_or_panic[ui.Stack](component.fontchooser_row_id)
 	mut fc := fontchooser_component(fc_layout)
 	fc.dtw = dtw
 }

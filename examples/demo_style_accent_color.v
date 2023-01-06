@@ -52,7 +52,7 @@ fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 	colors := gui.style_colors
 	// show the 4 accent colors
 	for i in 0 .. 4 {
-		mut rect := gui.window.rectangle('rect${i}')
+		mut rect := gui.window.get_widget_by_id_or_panic[ui.Rectangle]('rect${i}')
 		rect.update_style_params(color: colors[i])
 	}
 }
