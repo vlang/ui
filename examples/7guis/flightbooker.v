@@ -61,10 +61,10 @@ fn main() {
 }
 
 fn (mut app App) win_init(win &ui.Window) {
-	app.dd_flight = win.dropdown('dd_flight')
-	app.tb_oneway = win.textbox('tb_oneway')
-	app.tb_return = win.textbox('tb_return')
-	app.btn_book = win.button('btn_book')
+	app.dd_flight = win.get_widget_by_id_or_panic[ui.Dropdown]('dd_flight')
+	app.tb_oneway = win.get_widget_by_id_or_panic[ui.TextBox]('tb_oneway')
+	app.tb_return = win.get_widget_by_id_or_panic[ui.TextBox]('tb_return')
+	app.btn_book = win.get_widget_by_id_or_panic[ui.Button]('btn_book')
 	// init dates
 	t := time.now()
 	date := '${t.day}.${t.month}.${t.year}'

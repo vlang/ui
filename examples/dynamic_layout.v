@@ -67,7 +67,7 @@ fn btn_switch_click(btn &ui.Button) {
 	// if mut s is ui.Stack {
 	// 	s.move(from: 0, to: -1)
 	// }
-	mut s := window.stack('row')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('row')
 	s.move(from: 0, to: -1)
 }
 
@@ -88,7 +88,7 @@ fn btn_migrate_click(btn &ui.Button) {
 
 fn (mut app App) btn_add_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	app.cpt++
 	s.add(
 		child: ui.button(text: 'Button ${app.cpt}')
@@ -100,7 +100,7 @@ fn (mut app App) btn_add_click(btn &ui.Button) {
 
 fn (mut app App) btn_add_two_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	app.cpt++
 	s.add(
 		children: [ui.button(text: 'Button ${app.cpt++}'), ui.button(text: 'Button ${app.cpt}')]
@@ -112,13 +112,13 @@ fn (mut app App) btn_add_two_click(btn &ui.Button) {
 
 fn btn_remove_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	s.remove(at: -1)
 }
 
 fn btn_show_hide_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	state := btn.text == 'show'
 	s.set_children_visible(state, 0)
 	mut b := unsafe { btn }
@@ -127,7 +127,7 @@ fn btn_show_hide_click(btn &ui.Button) {
 
 fn btn_show_activate_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	state := btn.text == 'deactivate'
 	if state {
 		s.set_children_depth(ui.z_index_hidden, 0)
@@ -141,7 +141,7 @@ fn btn_show_activate_click(btn &ui.Button) {
 
 fn btn_remove_second_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	if s.get_children().len > 1 {
 		s.remove(at: 1)
 	} else {
@@ -151,7 +151,7 @@ fn btn_remove_second_click(btn &ui.Button) {
 
 fn btn_move_click(btn &ui.Button) {
 	window := btn.ui.window
-	mut s := window.stack('col2')
+	mut s := window.get_widget_by_id_or_panic[ui.Stack]('col2')
 	s.move(
 		from: 0
 		to: -1

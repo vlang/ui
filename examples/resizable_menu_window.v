@@ -125,7 +125,7 @@ fn menu_click(item &ui.MenuItem) {
 
 fn on_switch_click(switcher &ui.Switch) {
 	window := ui.Widget(switcher).window()
-	mut mb := window.menu('menubar')
+	mut mb := window.get_widget_by_id_or_panic[ui.Menu]('menubar')
 	mb.fixed_width = !mb.fixed_width
 	window.update_layout()
 }

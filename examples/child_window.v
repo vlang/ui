@@ -49,6 +49,10 @@ fn (mut app App) btn_click(btn &ui.Button) {
 }
 
 fn (mut app App) btn_greet_click(btn &ui.Button) {
-	genre := if btn.ui.window.checkbox('cb_genre').checked { 'miss' } else { 'mister' }
+	genre := if btn.ui.window.get_widget_by_id_or_panic[ui.CheckBox]('cb_genre').checked {
+		'miss'
+	} else {
+		'mister'
+	}
 	ui.message_box('Hello, ${genre} ${app.name}!')
 }

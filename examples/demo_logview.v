@@ -48,6 +48,6 @@ fn (mut app App) wait_complete(mut tb ui.TextBox) {
 }
 
 fn (mut app App) btn_connect(btn &ui.Button) {
-	mut tb := app.window.textbox('tb')
+	mut tb := app.window.get_widget_by_id_or_panic[ui.TextBox]('tb')
 	spawn app.wait_complete(mut tb)
 }
