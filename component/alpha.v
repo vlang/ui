@@ -81,7 +81,7 @@ pub fn alpha_component(w ui.ComponentChild) &AlphaComponent {
 }
 
 pub fn alpha_component_from_id(w ui.Window, id string) &AlphaComponent {
-	return alpha_component(w.stack(ui.component_id(id, 'layout')))
+	return alpha_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (mut ac AlphaComponent) set_alpha(alpha int) {

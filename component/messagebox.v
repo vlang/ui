@@ -63,7 +63,8 @@ pub fn messagebox_component(w ui.ComponentChild) &MessageBoxComponent {
 }
 
 pub fn messagebox_component_from_id(w ui.Window, id string) &MessageBoxComponent {
-	return messagebox_component(w.stack(ui.component_id(id, 'layout')))
+	return messagebox_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
+		'layout')))
 }
 
 fn messagebox_ok_click(b &ui.Button) {

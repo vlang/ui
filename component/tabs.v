@@ -121,7 +121,7 @@ pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
 }
 
 pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
-	return tabs_component(w.stack(ui.component_id(id, 'layout')))
+	return tabs_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 // fn tabs_build(layout &ui.Stack, win &ui.Window) {
@@ -245,7 +245,7 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 	for i, _ in tabs.tab_bar.children {
 		// println("$tabs.id ${tab_id(tabs.id, i) + "_label"}")
 		lab_id := tab_id(tabs.id, i) + '_label'
-		mut lab := win.label(lab_id)
+		mut lab := win.get_widget_by_id_or_panic[ui.Label](lab_id)
 		lab.ui = win.ui
 		mut dtw := ui.DrawTextWidget(lab)
 		w, h := dtw.text_size(lab.text)
@@ -256,7 +256,7 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		// println("$dx, $dy $lab.x $lab.y")
 		lab.set_pos(dx, dy)
 		// println("$dx, $dy $lab.x $lab.y")
-		mut c := win.canvas_layout(tab_id(tabs.id, i))
+		mut c := win.get_widget_by_id_or_panic[ui.CanvasLayout](tab_id(tabs.id, i))
 		c.set_child_relative_pos(lab_id, dx, dy)
 	}
 }

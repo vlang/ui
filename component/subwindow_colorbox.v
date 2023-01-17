@@ -27,8 +27,8 @@ pub enum ShowMode {
 
 // to connect the colorbox to gx.Color reference
 pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, show ShowMode) {
-	mut s := w.subwindow(component.colorbox_subwindow_id)
-	cb_layout := w.stack(component.colorbox_subwindow_layout_id)
+	mut s := w.get_widget_by_id_or_panic[ui.SubWindow](component.colorbox_subwindow_id)
+	cb_layout := w.get_widget_by_id_or_panic[ui.Stack](component.colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)
 	if unsafe { col != 0 } {
 		cb.connect(col)

@@ -262,7 +262,7 @@ fn (mut g GridComponent) show_formula() {
 	g.cur_i, g.cur_j = g.sel_i, g.sel_j
 	id := ui.component_id(g.id, 'tb_formula')
 	// println('tb_sel $id selected')
-	mut tb := g.layout.ui.window.textbox(id)
+	mut tb := g.layout.ui.window.get_widget_by_id_or_panic[ui.TextBox](id)
 	tb.set_visible(true)
 	// println('tb $tb.id')
 	tb.z_index = 1000

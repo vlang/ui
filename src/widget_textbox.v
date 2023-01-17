@@ -594,6 +594,40 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// println("right: $tb.cursor_posj")
 			}
+			.home {
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = 0
+						tb.ui.show_cursor = false
+					}
+					tb.sel_end = tb.cursor_pos
+					tb.cursor_pos = 0
+					tb.check_cursor_pos()
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true
+					tb.cursor_pos = 0
+					tb.check_cursor_pos()
+				}
+			}
+			.end {
+				if shift_key(e.mods) {
+					if !tb.is_sel_active() {
+						tb.sel_active = true
+						tb.sel_start = tb.cursor_pos
+						tb.ui.show_cursor = false
+					}
+					tb.cursor_pos = text.len
+					tb.check_cursor_pos()
+					tb.sel_end = tb.cursor_pos
+				} else {
+					tb.cancel_selection()
+					tb.ui.show_cursor = true
+					tb.cursor_pos = text.len
+					tb.check_cursor_pos()
+				}
+			}
 			.tab {
 				// tb.ui.show_cursor = false
 				/*

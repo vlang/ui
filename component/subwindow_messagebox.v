@@ -27,7 +27,7 @@ pub fn messagebox_subwindow_add(mut w ui.Window, p MessageBoxSubWindowParams) {
 				width: p.width
 				height: p.height
 				on_click: fn (hc &MessageBoxComponent) {
-					mut sw := hc.layout.ui.window.subwindow(ui.component_parent_id(hc.id))
+					mut sw := hc.layout.ui.window.get_widget_by_id_or_panic[ui.SubWindow](ui.component_parent_id(hc.id))
 					sw.set_visible(sw.hidden)
 				}
 			)

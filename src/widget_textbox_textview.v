@@ -276,11 +276,11 @@ pub fn (mut tv TextView) draw_device_visible_line(d DrawDevice, j int, y int, te
 		tv.refresh_visible_lines()
 		tv.visible_lines()
 	}
-	imin, imax := tv.tlv.from_i[j], tv.tlv.to_i[j]
+	imin, imax := tv.tlv.from_i[j] or { 0 }, tv.tlv.to_i[j] or { tv.tlv.to_i.len - 1 }
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string())
+	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr#[0..imin].string()),
+		y, ustr#[imin..imax].string())
 }
 
 fn (mut tv TextView) draw_device_selection(d DrawDevice) {
@@ -323,7 +323,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-		
+
 		color: gx.gray
 	)
 }
@@ -818,6 +818,7 @@ pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	}
 	if tv.tlv.to_j + cfg.nb_lines > tv.tlv.lines.len {
 		tv.scroll_y_to_end()
+		tv.tb.ui.refresh()
 	}
 }
 

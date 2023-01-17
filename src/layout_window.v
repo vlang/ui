@@ -239,7 +239,6 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
-
 	mut dd := DrawDeviceContext{
 		Context: gg.new_context(
 			width: width
@@ -252,11 +251,11 @@ pub fn window(cfg WindowParams) &Window {
 			frame_fn: if cfg.immediate {
 				frame_immediate
 			} else if cfg.native_rendering {
-				native_frame
+				frame_native
 			} else {
 				frame
 			}
-			// native_frame_fn: native_frame
+			// native_frame_fn: frame_native
 			event_fn: on_event
 			user_data: window
 			font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
@@ -388,6 +387,9 @@ fn gg_cleanup(mut window Window) {
 
 fn frame(mut w Window) {
 	if mut w.ui.dd is DrawDeviceContext {
+	    $if trace_ui_frame ? {
+		    eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+	    }
 		w.ui.dd.begin()
 	}
 
@@ -434,6 +436,9 @@ fn frame(mut w Window) {
 
 fn frame_immediate(mut w Window) {
 	if mut w.ui.dd is DrawDeviceContext {
+	    $if trace_ui_frame ? {
+		    eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+	    }
 		w.ui.dd.begin()
 	}
 
@@ -467,8 +472,12 @@ fn frame_immediate(mut w Window) {
 	}
 }
 
-fn native_frame(mut w Window) {
-	// println('ui.native_frame()')
+fn frame_native(mut w Window) {
+	$if trace_ui_frame ? {
+		eprintln('> ${@FN}')
+	}
+
+	// println('ui.frame_native()')
 	// C.printf(c'w=%p\n', w)
 	// println(w)
 	/*
@@ -480,13 +489,14 @@ fn native_frame(mut w Window) {
 		}
 	}
 	*/
+
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 	// if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for mut child in children {
 		child.draw()
 	}
-	// println('ui.native_frame() done')
+	// println('ui.frame_native() done')
 	//}
 	// w.ui.needs_refresh = false
 }
@@ -1077,12 +1087,7 @@ pub fn (mut w Window) set_title(title string) {
 }
 
 pub fn (mut w Window) refresh() {
-	if mut w.ui.dd is DrawDeviceContext {
-		w.ui.dd.refresh_ui()
-	}
-	$if macos {
-		C.darwin_window_refresh()
-	}
+	w.ui.refresh()
 }
 
 pub fn (w &Window) mouse_inside(x int, y int, width int, height int) bool {
@@ -1529,132 +1534,184 @@ pub fn (mut w Window) register_child(child_ Widget) {
 	}
 }
 
+// get_widget_by_id_or_panic returns the widget with the given id and type,
+// or does panic if the widget is not found or the widget with the given id is of a different type.
+// Example: w.get_widget_by_id_or_panic[ui.Button]('send_button')
+pub fn (w &Window) get_widget_by_id_or_panic[T](id string) &T {
+	return w.get_widget_by_id[T](id) or { panic(err) }
+}
+
+// get_widget_by_id returns the widget with the given id and type,
+// or an error if the widget is not found or the widget with the given id is of a different type.
+// Example: get_widget_by_id[ui.Button]('send_button') or { create_button('send_button') }
+pub fn (w &Window) get_widget_by_id[T](id string) !&T {
+	widget := w.widgets[id] or { return error('Widget with id `${id}` does not exist') }
+
+	if widget is T {
+		return widget
+	} else {
+		return error('Widget with id `${id}` is not a ${T.name} but a ${typeof(widget).name}')
+	}
+}
+
 // direct access of registered widget by id
-pub fn (w Window) button(id string) &Button {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) button(id string) &Button {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Button {
 		return widget
 	} else {
-		return button()
+		panic_widget_type_mismatch(id, 'ui.Button', widget.type_name())
 	}
 }
 
-pub fn (w Window) label(id string) &Label {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) label(id string) &Label {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Label {
 		return widget
 	} else {
-		return label()
+		panic_widget_type_mismatch(id, 'ui.Label', widget.type_name())
 	}
 }
 
-pub fn (w Window) listbox(id string) &ListBox {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) listbox(id string) &ListBox {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is ListBox {
 		return widget
 	} else {
-		return listbox()
+		panic_widget_type_mismatch(id, 'ui.ListBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) dropdown(id string) &Dropdown {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) dropdown(id string) &Dropdown {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Dropdown {
 		return widget
 	} else {
-		return dropdown()
+		panic_widget_type_mismatch(id, 'ui.Dropdown', widget.type_name())
 	}
 }
 
-pub fn (w Window) textbox(id string) &TextBox {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) textbox(id string) &TextBox {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is TextBox {
 		return widget
 	} else {
-		panic('widget ${id} is not a ui.TextBox but a ${widget.type_name()}')
-		return textbox()
+		panic_widget_type_mismatch(id, 'ui.TextBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) radio(id string) &Radio {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) radio(id string) &Radio {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Radio {
 		return widget
 	} else {
-		return radio()
+		panic_widget_type_mismatch(id, 'ui.Radio', widget.type_name())
 	}
 }
 
-pub fn (w Window) slider(id string) &Slider {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) slider(id string) &Slider {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Slider {
 		return widget
 	} else {
-		return slider()
+		panic_widget_type_mismatch(id, 'ui.Slider', widget.type_name())
 	}
 }
 
-pub fn (w Window) checkbox(id string) &CheckBox {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) checkbox(id string) &CheckBox {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CheckBox {
 		return widget
 	} else {
-		return checkbox()
+		panic_widget_type_mismatch(id, 'ui.CheckBox', widget.type_name())
 	}
 }
 
-pub fn (w Window) stack(id string) &Stack {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) stack(id string) &Stack {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Stack {
 		return widget
 	} else {
-		return stack()
+		panic_widget_type_mismatch(id, 'ui.Stack', widget.type_name())
 	}
 }
 
-pub fn (w Window) group(id string) &Group {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) group(id string) &Group {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Group {
 		return widget
 	} else {
-		return group()
+		panic_widget_type_mismatch(id, 'ui.Group', widget.type_name())
 	}
 }
 
-pub fn (w Window) canvas_layout(id string) &CanvasLayout {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CanvasLayout {
 		return widget
 	} else {
-		return canvas_layout()
+		panic_widget_type_mismatch(id, 'ui.CanvasLayout', widget.type_name())
 	}
 }
 
-pub fn (w Window) menu(id string) &Menu {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) menu(id string) &Menu {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Menu {
 		return widget
 	} else {
-		return menu()
+		panic_widget_type_mismatch(id, 'ui.Menu', widget.type_name())
 	}
 }
 
-pub fn (w Window) rectangle(id string) &Rectangle {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) rectangle(id string) &Rectangle {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Rectangle {
 		return widget
 	} else {
-		return rectangle()
+		panic_widget_type_mismatch(id, 'ui.Rectangle', widget.type_name())
 	}
 }
 
-pub fn (w Window) subwindow(id string) &SubWindow {
-	widget := w.widgets[id] or { panic('widget with id  ${id} does not exist') }
+[deprecated: 'use get_widget_by_id_or_panic() instead']
+[deprecated_after: '2023-01-20']
+pub fn (w &Window) subwindow(id string) &SubWindow {
+	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is SubWindow {
 		return widget
 	} else {
-		return subwindow()
+		panic_widget_type_mismatch(id, 'ui.SubWindow', widget.type_name())
 	}
+}
+
+[noreturn]
+fn panic_widget_type_mismatch(id string, expected_type string, actual_type string) {
+	panic('widget `${id}` is not a ${expected_type} but a ${actual_type}')
 }
 
 pub fn (w &Window) run() {
