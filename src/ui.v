@@ -52,8 +52,8 @@ mut:
 }
 
 pub fn (mut gui UI) refresh() {
-	if mut w.ui.dd is DrawDeviceContext {
-		w.ui.dd.refresh_ui()
+	if mut gui.window.ui.dd is DrawDeviceContext {
+		gui.window.ui.dd.refresh_ui()
 	}
 	$if macos {
 		C.darwin_window_refresh()
