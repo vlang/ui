@@ -6,5 +6,5 @@ Module {
         vcs: 'git'
         tags: ['gui','user interface']
         description: 'V UI is a cross-platform UI toolkit for Windows, macOS, Linux, and soon Android, iOS and the web (JS/WASM).'
-        license: 'GPL3 + commercial'
+        license: 'MIT'
 }
