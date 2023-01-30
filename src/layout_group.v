@@ -31,6 +31,7 @@ pub mut:
 	adj_height    int
 	adj_width     int
 	hidden        bool
+	clipping      bool
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed
@@ -47,6 +48,7 @@ pub mut:
 	width    int
 	height   int
 	spacing  int = 5
+    clipping bool
 	children []Widget
 }
 
@@ -58,8 +60,9 @@ pub fn group(c GroupParams) &Group {
 		y: c.y
 		width: c.width
 		height: c.height
-		children: c.children
 		spacing: c.spacing
+        clipping: c.clipping
+		children: c.children
 		ui: 0
 	}
 	return g
@@ -125,8 +128,9 @@ fn (mut g Group) calculate_child_positions() {
 		}
 	}
 	mut widgets := g.children.clone()
+    title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
 	mut start_x := g.x + g.margin_left
-	mut start_y := g.y + g.margin_top
+	mut start_y := g.y + g.margin_top + title_off
 	for mut widget in widgets {
 		_, wid_h := widget.size()
 		widget.set_pos(start_x, start_y)
@@ -145,13 +149,22 @@ fn (mut g Group) draw() {
 
 fn (mut g Group) draw_device(mut d DrawDevice) {
 	offset_start(mut g)
+    defer {
+	    offset_end(mut g)
+    }
+    cstate := clipping_start(g, mut d) or { return }
+    defer {
+        clipping_end(g, mut d, cstate)
+    }
+
 	// Border
 	$if gdraw ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
 			println('group ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
-	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
+    title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
+	d.draw_rect_empty(g.x, g.y + title_off, g.width, g.height - title_off, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.dd.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {
@@ -161,12 +174,11 @@ fn (mut g Group) draw_device(mut d DrawDevice) {
 		text_width = g.ui.dd.text_width(title)
 	}
 	// Title
-	d.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
-	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
+	d.draw_rect_filled(g.x + check_mark_size, g.y, text_width + 5, 10, g.ui.window.bg_color)
+	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 2, title)
 	for mut child in g.children {
 		child.draw_device(mut d)
 	}
-	offset_end(mut g)
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
