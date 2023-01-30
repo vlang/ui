@@ -40,7 +40,7 @@ fn ordinal(i int) string {
 	return '${i}th'
 }
 
-fn box_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn box_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	cols := [
 		gx.Color{
 			r: 128
@@ -110,19 +110,19 @@ fn mk_quad(id string, content_fn ContentFn) ui.Widget {
 fn win_key(w &ui.Window, e ui.KeyEvent) {
 	match e.key {
 		._1 {
-			mut q := w.stack('q1')
+			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q1')
 			q.clipping = !q.clipping
 		}
 		._2 {
-			mut q := w.stack('q2')
+			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q2')
 			q.clipping = !q.clipping
 		}
 		._3 {
-			mut q := w.stack('q3')
+			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q3')
 			q.clipping = !q.clipping
 		}
 		._4 {
-			mut q := w.stack('q4')
+			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q4')
 			q.clipping = !q.clipping
 		}
 		else {}
@@ -133,11 +133,11 @@ fn win_key(w &ui.Window, e ui.KeyEvent) {
 fn update_status(w &ui.Window) {
 	mut status := instructions2
 	for i in 1 .. 5 { // 1...4 doesn't work!?
-		mut q := w.stack('q${i}')
+		mut q := w.get_widget_by_id_or_panic[ui.Stack]('q${i}')
 		clip := if q.clipping { 'clip' } else { '----' }
 		status += ' ${clip}'
 	}
-	w.label('status').text = status
+	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
 }
 
 fn main() {
@@ -177,6 +177,6 @@ fn win_init(w &ui.Window) {
 	// w.canvas_layout('b14').clipping = false
 	// w.canvas_layout('b41').clipping = false
 	// w.canvas_layout('b44').clipping = false
-	// w.stack('q4').clipping = true
+	// w.get_widget_by_id_or_panic[ui.Stack]('q4').clipping = true
 	update_status(w)
 }

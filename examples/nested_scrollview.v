@@ -1,5 +1,4 @@
 import ui
-import os
 
 const (
 	win_width              = 550

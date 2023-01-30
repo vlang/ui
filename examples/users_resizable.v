@@ -242,7 +242,7 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn (app &State) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &State) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height
