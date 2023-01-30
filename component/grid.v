@@ -495,14 +495,14 @@ fn grid_cb_clicked(mut cb ui.CheckBox) {
 
 // main actions
 
-fn grid_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn grid_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("draw begin")
 	mut g := grid_component(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
 	// println("$g.rowbar_width == $g.pos_x")
 
 	for j in g.from_j .. g.to_j {
-		g.vars[j].draw_device(d, j, mut g)
+		g.vars[j].draw_device(mut d, j, mut g)
 		g.pos_x += g.widths[j]
 		// println("draw $j")
 	}
@@ -517,14 +517,14 @@ fn grid_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("draw end")
 }
 
-fn grid_post_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn grid_post_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("post draw begin")
 	mut g := grid_component(c)
 
-	g.draw_device_current(d)
+	g.draw_device_current(mut d)
 
-	g.draw_device_rowbar(d)
-	g.draw_device_colbar(d)
+	g.draw_device_rowbar(mut d)
+	g.draw_device_colbar(mut d)
 
 	ui.scrollview_update(c)
 	// println("post draw end")
@@ -549,14 +549,14 @@ fn (g &GridComponent) nrow() int {
 	return if g.index.len > 0 { g.index.len } else { g.nrow }
 }
 
-fn (mut g GridComponent) draw_device_current(d ui.DrawDevice) {
+fn (mut g GridComponent) draw_device_current(mut d ui.DrawDevice) {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
 	sel_color := gx.red
 	g.layout.draw_device_rect_surrounded(d, pos_x, pos_y, w, h, 3, sel_color)
 }
 
-fn (mut g GridComponent) draw_device_colbar(d ui.DrawDevice) {
+fn (mut g GridComponent) draw_device_colbar(mut d ui.DrawDevice) {
 	mut tb := g.tb_colbar
 	tb.is_focused = false
 	tb.read_only = true
@@ -579,7 +579,7 @@ fn (mut g GridComponent) draw_device_colbar(d ui.DrawDevice) {
 		unsafe {
 			*tb.text = var
 		}
-		tb.draw_device(d)
+		tb.draw_device(mut d)
 		pos_x += g.widths[j]
 	}
 	tb.set_pos(g.pos_x, g.pos_y)
@@ -587,10 +587,10 @@ fn (mut g GridComponent) draw_device_colbar(d ui.DrawDevice) {
 	unsafe {
 		*tb.text = ''
 	}
-	tb.draw_device(d)
+	tb.draw_device(mut d)
 }
 
-fn (mut g GridComponent) draw_device_rowbar(d ui.DrawDevice) {
+fn (mut g GridComponent) draw_device_rowbar(mut d ui.DrawDevice) {
 	mut tb := g.tb_rowbar
 	tb.is_focused = false
 	tb.read_only = true
@@ -605,7 +605,7 @@ fn (mut g GridComponent) draw_device_rowbar(d ui.DrawDevice) {
 		unsafe {
 			*tb.text = '${g.ind(i) + 1}'
 		}
-		tb.draw_device(d)
+		tb.draw_device(mut d)
 		g.pos_y += g.height(i)
 	}
 }
@@ -909,7 +909,7 @@ interface GridVar {
 	id string
 	grid &GridComponent
 	compare(a int, b int) int
-	draw_device(d ui.DrawDevice, j int, mut g GridComponent)
+	draw_device(mut d ui.DrawDevice, j int, mut g GridComponent)
 	value(i int) (string, GridType)
 mut:
 	set_value(i int, v string)
@@ -955,7 +955,7 @@ fn (mut gtb GridTextBox) set_value(i int, v string) {
 	gtb.var[i] = v
 }
 
-fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
+fn (gtb &GridTextBox) draw_device(mut d ui.DrawDevice, j int, mut g GridComponent) {
 	mut tb := g.tb_string
 	tb.is_focused = false
 	tb.read_only = true
@@ -975,7 +975,7 @@ fn (gtb &GridTextBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
 		}
 		// g.layout.update_layout()
 		// println("draw var tb $j: ${g.layout.get_children().map(it.id)}")
-		tb.draw_device(d)
+		tb.draw_device(mut d)
 		g.pos_y += g.height(i)
 	}
 }
@@ -1028,7 +1028,7 @@ fn (mut gdd GridDropdown) set_value(i int, v string) {
 	}
 }
 
-fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
+fn (gdd &GridDropdown) draw_device(mut d ui.DrawDevice, j int, mut g GridComponent) {
 	mut dd := g.dd_factor[gdd.name]
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
@@ -1039,7 +1039,7 @@ fn (gdd &GridDropdown) draw_device(d ui.DrawDevice, j int, mut g GridComponent) 
 		// println("$i) ${g.widths[j]}, ${g.height(i)}")
 		dd.propose_size(g.widths[j], g.height(i))
 		dd.selected_index = gdd.var.values[g.ind(i)]
-		dd.draw_device(d)
+		dd.draw_device(mut d)
 		g.pos_y += g.height(i)
 	}
 }
@@ -1087,7 +1087,7 @@ fn (mut gcb GridCheckBox) set_value(i int, v string) {
 	}
 }
 
-fn (gcb &GridCheckBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) {
+fn (gcb &GridCheckBox) draw_device(mut d ui.DrawDevice, j int, mut g GridComponent) {
 	mut cb := g.cb_bool
 	cb.is_focused = false
 	cb.set_visible(false)
@@ -1104,7 +1104,7 @@ fn (gcb &GridCheckBox) draw_device(d ui.DrawDevice, j int, mut g GridComponent) 
 		// 	*cb.text = gtb.var[g.ind(i)].clone()
 		// }
 		cb.checked = gcb.var[g.ind(i)]
-		cb.draw_device(d)
+		cb.draw_device(mut d)
 		g.pos_y += g.height(i)
 	}
 }

@@ -62,13 +62,13 @@ pub fn (d &DrawDevicePrint) reset_clipping() {
 	// TODO: implement
 }
 
-pub fn (d &DrawDevicePrint) set_clipping(x int, y int, w int, h int) {
+pub fn (d &DrawDevicePrint) set_clipping(rect Rect) {
 	// TODO: implement
 }
 
-pub fn (d &DrawDevicePrint) get_clipping() (int, int, int, int) {
+pub fn (d &DrawDevicePrint) get_clipping() Rect {
 	// TODO: implement
-	return 0, 0, math.max_i32, math.max_i32
+	return Rect{0, 0, math.max_i32, math.max_i32}
 }
 
 pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color) {

@@ -5,7 +5,6 @@ module ui
 
 import eventbus
 import gx
-import gg
 
 pub type BuildFn = fn (layout voidptr, win &Window)
 
@@ -13,7 +12,7 @@ pub type InitFn = fn (layout voidptr)
 
 pub const (
 	empty_stack           = stack(id: '_empty_stack_')
-	scrollview_empty_rect = gg.Rect{}
+	scrollview_empty_rect = Rect{}
 )
 
 pub enum Direction {
@@ -85,6 +84,7 @@ pub mut:
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
+	clipping              bool
 	is_root_layout        bool = true
 	// Style
 	theme_style  string
@@ -1098,6 +1098,14 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		return
 	}
 	offset_start(mut s)
+	defer {
+		offset_end(mut s)
+	}
+	clipping_state := clipping_start(s, mut d) or { return }
+	defer {
+		clipping_end(s, mut d, clipping_state)
+	}
+
 	$if layout ? {
 		if s.ui.layout_print {
 			println('Stack(${s.id}): (${s.real_x}, ${s.real_y}, ${s.real_width}, ${s.real_height})')
@@ -1118,38 +1126,56 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_stack(s)
 	}
-	$if sdraw_scroll ? {
-		if Layout(s).has_scrollview_or_parent_scrollview() {
-			// if s.scrollview != 0 {
-			for i, mut child in s.drawing_children {
-				if mut child !is Layout
-					&& is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
-					sr := s.scrollview.scissor_rect
-					cr := child.bounds()
-					println('sdraw ${s.id} (${sr.x}, ${sr.y}, ${sr.width}, ${sr.height})  ${i}) ${child.type_name()} ${child.id} (${cr.x}, ${cr.y}, ${cr.width}, ${cr.height}) clipped')
-				}
-			}
-		}
+	//$if sdraw_scroll ? {
+	//	if Layout(s).has_scrollview_or_parent_scrollview() {
+	//		// if s.scrollview != 0 {
+	//		for i, mut child in s.drawing_children {
+	//			if mut child !is Layout
+	//				&& is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+	//				sr := s.scrollview.scissor_rect
+	//				cr := child.bounds()
+	//				println('sdraw ${s.id} (${sr.x}, ${sr.y}, ${sr.width}, ${sr.height})  ${i}) ${child.type_name()} ${child.id} (${cr.x}, ${cr.y}, ${cr.width}, ${cr.height}) clipped')
+	//			}
+	//		}
+	//	}
+	//}
+
+	$if s_draw_children ? {
+		println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 	}
-	if Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s) {
-		// if s.scrollview != 0 {
-		for mut child in s.drawing_children {
-			// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
-			// Widget(s).debug_gg_rect(child.bounds(), gx.green)
-			if mut child is Layout
-				|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
-				child.draw_device(mut d)
-			}
+	active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
+	for mut child in s.drawing_children {
+		// println("$child.type_name() $child.id")
+		if active_scrollview {
+			// TODO: calculate whether child falls outside clipping rect and
+			// continue (i.e., skip child drawing)
+			// if mut child is Layout
+			//	|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+			//	child.draw_device(mut d)
+			//}
 		}
-	} else {
-		$if s_draw_children ? {
-			println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
-		}
-		for mut child in s.drawing_children {
-			// println("$child.type_name() $child.id")
-			child.draw_device(mut d)
-		}
+		child.draw_device(mut d)
 	}
+
+	// if Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s) {
+	//	// if s.scrollview != 0 {
+	//	for mut child in s.drawing_children {
+	//		// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
+	//		// Widget(s).debug_gg_rect(child.bounds(), gx.green)
+	//		if mut child is Layout
+	//			|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+	//			child.draw_device(mut d)
+	//		}
+	//	}
+	//} else {
+	//	$if s_draw_children ? {
+	//		println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+	//	}
+	//	for mut child in s.drawing_children {
+	//		// println("$child.type_name() $child.id")
+	//		child.draw_device(mut d)
+	//	}
+	//}
 	scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.dd.text_size(s.title)
@@ -1165,7 +1191,6 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, tx, ty - 2, s.title)
 	}
-	offset_end(mut s)
 }
 
 fn (s &Stack) margin(side Side) int {
@@ -1230,8 +1255,7 @@ fn (s &Stack) get_ui() &UI {
 }
 
 pub fn (s &Stack) point_inside(x f64, y f64) bool {
-	// println("point_inside $s.id ($x, $y) in ($s.x + $s.offset_x + $s.width, $s.y + $s.offset_y + $s.height)")
-	return point_inside(s, x, y)
+	return scrollview_widget_point_inside(s, x, y)
 }
 
 pub fn (mut s Stack) set_visible(state bool) {

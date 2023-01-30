@@ -30,17 +30,22 @@ fn offset_end(mut w Widget) {
 // set offset_x and offset_y for Widget
 pub fn set_offset(mut w Widget, ox int, oy int) {
 	w.offset_x, w.offset_y = ox, oy
-	if mut w is Stack {
-		for mut child in w.children {
-			set_offset(mut child, ox, oy)
-		}
-	} else if mut w is Group {
-		for mut child in w.children {
-			set_offset(mut child, ox, oy)
-		}
-	} else if mut w is CanvasLayout {
-		for mut child in w.children {
+	if mut w is Layout {
+		for mut child in w.get_children() {
 			set_offset(mut child, ox, oy)
 		}
 	}
+	// if mut w is Stack {
+	//	for mut child in w.children {
+	//		set_offset(mut child, ox, oy)
+	//	}
+	//} else if mut w is Group {
+	//	for mut child in w.children {
+	//		set_offset(mut child, ox, oy)
+	//	}
+	//} else if mut w is CanvasLayout {
+	//	for mut child in w.children {
+	//		set_offset(mut child, ox, oy)
+	//	}
+	//}
 }

@@ -1,28 +1,38 @@
 module ui
 
 import gg
-import math
 
 pub struct DrawDeviceContext {
 	gg.Context
 mut:
-	clip_rect [4]int = [0, 0, math.max_i32, math.max_i32]!
+	clip_rect Rect
 }
 
 pub fn (mut d DrawDeviceContext) reset_clipping() {
 	// no need to actually set scissor_rect, it is reset each frame anyway, but
 	// we do need to reset the clip_rect
-	window_size := gg.window_size()
-	d.clip_rect = [0, 0, window_size.width, window_size.height]!
+	size := gg.window_size()
+	d.clip_rect = Rect{
+		x: 0
+		y: 0
+		w: size.width
+		h: size.height
+	}
+	$if ui_clipping ? {
+		println('clip: reset')
+	}
 }
 
-pub fn (mut d DrawDeviceContext) set_clipping(x int, y int, w int, h int) {
-	d.clip_rect = [x, y, w, h]!
-	d.Context.scissor_rect(x, y, w, h)
+pub fn (mut d DrawDeviceContext) set_clipping(rect Rect) {
+	d.clip_rect = rect
+	d.Context.scissor_rect(rect.x, rect.y, rect.w, rect.h)
+	$if ui_clipping ? {
+		println('clip: set ${rect.x} ${rect.y} ${rect.w} ${rect.h}')
+	}
 }
 
-pub fn (d DrawDeviceContext) get_clipping() (int, int, int, int) {
-	return d.clip_rect[0], d.clip_rect[1], d.clip_rect[2], d.clip_rect[3]
+pub fn (d DrawDeviceContext) get_clipping() Rect {
+	return d.clip_rect
 }
 
 [deprecated: 'use `widget.clipping` flag instead']

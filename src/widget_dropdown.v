@@ -163,7 +163,7 @@ pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	offset_start(mut dd)
 	$if layout ? {
 		if dd.ui.layout_print {
-			println('DropDown(${dd.id}): (${dd.x}, ${dd.y}, ${dd.width}, ${dd.height})')
+			println('DropDown(${dd.id}): (${dd.x}, ${dd.y}, ${dd.width}, ${dd.dropdown_height})')
 		}
 	}
 	mut dtw := DrawTextWidget(dd)

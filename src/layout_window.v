@@ -387,9 +387,9 @@ fn gg_cleanup(mut window Window) {
 
 fn frame(mut w Window) {
 	if mut w.ui.dd is DrawDeviceContext {
-	    $if trace_ui_frame ? {
-		    eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
-	    }
+		$if trace_ui_frame ? {
+			eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+		}
 		w.ui.dd.begin()
 	}
 
@@ -436,9 +436,9 @@ fn frame(mut w Window) {
 
 fn frame_immediate(mut w Window) {
 	if mut w.ui.dd is DrawDeviceContext {
-	    $if trace_ui_frame ? {
-		    eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
-	    }
+		$if trace_ui_frame ? {
+			eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+		}
 		w.ui.dd.begin()
 	}
 
@@ -926,7 +926,7 @@ fn window_scroll(event gg.Event, ui &UI) {
 	if window.scroll_fn != WindowScrollFn(0) {
 		window.scroll_fn(window, e)
 	}
-	window.evt_mngr.point_inside_receivers_scroll(e)
+	window.evt_mngr.point_inside_receivers_scroll_event(e)
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 

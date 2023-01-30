@@ -37,10 +37,10 @@ interface DrawDevice {
 	draw_convex_poly(points []f32, color gx.Color)
 	draw_poly_empty(points []f32, color gx.Color)
 	// clipping
-	get_clipping() (int, int, int, int)
+	get_clipping() Rect
 mut:
 	reset_clipping()
-	set_clipping(x int, y int, w int, h int)
+	set_clipping(rect Rect)
 	set_bg_color(color gx.Color)
 }
 

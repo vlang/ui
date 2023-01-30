@@ -49,6 +49,7 @@ pub mut:
 	text_styles TextStyles
 	text_size   f64
 	hidden      bool
+	clipping    bool
 	// files droped
 	files_droped bool
 	// ordered

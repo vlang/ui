@@ -1,6 +1,5 @@
 // Same as demo_component_filebrowser with folder_only: true
 import ui
-import gg
 import ui.component as uic
 
 const (
@@ -32,7 +31,7 @@ fn on_click_ok(b &ui.Button) {
 }
 
 fn on_click_cancel(b &ui.Button) {
-	if b.ui.dd is gg.Context {
+	if b.ui.dd is ui.DrawDeviceContext {
 		b.ui.dd.quit()
 	}
 }

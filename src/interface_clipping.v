@@ -9,23 +9,29 @@ mut:
 	y int
 }
 
-struct ClippingState {
-	prev_x      int
-	prev_y      int
-	prev_width  int
-	prev_height int
-}
+type ClippingState = Rect
 
-fn clipping_start(c ClippingWidget, mut d DrawDevice) ClippingState {
+fn clipping_start(c ClippingWidget, mut d DrawDevice) !ClippingState {
 	if c.clipping {
-		px, py, pw, ph := d.get_clipping()
-		d.set_clipping(c.x, c.y, c.width, c.height)
-		return ClippingState{
-			prev_x: px
-			prev_y: py
-			prev_width: pw
-			prev_height: ph
+		mut x, mut y := c.x, c.y
+		if c is ScrollableWidget {
+			if has_scrollview(c) {
+				x, y = c.scrollview.orig_xy()
+			}
 		}
+		existing := d.get_clipping()
+		impose := Rect{
+			x: x
+			y: y
+			w: c.width
+			h: c.height
+		}
+		intersection := existing.intersection(impose)
+		if intersection.is_empty() {
+			return error('widget is occluded and can not be drawn')
+		}
+		d.set_clipping(intersection)
+		return existing
 	} else {
 		return ClippingState{}
 	}
@@ -33,6 +39,6 @@ fn clipping_start(c ClippingWidget, mut d DrawDevice) ClippingState {
 
 fn clipping_end(c ClippingWidget, mut d DrawDevice, s ClippingState) {
 	if c.clipping {
-		d.set_clipping(s.prev_x, s.prev_y, s.prev_width, s.prev_height)
+		d.set_clipping(s)
 	}
 }

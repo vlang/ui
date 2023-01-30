@@ -96,8 +96,9 @@ pub mut:
 	borderless bool
 	// bg_color           gx.Color
 	border_accentuated bool
-	// related to text drawing
-	hidden bool
+	// related to widget drawing
+	hidden   bool
+	clipping bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -322,12 +323,23 @@ pub fn (mut tb TextBox) draw() {
 
 pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	offset_start(mut tb)
+	defer {
+		offset_end(mut tb)
+	}
+	scrollview_draw_begin(mut tb, d)
+	defer {
+		scrollview_draw_end(tb, d)
+	}
+	clipping_state := clipping_start(tb, mut d) or { return }
+	defer {
+		clipping_end(tb, mut d, clipping_state)
+	}
 	$if layout ? {
 		if tb.ui.layout_print {
 			println('TextBox(${tb.id}): (${tb.x}, ${tb.y}, ${tb.width}, ${tb.height})')
 		}
 	}
-	scrollview_draw_begin(mut tb, d)
+
 	// draw background
 	if tb.has_scrollview {
 		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
@@ -421,8 +433,6 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_widget(mut tb, tb.ui)
 	}
-	scrollview_draw_end(tb, d)
-	offset_end(mut tb)
 }
 
 fn (tb &TextBox) is_sel_active() bool {

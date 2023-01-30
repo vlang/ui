@@ -103,7 +103,7 @@ fn (mut c Canvas) draw_device(mut d DrawDevice) {
 	defer {
 		offset_end(mut c)
 	}
-	clipping_state := clipping_start(c, mut d)
+	clipping_state := clipping_start(c, mut d) or { return }
 	defer {
 		clipping_end(c, mut d, clipping_state)
 	}

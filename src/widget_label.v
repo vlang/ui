@@ -151,7 +151,7 @@ fn (mut l Label) draw_device(mut d DrawDevice) {
 	offset_start(mut l)
 	$if layout ? {
 		if l.ui.layout_print {
-			println('Label(${b.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
+			println('Label(${l.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
 		}
 	}
 	splits := l.text.split('\n') // Split the text into an array of lines.
