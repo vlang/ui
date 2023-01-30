@@ -156,6 +156,7 @@ fn (mut b Button) init(parent Layout) {
 		}
 	}
 	b.load_style()
+	b.set_text_size()
 	if b.tooltip.text != '' {
 		mut win := ui.window
 		win.tooltip.append(b, b.tooltip)
@@ -347,12 +348,6 @@ pub fn (mut b Button) set_pos(x int, y int) {
 }
 
 pub fn (b &Button) size() (int, int) {
-	if b.width == 0 || b.height == 0 {
-		unsafe {
-			mut b2 := b
-			b2.set_text_size()
-		}
-	}
 	return b.width, b.height
 }
 
@@ -378,11 +373,15 @@ fn (mut b Button) draw() {
 
 fn (mut b Button) draw_device(mut d DrawDevice) {
 	offset_start(mut b)
+	defer {
+		offset_end(mut b)
+	}
 	$if layout ? {
 		if b.ui.layout_print {
 			println('Button(${b.id}): (${b.x}, ${b.y}, ${b.width}, ${b.height})')
 		}
 	}
+
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
@@ -451,7 +450,6 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_widget(mut b, b.ui)
 	}
-	offset_end(mut b)
 }
 
 pub fn (mut b Button) set_text(text string) {
@@ -467,6 +465,9 @@ pub fn (mut b Button) set_text_size() {
 		mut dtw := DrawTextWidget(b)
 		dtw.load_style()
 		b.text_width, b.text_height = dtw.text_size(b.text)
+		if b.id == 'hi' {
+			println('${b.text_width}')
+		}
 		// b.text_width, b.text_height = text_size(b, b.text)
 
 		// b.text_width = int(f32(b.text_width))

@@ -1101,9 +1101,9 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	defer {
 		offset_end(mut s)
 	}
-	clipping_state := clipping_start(s, mut d) or { return }
+	cstate := clipping_start(s, mut d) or { return }
 	defer {
-		clipping_end(s, mut d, clipping_state)
+		clipping_end(s, mut d, cstate)
 	}
 
 	$if layout ? {

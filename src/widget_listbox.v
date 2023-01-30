@@ -506,15 +506,25 @@ fn (mut lb ListBox) draw() {
 
 fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	offset_start(mut lb)
+	defer {
+		offset_end(mut lb)
+	}
 	$if layout ? {
 		if lb.ui.layout_print {
 			println('ListBox(${lb.id}): (${lb.x}, ${lb.y}, ${lb.width}, ${lb.height})')
 		}
 	}
+	scrollview_draw_begin(mut lb, d)
+	defer {
+		scrollview_draw_end(lb, d)
+	}
+	cstate := clipping_start(lb, mut d) or { return }
+	defer {
+		clipping_end(lb, mut d, cstate)
+	}
+
 	mut dtw := DrawTextWidget(lb)
 	dtw.draw_device_load_style(d)
-	// scrollview_clip(mut lb)
-	scrollview_draw_begin(mut lb, d)
 	height := if lb.has_scrollview && lb.adj_height > lb.height {
 		lb.adj_height + lb.text_offset_y
 	} else {
@@ -550,10 +560,6 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	if !lb.draw_lines {
 		d.draw_rect_empty(lb.x - 1, lb.y - 1, lb.width + 2, height + 2, lb.style.border_color)
 	}
-
-	// scrollview_draw(lb)
-	scrollview_draw_end(lb, d)
-	offset_end(mut lb)
 }
 
 fn (mut lb ListBox) get_draw_to(text string) int {

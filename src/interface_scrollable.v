@@ -442,7 +442,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 			if psv.active_y {
 				oy += psv.offset_y
 			}
-            return ox, oy
+			return ox, oy
 		}
 	}
 	return 0, 0
@@ -455,7 +455,7 @@ fn (sv &ScrollView) parent_offset() (int, int) {
 // usually what you want -- and so should technically be thought of as the (x,y)
 // co-ordinates of this widget where no scrolling has occurred in this widget.)
 pub fn (sv &ScrollView) orig_xy() (int, int) {
-    ox, oy := sv.parent_offset()
+	ox, oy := sv.parent_offset()
 	return sv.orig_x - ox, sv.orig_y - oy
 }
 

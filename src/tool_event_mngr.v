@@ -99,32 +99,19 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 			println('point_inside_receivers: ${w.id} !${w.hidden} && (${e.mouse_x}, ${e.mouse_y}) ${w.point_inside(e.mouse_x,
 				e.mouse_y)} ${w.has_parent_deactivated()}')
 		}
-		if w.hidden {
-			continue
-		}
-		if w.has_parent_deactivated() {
-			continue
-		}
-		if mut w is ScrollableWidget {
-			if !scrollview_widget_point_inside(w, e.mouse_x, e.mouse_y) {
-				continue
+		if w is ScrollableWidget {
+			sw := w as ScrollableWidget
+			if !w.hidden && has_scrollview(sw)
+				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
+				&& !has_child_with_active_scrollview(w, e.mouse_x, e.mouse_y)
+				&& !w.has_parent_deactivated() {
+				em.point_inside[evt_type] << w
+			}
+		} else {
+			if !w.hidden && w.point_inside(e.mouse_x, e.mouse_y) && !w.has_parent_deactivated() {
+				em.point_inside[evt_type] << w
 			}
 		}
-		em.point_inside[evt_type] << w
-		break // stop, so we don't include parents
-		//		if mut w is ScrollableWidget {
-		////			sw := w as ScrollableWidget
-		//			if !w.hidden && has_scrollview(w)
-		//				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
-		//				&& !w.scrollview.children_point_inside(e.mouse_x, e.mouse_y, .view)
-		//				&& !w.has_parent_deactivated() {
-		//				em.point_inside[evt_type] << w
-		//			}
-		//		} else {
-		//			if !w.hidden && w.point_inside(e.mouse_x, e.mouse_y) && !w.has_parent_deactivated() {
-		//				em.point_inside[evt_type] << w
-		//			}
-		//		}
 	}
 	$if em_scroll ? {
 		println('em.point_inside[${evt_type}] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')

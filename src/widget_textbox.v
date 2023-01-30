@@ -330,9 +330,9 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	defer {
 		scrollview_draw_end(tb, d)
 	}
-	clipping_state := clipping_start(tb, mut d) or { return }
+	cstate := clipping_start(tb, mut d) or { return }
 	defer {
-		clipping_end(tb, mut d, clipping_state)
+		clipping_end(tb, mut d, cstate)
 	}
 	$if layout ? {
 		if tb.ui.layout_print {

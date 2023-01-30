@@ -195,7 +195,7 @@ fn lb_change_multi(lb &ui.ListBox) {
 	println(lb.items.map('${it.text}: ${it.selected} ${it.disabled}'))
 }
 
-fn draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.full_width, c.full_height
 	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 }
