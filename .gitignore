@@ -14,6 +14,8 @@ fmt_verify_all
 .vscode
 *.code-workspace
 .lite_workspace.lua
+*~
+*#
 
 # Other files
 fns.txt
