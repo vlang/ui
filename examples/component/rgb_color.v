@@ -55,6 +55,6 @@ fn btn_click(b &ui.Button) {
 }
 
 fn on_rgb_changed(cs &uic.ColorSlidersComponent) {
-	mut rect := cs.layout.ui.window.get_widget_by_id_or_panic[ui.Rectangle]('rgb_rect')
+	mut rect := cs.layout.ui.window.get_or_panic[ui.Rectangle]('rgb_rect')
 	rect.style.color = cs.color()
 }

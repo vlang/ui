@@ -84,8 +84,7 @@ pub fn splitpanel_component(w ui.ComponentChild) &SplitPanelComponent {
 }
 
 pub fn splitpanel_component_from_id(w ui.Window, id string) &SplitPanelComponent {
-	return splitpanel_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
-		'layout')))
+	return splitpanel_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 fn splitpanel_btn_mouse_down(b &ui.Button, e &ui.MouseEvent) {

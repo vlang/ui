@@ -159,7 +159,7 @@ fn main() {
 								text: 'hide/show menu'
 								z_index: 10
 								on_click: fn (b &ui.Button) {
-									mut menu := b.ui.window.get_widget_by_id_or_panic[ui.Menu]('menu')
+									mut menu := b.ui.window.get_or_panic[ui.Menu]('menu')
 									menu.hidden = !menu.hidden
 								}
 							)),
@@ -179,7 +179,7 @@ fn menu_click(item &ui.MenuItem) {
 fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
-	mut b := win.get_widget_by_id_or_panic[ui.Button]('b_thm')
+	mut b := win.get_or_panic[ui.Button]('b_thm')
 	b.update_theme_style(dd.selected().text)
 }
 
@@ -187,7 +187,7 @@ fn lb_change(lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
-	mut b := win.get_widget_by_id_or_panic[ui.Button]('b_thm')
+	mut b := win.get_or_panic[ui.Button]('b_thm')
 	b.update_theme_style(id)
 }
 
@@ -201,7 +201,7 @@ fn draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 }
 
 fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
-	mut l := c.ui.window.get_widget_by_id_or_panic[ui.Label]('l_mm')
+	mut l := c.ui.window.get_or_panic[ui.Label]('l_mm')
 	l.set_text('(${e.x},${e.y})')
 }
 

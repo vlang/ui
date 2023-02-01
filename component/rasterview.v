@@ -100,8 +100,7 @@ pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
 }
 
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {
-	return rasterview_component(w.get_widget_by_id_or_panic[ui.CanvasLayout](ui.component_id(id,
-		'layout')))
+	return rasterview_component(w.get_or_panic[ui.CanvasLayout](ui.component_id(id, 'layout')))
 }
 
 pub fn (mut rv RasterViewComponent) connect_palette(pa &ColorPaletteComponent) {

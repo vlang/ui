@@ -37,7 +37,7 @@ fn main() {
 }
 
 fn on_change_celsius(mut tb_celsius ui.TextBox) {
-	mut tb_fahren := tb_celsius.ui.window.get_widget_by_id_or_panic[ui.TextBox]('fahren')
+	mut tb_fahren := tb_celsius.ui.window.get_or_panic[ui.TextBox]('fahren')
 	if tb_celsius.text.len <= 0 {
 		tb_fahren.set_text('0')
 		return
@@ -53,7 +53,7 @@ fn on_change_celsius(mut tb_celsius ui.TextBox) {
 }
 
 fn on_change_fahren(mut tb_fahren ui.TextBox) {
-	mut tb_celsius := tb_fahren.ui.window.get_widget_by_id_or_panic[ui.TextBox]('celsius')
+	mut tb_celsius := tb_fahren.ui.window.get_or_panic[ui.TextBox]('celsius')
 	if tb_fahren.text.len <= 0 {
 		tb_celsius.set_text('0')
 		return

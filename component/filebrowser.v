@@ -99,8 +99,7 @@ pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
 }
 
 pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {
-	return filebrowser_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
-		'layout')))
+	return filebrowser_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (fb &FileBrowserComponent) selected_full_title() string {

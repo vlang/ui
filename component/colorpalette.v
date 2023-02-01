@@ -98,8 +98,7 @@ pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
 }
 
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {
-	cp := colorpalette_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
-		'layout')))
+	cp := colorpalette_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 	return cp
 }
 
