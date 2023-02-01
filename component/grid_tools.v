@@ -75,8 +75,7 @@ pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
 }
 
 pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
-	return gridsettings_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
-		'layout')))
+	return gridsettings_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 fn gs_sort_click(mut b ui.Button) {

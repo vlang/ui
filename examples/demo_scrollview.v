@@ -23,7 +23,7 @@ fn main() {
 		mode: .resizable
 		on_init: fn (win &ui.Window) {
 			$if test_textwidth ? {
-				mut tb := win.get_widget_by_id_or_panic[ui.TextBox]('info')
+				mut tb := win.get_or_panic[ui.TextBox]('info')
 				tb.tv.test_textwidth('abcdefghijklmnrputwxyz &éèdzefzefzef')
 			}
 		}
@@ -54,7 +54,7 @@ fn main() {
 }
 
 fn on_scroll_change(sw ui.ScrollableWidget) {
-	mut tb := sw.ui.window.get_widget_by_id_or_panic[ui.TextBox]('info')
+	mut tb := sw.ui.window.get_or_panic[ui.TextBox]('info')
 	mut s := ''
 	sv := sw.scrollview
 	ox, oy := sv.orig_xy()

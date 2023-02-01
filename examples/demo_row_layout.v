@@ -243,7 +243,7 @@ fn (app &App) lb_change(lb &ui.ListBox) {
 		else {}
 	}
 
-	mut s := win.get_widget_by_id_or_panic[ui.Stack]('row')
+	mut s := win.get_or_panic[ui.Stack]('row')
 	// if mut s is ui.Stack {
 	if iw >= 0 {
 		if key == 'ui.compact' {
@@ -271,7 +271,7 @@ fn lb_change_sp(lb &ui.ListBox) {
 	key, _ := lb.selected() or { '10', '' }
 
 	win := lb.ui.window
-	mut s := win.get_widget_by_id_or_panic[ui.Stack]('row')
+	mut s := win.get_or_panic[ui.Stack]('row')
 
 	match lb.id {
 		'lbspace' {
@@ -290,32 +290,32 @@ fn lb_change_sp(lb &ui.ListBox) {
 }
 
 fn set_output_label(win &ui.Window) {
-	lb1w := win.get_widget_by_id_or_panic[ui.ListBox]('lb1w')
-	lb1h := win.get_widget_by_id_or_panic[ui.ListBox]('lb1h')
-	lb2w := win.get_widget_by_id_or_panic[ui.ListBox]('lb2w')
-	lb2h := win.get_widget_by_id_or_panic[ui.ListBox]('lb2h')
+	lb1w := win.get_or_panic[ui.ListBox]('lb1w')
+	lb1h := win.get_or_panic[ui.ListBox]('lb1h')
+	lb2w := win.get_or_panic[ui.ListBox]('lb2w')
+	lb2h := win.get_or_panic[ui.ListBox]('lb2h')
 	mut w1, mut w2, mut h1, mut h2 := '', '', '', ''
 	_, w1 = lb1w.selected() or { '100', '' }
 	_, w2 = lb2w.selected() or { '100', '' }
 	_, h1 = lb1h.selected() or { '100', '' }
 	_, h2 = lb2h.selected() or { '100', '' }
 
-	lbm := win.get_widget_by_id_or_panic[ui.ListBox]('lbmargin')
-	lbs := win.get_widget_by_id_or_panic[ui.ListBox]('lbspace')
+	lbm := win.get_or_panic[ui.ListBox]('lbmargin')
+	lbs := win.get_or_panic[ui.ListBox]('lbspace')
 	_, marg := lbm.selected() or { '100', '' }
 	_, sp := lbs.selected() or { '100', '' }
-	mut lss := win.get_widget_by_id_or_panic[ui.Label]('l_stack_sizes')
+	mut lss := win.get_or_panic[ui.Label]('l_stack_sizes')
 	lss.set_text('Row (Stack) declaration: ui.row( ${marg}, ${sp}, widths: [${w1}, ${w2}], heights: [${h1}, ${h2}])')
 }
 
 fn set_sizes_labels(win &ui.Window) {
-	mut btn1 := win.get_widget_by_id_or_panic[ui.Button]('btn1')
-	mut row_btn1 := win.get_widget_by_id_or_panic[ui.Stack]('row_btn1')
+	mut btn1 := win.get_or_panic[ui.Button]('btn1')
+	mut row_btn1 := win.get_or_panic[ui.Stack]('row_btn1')
 	mut w, mut h := btn1.size()
 	row_btn1.title = 'Btn1: (${w}, ${h})'
 
-	mut row_btn2 := win.get_widget_by_id_or_panic[ui.Stack]('row_btn2')
-	mut btn2 := win.get_widget_by_id_or_panic[ui.Button]('btn2')
+	mut row_btn2 := win.get_or_panic[ui.Stack]('row_btn2')
+	mut btn2 := win.get_or_panic[ui.Button]('btn2')
 	w, h = btn2.size()
 	row_btn2.title = 'Btn2: (${w}, ${h})'
 }
@@ -326,9 +326,9 @@ fn win_resize(win &ui.Window, w int, h int) {
 
 fn win_init(win &ui.Window) {
 	set_sizes_labels(win)
-	mut lb := win.get_widget_by_id_or_panic[ui.ListBox]('lb1w')
+	mut lb := win.get_or_panic[ui.ListBox]('lb1w')
 	sw, sh := lb.size()
-	mut row := win.get_widget_by_id_or_panic[ui.Stack]('row_btn1')
+	mut row := win.get_or_panic[ui.Stack]('row_btn1')
 	rw, rh := row.size()
 	println('win init (${sw}, ${sh}) (${row.x}, ${row.y} ,${rw}, ${rh})')
 	set_output_label(win)
