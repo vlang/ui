@@ -5,8 +5,12 @@
 *.exe
 *.ilk
 *.pdb
-# examples/*
-!examples/*/*.v
+
+examples/**/*
+!examples/**/*.v
+!examples/**/*.vab
+!examples/android
+!examples/assets
 fmt_verify_all
 
 # Ignore editor files
@@ -14,6 +18,7 @@ fmt_verify_all
 .vscode
 *.code-workspace
 .lite_workspace.lua
+ui.iml
 
 # Other files
 fns.txt
