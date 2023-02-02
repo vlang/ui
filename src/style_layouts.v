@@ -35,10 +35,10 @@ pub fn canvaslayout_style(p CanvasLayoutStyleParams) CanvasLayoutStyleParams {
 }
 
 pub fn (ls CanvasLayoutStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_radius'] = ls.bg_radius
-	toml['bg_color'] = hex_color(ls.bg_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_radius'] = ls.bg_radius
+	toml_['bg_color'] = hex_color(ls.bg_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut ls CanvasLayoutStyle) from_toml(a toml.Any) {
@@ -138,10 +138,10 @@ pub fn stack_style(p StackStyleParams) StackStyleParams {
 }
 
 pub fn (ls StackStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_radius'] = ls.bg_radius
-	toml['bg_color'] = hex_color(ls.bg_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_radius'] = ls.bg_radius
+	toml_['bg_color'] = hex_color(ls.bg_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut ls StackStyle) from_toml(a toml.Any) {

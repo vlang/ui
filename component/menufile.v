@@ -132,8 +132,7 @@ pub fn menufile_component(w ui.ComponentChild) &MenuFileComponent {
 }
 
 pub fn menufile_component_from_id(w ui.Window, id string) &MenuFileComponent {
-	return menufile_component(w.get_widget_by_id_or_panic[ui.Stack](ui.component_id(id,
-		'layout')))
+	return menufile_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (mf &MenuFileComponent) treeview_component() &TreeViewComponent {
@@ -179,7 +178,7 @@ fn btn_new_click(b &ui.Button) {
 fn btn_new_ok(b &ui.Button) {
 	// // println('ok new')
 	mf_id := ui.component_parent_id(b.id)
-	tb := b.ui.window.get_widget_by_id_or_panic[ui.TextBox](ui.component_id(mf_id, 'tb'))
+	tb := b.ui.window.get_or_panic[ui.TextBox](ui.component_id(mf_id, 'tb'))
 	mut h := hideable_component_from_id(b.ui.window, ui.component_id(mf_id, 'htb'))
 	mut dtv := treeview_component_from_id(b.ui.window, ui.component_id(mf_id, 'dtv'))
 	if dtv.sel_id != '' {

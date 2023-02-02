@@ -65,8 +65,8 @@ fn window_init(mut w ui.Window) {
 	}
 	font_paths := os.glob('${font_root_path}/*.ttf') or { panic(err) }
 
-	// c := w.get_widget_by_id_or_panic[ui.CanvasLayout]('c')
-	mut lb := w.get_widget_by_id_or_panic[ui.ListBox]('lb')
+	// c := w.get_or_panic[ui.CanvasLayout]('c')
+	mut lb := w.get_or_panic[ui.ListBox]('lb')
 	// dtw := ui.DrawTextWidget(c)
 	for fp in font_paths {
 		lb.add_item(fp, os.file_name(fp))
@@ -106,7 +106,7 @@ fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 
 fn (mut app App) lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
-	c := w.get_widget_by_id_or_panic[ui.CanvasLayout]('c')
+	c := w.get_or_panic[ui.CanvasLayout]('c')
 	mut dtw := ui.DrawTextWidget(c)
 	fp, id := lb.selected() or { 'classic', '' }
 	// println("$id, $fp")

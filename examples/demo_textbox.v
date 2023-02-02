@@ -68,7 +68,7 @@ fn main() {
 
 fn on_switch_click(switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
-	mut tb := switcher.ui.window.get_widget_by_id_or_panic[ui.TextBox](tbs)
+	mut tb := switcher.ui.window.get_or_panic[ui.TextBox](tbs)
 	tb.tv.switch_wordwrap()
 }
 
