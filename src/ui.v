@@ -52,11 +52,13 @@ mut:
 }
 
 pub fn (mut gui UI) refresh() {
-	if mut gui.window.ui.dd is DrawDeviceContext {
-		gui.window.ui.dd.refresh_ui()
-	}
-	$if macos {
-		C.darwin_window_refresh()
+	if mut gui.dd is DrawDeviceContext {
+		gui.dd.refresh_ui()
+		$if macos {
+			if gui.dd.native_rendering {
+				C.darwin_window_refresh()
+			}
+		}
 	}
 }
 
@@ -72,14 +74,7 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-		if mut gui.dd is DrawDeviceContext {
-			gui.dd.refresh_ui()
-			$if macos {
-				if gui.dd.native_rendering {
-					C.darwin_window_refresh()
-				}
-			}
-		}
+        gui.refresh()
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
