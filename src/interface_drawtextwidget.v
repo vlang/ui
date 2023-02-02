@@ -137,19 +137,19 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			int(ts.align), int(ts.vertical_align))
 	}
 	$if !screenshot ? {
-		gg := w.ui.gg
-		fons := gg.ft.fons
+		gg_ := w.ui.gg
+		fons := gg_.ft.fons
 		fons.set_font(w.ui.fonts.hash[ts.font_name])
 
-		scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
+		scale := if gg_.ft.scale == 0 { f32(1) } else { gg_.ft.scale }
 		size := if ts.mono { ts.size - 2 } else { ts.size }
 		fons.set_size(scale * f32(size))
-		gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
+		gg_.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
 		color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
 		if ts.color.a != 255 {
-			sgl.load_pipeline(gg.pipeline.alpha)
+			sgl.load_pipeline(gg_.pipeline.alpha)
 		}
-		gg.ft.fons.set_color(color)
+		gg_.ft.fons.set_color(color)
 		ascender := f32(0.0)
 		descender := f32(0.0)
 		lh := f32(0.0)
