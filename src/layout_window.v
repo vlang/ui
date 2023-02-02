@@ -239,7 +239,7 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
-	mut dd := DrawDeviceContext{
+	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
 			width: width
 			height: height
@@ -275,7 +275,7 @@ pub fn window(cfg WindowParams) &Window {
 		)
 	}
 	mut ui_ctx := &UI{
-		dd: &dd
+		dd: dd
 		gg: &dd.Context
 		window: window
 		svg: draw_device_svg()
