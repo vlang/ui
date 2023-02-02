@@ -21,7 +21,7 @@ mut:
 	box_text []string
 }
 
-fn mk_scroll_area_box(mut app App, r string, c string) ui.Widget {
+fn make_scroll_area_box(mut app App, r string, c string) ui.Widget {
 	app.box_text << 'box${r}${c}\n...\n...\n...\n...\n...\n...\n...\n...\n...'
 	return ui.textbox(
 		id: 'box${r}${c}'
@@ -32,35 +32,35 @@ fn mk_scroll_area_box(mut app App, r string, c string) ui.Widget {
 	)
 }
 
-fn mk_scroll_area_row(mut app App, r string) ui.Widget {
+fn make_scroll_area_row(mut app App, r string) ui.Widget {
 	return ui.row(
 		spacing: area_spacing
 		children: [
-			mk_scroll_area_box(mut app, r, '-1'),
-			mk_scroll_area_box(mut app, r, '-2'),
-			mk_scroll_area_box(mut app, r, '-3'),
-			mk_scroll_area_box(mut app, r, '-4'),
-			mk_scroll_area_box(mut app, r, '-5'),
+			make_scroll_area_box(mut app, r, '-1'),
+			make_scroll_area_box(mut app, r, '-2'),
+			make_scroll_area_box(mut app, r, '-3'),
+			make_scroll_area_box(mut app, r, '-4'),
+			make_scroll_area_box(mut app, r, '-5'),
 		]
 	)
 }
 
-fn mk_scroll_area(mut app App) ui.Widget {
+fn make_scroll_area(mut app App) ui.Widget {
 	mut kids := []ui.Widget{}
 
 	if single_column_of_boxes {
-		kids << mk_scroll_area_box(mut app, '', '-1')
-		kids << mk_scroll_area_box(mut app, '', '-2')
-		kids << mk_scroll_area_box(mut app, '', '-3')
-		kids << mk_scroll_area_box(mut app, '', '-4')
-		kids << mk_scroll_area_box(mut app, '', '-5')
+		kids << make_scroll_area_box(mut app, '', '-1')
+		kids << make_scroll_area_box(mut app, '', '-2')
+		kids << make_scroll_area_box(mut app, '', '-3')
+		kids << make_scroll_area_box(mut app, '', '-4')
+		kids << make_scroll_area_box(mut app, '', '-5')
 	} else {
-		kids << mk_scroll_area_row(mut app, '-0')
-		kids << mk_scroll_area_row(mut app, '-1')
-		kids << mk_scroll_area_row(mut app, '-2')
-		kids << mk_scroll_area_row(mut app, '-3')
-		kids << mk_scroll_area_row(mut app, '-4')
-		kids << mk_scroll_area_row(mut app, '-5')
+		kids << make_scroll_area_row(mut app, '-0')
+		kids << make_scroll_area_row(mut app, '-1')
+		kids << make_scroll_area_row(mut app, '-2')
+		kids << make_scroll_area_row(mut app, '-3')
+		kids << make_scroll_area_row(mut app, '-4')
+		kids << make_scroll_area_row(mut app, '-5')
 	}
 
 	return ui.column(
@@ -93,7 +93,7 @@ fn main() {
 			ui.column(
 				heights: [ui.stretch, 20.0]
 				widths: ui.stretch
-				children: [mk_scroll_area(mut app), ui.label(
+				children: [make_scroll_area(mut app), ui.label(
 					text: &instructions
 				)]
 			),

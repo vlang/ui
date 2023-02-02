@@ -14,7 +14,7 @@ const (
 
 type ContentFn = fn (int) ui.Widget
 
-fn mk_box(id string) ui.Widget {
+fn make_box(id string) ui.Widget {
 	mut widget := ui.canvas_layout(
 		id: id
 		bg_color: gx.black
@@ -84,7 +84,7 @@ fn box_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	}
 }
 
-fn mk_quad(id string, content_fn ContentFn) ui.Widget {
+fn make_quad(id string, content_fn ContentFn) ui.Widget {
 	return ui.column(
 		heights: ui.stretch
 		spacing: 10
@@ -110,21 +110,28 @@ fn mk_quad(id string, content_fn ContentFn) ui.Widget {
 fn win_key(w &ui.Window, e ui.KeyEvent) {
 	match e.key {
 		._1 {
-			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q1')
+			mut q := w.get_or_panic[ui.Stack]('q1')
 			q.clipping = !q.clipping
 		}
 		._2 {
-			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q2')
-			q.clipping = !q.clipping
+			mut q := w.get_or_panic[ui.Stack]('q2')
+            q.clipping = !q.clipping
 		}
 		._3 {
-			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q3')
+
+			mut q := w.get_or_panic[ui.Stack]('q3')
 			q.clipping = !q.clipping
 		}
 		._4 {
-			mut q := w.get_widget_by_id_or_panic[ui.Stack]('q4')
+			mut q := w.get_or_panic[ui.Stack]('q4')
 			q.clipping = !q.clipping
 		}
+        .escape {
+		    // TODO: w.close() not implemented (no multi-window support yet!)
+		    if w.ui.dd is ui.DrawDeviceContext {
+			    w.ui.dd.quit()
+		    }
+	    }
 		else {}
 	}
 	update_status(w)
@@ -133,11 +140,12 @@ fn win_key(w &ui.Window, e ui.KeyEvent) {
 fn update_status(w &ui.Window) {
 	mut status := instructions2
 	for i in 1 .. 5 { // 1...4 doesn't work!?
-		mut q := w.get_widget_by_id_or_panic[ui.Stack]('q${i}')
+		mut q := w.get_or_panic[ui.Stack]('q${i}')
 		clip := if q.clipping { 'clip' } else { '----' }
 		status += ' ${clip}'
-	}
-	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
+	 }
+    w.get_or_panic[ui.Label]('status').text = status
+//	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
 }
 
 fn main() {
@@ -153,9 +161,9 @@ fn main() {
 				heights: [ui.stretch, 15.0, 15.0]
 				widths: ui.stretch
 				children: [
-					mk_quad('', fn (q int) ui.Widget {
-						return mk_quad('q${q}', fn [q] (b int) ui.Widget {
-							return mk_box('b${q}${b}')
+					make_quad('', fn (q int) ui.Widget {
+						return make_quad('q${q}', fn [q] (b int) ui.Widget {
+							return make_box('b${q}${b}')
 						})
 					}),
 					ui.label(
