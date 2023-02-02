@@ -1,6 +1,5 @@
 module ui
 
-import gg
 import sokol.sgl
 import sokol.sfons
 
