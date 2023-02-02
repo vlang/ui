@@ -24,10 +24,10 @@ fn printed_toml(v toml.Any, p PrintTomlParams) string {
 	for k, e in am {
 		title := if p.title == '' { k } else { '${p.title}.${k}' }
 		indent := ['  '].repeat(title.split('.').len - 1).join('')
-		toml := e.as_map().to_toml()
-		if toml[0..4] == '0 = ' {
+		toml_ := e.as_map().to_toml()
+		if toml_[0..4] == '0 = ' {
 			out += '${indent}${k} = ${e.to_toml()}\n'
-		} else if toml.contains('{') {
+		} else if toml_.contains('{') {
 			// map
 			out += printed_toml(e.as_map(),
 				title: title
@@ -35,7 +35,7 @@ fn printed_toml(v toml.Any, p PrintTomlParams) string {
 		} else {
 			out += '${indent}[${title}]\n'
 			mut res := ''
-			for l in toml.split('\n') {
+			for l in toml_.split('\n') {
 				res += '${indent}${l}\n'
 			}
 			out += res

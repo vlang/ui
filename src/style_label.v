@@ -19,13 +19,13 @@ pub mut:
 }
 
 pub fn (ls LabelStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['text_font_name'] = ls.text_font_name
-	toml['text_color'] = hex_color(ls.text_color)
-	toml['text_size'] = ls.text_size
-	toml['text_align'] = int(ls.text_align)
-	toml['text_vertical_align'] = int(ls.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['text_font_name'] = ls.text_font_name
+	toml_['text_color'] = hex_color(ls.text_color)
+	toml_['text_size'] = ls.text_size
+	toml_['text_align'] = int(ls.text_align)
+	toml_['text_vertical_align'] = int(ls.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut ls LabelStyle) from_toml(a toml.Any) {
