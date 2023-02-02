@@ -76,7 +76,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 
 // component access
 pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
-	return &AccordionComponent(w.component)
+	return unsafe { &AccordionComponent(w.component) }
 }
 
 pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {

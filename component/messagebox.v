@@ -59,7 +59,7 @@ pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 
 // component access
 pub fn messagebox_component(w ui.ComponentChild) &MessageBoxComponent {
-	return &MessageBoxComponent(w.component)
+	return unsafe { &MessageBoxComponent(w.component) }
 }
 
 pub fn messagebox_component_from_id(w ui.Window, id string) &MessageBoxComponent {

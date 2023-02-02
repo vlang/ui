@@ -49,7 +49,7 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 }
 
 pub fn fontbutton_component(w ui.ComponentChild) &FontButtonComponent {
-	return &FontButtonComponent(w.component)
+	return unsafe { &FontButtonComponent(w.component) }
 }
 
 pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent {

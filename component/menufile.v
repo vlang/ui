@@ -128,7 +128,7 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 
 // component access
 pub fn menufile_component(w ui.ComponentChild) &MenuFileComponent {
-	return &MenuFileComponent(w.component)
+	return unsafe { &MenuFileComponent(w.component) }
 }
 
 pub fn menufile_component_from_id(w ui.Window, id string) &MenuFileComponent {

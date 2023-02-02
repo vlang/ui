@@ -117,7 +117,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 }
 
 pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
-	return &TabsComponent(w.component)
+	return unsafe { &TabsComponent(w.component) }
 }
 
 pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {

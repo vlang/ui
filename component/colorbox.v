@@ -163,7 +163,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 
 // component access
 pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
-	return &ColorBoxComponent(w.component)
+	return unsafe { &ColorBoxComponent(w.component) }
 }
 
 pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {

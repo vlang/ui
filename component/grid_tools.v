@@ -71,7 +71,7 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 
 // component constructor
 pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
-	return &GridSettingsComponent(w.component)
+	return unsafe { &GridSettingsComponent(w.component) }
 }
 
 pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
