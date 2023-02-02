@@ -343,7 +343,7 @@ pub fn unlock_scrollview_key(w ScrollableWidget) {
 [heap]
 pub struct ScrollView {
 pub mut:
-	widget &Widget = unsafe{ nil }
+	widget &Widget = unsafe { nil }
 	// color
 	btn_color_x gx.Color = ui.scrollbar_button_color
 	btn_color_y gx.Color = ui.scrollbar_button_color

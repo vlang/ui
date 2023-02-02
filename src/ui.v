@@ -74,7 +74,7 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-        gui.refresh()
+		gui.refresh()
 		gui.ticks = 0
 
 		// glfw.post_empty_event()

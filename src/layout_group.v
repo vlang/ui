@@ -48,7 +48,7 @@ pub mut:
 	width    int
 	height   int
 	spacing  int = 5
-    clipping bool
+	clipping bool
 	children []Widget
 }
 
@@ -61,7 +61,7 @@ pub fn group(c GroupParams) &Group {
 		width: c.width
 		height: c.height
 		spacing: c.spacing
-        clipping: c.clipping
+		clipping: c.clipping
 		children: c.children
 		ui: 0
 	}
@@ -128,7 +128,7 @@ fn (mut g Group) calculate_child_positions() {
 		}
 	}
 	mut widgets := g.children.clone()
-    title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
+	title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
 	mut start_x := g.x + g.margin_left
 	mut start_y := g.y + g.margin_top + title_off
 	for mut widget in widgets {
@@ -149,13 +149,13 @@ fn (mut g Group) draw() {
 
 fn (mut g Group) draw_device(mut d DrawDevice) {
 	offset_start(mut g)
-    defer {
-	    offset_end(mut g)
-    }
-    cstate := clipping_start(g, mut d) or { return }
-    defer {
-        clipping_end(g, mut d, cstate)
-    }
+	defer {
+		offset_end(mut g)
+	}
+	cstate := clipping_start(g, mut d) or { return }
+	defer {
+		clipping_end(g, mut d, cstate)
+	}
 
 	// Border
 	$if gdraw ? {
@@ -163,7 +163,7 @@ fn (mut g Group) draw_device(mut d DrawDevice) {
 			println('group ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
-    title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
+	title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
 	d.draw_rect_empty(g.x, g.y + title_off, g.width, g.height - title_off, gx.gray)
 	mut title := g.title
 	mut text_width := g.ui.dd.text_width(title)

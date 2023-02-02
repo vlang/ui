@@ -114,10 +114,9 @@ fn win_key(w &ui.Window, e ui.KeyEvent) {
 		}
 		._2 {
 			mut q := w.get_or_panic[ui.Stack]('q2')
-            q.clipping = !q.clipping
+			q.clipping = !q.clipping
 		}
 		._3 {
-
 			mut q := w.get_or_panic[ui.Stack]('q3')
 			q.clipping = !q.clipping
 		}
@@ -125,12 +124,12 @@ fn win_key(w &ui.Window, e ui.KeyEvent) {
 			mut q := w.get_or_panic[ui.Stack]('q4')
 			q.clipping = !q.clipping
 		}
-        .escape {
-		    // TODO: w.close() not implemented (no multi-window support yet!)
-		    if w.ui.dd is ui.DrawDeviceContext {
-			    w.ui.dd.quit()
-		    }
-	    }
+		.escape {
+			// TODO: w.close() not implemented (no multi-window support yet!)
+			if w.ui.dd is ui.DrawDeviceContext {
+				w.ui.dd.quit()
+			}
+		}
 		else {}
 	}
 	update_status(w)
@@ -142,9 +141,9 @@ fn update_status(w &ui.Window) {
 		mut q := w.get_or_panic[ui.Stack]('q${i}')
 		clip := if q.clipping { 'clip' } else { '----' }
 		status += ' ${clip}'
-	 }
-    w.get_or_panic[ui.Label]('status').text = status
-//	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
+	}
+	w.get_or_panic[ui.Label]('status').text = status
+	//	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
 }
 
 fn main() {
