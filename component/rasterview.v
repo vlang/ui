@@ -95,7 +95,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 }
 
 pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
-	return &RasterViewComponent(w.component)
+	return unsafe { &RasterViewComponent(w.component) }
 }
 
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {

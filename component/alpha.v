@@ -77,7 +77,7 @@ pub fn alpha_stack(p AlphaParams) &ui.Stack {
 
 // component access
 pub fn alpha_component(w ui.ComponentChild) &AlphaComponent {
-	return &AlphaComponent(w.component)
+	return unsafe { &AlphaComponent(w.component) }
 }
 
 pub fn alpha_component_from_id(w ui.Window, id string) &AlphaComponent {

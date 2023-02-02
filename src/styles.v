@@ -32,36 +32,36 @@ pub mut:
 }
 
 pub fn (s Style) to_toml() string {
-	mut toml := ''
-	toml += '[window]\n'
-	toml += s.win.to_toml()
-	toml += '\n[button]\n'
-	toml += s.btn.to_toml()
-	toml += '\n[progressbar]\n'
-	toml += s.pgbar.to_toml()
-	toml += '\n[slider]\n'
-	toml += s.slider.to_toml()
-	toml += '\n[dropdown]\n'
-	toml += s.dd.to_toml()
-	toml += '\n[checkbox]\n'
-	toml += s.cb.to_toml()
-	toml += '\n[radio]\n'
-	toml += s.radio.to_toml()
-	toml += '\n[rectangle]\n'
-	toml += s.rect.to_toml()
-	toml += '\n[menu]\n'
-	toml += s.menu.to_toml()
-	toml += '\n[canvaslayout]\n'
-	toml += s.cl.to_toml()
-	toml += '\n[stack]\n'
-	toml += s.stack.to_toml()
-	toml += '\n[textbox]\n'
-	toml += s.tb.to_toml()
-	toml += '\n[listbox]\n'
-	toml += s.lb.to_toml()
-	toml += '\n[label]\n'
-	toml += s.label.to_toml()
-	return toml
+	mut toml_ := ''
+	toml_ += '[window]\n'
+	toml_ += s.win.to_toml()
+	toml_ += '\n[button]\n'
+	toml_ += s.btn.to_toml()
+	toml_ += '\n[progressbar]\n'
+	toml_ += s.pgbar.to_toml()
+	toml_ += '\n[slider]\n'
+	toml_ += s.slider.to_toml()
+	toml_ += '\n[dropdown]\n'
+	toml_ += s.dd.to_toml()
+	toml_ += '\n[checkbox]\n'
+	toml_ += s.cb.to_toml()
+	toml_ += '\n[radio]\n'
+	toml_ += s.radio.to_toml()
+	toml_ += '\n[rectangle]\n'
+	toml_ += s.rect.to_toml()
+	toml_ += '\n[menu]\n'
+	toml_ += s.menu.to_toml()
+	toml_ += '\n[canvaslayout]\n'
+	toml_ += s.cl.to_toml()
+	toml_ += '\n[stack]\n'
+	toml_ += s.stack.to_toml()
+	toml_ += '\n[textbox]\n'
+	toml_ += s.tb.to_toml()
+	toml_ += '\n[listbox]\n'
+	toml_ += s.lb.to_toml()
+	toml_ += '\n[label]\n'
+	toml_ += s.label.to_toml()
+	return toml_
 }
 
 pub fn parse_style_toml_file(path string) Style {

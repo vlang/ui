@@ -95,7 +95,7 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 
 // component access
 pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
-	return &FileBrowserComponent(w.component)
+	return unsafe { &FileBrowserComponent(w.component) }
 }
 
 pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {

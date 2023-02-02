@@ -80,7 +80,7 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 }
 
 pub fn splitpanel_component(w ui.ComponentChild) &SplitPanelComponent {
-	return &SplitPanelComponent(w.component)
+	return unsafe { &SplitPanelComponent(w.component) }
 }
 
 pub fn splitpanel_component_from_id(w ui.Window, id string) &SplitPanelComponent {

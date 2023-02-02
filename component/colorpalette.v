@@ -94,7 +94,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 
 // component common access
 pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
-	return &ColorPaletteComponent(w.component)
+	return unsafe { &ColorPaletteComponent(w.component) }
 }
 
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {

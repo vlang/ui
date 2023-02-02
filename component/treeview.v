@@ -235,7 +235,7 @@ pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
 
 // component access
 pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
-	return &TreeViewComponent(w.component)
+	return unsafe { &TreeViewComponent(w.component) }
 }
 
 pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
@@ -362,14 +362,14 @@ pub fn (tv &TreeViewComponent) full_title(id string) string {
 
 fn (mut tv TreeViewComponent) activate(id string) {
 	if id in tv.containers {
-		mut l := tv.containers[id]
+		mut l := tv.containers[id] or { return }
 		l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
 	}
 }
 
 fn (mut tv TreeViewComponent) deactivate(id string) {
 	if id in tv.containers {
-		mut l := tv.containers[id]
+		mut l := tv.containers[id] or { return }
 		l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
 	}
 }

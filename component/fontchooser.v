@@ -46,7 +46,7 @@ pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 }
 
 pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
-	return &FontChooserComponent(w.component)
+	return unsafe { &FontChooserComponent(w.component) }
 }
 
 pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {

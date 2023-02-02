@@ -235,7 +235,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 
 // component access
 pub fn grid_component(w ui.ComponentChild) &GridComponent {
-	return &GridComponent(w.component)
+	return unsafe { &GridComponent(w.component) }
 }
 
 pub fn grid_component_from_id(w ui.Window, id string) &GridComponent {
@@ -1028,7 +1028,7 @@ fn (mut gdd GridDropdown) set_value(i int, v string) {
 }
 
 fn (gdd &GridDropdown) draw_device(mut d ui.DrawDevice, j int, mut g GridComponent) {
-	mut dd := g.dd_factor[gdd.name]
+	mut dd := g.dd_factor[gdd.name] or { return }
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	// println("ddd $j $gdd.var.values.len")

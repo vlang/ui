@@ -62,7 +62,7 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 
 // component access
 pub fn colorbutton_component(w ui.ComponentChild) &ColorButtonComponent {
-	return &ColorButtonComponent(w.component)
+	return unsafe { &ColorButtonComponent(w.component) }
 }
 
 pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonComponent {

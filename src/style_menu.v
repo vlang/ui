@@ -39,17 +39,17 @@ pub fn menu_style(p MenuStyleParams) MenuStyleParams {
 }
 
 pub fn (ms MenuStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['border_color'] = hex_color(ms.border_color)
-	toml['bar_color'] = hex_color(ms.bar_color)
-	toml['bg_color'] = hex_color(ms.bg_color)
-	toml['bg_color_hover'] = hex_color(ms.bg_color_hover)
-	toml['text_font_name'] = ms.text_font_name
-	toml['text_color'] = hex_color(ms.text_color)
-	toml['text_size'] = ms.text_size
-	toml['text_align'] = int(ms.text_align)
-	toml['text_vertical_align'] = int(ms.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['border_color'] = hex_color(ms.border_color)
+	toml_['bar_color'] = hex_color(ms.bar_color)
+	toml_['bg_color'] = hex_color(ms.bg_color)
+	toml_['bg_color_hover'] = hex_color(ms.bg_color_hover)
+	toml_['text_font_name'] = ms.text_font_name
+	toml_['text_color'] = hex_color(ms.text_color)
+	toml_['text_size'] = ms.text_size
+	toml_['text_align'] = int(ms.text_align)
+	toml_['text_vertical_align'] = int(ms.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut ms MenuStyle) from_toml(a toml.Any) {

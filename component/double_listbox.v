@@ -72,7 +72,7 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 
 // component common access
 pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
-	return &DoubleListBoxComponent(w.component)
+	return unsafe { &DoubleListBoxComponent(w.component) }
 }
 
 pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxComponent {

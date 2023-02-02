@@ -52,7 +52,7 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 }
 
 pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
-	return &HideableComponent(w.component)
+	return unsafe { &HideableComponent(w.component) }
 }
 
 pub fn hideable_component_from_id(w ui.Window, id string) &HideableComponent {
