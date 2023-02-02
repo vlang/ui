@@ -178,7 +178,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn (app &App) draw_circles(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &App) draw_circles(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	for i, circle in app.state.circles {
 		if i == app.hover {
 			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gx.light_gray)
