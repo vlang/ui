@@ -41,18 +41,18 @@ pub fn listbox_style(p ListBoxStyleParams) ListBoxStyleParams {
 }
 
 pub fn (lbs ListBoxStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['radius'] = lbs.radius
-	toml['border_color'] = hex_color(lbs.border_color)
-	toml['bg_color'] = hex_color(lbs.bg_color)
-	toml['bg_color_pressed'] = hex_color(lbs.bg_color_hover)
-	toml['bg_color_hover'] = hex_color(lbs.bg_color_pressed)
-	toml['text_font_name'] = lbs.text_font_name
-	toml['text_color'] = hex_color(lbs.text_color)
-	toml['text_size'] = lbs.text_size
-	toml['text_align'] = int(lbs.text_align)
-	toml['text_vertical_align'] = int(lbs.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['radius'] = lbs.radius
+	toml_['border_color'] = hex_color(lbs.border_color)
+	toml_['bg_color'] = hex_color(lbs.bg_color)
+	toml_['bg_color_pressed'] = hex_color(lbs.bg_color_hover)
+	toml_['bg_color_hover'] = hex_color(lbs.bg_color_pressed)
+	toml_['text_font_name'] = lbs.text_font_name
+	toml_['text_color'] = hex_color(lbs.text_color)
+	toml_['text_size'] = lbs.text_size
+	toml_['text_align'] = int(lbs.text_align)
+	toml_['text_vertical_align'] = int(lbs.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut lbs ListBoxStyle) from_toml(a toml.Any) {

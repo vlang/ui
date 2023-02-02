@@ -28,12 +28,12 @@ pub fn slider_style(p SliderStyleParams) SliderStyleParams {
 }
 
 pub fn (ss SliderStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['thumb_color'] = hex_color(ss.thumb_color)
-	toml['bg_color'] = hex_color(ss.bg_color)
-	toml['bg_border_color'] = hex_color(ss.bg_border_color)
-	toml['focused_bg_border_color'] = hex_color(ss.focused_bg_border_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['thumb_color'] = hex_color(ss.thumb_color)
+	toml_['bg_color'] = hex_color(ss.bg_color)
+	toml_['bg_border_color'] = hex_color(ss.bg_border_color)
+	toml_['focused_bg_border_color'] = hex_color(ss.focused_bg_border_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut ss SliderStyle) from_toml(a toml.Any) {

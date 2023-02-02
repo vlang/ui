@@ -19,9 +19,9 @@ mut:
 }
 
 pub fn (w WindowStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_color'] = hex_color(w.bg_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_color'] = hex_color(w.bg_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut w WindowStyle) from_toml(a toml.Any) {
