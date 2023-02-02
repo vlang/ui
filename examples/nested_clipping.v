@@ -15,14 +15,13 @@ const (
 type ContentFn = fn (int) ui.Widget
 
 fn make_box(id string) ui.Widget {
-	mut widget := ui.canvas_layout(
+	return ui.canvas_layout(
 		id: id
 		bg_color: gx.black
 		on_draw: box_draw
 		on_mouse_up: box_click
 		clipping: true
 	)
-	return widget
 }
 
 fn ordinal(i int) string {
