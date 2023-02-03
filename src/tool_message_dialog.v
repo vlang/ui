@@ -33,7 +33,7 @@ fn (mut win Window) add_message_dialog() {
 }
 
 fn message_dialog_click(b &Button) {
-	mut dlg := b.ui.window.stack('_msg_dlg_col')
+	mut dlg := b.ui.window.get_or_panic[Stack]('_msg_dlg_col')
 	dlg.set_visible(false)
 }
 
@@ -41,8 +41,8 @@ pub fn (win &Window) message(s string) {
 	if win.native_message {
 		message_box(s)
 	} else {
-		mut dlg := win.stack('_msg_dlg_col')
-		mut msg := win.label('_msg_dlg_lab')
+		mut dlg := win.get_or_panic[Stack]('_msg_dlg_col')
+		mut msg := win.get_or_panic[Label]('_msg_dlg_lab')
 		msg.set_text(s)
 		mut tw, mut th := text_lines_size(s.split('\n'), win.ui)
 		msg.propose_size(tw, th)
@@ -80,7 +80,7 @@ struct TextView {
 	y       int
 	width   int
 	height  int
-	context &TextContext
+	context &TextContext = unsafe { nil }
 }
 
 

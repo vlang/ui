@@ -67,7 +67,7 @@ pub fn (mut t Transition) cleanup() {
 [unsafe]
 pub fn (t &Transition) free() {
 	$if free ? {
-		print('transition $t.id')
+		print('transition ${t.id}')
 	}
 	unsafe {
 		t.id.free()
@@ -97,10 +97,10 @@ fn (mut t Transition) size() (int, int) {
 }
 
 fn (mut t Transition) draw() {
-	t.draw_device(t.ui.gg)
+	t.draw_device(mut t.ui.dd)
 }
 
-fn (mut t Transition) draw_device(d DrawDevice) {
+fn (mut t Transition) draw_device(mut d DrawDevice) {
 	if t.animated_value == 0 {
 		return
 	}

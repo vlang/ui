@@ -5,7 +5,6 @@ module ui
 
 import math
 import gx
-import gg
 import eventbus
 
 [heap]
@@ -22,7 +21,7 @@ pub mut:
 	z_index       int
 	is_focused    bool
 	parent        Layout = empty_stack
-	ui            &UI
+	ui            &UI    = unsafe { nil }
 	children      []Widget
 	margin_left   int = 5
 	margin_top    int = 10
@@ -32,6 +31,7 @@ pub mut:
 	adj_height    int
 	adj_width     int
 	hidden        bool
+	clipping      bool
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed
@@ -48,6 +48,7 @@ pub mut:
 	width    int
 	height   int
 	spacing  int = 5
+	clipping bool
 	children []Widget
 }
 
@@ -59,8 +60,9 @@ pub fn group(c GroupParams) &Group {
 		y: c.y
 		width: c.width
 		height: c.height
-		children: c.children
 		spacing: c.spacing
+		clipping: c.clipping
+		children: c.children
 		ui: 0
 	}
 	return g
@@ -90,7 +92,7 @@ pub fn (mut g Group) cleanup() {
 [unsafe]
 pub fn (g &Group) free() {
 	$if free ? {
-		print('group $g.id')
+		print('group ${g.id}')
 	}
 	unsafe {
 		g.id.free()
@@ -122,12 +124,13 @@ fn (mut g Group) set_pos(x int, y int) {
 fn (mut g Group) calculate_child_positions() {
 	$if gccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp $g.id size: ($g.width, $g.height)')
+			println('group ccp ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
-	mut widgets := g.children
+	mut widgets := g.children.clone()
+	title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
 	mut start_x := g.x + g.margin_left
-	mut start_y := g.y + g.margin_top
+	mut start_y := g.y + g.margin_top + title_off
 	for mut widget in widgets {
 		_, wid_h := widget.size()
 		widget.set_pos(start_x, start_y)
@@ -135,39 +138,47 @@ fn (mut g Group) calculate_child_positions() {
 	}
 	$if gccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group ccp2 $g.id size: ($g.width, $g.height)')
+			println('group ccp2 ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
 }
 
 fn (mut g Group) draw() {
-	g.draw_device(g.ui.gg)
+	g.draw_device(mut g.ui.dd)
 }
 
-fn (mut g Group) draw_device(d DrawDevice) {
+fn (mut g Group) draw_device(mut d DrawDevice) {
 	offset_start(mut g)
+	defer {
+		offset_end(mut g)
+	}
+	cstate := clipping_start(g, mut d) or { return }
+	defer {
+		clipping_end(g, mut d, cstate)
+	}
+
 	// Border
 	$if gdraw ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id size: ($g.width, $g.height)')
+			println('group ${g.id} size: (${g.width}, ${g.height})')
 		}
 	}
-	d.draw_rect_empty(g.x, g.y, g.width, g.height, gx.gray)
+	title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
+	d.draw_rect_empty(g.x, g.y + title_off, g.width, g.height - title_off, gx.gray)
 	mut title := g.title
-	mut text_width := g.ui.gg.text_width(title)
+	mut text_width := g.ui.dd.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {
 		proportion := f32(g.width) / f32(text_width)
 		target_len := int(math.floor(title.len * proportion)) - 5
 		title = if target_len < 0 { '' } else { title.substr(0, target_len) + '..' }
-		text_width = g.ui.gg.text_width(title)
+		text_width = g.ui.dd.text_width(title)
 	}
 	// Title
-	d.draw_rect_filled(g.x + check_mark_size, g.y - 5, text_width + 5, 10, g.ui.window.bg_color)
-	g.ui.gg.draw_text_def(g.x + check_mark_size + 3, g.y - 7, title)
+	d.draw_rect_filled(g.x + check_mark_size, g.y, text_width + 5, 10, g.ui.window.bg_color)
+	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 2, title)
 	for mut child in g.children {
-		child.draw_device(d)
+		child.draw_device(mut d)
 	}
-	offset_end(mut g)
 }
 
 fn (g &Group) point_inside(x f64, y f64) bool {
@@ -196,7 +207,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 		mut child_width, mut child_height := child.size()
 
 		$if ui_group ? {
-			println('$i $child.type_name() => child_width, child_height: $child_width, $child_height')
+			println('${i} ${child.type_name()} => child_width, child_height: ${child_width}, ${child_height}')
 		}
 
 		h += child_height // height of vertical stack means adding children's height
@@ -208,7 +219,7 @@ fn (mut g Group) set_adjusted_size(i int, ui &UI) {
 	g.adj_width = w
 	g.adj_height = h
 	$if adj_size_group ? {
-		println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
+		println('group ${g.id} adj size: (${g.adj_width}, ${g.adj_height})')
 	}
 }
 
@@ -222,7 +233,7 @@ fn (mut g Group) propose_size(w int, h int) (int, int) {
 	// println('g prop size: ($w, $h)')
 	$if gps ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {
-			println('group $g.id propose size: ($g.width, $g.height)')
+			println('group ${g.id} propose size: (${g.width}, ${g.height})')
 		}
 	}
 	return g.width, g.height

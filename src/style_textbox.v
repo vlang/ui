@@ -35,10 +35,10 @@ pub fn textbox_style(p TextBoxStyleParams) TextBoxStyleParams {
 }
 
 pub fn (ts TextBoxStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_radius'] = ts.bg_radius
-	toml['bg_color'] = hex_color(ts.bg_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_radius'] = ts.bg_radius
+	toml_['bg_color'] = hex_color(ts.bg_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut ts TextBoxStyle) from_toml(a toml.Any) {

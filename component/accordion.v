@@ -35,7 +35,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	if c.heights.len == 2 {
 		heights = c.heights.repeat(c.children.len)
 	} else {
-		heights = c.heights
+		heights = c.heights.clone()
 	}
 	mut layout := ui.column(
 		id: ui.component_id(c.id, 'layout')
@@ -52,7 +52,7 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	ui.component_connect(acc, layout)
 	mut title_id := ''
 	for i, title in c.titles {
-		title_id = c.id + '_$i'
+		title_id = c.id + '_${i}'
 		title_cp := ui.canvas_plus(
 			id: title_id
 			on_draw: accordion_draw
@@ -76,14 +76,14 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 
 // component access
 pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
-	return &AccordionComponent(w.component)
+	return unsafe { &AccordionComponent(w.component) }
 }
 
 pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
-	return accordion_component(w.stack(ui.component_id(id, 'layout')))
+	return accordion_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
-fn accordion_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn accordion_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	acc := accordion_component(c)
 	if acc.selected[c.id] {
 		c.draw_device_triangle_filled(d, 5, 8, 12, 8, 8, 14, gx.black)

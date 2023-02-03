@@ -74,6 +74,7 @@ fn main() {
 		]
 	)
 	app.window = window
+
 	// go app.timer()
 	ui.run(window)
 }
@@ -84,7 +85,7 @@ fn (mut app App) on_value_changed(slider &ui.Slider) {
 
 fn (mut app App) on_reset(button &ui.Button) {
 	app.elapsed_time = 0.0
-	go app.timer()
+	spawn app.timer()
 }
 
 fn (mut app App) timer() {

@@ -35,15 +35,15 @@ pub fn rectangle_style(p RectangleStyleParams) RectangleStyleParams {
 }
 
 pub fn (rects RectangleStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['border_color'] = hex_color(rects.border_color)
-	toml['color'] = hex_color(rects.color)
-	toml['text_font_name'] = rects.text_font_name
-	toml['text_color'] = hex_color(rects.text_color)
-	toml['text_size'] = rects.text_size
-	toml['text_align'] = int(rects.text_align)
-	toml['text_vertical_align'] = int(rects.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['border_color'] = hex_color(rects.border_color)
+	toml_['color'] = hex_color(rects.color)
+	toml_['text_font_name'] = rects.text_font_name
+	toml_['text_color'] = hex_color(rects.text_color)
+	toml_['text_size'] = rects.text_size
+	toml_['text_align'] = int(rects.text_align)
+	toml_['text_vertical_align'] = int(rects.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut rects RectangleStyle) from_toml(a toml.Any) {
@@ -52,8 +52,8 @@ pub fn (mut rects RectangleStyle) from_toml(a toml.Any) {
 	rects.text_font_name = a.value('text_font_name').string()
 	rects.text_color = HexColor(a.value('text_color').string()).color()
 	rects.text_size = a.value('text_size').int()
-	rects.text_align = TextHorizontalAlign(a.value('text_align').int())
-	rects.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	rects.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	rects.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut rect Rectangle) load_style() {

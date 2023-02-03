@@ -28,7 +28,7 @@ mut:
 	movable   bool
 	drag_type string = 'pic'
 	path      string
-	ui        &UI
+	ui        &UI = unsafe { nil }
 	image     gg.Image
 	on_click  PictureFn
 	use_cache bool
@@ -90,18 +90,20 @@ fn (mut pic Picture) init(parent Layout) {
 		pic.image = ui.img(pic.path)
 	} else {
 		if !os.exists(pic.path) {
-			eprintln('V UI: picture file "$pic.path" not found')
+			eprintln('V UI: picture file "${pic.path}" not found')
 		}
 		if !pic.use_cache && pic.path in ui.resource_cache {
 			pic.image = ui.resource_cache[pic.path]
-		} else {
-			pic.image = pic.ui.gg.create_image(pic.path)
+		} else if mut pic.ui.dd is DrawDeviceContext {
+			pic.image = pic.ui.dd.create_image(pic.path)
 			ui.resource_cache[pic.path] = pic.image
 		}
 	}
 	$if android {
 		byte_ary := os.read_apk_asset(pic.path) or { panic(err) }
-		pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary)
+		if mut pic.ui.dd is DrawDeviceContext {
+			pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary)
+		}
 	}
 	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
 	if pic.width == 0 || pic.height == 0 {
@@ -126,7 +128,7 @@ pub fn (mut p Picture) cleanup() {
 [unsafe]
 pub fn (p &Picture) free() {
 	$if free ? {
-		print('picture $p.id')
+		print('picture ${p.id}')
 	}
 	unsafe {
 		// p.image.free()
@@ -177,13 +179,13 @@ pub fn (mut pic Picture) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pic Picture) draw() {
-	pic.draw_device(pic.ui.gg)
+	pic.draw_device(mut pic.ui.dd)
 }
 
-fn (mut pic Picture) draw_device(d DrawDevice) {
+fn (mut pic Picture) draw_device(mut d DrawDevice) {
 	$if layout ? {
 		if pic.ui.layout_print {
-			println('Picture($pic.id): ($pic.x, $pic.y, $pic.width, $pic.height)')
+			println('Picture(${pic.id}): (${pic.x}, ${pic.y}, ${pic.width}, ${pic.height})')
 		}
 	}
 	d.draw_image(pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height, pic.image)

@@ -37,7 +37,7 @@ pub struct Button {
 	height_ int
 pub mut:
 	id          string
-	state       ButtonState = ButtonState(1)
+	state       ButtonState = .normal
 	height      int
 	width       int
 	z_index     int
@@ -140,7 +140,7 @@ pub fn button(c ButtonParams) &Button {
 	}
 	b.style_params.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {
-		println('Invalid icon path "$c.icon_path". The alternate text will be used.')
+		println('Invalid icon path "${c.icon_path}". The alternate text will be used.')
 		b.use_icon = false
 	}
 	return b
@@ -151,9 +151,12 @@ fn (mut b Button) init(parent Layout) {
 	ui := parent.get_ui()
 	b.ui = ui
 	if b.use_icon {
-		b.image = b.ui.gg.create_image(b.icon_path)
+		if mut b.ui.dd is DrawDeviceContext {
+			b.image = b.ui.dd.create_image(b.icon_path)
+		}
 	}
 	b.load_style()
+	b.set_text_size()
 	if b.tooltip.text != '' {
 		mut win := ui.window
 		win.tooltip.append(b, b.tooltip)
@@ -184,7 +187,7 @@ fn (mut b Button) cleanup() {
 [unsafe]
 pub fn (b &Button) free() {
 	$if free ? {
-		print('button $b.id')
+		print('button ${b.id}')
 	}
 	unsafe {
 		b.id.free()
@@ -208,7 +211,7 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if btn_keydown ? {
-		println('btn_keydown: $b.id  -> $b.hidden $b.is_focused')
+		println('btn_keydown: ${b.id}  -> ${b.hidden} ${b.is_focused}')
 	}
 	if b.hidden {
 		return
@@ -231,14 +234,14 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 
 fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_click ? {
-		println('btn_click $b.id movable $b.movable focused $b.is_focused top_widget ${b.ui.window.is_top_widget(b,
+		println('btn_click ${b.id} movable ${b.movable} focused ${b.is_focused} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
 	if b.hidden || b.disabled {
 		return
 	}
 	$if wpir ? {
-		println('btn click: $b.id ${b.ui.window.point_inside_receivers(events.on_mouse_down)}')
+		println('btn click: ${b.id} ${b.ui.window.point_inside_receivers(events.on_mouse_down)}')
 	}
 	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
 		return
@@ -258,7 +261,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .normal
 			if b.on_click != ButtonFn(0) && b.is_focused {
 				$if btn_onclick ? {
-					println('onclick $b.id')
+					println('onclick ${b.id}')
 				}
 				b.on_click(b)
 			}
@@ -268,7 +271,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_md ? {
-		println('btn_mouse_down $b.id movable $b.movable top_widget ${b.ui.window.is_top_widget(b,
+		println('btn_mouse_down ${b.id} movable ${b.movable} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
 	if b.hidden {
@@ -293,7 +296,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 
 fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
 	$if btn_mu ? {
-		println('btn_mu $b.id')
+		println('btn_mu ${b.id}')
 	}
 	if b.hidden {
 		return
@@ -345,12 +348,6 @@ pub fn (mut b Button) set_pos(x int, y int) {
 }
 
 pub fn (b &Button) size() (int, int) {
-	if b.width == 0 || b.height == 0 {
-		unsafe {
-			mut b2 := b
-			b2.set_text_size()
-		}
-	}
 	return b.width, b.height
 }
 
@@ -371,16 +368,20 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut b Button) draw() {
-	b.draw_device(b.ui.gg)
+	b.draw_device(mut b.ui.dd)
 }
 
-fn (mut b Button) draw_device(d DrawDevice) {
+fn (mut b Button) draw_device(mut d DrawDevice) {
 	offset_start(mut b)
+	defer {
+		offset_end(mut b)
+	}
 	$if layout ? {
 		if b.ui.layout_print {
-			println('Button($b.id): ($b.x, $b.y, $b.width, $b.height)')
+			println('Button(${b.id}): (${b.x}, ${b.y}, ${b.width}, ${b.height})')
 		}
 	}
+
 	bcenter_x := b.x + b.width / 2
 	bcenter_y := b.y + b.height / 2
 	padding := relative_size(b.padding, b.width, b.height)
@@ -435,21 +436,20 @@ fn (mut b Button) draw_device(d DrawDevice) {
 	if b.use_icon {
 		d.draw_image(x, y, width, height, b.image)
 	} else {
-		dtw := DrawTextWidget(b)
+		mut dtw := DrawTextWidget(b)
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, bcenter_x, bcenter_y, b.text)
 	}
 	$if tbb ? {
-		println('bcenter_x($bcenter_x) = b.x($b.x) + b.width($b.width) / 2')
-		println('bcenter_y($bcenter_y) = b.y($b.y) + b.height($b.height) / 2')
-		println('draw_text(b, bcenter_x($bcenter_x), bcenter_y($bcenter_y), b.text($b.text))')
-		println('draw_rect(b.x($b.x), b.y($b.y), b.width($b.width), b.height($b.height), bg_color)')
+		println('bcenter_x(${bcenter_x}) = b.x(${b.x}) + b.width(${b.width}) / 2')
+		println('bcenter_y(${bcenter_y}) = b.y(${b.y}) + b.height(${b.height}) / 2')
+		println('draw_text(b, bcenter_x(${bcenter_x}), bcenter_y(${bcenter_y}), b.text(${b.text}))')
+		println('draw_rect(b.x(${b.x}), b.y(${b.y}), b.width(${b.width}), b.height(${b.height}), bg_color)')
 		debug_draw_bb_text(bcenter_x, y, b.text_width, b.text_height, b.ui)
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut b, b.ui)
 	}
-	offset_end(mut b)
 }
 
 pub fn (mut b Button) set_text(text string) {
@@ -462,9 +462,12 @@ pub fn (mut b Button) set_text_size() {
 		b.width = b.image.width
 		b.height = b.image.height
 	} else {
-		dtw := DrawTextWidget(b)
+		mut dtw := DrawTextWidget(b)
 		dtw.load_style()
 		b.text_width, b.text_height = dtw.text_size(b.text)
+		if b.id == 'hi' {
+			println('${b.text_width}')
+		}
 		// b.text_width, b.text_height = text_size(b, b.text)
 
 		// b.text_width = int(f32(b.text_width))

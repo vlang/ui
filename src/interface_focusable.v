@@ -22,28 +22,32 @@ pub fn (f Focusable) has_focusable() bool {
 		focusable = !f.read_only
 	}
 	$if focus ? {
-		println('${f.id}.has_focusable(): $focusable && ${!f.hidden} && $f.ui.window.unlocked_focus() (locked_focus=<$f.ui.window.locked_focus>)')
+		println('${f.id}.has_focusable(): ${focusable} && ${!f.hidden} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
 	}
 	return focusable && !f.hidden && f.ui.window.unlocked_focus()
 }
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) set_focus() {
-	w := f.ui.window
+	mut w := f.ui.window
 	if !w.unlocked_focus() {
 		return
 	}
 	if f.is_focused {
-		$if focus ? {
-			println('$f.id already has focus at $w.ui.gg.frame')
+		if mut w.ui.dd is DrawDeviceContext {
+			$if focus ? {
+				println('${f.id} already has focus at ${w.ui.dd.frame}')
+			}
 		}
 		return
 	}
 	Layout(w).unfocus_all()
 	if f.has_focusable() {
 		f.is_focused = true
-		$if focus ? {
-			println('$f.id has focus at $w.ui.gg.frame')
+		if mut w.ui.dd is DrawDeviceContext {
+			$if focus ? {
+				println('${f.id} has focus at ${w.ui.dd.frame}')
+			}
 		}
 	}
 	// update drawing_children when focus is taken
@@ -52,24 +56,28 @@ pub fn (mut f Focusable) set_focus() {
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) force_focus() {
-	w := f.ui.window
+	mut w := f.ui.window
 	if f.is_focused {
-		$if focus ? {
-			println('$f.id already has focus at $w.ui.gg.frame')
+		if mut w.ui.dd is DrawDeviceContext {
+			$if focus ? {
+				println('${f.id} already has focus at ${w.ui.dd.frame}')
+			}
 		}
 		return
 	}
 	Layout(w).unfocus_all()
 	f.is_focused = true
-	$if focus ? {
-		println('$f.id has focus at $w.ui.gg.frame')
+	if mut w.ui.dd is DrawDeviceContext {
+		$if focus ? {
+			println('${f.id} has focus at ${w.ui.dd.frame}')
+		}
 	}
 }
 
 pub fn (f Focusable) lock_focus() {
 	mut w := f.ui.window
 	$if focus ? {
-		println('$f.id lock focus')
+		println('${f.id} lock focus')
 	}
 	w.locked_focus = f.id
 }
@@ -78,7 +86,7 @@ pub fn (f Focusable) unlock_focus() {
 	mut w := f.ui.window
 	if w.locked_focus == f.id {
 		$if focus ? {
-			println('$f.id unlock focus')
+			println('${f.id} unlock focus')
 		}
 		w.locked_focus = ''
 	}

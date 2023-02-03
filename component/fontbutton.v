@@ -49,11 +49,11 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 }
 
 pub fn fontbutton_component(w ui.ComponentChild) &FontButtonComponent {
-	return &FontButtonComponent(w.component)
+	return unsafe { &FontButtonComponent(w.component) }
 }
 
 pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent {
-	return fontbutton_component(w.button(id))
+	return fontbutton_component(w.get_or_panic[ui.Button](id))
 }
 
 fn font_button_click(mut b ui.Button) {
@@ -61,7 +61,7 @@ fn font_button_click(mut b ui.Button) {
 	// println('fb_click $fb.dtw.id')
 	fontchooser_connect(b.ui.window, fb.dtw)
 	fontchooser_subwindow_visible(b.ui.window)
-	mut s := b.ui.window.subwindow(fontchooser_subwindow_id)
+	mut s := b.ui.window.get_or_panic[ui.SubWindow](fontchooser_subwindow_id)
 	if s.x == 0 && s.y == 0 {
 		w, h := b.size()
 		s.set_pos(b.x + w / 2, b.y + h / 2)

@@ -1,6 +1,5 @@
 module ui
 
-import gg
 import sokol.sgl
 import sokol.sfons
 
@@ -128,7 +127,7 @@ pub fn (mut w DrawTextWidget) set_current_style(ts TextStyleParams) {
 	w.text_styles.current = w.text_style(ts)
 }
 
-pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
+pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	// println("load style ${w.style_id()} $ts")
 	if d.has_text_style() {
 		// println('lds current style: $ts')
@@ -137,24 +136,26 @@ pub fn (w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			int(ts.align), int(ts.vertical_align))
 	}
 	$if !screenshot ? {
-		gg := w.ui.gg
-		fons := gg.ft.fons
-		fons.set_font(w.ui.fonts.hash[ts.font_name])
+		if mut w.ui.dd is DrawDeviceContext {
+			gg_ := w.ui.dd
+			fons := gg_.ft.fons
+			fons.set_font(w.ui.fonts.hash[ts.font_name])
 
-		scale := if gg.ft.scale == 0 { f32(1) } else { gg.ft.scale }
-		size := if ts.mono { ts.size - 2 } else { ts.size }
-		fons.set_size(scale * f32(size))
-		gg.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
-		color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
-		if ts.color.a != 255 {
-			sgl.load_pipeline(gg.timage_pip)
+			scale := if gg_.ft.scale == 0 { f32(1) } else { gg_.ft.scale }
+			size := if ts.mono { ts.size - 2 } else { ts.size }
+			fons.set_size(scale * f32(size))
+			gg_.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
+			color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
+			if ts.color.a != 255 {
+				sgl.load_pipeline(gg_.pipeline.alpha)
+			}
+			gg_.ft.fons.set_color(color)
+			ascender := f32(0.0)
+			descender := f32(0.0)
+			lh := f32(0.0)
+			fons.vert_metrics(&ascender, &descender, &lh)
+			// println("load style $ascender, $descender ${}")
 		}
-		gg.ft.fons.set_color(color)
-		ascender := f32(0.0)
-		descender := f32(0.0)
-		lh := f32(0.0)
-		fons.vert_metrics(&ascender, &descender, &lh)
-		// println("load style $ascender, $descender ${}")
 	}
 }
 
@@ -162,13 +163,13 @@ pub fn (w DrawTextWidget) font_size() int {
 	return w.current_style().size
 }
 
-pub fn (w DrawTextWidget) load_style() {
-	w.draw_device_load_style(w.ui.gg)
+pub fn (mut w DrawTextWidget) load_style() {
+	w.draw_device_load_style(w.ui.dd)
 }
 
 // Draw and size methods
 
-pub fn (w DrawTextWidget) draw_device_load_style(d DrawDevice) {
+pub fn (mut w DrawTextWidget) draw_device_load_style(d DrawDevice) {
 	ts := w.current_style()
 	// println("lds $w.id current style: $ts")
 	w.load_style_(d, ts)
@@ -178,25 +179,27 @@ pub fn (w DrawTextWidget) draw_device_text(d DrawDevice, x int, y int, text stri
 	d.draw_text_default(x, y, text)
 }
 
-pub fn (w DrawTextWidget) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
+pub fn (mut w DrawTextWidget) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
 	w.load_style_(d, w.text_style(ts))
 	d.draw_text_default(x, y, text)
 }
 
 pub fn (w DrawTextWidget) text_size(text string) (int, int) {
-	return w.ui.gg.text_size(text)
+	return w.ui.dd.text_size(text)
 }
 
 pub fn (w DrawTextWidget) text_width(text string) int {
-	return w.ui.gg.text_width(text)
+	return w.ui.dd.text_width(text)
 }
 
-pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
-	ctx := w.ui.gg
-	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
-	return adv / ctx.scale
-}
+// REMOVED: this function uses internals of gg.Context which we probably do not
+// want to reproduce in the DrawDevice interface
+// pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
+//	ctx := w.ui.gg
+//	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+//	return adv / ctx.scale
+//}
 
 pub fn (w DrawTextWidget) text_height(text string) int {
-	return w.ui.gg.text_height(text)
+	return w.ui.dd.text_height(text)
 }

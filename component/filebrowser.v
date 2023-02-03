@@ -10,7 +10,7 @@ pub mut:
 	layout     &ui.Stack
 	btn_cancel &ui.Button
 	btn_ok     &ui.Button
-	tv         &TreeViewComponent
+	tv         &TreeViewComponent = unsafe { nil }
 	dir        string
 }
 
@@ -95,11 +95,11 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 
 // component access
 pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
-	return &FileBrowserComponent(w.component)
+	return unsafe { &FileBrowserComponent(w.component) }
 }
 
 pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {
-	return filebrowser_component(w.stack(ui.component_id(id, 'layout')))
+	return filebrowser_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (fb &FileBrowserComponent) selected_full_title() string {

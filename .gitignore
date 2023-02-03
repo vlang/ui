@@ -1,16 +1,26 @@
 # Ignore build binaries
 *.so
 *.dll
+*.dylib
 *.exe
 *.ilk
 *.pdb
-# examples/*
-!examples/*/*.v
+
+examples/**/*
+!examples/**/*.v
+!examples/**/*.vab
+!examples/android
+!examples/assets
 fmt_verify_all
 
 # Ignore editor files
+.idea
+.vscode
 *.code-workspace
 .lite_workspace.lua
+ui.iml
+*~
+*#
 
 # Other files
 fns.txt

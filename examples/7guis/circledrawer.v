@@ -178,7 +178,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn (app &App) draw_circles(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &App) draw_circles(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	for i, circle in app.state.circles {
 		if i == app.hover {
 			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gx.light_gray)
@@ -188,11 +188,11 @@ fn (app &App) draw_circles(d ui.DrawDevice, c &ui.CanvasLayout) {
 }
 
 fn (mut app App) click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
-	mut sw := c.ui.window.subwindow('sw_radius')
+	mut sw := c.ui.window.get_or_panic[ui.SubWindow]('sw_radius')
 	if c.ui.btn_down[0] {
 		if sw.is_visible() {
 			sw.set_visible(false)
-			sl := c.ui.window.slider('sl_radius')
+			sl := c.ui.window.get_or_panic[ui.Slider]('sl_radius')
 			action := ActionSetCircleRadius{
 				circle_index: app.sel
 				new_radius: f32(sl.val)
@@ -217,9 +217,9 @@ fn (mut app App) click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 			sw.update_layout()
 		}
 	}
-	mut btn_undo := c.ui.window.button('btn_undo')
+	mut btn_undo := c.ui.window.get_or_panic[ui.Button]('btn_undo')
 	check_undo_disabled(app.state, mut btn_undo)
-	mut btn_redo := c.ui.window.button('btn_redo')
+	mut btn_redo := c.ui.window.get_or_panic[ui.Button]('btn_redo')
 	check_redo_disabled(app.state, mut btn_redo)
 }
 
@@ -233,7 +233,7 @@ fn (mut app App) click_undo(mut b ui.Button) {
 	}
 	app.state.undo()
 	check_undo_disabled(app.state, mut b)
-	mut redo := b.ui.window.button('btn_redo')
+	mut redo := b.ui.window.get_or_panic[ui.Button]('btn_redo')
 	check_redo_disabled(app.state, mut redo)
 }
 
@@ -243,7 +243,7 @@ fn (mut app App) click_redo(mut b ui.Button) {
 	}
 	app.state.redo()
 	check_redo_disabled(app.state, mut b)
-	mut undo := b.ui.window.button('btn_undo')
+	mut undo := b.ui.window.get_or_panic[ui.Button]('btn_undo')
 	check_undo_disabled(app.state, mut undo)
 }
 

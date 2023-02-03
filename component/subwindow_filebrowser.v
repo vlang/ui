@@ -29,13 +29,13 @@ pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) 
 }
 
 pub fn filebrowser_subwindow_visible(w &ui.Window, id string) {
-	mut s := w.subwindow(ui.component_id(id, component.filebrowser_subwindow_id))
+	mut s := w.get_or_panic[ui.SubWindow](ui.component_id(id, component.filebrowser_subwindow_id))
 	s.set_visible(s.hidden)
 	s.update_layout()
 }
 
 pub fn filebrowser_subwindow_close(w &ui.Window, id string) {
-	mut s := w.subwindow(ui.component_id(id, component.filebrowser_subwindow_id))
+	mut s := w.get_or_panic[ui.SubWindow](ui.component_id(id, component.filebrowser_subwindow_id))
 	s.set_visible(false)
 	s.update_layout()
 }
@@ -60,13 +60,13 @@ pub fn newfilebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParam
 }
 
 pub fn newfilebrowser_subwindow_visible(w &ui.Window, id string) {
-	mut s := w.subwindow(ui.component_id(id, component.newfilebrowser_subwindow_id))
+	mut s := w.get_or_panic[ui.SubWindow](ui.component_id(id, component.newfilebrowser_subwindow_id))
 	s.set_visible(s.hidden)
 	s.update_layout()
 }
 
 pub fn newfilebrowser_subwindow_close(w &ui.Window, id string) {
-	mut s := w.subwindow(ui.component_id(id, component.newfilebrowser_subwindow_id))
+	mut s := w.get_or_panic[ui.SubWindow](ui.component_id(id, component.newfilebrowser_subwindow_id))
 	s.set_visible(false)
 	s.update_layout()
 }

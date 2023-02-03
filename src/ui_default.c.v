@@ -20,14 +20,14 @@ pub fn message_box(s string) {
 		waitgroup: sync.new_waitgroup()
 	}
 	message_app.waitgroup.add(1)
-	go run_message_dialog(mut message_app, s)
+	spawn run_message_dialog(mut message_app, s)
 	message_app.waitgroup.wait()
 }
 
 // ///////////////////////////////////////////////////////////
 struct MessageApp {
 mut:
-	window    &Window
+	window    &Window = unsafe { nil }
 	waitgroup &sync.WaitGroup
 }
 
@@ -38,9 +38,7 @@ fn run_message_dialog(mut message_app MessageApp, s string) {
 	mut height := 40
 	mut widgets := []Widget{}
 	widgets = [
-		// TODO: add hspace and vspace separators
-		label(text: ''),
-	]
+		/* TODO: add hspace and vspace separators */ label(text: '')]
 	for tline in text_lines {
 		widgets << label(text: tline)
 		height += 14

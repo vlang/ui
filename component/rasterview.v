@@ -75,7 +75,6 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		full_size_fn: rv_full_size
 		on_scroll_change: rv_scroll_change
 	)
-	layout.point_inside_visible = true
 	rv := &RasterViewComponent{
 		id: p.id
 		layout: layout
@@ -96,11 +95,11 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 }
 
 pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
-	return &RasterViewComponent(w.component)
+	return unsafe { &RasterViewComponent(w.component) }
 }
 
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {
-	return rasterview_component(w.canvas_layout(ui.component_id(id, 'layout')))
+	return rasterview_component(w.get_or_panic[ui.CanvasLayout](ui.component_id(id, 'layout')))
 }
 
 pub fn (mut rv RasterViewComponent) connect_palette(pa &ColorPaletteComponent) {
@@ -127,7 +126,7 @@ fn rv_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn rv_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	// N.B.: rv.size = rv.pixel_size + rv.inter
@@ -384,7 +383,9 @@ pub fn (mut rv RasterViewComponent) new_image() {
 }
 
 pub fn (mut rv RasterViewComponent) load_image(path string) {
-	rv.r.load_image(mut rv.layout.ui.gg, path)
+	if mut rv.layout.ui.dd is ui.DrawDeviceContext {
+		rv.r.load_image(mut rv.layout.ui.dd.Context, path)
+	}
 	rv.visible_pixels()
 	rv.update_bounds()
 	rv.layout.update_layout()
@@ -488,14 +489,14 @@ pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 	}
 
 	$if rv_mp ? {
-		println('di=$di for i := $from_i * $step_i; i >= $to_i * $step_i; i -= 1')
-		println('dj=$dj for j := $from_j * $step_j; j >= $to_j * $step_j; j -= 1')
+		println('di=${di} for i := ${from_i} * ${step_i}; i >= ${to_i} * ${step_i}; i -= 1')
+		println('dj=${dj} for j := ${from_j} * ${step_j}; j >= ${to_j} * ${step_j}; j -= 1')
 		if from_i + di >= rv.height() || from_i + di < 0 || to_i + di >= rv.height()
 			|| to_i + di < 0 {
-			println('erroooorr : $from_i + $di >= $rv.height() || $from_i + $di < 0 || $to_i + $di >= $rv.height() || $to_i + $di < 0')
+			println('erroooorr : ${from_i} + ${di} >= ${rv.height()} || ${from_i} + ${di} < 0 || ${to_i} + ${di} >= ${rv.height()} || ${to_i} + ${di} < 0')
 		}
 		if from_j + dj >= rv.width() || from_j + dj < 0 || to_j + dj >= rv.width() || to_j + dj < 0 {
-			println('erroooorr : $from_j + $dj >= $rv.width() || $from_j + $dj < 0 || $to_j + $dj >= $rv.width() || $to_j + $dj < 0')
+			println('erroooorr : ${from_j} + ${dj} >= ${rv.width()} || ${from_j} + ${dj} < 0 || ${to_j} + ${dj} >= ${rv.width()} || ${to_j} + ${dj} < 0')
 		}
 	}
 	for i := from_i * step_i; i >= to_i * step_i; i -= 1 {

@@ -28,12 +28,12 @@ pub fn progressbar_style(p ProgressBarStyleParams) ProgressBarStyleParams {
 }
 
 pub fn (pbs ProgressBarStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['color'] = hex_color(pbs.color)
-	toml['border_color'] = hex_color(pbs.border_color)
-	toml['bg_color'] = hex_color(pbs.bg_color)
-	toml['bg_border_color'] = hex_color(pbs.bg_border_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['color'] = hex_color(pbs.color)
+	toml_['border_color'] = hex_color(pbs.border_color)
+	toml_['bg_color'] = hex_color(pbs.bg_color)
+	toml_['bg_border_color'] = hex_color(pbs.bg_border_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut pbs ProgressBarStyle) from_toml(a toml.Any) {

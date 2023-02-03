@@ -15,7 +15,7 @@ pub mut:
 	offset_y int
 	z_index  int
 	parent   Layout = empty_stack
-	ui       &UI
+	ui       &UI    = unsafe { nil }
 	val      int
 	min      int
 	max      int
@@ -72,7 +72,7 @@ pub fn (mut pb ProgressBar) cleanup() {
 [unsafe]
 pub fn (pb &ProgressBar) free() {
 	$if free ? {
-		print('progress_bar $pb.id')
+		print('progress_bar ${pb.id}')
 	}
 	unsafe {
 		pb.id.free()
@@ -104,14 +104,14 @@ pub fn (mut pb ProgressBar) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut pb ProgressBar) draw() {
-	pb.draw_device(pb.ui.gg)
+	pb.draw_device(mut pb.ui.dd)
 }
 
-fn (mut pb ProgressBar) draw_device(d DrawDevice) {
+fn (mut pb ProgressBar) draw_device(mut d DrawDevice) {
 	offset_start(mut pb)
 	$if layout ? {
 		if pb.ui.layout_print {
-			println('ProgressBar($pb.id): ($pb.x, $pb.y, $pb.width, $pb.height)')
+			println('ProgressBar(${pb.id}): (${pb.x}, ${pb.y}, ${pb.width}, ${pb.height})')
 		}
 	}
 	// Draw the gray background

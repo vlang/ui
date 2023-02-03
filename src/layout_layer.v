@@ -11,6 +11,7 @@ pub fn canvas_layer(c CanvasLayoutParams) &CanvasLayout {
 	mut cl := canvas_layout(c)
 	cl.id = 'top_layer'
 	cl.z_index = -1
+	cl.clipping = false
 	cl.active_evt_mngr = false
 	cl.is_canvas_layer = true
 	cl.update_style_params(bg_color: transparent)

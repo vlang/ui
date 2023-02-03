@@ -50,11 +50,11 @@ fn main() {
 
 fn btn_click(b &ui.Button) {
 	cs := uic.colorsliders_component_from_id(b.ui.window, 'colorsliders')
-	txt := 'gx.rgb($cs.r_textbox_text,$cs.g_textbox_text,$cs.b_textbox_text)'
+	txt := 'gx.rgb(${cs.r_textbox_text},${cs.g_textbox_text},${cs.b_textbox_text})'
 	ui.message_box(txt)
 }
 
 fn on_rgb_changed(cs &uic.ColorSlidersComponent) {
-	mut rect := cs.layout.ui.window.rectangle('rgb_rect')
+	mut rect := cs.layout.ui.window.get_or_panic[ui.Rectangle]('rgb_rect')
 	rect.style.color = cs.color()
 }

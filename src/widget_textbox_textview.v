@@ -11,7 +11,7 @@ const (
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 pub struct TextView {
 pub mut:
-	text       &string
+	text       &string = unsafe { nil }
 	cursor_pos int
 	sel_start  int
 	sel_end    int
@@ -20,11 +20,11 @@ pub mut:
 	// synchronised lines for the text (or maybe a part)
 	tlv TextLinesView
 	// textbox
-	tb &TextBox // needed for textwidth and for is_wordwrap
+	tb &TextBox = unsafe { nil } // needed for textwidth and for is_wordwrap
 	// line_number
 	left_margin int
 	// Syntax Highlighter
-	sh &SyntaxHighLighter
+	sh &SyntaxHighLighter = unsafe { nil }
 }
 
 // Structure to help for drawing text line by line and cursor update between lines
@@ -89,8 +89,8 @@ pub fn (tv &TextView) size() (int, int) {
 }
 
 pub fn (tv &TextView) info() {
-	println('cursor: $tv.cursor_pos -> ($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j)')
-	println('sel: ($tv.sel_start, $tv.sel_end) -> ($tv.tlv.sel_start_i, $tv.tlv.sel_start_j, $tv.tlv.sel_end_i, $tv.tlv.sel_end_j)')
+	println('cursor: ${tv.cursor_pos} -> (${tv.tlv.cursor_pos_i}, ${tv.tlv.cursor_pos_j})')
+	println('sel: (${tv.sel_start}, ${tv.sel_end}) -> (${tv.tlv.sel_start_i}, ${tv.tlv.sel_start_j}, ${tv.tlv.sel_end_i}, ${tv.tlv.sel_end_j})')
 }
 
 pub fn (mut tv TextView) is_wordwrap() bool {
@@ -276,11 +276,11 @@ pub fn (mut tv TextView) draw_device_visible_line(d DrawDevice, j int, y int, te
 		tv.refresh_visible_lines()
 		tv.visible_lines()
 	}
-	imin, imax := tv.tlv.from_i[j], tv.tlv.to_i[j]
+	imin, imax := tv.tlv.from_i[j] or { 0 }, tv.tlv.to_i[j] or { tv.tlv.to_i.len - 1 }
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr[0..imin].string()),
-		y, ustr[imin..imax].string())
+	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr#[0..imin].string()),
+		y, ustr#[imin..imax].string())
 }
 
 fn (mut tv TextView) draw_device_selection(d DrawDevice) {
@@ -552,7 +552,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
-	// println('${wui.gg.pressed_keys_edge[int(Key.left_control)]}')
+	// println('${wui.dd.pressed_keys_edge[int(Key.left_control)]}')
 	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
 		if tv.tb.read_only {
 			return
@@ -818,6 +818,7 @@ pub fn (mut tv TextView) do_logview(cfg LogViewParams) {
 	}
 	if tv.tlv.to_j + cfg.nb_lines > tv.tlv.lines.len {
 		tv.scroll_y_to_end()
+		tv.tb.ui.refresh()
 	}
 }
 
@@ -1012,7 +1013,8 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
-		width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		// width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
+		width_cur = tv.text_width(ustr[i..(i + 1)].string())
 		width2 := if i < ustr.len { width + width_cur } else { width }
 		if (prev_width + width) / 2 <= xx && xx <= (width + width2) / 2 {
 			return i
@@ -1056,20 +1058,16 @@ fn (tv &TextView) fix_tab_char(txt string) string {
 // }
 
 fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	tv.draw_device_styled_text(tv.tb.ui.gg, x, y, text, ts)
+	tv.draw_device_styled_text(tv.tb.ui.dd, x, y, text, ts)
 }
 
 fn (tv &TextView) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
-	DrawTextWidget(tv.tb).draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
+	mut dtw := DrawTextWidget(tv.tb)
+	dtw.draw_device_styled_text(d, x, y, tv.fix_tab_char(text), ts)
 }
 
 fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(tv.fix_tab_char(text))
-}
-
-// Added to have mostly additive text width function
-fn (tv &TextView) text_width_additive(text string) f64 {
-	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
 }
 
 fn (tv &TextView) text_height(text string) int {
@@ -1093,20 +1091,6 @@ pub fn (tv &TextView) update_style(ts TextStyleParams) {
 
 // Not called automatically as it is in gg
 pub fn (tv &TextView) load_style() {
-	DrawTextWidget(tv.tb).load_style()
-}
-
-// that's weird text_width is not additive function
-pub fn (tv &TextView) test_textwidth(text string) {
-	ustr := text.runes()
-	mut width, mut width_bad := 0.0, 0.0
-	println('(text_width_additive vs text_width)')
-	for i in 0 .. ustr.len {
-		tmp := DrawTextWidget(tv.tb).text_width_additive(ustr[i..(i + 1)].string())
-		width += tmp
-		tmp_bad := DrawTextWidget(tv.tb).text_width(ustr[i..(i + 1)].string())
-		width_bad += tmp_bad
-		tmp2, _ := tv.text_size(ustr[..i + 1].string())
-		println('${ustr[..i + 1].string()} -> $i) ${ustr[i..(i + 1)].string()}  ($tmp vs $tmp_bad)  ($width == $tmp2 vs $width_bad == $tmp2)')
-	}
+	mut dtw := DrawTextWidget(tv.tb)
+	dtw.load_style()
 }

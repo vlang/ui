@@ -163,11 +163,11 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 
 // component access
 pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
-	return &ColorBoxComponent(w.component)
+	return unsafe { &ColorBoxComponent(w.component) }
 }
 
 pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {
-	return colorbox_component(w.stack(ui.component_id(id, 'layout')))
+	return colorbox_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 // equivalent of init method for widget
@@ -207,7 +207,7 @@ fn cv_h_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	}
 }
 
-fn cv_h_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn cv_h_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	cb := colorbox_component(c)
 	for j in 0 .. 255 {
 		c.draw_device_rect_empty(d, 0, j, 30, 1, cb.hsv_to_rgb(f64(j) / 256.0, .75, .75))
@@ -240,7 +240,7 @@ fn cv_sv_mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	}
 }
 
-fn cv_sv_draw(d ui.DrawDevice, mut c ui.CanvasLayout) {
+fn cv_sv_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 	mut cb := colorbox_component(c)
 
 	// TODO: check extra_draw c.draw_device_texture
@@ -281,7 +281,7 @@ fn cv_sel_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	cb.update_cur_color(true)
 }
 
-fn cv_sel_draw(d ui.DrawDevice, mut c ui.CanvasLayout) {
+fn cv_sel_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 	cb := colorbox_component(c)
 	mut hsv := HSVColor{}
 	mut h, mut s, mut v := 0.0, 0.0, 0.0
@@ -310,7 +310,7 @@ pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	}
 	$if cb_ucc ? {
 		id := if cb.colbtn != 0 { cb.colbtn.widget.id } else { 'id_none' }
-		println('update cur color $id ${cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0)}')
+		println('update cur color ${id} ${cb.colbtn != 0 && cb.colbtn.on_changed != ColorButtonFn(0)}')
 	}
 	if unsafe { cb.colbtn != 0 } && cb.colbtn.on_changed != ColorButtonFn(0) {
 		cb.colbtn.on_changed(cb.colbtn)

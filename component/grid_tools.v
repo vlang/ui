@@ -16,8 +16,8 @@ pub mut:
 [params]
 pub struct GridSettingsParams {
 	id       string
-	bg_color gx.Color = gx.light_blue
-	grid     &GridComponent
+	bg_color gx.Color       = gx.light_blue
+	grid     &GridComponent = unsafe { nil }
 	z_index  int = 100
 }
 
@@ -71,11 +71,11 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 
 // component constructor
 pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
-	return &GridSettingsComponent(w.component)
+	return unsafe { &GridSettingsComponent(w.component) }
 }
 
 pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
-	return gridsettings_component(w.stack(ui.component_id(id, 'layout')))
+	return gridsettings_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 fn gs_sort_click(mut b ui.Button) {
@@ -95,7 +95,7 @@ fn gs_sort_click(mut b ui.Button) {
 			}
 		}
 	}
-	println('sort: $vars, $orders')
+	println('sort: ${vars}, ${orders}')
 	g.unselect()
 	g.init_ranked_grid_data(vars, orders)
 }

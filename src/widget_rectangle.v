@@ -13,7 +13,7 @@ pub mut:
 	offset_y int
 	height   int
 	width    int
-	ui       &UI
+	ui       &UI    = unsafe { nil }
 	parent   Layout = empty_stack
 	// Style
 	theme_style  string
@@ -109,7 +109,7 @@ pub fn (mut r Rectangle) cleanup() {
 [unsafe]
 pub fn (r &Rectangle) free() {
 	$if free ? {
-		print('rectangle $r.id')
+		print('rectangle ${r.id}')
 	}
 	unsafe {
 		r.text.free()
@@ -136,14 +136,14 @@ pub fn (mut r Rectangle) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut r Rectangle) draw() {
-	r.draw_device(r.ui.gg)
+	r.draw_device(mut r.ui.dd)
 }
 
-fn (mut r Rectangle) draw_device(d DrawDevice) {
+fn (mut r Rectangle) draw_device(mut d DrawDevice) {
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {
-			println('Rectangle($r.id): ($r.x, $r.y, $r.width, $r.height)')
+			println('Rectangle(${r.id}): (${r.x}, ${r.y}, ${r.width}, ${r.height})')
 		}
 	}
 	if r.radius > 0 {
@@ -159,7 +159,7 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 	}
 	// Display rectangle text
 	if r.text != '' {
-		dtw := DrawTextWidget(r)
+		mut dtw := DrawTextWidget(r)
 		dtw.draw_device_load_style(d)
 		text_width, text_height := dtw.text_size(r.text)
 		mut dx := (r.width - text_width) / 2
@@ -179,14 +179,14 @@ fn (mut r Rectangle) draw_device(d DrawDevice) {
 // fn (mut r Rectangle) draw(d DrawDevice) {
 // 	offset_start(mut r)
 // 	if r.radius > 0 {
-// 		r.ui.gg.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
+// 		r.ui.dd.draw_rounded_rect_filled(r.x, r.y, r.width, r.height, r.radius, r.color)
 // 		if r.border {
-// 			r.ui.gg.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
+// 			r.ui.dd.draw_rounded_rect_empty(r.x, r.y, r.width, r.height, r.radius, r.border_color)
 // 		}
 // 	} else {
-// 		r.ui.gg.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
+// 		r.ui.dd.draw_rect_filled(r.x, r.y, r.width, r.height, r.color)
 // 		if r.border {
-// 			r.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
+// 			r.ui.dd.draw_rect_empty(r.x, r.y, r.width, r.height, r.border_color)
 // 		}
 // 	}
 // 	// Display rectangle text

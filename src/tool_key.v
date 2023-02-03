@@ -24,7 +24,7 @@ fn parse_mods_shortcut(s string) (KeyMod, string) {
 			}
 		}
 	}
-	return KeyMod(mods), parts[parts.len - 1].trim_space().to_lower()
+	return unsafe { KeyMod(mods) }, parts[parts.len - 1].trim_space().to_lower()
 }
 
 pub fn parse_char_key(key_str string) int {
@@ -99,9 +99,9 @@ pub enum KeyMod {
 }
 
 pub enum KeyState {
-	press = 1
-	release = 0
-	repeat = 2
+	release
+	press
+	repeat
 }
 
 pub struct KeyEvent {

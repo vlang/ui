@@ -63,10 +63,10 @@ fn window_init(mut w ui.Window) {
 	$if linux {
 		font_root_path = '/usr/share/fonts/truetype/*'
 	}
-	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
+	font_paths := os.glob('${font_root_path}/*.ttf') or { panic(err) }
 
-	// c := w.canvas_layout('c')
-	mut lb := w.listbox('lb')
+	// c := w.get_or_panic[ui.CanvasLayout]('c')
+	mut lb := w.get_or_panic[ui.ListBox]('lb')
 	// dtw := ui.DrawTextWidget(c)
 	for fp in font_paths {
 		lb.add_item(fp, os.file_name(fp))
@@ -95,23 +95,23 @@ fn window_init(mut w ui.Window) {
 	// dtw.set_style('arial')
 }
 
-fn (app &App) on_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)
 	w, h := dtw.text_size(app.text)
 	c.draw_device_rect_empty(d, 10, 11, w + 2, h + 2, gx.black)
-	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: ($w, $h)')
+	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: (${w}, ${h})')
 }
 
 fn (mut app App) lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
-	c := w.canvas_layout('c')
+	c := w.get_or_panic[ui.CanvasLayout]('c')
 	mut dtw := ui.DrawTextWidget(c)
 	fp, id := lb.selected() or { 'classic', '' }
 	// println("$id, $fp")
 	$if windows {
-		w.ui.add_font(id, 'C:/windows/fonts/$fp')
+		w.ui.add_font(id, 'C:/windows/fonts/${fp}')
 	} $else {
 		w.ui.add_font(id, fp)
 	}

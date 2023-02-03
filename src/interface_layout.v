@@ -19,7 +19,7 @@ mut:
 
 pub fn (l &Layout) set_children_depth(z_index int) {
 	for mut child in l.get_children() {
-		if child is Layout {
+		if mut child is Layout {
 			l2 := child as Layout
 			l2.set_children_depth(z_index)
 		}
@@ -30,7 +30,7 @@ pub fn (l &Layout) set_children_depth(z_index int) {
 pub fn (l &Layout) incr_children_depth(z_inc int) {
 	// println("incr_children_depth $l.id z_inc=$z_inc")
 	for mut child in l.get_children() {
-		if child is Layout {
+		if mut child is Layout {
 			l2 := child as Layout
 			l2.incr_children_depth(z_inc)
 		}
@@ -82,10 +82,10 @@ pub fn (l &Layout) has_child(widget &Widget) bool {
 pub fn (layout Layout) unfocus_all() {
 	// println('window.unfocus_all()')
 	for mut child in layout.get_children() {
-		if child is Layout {
+		if mut child is Layout {
 			l := child as Layout
 			l.unfocus_all()
-		} else if child is Focusable {
+		} else if mut child is Focusable {
 			mut f := child as Focusable
 			f.unfocus()
 		}
@@ -97,9 +97,9 @@ pub fn (layout Layout) set_focus_next() bool {
 	mut window := layout.get_ui().window
 	for mut child in layout.get_children() {
 		$if focus ? {
-			println('child to focus_next $child.id() ${child is Focusable}  ')
+			println('child to focus_next ${child.id()} ${child is Focusable}  ')
 		}
-		focused_found = if child is Layout {
+		focused_found = if mut child is Layout {
 			l := child as Layout
 			l.set_focus_next()
 		} else {
@@ -108,7 +108,7 @@ pub fn (layout Layout) set_focus_next() bool {
 		if focused_found {
 			break
 		}
-		if child is Focusable {
+		if mut child is Focusable {
 			mut f := child as Focusable
 			if f.has_focusable() {
 				// Focus on the next widget
@@ -131,9 +131,9 @@ pub fn (layout Layout) set_focus_prev() bool {
 	mut window := layout.get_ui().window
 	for mut child in layout.get_children().reverse() {
 		$if focus ? {
-			println('child to focus_prev $child.id() $child.type_name() ${child is Focusable}')
+			println('child to focus_prev ${child.id()} ${child.type_name()} ${child is Focusable}')
 		}
-		focused_found = if child is Layout {
+		focused_found = if mut child is Layout {
 			l := child as Layout
 			l.set_focus_prev()
 		} else {
@@ -142,7 +142,7 @@ pub fn (layout Layout) set_focus_prev() bool {
 		if focused_found {
 			break
 		}
-		if child is Focusable {
+		if mut child is Focusable {
 			mut f := child as Focusable
 			if f.has_focusable() {
 				// Focus on the next widget
@@ -233,12 +233,12 @@ pub fn (l Layout) debug_show_children_tree(level int) {
 	if level == 0 {
 		println('_'.repeat(80))
 		if l is Stack {
-			println('${' '.repeat(level)} root Stack $l.id $l.size()')
+			println('${' '.repeat(level)} root Stack ${l.id} ${l.size()}')
 		}
 	}
 	for i, mut child in l.get_children() {
-		println('${' '.repeat(level)} $level:$i -> $child.id ($child.type_name()) ($child.x, $child.y) $child.size() z_index: $child.z_index')
-		if child is Layout {
+		println('${' '.repeat(level)} ${level}:${i} -> ${child.id} (${child.type_name()}) (${child.x}, ${child.y}) ${child.size()} z_index: ${child.z_index}')
+		if mut child is Layout {
 			c := child as Layout
 			c.debug_show_children_tree(level + 1)
 		}

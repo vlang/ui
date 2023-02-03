@@ -70,5 +70,5 @@ fn win_init(w &ui.Window) {
 	// gc := uic.GridCell{0,1}
 	ac := gc.alphacell()
 	gc2 := uic.AlphaCell(ac).gridcell()
-	println('$gc -> $ac -> $gc2')
+	println('${gc} -> ${ac} -> ${gc2}')
 }

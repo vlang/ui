@@ -77,11 +77,11 @@ pub fn alpha_stack(p AlphaParams) &ui.Stack {
 
 // component access
 pub fn alpha_component(w ui.ComponentChild) &AlphaComponent {
-	return &AlphaComponent(w.component)
+	return unsafe { &AlphaComponent(w.component) }
 }
 
 pub fn alpha_component_from_id(w ui.Window, id string) &AlphaComponent {
-	return alpha_component(w.stack(ui.component_id(id, 'layout')))
+	return alpha_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (mut ac AlphaComponent) set_alpha(alpha int) {

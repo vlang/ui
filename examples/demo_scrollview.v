@@ -12,7 +12,7 @@ fn main() {
 	mut app := &App{}
 	mut s := ''
 	for i in 0 .. 100 {
-		s += 'line ($i)'.repeat(5)
+		s += 'line (${i})'.repeat(5)
 		s += '\n'
 	}
 	app.text = s
@@ -23,7 +23,7 @@ fn main() {
 		mode: .resizable
 		on_init: fn (win &ui.Window) {
 			$if test_textwidth ? {
-				mut tb := win.textbox('info')
+				mut tb := win.get_or_panic[ui.TextBox]('info')
 				tb.tv.test_textwidth('abcdefghijklmnrputwxyz &éèdzefzefzef')
 			}
 		}
@@ -54,13 +54,13 @@ fn main() {
 }
 
 fn on_scroll_change(sw ui.ScrollableWidget) {
-	mut tb := sw.ui.window.textbox('info')
+	mut tb := sw.ui.window.get_or_panic[ui.TextBox]('info')
 	mut s := ''
 	sv := sw.scrollview
 	ox, oy := sv.orig_xy()
-	s += 'textbox $sw.id has scrollview? $sw.has_scrollview'
-	s += '\nat ($sw.x, $sw.y) orig: ($ox, $oy)'
-	s += '\nwith scrollview offset: ($sv.offset_x, $sv.offset_y)'
-	s += '\nwith btn: ($sv.btn_x, $sv.btn_y)'
+	s += 'textbox ${sw.id} has scrollview? ${sw.has_scrollview}'
+	s += '\nat (${sw.x}, ${sw.y}) orig: (${ox}, ${oy})'
+	s += '\nwith scrollview offset: (${sv.offset_x}, ${sv.offset_y})'
+	s += '\nwith btn: (${sv.btn_x}, ${sv.btn_y})'
 	tb.set_text(s)
 }

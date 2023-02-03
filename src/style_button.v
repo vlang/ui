@@ -41,18 +41,18 @@ pub fn button_style(p ButtonStyleParams) ButtonStyleParams {
 }
 
 pub fn (bs ButtonStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['radius'] = bs.radius
-	toml['border_color'] = hex_color(bs.border_color)
-	toml['bg_color'] = hex_color(bs.bg_color)
-	toml['bg_color_pressed'] = hex_color(bs.bg_color_hover)
-	toml['bg_color_hover'] = hex_color(bs.bg_color_pressed)
-	toml['text_font_name'] = bs.text_font_name
-	toml['text_color'] = hex_color(bs.text_color)
-	toml['text_size'] = bs.text_size
-	toml['text_align'] = int(bs.text_align)
-	toml['text_vertical_align'] = int(bs.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['radius'] = bs.radius
+	toml_['border_color'] = hex_color(bs.border_color)
+	toml_['bg_color'] = hex_color(bs.bg_color)
+	toml_['bg_color_pressed'] = hex_color(bs.bg_color_hover)
+	toml_['bg_color_hover'] = hex_color(bs.bg_color_pressed)
+	toml_['text_font_name'] = bs.text_font_name
+	toml_['text_color'] = hex_color(bs.text_color)
+	toml_['text_size'] = bs.text_size
+	toml_['text_align'] = int(bs.text_align)
+	toml_['text_vertical_align'] = int(bs.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
@@ -64,8 +64,8 @@ pub fn (mut bs ButtonStyle) from_toml(a toml.Any) {
 	bs.text_font_name = a.value('text_font_name').string()
 	bs.text_color = HexColor(a.value('text_color').string()).color()
 	bs.text_size = a.value('text_size').int()
-	bs.text_align = TextHorizontalAlign(a.value('text_align').int())
-	bs.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	bs.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	bs.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut b Button) load_style() {

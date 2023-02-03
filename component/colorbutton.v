@@ -62,11 +62,11 @@ pub fn colorbutton(c ColorButtonParams) &ui.Button {
 
 // component access
 pub fn colorbutton_component(w ui.ComponentChild) &ColorButtonComponent {
-	return &ColorButtonComponent(w.component)
+	return unsafe { &ColorButtonComponent(w.component) }
 }
 
 pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonComponent {
-	return colorbutton_component(w.button(id))
+	return colorbutton_component(w.get_or_panic[ui.Button](id))
 }
 
 fn colorbutton_click(mut b ui.Button) {
@@ -75,7 +75,7 @@ fn colorbutton_click(mut b ui.Button) {
 	if b.ui.btn_down[1] {
 		colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .toggle)
 		// move only if s.x and s.y == 0 first use
-		mut s := b.ui.window.subwindow(colorbox_subwindow_id)
+		mut s := b.ui.window.get_or_panic[ui.SubWindow](colorbox_subwindow_id)
 		if s.x == 0 && s.y == 0 {
 			w, h := b.size()
 			if cbc.left_side {
@@ -87,7 +87,7 @@ fn colorbutton_click(mut b ui.Button) {
 			s.update_layout()
 		}
 	} else {
-		mut s := b.ui.window.subwindow(colorbox_subwindow_id)
+		mut s := b.ui.window.get_or_panic[ui.SubWindow](colorbox_subwindow_id)
 		if s.is_visible() {
 			colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .show)
 		}

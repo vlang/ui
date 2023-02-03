@@ -19,21 +19,21 @@ pub mut:
 }
 
 pub fn (ls LabelStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['text_font_name'] = ls.text_font_name
-	toml['text_color'] = hex_color(ls.text_color)
-	toml['text_size'] = ls.text_size
-	toml['text_align'] = int(ls.text_align)
-	toml['text_vertical_align'] = int(ls.text_vertical_align)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['text_font_name'] = ls.text_font_name
+	toml_['text_color'] = hex_color(ls.text_color)
+	toml_['text_size'] = ls.text_size
+	toml_['text_align'] = int(ls.text_align)
+	toml_['text_vertical_align'] = int(ls.text_vertical_align)
+	return toml_.to_toml()
 }
 
 pub fn (mut ls LabelStyle) from_toml(a toml.Any) {
 	ls.text_font_name = a.value('text_font_name').string()
 	ls.text_color = HexColor(a.value('text_color').string()).color()
 	ls.text_size = a.value('text_size').int()
-	ls.text_align = TextHorizontalAlign(a.value('text_align').int())
-	ls.text_vertical_align = TextVerticalAlign(a.value('text_vertical_align').int())
+	ls.text_align = unsafe { TextHorizontalAlign(a.value('text_align').int()) }
+	ls.text_vertical_align = unsafe { TextVerticalAlign(a.value('text_vertical_align').int()) }
 }
 
 pub fn (mut l Label) load_style() {

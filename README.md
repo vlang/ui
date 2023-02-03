@@ -1,7 +1,8 @@
 # V UI 0.0.4
 
 [![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/commits/master)
-<a href='https://patreon.com/vlang'><img src='https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvlang%26type%3Dpledges' height='20'></a>
+[![Sponsor][SponsorBadge]][SponsorUrl]
+[![Patreon][PatreonBadge]][PatreonUrl]
 
 [![Twitter handle][]][twitter badge]
 
@@ -93,14 +94,16 @@ On ChromeOS Linux/Crostini, install the Debian dependencies listed above followe
 
 ### License
 
-V UI is licensed under GPL3. A commercial license will be available.
-Open-source projects will have access to the commercial license for free. Every
-single feature will be open-sourced right away and available under both
-licenses. At some point in the future the library will be relicensed under MIT.
+V UI is licensed under MIT.
 
 ### Contributing
 
-After the first contribution you will be asked to agree to a CLA, declaring that you have the right to, and actually do, grant us the rights to use your contribution.
+Simply open a GitHub pull request.
 
 [twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
 [twitter badge]: https://twitter.com/v_language
+[PatreonBadge]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvlang%26type%3Dpatrons&style=flat
+[SponsorBadge]: https://camo.githubusercontent.com/da8bc40db5ed31e4b12660245535b5db67aa03ce/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f6c6162656c3d53706f6e736f72266d6573736167653d254532253944254134266c6f676f3d476974487562
+
+[PatreonUrl]: https://patreon.com/vlang
+[SponsorUrl]: https://github.com/sponsors/medvednikov

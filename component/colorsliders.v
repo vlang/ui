@@ -181,11 +181,11 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 
 // component access
 pub fn colorsliders_component(w ui.ComponentChild) &ColorSlidersComponent {
-	return &ColorSlidersComponent(w.component)
+	return unsafe { &ColorSlidersComponent(w.component) }
 }
 
 pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersComponent {
-	return colorsliders_component(w.stack(ui.component_id(id, 'layout')))
+	return colorsliders_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 pub fn (cs &ColorSlidersComponent) color() gx.Color {

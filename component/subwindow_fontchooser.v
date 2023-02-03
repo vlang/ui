@@ -18,11 +18,11 @@ pub fn fontchooser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change u
 }
 
 pub fn fontchooser_subwindow_visible(w &ui.Window) {
-	mut s := w.subwindow(component.fontchooser_subwindow_id)
+	mut s := w.get_or_panic[ui.SubWindow](component.fontchooser_subwindow_id)
 	s.set_visible(s.hidden)
 	s.update_layout()
 }
 
 pub fn fontchooser_subwindow(w &ui.Window) &ui.SubWindow {
-	return w.subwindow(component.fontchooser_subwindow_id)
+	return w.get_or_panic[ui.SubWindow](component.fontchooser_subwindow_id)
 }

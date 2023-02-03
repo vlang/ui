@@ -11,8 +11,8 @@ pub mut:
 	layout   &ui.Stack  // required
 	colbtn   &ui.Button // current
 	ncolors  int
-	alpha    &AlphaComponent
-	color    &gx.Color = unsafe { nil }
+	alpha    &AlphaComponent = unsafe { nil }
+	color    &gx.Color       = unsafe { nil }
 	selected string
 }
 
@@ -36,7 +36,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	children << [ui.label(text: 'colors', justify: ui.top_center), colbtn, ui.spacing()]
 	for i in 0 .. p.ncolors {
 		mut cb := colorbutton(
-			id: ui.component_id(p.id, 'palette$i')
+			id: ui.component_id(p.id, 'palette${i}')
 			on_click: colorpalette_click
 			left_side: true
 		)
@@ -94,11 +94,11 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 
 // component common access
 pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
-	return &ColorPaletteComponent(w.component)
+	return unsafe { &ColorPaletteComponent(w.component) }
 }
 
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {
-	cp := colorpalette_component(w.stack(ui.component_id(id, 'layout')))
+	cp := colorpalette_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 	return cp
 }
 

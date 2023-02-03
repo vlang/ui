@@ -39,12 +39,12 @@ pub fn dropdown_style(p DropdownStyleParams) DropdownStyleParams {
 }
 
 pub fn (dds DropdownStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_color'] = hex_color(dds.bg_color)
-	toml['border_color'] = hex_color(dds.border_color)
-	toml['focus_color'] = hex_color(dds.focus_color)
-	toml['drawer_color'] = hex_color(dds.drawer_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_color'] = hex_color(dds.bg_color)
+	toml_['border_color'] = hex_color(dds.border_color)
+	toml_['focus_color'] = hex_color(dds.focus_color)
+	toml_['drawer_color'] = hex_color(dds.drawer_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut dds DropdownStyle) from_toml(a toml.Any) {

@@ -33,7 +33,7 @@ pub mut:
 	parent      Layout = empty_stack
 	is_focused  bool
 	open        bool
-	ui          &UI
+	ui          &UI = unsafe { nil }
 	on_click    SwitchFn
 	on_key_down SwitchU32Fn
 	hidden      bool
@@ -84,7 +84,7 @@ pub fn (mut s Switch) cleanup() {
 [unsafe]
 pub fn (s &Switch) free() {
 	$if free ? {
-		print('switch $s.id')
+		print('switch ${s.id}')
 	}
 	unsafe {
 		s.id.free()
@@ -109,14 +109,14 @@ pub fn (mut s Switch) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Switch) draw() {
-	s.draw_device(s.ui.gg)
+	s.draw_device(mut s.ui.dd)
 }
 
-fn (mut s Switch) draw_device(d DrawDevice) {
+fn (mut s Switch) draw_device(mut d DrawDevice) {
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {
-			println('Switch($s.id): ($s.x, $s.y, $s.width, $s.height)')
+			println('Switch(${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height})')
 		}
 	}
 	padding := (s.height - ui.sw_dot_size) / 2
@@ -146,7 +146,7 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if sw_keydown ? {
-		println('sw_keydown: $s.id  -> $s.hidden $s.is_focused')
+		println('sw_keydown: ${s.id}  -> ${s.hidden} ${s.is_focused}')
 	}
 	if s.hidden {
 		return

@@ -10,7 +10,7 @@ const (
 
 struct App {
 mut:
-	window       &ui.Window
+	window       &ui.Window = unsafe { nil }
 	line_numbers bool
 }
 
@@ -60,7 +60,7 @@ fn main() {
 							id: 'menu'
 							dirs: dirs
 							on_file_changed: fn [mut app] (mut mf uic.MenuFileComponent) {
-								mf.layout.ui.window.set_title('V UI Edit: $mf.file')
+								mf.layout.ui.window.set_title('V UI Edit: ${mf.file}')
 								// reinit textbox scrollview
 								mut tb := mf.layout.ui.window.textbox('edit')
 								tb.scrollview.set(0, .btn_y)

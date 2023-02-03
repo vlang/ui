@@ -17,7 +17,7 @@ fn main() {
 	lines := app.tb2m.split('\n')
 	mut s := ''
 	for l in lines {
-		s += '$l\n'
+		s += '${l}\n'
 	}
 	app.tb2m = s
 	c := ui.column(
@@ -68,7 +68,7 @@ fn main() {
 
 fn on_switch_click(switcher &ui.Switch) {
 	tbs := if switcher.id == 'sw2' { 'tb2m' } else { 'tb3m' }
-	mut tb := switcher.ui.window.textbox(tbs)
+	mut tb := switcher.ui.window.get_or_panic[ui.TextBox](tbs)
 	tb.tv.switch_wordwrap()
 }
 

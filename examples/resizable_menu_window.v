@@ -120,12 +120,12 @@ fn main() {
 }
 
 fn menu_click(item &ui.MenuItem) {
-	println('$item.text selected (id: $item.id)')
+	println('${item.text} selected (id: ${item.id})')
 }
 
 fn on_switch_click(switcher &ui.Switch) {
 	window := ui.Widget(switcher).window()
-	mut mb := window.menu('menubar')
+	mut mb := window.get_or_panic[ui.Menu]('menubar')
 	mb.fixed_width = !mb.fixed_width
 	window.update_layout()
 }

@@ -98,10 +98,10 @@ pub fn (mut s SubWindow) cleanup() {
 }
 
 fn (mut s SubWindow) draw() {
-	s.draw_device(s.ui.gg)
+	s.draw_device(mut s.ui.dd)
 }
 
-fn (mut s SubWindow) draw_device(d DrawDevice) {
+fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 	if s.hidden {
 		return
 	}
@@ -110,7 +110,7 @@ fn (mut s SubWindow) draw_device(d DrawDevice) {
 	if s.decoration {
 		w, _ := s.size()
 		$if sw_draw ? {
-			println('$s.x, $s.y, $w, $ui.sw_decoration')
+			println('${s.x}, ${s.y}, ${w}, ${ui.sw_decoration}')
 		}
 		d.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
 	}
@@ -122,7 +122,7 @@ fn (mut s SubWindow) draw_device(d DrawDevice) {
 [unsafe]
 pub fn (s &SubWindow) free() {
 	$if free ? {
-		print('canvas_layout $s.id')
+		print('canvas_layout ${s.id}')
 	}
 	unsafe {
 		s.id.free()
@@ -292,7 +292,7 @@ fn (mut s SubWindow) is_top_subwindow() bool {
 
 fn (mut s SubWindow) as_top_subwindow() {
 	$if atsw ? {
-		println('as top subw $s.id')
+		println('as top subw ${s.id}')
 		Layout(s).debug_show_children_tree(0)
 	}
 	mut sws := []&SubWindow{}

@@ -39,7 +39,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 		if widget.id !in em.receivers[evt_type].map(it.id) {
 			em.receivers[evt_type] << widget
 			$if em_add ? {
-				println('add receiver $widget.id ($widget.type_name()) for $evt_type')
+				println('add receiver ${widget.id} (${widget.type_name()}) for ${evt_type}')
 				em.list_receivers(evt_type)
 			}
 		}
@@ -51,7 +51,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 pub fn (mut em EventMngr) rm_receiver(widget Widget, evt_types []string) {
 	for evt_type in evt_types {
 		$if em_rc ? {
-			println('rm_receivers from $evt_type widget $widget.id')
+			println('rm_receivers from ${evt_type} widget ${widget.id}')
 		}
 		// BUG: ind := em.mouse_down_receivers.index(widget)
 		// WORKAROUND with id
@@ -69,24 +69,24 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	em.point_inside[evt_type].clear()
 	em.sorted_receivers(evt_type)
 	$if em_mouse ? {
-		println('point_inside_receivers_mouse_event em.receivers[$evt_type]: ')
+		println('point_inside_receivers_mouse_event em.receivers[${evt_type}]: ')
 		em.list_receivers(evt_type)
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse ? {
-			println('point_inside_receivers: $w.id !$w.hidden && ${w.point_inside(e.x,
-				e.y)} $w.has_parent_deactivated()')
+			println('point_inside_receivers: ${w.id} !${w.hidden} && ${w.point_inside(e.x,
+				e.y)} ${w.has_parent_deactivated()}')
 		}
 		if !w.hidden && w.point_inside(e.x, e.y) && !w.has_parent_deactivated() {
 			em.point_inside[evt_type] << w
 		}
 	}
 	$if em_mouse ? {
-		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)}')
+		println('em.point_inside[${evt_type}] = ${em.point_inside[evt_type].map(it.id)}')
 	}
 }
 
-pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
+pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 	// TODO first sort scroll_receivers by order, z_index and hidden
 	evt_type := ui.events.on_scroll
 	em.point_inside[evt_type].clear()
@@ -96,14 +96,14 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_scroll ? {
-			println('point_inside_receivers: $w.id !$w.hidden && ($e.mouse_x, $e.mouse_y) ${w.point_inside(e.mouse_x,
-				e.mouse_y)} $w.has_parent_deactivated()')
+			println('point_inside_receivers: ${w.id} !${w.hidden} && (${e.mouse_x}, ${e.mouse_y}) ${w.point_inside(e.mouse_x,
+				e.mouse_y)} ${w.has_parent_deactivated()}')
 		}
 		if w is ScrollableWidget {
 			sw := w as ScrollableWidget
 			if !w.hidden && has_scrollview(sw)
 				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
-				&& !sw.scrollview.children_point_inside(e.mouse_x, e.mouse_y, .view)
+				&& !has_child_with_active_scrollview(w, e.mouse_x, e.mouse_y)
 				&& !w.has_parent_deactivated() {
 				em.point_inside[evt_type] << w
 			}
@@ -114,7 +114,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 		}
 	}
 	$if em_scroll ? {
-		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
+		println('em.point_inside[${evt_type}] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
 	}
 }
 
@@ -129,8 +129,8 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse_move ? {
-			println('point_inside_receivers: $w.id !$w.hidden && ($e.x, $e.y) ${w.point_inside(int(e.x),
-				int(e.y))} $w.has_parent_deactivated()')
+			println('point_inside_receivers: ${w.id} !${w.hidden} && (${e.x}, ${e.y}) ${w.point_inside(int(e.x),
+				int(e.y))} ${w.has_parent_deactivated()}')
 		}
 		if !w.hidden && w.point_inside(int(e.x), int(e.y)) && !w.has_parent_deactivated() {
 			if w.id !in point_inside_ids {
@@ -150,7 +150,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 		}
 	}
 	$if em_mouse_move ? {
-		println('em.point_inside[$evt_type] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
+		println('em.point_inside[${evt_type}] = ${em.point_inside[evt_type].map(it.id)} , ${em.point_inside[evt_type].map(it.z_index)}')
 	}
 }
 
@@ -170,7 +170,7 @@ pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	}
 	em.receivers[evt_type] = sorted.reverse()
 	$if em_sr ? {
-		println('(SORTED) em.receivers[$evt_type]: ')
+		println('(SORTED) em.receivers[${evt_type}]: ')
 		em.list_receivers(evt_type)
 	}
 }
@@ -181,7 +181,8 @@ pub fn (w Window) is_top_widget(widget Widget, evt_type string) bool {
 		pi = pi.filter(Layout(w.child_window).has_child_id(it.id))
 	}
 	$if em_itw ? {
-		println('is_top_widget ($evt_type) $widget.id ? ${pi.len >= 1 && pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
+		println('is_top_widget (${evt_type}) ${widget.id} ? ${pi.len >= 1
+			&& pi.first().id == widget.id}  with pi = ${pi.map(it.id)} (${pi.map(it.z_index)})')
 	}
 	return pi.len >= 1 && pi.first().id == widget.id
 }
@@ -192,10 +193,10 @@ pub fn (w Window) point_inside_receivers(evt_type string) []string {
 
 // used for debug
 pub fn (em &EventMngr) list_receivers(evt_type string) {
-	print('receivers list for $evt_type: ')
+	print('receivers list for ${evt_type}: ')
 	for i, ch in em.receivers[evt_type] {
 		id := ch.id()
-		print('($i)[$id: $ch.z_index] ')
+		print('(${i})[${id}: ${ch.z_index}] ')
 	}
 	println('\n')
 }
@@ -205,7 +206,7 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
 	if em.receivers[ui.events.on_delegate].len > 0 {
 		mut w := em.receivers[ui.events.on_delegate][0]
-		x, y := e.mouse_x / gui.gg.scale, e.mouse_y / gui.gg.scale
+		x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
 		return w.point_inside(x, y)
 	} else {
 		return false

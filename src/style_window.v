@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 import toml
 
 // Window
@@ -19,9 +18,9 @@ mut:
 }
 
 pub fn (w WindowStyle) to_toml() string {
-	mut toml := map[string]toml.Any{}
-	toml['bg_color'] = hex_color(w.bg_color)
-	return toml.to_toml()
+	mut toml_ := map[string]toml.Any{}
+	toml_['bg_color'] = hex_color(w.bg_color)
+	return toml_.to_toml()
 }
 
 pub fn (mut w WindowStyle) from_toml(a toml.Any) {
@@ -38,7 +37,7 @@ pub fn (mut w Window) load_style() {
 	w.update_style(w.style_params)
 	// println("w2 bg: $w.bg_color")
 	mut gui := w.ui
-	gui.gg.set_bg_color(w.bg_color)
+	gui.dd.set_bg_color(w.bg_color)
 	// mut l := Layout(w)
 	// l.update_theme_style(style)
 }

@@ -66,34 +66,41 @@ mut:
 
 pub fn (mut ui UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
-		println('add font $font_name at $font_path')
+		println('add font ${font_name} at ${font_path}')
 	}
-	// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
-	// (in fons__getGlyph, added becomes 0)
-	ui.gg.ft.fons.reset_atlas(512, 512)
-	bytes := os.read_bytes(font_path) or { []u8{} }
-	// gg := ui.gg
-	// mut f := ui.fonts
-	if bytes.len > 0 {
-		font := ui.gg.ft.fons.add_font_mem('sans', bytes, false)
-		if font >= 0 {
-			ui.font_paths[font_name] = font_path
-			ui.fonts.hash[font_name] = font
-			$if fontset ? {
-				println('font $font $font_name added ($font_path)')
+	if mut ui.dd is DrawDeviceContext {
+		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
+		// (in fons__getGlyph, added becomes 0)
+		ui.dd.ft.fons.reset_atlas(512, 512)
+
+		bytes := os.read_bytes(font_path) or { []u8{} }
+		// gg := ui.gg
+		// mut f := ui.fonts
+		if bytes.len > 0 {
+			font := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
+			if font >= 0 {
+				ui.font_paths[font_name] = font_path
+				ui.fonts.hash[font_name] = font
+				$if fontset ? {
+					println('font ${font} ${font_name} added (${font_path})')
+				}
+			} else {
+				$if fontset ? {
+					println('font ${font_name} NOT added (${font_path})')
+				}
 			}
 		} else {
 			$if fontset ? {
-				println('font $font_name NOT added ($font_path)')
+				println('font bytes unreadable')
 			}
 		}
 	} else {
 		$if fontset ? {
-			println('font bytes unreadable')
+			println('DrawDevice has no gg.Context')
 		}
 	}
 	$if fontset ? {
-		println('$ui.fonts')
+		println('${ui.fonts}')
 	}
 }
 
@@ -146,7 +153,7 @@ pub fn font_path_list() []string {
 	$if android {
 		font_root_path = '/system/fonts/*'
 	}
-	font_paths := os.glob('$font_root_path/*.ttf') or { panic(err) }
+	font_paths := os.glob('${font_root_path}/*.ttf') or { panic(err) }
 	return font_paths
 }
 
@@ -182,8 +189,8 @@ pub fn font_default() string {
 // font_path differs depending on os
 pub fn (mut w Window) add_font(id string, font_path string) {
 	$if windows {
-		if os.exists('C:/windows/fonts/$font_path') {
-			w.ui.add_font(id, 'C:/windows/fonts/$font_path')
+		if os.exists('C:/windows/fonts/${font_path}') {
+			w.ui.add_font(id, 'C:/windows/fonts/${font_path}')
 			return
 		}
 	} $else {

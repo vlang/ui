@@ -574,7 +574,7 @@ pub fn (mut r Raster) draw_glyph(index u16) (int, int) {
 	}
 
 	if bmp.style == .filled || bmp.style == .raw {
-		println('exec filler $color')
+		println('exec filler ${color}')
 		r.exec_filler(color)
 	}
 	x_min := glyph.x_min

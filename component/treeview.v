@@ -50,7 +50,7 @@ fn (mut t Tree) create_root(mut tv TreeViewComponent, mut layout ui.Stack, id_ro
 fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_root string, level int) {
 	root_id := tv.id + '_' + id_root
 	for i, mut item in t.items {
-		treeitem_id := root_id + '$component.tree_sep$i'
+		treeitem_id := root_id + '${component.tree_sep}${i}'
 		tv.parents[treeitem_id] = root_id
 		mut to_expand := ''
 		if mut item is string {
@@ -79,9 +79,10 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 		if to_expand != '' {
 			if mut item is Tree {
 				if tv.incr_mode {
-					l.children << item.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+					l.children << item.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
 				} else {
-					l.children << item.create_layout(mut tv, mut l, id_root + ':$i', level + 1)
+					l.children << item.create_layout(mut tv, mut l, id_root + ':${i}',
+						level + 1)
 				}
 			} else {
 				// finalize the incr_mode tree
@@ -91,7 +92,7 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 				// update tree
 				mut new_tree := treedir(path, fpath, true, tv.hidden_files)
 				t.items[i] = TreeItem(new_tree)
-				l.children << new_tree.create_root(mut tv, mut l, id_root + ':$i', level + 1)
+				l.children << new_tree.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
 				// update scrollview field
 				ui.scrollview_delegate_parent_scrollview(mut l)
 			}
@@ -188,9 +189,9 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	}
 	for i, mut tree in tv.trees {
 		if tv.incr_mode {
-			layout.children << tree.create_root(mut tv, mut layout, 'root$i', 0)
+			layout.children << tree.create_root(mut tv, mut layout, 'root${i}', 0)
 		} else {
-			layout.children << tree.create_layout(mut tv, mut layout, 'root$i', 0)
+			layout.children << tree.create_layout(mut tv, mut layout, 'root${i}', 0)
 		}
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
@@ -234,11 +235,11 @@ pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
 
 // component access
 pub fn treeview_component(w ui.ComponentChild) &TreeViewComponent {
-	return &TreeViewComponent(w.component)
+	return unsafe { &TreeViewComponent(w.component) }
 }
 
 pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
-	return treeview_component(w.stack(ui.component_id(id, 'layout')))
+	return treeview_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 // callbacks
@@ -250,7 +251,7 @@ fn treeview_init(layout &ui.Stack) {
 	}
 }
 
-fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn treeview_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	tv := treeview_component(c)
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
@@ -280,7 +281,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 		if tv.incr_mode && !tv.root_created[c.id] {
 			tv.root_created[c.id] = true // no more need to recreate it once created
 			mut t := tv.root_trees[c.id]
-			mut l := c.ui.window.stack(tv.views[c.id])
+			mut l := c.ui.window.get_or_panic[ui.Stack](tv.views[c.id])
 			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
 			// needs init for children
 			is_swp, swp := ui.Widget(l).subwindow_parent()
@@ -306,7 +307,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	if tv.sel_id != '' {
 		c.style.bg_color = tv.bg_sel_color
 		if tv.old_sel_id != '' && tv.old_sel_id != tv.sel_id {
-			mut old_sel_c := c.ui.window.canvas_layout(tv.old_sel_id)
+			mut old_sel_c := c.ui.window.get_or_panic[ui.CanvasLayout](tv.old_sel_id)
 			old_sel_c.style.bg_color = tv.bg_color
 		}
 	}
@@ -361,14 +362,14 @@ pub fn (tv &TreeViewComponent) full_title(id string) string {
 
 fn (mut tv TreeViewComponent) activate(id string) {
 	if id in tv.containers {
-		mut l := tv.containers[id]
+		mut l := tv.containers[id] or { return }
 		l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
 	}
 }
 
 fn (mut tv TreeViewComponent) deactivate(id string) {
 	if id in tv.containers {
-		mut l := tv.containers[id]
+		mut l := tv.containers[id] or { return }
 		l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
 	}
 }
@@ -419,12 +420,12 @@ pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tre
 		title: path
 		items: files.map(if os.is_dir(os.join_path(fpath, it)) {
 			if incr_mode {
-				TreeItem('root: $it$component.root_sep${os.join_path(fpath, it)}')
+				TreeItem('root: ${it}${component.root_sep}${os.join_path(fpath, it)}')
 			} else {
 				TreeItem(treedir(it, os.join_path(fpath, it), false, hidden_files))
 			}
 		} else {
-			TreeItem('file: $it')
+			TreeItem('file: ${it}')
 		})
 	}
 	return t

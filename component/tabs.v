@@ -117,11 +117,11 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 }
 
 pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
-	return &TabsComponent(w.component)
+	return unsafe { &TabsComponent(w.component) }
 }
 
 pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
-	return tabs_component(w.stack(ui.component_id(id, 'layout')))
+	return tabs_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
 // fn tabs_build(layout &ui.Stack, win &ui.Window) {
@@ -133,7 +133,7 @@ fn tabs_init(layout &ui.Stack) {
 	mut tabs := tabs_component(layout)
 	tabs.update_pos(layout.ui.window)
 	for id, mut page in tabs.pages {
-		println('tab $id initialized')
+		println('tab ${id} initialized')
 		if id != tabs.active {
 			if mut page is ui.Layout {
 				mut pa := page as ui.Layout
@@ -172,7 +172,7 @@ fn tab_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 }
 
 fn tab_id(id string, i int) string {
-	return '${id}_tab_$i'
+	return '${id}_tab_${i}'
 }
 
 fn (mut tabs TabsComponent) on_top() {
@@ -222,7 +222,7 @@ fn (mut tabs TabsComponent) update_tab_colors() {
 fn (mut tabs TabsComponent) print_styles() {
 	for tab in tabs.tab_bar.children {
 		if tab is ui.CanvasLayout {
-			println('$tab.id $tab.style')
+			println('${tab.id} ${tab.style}')
 		}
 	}
 }
@@ -245,7 +245,7 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 	for i, _ in tabs.tab_bar.children {
 		// println("$tabs.id ${tab_id(tabs.id, i) + "_label"}")
 		lab_id := tab_id(tabs.id, i) + '_label'
-		mut lab := win.label(lab_id)
+		mut lab := win.get_or_panic[ui.Label](lab_id)
 		lab.ui = win.ui
 		mut dtw := ui.DrawTextWidget(lab)
 		w, h := dtw.text_size(lab.text)
@@ -256,7 +256,7 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		// println("$dx, $dy $lab.x $lab.y")
 		lab.set_pos(dx, dy)
 		// println("$dx, $dy $lab.x $lab.y")
-		mut c := win.canvas_layout(tab_id(tabs.id, i))
+		mut c := win.get_or_panic[ui.CanvasLayout](tab_id(tabs.id, i))
 		c.set_child_relative_pos(lab_id, dx, dy)
 	}
 }

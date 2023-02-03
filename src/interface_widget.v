@@ -24,7 +24,7 @@ mut:
 	point_inside(x f64, y f64) bool
 	set_visible(bool)
 	draw()
-	draw_device(d DrawDevice)
+	draw_device(mut d DrawDevice)
 	cleanup()
 }
 
@@ -74,13 +74,13 @@ pub fn (mut w Widget) scaled_bounds() gg.Rect {
 pub fn (w Widget) subwindow_parent() (bool, Layout) {
 	mut p := w.parent
 	for {
-		if p is Window {
+		if mut p is Window {
 			break
 		}
-		if p is SubWindow {
+		if mut p is SubWindow {
 			return true, p
 		}
-		if p is Widget {
+		if mut p is Widget {
 			wp := p as Widget
 			p = wp.parent
 			continue
@@ -109,7 +109,7 @@ pub fn (w Widget) has_focus() bool {
 }
 
 pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
-	w.ui.gg.draw_rect_empty(r.x, r.y, r.width, r.height, color)
+	w.ui.dd.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }
 
 // children contains pure widgets (no stack or group), canvas_layout considered here as a widget (as it is the case ver often for component)

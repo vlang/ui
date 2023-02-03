@@ -31,6 +31,7 @@ fn main() {
 						children: [
 							ui.group(
 								title: 'First group'
+								clipping: true
 								children: [
 									ui.textbox(
 										max_len: 20
@@ -54,6 +55,7 @@ fn main() {
 							),
 							ui.group(
 								title: 'Second group'
+								clipping: true
 								children: [
 									ui.textbox(
 										max_len: 20

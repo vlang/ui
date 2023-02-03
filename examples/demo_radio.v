@@ -63,9 +63,9 @@ fn main() {
 fn on_switch_click(switcher &ui.Switch) {
 	// switcher_state := if switcher.open { 'Enabled' } else { 'Disabled' }
 	// app.label.set_text(switcher_state)
-	mut rh1 := switcher.ui.window.radio('rh1')
+	mut rh1 := switcher.ui.window.get_or_panic[ui.Radio]('rh1')
 	rh1.compact = !rh1.compact
-	mut rh2 := switcher.ui.window.radio('rh2')
+	mut rh2 := switcher.ui.window.get_or_panic[ui.Radio]('rh2')
 	rh2.compact = !rh2.compact
 	switcher.ui.window.update_layout()
 }

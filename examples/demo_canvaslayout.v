@@ -159,7 +159,7 @@ fn main() {
 								text: 'hide/show menu'
 								z_index: 10
 								on_click: fn (b &ui.Button) {
-									mut menu := b.ui.window.menu('menu')
+									mut menu := b.ui.window.get_or_panic[ui.Menu]('menu')
 									menu.hidden = !menu.hidden
 								}
 							)),
@@ -173,13 +173,13 @@ fn main() {
 }
 
 fn menu_click(item &ui.MenuItem) {
-	println('menu here $item.text')
+	println('menu here ${item.text}')
 }
 
 fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 	win := dd.ui.window
-	mut b := win.button('b_thm')
+	mut b := win.get_or_panic[ui.Button]('b_thm')
 	b.update_theme_style(dd.selected().text)
 }
 
@@ -187,22 +187,22 @@ fn lb_change(lb &ui.ListBox) {
 	id, _ := lb.selected() or { 'classic', '' }
 
 	win := lb.ui.window
-	mut b := win.button('b_thm')
+	mut b := win.get_or_panic[ui.Button]('b_thm')
 	b.update_theme_style(id)
 }
 
 fn lb_change_multi(lb &ui.ListBox) {
-	println(lb.items.map('$it.text: $it.selected $it.disabled'))
+	println(lb.items.map('${it.text}: ${it.selected} ${it.disabled}'))
 }
 
-fn draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.full_width, c.full_height
 	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
 }
 
 fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
-	mut l := c.ui.window.label('l_mm')
-	l.set_text('($e.x,$e.y)')
+	mut l := c.ui.window.get_or_panic[ui.Label]('l_mm')
+	l.set_text('(${e.x},${e.y})')
 }
 
 fn win_init(mut w ui.Window) {
