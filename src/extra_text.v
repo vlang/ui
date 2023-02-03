@@ -37,7 +37,7 @@ fn text_lines_size(lines []string, ui &UI) (int, int) {
 	mut width, mut height := 0, 0
 	mut tw, mut th := 0, 0
 	for line in lines {
-		tw, th = ui.gg.text_size(line)
+		tw, th = ui.dd.text_size(line)
 		// println("tt line: $line -> ($tw, $th)")
 		if tw > width {
 			width = tw

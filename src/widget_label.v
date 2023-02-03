@@ -3,8 +3,6 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gg
-
 [heap]
 pub struct Label {
 pub mut:
@@ -104,7 +102,7 @@ pub fn (mut l Label) set_pos(x int, y int) {
 
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
-		dtw := DrawTextWidget(l)
+		mut dtw := DrawTextWidget(l)
 		// println(dtw.current_style().size)
 		dtw.load_style()
 		mut w, mut h := 0, 0
@@ -146,25 +144,25 @@ fn (mut l Label) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut l Label) draw() {
-	l.draw_device(l.ui.gg)
+	l.draw_device(mut l.ui.dd)
 }
 
-fn (mut l Label) draw_device(d DrawDevice) {
+fn (mut l Label) draw_device(mut d DrawDevice) {
 	offset_start(mut l)
 	$if layout ? {
 		if l.ui.layout_print {
-			println('Label(${b.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
+			println('Label(${l.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
 		}
 	}
 	splits := l.text.split('\n') // Split the text into an array of lines.
-	height := l.ui.gg.text_height('W') // Get the height of the current font.
+	height := l.ui.dd.text_height('W') // Get the height of the current font.
 	for i, split in splits {
-		dtw := DrawTextWidget(l)
+		mut dtw := DrawTextWidget(l)
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, l.x, l.y + (height * i), split)
 		$if tbb ? {
-			w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)
-			println('label: w, h := l.ui.gg.text_width(split), l.ui.gg.text_height(split)')
+			w, h := l.ui.dd.text_size(split)
+			println('label: w, h := l.ui.dd.text_size(split)')
 			println('debug_draw_bb_text(l.x(${l.x}), l.y(${l.y}) + (height(${height}) * i(${i})), w(${w}), h(${h}), l.ui)')
 			debug_draw_bb_text(l.x, l.y + (height * i), w, h, l.ui)
 		}

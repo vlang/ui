@@ -3,6 +3,7 @@ module ui
 import gx
 import gg
 import ui.libvg
+import math
 
 struct DrawDeviceSVG {
 mut:
@@ -31,7 +32,8 @@ pub fn (mut d DrawDeviceSVG) screenshot_window(filename string, mut w Window) {
 	// println("svg device")
 	d.s = libvg.svg(width: w.width, height: w.height)
 	d.begin(w.bg_color)
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 	d.end()
 	d.save(filename)
 	unsafe { d.s.free() }
@@ -59,6 +61,8 @@ pub fn (d &DrawDeviceSVG) save(filepath string) {
 
 // interface DrawDevice
 
+pub fn (d DrawDeviceSVG) set_bg_color(color gx.Color) {}
+
 pub fn (d &DrawDeviceSVG) has_text_style() bool {
 	return true
 }
@@ -74,20 +78,64 @@ pub fn (d &DrawDeviceSVG) set_text_style(font_name string, font_path string, siz
 	// println('set_text_style: $d.ts')
 }
 
-pub fn (d &DrawDeviceSVG) scissor_rect(x int, y int, w int, h int) {
+pub fn (d &DrawDeviceSVG) draw_text(x int, y int, text string, cfg gx.TextCfg) {
+	// println('$d.id draw_text($x, $y, $text)')
+	mut s := d.s
+	s.text(x, y, text, 'none', d.ts)
+}
+
+// pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {
+pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
+	// println('$d.id draw_text_default($x, $y, $text)')
+	mut s := d.s
+	s.text(x, y, text, 'none', d.ts)
+}
+
+pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string) {}
+
+pub fn (d &DrawDeviceSVG) set_text_cfg(c gx.TextCfg) {}
+
+pub fn (d &DrawDeviceSVG) text_size(s string) (int, int) {
+	return 0, 0
+}
+
+pub fn (d &DrawDeviceSVG) text_width(s string) int {
+	return 0
+}
+
+pub fn (d &DrawDeviceSVG) text_height(s string) int {
+	return 0
+}
+
+pub fn (d &DrawDeviceSVG) reset_clipping() {
+	// TODO: implement
+}
+
+pub fn (d &DrawDeviceSVG) set_clipping(rect Rect) {
+	// TODO: implement
+}
+
+pub fn (d &DrawDeviceSVG) get_clipping() Rect {
+	// TODO: implement
+	return Rect{0, 0, math.max_i32, math.max_i32}
+}
+
+pub fn (d &DrawDeviceSVG) draw_pixel(x f32, y f32, color gx.Color) {
+	mut s := d.s
+	s.rectangle(int(x), int(y), 1, 1, fill: hex_color(color))
+}
+
+pub fn (d &DrawDeviceSVG) draw_pixels(points []f32, color gx.Color) {
+	mut s := d.s
+	for i in 0 .. points.len / 2 {
+		s.rectangle(int(points[i * 2]), int(points[i * 2 + 1]), 1, 1, fill: hex_color(color))
+	}
 }
 
 pub fn (d &DrawDeviceSVG) draw_image(x f32, y f32, width f32, height f32, img &gg.Image) {
 	// println('$d.id draw_image($x, $y, $width, $height, img)')
 	mut s := d.s
 	s.image(int(x), int(y), int(width), int(height), img.path)
-}
-
-// pub fn (d &DrawDeviceSVG) draw_text_def(x int, y int, text string)
-pub fn (d &DrawDeviceSVG) draw_text_default(x int, y int, text string) {
-	// println('$d.id draw_text_default($x, $y, $text)')
-	mut s := d.s
-	s.text(x, y, text, 'none', d.ts)
 }
 
 pub fn (d &DrawDeviceSVG) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
@@ -162,11 +210,15 @@ pub fn (d &DrawDeviceSVG) draw_slice_filled(x f32, y f32, r f32, start_angle f32
 	// println('$d.id ')
 }
 
-pub fn (d &DrawDeviceSVG) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceSVG) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	// println('$d.id ')
 }
 
-pub fn (d &DrawDeviceSVG) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceSVG) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	// println('$d.id ')
+}
+
+pub fn (d &DrawDeviceSVG) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	// println('$d.id ')
 }
 

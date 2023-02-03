@@ -95,7 +95,7 @@ fn window_init(mut w ui.Window) {
 	// dtw.set_style('arial')
 }
 
-fn (app &App) on_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	mut dtw := ui.DrawTextWidget(c)
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)

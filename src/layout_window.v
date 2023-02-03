@@ -239,42 +239,44 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
-	gcontext := gg.new_context(
-		width: width
-		height: height
-		use_ortho: true // This is needed for 2D drawing
-		create_window: true // TODO: Unused ?
-		window_title: cfg.title
-		resizable: resizable
-		fullscreen: fullscreen
-		frame_fn: if cfg.immediate {
-			frame_immediate
-		} else if cfg.native_rendering {
-			frame_native
-		} else {
-			frame
-		}
-		// native_frame_fn: frame_native
-		event_fn: on_event
-		user_data: window
-		font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
-		custom_bold_font_path: cfg.custom_bold_font_path
-		init_fn: gg_init
-		cleanup_fn: gg_cleanup
-		// keydown_fn: window_key_down
-		// char_fn: window_char
-		bg_color: window.bg_color // gx.rgb(230,230,230)
-		// window_state: ui
-		native_rendering: cfg.native_rendering
-		ui_mode: !cfg.immediate
-		// drag & drop
-		enable_dragndrop: cfg.enable_dragndrop
-		max_dropped_files: cfg.max_dropped_files
-		max_dropped_file_path_length: cfg.max_dropped_file_path_length
-	)
-
+	mut dd := &DrawDeviceContext{
+		Context: gg.new_context(
+			width: width
+			height: height
+			use_ortho: true // This is needed for 2D drawing
+			create_window: true // TODO: Unused ?
+			window_title: cfg.title
+			resizable: resizable
+			fullscreen: fullscreen
+			frame_fn: if cfg.immediate {
+				frame_immediate
+			} else if cfg.native_rendering {
+				frame_native
+			} else {
+				frame
+			}
+			// native_frame_fn: frame_native
+			event_fn: on_event
+			user_data: window
+			font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
+			custom_bold_font_path: cfg.custom_bold_font_path
+			init_fn: gg_init
+			cleanup_fn: gg_cleanup
+			// keydown_fn: window_key_down
+			// char_fn: window_char
+			bg_color: window.bg_color // gx.rgb(230,230,230)
+			// window_state: ui
+			native_rendering: cfg.native_rendering
+			ui_mode: !cfg.immediate
+			// drag & drop
+			enable_dragndrop: cfg.enable_dragndrop
+			max_dropped_files: cfg.max_dropped_files
+			max_dropped_file_path_length: cfg.max_dropped_file_path_length
+		)
+	}
 	mut ui_ctx := &UI{
-		gg: gcontext
+		dd: dd
+		gg: &dd.Context
 		window: window
 		svg: draw_device_svg()
 		bmp: draw_device_bitmap()
@@ -357,6 +359,7 @@ fn gg_init(mut window Window) {
 		window.register_child(*sw)
 		sw.init(window)
 	}
+
 	// refresh the layout
 	window.update_layout()
 
@@ -383,12 +386,21 @@ fn gg_cleanup(mut window Window) {
 }
 
 fn frame(mut w Window) {
-	$if trace_ui_frame ? {
-		eprintln('> ${@FN} w.ui.gg.frame: ${w.ui.gg.frame}')
+	if mut w.ui.dd is DrawDeviceContext {
+		$if trace_ui_frame ? {
+			eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+		}
+		w.ui.dd.begin()
 	}
-	w.ui.gg.begin()
 
-	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
+	// initial clipping
+	w.ui.dd.reset_clipping()
+
+	mut children := if unsafe { w.child_window == 0 } {
+		w.children
+	} else {
+		w.child_window.children
+	}
 
 	for mut child in children {
 		child.draw()
@@ -417,14 +429,18 @@ fn frame(mut w Window) {
 	}
 	*/
 
-	w.ui.gg.end()
+	if mut w.ui.dd is DrawDeviceContext {
+		w.ui.dd.end()
+	}
 }
 
 fn frame_immediate(mut w Window) {
-	$if trace_ui_frame ? {
-		eprintln('> ${@FN} w.ui.gg.frame: ${w.ui.gg.frame}')
+	if mut w.ui.dd is DrawDeviceContext {
+		$if trace_ui_frame ? {
+			eprintln('> ${@FN} w.ui.dd.frame: ${w.ui.dd.frame}')
+		}
+		w.ui.dd.begin()
 	}
-	w.ui.gg.begin()
 
 	for mut child in w.children_immediate {
 		child.draw()
@@ -451,7 +467,9 @@ fn frame_immediate(mut w Window) {
 
 	w.needs_refresh = false
 
-	w.ui.gg.end()
+	if mut w.ui.dd is DrawDeviceContext {
+		w.ui.dd.end()
+	}
 }
 
 fn frame_native(mut w Window) {
@@ -506,10 +524,8 @@ fn on_event(e &gg.Event, mut window Window) {
 	}
 
 	$if macos {
-		if window.ui.gg.native_rendering {
-			if e.typ in [.key_down, .mouse_scroll, .mouse_up] {
-				C.darwin_window_refresh()
-			} else {
+		if mut window.ui.dd is DrawDeviceContext {
+			if window.ui.dd.native_rendering {
 				C.darwin_window_refresh()
 			}
 		}
@@ -528,8 +544,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			prev_time := window.touch.start.time
 			window.touch.start = Touch{
 				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
+					x: int(e.mouse_x / window.dpi_scale)
+					y: int(e.mouse_y / window.dpi_scale)
 				}
 				time: time.now()
 			}
@@ -547,8 +563,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			// touch-like
 			window.touch.end = Touch{
 				pos: Pos{
-					x: int(e.mouse_x / window.ui.gg.scale)
-					y: int(e.mouse_y / window.ui.gg.scale)
+					x: int(e.mouse_x / window.dpi_scale)
+					y: int(e.mouse_y / window.dpi_scale)
 				}
 				time: time.now()
 			}
@@ -615,8 +631,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.start = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -630,8 +646,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.end = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -646,8 +662,8 @@ fn on_event(e &gg.Event, mut window Window) {
 				t := e.touches[0]
 				window.touch.move = Touch{
 					pos: Pos{
-						x: int(t.pos_x / window.ui.gg.scale)
-						y: int(t.pos_y / window.ui.gg.scale)
+						x: int(t.pos_x / window.dpi_scale)
+						y: int(t.pos_y / window.dpi_scale)
 					}
 					time: time.now()
 				}
@@ -772,8 +788,8 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
@@ -806,8 +822,8 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	// println("typ mouse move $event.typ")
 	mut window := ui.window
 	e := MouseMoveEvent{
-		x: event.mouse_x / ui.gg.scale
-		y: event.mouse_y / ui.gg.scale
+		x: event.mouse_x / window.dpi_scale
+		y: event.mouse_y / window.dpi_scale
 		mouse_button: int(event.mouse_button)
 	}
 
@@ -833,8 +849,8 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .up
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
@@ -874,8 +890,8 @@ fn window_click(event gg.Event, mut ui UI) {
 	// println("typ click $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: KeyMod(event.modifiers)
 	}
@@ -902,15 +918,15 @@ fn window_scroll(event gg.Event, ui &UI) {
 	mut window := ui.window
 	// println('title =$window.title')
 	e := ScrollEvent{
-		mouse_x: event.mouse_x / ui.gg.scale
-		mouse_y: event.mouse_y / ui.gg.scale
-		x: event.scroll_x / ui.gg.scale
-		y: event.scroll_y / ui.gg.scale
+		mouse_x: event.mouse_x / window.dpi_scale
+		mouse_y: event.mouse_y / window.dpi_scale
+		x: event.scroll_x / window.dpi_scale
+		y: event.scroll_y / window.dpi_scale
 	}
 	if window.scroll_fn != WindowScrollFn(0) {
 		window.scroll_fn(window, e)
 	}
-	window.evt_mngr.point_inside_receivers_scroll(e)
+	window.evt_mngr.point_inside_receivers_scroll_event(e)
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
@@ -1037,8 +1053,8 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 	mut window := ui.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / ui.gg.scale)
-		y: int(event.mouse_y / ui.gg.scale)
+		x: int(event.mouse_x / window.dpi_scale)
+		y: int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
@@ -1193,7 +1209,9 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
 
 pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
-	window.ui.gg.resize(w, h)
+	if mut window.ui.dd is DrawDeviceContext {
+		window.ui.dd.resize(w, h)
+	}
 	for mut child in window.children {
 		if mut child is Stack {
 			child.resize(w, h)
@@ -1713,6 +1731,7 @@ pub fn (mut w Window) png_screenshot(filename string) {
 pub fn (mut w Window) layout_print() {
 	mut d := draw_device_print()
 	w.ui.layout_print = true
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 	w.ui.layout_print = false
 }

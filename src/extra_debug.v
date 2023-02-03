@@ -17,8 +17,8 @@ fn debug_draw_bb_stack(s &Stack) {
 	println('debug_draw_bb_stack [${s.direction}] w, h = s.size()')
 	println('  in: (s.x(${s.x}) - s.margin(.left)(${s.margin(.left)}), s.y(${s.y}) - s.margin(.top)(${s.margin(.top)}), w(${w}), h(${h}))')
 	println(' out: (s.x(${s.x}), s.y(${s.y}), w(${w}) - s.margin(.left)(${s.margin(.left)}) - s.margin(.right)(${s.margin(.right)}), h(${h}) - s.margin(.top)(${s.margin(.top)}) - s.margin(.bottom)(${s.margin(.bottom)})')
-	s.ui.gg.draw_rect_empty(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
-	s.ui.gg.draw_rect_empty(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom),
+	s.ui.dd.draw_rect_empty(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
+	s.ui.dd.draw_rect_empty(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom),
 		col)
 }
 
@@ -26,12 +26,12 @@ fn debug_draw_bb_widget(mut wi Widget, ui &UI) {
 	col := gx.black
 	w, h := wi.size()
 	println('bb: ${wi.type_name()} (${wi.x}, ${wi.y} ,${w}, ${h})')
-	ui.gg.draw_rect_empty(wi.x, wi.y, w, h, col)
+	ui.dd.draw_rect_empty(wi.x, wi.y, w, h, col)
 }
 
 fn debug_draw_bb_text(x int, y int, w int, h int, ui &UI) {
 	col := gx.gray
-	ui.gg.draw_rect_empty(x, y, w, h, col)
+	ui.dd.draw_rect_empty(x, y, w, h, col)
 }
 
 // Debug function

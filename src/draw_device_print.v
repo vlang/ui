@@ -2,6 +2,7 @@ module ui
 
 import gx
 import gg
+import math
 
 struct DrawDevicePrint {
 	id       string = 'dd_print'
@@ -20,8 +21,11 @@ pub fn draw_device_print(p DrawDevicePrintParams) &DrawDevicePrint {
 
 fn draw_device_draw_print(filename string, mut w Window) {
 	d := draw_device_print(id: 'test', filename: filename)
-	DrawDevice(d).draw_window(mut w)
+	mut dd := DrawDevice(d)
+	dd.draw_window(mut w)
 }
+
+pub fn (d &DrawDevicePrint) set_bg_color(color gx.Color) {}
 
 pub fn (d &DrawDevicePrint) has_text_style() bool {
 	return false
@@ -29,21 +33,54 @@ pub fn (d &DrawDevicePrint) has_text_style() bool {
 
 pub fn (d &DrawDevicePrint) set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int) {}
 
-pub fn (d &DrawDevicePrint) scissor_rect(x int, y int, w int, h int) {}
-
-// pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, c gx.Color) {
-// 	println("$d.id draw_pixel($x, $y, $c)")
-// }
-// pub fn (d &DrawDevicePrint)	draw_pixels(points []f32, c gx.Color) {
-// 	println("$d.id ")
-// }
-pub fn (d &DrawDevicePrint) draw_image(x f32, y f32, width f32, height f32, img &gg.Image) {
-	println('${d.id} draw_image(${x}, ${y}, ${width}, ${height}, img)')
+pub fn (d &DrawDevicePrint) draw_text(x int, y int, text string, cfg gx.TextCfg) {
+	println('${d.id} draw_text(${x}, ${y}, ${text}, ${cfg})')
 }
 
-// pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string)
+// pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string) {
 pub fn (d &DrawDevicePrint) draw_text_default(x int, y int, text string) {
 	println('${d.id} draw_text_default(${x}, ${y}, ${text})')
+}
+
+pub fn (d &DrawDevicePrint) draw_text_def(x int, y int, text string) {}
+
+pub fn (d &DrawDevicePrint) set_text_cfg(c_ gx.TextCfg) {}
+
+pub fn (d &DrawDevicePrint) text_size(s string) (int, int) {
+	return 0, 0
+}
+
+pub fn (d &DrawDevicePrint) text_width(s string) int {
+	return 0
+}
+
+pub fn (d &DrawDevicePrint) text_height(s string) int {
+	return 0
+}
+
+pub fn (d &DrawDevicePrint) reset_clipping() {
+	// TODO: implement
+}
+
+pub fn (d &DrawDevicePrint) set_clipping(rect Rect) {
+	// TODO: implement
+}
+
+pub fn (d &DrawDevicePrint) get_clipping() Rect {
+	// TODO: implement
+	return Rect{0, 0, math.max_i32, math.max_i32}
+}
+
+pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color) {
+	println('${d.id} draw_pixel(${x}, ${y}, ${color})')
+}
+
+pub fn (d &DrawDevicePrint) draw_pixels(points []f32, color gx.Color) {
+	println('${d.id} draw_pixels(${points}, ${color})')
+}
+
+pub fn (d &DrawDevicePrint) draw_image(x f32, y f32, width f32, height f32, img &gg.Image) {
+	println('${d.id} draw_image(${x}, ${y}, ${width}, ${height}, img)')
 }
 
 pub fn (d &DrawDevicePrint) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
@@ -90,11 +127,15 @@ pub fn (d &DrawDevicePrint) draw_slice_filled(x f32, y f32, r f32, start_angle f
 	println('${d.id} ')
 }
 
-pub fn (d &DrawDevicePrint) draw_arc_empty(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	println('${d.id} ')
 }
 
-pub fn (d &DrawDevicePrint) draw_arc_filled(x f32, y f32, inner_radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+	println('${d.id} ')
+}
+
+pub fn (d &DrawDevicePrint) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	println('${d.id} ')
 }
 

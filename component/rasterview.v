@@ -75,7 +75,6 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		full_size_fn: rv_full_size
 		on_scroll_change: rv_scroll_change
 	)
-	layout.point_inside_visible = true
 	rv := &RasterViewComponent{
 		id: p.id
 		layout: layout
@@ -127,7 +126,7 @@ fn rv_scroll_change(sw ui.ScrollableWidget) {
 	}
 }
 
-fn rv_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn rv_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	// N.B.: rv.size = rv.pixel_size + rv.inter
@@ -384,7 +383,9 @@ pub fn (mut rv RasterViewComponent) new_image() {
 }
 
 pub fn (mut rv RasterViewComponent) load_image(path string) {
-	rv.r.load_image(mut rv.layout.ui.gg, path)
+	if mut rv.layout.ui.dd is ui.DrawDeviceContext {
+		rv.r.load_image(mut rv.layout.ui.dd.Context, path)
+	}
 	rv.visible_pixels()
 	rv.update_bounds()
 	rv.layout.update_layout()

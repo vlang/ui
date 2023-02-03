@@ -83,7 +83,7 @@ pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
 	return accordion_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
-fn accordion_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn accordion_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	acc := accordion_component(c)
 	if acc.selected[c.id] {
 		c.draw_device_triangle_filled(d, 5, 8, 12, 8, 8, 14, gx.black)

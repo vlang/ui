@@ -16,7 +16,8 @@ const (
 
 pub struct UI {
 pub mut:
-	gg             &gg.Context       = unsafe { nil }
+	dd             &DrawDevice = unsafe { nil }
+	gg             &gg.Context       [deprecated: 'use `UI.dd` instead (smart casting to `DrawDeviceContext` if necessary)'] = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
@@ -51,9 +52,13 @@ mut:
 }
 
 pub fn (mut gui UI) refresh() {
-	gui.gg.refresh_ui()
-	$if macos {
-		C.darwin_window_refresh()
+	if mut gui.dd is DrawDeviceContext {
+		gui.dd.refresh_ui()
+		$if macos {
+			if gui.dd.native_rendering {
+				C.darwin_window_refresh()
+			}
+		}
 	}
 }
 
@@ -69,12 +74,7 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-		gui.gg.refresh_ui()
-		$if macos {
-			if gui.gg.native_rendering {
-				C.darwin_window_refresh()
-			}
-		}
+		gui.refresh()
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
@@ -129,8 +129,10 @@ fn (mut gui UI) load_imgs() {
 
 // complete the drawing system
 pub fn (mut gui UI) load_img(id string, b []u8, path string) {
-	gui.imgs[id] = gui.gg.create_image_from_byte_array(b)
-	gui.imgs[id].path = path
+	if mut gui.dd is DrawDeviceContext {
+		gui.imgs[id] = gui.dd.create_image_from_byte_array(b)
+		gui.imgs[id].path = path
+	}
 }
 
 pub fn (gui &UI) img(id string) gg.Image {
@@ -150,6 +152,7 @@ pub fn (gui &UI) draw_device_img(d DrawDevice, id string, x int, y int, w int, h
 [unsafe]
 pub fn (gui &UI) free() {
 	unsafe {
+		// dd             &DrawDevice = voidptr(0)
 		// gg             &gg.Context = voidptr(0)
 		// window         &Window     = voidptr(0)
 		// clipboard      &clipboard.Clipboard
@@ -174,7 +177,9 @@ pub fn run(window &Window) {
 		mut gui := window.ui
 		gui.window = window // TODO: this can be removed since now in the window constructor
 		spawn gui.idle_loop()
-		gui.gg.run()
+		if mut gui.dd is DrawDeviceContext {
+			gui.dd.run()
+		}
 		gui.closed = true
 
 		// the gui.idle_loop thread checks every 10 ms if gui.closed is true;

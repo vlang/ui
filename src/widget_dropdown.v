@@ -156,17 +156,17 @@ pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut dd Dropdown) draw() {
-	dd.draw_device(dd.ui.gg)
+	dd.draw_device(mut dd.ui.dd)
 }
 
-pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
+pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	offset_start(mut dd)
 	$if layout ? {
 		if dd.ui.layout_print {
-			println('DropDown(${dd.id}): (${dd.x}, ${dd.y}, ${dd.width}, ${dd.height})')
+			println('DropDown(${dd.id}): (${dd.x}, ${dd.y}, ${dd.width}, ${dd.dropdown_height})')
 		}
 	}
-	dtw := DrawTextWidget(dd)
+	mut dtw := DrawTextWidget(dd)
 	dtw.draw_device_load_style(d)
 	// draw the main dropdown
 	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.style.bg_color)
@@ -176,10 +176,10 @@ pub fn (mut dd Dropdown) draw_device(d DrawDevice) {
 		dd.style.border_color
 	})
 	if dd.selected_index >= 0 {
-		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
+		// dd.ui.dd.draw_text_def(dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.items[dd.selected_index].text)
 	} else {
-		// dd.ui.gg.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
+		// dd.ui.dd.draw_text_def(dd.x + 5, dd.y + 5, dd.def_text)
 		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.def_text)
 	}
 	dd.draw_device_open(d)
@@ -202,7 +202,7 @@ fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 				color)
 			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				dd.style.border_color)
-			// dd.ui.gg.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
+			// dd.ui.dd.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 			DrawTextWidget(dd).draw_device_text(d, dd.x + 5, y + i * dd.dropdown_height + 5,
 				item.text)
 		}

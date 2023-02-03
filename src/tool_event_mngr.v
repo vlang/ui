@@ -86,7 +86,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	}
 }
 
-pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
+pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 	// TODO first sort scroll_receivers by order, z_index and hidden
 	evt_type := ui.events.on_scroll
 	em.point_inside[evt_type].clear()
@@ -103,7 +103,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll(e ScrollEvent) {
 			sw := w as ScrollableWidget
 			if !w.hidden && has_scrollview(sw)
 				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
-				&& !sw.scrollview.children_point_inside(e.mouse_x, e.mouse_y, .view)
+				&& !has_child_with_active_scrollview(w, e.mouse_x, e.mouse_y)
 				&& !w.has_parent_deactivated() {
 				em.point_inside[evt_type] << w
 			}
@@ -206,7 +206,7 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
 	if em.receivers[ui.events.on_delegate].len > 0 {
 		mut w := em.receivers[ui.events.on_delegate][0]
-		x, y := e.mouse_x / gui.gg.scale, e.mouse_y / gui.gg.scale
+		x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
 		return w.point_inside(x, y)
 	} else {
 		return false

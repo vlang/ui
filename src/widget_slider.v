@@ -193,10 +193,10 @@ pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut s Slider) draw() {
-	s.draw_device(s.ui.gg)
+	s.draw_device(mut s.ui.dd)
 }
 
-fn (mut s Slider) draw_device(d DrawDevice) {
+fn (mut s Slider) draw_device(mut d DrawDevice) {
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {

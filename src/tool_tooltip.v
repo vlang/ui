@@ -111,14 +111,14 @@ fn (mut t Tooltip) stop(id string) {
 	}
 }
 
-fn (t &Tooltip) draw() {
-	t.draw_device(t.ui.gg)
+fn (mut t Tooltip) draw() {
+	t.draw_device(mut t.ui.dd)
 }
 
-fn (t &Tooltip) draw_device(d DrawDevice) {
+fn (t &Tooltip) draw_device(mut d DrawDevice) {
 	if t.active {
 		// TODO:  add triangle to connect the rectangle
-		// win.ui.gg.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
+		// win.ui.dd.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
 		// gx.yellow)
 		d.draw_rounded_rect_filled(t.x, t.y, t.width, t.height, .3, t.bg_color)
 		draw_text_lines(t, t.x + ui.tooltip_margin, t.y, t.lines)

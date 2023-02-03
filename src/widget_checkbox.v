@@ -87,7 +87,7 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.parent = parent
 	cb.ui = parent.get_ui()
-	dtw := DrawTextWidget(cb)
+	mut dtw := DrawTextWidget(cb)
 	dtw.load_style()
 	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
 	cb.load_style()
@@ -170,7 +170,7 @@ pub fn (mut cb CheckBox) set_pos(x int, y int) {
 
 pub fn (mut cb CheckBox) adj_size() (int, int) {
 	if cb.adj_width == 0 || cb.adj_height == 0 {
-		dtw := DrawTextWidget(cb)
+		mut dtw := DrawTextWidget(cb)
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		w, h = dtw.text_size(cb.text)
@@ -193,10 +193,10 @@ pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 }
 
 pub fn (mut cb CheckBox) draw() {
-	cb.draw_device(cb.ui.gg)
+	cb.draw_device(mut cb.ui.dd)
 }
 
-pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
+pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	offset_start(mut cb)
 	$if layout ? {
 		if cb.ui.layout_print {
@@ -215,21 +215,21 @@ pub fn (mut cb CheckBox) draw_device(d DrawDevice) {
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		// cb.ui.gg.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
+		// cb.ui.dd.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2
-		cb.ui.gg.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gx.black)
-		cb.ui.gg.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gx.black)
+		cb.ui.dd.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gx.black)
+		cb.ui.dd.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gx.black)
 		//
 		y1 := cb.y + check_mark_size - 2
-		cb.ui.gg.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
-		cb.ui.gg.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
+		cb.ui.dd.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
+		cb.ui.dd.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
 		*/
 		d.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
-	dtw := DrawTextWidget(cb)
+	mut dtw := DrawTextWidget(cb)
 	dtw.draw_device_load_style(d)
 	dtw.draw_device_text(d, cb.x + ui.check_mark_size + 5, cb.y, cb.text)
 	$if bb ? {

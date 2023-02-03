@@ -4,7 +4,6 @@
 module ui
 
 import gx
-import gg
 import time
 // import sokol.sapp
 
@@ -97,8 +96,9 @@ pub mut:
 	borderless bool
 	// bg_color           gx.Color
 	border_accentuated bool
-	// related to text drawing
-	hidden bool
+	// related to widget drawing
+	hidden   bool
+	clipping bool
 	// component state for composable widget
 	component voidptr
 	// scrollview
@@ -285,7 +285,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		dtw := DrawTextWidget(tb)
+		mut dtw := DrawTextWidget(tb)
 		dtw.load_style()
 		mut w, mut h := dtw.text_size(tb.text)
 		return w + 2 * ui.textbox_padding_x, h + 2 * ui.textbox_padding_y
@@ -312,23 +312,34 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 }
 
 fn (mut tb TextBox) update_line_height() {
-	dtw := DrawTextWidget(tb)
+	mut dtw := DrawTextWidget(tb)
 	dtw.load_style()
 	tb.line_height = int(f64(dtw.text_height('W')) * (1.0 + tb.line_height_factor))
 }
 
 pub fn (mut tb TextBox) draw() {
-	tb.draw_device(tb.ui.gg)
+	tb.draw_device(mut tb.ui.dd)
 }
 
-pub fn (mut tb TextBox) draw_device(d DrawDevice) {
+pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	offset_start(mut tb)
+	defer {
+		offset_end(mut tb)
+	}
+	scrollview_draw_begin(mut tb, d)
+	defer {
+		scrollview_draw_end(tb, d)
+	}
+	cstate := clipping_start(tb, mut d) or { return }
+	defer {
+		clipping_end(tb, mut d, cstate)
+	}
 	$if layout ? {
 		if tb.ui.layout_print {
 			println('TextBox(${tb.id}): (${tb.x}, ${tb.y}, ${tb.width}, ${tb.height})')
 		}
 	}
-	scrollview_draw_begin(mut tb, d)
+
 	// draw background
 	if tb.has_scrollview {
 		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
@@ -347,7 +358,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	if tb.is_multiline {
 		tb.tv.draw_device_textlines(d)
 	} else {
-		dtw := DrawTextWidget(tb)
+		mut dtw := DrawTextWidget(tb)
 		dtw.draw_device_load_style(d)
 		mut text := ''
 		if tb.text != 0 {
@@ -414,7 +425,7 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 					cursor_x += dtw.text_width(left)
 				}
 			}
-			// tb.ui.gg.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
+			// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 			d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
 				gx.black) // , gx.Black)
 		}
@@ -422,8 +433,6 @@ pub fn (mut tb TextBox) draw_device(d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_widget(mut tb, tb.ui)
 	}
-	scrollview_draw_end(tb, d)
-	offset_end(mut tb)
 }
 
 fn (tb &TextBox) is_sel_active() bool {
@@ -441,7 +450,7 @@ fn (mut tb TextBox) draw_selection() {
 	}
 	sel_from, sel_width := tb.text_xminmax_from_pos(*tb.text, tb.sel_start, tb.sel_end)
 	// println("tb draw sel ($tb.sel_start, $tb.sel_end): $sel_from, $sel_width")
-	tb.ui.gg.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
+	tb.ui.dd.draw_rect_filled(tb.x + ui.textbox_padding_x + sel_from, tb.y + ui.textbox_padding_y,
 		sel_width, tb.line_height, ui.selection_color)
 }
 
@@ -1054,7 +1063,7 @@ fn (tb &TextBox) set_children_pos() {}
 // Utility functions
 
 pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	dtw := DrawTextWidget(tb)
+	mut dtw := DrawTextWidget(tb)
 	dtw.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
@@ -1077,7 +1086,7 @@ pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	dtw := DrawTextWidget(tb)
+	mut dtw := DrawTextWidget(tb)
 	dtw.load_style()
 	mut prev_width := 0
 	ustr := text.runes()
@@ -1172,7 +1181,7 @@ fn (mut tb TextBox) check_cursor_pos() {
 	} else if tb.cursor_pos > ustr.len {
 		tb.cursor_pos = ustr.len
 	}
-	dtw := DrawTextWidget(tb)
+	mut dtw := DrawTextWidget(tb)
 	dtw.load_style()
 	tb.skip_index_from_cursor(ustr, dtw)
 }

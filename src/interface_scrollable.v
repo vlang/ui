@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 
 // ScrollView exists only when attached to Widget
 // Is it not a widget but attached to a widget.
@@ -51,12 +50,11 @@ pub enum ScrollViewPart {
 type ScrollViewChangedFn = fn (sw ScrollableWidget)
 
 interface ScrollableWidget {
+	ClippingWidget
 mut:
 	has_scrollview bool
 	scrollview &ScrollView
 	id string
-	x int
-	y int
 	ui &UI
 	offset_x int
 	offset_y int
@@ -65,25 +63,13 @@ mut:
 	size() (int, int)
 }
 
-pub fn scrollview(w Widget) (bool, &ScrollView) {
-	if w is Stack {
-		if w.has_scrollview {
-			return true, w.scrollview
-		}
-	} else if w is CanvasLayout {
-		if w.has_scrollview {
-			return true, w.scrollview
-		}
-	} else if w is ListBox {
-		if w.has_scrollview {
-			return true, w.scrollview
-		}
-	} else if w is TextBox {
-		if w.has_scrollview {
-			return true, w.scrollview
-		}
+pub fn get_scrollview(sw ScrollableWidget) (bool, &ScrollView) {
+	has := sw.has_scrollview
+	return has, if has {
+		sw.scrollview
+	} else {
+		&ScrollView(0)
 	}
-	return false, &ScrollView(0)
 }
 
 pub fn has_scrollview(w ScrollableWidget) bool {
@@ -107,18 +93,19 @@ pub fn scrollview_need_update(mut w ScrollableWidget) {
 pub fn scrollview_add[T](mut w T) {
 	mut sv := &ScrollView{
 		parent: w.parent
-		widget: w
+		widget: unsafe { w }
 		ui: 0
 	}
 	// IMPORTANT (sort of bug):
 	// declaring `widget: w` inside struct before work for stack but not for canvas_layout
-	sv.widget = w
+	sv.widget = unsafe { w }
 	// TEST for the bug above
 	// mut w2 := sv.widget
 	// wi, he := w2.size()
 	// println("add: ($wi, $he) -> ($w.width, $w.height)")
 	w.scrollview = sv
 	w.has_scrollview = true
+	w.clipping = true
 }
 
 pub fn scrollview_widget_set_orig_xy(w Widget) {
@@ -161,20 +148,6 @@ pub fn scrollview_widget_set_orig_xy(w Widget) {
 	// 	}
 	// }
 }
-
-// pub fn (mut sw ScrollableWidget) set_orig_xy() {
-// 	mut sv := sw.scrollview
-// 	if sv != 0 {
-// 		sv.orig_x, sv.orig_y = sw.x, sw.y
-// 		sv.offset_x, sv.offset_y = 0, 0
-// 		if sv.active_x {
-// 			sv.change_value(.btn_x)
-// 		}
-// 		if sv.active_y {
-// 			sv.change_value(.btn_y)
-// 		}
-// 	}
-// }
 
 pub fn scrollview_set_orig_xy[T](w &T) {
 	if has_scrollview(w) {
@@ -282,8 +255,8 @@ pub fn scrollview_delegate_parent_scrollview[T](mut w T) {
 
 pub fn scrollview_update[T](w &T) {
 	if has_scrollview(w) {
-		mut sw := w.scrollview
-		sw.update()
+		mut sv := w.scrollview
+		sv.update()
 	}
 }
 
@@ -300,8 +273,8 @@ pub fn scrollview_widget_update(w Widget) {
 
 pub fn scrollview_update_active[T](w &T) {
 	if has_scrollview(w) {
-		mut sw := w.scrollview
-		sw.update_active()
+		mut sv := w.scrollview
+		sv.update_active()
 	}
 }
 
@@ -320,6 +293,9 @@ pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 	if scrollview_is_active(w) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
+			$if ui_clipping ? {
+				println('sv: update children')
+			}
 			svx, svy := sv.orig_xy()
 			if sv.active_x {
 				w.x = svx - sv.offset_x
@@ -330,8 +306,6 @@ pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 			w.set_children_pos()
 			sv.children_to_update = false
 		}
-
-		sv.clip(d)
 	}
 }
 
@@ -369,7 +343,7 @@ pub fn unlock_scrollview_key(w ScrollableWidget) {
 [heap]
 pub struct ScrollView {
 pub mut:
-	widget ScrollableWidget
+	widget &Widget = unsafe { nil }
 	// color
 	btn_color_x gx.Color = ui.scrollbar_button_color
 	btn_color_y gx.Color = ui.scrollbar_button_color
@@ -406,9 +380,7 @@ pub mut:
 	win_width  int
 	win_height int
 	ui         &UI = unsafe { nil }
-	// scissor
-	scissor_rect gg.Rect
-	parent       Layout
+	parent     Layout
 	// delta mouse
 	delta_mouse int = 50
 	// saved scrollview
@@ -421,10 +393,6 @@ fn (mut sv ScrollView) init(parent Layout) {
 	ui := widget.ui // get_ui()
 	sv.ui = ui
 	sv.parent = parent
-
-	// max size first
-	size := gg.window_size_real_pixels()
-	sv.scissor_rect = gg.Rect{f32(0), f32(0), f32(size.width), f32(size.height)}
 
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, scrollview_click, sv)
@@ -463,59 +431,32 @@ pub fn (sv &ScrollView) free() {
 }
 
 fn (sv &ScrollView) parent_offset() (int, int) {
-	mut ox, mut oy := 0, 0
 	parent := sv.parent
-	if parent is Stack {
+	if parent is ScrollableWidget {
 		if parent.scrollview != unsafe { nil } {
 			psv := parent.scrollview
+			mut ox, mut oy := psv.parent_offset()
 			if psv.active_x {
 				ox += psv.offset_x
 			}
 			if psv.active_y {
 				oy += psv.offset_y
 			}
-			pox, poy := psv.parent_offset()
-			ox += pox
-			oy += poy
-		}
-	} else if parent is CanvasLayout {
-		if parent.scrollview != unsafe { nil } {
-			psv := parent.scrollview
-			if psv.active_x {
-				ox += psv.offset_x
-			}
-			if psv.active_y {
-				oy += psv.offset_y
-			}
-			pox, poy := psv.parent_offset()
-			ox += pox
-			oy += poy
+			return ox, oy
 		}
 	}
-	return ox, oy
+	return 0, 0
 }
 
+// From a ScrollableWidget's ScrollView, fetch the "original" (x,y) co-ordinates
+// for the widget, prior to them being adjusted due to scrolling. (Note:
+// although they're called "original" co-ordinates, they will also reflect any
+// scrolling offsets that have occurred in parent ScrollViews -- which is
+// usually what you want -- and so should technically be thought of as the (x,y)
+// co-ordinates of this widget where no scrolling has occurred in this widget.)
 pub fn (sv &ScrollView) orig_xy() (int, int) {
 	ox, oy := sv.parent_offset()
 	return sv.orig_x - ox, sv.orig_y - oy
-}
-
-fn (sv &ScrollView) parent_scissor_rect() gg.Rect {
-	parent := sv.parent
-	size := gg.window_size() //_real_pixels()
-	mut scissor_rect := gg.Rect{f32(0), f32(0), f32(size.width), f32(size.height)}
-	if parent is Stack {
-		if parent.scrollview != unsafe { nil } {
-			psv := parent.scrollview
-			scissor_rect = psv.scissor_rect
-		}
-	} else if parent is CanvasLayout {
-		if parent.scrollview != unsafe { nil } {
-			psv := parent.scrollview
-			scissor_rect = psv.scissor_rect
-		}
-	}
-	return scissor_rect
 }
 
 fn (mut sv ScrollView) update_active() {
@@ -526,8 +467,9 @@ fn (mut sv ScrollView) update_active() {
 }
 
 fn (mut sv ScrollView) update() {
-	sv.width, sv.height = sv.widget.size()
-	sv.adj_width, sv.adj_height = sv.widget.adj_size()
+	mut sw := sv.widget as ScrollableWidget
+	sv.width, sv.height = sw.size()
+	sv.adj_width, sv.adj_height = sw.adj_size()
 	sv.update_active()
 
 	$if svu ? {
@@ -557,24 +499,41 @@ pub fn (sv &ScrollView) is_active() bool {
 	return sv.active_x || sv.active_y
 }
 
-fn (sv &ScrollView) children_point_inside(x f64, y f64, mode ScrollViewPart) bool {
-	w := sv.widget
-	if w is Stack {
-		for child in w.children {
-			ok, csv := scrollview(child)
-			if ok {
-				return csv.point_inside(x, y, mode) || csv.children_point_inside(x, y, mode)
+fn has_child_with_active_scrollview(w Widget, x f64, y f64) bool {
+	ww := w
+	if w is Layout {
+		xx, yy := x - ww.offset_x, y - ww.offset_y
+		for child in w.get_children() {
+			if child is ScrollableWidget {
+				if scrollview_is_active(child) && scrollview_widget_point_inside(child, x, y) {
+					$if ui_scroll_nest ? { // see examples/nested_scrollview.v
+						println('...found active child scrollview: ${child.id}')
+					}
+					return true
+				}
 			}
-		}
-	} else if w is CanvasLayout {
-		for child in w.children {
-			ok, csv := scrollview(child)
-			if ok {
-				return csv.point_inside(x, y, mode) || csv.children_point_inside(x, y, mode)
+			if has_child_with_active_scrollview(child, xx, yy) {
+				return true
 			}
 		}
 	}
 	return false
+}
+
+fn scrollview_widget_point_inside(w ScrollableWidget, x f64, y f64) bool {
+	xx, yy := if has_scrollview(w) { w.scrollview.orig_xy() } else { w.x, w.y }
+	wx, wy := xx + w.offset_x, yy + w.offset_y
+	// REMOVED: This doesn't work for textboxes where the text does not fill the
+	// width of the box. So, scroll events AWAY from the text (but inside the
+	// Textbox) are ignored.
+	// if has_scrollview(w) {
+	//    if w.id == 'b11' {
+	//        println("ww ${ww}, w.sv.adj_w ${w.scrollview.adj_width}")
+	//    }
+	//    ww = math.min(ww, w.scrollview.adj_width)
+	//    hh = math.min(hh, w.scrollview.adj_height)
+	//}
+	return x >= wx && x <= wx + w.width && y >= wy && y <= wy + w.height
 }
 
 fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
@@ -593,11 +552,15 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy
 			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.sb_h
 		}
-		.btn_x { // thanks to draw_rounded_fill_rect the size of the button is at least of width 2 * ui.scrollbar_size / 3 even if sv.btn_w is 0
+		.btn_x {
+			// thanks to draw_rounded_rect_filled() the width of the button is
+			// at least 2 * ui.scrollbar_size / 3 even if sv.btn_w is 0
 			x_min, y_min = svx + sv.btn_x - ui.scrollbar_size / 3, svy + sv.height - ui.scrollbar_size
 			x_max, y_max = x_min + sv.btn_w + 2 * ui.scrollbar_size / 3, y_min + ui.scrollbar_size
 		}
-		.btn_y { // thanks to draw_rounded_fill_rect the size of the button is at least of height 2 * ui.scrollbar_size / 3 even if sv.btn_h is 0
+		.btn_y {
+			// thanks to draw_rounded_rect_filled() the height of the button is
+			// at least 2 * ui.scrollbar_size / 3 even if sv.btn_h is 0
 			x_min, y_min = svx + sv.width - ui.scrollbar_size, svy + sv.btn_y - ui.scrollbar_size / 3
 			x_max, y_max = x_min + ui.scrollbar_size, y_min + sv.btn_h + 2 * ui.scrollbar_size / 3
 		}
@@ -605,9 +568,6 @@ fn (sv &ScrollView) point_inside(x f64, y f64, mode ScrollViewPart) bool {
 			return sv.point_inside(x, y, .bar_x) || sv.point_inside(x, y, .bar_y)
 		}
 	}
-	// if mode == .view {
-	// 	println("${sv.widget.id} $x >= $x_min && $x <= $x_max && $y >= $y_min && $y <= $y_max")
-	// }
 	return x >= x_min && x <= x_max && y >= y_min && y <= y_max
 }
 
@@ -617,7 +577,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 		if sv.offset_x < 0 {
 			sv.offset_x = 0
 		}
-		max_offset_x, a_x := sv.coef_x()
+		max_offset_x, a_x := sv.x_offset_max_and_coef()
 		if sv.offset_x > max_offset_x && max_offset_x >= 0 {
 			sv.offset_x = max_offset_x
 		}
@@ -626,7 +586,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 		if sv.offset_y < 0 {
 			sv.offset_y = 0
 		}
-		max_offset_y, a_y := sv.coef_y()
+		max_offset_y, a_y := sv.y_offset_max_and_coef()
 		// println("change_value: sv.offset_y = $sv.offset_y max_offset_y = $max_offset_y")
 		if sv.offset_y > max_offset_y && max_offset_y >= 0 {
 			sv.offset_y = max_offset_y
@@ -635,7 +595,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 		sv.btn_y = int(f32(sv.offset_y) * a_y)
 	}
 	// Special treatment for textbox
-	mut sw := sv.widget
+	mut sw := sv.widget as ScrollableWidget
 	if mut sw is TextBox {
 		// println("textbox scroll changed")
 		if sw.has_scrollview {
@@ -648,35 +608,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	}
 }
 
-pub fn (mut sv ScrollView) clip(d DrawDevice) {
-	if sv.is_active() {
-		svx, svy := sv.orig_xy()
-		sr := gg.Rect{
-			x: svx //* gg.dpi_scale()
-			y: svy //* gg.dpi_scale()
-			width: sv.width //* gg.dpi_scale()
-			height: sv.height //* gg.dpi_scale()
-		}
-		psr := sv.parent_scissor_rect()
-		scissor_rect := intersection_rect(sr, psr)
-		d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-			int(scissor_rect.height))
-		sv.scissor_rect = scissor_rect
-	} else {
-		if !sv.active_x {
-			sv.offset_x = 0
-		}
-		if !sv.active_y {
-			sv.offset_y = 0
-		}
-	}
-}
-
 pub fn (sv &ScrollView) draw_device(d DrawDevice) {
-	scissor_rect := sv.parent_scissor_rect()
-	d.scissor_rect(int(scissor_rect.x), int(scissor_rect.y), int(scissor_rect.width),
-		int(scissor_rect.height))
-
 	svx, svy := sv.orig_xy()
 
 	if sv.active_x {
@@ -711,7 +643,7 @@ pub fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 }
 
 pub fn (mut sv ScrollView) scroll_to_end_y() {
-	max_offset_y, _ := sv.coef_y()
+	max_offset_y, _ := sv.y_offset_max_and_coef()
 	sv.set(max_offset_y, .btn_y)
 }
 
@@ -728,10 +660,12 @@ pub fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 	}
 }
 
-fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
-	// println("sv srollview ${sv.point_inside(e.mouse_x, e.mouse_y, .view)}")
+fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, _ voidptr) {
+	$if ui_scroll_nest ? { // see examples/nested_scrollview.v
+		println('checking scrollview: ${sv.widget.id}')
+	}
 	if sv.is_active() && sv.point_inside(e.mouse_x, e.mouse_y, .view)
-		&& !sv.children_point_inside(e.mouse_x, e.mouse_y, .view) {
+		&& !has_child_with_active_scrollview(sv.widget, e.mouse_x, e.mouse_y) {
 		sw := sv.widget
 		if sw is Widget {
 			w := sw as Widget
@@ -740,7 +674,6 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 					sv.offset_x -= int(e.x * sv.delta_mouse)
 					sv.change_value(.btn_x)
 				}
-
 				if sv.active_y {
 					sv.offset_y -= int(e.y * sv.delta_mouse)
 					// println("scroll sv.offset_y = $sv.offset_y")
@@ -751,33 +684,39 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, zzz voidptr) {
 	}
 }
 
-fn scrollview_click(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
+fn scrollview_click(mut sv ScrollView, e &MouseEvent, _ voidptr) {
 	if !sv.is_active() {
 		return
 	}
-	sv.is_focused = sv.point_inside(e.x, e.y, .view) && !sv.children_point_inside(e.x, e.y, .view)
+	$if ui_scroll_nest ? { // see examples/nested_scrollview.v
+		println('checking scrollview: ${sv.widget.id}')
+	}
+	sv.is_focused = sv.point_inside(e.x, e.y, .view)
+		&& !has_child_with_active_scrollview(sv.widget, e.x, e.y)
 	if sv.active_x && sv.point_inside(e.x, e.y, .bar_x) {
 		sv.is_focused = true
-		_, a_x := sv.coef_x()
-		sv.offset_x = int((e.x - sv.orig_x - sv.btn_w / 2) / a_x)
+		_, a_x := sv.x_offset_max_and_coef()
+		svx, _ := sv.orig_xy()
+		sv.offset_x = int((e.x - svx - sv.btn_w / 2) / a_x)
 		sv.change_value(.btn_x)
 	} else if sv.active_y && sv.point_inside(e.x, e.y, .bar_y) {
 		sv.is_focused = true
-		_, a_y := sv.coef_y()
-		sv.offset_y = int((e.y - sv.orig_y - sv.btn_h / 2) / a_y)
+		_, a_y := sv.y_offset_max_and_coef()
+		_, svy := sv.orig_xy()
+		sv.offset_y = int((e.y - svy - sv.btn_h / 2) / a_y)
 		// println("$sv.offset_y = int(($e.y - $sv.orig_y - $sv.btn_h / 2) / $a_y)")
 		sv.change_value(.btn_y)
 	}
 }
 
-// fn scrollview_touch_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
+// fn scrollview_touch_move(mut sv ScrollView, e &MouseMoveEvent, _ voidptr) {
 // 	if !sv.is_active() {
 // 		return
 // 	}
 // 	// TODO
 // }
 
-fn scrollview_mouse_down(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
+fn scrollview_mouse_down(mut sv ScrollView, e &MouseEvent, _ voidptr) {
 	if !sv.is_active() {
 		return
 	}
@@ -794,7 +733,7 @@ fn scrollview_mouse_down(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn scrollview_mouse_up(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
+fn scrollview_mouse_up(mut sv ScrollView, e &MouseEvent, _ voidptr) {
 	if !sv.is_active() {
 		return
 	}
@@ -802,7 +741,7 @@ fn scrollview_mouse_up(mut sv ScrollView, e &MouseEvent, zzz voidptr) {
 	sv.drag_offset = 0
 }
 
-fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
+fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, _ voidptr) {
 	if !sv.is_active() {
 		return
 	}
@@ -820,10 +759,10 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 		sv.dragging = 0 // invalid neither x nor y
 	} else if sv.dragging > 0 {
 		if sv.dragging == 1 {
-			_, a_x := sv.coef_x()
+			_, a_x := sv.x_offset_max_and_coef()
 			sv.offset_x = sv.orig_offset + int(f32(e.x - sv.drag_offset) / a_x)
 		} else {
-			_, a_y := sv.coef_y()
+			_, a_y := sv.y_offset_max_and_coef()
 			sv.offset_y = sv.orig_offset + int(f32(e.y - sv.drag_offset) / a_y)
 			// println("move: $sv.offset_y = $sv.orig_offset + ($e.y - $sv.drag_offset) /  $a_y")
 		}
@@ -832,7 +771,7 @@ fn scrollview_mouse_move(mut sv ScrollView, e &MouseMoveEvent, zzz voidptr) {
 }
 
 // N.B.: deactivated for TextBox and ListBox
-fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
+fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, _ voidptr) {
 	if !sv.is_active() || !sv.is_focused || sv.key_locked {
 		return
 	}
@@ -865,13 +804,17 @@ fn scrollview_key_down(mut sv ScrollView, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-pub fn (sv &ScrollView) coef_x() (int, f32) {
+// returns max scroll offset (in scrollview pixels), and scrollview-to-scrollbar
+// coefficient (i.e., multiplying a number of pixels in the view by this gives
+// you the smaller, fractional number of pixels in the scrollbar which is the
+// scrollbar button offset)
+fn (sv &ScrollView) x_offset_max_and_coef() (int, f32) {
 	max_offset_x := sv.adj_width - sv.width + 2 * ui.scrollbar_size
 	return max_offset_x, f32(sv.sb_w - sv.btn_w) / f32(max_offset_x)
 }
 
-pub fn (sv &ScrollView) coef_y() (int, f32) {
+fn (sv &ScrollView) y_offset_max_and_coef() (int, f32) {
 	max_offset_y := (sv.adj_height - sv.height + 2 * ui.scrollbar_size)
-	// println("coef_y: max_offset_y := ( (adj_h =$sv.adj_height) - (h=$sv.height) + 2 * (size=$ui.scrollbar_size))")
+	// println("y_offset_max_and_coef: max_offset_y := ( (adj_h =$sv.adj_height) - (h=$sv.height) + 2 * (size=$ui.scrollbar_size))")
 	return max_offset_y, f32(sv.sb_h - sv.btn_h) / f32(max_offset_y)
 }

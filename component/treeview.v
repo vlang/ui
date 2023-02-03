@@ -251,7 +251,7 @@ fn treeview_init(layout &ui.Stack) {
 	}
 }
 
-fn treeview_draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn treeview_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	tv := treeview_component(c)
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {

@@ -1,7 +1,6 @@
 module ui
 
 import gx
-import gg
 
 [heap]
 pub struct Grid {
@@ -77,10 +76,10 @@ pub fn (g &Grid) free() {
 }
 
 fn (mut gv Grid) draw() {
-	gv.draw_device(gv.ui.gg)
+	gv.draw_device(mut gv.ui.dd)
 }
 
-fn (mut gv Grid) draw_device(d DrawDevice) {
+fn (mut gv Grid) draw_device(mut d DrawDevice) {
 	offset_start(mut gv)
 	cell_height := gv.cell_height
 	cell_width := gv.cell_width
@@ -100,9 +99,9 @@ fn (mut gv Grid) draw_device(d DrawDevice) {
 			d.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height, gx.gray)
 		}
 		// Text values
-		text_width = gv.ui.gg.text_width(c)
-		text_height = gv.ui.gg.text_height(c)
-		gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
+		text_width = gv.ui.dd.text_width(c)
+		text_height = gv.ui.dd.text_height(c)
+		gv.ui.dd.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
 			y + int(cell_height) / 2 - text_height / 2, c)
 	}
 	y += int(cell_height) * if gv.header.len == 0 { 0 } else { 1 }
@@ -116,9 +115,9 @@ fn (mut gv Grid) draw_device(d DrawDevice) {
 					gx.gray)
 			}
 			// Text values
-			text_width = gv.ui.gg.text_width(c)
-			text_height = gv.ui.gg.text_height(c)
-			gv.ui.gg.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
+			text_width = gv.ui.dd.text_width(c)
+			text_height = gv.ui.dd.text_height(c)
+			gv.ui.dd.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
 				y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
 		}
 	}
@@ -128,14 +127,14 @@ fn (mut gv Grid) draw_device(d DrawDevice) {
 fn min_text_width(gv Grid) int {
 	mut min := 0
 	for ch in gv.header {
-		if gv.ui.gg.text_width(ch) > min {
-			min = gv.ui.gg.text_width(ch)
+		if gv.ui.dd.text_width(ch) > min {
+			min = gv.ui.dd.text_width(ch)
 		}
 	}
 	for ba in gv.body {
 		for cb in ba {
-			if gv.ui.gg.text_width(cb) > min {
-				min = gv.ui.gg.text_width(cb)
+			if gv.ui.dd.text_width(cb) > min {
+				min = gv.ui.dd.text_width(cb)
 			}
 		}
 	}
