@@ -1219,6 +1219,9 @@ pub fn (mut window Window) resize(w int, h int) {
 		if mut child is CanvasLayout {
 			child.resize(w, h)
 		}
+		if mut child is GridLayout {
+			child.resize(w, h)
+		}
 	}
 }
 
@@ -1230,6 +1233,8 @@ pub fn (w &Window) update_layout() {
 		if s.id != empty_stack.id {
 			s.update_layout()
 		}
+	} else if mut s is GridLayout {
+		s.update_layout()
 	}
 	// for mut s in w.get_children() {
 	// 	if mut s is Stack {
@@ -1489,6 +1494,24 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		// println("register CanvasLayout")
 		if child.id == '' {
 			mode := 'cl'
+			w.widgets_counts[mode] += 1
+			child.id = '_${mode}_${w.widgets_counts[mode]}'
+			w.widgets[child.id] = child
+		} else {
+			w.widgets[child.id] = child
+		}
+		$if register ? {
+			if child.id != '' {
+				println('registered ${child.id}')
+			}
+		}
+		for child2 in child.children {
+			w.register_child(child2)
+		}
+	} else if mut child is GridLayout {
+		// println("register CanvasLayout")
+		if child.id == '' {
+			mode := 'gl'
 			w.widgets_counts[mode] += 1
 			child.id = '_${mode}_${w.widgets_counts[mode]}'
 			w.widgets[child.id] = child

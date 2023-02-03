@@ -333,7 +333,7 @@ fn (mut s Stack) set_children_sizes() {
 	// set children sizes
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
-		if child is Stack || child is Group || child is CanvasLayout {
+		if child is Stack || child is Group || child is CanvasLayout || child is GridLayout {
 			w, h = widths[i], heights[i]
 		} else {
 			if c.width_type[i] in [.fixed, .stretch, .weighted] {
