@@ -1,15 +1,8 @@
 import ui
 import gx
 
-struct App {
-mut:
-	window &ui.Window = unsafe { nil }
-	info   string     = '....'
-}
-
 fn main() {
-	mut app := &App{}
-	app.window = ui.window(
+	window := ui.window(
 		width: 600
 		height: 600
 		title: 'V UI: Event'
@@ -60,12 +53,12 @@ fn main() {
 						id: 'info'
 						mode: .multiline | .read_only
 						bg_color: gx.hex(0xfcf4e4ff)
-						text: &app.info
+						// text: &app.info
 						text_size: 24
 					),
 				]
 			),
 		]
 	)
-	ui.run(app.window)
+	ui.run(window)
 }
