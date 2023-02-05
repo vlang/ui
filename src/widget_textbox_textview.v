@@ -1070,6 +1070,11 @@ fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(tv.fix_tab_char(text))
 }
 
+// Added to have mostly additive text width function
+fn (tv &TextView) text_width_additive(text string) f64 {
+	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
+}
+
 fn (tv &TextView) text_height(text string) int {
 	return DrawTextWidget(tv.tb).text_width(text)
 }

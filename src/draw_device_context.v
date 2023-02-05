@@ -35,6 +35,12 @@ pub fn (d DrawDeviceContext) get_clipping() Rect {
 	return d.clip_rect
 }
 
+pub fn (d DrawDeviceContext) text_width_additive(text string) f64 {
+	ctx := d.Context
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+	return adv / ctx.scale
+}
+
 [deprecated: 'use `widget.clipping` flag instead']
 pub fn (d &DrawDeviceContext) scissor_rect(x int, y int, w int, h int) {
 	d.Context.scissor_rect(x, y, w, h)
