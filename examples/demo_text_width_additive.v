@@ -10,10 +10,12 @@ window := ui.window(
 		ui.column(
 			widths: ui.stretch
 			heights: [ui.compact, ui.stretch]
+			margin_: 5
+			spacing: 10
 			children: [
 				ui.textbox(
 					id: 'text'
-					// text: &app.info
+					placeholder: 'Type text here to show textwidth below...'
 					text_size: 20
 					on_change: fn (tb_text &ui.TextBox) {
 						mut tb := tb_text.ui.window.get_or_panic[ui.TextBox]('info')
