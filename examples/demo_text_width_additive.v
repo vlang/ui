@@ -1,7 +1,7 @@
 import ui
 import gx
 
-window := ui.window(
+win := ui.window(
 	width: 1000
 	height: 600
 	title: 'V UI: Test text_width_additive'
@@ -49,4 +49,4 @@ window := ui.window(
 		),
 	]
 )
-ui.run(window)
+ui.run(win)
