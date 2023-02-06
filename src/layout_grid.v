@@ -35,8 +35,6 @@ pub mut:
 	margin_top       int = 5
 	margin_right     int = 5
 	margin_bottom    int = 5
-	adj_height       int
-	adj_width        int
 	hidden           bool
 	is_root_layout   bool = true
 	// component state for composable widget
@@ -93,25 +91,25 @@ fn (mut g GridLayout) init(parent Layout) {
 	g.parent = parent
 	mut ui := parent.get_ui()
 	g.ui = ui
-	if parent is Window {
-		ui.window = unsafe { parent }
-		mut window := unsafe { parent }
-		if g.is_root_layout {
-			window.root_layout = g
-			window.update_layout() // i.e s.update_all_children_recursively(parent)
-		} else {
-			g.update_layout()
-		}
-	} else {
-		g.is_root_layout = false
-	}
-
 	for mut child in g.children {
 		// println('gl init child ${child.id} ')
 		child.init(g)
 	}
 	g.decode_size()
 	g.calculate_children()
+	if parent is Window {
+		ui.window = unsafe { parent }
+		mut window := unsafe { parent }
+		if g.is_root_layout {
+			window.root_layout = g
+			// window.update_layout() // i.e s.update_all_children_recursively(parent)
+		}
+		// else {
+		// g.update_layout()
+		//}
+	} else {
+		g.is_root_layout = false
+	}
 }
 
 [manualfree]
@@ -238,11 +236,6 @@ fn (g &GridLayout) get_ui() &UI {
 fn (mut g GridLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
 	g.propose_size(width, height)
-	for mut child in g.children {
-		if mut child is Stack {
-			child.resize(width, height)
-		}
-	}
 }
 
 fn (g &GridLayout) get_subscriber() &eventbus.Subscriber {
@@ -283,13 +276,12 @@ fn (mut g GridLayout) update_layout() {
 		}
 	}
 	g.calculate_children()
+	for mut child in g.children {
+		if mut child is Stack {
+			child.update_layout()
+		}
+	}
 	g.set_drawing_children()
-
-	// for mut child in g.children {
-	// 	if mut child is Stack {
-	// 		child.update_layout()
-	// 	}
-	// }
 }
 
 fn (mut g GridLayout) set_drawing_children() {
