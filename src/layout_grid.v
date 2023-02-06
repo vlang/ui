@@ -102,7 +102,7 @@ fn (mut g GridLayout) init(parent Layout) {
 		mut window := unsafe { parent }
 		if g.is_root_layout {
 			window.root_layout = g
-			// window.update_layout() // i.e s.update_all_children_recursively(parent)
+			window.update_layout() // i.e s.update_all_children_recursively(parent)
 		}
 		// else {
 		// g.update_layout()
@@ -236,6 +236,7 @@ fn (g &GridLayout) get_ui() &UI {
 fn (mut g GridLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
 	g.propose_size(width, height)
+	g.set_children_pos()
 }
 
 fn (g &GridLayout) get_subscriber() &eventbus.Subscriber {
