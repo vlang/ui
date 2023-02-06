@@ -160,6 +160,24 @@ fn (mut g GridLayout) set_pos(x int, y int) {
 	g.calculate_children()
 }
 
+pub fn (mut g GridLayout) set_children_pos() {
+	// mut widgets := g.children.clone()
+	mut start_x := f32(g.x + g.margin_left)
+	mut start_y := f32(g.y + g.margin_top)
+	w := f32(g.width - g.margin_right - g.margin_left) / 100.0
+	h := f32(g.height - g.margin_top - g.margin_bottom) / 100.0
+	// println('size: $g.width, $g.height $w, $h $g.child_rects')
+	for i, mut child in g.children {
+		// println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
+		// start_y + h * g.child_rects[i].y)})')
+		// println("size(${int(w * g.child_rects[i].width)}, ${int(h * g.child_rects[i].height)})")
+		child.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
+		if mut child is Stack {
+			child.update_layout()
+		}
+	}
+}
+
 fn (mut g GridLayout) calculate_children() {
 	$if glccp ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {

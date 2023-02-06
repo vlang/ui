@@ -72,125 +72,133 @@ fn main() {
 		height: win_height
 		title: 'V UI Demo'
 		mode: .resizable
-		// bg_color: ui.color_solaris
+		bg_color: ui.color_solaris
 		// theme: 'red'
 		native_message: false
 		children: [
-			ui.grid_layout(
-				id: 'gl'
-				children: {
-					'col1@0x0x30x100':  ui.column(
-						spacing: 10
-						heights: ui.compact
-						scrollview: true
-						children: [
-							ui.textbox(
-								max_len: 20
-								width: 200
-								placeholder: 'First name'
-								text: &app.first_name
-								// is_focused: &app.started
-								is_error: &app.is_error
-								is_focused: true
-							),
-							ui.textbox(
-								max_len: 50
-								width: 200
-								placeholder: 'Last name'
-								text: &app.last_name
-								is_error: &app.is_error
-							),
-							ui.textbox(
-								max_len: 3
-								width: 200
-								placeholder: 'Age'
-								is_numeric: true
-								text: &app.age
-								is_error: &app.is_error
-							),
-							ui.textbox(
-								width: 200
-								placeholder: 'Password'
-								is_password: true
-								max_len: 20
-								text: &app.password
-							),
-							ui.checkbox(
-								checked: true
-								text: 'Online registration'
-							),
-							ui.checkbox(text: 'Subscribe to the newsletter'),
-							app.country,
-							ui.row(
-								id: 'btn_row'
-								widths: [.5, .2]
-								heights: 20.0
-								spacing: .3
-								children: [
-									ui.button(
-										text: 'Add user'
-										tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
-										on_click: app.btn_add_click
-										radius: .0
-									),
-									ui.button(
-										tooltip: 'about'
-										text: '?'
-										on_click: btn_help_click
-										radius: .3
-									),
-								]
-							),
-							ui.row(
-								spacing: .05
-								widths: [
-									.8,
-									.15,
-								]
+			ui.row(
+				widths: ui.stretch
+				heights: ui.stretch
+				children: [
+					ui.grid_layout(
+						id: 'gl'
+						children: {
+							'col1@1x1x29x79':   ui.column(
+								spacing: 10
 								heights: ui.compact
+								scrollview: true
+								bg_color: gx.white
+								// margin_: 5
 								children: [
-									app.pbar,
-									app.label,
+									ui.textbox(
+										max_len: 20
+										width: 200
+										placeholder: 'First name'
+										text: &app.first_name
+										// is_focused: &app.started
+										is_error: &app.is_error
+										is_focused: true
+									),
+									ui.textbox(
+										max_len: 50
+										width: 200
+										placeholder: 'Last name'
+										text: &app.last_name
+										is_error: &app.is_error
+									),
+									ui.textbox(
+										max_len: 3
+										width: 200
+										placeholder: 'Age'
+										is_numeric: true
+										text: &app.age
+										is_error: &app.is_error
+									),
+									ui.textbox(
+										width: 200
+										placeholder: 'Password'
+										is_password: true
+										max_len: 20
+										text: &app.password
+									),
+									ui.checkbox(
+										checked: true
+										text: 'Online registration'
+									),
+									ui.checkbox(text: 'Subscribe to the newsletter'),
+									app.country,
+									ui.row(
+										id: 'btn_row'
+										widths: [.5, .2]
+										heights: 20.0
+										spacing: .3
+										children: [
+											ui.button(
+												text: 'Add user'
+												tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
+												on_click: app.btn_add_click
+												radius: .0
+											),
+											ui.button(
+												tooltip: 'about'
+												text: '?'
+												on_click: btn_help_click
+												radius: .3
+											),
+										]
+									),
+									ui.row(
+										spacing: .05
+										widths: [
+											.8,
+											.15,
+										]
+										heights: ui.compact
+										children: [
+											app.pbar,
+											app.label,
+										]
+									),
 								]
-							),
-						]
-					)
-					'col2@30x0x70x100': ui.column(
-						scrollview: true
-						alignments: ui.HorizontalAlignments{
-							center: [
-								0,
-							]
-							right: [
-								1,
-							]
+							)
+							'col2@32x21x68x78': ui.column(
+								scrollview: true
+								alignments: ui.HorizontalAlignments{
+									center: [
+										0,
+									]
+									right: [
+										1,
+									]
+								}
+								widths: [
+									ui.stretch,
+									ui.compact,
+								]
+								heights: [
+									ui.stretch,
+									ui.compact,
+								]
+								children: [
+									ui.canvas_plus(
+										width: 400
+										height: 275
+										on_draw: app.draw
+										bg_color: gx.Color{255, 220, 220, 150}
+										bg_radius: 10
+										// text_size: 20
+									),
+									ui.picture(
+										id: 'logo'
+										width: 50
+										height: 50
+										path: logo
+									),
+								]
+							)
 						}
-						widths: [
-							ui.stretch,
-							ui.compact,
-						]
-						heights: [
-							ui.stretch,
-							ui.compact,
-						]
-						children: [
-							ui.canvas_plus(
-								width: 400
-								height: 275
-								on_draw: app.draw
-								bg_color: gx.Color{255, 220, 220, 150}
-								bg_radius: 10
-								// text_size: 20
-							),
-							ui.picture(
-								id: 'logo'
-								width: 50
-								height: 50
-								path: logo
-							),
-						]
-					)
-				}
+					),
+				]
 			),
 		]
 	)

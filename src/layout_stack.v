@@ -995,6 +995,8 @@ pub fn (mut s Stack) set_children_pos() {
 			child.set_children_pos()
 		} else if mut child is CanvasLayout {
 			child.set_children_pos()
+		} else if mut child is GridLayout {
+			child.set_children_pos()
 		}
 	}
 }
