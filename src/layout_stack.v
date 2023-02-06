@@ -820,10 +820,8 @@ pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	}
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	// if s.id == '_msg_dlg_col' {
-	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
-	// }
-	// println("$s.id propose size $w, $h")
+
+	// println("${s.id} propose size ${w}, ${h} => ${s.width}, ${s.height} ")
 
 	scrollview_update(s)
 	return s.real_width, s.real_height

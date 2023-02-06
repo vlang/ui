@@ -585,6 +585,8 @@ fn (mut c CanvasLayout) set_drawing_children() {
 			child.set_drawing_children()
 		} else if mut child is CanvasLayout {
 			child.set_drawing_children()
+		} else if mut child is GridLayout {
+			child.set_drawing_children()
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > c.z_index {

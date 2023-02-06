@@ -27,17 +27,18 @@ pub mut:
 	parent     Layout = empty_stack
 	ui         &UI    = unsafe { nil }
 	// children
-	child_rects    []gg.Rect
-	child_ids      []string
-	children       []Widget
-	margin_left    int = 5
-	margin_top     int = 5
-	margin_right   int = 5
-	margin_bottom  int = 5
-	adj_height     int
-	adj_width      int
-	hidden         bool
-	is_root_layout bool = true
+	child_rects      []gg.Rect
+	child_ids        []string
+	children         []Widget
+	drawing_children []Widget
+	margin_left      int = 5
+	margin_top       int = 5
+	margin_right     int = 5
+	margin_bottom    int = 5
+	adj_height       int
+	adj_width        int
+	hidden           bool
+	is_root_layout   bool = true
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed
@@ -106,6 +107,7 @@ fn (mut g GridLayout) init(parent Layout) {
 	}
 
 	for mut child in g.children {
+		println('gl init child ${child.id} ')
 		child.init(g)
 	}
 	g.decode_size()
@@ -173,6 +175,7 @@ fn (mut g GridLayout) calculate_children() {
 	for i, mut widget in g.children {
 		// println('widget.set_pos($i) $widget.id ${int(start_x + w * g.child_rects[i].x)}, ${int(
 		// start_y + h * g.child_rects[i].y)})')
+		// println("size(${int(w * g.child_rects[i].width)}, ${int(h * g.child_rects[i].height)})")
 		widget.set_pos(int(start_x + w * g.child_rects[i].x), int(start_y + h * g.child_rects[i].y))
 		widget.propose_size(int(w * g.child_rects[i].width), int(h * g.child_rects[i].height))
 	}
@@ -269,4 +272,26 @@ fn (mut g GridLayout) update_layout() {
 		}
 	}
 	g.calculate_children()
+	g.set_drawing_children()
+}
+
+fn (mut g GridLayout) set_drawing_children() {
+	for mut child in g.children {
+		if mut child is Stack {
+			child.set_drawing_children()
+		} else if mut child is CanvasLayout {
+			child.set_drawing_children()
+		} else if mut child is GridLayout {
+			child.set_drawing_children()
+		}
+		// println("z_index: ${child.type_name()} $child.z_index")
+		if child.z_index > g.z_index {
+			$if cl_z_index_update ? {
+				println('${g.id} changed z_index from ${child.id} ${child.z_index}')
+			}
+			g.z_index = child.z_index - 1
+		}
+	}
+	g.drawing_children = g.children.filter(!it.hidden)
+	g.sorted_drawing_children()
 }
