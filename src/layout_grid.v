@@ -107,7 +107,7 @@ fn (mut g GridLayout) init(parent Layout) {
 	}
 
 	for mut child in g.children {
-		println('gl init child ${child.id} ')
+		// println('gl init child ${child.id} ')
 		child.init(g)
 	}
 	g.decode_size()
@@ -199,7 +199,7 @@ fn (mut g GridLayout) draw_device(mut d DrawDevice) {
 		}
 	}
 	for mut child in g.children {
-		// println("${child.id} drawn at ${child.x}, ${child.y} ${child.size()}")
+		// println("$g.id -> ${child.id} drawn at ${child.x}, ${child.y} ${child.size()}")
 		child.draw_device(mut d)
 	}
 	offset_end(mut g)
@@ -220,23 +220,16 @@ fn (g &GridLayout) get_ui() &UI {
 fn (mut g GridLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
 	g.propose_size(width, height)
+	for mut child in g.children {
+		if mut child is Stack {
+			child.resize(width, height)
+		}
+	}
 }
 
 fn (g &GridLayout) get_subscriber() &eventbus.Subscriber {
 	parent := g.parent
 	return parent.get_subscriber()
-}
-
-fn (mut g GridLayout) set_adjusted_size(i int, ui &UI) {
-	g.adj_width = g.width
-	g.adj_height = g.height
-	// $if adj_size_group ? {
-	// 	println('group $g.id adj size: ($g.adj_width, $g.adj_height)')
-	// }
-}
-
-fn (g &GridLayout) adj_size() (int, int) {
-	return g.adj_width, g.adj_height
 }
 
 fn (mut g GridLayout) propose_size(w int, h int) (int, int) {
@@ -273,6 +266,12 @@ fn (mut g GridLayout) update_layout() {
 	}
 	g.calculate_children()
 	g.set_drawing_children()
+
+	// for mut child in g.children {
+	// 	if mut child is Stack {
+	// 		child.update_layout()
+	// 	}
+	// }
 }
 
 fn (mut g GridLayout) set_drawing_children() {

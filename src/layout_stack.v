@@ -194,7 +194,7 @@ pub fn (mut s Stack) init(parent Layout) {
 		if s.is_root_layout {
 			window.root_layout = s
 			s.real_x, s.real_y = 0, 0
-			window.update_layout() // i.e s.update_all_children_recursively(parent)
+			window.update_layout()
 		} else {
 			s.update_layout()
 		}
@@ -896,8 +896,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
 						println('set_adj_size ${s.id} (cvl): child(${child.id}) child_width = ${child_width}  child_height = ${child_height})')
 					}
-				} $else {
-				} // because of a bug mixing $if and else
+				}
+				//$else {
+				//} // because of a bug mixing $if and else
 			} else {
 				child_width, child_height = child.size()
 				$if s_adj_size ? {
@@ -1077,6 +1078,10 @@ pub fn (mut s Stack) set_drawing_children() {
 			if child.z_index > z_index_hidden {
 				child.set_drawing_children()
 			}
+		} else if mut child is GridLayout {
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
@@ -1139,7 +1144,7 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	//}
 
 	$if s_draw_children ? {
-		println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+		println('draw ${s.id}: ${s.children.map(it.id)} ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 	}
 	active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
 	for mut child in s.drawing_children {
