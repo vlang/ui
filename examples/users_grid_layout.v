@@ -72,6 +72,7 @@ fn main() {
 		height: win_height
 		title: 'V UI Demo'
 		mode: .resizable
+		bg_color: ui.color_solaris
 		// bg_color: ui.color_solaris
 		// theme: 'red'
 		native_message: false
@@ -79,9 +80,10 @@ fn main() {
 			ui.grid_layout(
 				id: 'gl'
 				children: {
-					'col1@0x0x30x100':  ui.column(
+					'col1@0x0x30x50':   ui.column(
 						spacing: 10
 						heights: ui.compact
+						bg_color: gx.white
 						scrollview: true
 						children: [
 							ui.textbox(
@@ -155,7 +157,7 @@ fn main() {
 							),
 						]
 					)
-					'col2@30x0x70x100': ui.column(
+					'col2@30x20x70x70': ui.column(
 						scrollview: true
 						alignments: ui.HorizontalAlignments{
 							center: [
