@@ -10,6 +10,21 @@ Goal:
 2) Two options:
 	a) size of grid_layout is fixed (=> use of srollview if parent does not allocate enough space)
 	b) size of grid_layout is not fixed and then only deduced from the parent.
+
+NEW:
+a) sizes:
+	1) float between 0.0 to 100.0 expresses relative size in percentage of the full size
+	2) integer expresses absolute size
+a) coordinates:
+	1) float between 0.0 to 100.0 expresses expresses relative coordinate in percentage of the full size
+	2) integer expresses absolute coordinate
+	3) x or y absolute coordinates from top-left corner
+	4) -x or -y absolute coordinates from bottom-right corner
+b) 4 options:
+	1) (xLeft,yTop) -> (xRight,yBottom)
+	2) (xRight,yBottom) <- (xLeft,yTop)
+	3) (x,y) ++ (w,h) <=> (x,y) -> (x+w,y+h)
+	4) (x,y) -- (w,h) <=> (x-w,y-h) -> (x,y)
 */
 
 [heap]
