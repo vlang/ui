@@ -77,12 +77,12 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		// gg := ui.gg
 		// mut f := ui.fonts
 		if bytes.len > 0 {
-			font := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
-			if font >= 0 {
+			font_ := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
+			if font_ >= 0 {
 				ui.font_paths[font_name] = font_path
-				ui.fonts.hash[font_name] = font
+				ui.fonts.hash[font_name] = font_
 				$if fontset ? {
-					println('font ${font} ${font_name} added (${font_path})')
+					println('font ${font_} ${font_name} added (${font_path})')
 				}
 			} else {
 				$if fontset ? {
