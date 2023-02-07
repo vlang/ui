@@ -187,21 +187,7 @@ pub fn (mut s Stack) init(parent Layout) {
 	if s.on_init != InitFn(0) {
 		s.on_init(s)
 	}
-
-	if parent is Window {
-		ui.window = unsafe { parent }
-		mut window := unsafe { parent }
-		if s.is_root_layout {
-			window.root_layout = s
-			s.real_x, s.real_y = 0, 0
-			window.update_layout()
-		} else {
-			s.update_layout()
-		}
-	} else {
-		s.is_root_layout = false
-	}
-
+	s.set_root_layout()
 	if has_scrollview(s) {
 		s.scrollview.init(parent)
 		s.ui.window.evt_mngr.add_receiver(s, [events.on_scroll])
@@ -211,6 +197,24 @@ pub fn (mut s Stack) init(parent Layout) {
 	$if sscroll ? {
 		swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
 		println('${s.id} stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} ${swid} (${parent.id})')
+	}
+}
+
+// Determine wheither Stack s is a root layout
+fn (mut s Stack) set_root_layout() {
+	if mut s.parent is Window {
+		// TODO: before removing line below test if this is necessary
+		// s.ui.window = unsafe { s.parent }
+		mut window := unsafe { s.parent }
+		if s.is_root_layout {
+			window.root_layout = s
+			s.real_x, s.real_y = 0, 0
+			// window.update_layout()
+		} else {
+			s.update_layout()
+		}
+	} else {
+		s.is_root_layout = false
 	}
 }
 

@@ -97,16 +97,21 @@ fn (mut g GridLayout) init(parent Layout) {
 	}
 	g.decode_size()
 	g.calculate_children()
-	if parent is Window {
-		ui.window = unsafe { parent }
-		mut window := unsafe { parent }
+	g.set_root_layout()
+}
+
+// Determine wheither GridLayout g is a root layout
+fn (mut g GridLayout) set_root_layout() {
+	if mut g.parent is Window {
+		// TODO: before removing line below test if this is necessary
+		// g.ui.window = unsafe { g.parent }
+		mut window := unsafe { g.parent }
 		if g.is_root_layout {
 			window.root_layout = g
-			window.update_layout() // i.e s.update_all_children_recursively(parent)
+			// window.update_layout()
+		} else {
+			g.update_layout()
 		}
-		// else {
-		// g.update_layout()
-		//}
 	} else {
 		g.is_root_layout = false
 	}

@@ -1228,21 +1228,20 @@ pub fn (mut window Window) resize(w int, h int) {
 // ask for an update to restructure the whole children tree from root layout
 pub fn (w &Window) update_layout() {
 	// update root_layout
-	mut s := w.root_layout
-	if mut s is Stack {
-		if s.id != empty_stack.id {
-			s.update_layout()
+	mut r := w.root_layout
+	if mut r is Stack {
+		if r.id != empty_stack.id {
+			$if root_layout ? {
+				println('Stack ${r.id} as root layout')
+			}
+			r.update_layout()
 		}
-	} else if mut s is GridLayout {
-		s.update_layout()
+	} else if mut r is GridLayout {
+		$if root_layout ? {
+			println('GridLayout ${r.id} as root layout')
+		}
+		r.update_layout()
 	}
-	// for mut s in w.get_children() {
-	// 	if mut s is Stack {
-	// 		if s.id != empty_stack.id {
-	// 			s.update_layout()
-	// 		}
-	// 	}
-	// }
 }
 
 pub fn (w &Window) update_layout_without_pos() {
