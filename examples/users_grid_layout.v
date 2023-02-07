@@ -82,6 +82,7 @@ fn main() {
 				children: {
 					'col1@0x0x30x50':   ui.column(
 						spacing: 10
+						widths: ui.compact
 						heights: ui.compact
 						bg_color: gx.white
 						scrollview: true

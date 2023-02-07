@@ -83,6 +83,7 @@ fn main() {
 				children: [
 					ui.column(
 						spacing: 10
+						widths: ui.compact
 						heights: ui.compact
 						scrollview: true
 						children: [
