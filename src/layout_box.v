@@ -210,8 +210,9 @@ fn (mut b BoxLayout) init(parent Layout) {
 	b.ui = ui
 	for i, mut child in b.children {
 		child.id = b.child_id[i]
-		// println('gl init child ${child.id} ')
+		// println('$i) gl init child ${child.id} ')
 		child.init(b)
+		// unsafe{println('$i) end init ${b.child_box[i]}')}
 	}
 	b.decode_size()
 	b.set_children_pos_and_size()
@@ -390,7 +391,7 @@ fn (mut b BoxLayout) draw_device(mut d DrawDevice) {
 			println('box_layout ${b.id} size: (${b.width}, ${b.height})')
 		}
 	}
-	for mut child in b.children {
+	for mut child in b.drawing_children {
 		// println("$b.id -> ${child.id} drawn at ${child.x}, ${child.y} ${child.size()}")
 		child.draw_device(mut d)
 	}
