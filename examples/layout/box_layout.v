@@ -6,7 +6,7 @@ const (
 	win_height = 300
 )
 
-window := ui.window(
+ui.run(ui.window(
 	width: win_width
 	height: win_height
 	title: 'V UI: Rectangles inside BoxLayout'
@@ -27,5 +27,4 @@ window := ui.window(
 			}
 		),
 	]
-)
-ui.run(window)
+))
