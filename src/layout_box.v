@@ -23,9 +23,9 @@ a) coordinates:
 	3) x or y absolute coordinates from top-left corner
 	4) -x or -y absolute coordinates from bottom-right corner
 b) widget position and size:
-	1) (xLeft,yTop) -> (xRight,yBottom) or (xRight,yBottom) <- (xLeft,yTop) => storage: Bounding{LeftTopToRightBottom}
-	2) (x,y) ++ (w,h) equivalent to (x,y) -> (x+w,y+h) => storage: Bounding{gg.Rect} (x,y)==(xLeft,yTop) w>0,h>0
-	3) (x,y) -- (w,h) equivalent to (x-w,y-h) -> (x,y) => storage: Bounding{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
+	1) (xLeft,yTop) << (xRight,yBottom) or (xRight,yBottom) >> (xLeft,yTop) => storage: Box{LeftTopToRightBottom}
+	2) (x,y) ++ (w,h) equivalent to (x,y) -> (x+w,y+h) => storage: Box{gg.Rect} (x,y)==(xLeft,yTop) w>0,h>0
+	3) (x,y) -- (w,h) equivalent to (x-w,y-h) -> (x,y) => storage: Box{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
 */
 
 // IMPORTANT: No margins since users can add relative or absolute ones manually
@@ -33,8 +33,8 @@ b) widget position and size:
 struct LeftTopToRightBottom {
 mut:
 	x_left   f32
-	x_right  f32
 	y_top    f32
+	x_right  f32
 	y_bottom f32
 }
 
@@ -44,7 +44,10 @@ union Box {
 }
 
 enum BoxMode {
-	left_top_width_height
+	left_top_width_height // width>0, height>0
+	right_top_width_height // width<0, height>0
+	right_bottom_width_height // width<0, height<0
+	left_bottom_width_height // width>0, height<0
 	left_top_right_bottom
 }
 
@@ -110,7 +113,7 @@ fn (mut b BoxLayout) parse_child(key string, child Widget) {
 	} else {
 		b.id + '_' + key, tmp[0]
 	}
-	if tmp_rect.contains_any_substr(['++', '--', '->', '<-']) {
+	if tmp_rect.contains_any_substr(['++', '-+', '--', '+-', '<<', '>>']) {
 		// TODO
 		// lt2rb := LeftTopToRightBottom{0.0,0.0,0.0,0.0}
 		// a := Bounding{LeftTopToRightBottom: lt2rb}
@@ -126,7 +129,7 @@ fn (mut b BoxLayout) parse_child(key string, child Widget) {
 		b.child_box << Box{
 			Rect: rect
 		}
-		b.child_mode << BoxMode.left_top_width_height
+		b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
 		b.children << child
 	} else if tmp_rect.contains(',') { // (xLeft,yTop,xRight,yBottom) mode
 		vec4 := tmp_rect.split(',').map(it.f32())
@@ -135,6 +138,7 @@ fn (mut b BoxLayout) parse_child(key string, child Widget) {
 		} else {
 			LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
 		}
+		// println(lt2rb)
 		b.child_id << id
 		b.child_box << Box{
 			LeftTopToRightBottom: lt2rb
@@ -148,7 +152,8 @@ fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
 	mut ui := parent.get_ui()
 	b.ui = ui
-	for mut child in b.children {
+	for i, mut child in b.children {
+		child.id = b.child_id[i]
 		// println('gl init child ${child.id} ')
 		child.init(b)
 	}
@@ -221,20 +226,79 @@ fn (mut b BoxLayout) set_pos(x int, y int) {
 	b.set_children_pos_and_size()
 }
 
+pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
+	mut x, mut y := 0, 0
+	unsafe {
+		match b.child_mode[i] {
+			.left_top_width_height {
+				x = b.x + absolute_or_relative_pos(b.child_box[i].x, b.width)
+				y = b.y + absolute_or_relative_pos(b.child_box[i].y, b.height)
+			}
+			.right_top_width_height {
+				x = b.x + absolute_or_relative_pos(b.child_box[i].x, b.width) +
+					absolute_or_relative_size(b.child_box[i].width, b.width)
+				y = b.y + absolute_or_relative_pos(b.child_box[i].y, b.height)
+			}
+			.right_bottom_width_height {
+				x = b.x + absolute_or_relative_pos(b.child_box[i].x, b.width) +
+					absolute_or_relative_size(b.child_box[i].width, b.width)
+				y = b.y + absolute_or_relative_pos(b.child_box[i].y, b.height) +
+					absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.left_bottom_width_height {
+				x = b.x + absolute_or_relative_pos(b.child_box[i].x, b.width)
+				y = b.y + absolute_or_relative_pos(b.child_box[i].y, b.height) +
+					absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.left_top_right_bottom {
+				x = b.x + absolute_or_relative_pos(b.child_box[i].x_left, b.width)
+				y = b.y + absolute_or_relative_pos(b.child_box[i].y_top, b.height)
+			}
+		}
+	}
+	// println("$child.id: x,y =($x, $y)")
+	child.set_pos(x, y)
+}
+
+pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
+	mut w, mut h := 0, 0
+	unsafe {
+		match b.child_mode[i] {
+			.left_top_width_height {
+				w = absolute_or_relative_size(b.child_box[i].width, b.width)
+				h = absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.right_top_width_height {
+				w = -absolute_or_relative_size(b.child_box[i].width, b.width)
+				h = absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.right_bottom_width_height {
+				w = -absolute_or_relative_size(b.child_box[i].width, b.width)
+				h = -absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.left_bottom_width_height {
+				w = absolute_or_relative_size(b.child_box[i].width, b.width)
+				h = -absolute_or_relative_size(b.child_box[i].height, b.height)
+			}
+			.left_top_right_bottom {
+				w = absolute_or_relative_pos(b.child_box[i].x_right, b.width) - absolute_or_relative_size(b.child_box[i].x_left,
+					b.width)
+				h = absolute_or_relative_pos(b.child_box[i].y_bottom, b.height) - absolute_or_relative_size(b.child_box[i].y_top,
+					b.height)
+			}
+		}
+	}
+	// println("$child.id: w,h=($w, $h)")
+	child.propose_size(w, h)
+}
+
 pub fn (mut b BoxLayout) set_children_pos() {
-	// mut widgets := b.children.clone()
-	mut start_x := f32(b.x)
-	mut start_y := f32(b.y)
-	w := f32(b.width) / 100.0
-	h := f32(b.height) / 100.0
 	// println('size: $b.width, $b.height $w, $h $b.child_box')
 	for i, mut child in b.children {
 		// println('widget.set_pos($i) $widget.id ${int(start_x + w * b.child_box[i].x)}, ${int(
 		// start_y + h * b.child_box[i].y)})')
 		// println("size(${int(w * b.child_box[i].width)}, ${int(h * b.child_box[i].height)})")
-		unsafe {
-			child.set_pos(int(start_x + w * b.child_box[i].x), int(start_y + h * b.child_box[i].y))
-		}
+		b.set_child_pos(i, mut child)
 		if mut child is Stack {
 			child.update_layout()
 		}
@@ -247,21 +311,9 @@ fn (mut b BoxLayout) set_children_pos_and_size() {
 			println('gridlayout scps ${b.id} size: (${b.width}, ${b.height})')
 		}
 	}
-	// mut widgets := b.children.clone()
-	mut start_x := f32(b.x)
-	mut start_y := f32(b.y)
-	w := f32(b.width) / 100.0
-	h := f32(b.height) / 100.0
-	// println('size: $b.width, $b.height $w, $h $b.child_box')
-	for i, mut widget in b.children {
-		// if b.child_rect_bounding
-		// println('widget.set_pos($i) $widget.id ${int(start_x + w * b.child_box[i].x)}, ${int(
-		// start_y + h * b.child_box[i].y)})')
-		// println("size(${int(w * b.child_box[i].width)}, ${int(h * b.child_box[i].height)})")
-		unsafe {
-			widget.set_pos(int(start_x + w * b.child_box[i].x), int(start_y + h * b.child_box[i].y))
-			widget.propose_size(int(w * b.child_box[i].width), int(h * b.child_box[i].height))
-		}
+	for i, mut child in b.children {
+		b.set_child_pos(i, mut child)
+		b.set_child_size(i, mut child)
 	}
 	$if bl_scps ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
@@ -375,18 +427,41 @@ fn (mut b BoxLayout) set_drawing_children() {
 }
 
 // absolute or relative size with respect to parent size
-pub fn absolute_or_relative_size(size f32, parent_size int) f32 {
+fn absolute_or_relative_pos(size f32, parent_size int) int {
+	return if size < -1.0 {
+		parent_size + int(size)
+	} else if size > 1.0 {
+		int(size) // absolute size
+	} else { // size inside ]-1.0,1.0[
+		new_size := size * parent_size
+		if size < 0 {
+			parent_size - int(new_size)
+		} else {
+			// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
+			int(new_size)
+		}
+	}
+}
+
+// absolute or relative size with respect to parent size
+fn absolute_or_relative_size(size f32, parent_size int) int {
 	return if size < -1.0 || size > 1.0 { // size outside [-1.0, 1.0]
-		size // absolute size
-	} else if size < 0 { // size inside ]-1.0,0.0[
-		percent := f32(-size) / 100
-		new_size := percent * parent_size
+		int(size) // absolute size
+	} else { // size inside ]-1.0,1.0[
+		new_size := size * parent_size
 		// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
-		new_size
-	} else { // size inside ]0.0,1.0[
-		percent := f32(size) / 100
-		new_size := percent * parent_size
-		// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
-		new_size
+		int(new_size)
+	}
+}
+
+fn box_direction(rect &gg.Rect) BoxMode {
+	return if rect.width >= 0 && rect.height >= 0 {
+		.left_top_width_height
+	} else if rect.width <= 0 && rect.height >= 0 {
+		.right_top_width_height
+	} else if rect.width <= 0 && rect.height <= 0 {
+		.right_bottom_width_height
+	} else {
+		.left_bottom_width_height
 	}
 }

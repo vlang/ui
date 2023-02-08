@@ -80,7 +80,7 @@ fn main() {
 			ui.box_layout(
 				id: 'bl'
 				children: {
-					'col1@0x0x30x50':   ui.column(
+					'col1@0x0x0.3x0.5':  ui.column(
 						spacing: 10
 						widths: ui.compact
 						heights: ui.compact
@@ -158,7 +158,7 @@ fn main() {
 							),
 						]
 					)
-					'col2@30x20x70x70': ui.column(
+					'col2@0.3,20,-5,-5': ui.column(
 						scrollview: true
 						alignments: ui.HorizontalAlignments{
 							center: [

@@ -21,13 +21,13 @@ fn main() {
 					ui.box_layout(
 						id: 'bl'
 						children: {
-							'id1@0x0x30x30':   ui.rectangle(
+							'id1@0x0x0.3x0.3':     ui.rectangle(
 								color: gx.rgb(255, 100, 100)
 							)
-							'id2@30x30x40x40': ui.rectangle(
+							'id2@0.3x0.3x0.4x0.4': ui.rectangle(
 								color: gx.rgb(100, 255, 100)
 							)
-							'id3@70x70x30x30': ui.rectangle(
+							'id3@0.7x0.7x0.3x0.3': ui.rectangle(
 								color: gx.rgb(100, 100, 255)
 							)
 						}
