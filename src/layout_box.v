@@ -23,9 +23,10 @@ a) coordinates:
 	3) x or y absolute coordinates from top-left corner
 	4) -x or -y absolute coordinates from bottom-right corner
 b) widget position and size:
-	1) (xLeft,yTop) << (xRight,yBottom) or (xRight,yBottom) >> (xLeft,yTop) => storage: Box{LeftTopToRightBottom}
+	1) (xLeft,yTop) -> (xRight,yBottom) => storage: Box{LeftTopToRightBottom}
 	2) (x,y) ++ (w,h) equivalent to (x,y) -> (x+w,y+h) => storage: Box{gg.Rect} (x,y)==(xLeft,yTop) w>0,h>0
 	3) (x,y) -- (w,h) equivalent to (x-w,y-h) -> (x,y) => storage: Box{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
+	4) (x,y) .. (w,h) equivalent to (x-w/2,y-h/2) -> (x+w/2,y+h/2) => storage: Box{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
 */
 
 // IMPORTANT: No margins since users can add relative or absolute ones manually
@@ -113,26 +114,15 @@ fn (mut b BoxLayout) parse_child(key string, child Widget) {
 	} else {
 		b.id + '_' + key, tmp[0]
 	}
-	if tmp_rect.contains_any_substr(['++', '-+', '--', '+-', '<<', '>>']) {
+	if tmp_rect.contains_any_substr(['++', '-+', '--', '+-', '->']) {
 		// TODO
 		// lt2rb := LeftTopToRightBottom{0.0,0.0,0.0,0.0}
 		// a := Bounding{LeftTopToRightBottom: lt2rb}
 		// unsafe{println(a.x_left)}
-	} else if tmp_rect.contains('x') { // (x,y,w,h) mode
-		vec4 := tmp_rect.split('x').map(it.f32())
-		rect := if vec4.len == 4 {
-			gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
-		} else {
-			gg.Rect{0.0, 0.0, 0.0, 0.0}
-		}
-		b.child_id << id
-		b.child_box << Box{
-			Rect: rect
-		}
-		b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
-		b.children << child
-	} else if tmp_rect.contains(',') { // (xLeft,yTop,xRight,yBottom) mode
-		vec4 := tmp_rect.split(',').map(it.f32())
+	} else if tmp_rect.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
+		tmp2 := tmp_rect.split('x').map(it.trim_space())
+		mut vec4 := tmp2[0].split(',').map(it.f32())
+		vec4 << tmp2[1].split(',').map(it.f32())
 		lt2rb := if vec4.len == 4 {
 			LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
 		} else {
@@ -144,6 +134,19 @@ fn (mut b BoxLayout) parse_child(key string, child Widget) {
 			LeftTopToRightBottom: lt2rb
 		}
 		b.child_mode << BoxMode.left_top_right_bottom
+		b.children << child
+	} else if tmp_rect.contains(',') { // (x,y,w,h) mode
+		vec4 := tmp_rect.split(',').map(it.f32())
+		rect := if vec4.len == 4 {
+			gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+		} else {
+			gg.Rect{0.0, 0.0, 0.0, 0.0}
+		}
+		b.child_id << id
+		b.child_box << Box{
+			Rect: rect
+		}
+		b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
 		b.children << child
 	}
 }
@@ -430,7 +433,7 @@ fn (mut b BoxLayout) set_drawing_children() {
 fn absolute_or_relative_pos(size f32, parent_size int) int {
 	return if size < -1.0 {
 		parent_size + int(size)
-	} else if size > 1.0 {
+	} else if size > 1.0 || size == 0 {
 		int(size) // absolute size
 	} else { // size inside ]-1.0,1.0[
 		new_size := size * parent_size
