@@ -109,46 +109,99 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 
 fn (mut b BoxLayout) parse_child(key string, child Widget) {
 	tmp := key.split_any('@:')
+	mut tmp2 := []string{}
 	id, tmp_rect := if tmp.len > 1 {
 		tmp[0], tmp[1]
 	} else {
 		b.id + '_' + key, tmp[0]
 	}
-	if tmp_rect.contains_any_substr(['++', '-+', '--', '+-', '->']) {
-		// TODO
-		// lt2rb := LeftTopToRightBottom{0.0,0.0,0.0,0.0}
-		// a := Bounding{LeftTopToRightBottom: lt2rb}
-		// unsafe{println(a.x_left)}
+	if tmp_rect.contains('++') {
+		tmp2 = tmp_rect.split('++').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			mut vec4 := tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			b.add_rect_child(id, child, vec4)
+		}
+	} else if tmp_rect.contains('-+') {
+		tmp2 = tmp_rect.split('-+').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			mut vec4 := tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			b.add_rect_child(id, child, vec4)
+		}
+	} else if tmp_rect.contains('--') {
+		tmp2 = tmp_rect.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			mut vec4 := tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			vec4[3] -= vec4[3]
+			b.add_rect_child(id, child, vec4)
+		}
+	} else if tmp_rect.contains('+-') {
+		tmp2 = tmp_rect.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			mut vec4 := tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[3] -= vec4[3]
+			b.add_rect_child(id, child, vec4)
+		}
+	} else if tmp_rect.contains('->') {
+		tmp2 = tmp_rect.split('->').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			mut vec4 := tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			b.add_lt2rb_child(id, child, vec4)
+		}
 	} else if tmp_rect.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
-		tmp2 := tmp_rect.split('x').map(it.trim_space())
+		tmp2 = tmp_rect.split('x').map(it.trim_space())
 		mut vec4 := tmp2[0].split(',').map(it.f32())
 		vec4 << tmp2[1].split(',').map(it.f32())
-		lt2rb := if vec4.len == 4 {
-			LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
-		} else {
-			LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
-		}
-		// println(lt2rb)
-		b.child_id << id
-		b.child_box << Box{
-			LeftTopToRightBottom: lt2rb
-		}
-		b.child_mode << BoxMode.left_top_right_bottom
-		b.children << child
+		b.add_lt2rb_child(id, child, vec4)
 	} else if tmp_rect.contains(',') { // (x,y,w,h) mode
 		vec4 := tmp_rect.split(',').map(it.f32())
-		rect := if vec4.len == 4 {
-			gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
-		} else {
-			gg.Rect{0.0, 0.0, 0.0, 0.0}
-		}
-		b.child_id << id
-		b.child_box << Box{
-			Rect: rect
-		}
-		b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
-		b.children << child
+		b.add_rect_child(id, child, vec4)
 	}
+}
+
+fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
+	lt2rb := if vec4.len == 4 {
+		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
+	}
+	// println(lt2rb)
+	b.child_id << id
+	b.child_box << Box{
+		LeftTopToRightBottom: lt2rb
+	}
+	b.child_mode << BoxMode.left_top_right_bottom
+	b.children << child
+}
+
+fn (mut b BoxLayout) add_rect_child(id string, child Widget, vec4 []f32) {
+	rect := if vec4.len == 4 {
+		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	b.child_id << id
+	b.child_box << Box{
+		Rect: rect
+	}
+	b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
+	b.children << child
 }
 
 fn (mut b BoxLayout) init(parent Layout) {

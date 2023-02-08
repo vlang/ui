@@ -15,13 +15,13 @@ window := ui.window(
 		ui.box_layout(
 			id: 'bl'
 			children: {
-				'id1: 0,0,30,30':         ui.rectangle(
+				'id1: (0,0) ++ (30,30)':     ui.rectangle(
 					color: gx.rgb(255, 100, 100)
 				)
-				'id2: 30,30 x 0.5,0.5':   ui.rectangle(
+				'id2: (30,30) -> (0.5,0.5)': ui.rectangle(
 					color: gx.rgb(100, 255, 100)
 				)
-				'id3: 0.5,0.5 x 1.0,1.0': ui.rectangle(
+				'id3: (0.5,0.5) ->  (1,1)':  ui.rectangle(
 					color: gx.rgb(100, 100, 255)
 				)
 			}
