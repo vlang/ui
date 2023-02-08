@@ -337,7 +337,7 @@ fn (mut s Stack) set_children_sizes() {
 	// set children sizes
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
-		if child is Stack || child is Group || child is CanvasLayout || child is GridLayout {
+		if child is Stack || child is Group || child is CanvasLayout || child is BoxLayout {
 			w, h = widths[i], heights[i]
 		} else {
 			if c.width_type[i] in [.fixed, .stretch, .weighted] {
@@ -999,7 +999,7 @@ pub fn (mut s Stack) set_children_pos() {
 			child.set_children_pos()
 		} else if mut child is CanvasLayout {
 			child.set_children_pos()
-		} else if mut child is GridLayout {
+		} else if mut child is BoxLayout {
 			child.set_children_pos()
 		}
 	}
@@ -1084,7 +1084,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			if child.z_index > z_index_hidden {
 				child.set_drawing_children()
 			}
-		} else if mut child is GridLayout {
+		} else if mut child is BoxLayout {
 			if child.z_index > z_index_hidden {
 				child.set_drawing_children()
 			}

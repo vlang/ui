@@ -1219,7 +1219,7 @@ pub fn (mut window Window) resize(w int, h int) {
 		if mut child is CanvasLayout {
 			child.resize(w, h)
 		}
-		if mut child is GridLayout {
+		if mut child is BoxLayout {
 			child.resize(w, h)
 		}
 	}
@@ -1236,9 +1236,9 @@ pub fn (w &Window) update_layout() {
 			}
 			r.update_layout()
 		}
-	} else if mut r is GridLayout {
+	} else if mut r is BoxLayout {
 		$if root_layout ? {
-			println('GridLayout ${r.id} as root layout')
+			println('BoxLayout ${r.id} as root layout')
 		}
 		r.update_layout()
 	}
@@ -1507,7 +1507,7 @@ pub fn (mut w Window) register_child(child_ Widget) {
 		for child2 in child.children {
 			w.register_child(child2)
 		}
-	} else if mut child is GridLayout {
+	} else if mut child is BoxLayout {
 		// println("register CanvasLayout")
 		if child.id == '' {
 			mode := 'gl'

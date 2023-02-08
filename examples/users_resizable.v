@@ -79,7 +79,7 @@ fn main() {
 			ui.row(
 				margin_: .02
 				spacing: .02
-				widths: [.3, .64] // 1.0 == .64 + .3 + .02 + 2 * .02
+				widths: [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
 				children: [
 					ui.column(
 						spacing: 10
@@ -126,7 +126,7 @@ fn main() {
 							app.country,
 							ui.row(
 								id: 'btn_row'
-								widths: [.5, .2]
+								widths: ui.compact
 								heights: 20.0
 								spacing: .3
 								children: [

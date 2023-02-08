@@ -10,16 +10,16 @@ fn main() {
 	window := ui.window(
 		width: win_width
 		height: win_height
-		title: 'V UI: Rectangles inside GridLayout'
+		title: 'V UI: Rectangles inside BoxLayout'
 		mode: .resizable
 		children: [
 			ui.row(
-				margin: ui.Margin{5, 5, 5, 5}
+				margin_: 20
 				widths: ui.stretch
 				heights: ui.stretch
 				children: [
-					ui.grid_layout(
-						id: 'gl'
+					ui.box_layout(
+						id: 'bl'
 						children: {
 							'id1@0x0x30x30':   ui.rectangle(
 								color: gx.rgb(255, 100, 100)

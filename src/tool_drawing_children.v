@@ -85,29 +85,29 @@ fn (mut c CanvasLayout) sorted_drawing_children() {
 	}
 }
 
-fn (mut g GridLayout) sorted_drawing_children() {
+fn (mut b BoxLayout) sorted_drawing_children() {
 	mut dc := []SortedWidget{}
 	mut sorted := []Widget{}
 
 	$if sdc ? {
-		println('(Z_INDEX) drawing_children[${g.id}]: ')
-		for i, ch in g.drawing_children {
+		println('(Z_INDEX) drawing_children[${b.id}]: ')
+		for i, ch in b.drawing_children {
 			id := ch.id()
 			print('(${i})[${id} -> ${ch.z_index}] ')
 		}
 		println('\n')
 	}
-	for i, child in g.drawing_children {
+	for i, child in b.drawing_children {
 		dc << SortedWidget{i, child}
 	}
 	dc.sort_with_compare(compare_sorted_widget)
 	for child in dc {
 		sorted << child.w
 	}
-	g.drawing_children = sorted
+	b.drawing_children = sorted
 	$if sdc ? {
-		println('(SORTED) drawing_children[${g.id}]: ')
-		for i, ch in g.drawing_children {
+		println('(SORTED) drawing_children[${b.id}]: ')
+		for i, ch in b.drawing_children {
 			id := ch.id()
 			print('(${i})[${id}-> ${ch.z_index}] ')
 		}
