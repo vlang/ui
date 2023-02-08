@@ -27,6 +27,8 @@ b) widget position and size:
 	2) (x,y) ++ (w,h) equivalent to (x,y) -> (x+w,y+h) => storage: Box{gg.Rect} (x,y)==(xLeft,yTop) w>0,h>0
 	3) (x,y) -- (w,h) equivalent to (x-w,y-h) -> (x,y) => storage: Box{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
 	4) (x,y) .. (w,h) equivalent to (x-w/2,y-h/2) -> (x+w/2,y+h/2) => storage: Box{gg.Rect} (x,y)==(xRight,yBottom) w<0,h<0
+	5) When xLeft,yTop,xRight,yBottom are relative one can fancy to add absolute coordinate left_offset, right_offset, top_offset, bottom_offset
+		(xLeft + left_offset, yTop + top_offset) -> (xRight + right_offset,yBottom + bottom_offset) => storage: Box{LeftTopToRightBottom} but with values being float which absolute value is the sum of integer and real between 0 and 1
 */
 
 // IMPORTANT: No margins since users can add relative or absolute ones manually
@@ -485,18 +487,22 @@ fn (mut b BoxLayout) set_drawing_children() {
 
 // absolute or relative size with respect to parent size
 fn absolute_or_relative_pos(size f32, parent_size int) int {
-	return if size < -1.0 {
+	return if size < -1.0 && int(size) == size { // negative integer => absolute coordinate from the end
 		parent_size + int(size)
-	} else if size > 1.0 || size == 0 {
+	} else if (size > 1.0 && int(size) == size) || size == 0 { // positive integer => absolute coordinate from the start
 		int(size) // absolute size
-	} else { // size inside ]-1.0,1.0[
+	} else if size >= -1 && size <= 1 { // size inside [-1.0,1.0]\{0}
 		new_size := size * parent_size
-		if size < 0 {
+		if size < 0 { // ]-1.0, 0[ => relative coordinate from the end
 			parent_size - int(new_size)
 		} else {
 			// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
 			int(new_size)
 		}
+	} else if size < -1.0 && int(size) != size {
+		int((int(size) - size) * parent_size) + int(size)
+	} else { // if size > 1.0 && int(size) != size {
+		int((size - int(size)) * parent_size) + int(size)
 	}
 }
 
