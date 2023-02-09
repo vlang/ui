@@ -229,15 +229,15 @@ pub fn scrollview_widget_restore_offset(w Widget) {
 pub fn scrollview_restore_offset[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
-		sv.orig_x, sv.orig_y = w.x, w.y
-		// Load prev offset
-		sv.offset_x, sv.offset_y = sv.prev_offset_x, sv.prev_offset_y
-		// println("restore offset: $sv.offset_x, $sv.offset_y")
 		sv.update_active()
 		if sv.active_x {
+			sv.orig_x = w.x
+			sv.offset_x = sv.prev_offset_x
 			sv.change_value(.btn_x)
 		}
 		if sv.active_y {
+			sv.orig_y = w.y
+			sv.offset_y = sv.prev_offset_y
 			sv.change_value(.btn_y)
 		}
 		// println("restore2 offset: $sv.offset_x, $sv.offset_y")
@@ -294,7 +294,7 @@ pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 		mut sv := w.scrollview
 		if sv.children_to_update {
 			$if ui_clipping ? {
-				println('sv: update children')
+				println('sv: ${sv.widget.id} update children')
 			}
 			svx, svy := sv.orig_xy()
 			if sv.active_x {
@@ -597,7 +597,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	// Special treatment for textbox
 	mut sw := sv.widget as ScrollableWidget
 	if mut sw is TextBox {
-		// println("textbox scroll changed")
+		// println("textbox $sw.id scroll changed")
 		if sw.has_scrollview {
 			sw.tv.scroll_changed()
 		}
@@ -676,7 +676,7 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, _ voidptr) {
 				}
 				if sv.active_y {
 					sv.offset_y -= int(e.y * sv.delta_mouse)
-					// println("scroll sv.offset_y = $sv.offset_y")
+					// println("scroll $sw.id sv.offset_y = $sv.offset_y")
 					sv.change_value(.btn_y)
 				}
 			}

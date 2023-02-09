@@ -13,6 +13,7 @@ mut:
 
 fn make_tb(mut app App, has_row bool) ui.Widget {
 	tb := ui.textbox(
+		width: 200
 		mode: .multiline
 		bg_color: gx.yellow
 		text: &app.text

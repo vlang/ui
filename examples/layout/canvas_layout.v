@@ -12,7 +12,7 @@ fn main() {
 	$if android {
 		logo = 'img/logo.png'
 	}
-	mut text := 'gcghcghc fvfyfy' + '\n'.repeat(10)
+	mut text := 'gcghchc\n fvfyfy' + 'titi\n'.repeat(10)
 	mut window := ui.window(
 		width: win_width
 		height: win_height

@@ -974,7 +974,9 @@ pub fn (mut s Stack) set_children_pos() {
 	mut children := s.children.filter(it.z_index > z_index_hidden)
 	for i, mut child in children {
 		child_width, child_height := child.size()
+		scrollview_widget_save_offset(child)
 		s.set_child_pos(mut child, i, x, y)
+		scrollview_widget_restore_offset(child)
 		if s.direction == .row {
 			$if scp ? {
 				println('$.row ${i}): child_width=${child_width} x => ${x}')
@@ -1155,17 +1157,18 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	$if s_draw_children ? {
 		println('draw ${s.id}: ${s.children.map(it.id)} ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 	}
-	active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
+	// REMARK: DO NOT REMOVE -> not used maybe update later
+	// active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
 	for mut child in s.drawing_children {
 		// println("$child.type_name() $child.id")
-		if active_scrollview {
-			// TODO: calculate whether child falls outside clipping rect and
-			// continue (i.e., skip child drawing)
-			// if mut child is Layout
-			//	|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
-			//	child.draw_device(mut d)
-			//}
-		}
+		// if active_scrollview {
+		// 	// TODO: calculate whether child falls outside clipping rect and
+		// 	// continue (i.e., skip child drawing)
+		// 	// if mut child is Layout
+		// 	//	|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+		// 	//	child.draw_device(mut d)
+		// 	//}
+		// }
 		child.draw_device(mut d)
 	}
 

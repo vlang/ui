@@ -514,7 +514,10 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 
 pub fn (mut c CanvasLayout) set_children_pos() {
 	for i, mut child in c.children {
+		// Very important to keep scrollview of children up to date: scrollview_widget_save_offset and scrollview_widget_restore_offset
+		scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
+		scrollview_widget_restore_offset(child)
 		if mut child is Stack {
 			child.update_layout()
 		}
@@ -667,19 +670,21 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	//		}
 	//	}
 	//}
-	active_scrollview := Layout(c).has_scrollview_or_parent_scrollview() && scrollview_is_active(c)
+
+	// REMARK: DO NOT REMOVE -> not used maybe update later
+	// active_scrollview := Layout(c).has_scrollview_or_parent_scrollview() && scrollview_is_active(c)
 	for mut child in c.drawing_children {
 		$if cl_draw_children ? {
 			println('draw <${c.id}>: ${c.drawing_children.map(it.id)} at ${c.drawing_children.map(it.x)}')
 		}
-		if active_scrollview {
-			// TODO: calculate whether child falls outside clipping rect and
-			// continue (i.e., skip child drawing)
-			// if mut child is Layout
-			//	|| !is_empty_intersection(c.scrollview.scissor_rect, child.bounds()) {
-			//	child.draw_device(mut d)
-			//}
-		}
+		// if active_scrollview {
+		// 	// TODO: calculate whether child falls outside clipping rect and
+		// 	// continue (i.e., skip child drawing)
+		// 	// if mut child is Layout
+		// 	//	|| !is_empty_intersection(c.scrollview.scissor_rect, child.bounds()) {
+		// 	//	child.draw_device(mut d)
+		// 	//}
+		// }
 		child.draw_device(mut d)
 	}
 
