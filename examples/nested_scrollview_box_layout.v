@@ -20,16 +20,12 @@ fn make_scroll_area(mut app App) ui.Widget {
 		for c in 0 .. 5 {
 			id := 'box${r}_${c}'
 			app.box_text << 'box${r}${c}\n...\n...\n...\n...\n...\n...\n...\n...\n...'
-			kids['${id}: (${r * 110},${c * 90}) ++ (100,80)'] = ui.row(
-				children: [
-					ui.textbox(
-						width: box_width
-						height: box_height
-						bg_color: gx.white
-						is_multiline: true
-						text: &app.box_text[app.box_text.len - 1]
-					),
-				]
+			kids['${id}: (${r * 110},${c * 90}) ++ (100,80)'] = ui.textbox(
+				width: box_width
+				height: box_height
+				bg_color: gx.white
+				is_multiline: true
+				text: &app.box_text[app.box_text.len - 1]
 			)
 		}
 	}

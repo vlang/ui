@@ -219,9 +219,7 @@ pub fn (mut tv TextView) update_lines() {
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
 	tv.update_left_margin()
-	if tv.tb.has_scrollview {
-		scrollview_update(tv.tb)
-	}
+	scrollview_update(tv.tb)
 }
 
 fn (mut tv TextView) update_left_margin() {

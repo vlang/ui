@@ -347,7 +347,7 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 			}
 		}
 	}
-	// println("$child.id: w,h=($w, $h)")
+	// println('${child.id}: w,h=(${w}, ${h})')
 	child.propose_size(w, h)
 }
 
@@ -414,6 +414,7 @@ fn (b &BoxLayout) get_ui() &UI {
 
 fn (mut b BoxLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
+	scrollview_widget_set_orig_xy(b)
 	b.propose_size(width, height)
 }
 
