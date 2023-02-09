@@ -89,7 +89,7 @@ fn main() {
 								heights: ui.compact
 								scrollview: true
 								bg_color: gx.white
-								// margin_: 20
+								// margin_: 10
 								children: [
 									ui.textbox(
 										max_len: 20

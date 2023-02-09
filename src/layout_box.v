@@ -415,7 +415,6 @@ fn (b &BoxLayout) get_ui() &UI {
 fn (mut b BoxLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
 	b.propose_size(width, height)
-	b.set_children_pos()
 }
 
 fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber {
@@ -462,6 +461,7 @@ fn (mut b BoxLayout) update_layout() {
 		}
 	}
 	b.set_drawing_children()
+	scrollview_widget_set_orig_xy(b)
 }
 
 fn (mut b BoxLayout) set_drawing_children() {

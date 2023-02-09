@@ -13,7 +13,6 @@ mut:
 
 fn make_tb(mut app App, has_row bool) ui.Widget {
 	tb := ui.textbox(
-		width: 200
 		mode: .multiline
 		bg_color: gx.yellow
 		text: &app.text
@@ -36,7 +35,7 @@ fn main() {
 		with_row = true
 	}
 	mut app := App{
-		text: 'blah blah blah\n'.repeat(100)
+		text: 'blah blah blah\n'.repeat(10)
 	}
 	ui.run(ui.window(
 		width: win_width

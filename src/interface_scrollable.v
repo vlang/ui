@@ -131,6 +131,20 @@ pub fn scrollview_widget_set_orig_xy(w Widget) {
 		if has_scrollview(w) {
 			scrollview_set_orig_xy(w)
 		}
+	} else if w is Group {
+		// if has_scrollview(w) {
+		// 	scrollview_set_orig_xy(w)
+		// }
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child)
+		}
+	} else if w is BoxLayout {
+		// if has_scrollview(w) {
+		// 	scrollview_set_orig_xy(w)
+		// }
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child)
+		}
 	}
 
 	// TODO: DOES NOT WORK
