@@ -508,12 +508,16 @@ fn absolute_or_relative_pos(size f32, parent_size int) int {
 
 // absolute or relative size with respect to parent size
 fn absolute_or_relative_size(size f32, parent_size int) int {
-	return if size < -1.0 || size > 1.0 { // size outside [-1.0, 1.0]
+	return if (size < -1.0 || size > 1.0) && int(size) == size { // size outside [-1.0, 1.0]
 		int(size) // absolute size
-	} else { // size inside ]-1.0,1.0[
+	} else if size >= -1 && size <= 1 { // size inside ]-1.0,1.0[
 		new_size := size * parent_size
 		// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
 		int(new_size)
+	} else if size < 0 { // non integer < -1
+		int((int(size) - size) * parent_size) // Here relative part always > 0
+	} else { // non integer > 1
+		int((size - int(size)) * parent_size) // Here relative part always > 0
 	}
 }
 

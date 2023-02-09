@@ -3,7 +3,7 @@ import gx
 import os
 
 const (
-	win_width  = 500
+	win_width  = 550
 	win_height = 385
 )
 
@@ -12,6 +12,7 @@ fn main() {
 	$if android {
 		logo = 'img/logo.png'
 	}
+	mut text := 'gcghcghc fvfyfy' + '\n'.repeat(10)
 	mut window := ui.window(
 		width: win_width
 		height: win_height
@@ -162,6 +163,14 @@ fn main() {
 									mut menu := b.ui.window.get_or_panic[ui.Menu]('menu')
 									menu.hidden = !menu.hidden
 								}
+							)),
+							ui.at(300, 30, ui.textbox(
+								id: 'tb'
+								width: 150
+								height: 100
+								mode: .multiline
+								bg_color: gx.yellow
+								text: &text
 							)),
 						]
 					),

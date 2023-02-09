@@ -1131,6 +1131,9 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		}
 	}
 	scrollview_draw_begin(mut s, d)
+	defer {
+		scrollview_draw_end(s, d)
+	}
 
 	$if bb ? {
 		debug_draw_bb_stack(s)
@@ -1185,7 +1188,9 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	//		child.draw_device(mut d)
 	//	}
 	//}
-	scrollview_draw_end(s, d)
+
+	// DO NOT REMOVE: test first if defer is working
+	// scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.dd.text_size(s.title)
 		// draw rectangle around stack
