@@ -961,7 +961,9 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 		}
 		s.real_x, s.real_y = x, y
 	}
+	scrollview_widget_save_offset(s)
 	s.update_pos()
+	scrollview_widget_restore_offset(s)
 }
 
 pub fn (mut s Stack) set_children_pos() {
@@ -974,10 +976,7 @@ pub fn (mut s Stack) set_children_pos() {
 	mut children := s.children.filter(it.z_index > z_index_hidden)
 	for i, mut child in children {
 		child_width, child_height := child.size()
-		// Very important to save restore previous scrollview offset
-		scrollview_widget_save_offset(child)
 		s.set_child_pos(mut child, i, x, y)
-		scrollview_widget_restore_offset(child)
 		if s.direction == .row {
 			$if scp ? {
 				println('$.row ${i}): child_width=${child_width} x => ${x}')

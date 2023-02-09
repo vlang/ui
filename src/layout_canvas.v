@@ -514,10 +514,7 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 
 pub fn (mut c CanvasLayout) set_children_pos() {
 	for i, mut child in c.children {
-		// Very important to keep scrollview of children up to date: scrollview_widget_save_offset and scrollview_widget_restore_offset
-		scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
-		scrollview_widget_restore_offset(child)
 		if mut child is Stack {
 			child.update_layout()
 		}
@@ -534,8 +531,10 @@ pub fn (mut c CanvasLayout) set_child_relative_pos(id string, x int, y int) {
 }
 
 pub fn (mut c CanvasLayout) set_pos(x int, y int) {
+	scrollview_widget_save_offset(c)
 	c.x = x
 	c.y = y
+	scrollview_widget_restore_offset(c)
 	// scrollview_update_orig_size(c)
 	c.set_children_pos()
 }

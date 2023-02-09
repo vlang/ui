@@ -276,8 +276,10 @@ pub fn (tb &TextBox) free() {
 pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
 	// println('text box $xx set pos $x, $y')
+	scrollview_widget_save_offset(t)
 	t.x = x
 	t.y = y
+	scrollview_widget_restore_offset(t)
 }
 
 // Needed for ScrollableWidget
