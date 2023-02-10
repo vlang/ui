@@ -187,21 +187,7 @@ pub fn (mut s Stack) init(parent Layout) {
 	if s.on_init != InitFn(0) {
 		s.on_init(s)
 	}
-
-	if parent is Window {
-		ui.window = unsafe { parent }
-		mut window := unsafe { parent }
-		if s.is_root_layout {
-			window.root_layout = s
-			s.real_x, s.real_y = 0, 0
-			window.update_layout() // i.e s.update_all_children_recursively(parent)
-		} else {
-			s.update_layout()
-		}
-	} else {
-		s.is_root_layout = false
-	}
-
+	s.set_root_layout()
 	if has_scrollview(s) {
 		s.scrollview.init(parent)
 		s.ui.window.evt_mngr.add_receiver(s, [events.on_scroll])
@@ -211,6 +197,24 @@ pub fn (mut s Stack) init(parent Layout) {
 	$if sscroll ? {
 		swid := if s.scrollview != 0 { s.scrollview.widget.id } else { 'no' }
 		println('${s.id} stack (parent) scrollview ${has_scrollview_or_parent_scrollview(s)} ${swid} (${parent.id})')
+	}
+}
+
+// Determine wheither Stack s is a root layout
+fn (mut s Stack) set_root_layout() {
+	if mut s.parent is Window {
+		// TODO: before removing line below test if this is necessary
+		// s.ui.window = unsafe { s.parent }
+		mut window := unsafe { s.parent }
+		if s.is_root_layout {
+			window.root_layout = s
+			s.real_x, s.real_y = 0, 0
+			// window.update_layout()
+		} else {
+			s.update_layout()
+		}
+	} else {
+		s.is_root_layout = false
 	}
 }
 
@@ -271,7 +275,7 @@ pub fn (mut s Stack) update_layout() {
 	// 6) set position for chilfren
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
-	scrollview_widget_set_orig_xy(s)
+	scrollview_widget_set_orig_xy(s, true)
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
@@ -333,7 +337,7 @@ fn (mut s Stack) set_children_sizes() {
 	// set children sizes
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
-		if child is Stack || child is Group || child is CanvasLayout {
+		if child is Stack || child is Group || child is CanvasLayout || child is BoxLayout {
 			w, h = widths[i], heights[i]
 		} else {
 			if c.width_type[i] in [.fixed, .stretch, .weighted] {
@@ -820,10 +824,8 @@ pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	}
 	s.real_width, s.real_height = w, h
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
-	// if s.id == '_msg_dlg_col' {
-	// 	println('prop size $s.id: ($w, $h) ($s.width, $s.height) adj:  ($s.adj_width, $s.adj_height)')
-	// }
-	// println("$s.id propose size $w, $h")
+
+	// println("${s.id} propose size ${w}, ${h} => ${s.width}, ${s.height} ")
 
 	scrollview_update(s)
 	return s.real_width, s.real_height
@@ -898,8 +900,9 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 					if s.debug_ids.len == 0 || s.id in s.debug_ids {
 						println('set_adj_size ${s.id} (cvl): child(${child.id}) child_width = ${child_width}  child_height = ${child_height})')
 					}
-				} $else {
-				} // because of a bug mixing $if and else
+				}
+				//$else {
+				//} // because of a bug mixing $if and else
 			} else {
 				child_width, child_height = child.size()
 				$if s_adj_size ? {
@@ -958,7 +961,9 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 		}
 		s.real_x, s.real_y = x, y
 	}
+	scrollview_widget_save_offset(s)
 	s.update_pos()
+	scrollview_widget_restore_offset(s)
 }
 
 pub fn (mut s Stack) set_children_pos() {
@@ -995,6 +1000,8 @@ pub fn (mut s Stack) set_children_pos() {
 		if mut child is Stack {
 			child.set_children_pos()
 		} else if mut child is CanvasLayout {
+			child.set_children_pos()
+		} else if mut child is BoxLayout {
 			child.set_children_pos()
 		}
 	}
@@ -1079,6 +1086,10 @@ pub fn (mut s Stack) set_drawing_children() {
 			if child.z_index > z_index_hidden {
 				child.set_drawing_children()
 			}
+		} else if mut child is BoxLayout {
+			if child.z_index > z_index_hidden {
+				child.set_drawing_children()
+			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > s.z_index {
@@ -1122,6 +1133,9 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		}
 	}
 	scrollview_draw_begin(mut s, d)
+	defer {
+		scrollview_draw_end(s, d)
+	}
 
 	$if bb ? {
 		debug_draw_bb_stack(s)
@@ -1141,19 +1155,20 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	//}
 
 	$if s_draw_children ? {
-		println('draw ${s.id}: ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
+		println('draw ${s.id}: ${s.children.map(it.id)} ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 	}
-	active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
+	// REMARK: DO NOT REMOVE -> not used maybe update later
+	// active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
 	for mut child in s.drawing_children {
 		// println("$child.type_name() $child.id")
-		if active_scrollview {
-			// TODO: calculate whether child falls outside clipping rect and
-			// continue (i.e., skip child drawing)
-			// if mut child is Layout
-			//	|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
-			//	child.draw_device(mut d)
-			//}
-		}
+		// if active_scrollview {
+		// 	// TODO: calculate whether child falls outside clipping rect and
+		// 	// continue (i.e., skip child drawing)
+		// 	// if mut child is Layout
+		// 	//	|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
+		// 	//	child.draw_device(mut d)
+		// 	//}
+		// }
 		child.draw_device(mut d)
 	}
 
@@ -1176,7 +1191,9 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	//		child.draw_device(mut d)
 	//	}
 	//}
-	scrollview_draw_end(s, d)
+
+	// DO NOT REMOVE: test first if defer is working
+	// scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.dd.text_size(s.title)
 		// draw rectangle around stack
@@ -1266,12 +1283,10 @@ pub fn (mut s Stack) set_visible(state bool) {
 }
 
 fn (mut s Stack) resize(width int, height int) {
-	scrollview_widget_save_offset(s)
 	s.init_size()
 	s.update_pos()
 	s.set_children_sizes()
 	s.set_children_pos()
-	scrollview_widget_restore_offset(s)
 	// println("RESIZE: $width, $height")
 }
 

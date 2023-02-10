@@ -783,8 +783,10 @@ fn lb_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 pub fn (mut lb ListBox) set_pos(x int, y int) {
 	if lb.x != x || lb.y != y {
 		// println("set pos lb: $x, $y")
+		scrollview_widget_save_offset(lb)
 		lb.x = x
 		lb.y = y
+		scrollview_widget_restore_offset(lb)
 	}
 }
 

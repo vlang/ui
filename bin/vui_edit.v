@@ -62,7 +62,7 @@ fn main() {
 							on_file_changed: fn [mut app] (mut mf uic.MenuFileComponent) {
 								mf.layout.ui.window.set_title('V UI Edit: ${mf.file}')
 								// reinit textbox scrollview
-								mut tb := mf.layout.ui.window.textbox('edit')
+								mut tb := mf.layout.ui.window.get_or_panic[ui.TextBox]('edit')
 								tb.scrollview.set(0, .btn_y)
 								ui.scrollview_reset(mut tb)
 								tv := mf.treeview_component()
@@ -81,7 +81,7 @@ fn main() {
 							}
 							on_save: fn (mf &uic.MenuFileComponent) {
 								// println("save $mf.file")
-								tb := mf.layout.ui.window.textbox('edit')
+								tb := mf.layout.ui.window.get_or_panic[ui.TextBox]('edit')
 								// println("text: <${*tb.text}>")
 								os.write_file(mf.file, tb.text) or {}
 							}

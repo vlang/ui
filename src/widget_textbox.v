@@ -276,8 +276,10 @@ pub fn (tb &TextBox) free() {
 pub fn (mut t TextBox) set_pos(x int, y int) {
 	// xx := t.placeholder
 	// println('text box $xx set pos $x, $y')
+	scrollview_widget_save_offset(t)
 	t.x = x
 	t.y = y
+	scrollview_widget_restore_offset(t)
 }
 
 // Needed for ScrollableWidget
@@ -305,7 +307,7 @@ pub fn (mut tb TextBox) propose_size(w int, h int) (int, int) {
 	}
 	// update_text_size(mut tb)
 	if tb.is_multiline {
-		scrollview_update(tb)
+		// scrollview_update(tb)
 		tb.tv.update_lines()
 	}
 	return tb.width, tb.height

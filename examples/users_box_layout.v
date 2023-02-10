@@ -72,19 +72,19 @@ fn main() {
 		height: win_height
 		title: 'V UI Demo'
 		mode: .resizable
+		bg_color: ui.color_solaris
 		// bg_color: ui.color_solaris
 		// theme: 'red'
 		native_message: false
 		children: [
-			ui.row(
-				margin_: .02
-				spacing: .02
-				widths: [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
-				children: [
-					ui.column(
+			ui.box_layout(
+				id: 'bl'
+				children: {
+					'col1: (0,0) ++ (0.3,0.5)':  ui.column(
 						spacing: 10
 						widths: ui.compact
 						heights: ui.compact
+						bg_color: gx.white
 						scrollview: true
 						children: [
 							ui.textbox(
@@ -126,7 +126,7 @@ fn main() {
 							app.country,
 							ui.row(
 								id: 'btn_row'
-								widths: ui.compact
+								widths: [.5, .2]
 								heights: 20.0
 								spacing: .3
 								children: [
@@ -157,8 +157,8 @@ fn main() {
 								]
 							),
 						]
-					),
-					ui.column(
+					)
+					'col2: (0.3,20) -> (-5,-5)': ui.column(
 						scrollview: true
 						alignments: ui.HorizontalAlignments{
 							center: [
@@ -192,8 +192,8 @@ fn main() {
 								path: logo
 							),
 						]
-					),
-				]
+					)
+				}
 			),
 		]
 	)

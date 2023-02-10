@@ -166,6 +166,7 @@ fn main() {
 					ui.canvas_plus(
 						bg_color: gx.white
 						bg_radius: .025
+						clipping: true
 						on_draw: app.draw_circles
 						on_click: app.click_circles
 						on_mouse_move: app.mouse_move_circles
