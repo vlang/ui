@@ -275,7 +275,7 @@ pub fn (mut s Stack) update_layout() {
 	// 6) set position for chilfren
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
-	scrollview_widget_set_orig_xy(s)
+	scrollview_widget_set_orig_xy(s, true)
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window

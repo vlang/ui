@@ -108,42 +108,42 @@ pub fn scrollview_add[T](mut w T) {
 	w.clipping = true
 }
 
-pub fn scrollview_widget_set_orig_xy(w Widget) {
+pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 	if w is Stack {
 		if has_scrollview(w) {
-			scrollview_set_orig_xy(w)
+			scrollview_set_orig_xy(w, reset_offset)
 		}
 		for child in w.children {
-			scrollview_widget_set_orig_xy(child)
+			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is CanvasLayout {
 		if has_scrollview(w) {
-			scrollview_set_orig_xy(w)
+			scrollview_set_orig_xy(w, reset_offset)
 		}
 		for child in w.children {
-			scrollview_widget_set_orig_xy(child)
+			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is ListBox {
 		if has_scrollview(w) {
-			scrollview_set_orig_xy(w)
+			scrollview_set_orig_xy(w, reset_offset)
 		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
-			scrollview_set_orig_xy(w)
+			scrollview_set_orig_xy(w, reset_offset)
 		}
 	} else if w is Group {
 		// if has_scrollview(w) {
 		// 	scrollview_set_orig_xy(w)
 		// }
 		for child in w.children {
-			scrollview_widget_set_orig_xy(child)
+			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is BoxLayout {
 		// if has_scrollview(w) {
 		// 	scrollview_set_orig_xy(w)
 		// }
 		for child in w.children {
-			scrollview_widget_set_orig_xy(child)
+			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	}
 
@@ -163,12 +163,14 @@ pub fn scrollview_widget_set_orig_xy(w Widget) {
 	// }
 }
 
-pub fn scrollview_set_orig_xy[T](w &T) {
+pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// rest values
 		sv.orig_x, sv.orig_y = w.x, w.y
-		sv.offset_x, sv.offset_y = 0, 0
+		if reset_offset {
+			sv.offset_x, sv.offset_y = 0, 0
+		}
 		if sv.active_x {
 			sv.change_value(.btn_x)
 		}
