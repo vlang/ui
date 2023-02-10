@@ -15,12 +15,17 @@ mut:
 }
 
 fn make_scroll_area(mut app App) ui.Widget {
-	mut kids := map[string]ui.Widget{}
+	mut kids, mut decl := map[string]ui.Widget{}, ''
 	for r in 0 .. 5 {
 		for c in 0 .. 5 {
 			id := 'box${r}_${c}'
 			app.box_text << 'box${r}${c}\n...\n...\n...\n...\n...\n...\n...\n...\n...'
-			kids['${id}: (${r * 110},${c * 90}) ++ (100,80)'] = ui.textbox(
+			$if fixed ? {
+				decl = '${id}: (${r * 110},${c * 90}) ++ (100,80)'
+			} $else {
+				decl = '${id}: (${r * 1.0 / 5},${c * 1.0 / 5}) ++ (${1.0 / 5 - 0.01},${1.0 / 5 - .01})'
+			}
+			kids[decl] = ui.textbox(
 				width: box_width
 				height: box_height
 				bg_color: gx.white
@@ -47,21 +52,22 @@ fn win_key_down(w &ui.Window, e ui.KeyEvent) {
 
 fn main() {
 	mut app := App{}
-	kids := make_scroll_area(mut app)
 	mut win := ui.window(
 		width: win_width
 		height: win_height
-		title: 'V nested scrollviewsboxlayout inside '
+		title: 'V nested scrollviews inside boxlayout '
 		on_key_down: win_key_down
 		mode: .resizable
 		children: [
-			// ui.column(
-			// 	heights: ui.stretch
-			// 	widths: ui.stretch
-			// 	children: [
-			kids,
-			// 	]
-			// ),
+			ui.column(
+				// scrollview: true
+				widths: ui.stretch
+				heights: ui.stretch
+				bg_color: gx.yellow
+				children: [
+					make_scroll_area(mut app),
+				]
+			),
 		]
 	)
 	ui.run(win)
