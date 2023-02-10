@@ -3,77 +3,50 @@
 // that can be found in the LICENSE file.
 module ui
 
-import sync
+import os
+import rand
 
+// Note: sokol currently does not allow proper handling of multiple windows:
+// - closing the secondary window, causes closing of the primary one as well.
+// - closing the secondary window frequently leads to crashes as well,
+// depending on when the closing event is handled, in the secondary thread.
+//
+// Due to this, for now just implement a fallback to the wide spread program
+// gxmessage, followed by xmessage, even though its messages do look a little ugly.
+//
+// TODO: implement a simple X11 message box, directly with C calls,
+// instead of relying on external programs.
+
+// message_box shows a simple message box, containing a single text message, and an OK button
 pub fn message_box(s string) {
-	// Running the message box dialog window
-	// in a new thread ensures that glfw's context
-	// of the main window will not be messed up.
-	//
-	// We use a waitgroup to wait for the end of the thread,
-	// to ensure that message_box shows a modal dialog, i.e. that
-	// its behaviour is as close to the behaviour of the native
-	// message box dialogs on other platforms.
-	//
-	mut message_app := &MessageApp{
-		window: 0
-		waitgroup: sync.new_waitgroup()
-	}
-	message_app.waitgroup.add(1)
-	spawn run_message_dialog(mut message_app, s)
-	message_app.waitgroup.wait()
-}
-
-// ///////////////////////////////////////////////////////////
-struct MessageApp {
-mut:
-	window    &Window = unsafe { nil }
-	waitgroup &sync.WaitGroup
-}
-
-fn run_message_dialog(mut message_app MessageApp, s string) {
-	// run_message_dialog is run in a separate thread
-	// and will block until the dialog window is closed
-	text_lines := word_wrap_to_lines(s, 70)
-	mut height := 40
-	mut widgets := []Widget{}
-	widgets = [
-		/* TODO: add hspace and vspace separators */ label(text: '')]
-	for tline in text_lines {
-		widgets << label(text: tline)
-		height += 14
-	}
-	widgets << label(text: ' ')
-	widgets << button(text: 'OK')
-	message_app.window = window(
-		width: 400
-		height: height
-		title: 'Message box'
-		bg_color: default_window_color
-		children: [
-			column(
-				stretch: true
-				alignment: .center
-				margin: Margin{5, 5, 5, 5}
-				children: widgets
-			),
-		]
-	)
-	mut subscriber := message_app.window.get_subscriber()
-	subscriber.subscribe_method(events.on_key_down, msgbox_on_key_down, message_app)
-	run(message_app.window)
-	message_app.waitgroup.done()
-}
-
-fn msgbox_on_key_down(mut app MessageApp, e &KeyEvent, window &Window) {
-	match e.key {
-		.enter, .escape, .space {
-			// app.window.glfw_obj.set_should_close(true)
+	// try several programs, in order from more modern to most likely installed but ugly:
+	for cmd in ['gxmessage', 'xmessage'] {
+		message_box_system(cmd, s) or {
+			eprintln('message_box error: ${err}')
+			continue
 		}
-		else {}
+		return
 	}
+	eprintln('-'.repeat(80))
+	eprintln('| neither xmessage or gxmessage were found; please install the `x11-utils` and `gxmessage` packages |')
+	eprintln('-'.repeat(80))
+	eprintln(s)
+	eprintln('-'.repeat(80))
 }
 
-fn msgbox_btn_ok_click(mut app MessageApp) {
-	// app.window.glfw_obj.set_should_close(true)
+fn message_box_system(cmdname string, s string) ! {
+	msgcmd := os.find_abs_path_of_executable(cmdname) or {
+		return error('${cmdname} was not found')
+	}
+	sfilepath := os.join_path(os.temp_dir(), '${rand.ulid()}.txt')
+	os.write_file(sfilepath, s) or {}
+	defer {
+		os.rm(sfilepath) or {}
+	}
+	mut other_options := ['-nearmouse']
+	if cmdname == 'gxmessage' {
+		other_options << '-title "Message:"'
+	}
+	cmd := '${os.quoted_path(msgcmd)} ${other_options.join(' ')} -print -file ${os.quoted_path(sfilepath)}'
+	os.system(cmd)
 }
