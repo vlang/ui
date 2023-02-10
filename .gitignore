@@ -11,6 +11,8 @@ examples/**/*
 !examples/**/*.vab
 !examples/android
 !examples/assets
+!examples/layout
+!examples/component
 fmt_verify_all
 
 # Ignore editor files

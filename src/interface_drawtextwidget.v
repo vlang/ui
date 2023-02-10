@@ -192,13 +192,13 @@ pub fn (w DrawTextWidget) text_width(text string) int {
 	return w.ui.dd.text_width(text)
 }
 
-// REMOVED: this function uses internals of gg.Context which we probably do not
-// want to reproduce in the DrawDevice interface
-// pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
-//	ctx := w.ui.gg
-//	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
-//	return adv / ctx.scale
-//}
+pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
+	if w.ui.dd is DrawDeviceContext {
+		return w.ui.dd.text_width_additive(text)
+	} else {
+		return w.text_width(text)
+	}
+}
 
 pub fn (w DrawTextWidget) text_height(text string) int {
 	return w.ui.dd.text_height(text)

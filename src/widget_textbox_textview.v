@@ -219,9 +219,7 @@ pub fn (mut tv TextView) update_lines() {
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
 	tv.update_left_margin()
-	if tv.tb.has_scrollview {
-		scrollview_update(tv.tb)
-	}
+	scrollview_update(tv.tb)
 }
 
 fn (mut tv TextView) update_left_margin() {
@@ -1068,6 +1066,11 @@ fn (tv &TextView) draw_device_styled_text(d DrawDevice, x int, y int, text strin
 
 fn (tv &TextView) text_width(text string) int {
 	return DrawTextWidget(tv.tb).text_width(tv.fix_tab_char(text))
+}
+
+// Added to have mostly additive text width function
+fn (tv &TextView) text_width_additive(text string) f64 {
+	return DrawTextWidget(tv.tb).text_width_additive(tv.fix_tab_char(text))
 }
 
 fn (tv &TextView) text_height(text string) int {
