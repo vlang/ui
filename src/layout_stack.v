@@ -953,6 +953,7 @@ fn (mut s Stack) update_pos() {
 }
 
 pub fn (mut s Stack) set_pos(x int, y int) {
+	scrollview_widget_save_offset(s)
 	if s.real_x != x || s.real_y != y {
 		// could depend on anchor in the future
 		// Default is anchor=.top_left here (and could be .top_right, .bottom_left, .bottom_right)
@@ -961,9 +962,8 @@ pub fn (mut s Stack) set_pos(x int, y int) {
 		}
 		s.real_x, s.real_y = x, y
 	}
-	scrollview_widget_save_offset(s)
 	s.update_pos()
-	scrollview_widget_restore_offset(s)
+	scrollview_widget_restore_offset(s, true)
 }
 
 pub fn (mut s Stack) set_children_pos() {

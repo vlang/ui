@@ -163,6 +163,17 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 	// }
 }
 
+fn has_parent_scrolling(w Widget) bool {
+	pw := w.parent
+	if pw is ScrollableWidget {
+		if has_scrollview(pw) {
+			psw := pw as  ScrollableWidget
+			return psw.scrollview.children_to_update
+		}
+	}
+	return false
+}
+
 pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -172,9 +183,15 @@ pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 			sv.offset_x, sv.offset_y = 0, 0
 		}
 		if sv.active_x {
+			// if reset_offset {
+			// 	sv.offset_x = 0
+			// }
 			sv.change_value(.btn_x)
 		}
 		if sv.active_y {
+			// if reset_offset {
+			// 	sv.orig_y = 0
+			// }
 			sv.change_value(.btn_y)
 		}
 		// println('set orig size $.id: ($w.x, $w.y)')
@@ -216,43 +233,48 @@ pub fn scrollview_save_offset[T](w &T) {
 	}
 }
 
-pub fn scrollview_widget_restore_offset(w Widget) {
+pub fn scrollview_widget_restore_offset(w Widget, orig bool) {
 	if w is Stack {
 		if has_scrollview(w) {
-			scrollview_restore_offset(w)
+			scrollview_restore_offset(w, orig)
 		}
 		for child in w.children {
-			scrollview_widget_restore_offset(child)
+			scrollview_widget_restore_offset(child, orig)
 		}
 	} else if w is CanvasLayout {
 		if has_scrollview(w) {
-			scrollview_restore_offset(w)
+			scrollview_restore_offset(w, orig)
 		}
 		for child in w.children {
-			scrollview_widget_restore_offset(child)
+			scrollview_widget_restore_offset(child, orig)
 		}
 	} else if w is ListBox {
 		if has_scrollview(w) {
-			scrollview_restore_offset(w)
+			scrollview_restore_offset(w, orig)
 		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
-			scrollview_restore_offset(w)
+			scrollview_restore_offset(w, orig)
 		}
 	}
 }
 
-pub fn scrollview_restore_offset[T](w &T) {
+pub fn scrollview_restore_offset[T](w &T, orig bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.update_active()
 		if sv.active_x {
-			sv.orig_x = w.x
+			if !has_parent_scrolling(sv.widget) {
+				sv.orig_x = w.x
+			}
 			sv.offset_x = sv.prev_offset_x
 			sv.change_value(.btn_x)
 		}
 		if sv.active_y {
-			sv.orig_y = w.y
+			if !has_parent_scrolling(sv.widget) {
+				println("restore offset $sv.widget.id")
+				sv.orig_y = w.y
+			}
 			sv.offset_y = sv.prev_offset_y
 			sv.change_value(.btn_y)
 		}
@@ -686,6 +708,7 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, _ voidptr) {
 		if sw is Widget {
 			w := sw as Widget
 			if sv.ui.window.is_top_widget(w, events.on_scroll) {
+				println("scroll $w.id")
 				if sv.active_x {
 					sv.offset_x -= int(e.x * sv.delta_mouse)
 					sv.change_value(.btn_x)

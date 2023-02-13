@@ -9,7 +9,7 @@ pub struct DemoComponent {
 pub mut:
 	layout   &ui.Stack = unsafe { nil } // required
 	tb_text  string    = 'textbox text'
-	tbm_text string    = 'textbox multilines text\nsecond line'
+	tbm_text string    = 'textbox multilines text\nsecond line\n' + ("blah blah".repeat(10) + "blah\n").repeat(20)
 }
 
 [params]

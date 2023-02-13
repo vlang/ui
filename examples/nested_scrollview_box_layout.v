@@ -22,6 +22,8 @@ fn make_scroll_area(mut app App) ui.Widget {
 			app.box_text << 'box${r}${c}\n...\n...\n...\n...\n...\n...\n...\n...\n...'
 			$if fixed ? {
 				decl = '${id}: (${r * 110},${c * 90}) ++ (100,80)'
+			} $else $if fixed_spacing ? {
+				decl = '${id}: (${r * 1.0 / 5},${c * 1.0 / 5}) ++ (${1.0 / 5 - 0.01},${1.0 / 5 - .01})'
 			} $else {
 				decl = '${id}: (${r * 1.0 / 5},${c * 1.0 / 5}) ++ (${1.0 / 5 - 0.01},${1.0 / 5 - .01})'
 			}
@@ -60,7 +62,7 @@ fn main() {
 		mode: .resizable
 		children: [
 			ui.column(
-				// scrollview: true
+				scrollview: true
 				widths: ui.stretch
 				heights: ui.stretch
 				bg_color: gx.yellow

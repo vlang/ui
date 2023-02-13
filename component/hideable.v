@@ -82,6 +82,11 @@ pub fn hideable_show(w &ui.Window, id string) {
 	h.show()
 }
 
+pub fn hideable_hide(w &ui.Window, id string) {
+	mut h := hideable_component_from_id(w, id)
+	h.hide()
+}
+
 pub fn (mut h HideableComponent) show() {
 	// mut layout := h.window.stack(h.child_layout_id)
 	// restore z_index

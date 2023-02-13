@@ -439,6 +439,8 @@ pub fn (mut c CanvasLayout) update_layout() {
 	// update size and scrollview if necessary
 	c.set_adjusted_size(c.ui)
 	scrollview_update(c)
+	// println("hereee")
+	// scrollview_widget_set_orig_xy(c, false)
 }
 
 pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
@@ -513,8 +515,11 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 }
 
 pub fn (mut c CanvasLayout) set_children_pos() {
+	println("scp $c.id")
 	for i, mut child in c.children {
+		// scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
+		// scrollview_widget_restore_offset(child, true)
 		if mut child is Stack {
 			child.update_layout()
 		}
@@ -534,7 +539,7 @@ pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	scrollview_widget_save_offset(c)
 	c.x = x
 	c.y = y
-	scrollview_widget_restore_offset(c)
+	scrollview_widget_restore_offset(c, true)
 	// scrollview_update_orig_size(c)
 	c.set_children_pos()
 }
