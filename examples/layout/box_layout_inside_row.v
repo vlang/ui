@@ -10,14 +10,16 @@ const (
 struct App {
 mut:
 	text   string
+	texts  map[string]string
 	window &ui.Window = unsafe { nil }
 }
 
-fn make_tb(mut app App, has_row bool) ui.Widget {
+fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
+	app.texts['toto'] = 'blah3 blah blah\n'.repeat(10)
 	tb := ui.textbox(
 		mode: .multiline
 		bg_color: gx.yellow
-		text: &app.text
+		text: &(app.texts['toto'])
 	)
 	return if has_row {
 		ui.Widget(ui.row(
@@ -35,6 +37,8 @@ fn main() {
 	mut app := App{
 		text: 'blah blah blah\n'.repeat(10)
 	}
+
+	mut text := ['blah2 blah blah\n'.repeat(10)]
 	app.window = ui.window(
 		width: win_width
 		height: win_height
@@ -55,7 +59,8 @@ fn main() {
 							'id2: (0.3,0.3) ++ (0.4,0.4)': ui.rectangle(
 								color: gx.rgb(100, 255, 100)
 							)
-							'id3: (0.7,0.7) ++ (0.3,0.3)': make_tb(mut app, false)
+							'id3: (0.7,0.7) ++ (0.3,0.3)': make_tb(mut app, mut text,
+								false)
 							'btn: (0.7,0.1) ++ (50,20)':   ui.button(
 								text: 'switch'
 								on_click: app.btn_click

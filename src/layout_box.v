@@ -109,7 +109,7 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 	return b
 }
 
-fn (mut b BoxLayout) init(parent Layout) {
+pub fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
 	mut ui := parent.get_ui()
 	b.ui = ui
