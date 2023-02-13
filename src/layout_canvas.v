@@ -38,6 +38,7 @@ pub mut:
 	is_focused       bool
 	ui               &UI = unsafe { nil }
 	hidden           bool
+	is_root_layout   bool = true
 	clipping         bool
 	adj_width        int
 	adj_height       int
@@ -214,12 +215,30 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
+	c.set_root_layout()
 
 	if has_scrollview(c) {
 		c.scrollview.init(parent)
 		c.ui.window.evt_mngr.add_receiver(c, [events.on_scroll])
 	} else {
 		scrollview_delegate_parent_scrollview(mut c)
+	}
+}
+
+// Determine wheither CanvasLayout b is a root layout
+fn (mut c CanvasLayout) set_root_layout() {
+	if mut c.parent is Window {
+		// TODO: before removing line below test if this is necessary
+		// c.ui.window = unsafe {c.parent }
+		mut window := unsafe { c.parent }
+		if c.is_root_layout {
+			window.root_layout = c
+			// window.update_layout()
+		} else {
+			c.update_layout()
+		}
+	} else {
+		c.is_root_layout = false
 	}
 }
 
@@ -434,13 +453,24 @@ pub fn (mut c CanvasLayout) update_layout() {
 	if c.is_canvas_layer {
 		return
 	}
-	// println("$c.id update_layout")
-	c.set_drawing_children()
+	// TODO: test if this is necessary
+	if c.is_root_layout {
+		window := c.ui.window
+		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
+		$if android {
+			to_resize = true
+		}
+		if to_resize {
+			c.resize(window.width, window.height)
+		}
+	}
+
 	// update size and scrollview if necessary
 	c.set_adjusted_size(c.ui)
 	scrollview_update(c)
-	// println("hereee")
-	// scrollview_widget_set_orig_xy(c, false)
+	// println("$c.id update_layout")
+	c.set_drawing_children()
+	scrollview_widget_set_orig_xy(c, true)
 }
 
 pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
