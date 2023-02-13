@@ -104,106 +104,9 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		ui: 0
 	}
 	for key, child in c.children {
-		b.parse_child(key, child)
+		b.set_child_bounding(key, child)
 	}
 	return b
-}
-
-fn (mut b BoxLayout) parse_child(key string, child Widget) {
-	tmp := key.split_any('@:')
-	mut tmp2 := []string{}
-	id, tmp_rect := if tmp.len > 1 {
-		tmp[0], tmp[1]
-	} else {
-		b.id + '_' + key, tmp[0]
-	}
-	if tmp_rect.contains('++') {
-		tmp2 = tmp_rect.split('++').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('-+') {
-		tmp2 = tmp_rect.split('-+').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[2] -= vec4[2]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('--') {
-		tmp2 = tmp_rect.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[2] -= vec4[2]
-			vec4[3] -= vec4[3]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('+-') {
-		tmp2 = tmp_rect.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[3] -= vec4[3]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('->') {
-		tmp2 = tmp_rect.split('->').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			b.add_lt2rb_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
-		tmp2 = tmp_rect.split('x').map(it.trim_space())
-		mut vec4 := tmp2[0].split(',').map(it.f32())
-		vec4 << tmp2[1].split(',').map(it.f32())
-		b.add_lt2rb_child(id, child, vec4)
-	} else if tmp_rect.contains(',') { // (x,y,w,h) mode
-		vec4 := tmp_rect.split(',').map(it.f32())
-		b.add_rect_child(id, child, vec4)
-	}
-}
-
-fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
-	lt2rb := if vec4.len == 4 {
-		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
-	} else {
-		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
-	}
-	// println(lt2rb)
-	b.child_id << id
-	b.child_box << Box{
-		LeftTopToRightBottom: lt2rb
-	}
-	b.child_mode << BoxMode.left_top_right_bottom
-	b.children << child
-}
-
-fn (mut b BoxLayout) add_rect_child(id string, child Widget, vec4 []f32) {
-	rect := if vec4.len == 4 {
-		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
-	} else {
-		gg.Rect{0.0, 0.0, 0.0, 0.0}
-	}
-	b.child_id << id
-	b.child_box << Box{
-		Rect: rect
-	}
-	b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
-	b.children << child
 }
 
 fn (mut b BoxLayout) init(parent Layout) {
@@ -263,6 +166,86 @@ pub fn (b &BoxLayout) free() {
 	$if free ? {
 		println(' -> freed')
 	}
+}
+
+fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
+	id, bounding := parse_boxlayout_child_key(key, b.id)
+	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+	match mode {
+		'rect' { b.add_rect_child(id, child, bounding_vec) }
+		'lt2rb' { b.add_lt2rb_child(id, child, bounding_vec) }
+		else {}
+	}
+}
+
+pub fn (mut b BoxLayout) update_child_bounding(id string, bounding string) {
+	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+	match mode {
+		'rect' { b.update_rect_child(id, bounding_vec) }
+		'lt2rb' { b.update_lt2rb_child(id, bounding_vec) }
+		else {}
+	}
+}
+
+fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
+	lt2rb := if vec4.len == 4 {
+		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
+	}
+	// println(lt2rb)
+	b.child_id << id
+	b.child_box << Box{
+		LeftTopToRightBottom: lt2rb
+	}
+	b.child_mode << BoxMode.left_top_right_bottom
+	b.children << child
+}
+
+fn (mut b BoxLayout) add_rect_child(id string, child Widget, vec4 []f32) {
+	rect := if vec4.len == 4 {
+		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	b.child_id << id
+	b.child_box << Box{
+		Rect: rect
+	}
+	b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
+	b.children << child
+}
+
+fn (mut b BoxLayout) update_lt2rb_child(id string, vec4 []f32) {
+	lt2rb := if vec4.len == 4 {
+		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
+	}
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	b.child_box[ind] = Box{
+		LeftTopToRightBottom: lt2rb
+	}
+	b.child_mode[ind] = BoxMode.left_top_right_bottom
+}
+
+fn (mut b BoxLayout) update_rect_child(id string, vec4 []f32) {
+	rect := if vec4.len == 4 {
+		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	b.child_box[ind] = Box{
+		Rect: rect
+	}
+	b.child_mode[ind] = box_direction(rect)
 }
 
 fn (mut b BoxLayout) decode_size() {
@@ -444,7 +427,7 @@ fn (b &BoxLayout) get_children() []Widget {
 	return b.children
 }
 
-fn (mut b BoxLayout) update_layout() {
+pub fn (mut b BoxLayout) update_layout() {
 	if b.is_root_layout {
 		window := b.ui.window
 		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
@@ -484,6 +467,81 @@ fn (mut b BoxLayout) set_drawing_children() {
 	}
 	b.drawing_children = b.children.filter(!it.hidden)
 	b.sorted_drawing_children()
+}
+
+// parse child key and return id and bounding spec
+fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
+	tmp := key.split_any('@:')
+	return if tmp.len > 1 {
+		tmp[0], tmp[1]
+	} else {
+		bl_id + '@' + key, tmp[0]
+	}
+}
+
+// parse child bounding and return
+fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
+	mut vec4, mut mode := []f32{}, ''
+	mut tmp2 := []string{}
+	if bounding.contains('++') {
+		tmp2 = bounding.split('++').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			mode = 'rect'
+		}
+	} else if bounding.contains('-+') {
+		tmp2 = bounding.split('-+').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			mode = 'rect'
+		}
+	} else if bounding.contains('--') {
+		tmp2 = bounding.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			vec4[3] -= vec4[3]
+			mode = 'rect'
+		}
+	} else if bounding.contains('+-') {
+		tmp2 = bounding.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[3] -= vec4[3]
+			mode = 'rect'
+		}
+	} else if bounding.contains('->') {
+		tmp2 = bounding.split('->').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			mode = 'lt2rb'
+		}
+	} else if bounding.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
+		tmp2 = bounding.split('x').map(it.trim_space())
+		vec4 = tmp2[0].split(',').map(it.f32())
+		vec4 << tmp2[1].split(',').map(it.f32())
+		mode = 'rect'
+	} else if bounding.contains(',') { // (x,y,w,h) mode
+		vec4 = bounding.split(',').map(it.f32())
+		mode = 'rect'
+	}
+	return mode, vec4
 }
 
 // absolute or relative size with respect to parent size

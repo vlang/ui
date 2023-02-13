@@ -276,6 +276,14 @@ pub fn (mut s Stack) update_layout() {
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
 	scrollview_widget_set_orig_xy(s, true)
+	// 8) update_layout children if CanvasLayout or BoxLayout
+	for mut child in s.children {
+		if mut child is CanvasLayout {
+			child.update_layout()
+		} else if mut child is BoxLayout {
+			child.update_layout()
+		}
+	}
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window

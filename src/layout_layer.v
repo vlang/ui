@@ -9,6 +9,7 @@ const (
 // Used to absolute coordinates on top (of everything)
 pub fn canvas_layer(c CanvasLayoutParams) &CanvasLayout {
 	mut cl := canvas_layout(c)
+	cl.is_root_layout = false
 	cl.id = 'top_layer'
 	cl.z_index = -1
 	cl.clipping = false
