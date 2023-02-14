@@ -248,6 +248,17 @@ fn (mut b BoxLayout) update_rect_child(id string, vec4 []f32) {
 	b.child_mode[ind] = box_direction(rect)
 }
 
+pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	parent := b.children[ind].parent
+	b.children[ind] = child
+	child.init(parent)
+	b.update_layout()
+}
+
 fn (mut b BoxLayout) decode_size() {
 	parent_width, parent_height := b.parent.size()
 	if b.is_root_layout {
