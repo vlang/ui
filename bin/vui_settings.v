@@ -1,6 +1,6 @@
 import ui
-import gx
-import gg
+// import gx
+// import gg
 import ui.component as uic
 import os.font
 
