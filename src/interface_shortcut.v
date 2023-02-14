@@ -35,6 +35,12 @@ pub fn (mut s Shortcutable) add_shortcut_context(shortcut string, context voidpt
 	}
 }
 
+// TODO: documentation
+pub fn (mut s Shortcutable) add_shortcut_with_context(shortcut string, key_fn ShortcutFn, context voidptr) {
+	s.add_shortcut(shortcut, key_fn)
+	s.add_shortcut_context(shortcut, context)
+}
+
 // This provides user defined shortcut actions (see grid and grid_data as a use case)
 pub type ShortcutFn = fn (context voidptr)
 

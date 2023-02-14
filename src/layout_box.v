@@ -4,6 +4,10 @@ module ui
 import gg
 import eventbus
 
+const (
+	null_rect = gg.Rect{0.0, 0.0, 0.0, 0.0}
+)
+
 /*
 Goal:
 1) Children are located relatively to the size of the parent box_layout
@@ -183,13 +187,17 @@ fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
 }
 
 // TODO: documentation
-pub fn (mut b BoxLayout) update_child_bounding(id string, bounding string) {
-	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
-	match mode {
-		'rect' { b.update_rect_child(id, bounding_vec) }
-		'lt2rb' { b.update_lt2rb_child(id, bounding_vec) }
-		else {}
+pub fn (mut b BoxLayout) update_child_bounding(keys ...string) {
+	for key in keys {
+		id, bounding := parse_boxlayout_child_key(key, b.id)
+		mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+		match mode {
+			'rect' { b.update_rect_child(id, bounding_vec) }
+			'lt2rb' { b.update_lt2rb_child(id, bounding_vec) }
+			else {}
+		}
 	}
+	b.update_layout()
 }
 
 fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
@@ -487,14 +495,25 @@ fn (mut b BoxLayout) set_drawing_children() {
 		}
 	}
 	b.drawing_children = b.children.filter(!it.hidden)
+	b.drawing_children = b.drawing_children.filter(!b.is_box_hidden(it.id))
 	b.sorted_drawing_children()
+}
+
+pub fn (b &BoxLayout) is_box_hidden(id string) bool {
+	ind := b.child_id.index(id)
+	println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
+	if ind < 0 {
+		return false
+	}
+	box := b.child_box[ind]
+	return unsafe { box.x == 0 && box.y == 0 && box.width == 0 && box.height == 0 }
 }
 
 // parse child key and return id and bounding spec
 fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
-	tmp := key.split_any('@:')
+	tmp := key.split_any(':')
 	return if tmp.len > 1 {
-		tmp[0], tmp[1]
+		tmp[0].trim_space(), tmp[1].trim_space()
 	} else {
 		bl_id + '@' + key, tmp[0]
 	}
@@ -504,7 +523,10 @@ fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
 fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
 	mut vec4, mut mode := []f32{}, ''
 	mut tmp2 := []string{}
-	if bounding.contains('++') {
+	if bounding == 'hidden' {
+		vec4 = [f32(0), 0, 0, 0] // hidden in drawing_children
+		mode = 'rect'
+	} else if bounding.contains('++') {
 		tmp2 = bounding.split('++').map(it.trim_space())
 		mut tmp3 := tmp2[0].find_between('(', ')')
 		if !tmp3.is_blank() {

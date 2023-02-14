@@ -1135,6 +1135,9 @@ fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
 }
 
 fn (mut tb TextBox) skip_index_from_cursor(ustr []rune, dtw DrawTextWidget) {
+	if tb.width == 0 {
+		return
+	}
 	text_len := ustr.len
 	width_max := tb.width - 2 * ui.textbox_padding_x
 	width := if text_len == 0 { 0 } else { dtw.text_width(*(tb.text)) }
