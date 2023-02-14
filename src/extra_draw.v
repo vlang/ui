@@ -142,6 +142,7 @@ fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
 // 	w.ui.dd.draw_text(x, y, text_, tc)
 // }
 
+// TODO: documentation
 pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
 	mut th := 0
 	for line in lines {
@@ -230,6 +231,7 @@ pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 	return gx.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
 }
 
+// TODO: documentation
 pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
@@ -261,6 +263,7 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	return h, s, v
 }
 
+// TODO: documentation
 pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
 	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
@@ -291,6 +294,7 @@ pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
 // Texture stuff borrowed from @penguindark to deal with texture in sokol
 //
 
+// TODO: documentation
 pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 	mut img_desc := C.sg_image_desc{
 		width: w
@@ -314,6 +318,7 @@ pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 	return sg_img
 }
 
+// TODO: documentation
 pub fn destroy_texture(sg_img C.sg_image) {
 	C.sg_destroy_image(sg_img)
 }

@@ -21,6 +21,7 @@ pub struct GridSettingsParams {
 	z_index  int = 100
 }
 
+// TODO: documentation
 pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	lbl := ui.listbox(
 		id: ui.component_id(p.id, 'lb_left')
@@ -74,6 +75,7 @@ pub fn gridsettings_component(w ui.ComponentChild) &GridSettingsComponent {
 	return unsafe { &GridSettingsComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn gridsettings_component_from_id(w ui.Window, id string) &GridSettingsComponent {
 	return gridsettings_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
@@ -100,6 +102,7 @@ fn gs_sort_click(mut b ui.Button) {
 	g.init_ranked_grid_data(vars, orders)
 }
 
+// TODO: documentation
 pub fn (mut gs GridSettingsComponent) update_sorted_vars() {
 	g := gs.grid
 	// println("update sorted vars <$gs.id> ${typeof(g).name} <$g.id>")

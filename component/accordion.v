@@ -28,6 +28,7 @@ pub struct AccordionParams {
 	scrollview bool
 }
 
+// TODO: documentation
 pub fn accordion_stack(c AccordionParams) &ui.Stack {
 	// if c.children.len != c.titles.len {
 	// }
@@ -79,6 +80,7 @@ pub fn accordion_component(w ui.ComponentChild) &AccordionComponent {
 	return unsafe { &AccordionComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
 	return accordion_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }

@@ -18,26 +18,31 @@ mut:
 	draw()
 }
 
+// TODO: documentation
 pub fn (w Draggable) active() bool {
 	d := w.get_window().dragger
 	return w == d.widget
 }
 
+// TODO: documentation
 pub fn (w Draggable) bounds() gg.Rect {
 	sw, sh := w.size()
 	return gg.Rect{w.x, w.y, sw, sh}
 }
 
+// TODO: documentation
 pub fn (w Draggable) scaled_bounds() gg.Rect {
 	sw, sh := w.size()
 	sc := gg.dpi_scale()
 	return gg.Rect{w.x * sc, w.y * sc, sw * sc, sh * sc}
 }
 
+// TODO: documentation
 pub fn (w Draggable) inside(b gg.Rect) bool {
 	return inside_rect(w.bounds(), b)
 }
 
+// TODO: documentation
 pub fn (w Draggable) intersect(b gg.Rect) bool {
 	// println("${w.bounds()} inter $b")
 	return !is_empty_intersection(w.drag_bounds(), b)
@@ -157,15 +162,18 @@ mut:
 	drop_types []string
 }
 
+// TODO: documentation
 pub fn (dz DropZone) bounds() gg.Rect {
 	w, h := dz.size()
 	return gg.Rect{dz.x, dz.y, w, h}
 }
 
+// TODO: documentation
 pub fn (dz DropZone) drop_types() []string {
 	return dz.drop_types
 }
 
+// TODO: documentation
 pub fn (mut dz DropZone) set_drop_types(dt []string) {
 	dz.drop_types = dt
 }

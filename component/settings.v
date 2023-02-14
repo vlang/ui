@@ -3,6 +3,7 @@ module component
 import ui
 // import gx
 
+// TODO: documentation
 pub fn setting_color(param string) {
 }
 
@@ -23,6 +24,7 @@ pub struct SettingFontParams {
 	text  string
 }
 
+// TODO: documentation
 pub fn setting_font(s SettingFontParams) &ui.Stack {
 	lb_param := ui.label(text: s.text)
 	lb_font := ui.label(text: s.id)
@@ -42,14 +44,17 @@ pub fn setting_font(s SettingFontParams) &ui.Stack {
 	return layout
 }
 
+// TODO: documentation
 pub fn setting_int(param string) &ui.Stack {
 	return ui.row()
 }
 
+// TODO: documentation
 pub fn setting_f32(param string) &ui.Stack {
 	return ui.row()
 }
 
+// TODO: documentation
 pub fn settings_bool(param string) &ui.Stack {
 	return ui.row()
 }

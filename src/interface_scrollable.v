@@ -63,6 +63,7 @@ mut:
 	size() (int, int)
 }
 
+// TODO: documentation
 pub fn get_scrollview(sw ScrollableWidget) (bool, &ScrollView) {
 	has := sw.has_scrollview
 	return has, if has {
@@ -72,24 +73,29 @@ pub fn get_scrollview(sw ScrollableWidget) (bool, &ScrollView) {
 	}
 }
 
+// TODO: documentation
 pub fn has_scrollview(w ScrollableWidget) bool {
 	return w.has_scrollview
 }
 
+// TODO: documentation
 pub fn has_scrollview_or_parent_scrollview(w ScrollableWidget) bool {
 	return unsafe { w.scrollview != 0 }
 }
 
+// TODO: documentation
 pub fn scrollview_is_active(w ScrollableWidget) bool {
 	return w.has_scrollview && w.scrollview.is_active()
 }
 
+// TODO: documentation
 pub fn scrollview_need_update(mut w ScrollableWidget) {
 	if w.has_scrollview {
 		w.scrollview.children_to_update = true
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_add[T](mut w T) {
 	mut sv := &ScrollView{
 		parent: w.parent
@@ -108,6 +114,7 @@ pub fn scrollview_add[T](mut w T) {
 	w.clipping = true
 }
 
+// TODO: documentation
 pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 	if w is Stack {
 		if has_scrollview(w) {
@@ -174,6 +181,7 @@ fn has_parent_scrolling(w Widget) bool {
 	return false
 }
 
+// TODO: documentation
 pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -198,6 +206,7 @@ pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_widget_save_offset(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
@@ -224,6 +233,7 @@ pub fn scrollview_widget_save_offset(w Widget) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_save_offset[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -233,6 +243,7 @@ pub fn scrollview_save_offset[T](w &T) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_widget_restore_offset(w Widget, orig bool) {
 	if w is Stack {
 		if has_scrollview(w) {
@@ -259,6 +270,7 @@ pub fn scrollview_widget_restore_offset(w Widget, orig bool) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_restore_offset[T](w &T, orig bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -282,6 +294,7 @@ pub fn scrollview_restore_offset[T](w &T, orig bool) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_delegate_parent_scrollview[T](mut w T) {
 	parent := w.parent
 	if parent is Stack {
@@ -291,6 +304,7 @@ pub fn scrollview_delegate_parent_scrollview[T](mut w T) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_update[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -298,6 +312,7 @@ pub fn scrollview_update[T](w &T) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_widget_update(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
@@ -309,6 +324,7 @@ pub fn scrollview_widget_update(w Widget) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_update_active[T](w &T) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
@@ -316,6 +332,7 @@ pub fn scrollview_update_active[T](w &T) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_widget_update_active(w Widget) {
 	if w is Stack {
 		if has_scrollview(w) {
@@ -327,6 +344,7 @@ pub fn scrollview_widget_update_active(w Widget) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 	if scrollview_is_active(w) {
 		mut sv := w.scrollview
@@ -347,6 +365,7 @@ pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_draw_end[T](w &T, d DrawDevice) {
 	if has_scrollview(w) {
 		sv := w.scrollview
@@ -354,6 +373,7 @@ pub fn scrollview_draw_end[T](w &T, d DrawDevice) {
 	}
 }
 
+// TODO: documentation
 pub fn scrollview_reset[T](mut w T) {
 	mut sv := w.scrollview
 	svx, svy := sv.orig_xy()
@@ -368,11 +388,13 @@ pub fn scrollview_reset[T](mut w T) {
 	w.set_children_pos()
 }
 
+// TODO: documentation
 pub fn lock_scrollview_key(w ScrollableWidget) {
 	mut sv := w.scrollview
 	sv.key_locked = true
 }
 
+// TODO: documentation
 pub fn unlock_scrollview_key(w ScrollableWidget) {
 	mut sv := w.scrollview
 	sv.key_locked = false
@@ -446,6 +468,7 @@ fn (mut sv ScrollView) init(parent Layout) {
 	}
 }
 
+// TODO: documentation
 [manualfree]
 pub fn (mut sv ScrollView) cleanup() {
 	mut subscriber := sv.parent.get_subscriber()
@@ -463,6 +486,7 @@ pub fn (mut sv ScrollView) cleanup() {
 	unsafe { sv.free() }
 }
 
+// TODO: documentation
 [unsafe]
 pub fn (sv &ScrollView) free() {
 	unsafe { free(sv) }
@@ -533,6 +557,7 @@ fn (mut sv ScrollView) update() {
 	}
 }
 
+// TODO: documentation
 pub fn (sv &ScrollView) is_active() bool {
 	return sv.active_x || sv.active_y
 }
@@ -646,6 +671,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 	}
 }
 
+// TODO: documentation
 pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 	svx, svy := sv.orig_xy()
 
@@ -667,6 +693,7 @@ pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 	if sv.is_active() {
 		if sv.active_x && mode == .btn_x {
@@ -680,11 +707,13 @@ pub fn (mut sv ScrollView) set(val int, mode ScrollViewPart) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut sv ScrollView) scroll_to_end_y() {
 	max_offset_y, _ := sv.y_offset_max_and_coef()
 	sv.set(max_offset_y, .btn_y)
 }
 
+// TODO: documentation
 pub fn (mut sv ScrollView) inc(delta int, mode ScrollViewPart) {
 	if sv.is_active() {
 		if sv.active_x && mode == .btn_x {

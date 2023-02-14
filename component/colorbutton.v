@@ -33,6 +33,7 @@ pub struct ColorButtonParams {
 	on_changed   ColorButtonFn
 }
 
+// TODO: documentation
 pub fn colorbutton(c ColorButtonParams) &ui.Button {
 	mut b := &ui.Button{
 		id: c.id
@@ -65,6 +66,7 @@ pub fn colorbutton_component(w ui.ComponentChild) &ColorButtonComponent {
 	return unsafe { &ColorButtonComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonComponent {
 	return colorbutton_component(w.get_or_panic[ui.Button](id))
 }

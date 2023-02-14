@@ -39,6 +39,7 @@ pub struct TabsParams {
 	tab_spacing f64 = 5.0
 }
 
+// TODO: documentation
 pub fn tabs_stack(c TabsParams) &ui.Stack {
 	mut children := []ui.Widget{}
 
@@ -116,10 +117,12 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	return layout
 }
 
+// TODO: documentation
 pub fn tabs_component(w ui.ComponentChild) &TabsComponent {
 	return unsafe { &TabsComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
 	return tabs_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }

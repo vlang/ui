@@ -28,15 +28,18 @@ mut:
 	cleanup()
 }
 
+// TODO: documentation
 pub fn (w &Widget) get_depth() int {
 	return w.z_index
 }
 
+// TODO: documentation
 pub fn (mut w Widget) set_depth(z_index int) {
 	w.z_index = z_index
 	// w.set_visible(z_index != ui.z_index_hidden)
 }
 
+// TODO: documentation
 pub fn (child &Widget) id() string {
 	return child.id
 }
@@ -64,6 +67,7 @@ pub fn (mut w Widget) bounds() gg.Rect {
 	return gg.Rect{w.x, w.y, sw, sh}
 }
 
+// TODO: documentation
 pub fn (mut w Widget) scaled_bounds() gg.Rect {
 	sw, sh := w.size()
 	sc := gg.dpi_scale()
@@ -100,6 +104,7 @@ pub fn (w Widget) is_layout_with_children() bool {
 	}
 }
 
+// TODO: documentation
 pub fn (w Widget) has_focus() bool {
 	if w is Focusable {
 		fw := w as Focusable
@@ -108,6 +113,7 @@ pub fn (w Widget) has_focus() bool {
 	return false
 }
 
+// TODO: documentation
 pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
 	w.ui.dd.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }
@@ -118,6 +124,7 @@ pub fn is_children_have_widget(children []Widget) bool {
 	return tmp.len > 0
 }
 
+// TODO: documentation
 pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
 	if parent is Layout {
 		if w.parent.id == parent.id {
@@ -135,6 +142,7 @@ pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
 	}
 }
 
+// TODO: documentation
 pub fn (w Widget) window() &Window {
 	return w.ui.window
 }

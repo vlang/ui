@@ -9,6 +9,7 @@ mut:
 	shortcuts Shortcuts
 }
 
+// TODO: documentation
 pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
 	mods, code, key := parse_shortcut(shortcut)
 	if code == 0 {
@@ -24,6 +25,7 @@ pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut s Shortcutable) add_shortcut_context(shortcut string, context voidptr) {
 	_, code, key := parse_shortcut(shortcut)
 	if code == 0 {
@@ -52,6 +54,7 @@ pub mut:
 	context voidptr
 }
 
+// TODO: documentation
 pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	// weirdly when .ctrl modifier the codepoint is differently interpreted
 	mut s := utf32_to_str(e.codepoint)
@@ -72,6 +75,7 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	}
 }
 
+// TODO: documentation
 pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	if int(e.key) in shortcuts.keys {
 		sc := shortcuts.keys[int(e.key)]

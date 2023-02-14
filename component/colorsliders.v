@@ -37,6 +37,7 @@ pub struct ColorSlidersParams {
 	on_changed  ColorSlidersFn
 }
 
+// TODO: documentation
 pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	r_textbox := ui.textbox(
 		max_len: 3
@@ -184,14 +185,17 @@ pub fn colorsliders_component(w ui.ComponentChild) &ColorSlidersComponent {
 	return unsafe { &ColorSlidersComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersComponent {
 	return colorsliders_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn (cs &ColorSlidersComponent) color() gx.Color {
 	return gx.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()), u8(cs.b_textbox.text.int()))
 }
 
+// TODO: documentation
 pub fn (mut cs ColorSlidersComponent) set_color(color gx.Color) {
 	cs.r_textbox_text = color.r.str()
 	cs.g_textbox_text = color.g.str()

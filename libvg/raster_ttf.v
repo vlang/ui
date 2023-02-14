@@ -3,6 +3,7 @@ module libvg
 import x.ttf
 import os
 
+// TODO: documentation
 pub fn (mut r Raster) attach_bitmap() {
 	bmp := ttf.BitMap{
 		tf: 0
@@ -20,6 +21,7 @@ pub fn (mut r Raster) attach_bitmap() {
 	r.bmp = &bmp
 }
 
+// TODO: documentation
 pub fn (mut r Raster) add_ttf(ttf_filename string) {
 	mut ttf_font := ttf.TTF_File{}
 	ttf_font.buf = os.read_bytes(ttf_filename) or { panic(err) }
@@ -27,12 +29,14 @@ pub fn (mut r Raster) add_ttf(ttf_filename string) {
 	r.ttf_fonts[ttf_filename] = ttf_font
 }
 
+// TODO: documentation
 pub fn (mut r Raster) attach_ttf(ttf_filename string) {
 	the_font_ptr := r.ttf_fonts[ttf_filename]
 	r.ttf_font = &the_font_ptr
 	r.bmp.tf = r.ttf_font
 }
 
+// TODO: documentation
 pub fn (r &Raster) get_info_string() {
 	// print font info
 	println(r.ttf_font.get_info_string())
@@ -44,6 +48,7 @@ pub struct SetFontSizeParams {
 	device_dpi int = 72
 }
 
+// TODO: documentation
 pub fn (mut r Raster) set_font_size(p SetFontSizeParams) {
 	// Formula for scale calculation
 	// scaler := (font_size * device dpi) / (72dpi * em_unit)
@@ -51,6 +56,7 @@ pub fn (mut r Raster) set_font_size(p SetFontSizeParams) {
 	r.bmp.scale = scale
 }
 
+// TODO: documentation
 pub fn (mut r Raster) init_style(ts BitmapTextStyle) {
 	r.attach_ttf(ts.font_path)
 	r.init_filler()
@@ -61,6 +67,7 @@ pub fn (mut r Raster) init_style(ts BitmapTextStyle) {
 	r.style = .filled
 }
 
+// TODO: documentation
 pub fn (r &Raster) get_y_base() f32 {
 	// height of the font to use in the buffer to separate the lines
 	y_base := f32((r.ttf_font.y_max - r.ttf_font.y_min) * r.bmp.scale)

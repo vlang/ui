@@ -28,6 +28,7 @@ pub struct SplitPanelParams {
 	btn_size  int = component.splitpanel_btn_size
 }
 
+// TODO: documentation
 pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	splitbtn := ui.button(
 		id: ui.component_id(p.id, 'splitbtn')
@@ -79,10 +80,12 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	return layout
 }
 
+// TODO: documentation
 pub fn splitpanel_component(w ui.ComponentChild) &SplitPanelComponent {
 	return unsafe { &SplitPanelComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn splitpanel_component_from_id(w ui.Window, id string) &SplitPanelComponent {
 	return splitpanel_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }

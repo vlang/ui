@@ -77,6 +77,7 @@ fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 	sh.tv.update_style(font_name: 'fixed', size: 18)
 }
 
+// TODO: documentation
 pub fn (mut sh SyntaxHighLighter) set_lang(ext string) {
 	sh.lang = ''
 	if ext.len == 0 {

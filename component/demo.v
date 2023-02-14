@@ -18,6 +18,7 @@ pub struct DemoParams {
 	id string = 'demo'
 }
 
+// TODO: documentation
 pub fn demo_stack(p DemoParams) &ui.Stack {
 	mut dc := &DemoComponent{}
 	menu_items := [

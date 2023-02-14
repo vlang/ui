@@ -89,6 +89,7 @@ mut:
 	id string
 }
 
+// TODO: documentation
 pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_id(p.id, 'layout')
@@ -238,6 +239,7 @@ pub fn grid_component(w ui.ComponentChild) &GridComponent {
 	return unsafe { &GridComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn grid_component_from_id(w ui.Window, id string) &GridComponent {
 	return grid_component(w.get_or_panic[ui.CanvasLayout](ui.component_id(id, 'layout')))
 }
@@ -838,6 +840,7 @@ fn (mut g GridComponent) visible_cells() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) visible_fixed_cells() {
 	g.from_i = math.min(math.max((g.layout.scrollview.offset_y - g.colbar_height - g.header_size) / g.cell_height,
 		0), g.nrow() - 1)
@@ -847,6 +850,7 @@ pub fn (mut g GridComponent) visible_fixed_cells() {
 	// println("vfc $g.from_i, $g.to_i")
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) cur_allways_visible() {
 	if !ui.has_scrollview(g.layout) {
 		return
@@ -870,6 +874,7 @@ pub fn (mut g GridComponent) cur_allways_visible() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) scroll_x_to_cur(end bool) {
 	if g.layout.scrollview.active_x {
 		delta := if end {
@@ -882,6 +887,7 @@ pub fn (mut g GridComponent) scroll_x_to_cur(end bool) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) scroll_y_to_cur(end bool) {
 	if g.layout.scrollview.active_y {
 		delta := if end {
@@ -894,6 +900,7 @@ pub fn (mut g GridComponent) scroll_y_to_cur(end bool) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) scroll_y_to_end() {
 	if g.layout.scrollview.active_y {
 		_, y := g.get_pos(g.nrow - 1, g.ncol - 1)
@@ -929,6 +936,7 @@ pub struct GridTextBoxParams {
 	var  []string
 }
 
+// TODO: documentation
 pub fn grid_textbox(p GridTextBoxParams) &GridTextBox {
 	return &GridTextBox{
 		grid: p.grid
@@ -996,6 +1004,7 @@ pub struct GridDropdownParams {
 	var  Factor
 }
 
+// TODO: documentation
 pub fn grid_dropdown(p GridDropdownParams) &GridDropdown {
 	return &GridDropdown{
 		grid: p.grid
@@ -1058,6 +1067,7 @@ pub struct GridCheckBoxParams {
 	var  []bool
 }
 
+// TODO: documentation
 pub fn grid_checkbox(p GridCheckBoxParams) &GridCheckBox {
 	return &GridCheckBox{
 		id: p.id
@@ -1112,6 +1122,7 @@ fn (gcb &GridCheckBox) draw_device(mut d ui.DrawDevice, j int, mut g GridCompone
 
 type RankedGridData = int
 
+// TODO: documentation
 pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 	// create compare_grid_data closure
 	compare_grid_data := fn [vars, orders, g] (a &RankedGridData, b &RankedGridData) int {

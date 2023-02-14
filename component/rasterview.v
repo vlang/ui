@@ -58,6 +58,7 @@ pub struct RasterViewParams {
 	on_click RasterViewFn = RasterViewFn(0)
 }
 
+// TODO: documentation
 pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
 		id: ui.component_id(p.id, 'layout')
@@ -94,14 +95,17 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	return layout
 }
 
+// TODO: documentation
 pub fn rasterview_component(w ui.ComponentChild) &RasterViewComponent {
 	return unsafe { &RasterViewComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn rasterview_component_from_id(w &ui.Window, id string) &RasterViewComponent {
 	return rasterview_component(w.get_or_panic[ui.CanvasLayout](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) connect_palette(pa &ColorPaletteComponent) {
 	rv.palette = pa
 }
@@ -291,6 +295,7 @@ struct Int2 {
 	n int
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) top_colors() []gx.Color {
 	mut table := map[int]int{}
 	mut colors := []gx.Color{}
@@ -378,10 +383,12 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 	// println('i: ($rv.from_i, $rv.to_i, $rv.from_y)  j: ($rv.from_j, $rv.to_j, $rv.from_x)')
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) new_image() {
 	rv.r.clear()
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) load_image(path string) {
 	if mut rv.layout.ui.dd is ui.DrawDeviceContext {
 		rv.r.load_image(mut rv.layout.ui.dd.Context, path)
@@ -391,10 +398,12 @@ pub fn (mut rv RasterViewComponent) load_image(path string) {
 	rv.layout.update_layout()
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) save_image_as(path string) {
 	rv.r.save_image_as(path)
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) update_bounds() {
 	rv.bounds_i, rv.bounds_j, rv.bounds_w, rv.bounds_h = 0, 0, 0, 0
 	mut ok := true
@@ -466,10 +475,12 @@ pub fn (mut rv RasterViewComponent) update_bounds() {
 	// println("rv bounds: $rv.bounds_i, $rv.bounds_h, $rv.bounds_j, $rv.bounds_w (${rv.width()}, ${rv.height()})")
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) get_margins() (int, int, int, int) { // top, bottom, left, right
 	return rv.bounds_i, rv.height() - rv.bounds_i - rv.bounds_h, rv.bounds_j, rv.width() - rv.bounds_j - rv.bounds_w
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 	mt, mb, ml, mr := rv.get_margins()
 	if (di == 0 && dj == 0) || (di < 0 && di < -mt) || (di > 0 && di > mb)
@@ -512,6 +523,7 @@ pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 	rv.bounds_j += dj
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) extract_size(pngfile string) {
 	query := r'.*\-(?P<width>\d+)x?(?P<height>\d+)?\.png'
 	mut re := regex.regex_opt(query) or { panic(err) }
@@ -528,30 +540,37 @@ pub fn (mut rv RasterViewComponent) extract_size(pngfile string) {
 
 // method for raster
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) width() int {
 	return rv.r.width
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) height() int {
 	return rv.r.height
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) channels() int {
 	return rv.r.channels
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) data() &byte {
 	return rv.r.data.data
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) set_raster_size(w int, h int) {
 	rv.r.width, rv.r.height = w, h
 }
 
+// TODO: documentation
 pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
 	return rv.r.get_pixel(i, j)
 }
 
+// TODO: documentation
 pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, col gx.Color) {
 	rv.r.set_pixel(i, j, col)
 }

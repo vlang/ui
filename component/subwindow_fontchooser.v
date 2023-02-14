@@ -17,12 +17,14 @@ pub fn fontchooser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change u
 	}
 }
 
+// TODO: documentation
 pub fn fontchooser_subwindow_visible(w &ui.Window) {
 	mut s := w.get_or_panic[ui.SubWindow](component.fontchooser_subwindow_id)
 	s.set_visible(s.hidden)
 	s.update_layout()
 }
 
+// TODO: documentation
 pub fn fontchooser_subwindow(w &ui.Window) &ui.SubWindow {
 	return w.get_or_panic[ui.SubWindow](component.fontchooser_subwindow_id)
 }

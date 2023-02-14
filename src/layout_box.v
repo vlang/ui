@@ -94,6 +94,7 @@ pub mut:
 	children map[string]Widget
 }
 
+// TODO: documentation
 pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 	mut b := &BoxLayout{
 		id: c.id
@@ -109,6 +110,7 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 	return b
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
 	mut ui := parent.get_ui()
@@ -141,6 +143,7 @@ fn (mut b BoxLayout) set_root_layout() {
 	}
 }
 
+// TODO: documentation
 [manualfree]
 pub fn (mut b BoxLayout) cleanup() {
 	for mut child in b.children {
@@ -151,6 +154,7 @@ pub fn (mut b BoxLayout) cleanup() {
 	}
 }
 
+// TODO: documentation
 [unsafe]
 pub fn (b &BoxLayout) free() {
 	$if free ? {
@@ -178,6 +182,7 @@ fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) update_child_bounding(id string, bounding string) {
 	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
 	match mode {
@@ -248,6 +253,7 @@ fn (mut b BoxLayout) update_rect_child(id string, vec4 []f32) {
 	b.child_mode[ind] = box_direction(rect)
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
 	ind := b.child_id.index(id)
 	if ind < 0 {
@@ -279,6 +285,7 @@ fn (mut b BoxLayout) set_pos(x int, y int) {
 	b.set_children_pos_and_size()
 }
 
+// TODO: documentation
 pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	mut x, mut y := 0, 0
 	unsafe {
@@ -313,6 +320,7 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	child.set_pos(x, y)
 }
 
+// TODO: documentation
 pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	mut w, mut h := 0, 0
 	unsafe {
@@ -345,6 +353,7 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	child.propose_size(w, h)
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) set_children_pos() {
 	// println('size: $b.width, $b.height $w, $h $b.child_box')
 	for i, mut child in b.children {
@@ -438,6 +447,7 @@ fn (b &BoxLayout) get_children() []Widget {
 	return b.children
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) update_layout() {
 	if b.is_root_layout {
 		window := b.ui.window

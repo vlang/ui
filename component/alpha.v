@@ -23,6 +23,7 @@ pub struct AlphaParams {
 	on_changed AlphaFn      = AlphaFn(0)
 }
 
+// TODO: documentation
 pub fn alpha_stack(p AlphaParams) &ui.Stack {
 	tb := ui.textbox(
 		id: ui.component_id(p.id, 'textbox')
@@ -80,10 +81,12 @@ pub fn alpha_component(w ui.ComponentChild) &AlphaComponent {
 	return unsafe { &AlphaComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn alpha_component_from_id(w ui.Window, id string) &AlphaComponent {
 	return alpha_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn (mut ac AlphaComponent) set_alpha(alpha int) {
 	if ui.is_rgb_valid(alpha) {
 		ac.alpha = alpha
