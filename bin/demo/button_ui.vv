@@ -1,4 +1,3 @@
-[[layout]]
 btn_click := fn (_ &ui.Button) { 
 		ui.message_box('coucou toto!')
 }
@@ -16,4 +15,3 @@ layout = ui.box_layout(
 	)
   }
 )
-[[main_pre]]

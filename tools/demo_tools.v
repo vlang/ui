@@ -6,6 +6,10 @@ import os
 const (
 	demo_blocks               = ['layout', 'main_pre', 'main_post', 'window_init'] // in the right order
 	demo_comment_block_delims = set_demo_comment_block_delims()
+	block_format_delim        = {
+		'start': '[<'
+		'stop':  '>]'
+	}
 )
 
 [heap]
@@ -38,24 +42,42 @@ pub fn set_demo_comment_block_delims() map[string]string {
 	return delims_
 }
 
+fn complete_demo_ui_code(code string) string {
+	mut new_code := code
+	mut block_name := tools.demo_blocks[0]
+	if !code.contains(block_format(block_name)) {
+		new_code = block_format(block_name) + '\n' + new_code
+	}
+	for i in 1 .. tools.demo_blocks.len {
+		block_name = tools.demo_blocks[i]
+		if !code.contains(block_format(block_name)) {
+			new_code += '\n' + block_format(block_name)
+		}
+	}
+	new_code += '\n' + block_format('end')
+	println(new_code)
+	return new_code
+}
+
 pub fn (mut dt DemoTemplate) update_blocks() {
-	code := dt.tb.get_text()
-	for i, block_name in tools.demo_blocks[0..(tools.demo_blocks.len - 1)] {
-		start := '[[${block_name}]]'
-		stop := '[[${tools.demo_blocks[i + 1]}]]'
+	code := complete_demo_ui_code(dt.tb.get_text())
+	for _, block_name in tools.demo_blocks[0..tools.demo_blocks.len] {
+		start := block_format(block_name)
+		stop := tools.block_format_delim['start'] // '[[${tools.demo_blocks[i + 1]}]]'
 		dt.blocks[block_name] = if code.contains(start) && code.contains(stop) {
 			code.find_between(start, stop)
 		} else {
 			''
 		}
 	}
-	block_name := tools.demo_blocks[tools.demo_blocks.len - 1]
-	start := '[[${block_name}]]'
-	dt.blocks[block_name] = if code.contains(start) {
-		code.all_after(start)
-	} else {
-		''
-	}
+	println(dt.blocks)
+	// block_name := tools.demo_blocks[tools.demo_blocks.len - 1]
+	// start := block_format(block_name)
+	// dt.blocks[block_name] = if code.contains(start) {
+	// 	code.all_after(start)
+	// } else {
+	// 	''
+	// }
 }
 
 // pub fn update_demo_toolbar_edit(code string, mut tbs map[string]&ui.TextBox) {
@@ -87,4 +109,8 @@ pub fn (mut dt DemoTemplate) write_file() {
 	}
 	code += '\n' + dt.template['post']
 	os.write_file(dt.file, code) or { panic(err) }
+}
+
+fn block_format(block_name string) string {
+	return tools.block_format_delim['start'] + block_name + tools.block_format_delim['stop']
 }

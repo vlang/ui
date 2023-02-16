@@ -56,8 +56,9 @@ pub fn update_build(file string, src string, mut tbs map[string]&ui.TextBox) {
 	for i in 0 .. (tools.build_blocks.len - 1) {
 		start = tools.build_comment_block_delims['end_${tools.build_blocks[i]}']
 		stop = tools.build_comment_block_delims['begin_${tools.build_blocks[i + 1]}']
-		code += start + src.find_between(start, stop) + stop + unsafe { tbs[tools.build_blocks[i +
-			1]].get_text() }
+		code += start + src.find_between(start, stop) + stop + unsafe {
+			tbs[tools.build_blocks[i + 1]].get_text()
+		}
 	}
 	start = tools.build_comment_block_delims['end_${tools.build_blocks[tools.build_blocks.len - 1]}']
 	code += src.all_after(start)
