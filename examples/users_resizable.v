@@ -65,7 +65,7 @@ fn main() {
 			val: 2
 			// theme: "red"
 		)
-		label: ui.label(text: '2/10')
+		label: ui.label(id: 'counter', text: '2/10', text_font_name: 'fixed_bold_italic')
 	}
 	mut window := ui.window(
 		width: win_width
@@ -128,15 +128,17 @@ fn main() {
 								id: 'btn_row'
 								widths: ui.compact
 								heights: 20.0
-								spacing: .3
+								spacing: 80
 								children: [
 									ui.button(
+										width: 60
 										text: 'Add user'
 										tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
 										on_click: app.btn_add_click
 										radius: .0
 									),
 									ui.button(
+										width: 40
 										tooltip: 'about'
 										text: '?'
 										on_click: btn_help_click
@@ -145,10 +147,10 @@ fn main() {
 								]
 							),
 							ui.row(
-								spacing: .05
+								spacing: 10
 								widths: [
-									.8,
-									.15,
+									150.0,
+									40,
 								]
 								heights: ui.compact
 								children: [

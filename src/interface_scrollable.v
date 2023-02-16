@@ -284,7 +284,7 @@ pub fn scrollview_restore_offset[T](w &T, orig bool) {
 		}
 		if sv.active_y {
 			if !has_parent_scrolling(sv.widget) {
-				println('restore offset ${sv.widget.id}')
+				// println('restore offset ${sv.widget.id}')
 				sv.orig_y = w.y
 			}
 			sv.offset_y = sv.prev_offset_y
@@ -737,7 +737,7 @@ fn scrollview_scroll(mut sv ScrollView, e &ScrollEvent, _ voidptr) {
 		if sw is Widget {
 			w := sw as Widget
 			if sv.ui.window.is_top_widget(w, events.on_scroll) {
-				println('scroll ${w.id}')
+				// println('scroll ${w.id}')
 				if sv.active_x {
 					sv.offset_x -= int(e.x * sv.delta_mouse)
 					sv.change_value(.btn_x)

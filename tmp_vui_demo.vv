@@ -26,6 +26,7 @@ mut:
 	status &ui.TextBox   	 = unsafe { nil }
 	texts  map[string]string
 	active ui.Widget = ui.empty_stack
+	btn_cb map[string]fn(&ui.Button)
 	boundings [][]string
 	bounding_cur int
 	cache_code map[string]string 
@@ -80,6 +81,7 @@ fn (mut app App) run(_ &ui.Button) {
 	last_ts := live.info().last_mod_ts
 	reload_ms := live.info().reload_time_ms
 	app.dt.write_file()
+	{return} 
 	mut reloads2 := live.info().reloads_ok
 	mut last_ts2 := live.info().last_mod_ts
 	mut reload_ms2 := live.info().reload_time_ms
@@ -110,7 +112,25 @@ fn (mut app App) clear_status() {
 [live]
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
-// <<BEGIN_LAYOUT>>// <<END_LAYOUT>>
+// <<BEGIN_LAYOUT>>
+app.btn_cb['btn_click'] = fn (_ &ui.Button) { 
+		ui.message_box('coucou toto!')
+}
+layout = ui.box_layout(
+  children: {
+    'btn: (0.2, 0.4) -> (0.5,0.5)': ui.button(
+      text: 'show'
+      on_click: fn (btn &ui.Button) {
+        ui.message_box('Hi everybody !')
+      }
+    )
+	'btn2: (0.7, 0.2) ++ (40,20)': ui.button(
+      text: 'show2'
+      on_click: app.btn_cb['btn_click']
+	)
+  }
+)
+// <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()
 	app.layout.update_child("active", mut layout)	
@@ -118,21 +138,25 @@ fn (mut app App) update_interactive() {
 
 [live]
 fn (mut app App) make_precode() {
-// <<BEGIN_MAIN_PRE>>// <<END_MAIN_PRE>>
+// <<BEGIN_MAIN_PRE>>
+// <<END_MAIN_PRE>>
 }
 
 [live]
 fn (mut app App) make_postcode() {
-// <<BEGIN_MAIN_POST>>// <<END_MAIN_POST>>
+// <<BEGIN_MAIN_POST>>
+// <<END_MAIN_POST>>
 }
 
 [live]
 fn (mut app App) win_init(_ &ui.Window) {
-	app.edit.scrollview.set(0, .btn_y)
-	ui.scrollview_reset(mut app.edit)
-	app.edit.tv.sh.set_lang('.v')
-	app.edit.is_line_number = true
+	 
+			app.edit.scrollview.set(0, .btn_y)
+			ui.scrollview_reset(mut app.edit)
+			app.edit.tv.sh.set_lang('.v')
+			app.edit.is_line_number = true
 	
+	// tools.update_demo_toolbar_edit(src_codes["button"], mut app.toolbars_edit)
 // <<BEGIN_WINDOW_INIT>>// <<END_WINDOW_INIT>>
 }
 

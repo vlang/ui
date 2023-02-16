@@ -127,7 +127,7 @@ fn (mut app App) make_postcode() {
 }
 
 [live]
-fn (mut app App) win_init(_ &ui.Window) {
+fn (mut app App) win_init(_ &ui.Window) { 
 	app.edit.scrollview.set(0, .btn_y)
 	ui.scrollview_reset(mut app.edit)
 	app.edit.tv.sh.set_lang('.v')

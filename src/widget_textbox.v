@@ -50,7 +50,7 @@ pub mut:
 	ui &UI = unsafe { nil }
 	// text               string
 	text               &string = unsafe { nil }
-	text_              string // This is the internal string content when not provided by the user
+	text_value         string // This is the internal string content when not provided by the user
 	max_len            int
 	line_height        int
 	line_height_factor f64
@@ -140,7 +140,8 @@ pub struct TextBoxParams {
 	is_numeric         bool
 	is_password        bool
 	text               &string = unsafe { nil }
-	is_error           &bool   = unsafe { nil }
+	text_value         string
+	is_error           &bool = unsafe { nil }
 	is_focused         bool
 	// is_error bool
 	// bg_color           gx.Color = gx.white
@@ -180,7 +181,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		style_params: c.TextBoxStyleParams
 		ui: 0
 		text: c.text
-		text_: ''
+		text_value: c.text_value
 		is_focused: c.is_focused
 		is_error: c.is_error
 		read_only: c.read_only || c.mode.has(.read_only)
@@ -199,7 +200,13 @@ pub fn textbox(c TextBoxParams) &TextBox {
 	}
 	tb.style_params.style = c.theme
 	if tb.text == 0 {
-		tb.text = &tb.text_
+		tb.text = &tb.text_value
+	} else {
+		if !c.text_value.is_blank() {
+			unsafe {
+				*tb.text = c.text_value
+			}
+		}
 	}
 	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
@@ -1015,6 +1022,10 @@ fn (mut tb TextBox) unfocus() {
 }
 
 pub fn (mut tb TextBox) hide() {
+}
+
+pub fn (mut tb TextBox) get_text() string {
+	return *tb.text
 }
 
 pub fn (mut tb TextBox) set_text(s string) {

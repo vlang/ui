@@ -80,11 +80,10 @@ fn main() {
 			ui.box_layout(
 				id: 'bl'
 				children: {
-					'col1: (0,0) ++ (0.3,0.5)':  ui.column(
+					'col1: (10,0) ++ (200,1)':   ui.column(
 						spacing: 10
 						widths: ui.compact
 						heights: ui.compact
-						bg_color: gx.white
 						scrollview: true
 						children: [
 							ui.textbox(
@@ -126,17 +125,19 @@ fn main() {
 							app.country,
 							ui.row(
 								id: 'btn_row'
-								widths: [.5, .2]
+								widths: ui.compact
 								heights: 20.0
-								spacing: .3
+								spacing: 80
 								children: [
 									ui.button(
+										width: 60
 										text: 'Add user'
 										tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
 										on_click: app.btn_add_click
 										radius: .0
 									),
 									ui.button(
+										width: 40
 										tooltip: 'about'
 										text: '?'
 										on_click: btn_help_click
@@ -145,10 +146,10 @@ fn main() {
 								]
 							),
 							ui.row(
-								spacing: .05
+								spacing: 10
 								widths: [
-									.8,
-									.15,
+									150.0,
+									40,
 								]
 								heights: ui.compact
 								children: [
@@ -158,7 +159,7 @@ fn main() {
 							),
 						]
 					)
-					'col2: (0.3,20) -> (-5,-5)': ui.column(
+					'col2: (220,20) -> (-5,-5)': ui.column(
 						scrollview: true
 						alignments: ui.HorizontalAlignments{
 							center: [

@@ -553,7 +553,7 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 
 // TODO: documentation
 pub fn (mut c CanvasLayout) set_children_pos() {
-	println('scp ${c.id}')
+	// println('scp ${c.id}')
 	for i, mut child in c.children {
 		// scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)

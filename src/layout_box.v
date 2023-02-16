@@ -501,7 +501,7 @@ fn (mut b BoxLayout) set_drawing_children() {
 
 pub fn (b &BoxLayout) is_box_hidden(id string) bool {
 	ind := b.child_id.index(id)
-	println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
+	// println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
 	if ind < 0 {
 		return false
 	}
@@ -525,6 +525,9 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
 	mut tmp2 := []string{}
 	if bounding == 'hidden' {
 		vec4 = [f32(0), 0, 0, 0] // hidden in drawing_children
+		mode = 'rect'
+	} else if bounding == 'stretch' {
+		vec4 = [f32(0), 0, 1, 1] // stretch means full size
 		mode = 'rect'
 	} else if bounding.contains('++') {
 		tmp2 = bounding.split('++').map(it.trim_space())
