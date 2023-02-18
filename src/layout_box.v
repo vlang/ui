@@ -267,9 +267,10 @@ pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
 	if ind < 0 {
 		return
 	}
-	parent := b.children[ind].parent
+	child.id = b.children[ind].id
+	b.children[ind].cleanup()
 	b.children[ind] = child
-	child.init(parent)
+	child.init(b)
 	b.update_layout()
 }
 

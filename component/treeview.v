@@ -187,6 +187,7 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 		indent: c.indent
 		filter_types: c.filter_types
 		hidden_files: c.hidden_files
+		mode: c.mode
 		on_click: c.on_click
 		bg_color: c.bg_color
 		bg_sel_color: c.bg_sel_color
@@ -370,21 +371,21 @@ pub fn (tv &TreeViewComponent) full_title(id string) string {
 	return os.join_path(res[0], ...res[1..])
 }
 
-fn (mut tv TreeViewComponent) activate(id string) {
+pub fn (mut tv TreeViewComponent) activate(id string) {
 	if id in tv.containers {
 		mut l := tv.containers[id] or { return }
 		l.set_children_depth(tv.z_index[id], l.child_index_by_id(tv.views[id]))
 	}
 }
 
-fn (mut tv TreeViewComponent) deactivate(id string) {
+pub fn (mut tv TreeViewComponent) deactivate(id string) {
 	if id in tv.containers {
 		mut l := tv.containers[id] or { return }
 		l.set_children_depth(ui.z_index_hidden, l.child_index_by_id(tv.views[id]))
 	}
 }
 
-fn (mut tv TreeViewComponent) deactivate_all() {
+pub fn (mut tv TreeViewComponent) deactivate_all() {
 	for id in tv.root_ids.reverse() {
 		if tv.types[id] == 'root' {
 			// println("dea all $id ${tv.titles[id]}")
@@ -393,6 +394,11 @@ fn (mut tv TreeViewComponent) deactivate_all() {
 			tv.layout.update_layout_without_pos()
 		}
 	}
+}
+
+// TODO: documentation
+pub fn (tv &TreeViewComponent) selected_title() string {
+	return tv.titles[tv.sel_id]
 }
 
 // TODO: documentation
