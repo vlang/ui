@@ -1,0 +1,12 @@
+layout = ui.box_layout(
+  children: {
+     'rect: (0.2, 0.4) -> (0.5,0.5)': ui.rectangle(
+				color: gx.yellow
+			),
+    'lab: (0.2, 0.4) -> (0.5,0.5)': ui.label(
+				text: 'Centered text'
+				justify: [0.5, 0.75]
+				// text_align: .center
+			),
+  }
+)

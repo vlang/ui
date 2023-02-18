@@ -7,6 +7,9 @@ pub fn parse_shortcut(s string) (KeyMod, int, string) {
 	mods, key := parse_mods_shortcut(s)
 	code := parse_key(key)
 	// N.B.: if code == 0 => char mode shortcut
+	$if parse_shortcut ? {
+		println([mods.str(), code.str(), key])
+	}
 	return mods, code, key
 }
 

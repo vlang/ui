@@ -193,7 +193,7 @@ fn btn_new_ok(b &ui.Button) {
 		if mf.on_new != MenuFileFn(0) {
 			mf.on_new(mf)
 		}
-		dtv.open(mf.folder_to_open)
+		dtv.open_dir(mf.folder_to_open)
 	}
 	h.hide()
 }
@@ -213,7 +213,7 @@ fn btn_open_ok(b &ui.Button) {
 	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
 		2))
 	mf.folder_to_open = fb.selected_full_title()
-	dtv.open(mf.folder_to_open)
+	dtv.open_dir(mf.folder_to_open)
 }
 
 fn btn_open_cancel(b &ui.Button) {

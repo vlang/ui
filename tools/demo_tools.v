@@ -6,10 +6,6 @@ import os
 const (
 	demo_blocks               = ['layout', 'main_pre', 'main_post', 'window_init'] // in the right order
 	demo_comment_block_delims = set_demo_comment_block_delims()
-	block_format_delim        = {
-		'start': '[<'
-		'stop':  '>]'
-	}
 )
 
 [heap]
@@ -63,7 +59,7 @@ pub fn (mut dt DemoTemplate) update_blocks() {
 	code := complete_demo_ui_code(dt.tb.get_text())
 	for _, block_name in tools.demo_blocks[0..tools.demo_blocks.len] {
 		start := block_format(block_name)
-		stop := tools.block_format_delim['start'] // '[[${tools.demo_blocks[i + 1]}]]'
+		stop := block_format_delim['start'] // '[[${tools.demo_blocks[i + 1]}]]'
 		dt.blocks[block_name] = if code.contains(start) && code.contains(stop) {
 			code.find_between(start, stop)
 		} else {
@@ -109,8 +105,4 @@ pub fn (mut dt DemoTemplate) write_file() {
 	}
 	code += '\n' + dt.template['post']
 	os.write_file(dt.file, code) or { panic(err) }
-}
-
-fn block_format(block_name string) string {
-	return tools.block_format_delim['start'] + block_name + tools.block_format_delim['stop']
 }

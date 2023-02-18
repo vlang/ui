@@ -146,3 +146,8 @@ pub fn (w Widget) is_in_parent_tree(parent Widget) bool {
 pub fn (w Widget) window() &Window {
 	return w.ui.window
 }
+
+// Shorten w.ui.window.get_or_panic
+pub fn (w Widget) get[T](id string) &T {
+	return w.ui.window.get_or_panic[T](id)
+}

@@ -144,6 +144,8 @@ pub mut:
 	hidden_files bool
 	incr_mode    bool
 	indent       int
+	// mode
+	mode string
 	// event
 	on_click TreeViewClickFn
 }
@@ -164,6 +166,7 @@ pub struct TreeViewParams {
 	indent       int = 10
 	filter_types []string
 	hidden_files bool
+	mode         string = 'default'
 }
 
 // TODO: documentation
@@ -232,6 +235,7 @@ pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
 		on_click: p.on_click
 		indent: p.indent
 		filter_types: if p.folder_only { ['root'] } else { p.filter_types }
+		mode: 'dirtree'
 	)
 }
 
@@ -396,21 +400,23 @@ pub fn (tv &TreeViewComponent) selected_full_title() string {
 	return tv.full_title(tv.sel_id)
 }
 
-// TODO: documentation
-pub fn (mut tv TreeViewComponent) open(folder string) {
-	tv.deactivate_all()
-	l := tv.layout
-	mut l2 := l.parent
-	if mut l2 is ui.Stack {
-		l2.remove(at: 0)
-		l2.add(
-			at: 0
-			child: dirtreeview_stack(
-				id: tv.id
-				trees: [folder]
-				on_click: tv.on_click
+// dirtreeview related
+pub fn (mut tv TreeViewComponent) open_dir(folder string) {
+	if tv.mode == 'dirtree' {
+		tv.deactivate_all()
+		l := tv.layout
+		mut l2 := l.parent
+		if mut l2 is ui.Stack {
+			l2.remove(at: 0)
+			l2.add(
+				at: 0
+				child: dirtreeview_stack(
+					id: tv.id
+					trees: [folder]
+					on_click: tv.on_click
+				)
 			)
-		)
+		}
 	}
 }
 

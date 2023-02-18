@@ -83,6 +83,7 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 
 // TODO: documentation
 pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
+	// println("key_shortcut ${int(e.key)}")
 	if int(e.key) in shortcuts.keys {
 		sc := shortcuts.keys[int(e.key)]
 		if has_key_mods(e.mods, sc.mods) {
