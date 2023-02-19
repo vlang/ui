@@ -29,6 +29,27 @@ mut:
 }
 
 // TODO: documentation
+pub fn (w &Widget) is_visible() bool {
+	return !w.hidden && w.z_index > z_index_hidden
+}
+
+// TODO: documentation
+pub fn (w &Widget) is_parent_visible(recursive bool) bool {
+	parent := w.parent
+	if parent is Widget {
+		p := parent as Widget
+		if recursive {
+			return p.is_visible() && p.is_parent_visible(true)
+		} else {
+			return p.is_visible()
+		}
+	} else if parent is Window {
+		return true
+	}
+	return false
+}
+
+// TODO: documentation
 pub fn (w &Widget) get_depth() int {
 	return w.z_index
 }

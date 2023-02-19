@@ -62,17 +62,18 @@ enum BoxMode {
 [heap]
 pub struct BoxLayout {
 pub mut:
-	id         string
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	is_focused bool
-	parent     Layout = empty_stack
-	ui         &UI    = unsafe { nil }
+	id          string
+	height      int
+	width       int
+	x           int
+	y           int
+	offset_x    int
+	offset_y    int
+	z_index     int
+	deactivated bool
+	is_focused  bool
+	parent      Layout = empty_stack
+	ui          &UI    = unsafe { nil }
 	// children
 	child_box        []Box
 	child_id         []string
@@ -184,6 +185,7 @@ fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
 		'lt2rb' { b.add_lt2rb_child(id, child, bounding_vec) }
 		else {}
 	}
+	b.update_visible_children()
 }
 
 // TODO: documentation
@@ -197,6 +199,7 @@ pub fn (mut b BoxLayout) update_child_bounding(keys ...string) {
 			else {}
 		}
 	}
+	b.update_visible_children()
 	b.update_layout()
 }
 
@@ -271,7 +274,14 @@ pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
 	b.children[ind].cleanup()
 	b.children[ind] = child
 	child.init(b)
+	b.register_child(child)
 	b.update_layout()
+}
+
+pub fn (mut b BoxLayout) update_visible_children() {
+	for i, mut child in b.children {
+		child.hidden = b.child_box[i].is_null()
+	}
 }
 
 fn (mut b BoxLayout) decode_size() {
@@ -507,7 +517,12 @@ pub fn (b &BoxLayout) is_box_hidden(id string) bool {
 		return false
 	}
 	box := b.child_box[ind]
-	return unsafe { box.x == 0 && box.y == 0 && box.width == 0 && box.height == 0 }
+	return box.is_null()
+}
+
+fn (mut b BoxLayout) register_child(child Widget) {
+	mut window := b.ui.window
+	window.register_child(child)
 }
 
 // parse child key and return id and bounding spec
@@ -637,4 +652,8 @@ fn box_direction(rect &gg.Rect) BoxMode {
 	} else {
 		.left_bottom_width_height
 	}
+}
+
+pub fn (box Box) is_null() bool {
+	return unsafe { box.x == 0 && box.y == 0 && box.width == 0 && box.height == 0 }
 }

@@ -66,6 +66,8 @@ pub fn (mut l Layout) activate() {
 		l.deactivated = false
 	} else if mut l is CanvasLayout {
 		l.deactivated = false
+	} else if mut l is BoxLayout {
+		l.deactivated = false
 	}
 }
 
@@ -74,6 +76,8 @@ pub fn (mut l Layout) deactivate() {
 	if mut l is Stack {
 		l.deactivated = true
 	} else if mut l is CanvasLayout {
+		l.deactivated = true
+	} else if mut l is BoxLayout {
 		l.deactivated = true
 	}
 }

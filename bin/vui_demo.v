@@ -34,12 +34,13 @@ mut:
 	active ui.Widget = ui.empty_stack
 	boundings [][]string
 	bounding_cur int
+	bounding_box_cur string
 	cache_code map[string]string
 }
 
 fn (mut app App) set_status(txt string) {
 	app.status.set_text(txt)
-	println('status: ${txt}')
+	// println('status: ${txt}')
 }
 
 fn (mut app App) clear_status() {
@@ -49,13 +50,13 @@ fn (mut app App) clear_status() {
 
 fn (mut app App) make_children() {
 	app.boundings = [
-		['treedemo: hidden', 'treelayout: hidden', 'run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) ++ (1,0.5)',
+		['bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) ++ (1,0.5)',
 			'active: (0, 0.5) ++ (1,0.5)'],
-		['treedemo: hidden', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) -> (1,1)',
+		['bb: hidden','treedemo: hidden', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) -> (1,1)',
 			'active: (0, 0) -> (0,0)'],
-		['treedemo: hidden', 'treelayout: hidden','run: hidden', 'status: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
-		['treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
-		['treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['bb: hidden','treedemo: hidden', 'treelayout: hidden','run: hidden', 'status: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
+		['bb: hidden','treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['bb: hidden','treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
 	]
 	app.active = ui.box_layout(id: "active")
 	app.run_btn = ui.button(
@@ -92,25 +93,19 @@ fn (mut app App) make_children() {
 	app.treelayout = tools.layouttree_stack(
 		widget: app.active
 		on_click: fn [mut app](c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
-			selected := tv.titles[c.id]
-			println("selected $selected in widgets ${selected in app.window.widgets}")
-			if selected in app.window.widgets {
-				mut bb := app.window.widgets[selected]
-				w, h := bb.size()
-				println("(${bb.x}, ${bb.y} ++ (${w}, ${h}))")
-				app.layout.update_child_bounding("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
-				app.layout.update_layout()
-			}
+			app.bounding_box_cur = tv.titles[c.id]
+			// println("selected $selected in widgets ${selected in app.window.widgets} ${app.window.widgets.keys()}")
+			app.update_bounding_box()
 		}
 	)
-	app.bounding_box = ui.rectangle(id: "bb", z_index: 10, color: gx.rgba(255,0, 0, 10))
+	app.bounding_box = ui.rectangle(id: "bb", z_index: 10, color: gx.rgba(255,0, 0, 100))
 	app.status = ui.textbox(mode: .read_only)
 	app.layout = ui.box_layout(
 		id: 'bl_root'
 		children: {
 			'run: (0,0) ++ (50,20)':       app.run_btn
-			'treedemo: hidden': app.treedemo
-			'treelayout: hidden': app.treelayout
+			'treedemo: hidden':  ui.column(children: [app.treedemo])
+			'treelayout: hidden': ui.column(children: [app.treelayout])
 			'status: (55,0) -> (1,20)':    app.status
 			'edit: (0,20) -> (1,0.5)':     app.edit
 			'active: (0, 0.5) -> (1,1)': app.active
@@ -125,10 +120,19 @@ fn (mut app App) update_treelayout() {
 	tools.layouttree_reopen(mut tvc, app.active)
 }
 
+fn (mut app App) update_bounding_box() {
+	if app.bounding_box_cur in app.window.widgets {
+		mut bb := app.window.widgets[app.bounding_box_cur]
+		w, h := bb.size()
+		// println("(${bb.x}, ${bb.y} ++ (${w}, ${h}))")
+		app.layout.update_child_bounding("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
+		// app.layout.update_layout()
+	}
+}
+
 fn (mut app App) run() {
 	// TODO: app.set_status below does not ork 
 	app.set_status('recompiling...')
-	println("reccccooommm")
 	reloads := live.info().reloads_ok
 	last_ts := live.info().last_mod_ts
 	reload_ms := live.info().reload_time_ms
@@ -145,7 +149,7 @@ fn (mut app App) run() {
 		last_ts2 = live.info().last_mod_ts
 		reload_ms2 = live.info().reload_time_ms
 	}
-	println('${reloads} ?= ${reloads2}  ${last_ts} ?= ${last_ts2} ${reload_ms} ?= ${reload_ms2}')
+	// println('${reloads} ?= ${reloads2}  ${last_ts} ?= ${last_ts2} ${reload_ms} ?= ${reload_ms2}')
 	time.sleep(time_sleep * time.millisecond)
 	if reloads2 == reloads && reload_ms == reload_ms2 {
 		ui.message_box('rerun since compilation failed: ${reloads} ?= ${reloads2}  ${last_ts} ?= ${last_ts2} ${reload_ms} ?= ${reload_ms2}')
@@ -210,6 +214,10 @@ fn (mut app App) win_init(_ &ui.Window) {
 
 // vfmt on
 
+fn (mut app App) resize(_ &ui.Window, _ int, _ int) {
+	app.update_bounding_box()
+}
+
 fn main() {
 	mut app := App{}
 	app.make_children()
@@ -221,6 +229,7 @@ fn main() {
 		title: 'V UI: Demo'
 		mode: .resizable
 		on_init: app.win_init
+		on_resize: app.resize
 		children: [app.layout]
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
@@ -254,8 +263,16 @@ fn main() {
 		app.bounding_cur = 1
 		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
 	}, app)
-	sc.add_shortcut_with_context('ctrl + 2', fn (mut app App) {
+	sc.add_shortcut_with_context('ctrl + n', fn (mut app App) {
 		app.bounding_cur = 0
+		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+	}, app)
+	sc.add_shortcut_with_context('ctrl + o', fn (mut app App) {
+		app.bounding_cur = 3
+		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+	}, app)
+	sc.add_shortcut_with_context('ctrl + b', fn (mut app App) {
+		app.bounding_cur = 4
 		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
 	}, app)
 	// POST CODE HERE

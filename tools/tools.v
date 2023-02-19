@@ -37,8 +37,7 @@ pub fn treedir(path string, fpath string) uic.Tree {
 // treechildren
 pub fn tree_layout(layout ui.Layout) uic.Tree {
 	children := layout.get_children()
-	//
-	println('tree_layout ${layout.id} ${children.map(it.id)}')
+	// println('tree_layout ${layout.id} ${children.map(it.id)}')
 	t := uic.Tree{
 		title: layout.id
 		items: children.map(if it is ui.Layout {
