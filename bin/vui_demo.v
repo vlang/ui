@@ -163,23 +163,6 @@ fn (mut app App) run() {
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
-btn_click := fn (_ &ui.Button) { 
-		ui.message_box('coucou toto!')
-}
-layout = ui.box_layout(
-  children: {
-    'btn: (0.2, 0.4) -> (0.5,0.5)': ui.button(
-      text: 'show'
-      on_click: fn (btn &ui.Button) {
-        ui.message_box('Hi everybody !')
-      }
-    )
-	'btn2: (0.7, 0.2) ++ (40,20)': ui.button(
-      text: 'show2'
-      on_click: btn_click
-	)
-  }
-)
 // <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()

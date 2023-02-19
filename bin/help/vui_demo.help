@@ -1,5 +1,8 @@
 Shortcuts:
 
-Ctrl + H: toggle this help message box
-Ctrl + O: toggle Menu File
-Ctrl + P: toggle Palette
+ctrl + h: toggle this help message box
+ctrl + o: show tree of examples
+ctrl + e: only show the editor of the source code
+ctrl + v: only show the view of the result
+ctrl + n: show editor and view of the result
+ctrl + b: show tree of children to show the bounding box of selected child
