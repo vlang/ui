@@ -520,7 +520,7 @@ pub fn (b &BoxLayout) is_box_hidden(id string) bool {
 	return box.is_null()
 }
 
-fn (mut b BoxLayout) register_child(child Widget) {
+pub fn (mut b BoxLayout) register_child(child Widget) {
 	mut window := b.ui.window
 	window.register_child(child)
 }

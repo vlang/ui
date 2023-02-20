@@ -310,7 +310,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 		} else {
 			tv.deactivate(c.id)
 		}
-		tv.layout.update_layout_without_pos()
+		tv.layout.update_layout() //_without_pos()
 	}
 	if tv.sel_id != '' {
 		c.style.bg_color = tv.bg_sel_color
@@ -326,7 +326,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	// To update scrollview
 	mut tvcol := tv.layout.parent
 	if mut tvcol is ui.Stack {
-		tvcol.update_layout_without_pos()
+		tvcol.update_layout() //_without_pos()
 		ui.scrollview_update(tvcol)
 	}
 
@@ -385,13 +385,24 @@ pub fn (mut tv TreeViewComponent) deactivate(id string) {
 	}
 }
 
+pub fn (mut tv TreeViewComponent) activate_all() {
+	for id in tv.root_ids {
+		if tv.types[id] == 'root' {
+			// println("dea all $id ${tv.titles[id]}")
+			tv.selected[id] = false
+			tv.activate(id)
+			tv.layout.update_layout() //_without_pos()
+		}
+	}
+}
+
 pub fn (mut tv TreeViewComponent) deactivate_all() {
 	for id in tv.root_ids.reverse() {
 		if tv.types[id] == 'root' {
 			// println("dea all $id ${tv.titles[id]}")
 			tv.selected[id] = false
 			tv.deactivate(id)
-			tv.layout.update_layout_without_pos()
+			tv.layout.update_layout() //_without_pos()
 		}
 	}
 }

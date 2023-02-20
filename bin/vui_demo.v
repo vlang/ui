@@ -27,7 +27,9 @@ mut:
 	edit &ui.TextBox = unsafe { nil }
 	treedemo &ui.Stack = unsafe{ nil }
 	treelayout &ui.Stack = unsafe{ nil }
+	toolbar &ui.Stack = unsafe{ nil }
 	run_btn   &ui.Button 	 = unsafe { nil }
+	help_btn   &ui.Button 	 = unsafe { nil }
 	status &ui.TextBox   	 = unsafe { nil }
 	bounding_box  &ui.Rectangle = unsafe{ nil }
 	texts  map[string]string
@@ -50,13 +52,13 @@ fn (mut app App) clear_status() {
 
 fn (mut app App) make_children() {
 	app.boundings = [
-		['bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) ++ (1,0.5)',
+		['toolbar: (0,0) -> (1,20)', 'bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) ++ (1,0.5)',
 			'active: (0, 0.5) ++ (1,0.5)'],
-		['bb: hidden','treedemo: hidden', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0,20) -> (1,1)',
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) -> (1,1)',
 			'active: (0, 0) -> (0,0)'],
-		['bb: hidden','treedemo: hidden', 'treelayout: hidden','run: hidden', 'status: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
-		['bb: hidden','treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
-		['bb: hidden','treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden','run: (0,0) ++ (50,20)', 'status: (55,0) -> (1,20)', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: hidden','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
 	]
 	app.active = ui.box_layout(id: "active")
 	app.run_btn = ui.button(
@@ -66,6 +68,23 @@ fn (mut app App) make_children() {
 			// println("btn run clicked")
 			app.run()
 		}
+	)
+	app.help_btn = ui.button(
+		text: ' ? '
+		bg_color: gx.light_green
+		on_click: fn [mut app] (_ &ui.Button) {
+			mut sw := app.window.get_or_panic[ui.SubWindow]("help")
+			sw.set_visible(sw.hidden)
+		}
+	)
+	app.status = ui.textbox(mode: .read_only)
+	app.toolbar = ui.row(
+		id: "toolbar"
+		margin_: 2
+		spacing: 2
+		bg_color: gx.black
+		widths: [ui.compact, ui.compact, ui.stretch]
+		children: [app.run_btn, app.help_btn, app.status]
 	)
 	app.edit = ui.textbox(
 		mode: .multiline
@@ -99,14 +118,12 @@ fn (mut app App) make_children() {
 		}
 	)
 	app.bounding_box = ui.rectangle(id: "bb", z_index: 10, color: gx.rgba(255,0, 0, 100))
-	app.status = ui.textbox(mode: .read_only)
 	app.layout = ui.box_layout(
 		id: 'bl_root'
 		children: {
-			'run: (0,0) ++ (50,20)':       app.run_btn
+			'toolbar: (0,0) ++ (1,20)':       app.toolbar
 			'treedemo: hidden':  ui.column(children: [app.treedemo])
 			'treelayout: hidden': ui.column(children: [app.treelayout])
-			'status: (55,0) -> (1,20)':    app.status
 			'edit: (0,20) -> (1,0.5)':     app.edit
 			'active: (0, 0.5) -> (1,1)': app.active
 			'bb: hidden': app.bounding_box
@@ -118,6 +135,7 @@ fn (mut app App) make_children() {
 fn (mut app App) update_treelayout() {
 	mut tvc := uic.treeview_component(app.treelayout)
 	tools.layouttree_reopen(mut tvc, app.active)
+	app.layout.register_child(app.treelayout)
 }
 
 fn (mut app App) update_bounding_box() {
@@ -189,9 +207,10 @@ fn (mut app App) win_init(_ &ui.Window) {
 	ui.scrollview_reset(mut app.edit)
 	app.edit.tv.sh.set_lang('.v')
 	app.edit.is_line_number = true
+	app.bounding_cur = 3
+	app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
 	
 // <<BEGIN_WINDOW_INIT>>
-
 // <<END_WINDOW_INIT>>
 }
 
@@ -257,6 +276,9 @@ fn main() {
 	sc.add_shortcut_with_context('ctrl + b', fn (mut app App) {
 		app.bounding_cur = 4
 		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		// println(app.window.widgets.keys())
+		mut tvc := uic.treeview_component(app.treelayout)
+		tvc.activate_all()
 	}, app)
 	// POST CODE HERE
 	app.make_postcode()

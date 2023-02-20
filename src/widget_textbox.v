@@ -1171,10 +1171,10 @@ fn (mut tb TextBox) skip_index_from_cursor(ustr []rune, dtw DrawTextWidget) {
 		}
 		mut mode, mut left_side := -1, true
 		d_start, d_end := tb.cursor_pos - 0, text_len - tb.cursor_pos
-		if dtw.text_width(ustr[start..(end - 1)].string()) < width_max {
+		if dtw.text_width(ustr#[start..(end - 1)].string()) < width_max {
 			mode = 1
 		}
-		if dtw.text_width(ustr[(start + 1)..end].string()) < width_max {
+		if dtw.text_width(ustr#[(start + 1)..end].string()) < width_max {
 			mode += 2
 		}
 		if mode == 2 || (mode == 3 && d_end < d_start) {

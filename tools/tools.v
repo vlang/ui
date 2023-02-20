@@ -86,7 +86,7 @@ pub fn layouttree_stack(p TreeViewLayoutParams) &ui.Stack {
 
 pub fn layouttree_reopen(mut tv uic.TreeViewComponent, layout_widget ui.Widget) {
 	if tv.mode == 'tools.layout' {
-		tv.deactivate_all()
+		// tv.deactivate_all()
 		l := tv.layout
 		// println("layouttree_reopen $tv.id $l.id $layout_widget.id")
 		mut lp := l.parent
