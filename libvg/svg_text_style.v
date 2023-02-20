@@ -12,12 +12,14 @@ pub mut:
 	vertical_align string
 }
 
+// TODO: documentation
 pub fn svg_text_style() &SvgTextStyle {
 	return &SvgTextStyle{}
 }
 
 // utility
 
+// TODO: documentation
 pub fn (mut ts SvgTextStyle) set_align(align int) {
 	ts.align = match align {
 		C.FONS_ALIGN_LEFT { 'start' }
@@ -27,6 +29,7 @@ pub fn (mut ts SvgTextStyle) set_align(align int) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut ts SvgTextStyle) set_vertical_align(align int) {
 	ts.vertical_align = match align {
 		C.FONS_ALIGN_BOTTOM { 'text-top' }

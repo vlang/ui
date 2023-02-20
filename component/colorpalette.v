@@ -25,6 +25,7 @@ pub struct ColorPaletteParams {
 	ncolors   int = 6
 }
 
+// TODO: documentation
 pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	mut colbtn := colorbutton(
 		id: ui.component_id(p.id, 'colbtn')
@@ -97,11 +98,13 @@ pub fn colorpalette_component(w ui.ComponentChild) &ColorPaletteComponent {
 	return unsafe { &ColorPaletteComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteComponent {
 	cp := colorpalette_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 	return cp
 }
 
+// TODO: documentation
 pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 	// println("palette update_colors: $colors")
 	for i in 0 .. math.min(cp.ncolors, colors.len) {
@@ -114,18 +117,21 @@ pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gx.Color) {
 	unsafe {
 		*(cp.colbtn.bg_color) = color
 	}
 }
 
+// TODO: documentation
 pub fn (mut cp ColorPaletteComponent) connect_color(color &gx.Color) {
 	unsafe {
 		cp.color = color
 	}
 }
 
+// TODO: documentation
 pub fn colorpalette_click(cb &ColorButtonComponent) {
 	mut cp := colorpalette_component_from_id(cb.widget.ui.window, ui.component_parent_id(cb.widget.id))
 	cp.selected = cb.widget.id

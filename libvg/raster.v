@@ -37,6 +37,7 @@ pub struct RasterParams {
 	channels int = 4
 }
 
+// TODO: documentation
 pub fn raster(p RasterParams) &Raster {
 	r := &Raster{
 		width: p.width
@@ -47,10 +48,12 @@ pub fn raster(p RasterParams) &Raster {
 	return r
 }
 
+// TODO: documentation
 pub fn (mut r Raster) clear() {
 	r.data = []byte{len: r.width * r.height * r.channels}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) load(img &gg.Image) {
 	// println("$img.width, $img.height, $img.nr_channels")
 	// println("$img.ok, $img.simg_ok")
@@ -61,6 +64,7 @@ pub fn (mut r Raster) load(img &gg.Image) {
 	unsafe { C.memcpy(r.data.data, img.data, r.data.len) }
 }
 
+// TODO: documentation
 pub fn (mut r Raster) load_image(mut ctx gg.Context, path string) {
 	if !os.exists(path) {
 		return
@@ -68,12 +72,14 @@ pub fn (mut r Raster) load_image(mut ctx gg.Context, path string) {
 	r.load(ctx.create_image(path))
 }
 
+// TODO: documentation
 pub fn (r &Raster) save_image_as(path string) {
 	stbi.stbi_write_png(path, r.width, r.height, r.channels, r.data.data, r.width * r.channels) or {
 		panic(err)
 	}
 }
 
+// TODO: documentation
 pub fn (r &Raster) get_pixel(i int, j int) gx.Color {
 	k := (i * r.width + j) * r.channels
 	if r.channels == 4 {
@@ -84,6 +90,7 @@ pub fn (r &Raster) get_pixel(i int, j int) gx.Color {
 	return gx.rgba(0, 0, 0, 0)
 }
 
+// TODO: documentation
 pub fn (mut r Raster) set_pixel(i int, j int, color gx.Color) {
 	if j < 0 || j >= r.width || i < 0 || i >= r.height {
 		return
@@ -97,6 +104,7 @@ pub fn (mut r Raster) set_pixel(i int, j int, color gx.Color) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) rectangle_filled(x int, y int, w int, h int, color gx.Color) {
 	for i in y .. (y + h) {
 		for j in x .. (x + w) {
@@ -105,6 +113,7 @@ pub fn (mut r Raster) rectangle_filled(x int, y int, w int, h int, color gx.Colo
 	}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) copy(r2 &Raster, x int, y int, w int, h int) {
 	w2, h2 := f32(r2.width), f32(r2.height)
 	mut color := gx.white

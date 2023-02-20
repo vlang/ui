@@ -1011,8 +1011,7 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
-		// width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
-		width_cur = tv.text_width(ustr[i..(i + 1)].string())
+		width_cur = tv.text_width_additive(ustr[i..(i + 1)].string())
 		width2 := if i < ustr.len { width + width_cur } else { width }
 		if (prev_width + width) / 2 <= xx && xx <= (width + width2) / 2 {
 			return i
@@ -1074,7 +1073,7 @@ fn (tv &TextView) text_width_additive(text string) f64 {
 }
 
 fn (tv &TextView) text_height(text string) int {
-	return DrawTextWidget(tv.tb).text_width(text)
+	return DrawTextWidget(tv.tb).text_height(text)
 }
 
 fn (tv &TextView) text_size(text string) (int, int) {

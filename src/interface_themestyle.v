@@ -7,10 +7,12 @@ mut:
 	load_style()
 }
 
+// TODO: documentation
 pub fn (mut w WidgetThemeStyle) update_theme_style(theme_style string) {
 	w.theme_style = theme_style
 }
 
+// TODO: documentation
 pub fn (mut l Layout) update_theme_style(theme_style string) {
 	if mut l is WidgetThemeStyle {
 		mut w := l as WidgetThemeStyle

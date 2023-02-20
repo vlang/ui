@@ -3,6 +3,7 @@ module ui
 import gx
 import os
 
+// TODO: documentation
 pub fn env(var string) string {
 	return os.getenv(var)
 }

@@ -31,6 +31,7 @@ pub struct MenuFileParams {
 	bg_color        gx.Color = ui.color_solaris
 }
 
+// TODO: documentation
 pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 	btn_newfile := ui.button(
 		id: ui.component_id(p.id, 'btn_newfile')
@@ -131,16 +132,19 @@ pub fn menufile_component(w ui.ComponentChild) &MenuFileComponent {
 	return unsafe { &MenuFileComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn menufile_component_from_id(w ui.Window, id string) &MenuFileComponent {
 	return menufile_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn (mf &MenuFileComponent) treeview_component() &TreeViewComponent {
 	return treeview_component_from_id(mf.layout.ui.window, ui.component_id(mf.id, 'dtv'))
 }
 
 // Init
 
+// TODO: documentation
 pub fn menufile_init(layout &ui.Stack) {
 	mut window := layout.ui.window
 	// println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
@@ -189,7 +193,7 @@ fn btn_new_ok(b &ui.Button) {
 		if mf.on_new != MenuFileFn(0) {
 			mf.on_new(mf)
 		}
-		dtv.open(mf.folder_to_open)
+		dtv.open_dir(mf.folder_to_open)
 	}
 	h.hide()
 }
@@ -209,7 +213,7 @@ fn btn_open_ok(b &ui.Button) {
 	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
 		2))
 	mf.folder_to_open = fb.selected_full_title()
-	dtv.open(mf.folder_to_open)
+	dtv.open_dir(mf.folder_to_open)
 }
 
 fn btn_open_cancel(b &ui.Button) {

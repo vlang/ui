@@ -14,6 +14,7 @@ import encoding.utf8
 * Filler functions
 *
 ******************************************************************************/
+// TODO: documentation
 pub fn (mut r Raster) init_filler() {
 	h := r.height - r.filler.len
 	// println("init_filler h $h = $r.height - $r.filler.len")
@@ -26,12 +27,14 @@ pub fn (mut r Raster) init_filler() {
 	// println("Init filler: ${r.filler.len} rows ${r.filler[0].len}")
 }
 
+// TODO: documentation
 pub fn (mut r Raster) clear_filler() {
 	for i in 0 .. r.height {
 		r.filler[i].clear()
 	}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) exec_filler(color gx.Color) {
 	// println("exec filler inside $r.height")
 	for y in 0 .. r.height {
@@ -60,6 +63,7 @@ pub fn (mut r Raster) exec_filler(color gx.Color) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) fline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
 	mut x0 := f32(in_x0)
 	mut x1 := f32(in_x1)
@@ -212,6 +216,7 @@ pub fn (mut r Raster) aline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Col
 * draw functions
 *
 ******************************************************************************/
+// TODO: documentation
 pub fn (mut r Raster) line(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
 	// outline with aliased borders
 	if r.style == .outline_aliased {
@@ -292,6 +297,7 @@ pub fn (mut r Raster) line(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Colo
 	}
 }
 
+// TODO: documentation
 pub fn (mut r Raster) box(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
 	r.line(in_x0, in_y0, in_x1, in_y0, c)
 	r.line(in_x1, in_y0, in_x1, in_y1, c)
@@ -299,6 +305,7 @@ pub fn (mut r Raster) box(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color
 	r.line(in_x0, in_y0, in_x0, in_y1, c)
 }
 
+// TODO: documentation
 pub fn (mut r Raster) quadratic(in_x0 int, in_y0 int, in_x1 int, in_y1 int, in_cx int, in_cy int, c gx.Color) {
 	/*
 	x0 := int(in_x0 * r.scale)
@@ -385,6 +392,7 @@ fn (mut r Raster) draw_notdef_glyph(in_x int, in_w int) {
 	r.line(int(x - in_w), int(y), int(x), int(y - y_h), r.color)
 }
 
+// TODO: documentation
 pub fn (mut r Raster) draw_text(in_string string) (int, int) {
 	mut bmp := r.bmp
 	mut w := 0
@@ -461,6 +469,7 @@ pub fn (mut r Raster) draw_text(in_string string) (int, int) {
 	return w, int(math.abs(int(bmp.tf.y_max - bmp.tf.y_min)) * bmp.scale)
 }
 
+// TODO: documentation
 pub fn (mut r Raster) draw_glyph(index u16) (int, int) {
 	mut bmp := r.bmp
 	glyph := bmp.tf.read_glyph(index)

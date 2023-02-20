@@ -20,6 +20,7 @@ mut:
 	actions Actions
 }
 
+// TODO: documentation
 pub fn (mut s Actionable) add_action(action string, context voidptr, action_fn ActionFn) {
 	s.actions[action] = Action{
 		context: context
@@ -27,6 +28,7 @@ pub fn (mut s Actionable) add_action(action string, context voidptr, action_fn A
 	}
 }
 
+// TODO: documentation
 pub fn (s &Actionable) run_action(action string) {
 	if action in s.actions {
 		action_ := s.actions[action]

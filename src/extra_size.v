@@ -76,6 +76,7 @@ mut:
 	height_mass    f64
 }
 
+// TODO: documentation
 [unsafe]
 pub fn (c &CachedSizes) free() {
 	unsafe {

@@ -22,6 +22,7 @@ pub struct FontChooserParams {
 	dtw        ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
 }
 
+// TODO: documentation
 pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 	mut lb := ui.listbox(
 		id: c.id
@@ -45,14 +46,17 @@ pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 	return layout
 }
 
+// TODO: documentation
 pub fn fontchooser_component(w ui.ComponentChild) &FontChooserComponent {
 	return unsafe { &FontChooserComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserComponent {
 	return fontchooser_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
 	return w.get_or_panic[ui.ListBox](component.fontchooser_lb_id)
 }
@@ -70,6 +74,7 @@ fn fontchooser_add_fonts_items(mut lb ui.ListBox) {
 	}
 }
 
+// TODO: documentation
 pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
 	fc_layout := w.get_or_panic[ui.Stack](component.fontchooser_row_id)
 	mut fc := fontchooser_component(fc_layout)

@@ -11,14 +11,17 @@ mut:
 	text_styles TextStyles
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) add_font(font_name string, font_path string) {
 	w.ui.add_font(font_name, font_path)
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) init_style(ts TextStyleParams) {
 	w.set_current_style(ts)
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) text_style(ts TextStyleParams) TextStyle {
 	ts_ := if ts.id == no_string { w.text_styles.current } else { w.style_by_id(ts.id) }
 	return TextStyle{
@@ -80,6 +83,7 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 // 	}
 // }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) update_style(ts TextStyleParams) {
 	mut ts_ := if ts.id in w.text_styles.hash {
 		&(w.text_styles.hash[ts.id])
@@ -102,6 +106,7 @@ pub fn (mut w DrawTextWidget) update_style(ts TextStyleParams) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) update_text_size(size f64) {
 	if size > 0 {
 		_, win_height := w.ui.window.size()
@@ -114,6 +119,7 @@ pub fn (mut w DrawTextWidget) update_text_size(size f64) {
 	}
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) style_by_id(id string) TextStyle {
 	return w.text_styles.hash[id] or { w.ui.text_styles[id] or { w.ui.text_styles['_default_'] } }
 }
@@ -123,10 +129,12 @@ pub fn (w DrawTextWidget) current_style() TextStyle {
 	return w.text_styles.current
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) set_current_style(ts TextStyleParams) {
 	w.text_styles.current = w.text_style(ts)
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	// println("load style ${w.style_id()} $ts")
 	if d.has_text_style() {
@@ -159,39 +167,47 @@ pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 	}
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) font_size() int {
 	return w.current_style().size
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) load_style() {
 	w.draw_device_load_style(w.ui.dd)
 }
 
 // Draw and size methods
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) draw_device_load_style(d DrawDevice) {
 	ts := w.current_style()
 	// println("lds $w.id current style: $ts")
 	w.load_style_(d, ts)
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) draw_device_text(d DrawDevice, x int, y int, text string) {
 	d.draw_text_default(x, y, text)
 }
 
+// TODO: documentation
 pub fn (mut w DrawTextWidget) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
 	w.load_style_(d, w.text_style(ts))
 	d.draw_text_default(x, y, text)
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) text_size(text string) (int, int) {
 	return w.ui.dd.text_size(text)
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) text_width(text string) int {
 	return w.ui.dd.text_width(text)
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 	if w.ui.dd is DrawDeviceContext {
 		return w.ui.dd.text_width_additive(text)
@@ -200,6 +216,7 @@ pub fn (w DrawTextWidget) text_width_additive(text string) f64 {
 	}
 }
 
+// TODO: documentation
 pub fn (w DrawTextWidget) text_height(text string) int {
 	return w.ui.dd.text_height(text)
 }

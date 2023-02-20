@@ -32,6 +32,7 @@ pub struct FileBrowserParams {
 	on_click_cancel ui.ButtonFn
 }
 
+// TODO: documentation
 pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 	btn_cancel := ui.button(
 		id: ui.component_id(p.id, 'btn_cancel')
@@ -98,10 +99,12 @@ pub fn filebrowser_component(w ui.ComponentChild) &FileBrowserComponent {
 	return unsafe { &FileBrowserComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn filebrowser_component_from_id(w ui.Window, id string) &FileBrowserComponent {
 	return filebrowser_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
+// TODO: documentation
 pub fn (fb &FileBrowserComponent) selected_full_title() string {
 	tv := fb.tv
 	return tv.selected_full_title()

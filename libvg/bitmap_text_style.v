@@ -13,10 +13,12 @@ pub mut:
 	vertical_align f32
 }
 
+// TODO: documentation
 pub fn bitmap_text_style() &BitmapTextStyle {
 	return &BitmapTextStyle{}
 }
 
+// TODO: documentation
 pub fn (mut ts BitmapTextStyle) set_align(align int) {
 	ts.align = match align {
 		C.FONS_ALIGN_LEFT { .left }
@@ -26,6 +28,7 @@ pub fn (mut ts BitmapTextStyle) set_align(align int) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut ts BitmapTextStyle) set_vertical_align(align int) {
 	ts.vertical_align = match align {
 		C.FONS_ALIGN_BOTTOM { f32(0) }
