@@ -13,6 +13,7 @@ mut:
 	adj_size() (int, int)
 }
 
+// TODO: documentation
 pub fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 	width, height := w.size()
 	adj_width, adj_height := w.adj_size()

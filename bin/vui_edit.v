@@ -62,7 +62,8 @@ fn main() {
 							on_file_changed: fn [mut app] (mut mf uic.MenuFileComponent) {
 								mf.layout.ui.window.set_title('V UI Edit: ${mf.file}')
 								// reinit textbox scrollview
-								mut tb := mf.layout.ui.window.get_or_panic[ui.TextBox]('edit')
+								// mut tb := mf.layout.ui.window.get_or_panic[ui.TextBox]('edit')
+								mut tb := ui.Widget(mf.layout).get[ui.TextBox]('edit')
 								tb.scrollview.set(0, .btn_y)
 								ui.scrollview_reset(mut tb)
 								tv := mf.treeview_component()

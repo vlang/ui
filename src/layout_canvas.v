@@ -38,6 +38,7 @@ pub mut:
 	is_focused       bool
 	ui               &UI = unsafe { nil }
 	hidden           bool
+	is_root_layout   bool = true
 	clipping         bool
 	adj_width        int
 	adj_height       int
@@ -119,6 +120,7 @@ pub struct CanvasLayoutParams {
 	children         []Widget
 }
 
+// TODO: documentation
 pub fn canvas_layout(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := canvas_plus(c)
 	canvas.children = c.children
@@ -214,6 +216,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 
 	c.set_adjusted_size(ui)
 	c.set_children_pos()
+	c.set_root_layout()
 
 	if has_scrollview(c) {
 		c.scrollview.init(parent)
@@ -223,6 +226,24 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	}
 }
 
+// Determine wheither CanvasLayout b is a root layout
+fn (mut c CanvasLayout) set_root_layout() {
+	if mut c.parent is Window {
+		// TODO: before removing line below test if this is necessary
+		// c.ui.window = unsafe {c.parent }
+		mut window := unsafe { c.parent }
+		if c.is_root_layout {
+			window.root_layout = c
+			// window.update_layout()
+		} else {
+			c.update_layout()
+		}
+	} else {
+		c.is_root_layout = false
+	}
+}
+
+// TODO: documentation
 [manualfree]
 pub fn (mut c CanvasLayout) cleanup() {
 	mut subscriber := c.parent.get_subscriber()
@@ -254,6 +275,7 @@ pub fn (mut c CanvasLayout) cleanup() {
 	unsafe { c.free() }
 }
 
+// TODO: documentation
 [unsafe]
 pub fn (c &CanvasLayout) free() {
 	$if free ? {
@@ -368,6 +390,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
 	// println("enter $c.id")
 	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
@@ -380,6 +403,7 @@ pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) on_mouse_leave(e &MouseMoveEvent) {
 	// println("leave $c.id")
 	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
@@ -430,17 +454,32 @@ fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) update_layout() {
 	if c.is_canvas_layer {
 		return
 	}
-	// println("$c.id update_layout")
-	c.set_drawing_children()
+	// TODO: test if this is necessary
+	if c.is_root_layout {
+		window := c.ui.window
+		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
+		$if android {
+			to_resize = true
+		}
+		if to_resize {
+			c.resize(window.width, window.height)
+		}
+	}
+
 	// update size and scrollview if necessary
 	c.set_adjusted_size(c.ui)
 	scrollview_update(c)
+	// println("$c.id update_layout")
+	c.set_drawing_children()
+	scrollview_widget_set_orig_xy(c, true)
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	$if c_adj_size ? {
 		c.debug_ids = env('UI_IDS').split(',').clone()
@@ -512,15 +551,20 @@ pub fn (mut c CanvasLayout) set_adjusted_size(gui &UI) {
 	c.adj_height = h
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) set_children_pos() {
+	// println('scp ${c.id}')
 	for i, mut child in c.children {
+		// scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
+		// scrollview_widget_restore_offset(child, true)
 		if mut child is Stack {
 			child.update_layout()
 		}
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) set_child_relative_pos(id string, x int, y int) {
 	for i, child in c.children {
 		if child.id == id {
@@ -530,19 +574,22 @@ pub fn (mut c CanvasLayout) set_child_relative_pos(id string, x int, y int) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	scrollview_widget_save_offset(c)
 	c.x = x
 	c.y = y
-	scrollview_widget_restore_offset(c)
+	scrollview_widget_restore_offset(c, true)
 	// scrollview_update_orig_size(c)
 	c.set_children_pos()
 }
 
+// TODO: documentation
 pub fn (c CanvasLayout) adj_size() (int, int) {
 	return c.adj_width, c.adj_height
 }
 
+// TODO: documentation
 pub fn (c CanvasLayout) size() (int, int) {
 	return c.width, c.height
 }
@@ -568,6 +615,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 	return fw, fh
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	// TODO: to check if this valid for everything
 	c.width = if w > 0 { w } else { c.adj_width }
@@ -712,6 +760,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) set_visible(state bool) {
 	c.hidden = !state
 	for mut child in c.children {
@@ -719,6 +768,7 @@ pub fn (mut c CanvasLayout) set_visible(state bool) {
 	}
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) point_inside(x f64, y f64) bool {
 	return scrollview_widget_point_inside(c, x, y)
 }
@@ -736,19 +786,23 @@ fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) focus() {
 	mut f := Focusable(c)
 	f.set_focus()
 }
 
+// TODO: documentation
 pub fn (mut c CanvasLayout) unfocus() {
 	c.is_focused = false
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) get_children() []Widget {
 	return c.children
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) child_index_by_id(id string) int {
 	for i, child in c.children {
 		if child.id() == id {
@@ -760,23 +814,28 @@ pub fn (c &CanvasLayout) child_index_by_id(id string) int {
 
 //
 
+// TODO: documentation
 pub fn (c &CanvasLayout) orig_pos(x f64, y f64) (int, int) {
 	return int(x + c.x + c.offset_x), int(y + c.y + c.offset_y)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) abs_pos(x f64, y f64) (int, int) {
 	cx, cy := if has_scrollview(c) { c.scrollview.orig_xy() } else { c.x, c.y }
 	return int(x + cx + c.offset_x), int(y + cy + c.offset_y)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) rel_pos(x f64, y f64) (f32, f32) {
 	return f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) rel_pos_x(x f64) f32 {
 	return f32(x + c.x + c.offset_x)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
 	// println("$y + $c.y + $c.offset_y")
 	return f32(y + c.y + c.offset_y)
@@ -786,22 +845,26 @@ pub fn (c &CanvasLayout) rel_pos_y(y f64) f32 {
 
 // ---- text
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 	c.draw_device_text(c.ui.dd, x, y, text)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
 	mut dtw := DrawTextWidget(c)
 	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
 	dtw.draw_device_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(c)
 	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
 		ts)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
 	mut dtw := DrawTextWidget(c)
 	dtw.draw_device_styled_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
@@ -809,12 +872,14 @@ pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, tex
 
 // ---- triangle
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_triangle_empty(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
 	d.draw_triangle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
 		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
 		c.offset_y), color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
 	d.draw_triangle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
 		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
@@ -823,11 +888,13 @@ pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64,
 
 // ---- square
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_square_empty(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
 	c.draw_device_rect_empty(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
 		s, s, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
 	c.draw_device_rect_filled(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
 		s, s, color)
@@ -835,20 +902,24 @@ pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s
 
 // ---- rectangle
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
 	d.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
 	d.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rounded_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
 	d.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
 		h, rad, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, border_color gx.Color) {
 	rad := relative_size(radius, int(w), int(h))
 	d.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
@@ -857,26 +928,31 @@ pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f
 
 // ---- circle
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_circle_line(d DrawDevice, x f64, y f64, r int, segments int, color gx.Color) {
 	d.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, segments,
 		color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_circle_empty(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
 	d.draw_circle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_circle_filled(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
 	d.draw_circle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
 }
 
 // ---- slice
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_slice_empty(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	d.draw_slice_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
 		end_angle, segments, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	d.draw_slice_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
 		end_angle, segments, color)
@@ -884,16 +960,19 @@ pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r 
 
 // ---- arc
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	d.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
 		start_angle, end_angle, segments, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	d.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
 		start_angle, end_angle, segments, color)
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
 	d.draw_arc_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, start_angle,
 		end_angle, segments, color)
@@ -901,6 +980,7 @@ pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius
 
 // ---- line
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2 f64, color gx.Color) {
 	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
 	// $y2 + $c.y + $c.offset_y")
@@ -910,9 +990,11 @@ pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2
 
 // ---- polygon
 // TODO: What to do about canvas offset?
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_convex_poly(d DrawDevice, points []f32, color gx.Color) {
 }
 
+// TODO: documentation
 pub fn (c &CanvasLayout) draw_device_empty_poly(d DrawDevice, points []f32, color gx.Color) {
 }
 

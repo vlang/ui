@@ -786,7 +786,7 @@ pub fn (mut lb ListBox) set_pos(x int, y int) {
 		scrollview_widget_save_offset(lb)
 		lb.x = x
 		lb.y = y
-		scrollview_widget_restore_offset(lb)
+		scrollview_widget_restore_offset(lb, true)
 	}
 }
 

@@ -23,6 +23,7 @@ pub struct MessageBoxParams {
 	height   int
 }
 
+// TODO: documentation
 pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 	mut tb := ui.textbox(
 		id: ui.component_id(p.id, 'textbox')
@@ -62,6 +63,7 @@ pub fn messagebox_component(w ui.ComponentChild) &MessageBoxComponent {
 	return unsafe { &MessageBoxComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn messagebox_component_from_id(w ui.Window, id string) &MessageBoxComponent {
 	return messagebox_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }

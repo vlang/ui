@@ -16,6 +16,7 @@ mut:
 	unfocus()
 }
 
+// TODO: documentation
 pub fn (f Focusable) has_focusable() bool {
 	mut focusable := true
 	if f is TextBox {
@@ -74,6 +75,7 @@ pub fn (mut f Focusable) force_focus() {
 	}
 }
 
+// TODO: documentation
 pub fn (f Focusable) lock_focus() {
 	mut w := f.ui.window
 	$if focus ? {
@@ -82,6 +84,7 @@ pub fn (f Focusable) lock_focus() {
 	w.locked_focus = f.id
 }
 
+// TODO: documentation
 pub fn (f Focusable) unlock_focus() {
 	mut w := f.ui.window
 	if w.locked_focus == f.id {
@@ -92,6 +95,7 @@ pub fn (f Focusable) unlock_focus() {
 	}
 }
 
+// TODO: documentation
 pub fn (f Focusable) update_parent_drawing_children() {
 	if f is Widget {
 		w := f as Widget

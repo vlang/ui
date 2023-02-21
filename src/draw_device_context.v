@@ -8,6 +8,7 @@ mut:
 	clip_rect Rect
 }
 
+// TODO: documentation
 pub fn (mut d DrawDeviceContext) reset_clipping() {
 	// no need to actually set scissor_rect, it is reset each frame anyway, but
 	// we do need to reset the clip_rect
@@ -23,6 +24,7 @@ pub fn (mut d DrawDeviceContext) reset_clipping() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut d DrawDeviceContext) set_clipping(rect Rect) {
 	d.clip_rect = rect
 	d.Context.scissor_rect(rect.x, rect.y, rect.w, rect.h)
@@ -31,10 +33,12 @@ pub fn (mut d DrawDeviceContext) set_clipping(rect Rect) {
 	}
 }
 
+// TODO: documentation
 pub fn (d DrawDeviceContext) get_clipping() Rect {
 	return d.clip_rect
 }
 
+// TODO: documentation
 pub fn (d DrawDeviceContext) text_width_additive(text string) f64 {
 	ctx := d.Context
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))

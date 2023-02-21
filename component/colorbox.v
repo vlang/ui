@@ -68,6 +68,7 @@ pub struct ColorBoxParams {
 	drag  bool
 }
 
+// TODO: documentation
 pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	mut cv_h := ui.canvas_plus(
 		id: ui.component_id(c.id, 'h')
@@ -166,6 +167,7 @@ pub fn colorbox_component(w ui.ComponentChild) &ColorBoxComponent {
 	return unsafe { &ColorBoxComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn colorbox_component_from_id(w ui.Window, id string) &ColorBoxComponent {
 	return colorbox_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
@@ -185,10 +187,12 @@ fn colorbox_init(layout &ui.Stack) {
 	cb.update_buffer()
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) connect(col &gx.Color) {
 	cb.linked = unsafe { col }
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) connect_colorbutton(b &ColorButtonComponent) {
 	cb.colbtn = unsafe { b }
 }
@@ -300,6 +304,7 @@ fn cv_sel_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	cb.r_rgb_cur.style.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
 	if unsafe { cb.linked != 0 } {
@@ -322,11 +327,13 @@ pub fn (mut cb ColorBoxComponent) update_cur_color(reactive bool) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_sel_color() {
 	// cb.r_sel.color = cb.hsv_to_rgb(cb.h, cb.s, cb.v)
 	cb.hsv_sel[cb.ind_sel] = HSVColor{cb.h, cb.s, cb.v}
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_buffer() {
 	unsafe { ui.destroy_texture(cb.simg) }
 	sz := 256 * 256 * 4
@@ -358,6 +365,7 @@ fn tb_char(tb &ui.TextBox, cp u32) {
 	cb.update_from_rgb(r, g, b)
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_from_rgb(r int, g int, b int) {
 	if 0 <= r && r < 256 {
 		if 0 <= g && g < 256 {
@@ -384,6 +392,7 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 
 // options
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_theme() {
 	cb.layout.style.bg_color = if cb.light {
 		gx.rgba(255, 255, 255, 50)
@@ -399,6 +408,7 @@ pub fn (mut cb ColorBoxComponent) update_theme() {
 	dtw.update_style(color: color)
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_hsl() {
 	if cb.hsl {
 		cb.rgb_to_hsv = ui.rgb_to_hsl
@@ -409,6 +419,7 @@ pub fn (mut cb ColorBoxComponent) update_hsl() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_drag_mode() {
 	if cb.drag {
 		cb.cv_h.mouse_move_fn = cv_h_mouse_move

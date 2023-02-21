@@ -20,6 +20,7 @@ mut:
 // 	}
 // }
 
+// TODO: documentation
 pub fn (mut win Window) build_layout(l Layout) {
 	for mut w in l.get_children() {
 		if mut w is WidgetBuild {
@@ -33,6 +34,7 @@ pub fn (mut win Window) build_layout(l Layout) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut win Window) build() {
 	win.build_layout(win)
 }

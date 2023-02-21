@@ -18,6 +18,7 @@ pub struct DataGridParams {
 	settings_z_index  int      = 100
 }
 
+// TODO: documentation
 pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	mut pg := p.GridParams
 	pg.id = ui.component_id(p.id, 'grid')

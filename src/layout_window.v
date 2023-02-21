@@ -1236,6 +1236,11 @@ pub fn (w &Window) update_layout() {
 			}
 			r.update_layout()
 		}
+	} else if mut r is CanvasLayout {
+		$if root_layout ? {
+			println('CanvasLayout ${r.id} as root layout')
+		}
+		r.update_layout()
 	} else if mut r is BoxLayout {
 		$if root_layout ? {
 			println('BoxLayout ${r.id} as root layout')

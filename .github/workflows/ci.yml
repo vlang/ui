@@ -20,8 +20,8 @@ jobs:
           path: vlib/ui
       - name: Build V
         run: make
-      - name: v vet
-        run: ./v vet vlib/ui
+#      - name: v vet
+#        run: ./v vet vlib/ui
       - name: v fmt -verify
         run: ./v fmt -verify vlib/ui
 

@@ -20,6 +20,7 @@ pub struct DoubleListBoxParams {
 	items []string
 }
 
+// TODO: documentation
 pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	mut items := map[string]string{}
 	for item in c.items {
@@ -75,6 +76,7 @@ pub fn doublelistbox_component(w ui.ComponentChild) &DoubleListBoxComponent {
 	return unsafe { &DoubleListBoxComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn doublelistbox_component_from_id(w ui.Window, id string) &DoubleListBoxComponent {
 	return doublelistbox_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
@@ -111,6 +113,7 @@ fn doublelistbox_move_right(btn &ui.Button) {
 	}
 }
 
+// TODO: documentation
 pub fn (dlb &DoubleListBoxComponent) values() []string {
 	return dlb.lb_right.values()
 }

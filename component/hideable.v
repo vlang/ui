@@ -26,6 +26,7 @@ pub struct HideableParams {
 	open     bool = true
 }
 
+// TODO: documentation
 pub fn hideable_stack(p HideableParams) &ui.Stack {
 	mut layout := ui.row(
 		widths: ui.stretch
@@ -51,10 +52,12 @@ pub fn hideable_stack(p HideableParams) &ui.Stack {
 	return layout
 }
 
+// TODO: documentation
 pub fn hideable_component(w ui.ComponentChild) &HideableComponent {
 	return unsafe { &HideableComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn hideable_component_from_id(w ui.Window, id string) &HideableComponent {
 	return hideable_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
@@ -67,21 +70,31 @@ fn hideable_init(layout &ui.Stack) {
 	}
 }
 
+// TODO: documentation
 pub fn hideable_add_shortcut(w &ui.Window, shortcut string, shortcut_fn ui.ShortcutFn) {
 	mut sc := ui.Shortcutable(w)
 	sc.add_shortcut(shortcut, shortcut_fn)
 }
 
+// TODO: documentation
 pub fn hideable_toggle(w &ui.Window, id string) {
 	mut h := hideable_component_from_id(w, id)
 	h.toggle()
 }
 
+// TODO: documentation
 pub fn hideable_show(w &ui.Window, id string) {
 	mut h := hideable_component_from_id(w, id)
 	h.show()
 }
 
+// TODO: documentation
+pub fn hideable_hide(w &ui.Window, id string) {
+	mut h := hideable_component_from_id(w, id)
+	h.hide()
+}
+
+// TODO: documentation
 pub fn (mut h HideableComponent) show() {
 	// mut layout := h.window.stack(h.child_layout_id)
 	// restore z_index
@@ -90,6 +103,7 @@ pub fn (mut h HideableComponent) show() {
 	h.window.update_layout()
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) hide() {
 	mut layout := h.layout
 	h.hide_children()
@@ -97,10 +111,12 @@ pub fn (mut h HideableComponent) hide() {
 	h.window.update_layout()
 }
 
+// TODO: documentation
 pub fn (h HideableComponent) is_active() bool {
 	return h.layout.z_index != ui.z_index_hidden
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) toggle() {
 	if h.layout.z_index == ui.z_index_hidden {
 		h.show()
@@ -109,6 +125,7 @@ pub fn (mut h HideableComponent) toggle() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) show_children() {
 	// restore z_index
 	for id, _ in h.children {
@@ -117,6 +134,7 @@ pub fn (mut h HideableComponent) show_children() {
 	}
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) hide_children() {
 	for id, _ in h.children {
 		mut child := h.children[id]
@@ -125,6 +143,7 @@ pub fn (mut h HideableComponent) hide_children() {
 	h.layout.z_index = ui.z_index_hidden
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) set_children_depth() {
 	for child in h.layout.children {
 		h.z_index[child.id] = child.z_index
@@ -132,6 +151,7 @@ pub fn (mut h HideableComponent) set_children_depth() {
 	h.layout.z_index = h.z_index[h.layout.id]
 }
 
+// TODO: documentation
 pub fn (mut h HideableComponent) save_children_depth(children []ui.Widget) {
 	for child in children {
 		if child is ui.Layout {

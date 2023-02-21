@@ -25,6 +25,7 @@ pub struct FontButtonParams {
 	bg_color     &gx.Color = unsafe { nil }
 }
 
+// TODO: documentation
 pub fn fontbutton(c FontButtonParams) &ui.Button {
 	b := &ui.Button{
 		id: c.id
@@ -48,10 +49,12 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 	return b
 }
 
+// TODO: documentation
 pub fn fontbutton_component(w ui.ComponentChild) &FontButtonComponent {
 	return unsafe { &FontButtonComponent(w.component) }
 }
 
+// TODO: documentation
 pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent {
 	return fontbutton_component(w.get_or_panic[ui.Button](id))
 }

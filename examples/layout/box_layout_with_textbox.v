@@ -8,7 +8,8 @@ const (
 
 struct App {
 mut:
-	text string
+	text   string
+	btn_cb map[string]fn (&ui.Button)
 }
 
 fn make_tb(mut app App, has_row bool) ui.Widget {
@@ -27,6 +28,16 @@ fn make_tb(mut app App, has_row bool) ui.Widget {
 	} else {
 		ui.Widget(tb)
 	}
+}
+
+fn (mut app App) make_btn() ui.Widget {
+	app.btn_cb['btn_click'] = fn (_ &ui.Button) {
+		ui.message_box('coucou toto!')
+	}
+	return ui.button(
+		text: 'toto'
+		on_click: app.btn_cb['btn_click']
+	)
 }
 
 fn main() {
@@ -56,6 +67,7 @@ fn main() {
 					'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
 						color: gx.white
 					)
+					'id5: (0.7,0.2) ++ (50,20)':      app.make_btn()
 				}
 			),
 		]

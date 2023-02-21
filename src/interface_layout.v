@@ -17,6 +17,7 @@ mut:
 	draw()
 }
 
+// TODO: documentation
 pub fn (l &Layout) set_children_depth(z_index int) {
 	for mut child in l.get_children() {
 		if mut child is Layout {
@@ -27,6 +28,7 @@ pub fn (l &Layout) set_children_depth(z_index int) {
 	}
 }
 
+// TODO: documentation
 pub fn (l &Layout) incr_children_depth(z_inc int) {
 	// println("incr_children_depth $l.id z_inc=$z_inc")
 	for mut child in l.get_children() {
@@ -39,6 +41,7 @@ pub fn (l &Layout) incr_children_depth(z_inc int) {
 	}
 }
 
+// TODO: documentation
 pub fn (l &Layout) has_child_id(widget_id string) bool {
 	// println("has_child_id children: ${l.get_children().len} => ${l.get_children().map(it.id)}")
 	for child in l.get_children() {
@@ -57,28 +60,36 @@ pub fn (l &Layout) has_child_id(widget_id string) bool {
 	return false
 }
 
+// TODO: documentation
 pub fn (mut l Layout) activate() {
 	if mut l is Stack {
 		l.deactivated = false
 	} else if mut l is CanvasLayout {
 		l.deactivated = false
+	} else if mut l is BoxLayout {
+		l.deactivated = false
 	}
 }
 
+// TODO: documentation
 pub fn (mut l Layout) deactivate() {
 	if mut l is Stack {
 		l.deactivated = true
 	} else if mut l is CanvasLayout {
 		l.deactivated = true
+	} else if mut l is BoxLayout {
+		l.deactivated = true
 	}
 }
 
+// TODO: documentation
 pub fn (l &Layout) has_child(widget &Widget) bool {
 	return l.has_child_id(widget.id)
 }
 
 //---- Layout focusable methods
 
+// TODO: documentation
 pub fn (layout Layout) unfocus_all() {
 	// println('window.unfocus_all()')
 	for mut child in layout.get_children() {
@@ -92,6 +103,7 @@ pub fn (layout Layout) unfocus_all() {
 	}
 }
 
+// TODO: documentation
 pub fn (layout Layout) set_focus_next() bool {
 	mut focused_found := false
 	mut window := layout.get_ui().window
@@ -126,6 +138,7 @@ pub fn (layout Layout) set_focus_next() bool {
 	return focused_found
 }
 
+// TODO: documentation
 pub fn (layout Layout) set_focus_prev() bool {
 	mut focused_found := false
 	mut window := layout.get_ui().window
@@ -160,6 +173,7 @@ pub fn (layout Layout) set_focus_prev() bool {
 	return focused_found
 }
 
+// TODO: documentation
 pub fn (layout Layout) set_focus_first() bool {
 	mut doit := false
 	for child in layout.get_children() {
@@ -185,6 +199,7 @@ pub fn (layout Layout) set_focus_first() bool {
 	return doit
 }
 
+// TODO: documentation
 pub fn (layout Layout) set_focus_last() bool {
 	mut doit := false
 	for child in layout.get_children().reverse() {
@@ -210,6 +225,7 @@ pub fn (layout Layout) set_focus_last() bool {
 	return doit
 }
 
+// TODO: documentation
 pub fn (l Layout) has_scrollview() bool {
 	if l is ScrollableWidget {
 		sw := l as ScrollableWidget
@@ -219,6 +235,7 @@ pub fn (l Layout) has_scrollview() bool {
 	}
 }
 
+// TODO: documentation
 pub fn (l Layout) has_scrollview_or_parent_scrollview() bool {
 	if l is ScrollableWidget {
 		sw := l as ScrollableWidget
@@ -245,6 +262,7 @@ pub fn (l Layout) debug_show_children_tree(level int) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut l Layout) update_drawing_children() {
 	if mut l is CanvasLayout {
 		l.set_drawing_children()

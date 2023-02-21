@@ -53,6 +53,7 @@ pub fn grid_formula_mngr(formulas map[string]string) GridFormulaMngr {
 	return gfm
 }
 
+// TODO: documentation
 pub fn (mut gfm GridFormulaMngr) init() {
 	// gfm.active_cells.clear()
 	for cell, mut formula in gfm.formulas {
@@ -61,6 +62,7 @@ pub fn (mut gfm GridFormulaMngr) init() {
 	gfm.init_active_cells()
 }
 
+// TODO: documentation
 pub fn (mut gfm GridFormulaMngr) init_active_cells() {
 	gfm.active_cells.clear()
 	for _, formula in gfm.formulas {
@@ -86,6 +88,7 @@ fn (mut gfm GridFormulaMngr) init_formula(cell string, mut formula GridFormula) 
 
 // new formula
 
+// TODO: documentation
 pub fn (mut g GridComponent) new_formula(gc GridCell, formula string) {
 	ac := gc.alphacell()
 	g.formula_mngr.formulas[ac] = GridFormula{
@@ -100,23 +103,27 @@ pub fn (mut g GridComponent) new_formula(gc GridCell, formula string) {
 
 // init
 
+// TODO: documentation
 pub fn (mut g GridComponent) init_formulas() {
 	g.update_formulas()
 	g.activate_formula_cells()
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) activate_formula_cells() {
 	for cell, _ in g.formula_mngr.formulas {
 		g.activate_cell(cell)
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) update_formulas() {
 	for _, formula in g.formula_mngr.formulas {
 		g.update_formula(formula, false)
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
 	g.formula_mngr.cells_to_activate.clear()
 	g.formula_mngr.cells_to_activate << c
@@ -130,6 +137,7 @@ pub fn (mut g GridComponent) activate_cell(c AlphaCell) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	// only if c is an active cell (i.e. contained in some formula)
 	gfm := g.formula_mngr
@@ -142,6 +150,7 @@ pub fn (mut g GridComponent) propagate_cell(c AlphaCell) {
 	}
 }
 
+// TODO: documentation
 pub fn (mut g GridComponent) update_formula(formula GridFormula, activate bool) {
 	// println(c)
 	// println(gfm.active_cell_to_formula[active_cell])
@@ -170,6 +179,7 @@ fn sum(a ...f64) f64 {
 	return total
 }
 
+// TODO: documentation
 pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
 	mut res := map[string]GridFormula{}
 	for k, v in formulas {
@@ -181,6 +191,7 @@ pub fn grid_formulas(formulas map[string]string) map[string]GridFormula {
 	return res
 }
 
+// TODO: documentation
 pub fn parse_formula(formula string) (string, []string) {
 	query := r'(?P<colfrom>[A-Z]+)(?P<rowfrom>\d+)\:?(?P<colto>[A-Z]+)?(?P<rowto>\d+)?.*'
 	mut re := regex.regex_opt(query) or { panic(err) }
@@ -305,6 +316,7 @@ fn grid_tb_formula_enter(mut tb ui.TextBox) {
 
 // methods
 
+// TODO: documentation
 pub fn (ac AlphaCell) gridcell() GridCell {
 	query := r'(?P<column>[A-Z]+)(?P<row>\d+)'
 	mut re := regex.regex_opt(query) or { panic(err) }
@@ -318,6 +330,7 @@ pub fn (ac AlphaCell) gridcell() GridCell {
 	}
 }
 
+// TODO: documentation
 pub fn (gc GridCell) alphacell() string {
 	mut acj, mut z, mut r := []u8{}, gc.j, 0
 	for {

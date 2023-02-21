@@ -50,7 +50,7 @@ pub mut:
 	ui &UI = unsafe { nil }
 	// text               string
 	text               &string = unsafe { nil }
-	text_              string // This is the internal string content when not provided by the user
+	text_value         string // This is the internal string content when not provided by the user
 	max_len            int
 	line_height        int
 	line_height_factor f64
@@ -140,7 +140,8 @@ pub struct TextBoxParams {
 	is_numeric         bool
 	is_password        bool
 	text               &string = unsafe { nil }
-	is_error           &bool   = unsafe { nil }
+	text_value         string
+	is_error           &bool = unsafe { nil }
 	is_focused         bool
 	// is_error bool
 	// bg_color           gx.Color = gx.white
@@ -180,7 +181,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		style_params: c.TextBoxStyleParams
 		ui: 0
 		text: c.text
-		text_: ''
+		text_value: c.text_value
 		is_focused: c.is_focused
 		is_error: c.is_error
 		read_only: c.read_only || c.mode.has(.read_only)
@@ -199,7 +200,13 @@ pub fn textbox(c TextBoxParams) &TextBox {
 	}
 	tb.style_params.style = c.theme
 	if tb.text == 0 {
-		tb.text = &tb.text_
+		tb.text = &tb.text_value
+	} else {
+		if !c.text_value.is_blank() {
+			unsafe {
+				*tb.text = c.text_value
+			}
+		}
 	}
 	if c.scrollview && tb.is_multiline {
 		scrollview_add(mut tb)
@@ -273,13 +280,14 @@ pub fn (tb &TextBox) free() {
 // 	dtw.update_text_size(tb.text_size)
 // }
 
-pub fn (mut t TextBox) set_pos(x int, y int) {
-	// xx := t.placeholder
+pub fn (mut tb TextBox) set_pos(x int, y int) {
+	// xx := tb.placeholder
 	// println('text box $xx set pos $x, $y')
-	scrollview_widget_save_offset(t)
-	t.x = x
-	t.y = y
-	scrollview_widget_restore_offset(t)
+	// println("sp tb $tb.id")
+	scrollview_widget_save_offset(tb)
+	tb.x = x
+	tb.y = y
+	scrollview_widget_restore_offset(tb, true)
 }
 
 // Needed for ScrollableWidget
@@ -1016,6 +1024,10 @@ fn (mut tb TextBox) unfocus() {
 pub fn (mut tb TextBox) hide() {
 }
 
+pub fn (mut tb TextBox) get_text() string {
+	return *tb.text
+}
+
 pub fn (mut tb TextBox) set_text(s string) {
 	if tb.is_multiline {
 		active_x := tb.scrollview.active_x
@@ -1134,6 +1146,9 @@ fn (tb &TextBox) skip_index_from_start(ustr []rune, dtw DrawTextWidget) int {
 }
 
 fn (mut tb TextBox) skip_index_from_cursor(ustr []rune, dtw DrawTextWidget) {
+	if tb.width == 0 {
+		return
+	}
 	text_len := ustr.len
 	width_max := tb.width - 2 * ui.textbox_padding_x
 	width := if text_len == 0 { 0 } else { dtw.text_width(*(tb.text)) }
@@ -1156,10 +1171,10 @@ fn (mut tb TextBox) skip_index_from_cursor(ustr []rune, dtw DrawTextWidget) {
 		}
 		mut mode, mut left_side := -1, true
 		d_start, d_end := tb.cursor_pos - 0, text_len - tb.cursor_pos
-		if dtw.text_width(ustr[start..(end - 1)].string()) < width_max {
+		if dtw.text_width(ustr#[start..(end - 1)].string()) < width_max {
 			mode = 1
 		}
-		if dtw.text_width(ustr[(start + 1)..end].string()) < width_max {
+		if dtw.text_width(ustr#[(start + 1)..end].string()) < width_max {
 			mode += 2
 		}
 		if mode == 2 || (mode == 3 && d_end < d_start) {

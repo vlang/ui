@@ -4,6 +4,10 @@ module ui
 import gg
 import eventbus
 
+const (
+	null_rect = gg.Rect{0.0, 0.0, 0.0, 0.0}
+)
+
 /*
 Goal:
 1) Children are located relatively to the size of the parent box_layout
@@ -58,17 +62,18 @@ enum BoxMode {
 [heap]
 pub struct BoxLayout {
 pub mut:
-	id         string
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
-	is_focused bool
-	parent     Layout = empty_stack
-	ui         &UI    = unsafe { nil }
+	id          string
+	height      int
+	width       int
+	x           int
+	y           int
+	offset_x    int
+	offset_y    int
+	z_index     int
+	deactivated bool
+	is_focused  bool
+	parent      Layout = empty_stack
+	ui          &UI    = unsafe { nil }
 	// children
 	child_box        []Box
 	child_id         []string
@@ -94,6 +99,7 @@ pub mut:
 	children map[string]Widget
 }
 
+// TODO: documentation
 pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 	mut b := &BoxLayout{
 		id: c.id
@@ -104,109 +110,13 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		ui: 0
 	}
 	for key, child in c.children {
-		b.parse_child(key, child)
+		b.set_child_bounding(key, child)
 	}
 	return b
 }
 
-fn (mut b BoxLayout) parse_child(key string, child Widget) {
-	tmp := key.split_any('@:')
-	mut tmp2 := []string{}
-	id, tmp_rect := if tmp.len > 1 {
-		tmp[0], tmp[1]
-	} else {
-		b.id + '_' + key, tmp[0]
-	}
-	if tmp_rect.contains('++') {
-		tmp2 = tmp_rect.split('++').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('-+') {
-		tmp2 = tmp_rect.split('-+').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[2] -= vec4[2]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('--') {
-		tmp2 = tmp_rect.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[2] -= vec4[2]
-			vec4[3] -= vec4[3]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('+-') {
-		tmp2 = tmp_rect.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			vec4[3] -= vec4[3]
-			b.add_rect_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('->') {
-		tmp2 = tmp_rect.split('->').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			mut vec4 := tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
-			b.add_lt2rb_child(id, child, vec4)
-		}
-	} else if tmp_rect.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
-		tmp2 = tmp_rect.split('x').map(it.trim_space())
-		mut vec4 := tmp2[0].split(',').map(it.f32())
-		vec4 << tmp2[1].split(',').map(it.f32())
-		b.add_lt2rb_child(id, child, vec4)
-	} else if tmp_rect.contains(',') { // (x,y,w,h) mode
-		vec4 := tmp_rect.split(',').map(it.f32())
-		b.add_rect_child(id, child, vec4)
-	}
-}
-
-fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
-	lt2rb := if vec4.len == 4 {
-		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
-	} else {
-		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
-	}
-	// println(lt2rb)
-	b.child_id << id
-	b.child_box << Box{
-		LeftTopToRightBottom: lt2rb
-	}
-	b.child_mode << BoxMode.left_top_right_bottom
-	b.children << child
-}
-
-fn (mut b BoxLayout) add_rect_child(id string, child Widget, vec4 []f32) {
-	rect := if vec4.len == 4 {
-		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
-	} else {
-		gg.Rect{0.0, 0.0, 0.0, 0.0}
-	}
-	b.child_id << id
-	b.child_box << Box{
-		Rect: rect
-	}
-	b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
-	b.children << child
-}
-
-fn (mut b BoxLayout) init(parent Layout) {
+// TODO: documentation
+pub fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
 	mut ui := parent.get_ui()
 	b.ui = ui
@@ -238,6 +148,7 @@ fn (mut b BoxLayout) set_root_layout() {
 	}
 }
 
+// TODO: documentation
 [manualfree]
 pub fn (mut b BoxLayout) cleanup() {
 	for mut child in b.children {
@@ -248,6 +159,7 @@ pub fn (mut b BoxLayout) cleanup() {
 	}
 }
 
+// TODO: documentation
 [unsafe]
 pub fn (b &BoxLayout) free() {
 	$if free ? {
@@ -262,6 +174,113 @@ pub fn (b &BoxLayout) free() {
 	}
 	$if free ? {
 		println(' -> freed')
+	}
+}
+
+fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
+	id, bounding := parse_boxlayout_child_key(key, b.id)
+	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+	match mode {
+		'rect' { b.add_rect_child(id, child, bounding_vec) }
+		'lt2rb' { b.add_lt2rb_child(id, child, bounding_vec) }
+		else {}
+	}
+	b.update_visible_children()
+}
+
+// TODO: documentation
+pub fn (mut b BoxLayout) update_child_bounding(keys ...string) {
+	for key in keys {
+		id, bounding := parse_boxlayout_child_key(key, b.id)
+		mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+		match mode {
+			'rect' { b.update_rect_child(id, bounding_vec) }
+			'lt2rb' { b.update_lt2rb_child(id, bounding_vec) }
+			else {}
+		}
+	}
+	b.update_visible_children()
+	b.update_layout()
+}
+
+fn (mut b BoxLayout) add_lt2rb_child(id string, child Widget, vec4 []f32) {
+	lt2rb := if vec4.len == 4 {
+		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
+	}
+	// println(lt2rb)
+	b.child_id << id
+	b.child_box << Box{
+		LeftTopToRightBottom: lt2rb
+	}
+	b.child_mode << BoxMode.left_top_right_bottom
+	b.children << child
+}
+
+fn (mut b BoxLayout) add_rect_child(id string, child Widget, vec4 []f32) {
+	rect := if vec4.len == 4 {
+		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	b.child_id << id
+	b.child_box << Box{
+		Rect: rect
+	}
+	b.child_mode << box_direction(rect) // BoxMode.left_top_width_height
+	b.children << child
+}
+
+fn (mut b BoxLayout) update_lt2rb_child(id string, vec4 []f32) {
+	lt2rb := if vec4.len == 4 {
+		LeftTopToRightBottom{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
+	}
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	b.child_box[ind] = Box{
+		LeftTopToRightBottom: lt2rb
+	}
+	b.child_mode[ind] = BoxMode.left_top_right_bottom
+}
+
+fn (mut b BoxLayout) update_rect_child(id string, vec4 []f32) {
+	rect := if vec4.len == 4 {
+		gg.Rect{vec4[0], vec4[1], vec4[2], vec4[3]}
+	} else {
+		gg.Rect{0.0, 0.0, 0.0, 0.0}
+	}
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	b.child_box[ind] = Box{
+		Rect: rect
+	}
+	b.child_mode[ind] = box_direction(rect)
+}
+
+// TODO: documentation
+pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	child.id = b.children[ind].id
+	b.children[ind].cleanup()
+	b.children[ind] = child
+	child.init(b)
+	b.register_child(child)
+	b.update_layout()
+}
+
+pub fn (mut b BoxLayout) update_visible_children() {
+	for i, mut child in b.children {
+		child.hidden = b.child_box[i].is_null()
 	}
 }
 
@@ -285,6 +304,7 @@ fn (mut b BoxLayout) set_pos(x int, y int) {
 	b.set_children_pos_and_size()
 }
 
+// TODO: documentation
 pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	mut x, mut y := 0, 0
 	unsafe {
@@ -319,6 +339,7 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	child.set_pos(x, y)
 }
 
+// TODO: documentation
 pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	mut w, mut h := 0, 0
 	unsafe {
@@ -351,6 +372,7 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	child.propose_size(w, h)
 }
 
+// TODO: documentation
 pub fn (mut b BoxLayout) set_children_pos() {
 	// println('size: $b.width, $b.height $w, $h $b.child_box')
 	for i, mut child in b.children {
@@ -444,7 +466,8 @@ fn (b &BoxLayout) get_children() []Widget {
 	return b.children
 }
 
-fn (mut b BoxLayout) update_layout() {
+// TODO: documentation
+pub fn (mut b BoxLayout) update_layout() {
 	if b.is_root_layout {
 		window := b.ui.window
 		mut to_resize := window.mode in [.fullscreen, .max_size, .resizable]
@@ -483,7 +506,104 @@ fn (mut b BoxLayout) set_drawing_children() {
 		}
 	}
 	b.drawing_children = b.children.filter(!it.hidden)
+	b.drawing_children = b.drawing_children.filter(!b.is_box_hidden(it.id))
 	b.sorted_drawing_children()
+}
+
+pub fn (b &BoxLayout) is_box_hidden(id string) bool {
+	ind := b.child_id.index(id)
+	// println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
+	if ind < 0 {
+		return false
+	}
+	box := b.child_box[ind]
+	return box.is_null()
+}
+
+pub fn (mut b BoxLayout) register_child(child Widget) {
+	mut window := b.ui.window
+	window.register_child(child)
+}
+
+// parse child key and return id and bounding spec
+fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
+	tmp := key.split_any(':')
+	return if tmp.len > 1 {
+		tmp[0].trim_space(), tmp[1].trim_space()
+	} else {
+		bl_id + '@' + key, tmp[0]
+	}
+}
+
+// parse child bounding and return
+fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
+	mut vec4, mut mode := []f32{}, ''
+	mut tmp2 := []string{}
+	if bounding == 'hidden' {
+		vec4 = [f32(0), 0, 0, 0] // hidden in drawing_children
+		mode = 'rect'
+	} else if bounding == 'stretch' {
+		vec4 = [f32(0), 0, 1, 1] // stretch means full size
+		mode = 'rect'
+	} else if bounding.contains('++') {
+		tmp2 = bounding.split('++').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			mode = 'rect'
+		}
+	} else if bounding.contains('-+') {
+		tmp2 = bounding.split('-+').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			mode = 'rect'
+		}
+	} else if bounding.contains('--') {
+		tmp2 = bounding.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[2] -= vec4[2]
+			vec4[3] -= vec4[3]
+			mode = 'rect'
+		}
+	} else if bounding.contains('+-') {
+		tmp2 = bounding.split('--').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			vec4[3] -= vec4[3]
+			mode = 'rect'
+		}
+	} else if bounding.contains('->') {
+		tmp2 = bounding.split('->').map(it.trim_space())
+		mut tmp3 := tmp2[0].find_between('(', ')')
+		if !tmp3.is_blank() {
+			vec4 = tmp3.split(',').map(it.f32())
+			tmp3 = tmp2[1].find_between('(', ')')
+			vec4 << tmp3.split(',').map(it.f32())
+			mode = 'lt2rb'
+		}
+	} else if bounding.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
+		tmp2 = bounding.split('x').map(it.trim_space())
+		vec4 = tmp2[0].split(',').map(it.f32())
+		vec4 << tmp2[1].split(',').map(it.f32())
+		mode = 'rect'
+	} else if bounding.contains(',') { // (x,y,w,h) mode
+		vec4 = bounding.split(',').map(it.f32())
+		mode = 'rect'
+	}
+	return mode, vec4
 }
 
 // absolute or relative size with respect to parent size
@@ -532,4 +652,8 @@ fn box_direction(rect &gg.Rect) BoxMode {
 	} else {
 		.left_bottom_width_height
 	}
+}
+
+pub fn (box Box) is_null() bool {
+	return unsafe { box.x == 0 && box.y == 0 && box.width == 0 && box.height == 0 }
 }
