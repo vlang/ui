@@ -10,11 +10,13 @@ pub const (
 	z_index_focus  = 10
 )
 
+[flag]
 pub enum WindowSizeType {
 	normal_size
 	resizable
 	max_size
 	fullscreen
+	no_fullscreen
 }
 
 pub type Size = []f64 | f64

@@ -42,6 +42,7 @@ pub mut:
 	title             string
 	width             int
 	height            int
+	no_fullscreen     bool
 	click_fn          WindowMouseFn
 	mouse_down_fn     WindowMouseFn
 	mouse_up_fn       WindowMouseFn
@@ -114,7 +115,7 @@ pub:
 	height        int
 	font_path     string
 	title         string
-	always_on_top bool
+	no_fullscreen bool
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -163,8 +164,9 @@ pub fn window(cfg WindowParams) &Window {
 	}*/
 
 	mut width, mut height := cfg.width, cfg.height
-	mut resizable := cfg.resizable
-	mut fullscreen := false
+	mut resizable := cfg.resizable || cfg.mode.has(.resizable)
+	mut fullscreen := cfg.mode.has(.fullscreen)
+	mut no_fullscreen := cfg.no_fullscreen || cfg.mode.has(.no_fullscreen)
 
 	mut sc_size := gg.Size{width, height}
 
@@ -173,23 +175,16 @@ pub fn window(cfg WindowParams) &Window {
 		sc_size = gg.screen_size()
 	}
 
-	match cfg.mode {
-		.max_size {
-			if sc_size.width > 0 {
-				width, height = sc_size.width, sc_size.height
-				resizable = true
-			}
-		}
-		.fullscreen {
-			if sc_size.width > 10 {
-				width, height = sc_size.width, sc_size.height
-			}
-			fullscreen = true
-		}
-		.resizable {
+	if cfg.mode.has(.max_size) {
+		if sc_size.width > 0 {
+			width, height = sc_size.width, sc_size.height
 			resizable = true
 		}
-		else {}
+	} else if cfg.mode.has(.fullscreen) {
+		if sc_size.width > 10 {
+			width, height = sc_size.width, sc_size.height
+		}
+		fullscreen = true
 	}
 
 	// default text_cfg
@@ -207,6 +202,7 @@ pub fn window(cfg WindowParams) &Window {
 		title: cfg.title
 		width: width
 		height: height
+		no_fullscreen: no_fullscreen
 		theme_style: cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
@@ -742,6 +738,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 		}
 	} else if e.key == .f10 && super_key(e.mods) {
 		window.layout_print()
+	} else if e.key == .f11 && super_key(e.mods) {
+		if !window.no_fullscreen {
+			gg.toggle_fullscreen()
+		}
 	} else {
 		// add user shortcuts for window
 		key_shortcut(e, window.shortcuts, window)
@@ -1285,8 +1285,6 @@ fn (mut w Window) focus_prev() {
 }
 
 //---- unused
-
-pub fn (w &Window) always_on_top(val bool) {}
 
 pub fn (w &Window) set_cursor(cursor Cursor) {}
 
