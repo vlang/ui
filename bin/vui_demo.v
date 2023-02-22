@@ -13,11 +13,6 @@ const (
 	time_sleep      = 500
 	help_text       = $embed_file('help/vui_demo.help').to_string()
 	demos_json       = $embed_file('assets/demos.json').to_string()
-	// src_codes       = {
-	// 	'demo/widgets/button': $embed_file('demo/widgets/button_ui.vv').to_string()
-	// 	'demo/widgets/label': $embed_file('demo/widgets/label_ui.vv').to_string()
-	// 	'demo/layouts/box_layout': $embed_file('demo/layouts/box_layout_ui.vv').to_string()
-	// }
 )
 
 [heap]
@@ -32,6 +27,7 @@ mut:
 	toolbar &ui.Stack = unsafe{ nil }
 	run_btn   &ui.Button 	 = unsafe { nil }
 	help_btn   &ui.Button 	 = unsafe { nil }
+	reset_btn   &ui.Button 	 = unsafe { nil }
 	status &ui.TextBox   	 = unsafe { nil }
 	bounding_box  &ui.Rectangle = unsafe{ nil }
 	texts  map[string]string
@@ -47,7 +43,6 @@ fn (mut app App) make_cache_code()  {
 	for key, val in src_codes {
 		app.cache_code[key] = val.str()	
 	}
-	
 }
 
 fn (mut app App) set_status(txt string) {
@@ -87,14 +82,21 @@ fn (mut app App) make_children() {
 			sw.set_visible(sw.hidden)
 		}
 	)
+	app.reset_btn = ui.button(
+		text: ' Reset '
+		bg_color: gx.orange
+		on_click: fn [mut app] (_ &ui.Button) {
+			app.reset()
+		}
+	)
 	app.status = ui.textbox(mode: .read_only)
 	app.toolbar = ui.row(
 		id: "toolbar"
 		margin_: 2
 		spacing: 2
 		bg_color: gx.black
-		widths: [ui.compact, ui.compact, ui.stretch]
-		children: [app.run_btn, app.help_btn, app.status]
+		widths: [ui.compact, ui.compact, ui.compact, ui.stretch]
+		children: [app.run_btn, app.help_btn, app.reset_btn, app.status]
 	)
 	app.edit = ui.textbox(
 		mode: .multiline
@@ -189,31 +191,16 @@ fn (mut app App) run() {
 	spawn app.clear_status()
 }
 
+fn (mut app App) reset() {
+	app.edit.set_text("")
+	app.run()
+}
+
 [live]
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
-layout = ui.box_layout(
-	children: {
-		"bl1: (0,0) -> (0.4, 0.5)": ui.box_layout(
-			children: {
-				"bl1/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.yellow)
-				"bl1/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-				)
-			}
-		)
-		"bl2: (0.5,0.5) -> (0.9, 1)": ui.box_layout(
-			children: {
-				"bl2/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.orange)
-				"bl2/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "clipped loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-					clipping: true
-				)
-			}
-		)
-	}
-)
+
 // <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()
