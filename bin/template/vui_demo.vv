@@ -52,13 +52,13 @@ fn (mut app App) clear_status() {
 
 fn (mut app App) make_children() {
 	app.boundings = [
-		['toolbar: (0,0) -> (1,20)', 'bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) ++ (1,0.5)',
-			'active: (0, 0.5) ++ (1,0.5)'],
+		['toolbar: (0,0) -> (1,20)', 'bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) -> (1,0.5)',
+			'active: (0, 0.5) -> (1,0.5)'],
 		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) -> (1,1)',
 			'active: (0, 0) -> (0,0)'],
 		['toolbar: hidden','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
-		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
-		['toolbar: (0,0) -> (1,20)','bb: hidden','treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: (0,20) -> (0.3,1)', 'treelayout: hidden','edit: (0.3,20) -> (1,0.5)', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treelayout: (0,20) -> (0.3,1)', 'treedemo: hidden', 'edit: (0.3,20) -> (1,0.5)', 'active: (0.3, 0.5) -> (1,1)'],
 	]
 	app.active = ui.box_layout(id: "active")
 	app.run_btn = ui.button(
@@ -232,7 +232,7 @@ fn main() {
 		mode: .resizable
 		on_init: app.win_init
 		on_resize: app.resize
-		children: [app.layout]
+		layout: app.layout
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
 	mut sc := ui.Shortcutable(app.window)
