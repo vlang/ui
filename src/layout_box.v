@@ -113,7 +113,8 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		ui: 0
 	}
 	for key, child in c.children {
-		b.set_child_bounding(key, child)
+		mut child_mut := child
+		b.set_child_bounding(key, mut child_mut)
 	}
 	return b
 }
@@ -180,13 +181,16 @@ pub fn (b &BoxLayout) free() {
 	}
 }
 
-fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
+fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) ? {
 	id, bounding := parse_boxlayout_child_key(key, b.id)
-	mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+	mode, bounding_vec, has_z_index, z_index := parse_boxlayout_child_bounding(bounding)
 	match mode {
 		'rect' { b.add_rect_child(id, child, bounding_vec) }
 		'lt2rb' { b.add_lt2rb_child(id, child, bounding_vec) }
 		else {}
+	}
+	if has_z_index {
+		child.set_depth(z_index)
 	}
 	b.update_visible_children()
 }
@@ -195,11 +199,14 @@ fn (mut b BoxLayout) set_child_bounding(key string, child Widget) {
 pub fn (mut b BoxLayout) update_child_bounding(keys ...string) {
 	for key in keys {
 		id, bounding := parse_boxlayout_child_key(key, b.id)
-		mode, bounding_vec := parse_boxlayout_child_bounding(bounding)
+		mode, bounding_vec, has_z_index, z_index := parse_boxlayout_child_bounding(bounding)
 		match mode {
 			'rect' { b.update_rect_child(id, bounding_vec) }
 			'lt2rb' { b.update_lt2rb_child(id, bounding_vec) }
 			else {}
+		}
+		if has_z_index {
+			b.update_child_depth(id, z_index)
 		}
 	}
 	b.update_visible_children()
@@ -265,6 +272,14 @@ fn (mut b BoxLayout) update_rect_child(id string, vec4 []f32) {
 		Rect: rect
 	}
 	b.child_mode[ind] = box_direction(rect)
+}
+
+fn (mut b BoxLayout) update_child_depth(id string, z_index int) {
+	ind := b.child_id.index(id)
+	if ind < 0 {
+		return
+	}
+	b.children[ind].set_depth(z_index)
 }
 
 // TODO: documentation
@@ -551,8 +566,8 @@ fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
 }
 
 // parse child bounding and return
-fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
-	mut vec4, mut mode := []f32{}, ''
+fn parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int) {
+	mut vec4, mut mode, mut has_z_index, mut z_index := []f32{}, '', false, 0
 	mut tmp2 := []string{}
 	if bounding == 'hidden' {
 		vec4 = [f32(0), 0, 0, 0] // hidden in drawing_children
@@ -562,51 +577,36 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
 		mode = 'rect'
 	} else if bounding.contains('++') {
 		tmp2 = bounding.split('++').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			vec4 = tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
+		vec4, has_z_index, z_index = parse_boundiing_with_possible_zindex(tmp2[0], tmp2[1])
+		if vec4.len == 4 {
 			mode = 'rect'
 		}
 	} else if bounding.contains('-+') {
 		tmp2 = bounding.split('-+').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			vec4 = tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
+		vec4, has_z_index, z_index = parse_boundiing_with_possible_zindex(tmp2[0], tmp2[1])
+		if vec4.len == 4 {
 			vec4[2] -= vec4[2]
 			mode = 'rect'
 		}
 	} else if bounding.contains('--') {
 		tmp2 = bounding.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			vec4 = tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
+		vec4, has_z_index, z_index = parse_boundiing_with_possible_zindex(tmp2[0], tmp2[1])
+		if vec4.len == 4 {
 			vec4[2] -= vec4[2]
 			vec4[3] -= vec4[3]
 			mode = 'rect'
 		}
 	} else if bounding.contains('+-') {
 		tmp2 = bounding.split('--').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			vec4 = tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
+		vec4, has_z_index, z_index = parse_boundiing_with_possible_zindex(tmp2[0], tmp2[1])
+		if vec4.len == 4 {
 			vec4[3] -= vec4[3]
 			mode = 'rect'
 		}
 	} else if bounding.contains('->') {
 		tmp2 = bounding.split('->').map(it.trim_space())
-		mut tmp3 := tmp2[0].find_between('(', ')')
-		if !tmp3.is_blank() {
-			vec4 = tmp3.split(',').map(it.f32())
-			tmp3 = tmp2[1].find_between('(', ')')
-			vec4 << tmp3.split(',').map(it.f32())
+		vec4, has_z_index, z_index = parse_boundiing_with_possible_zindex(tmp2[0], tmp2[1])
+		if vec4.len == 4 {
 			mode = 'lt2rb'
 		}
 	} else if bounding.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
@@ -618,7 +618,28 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32) {
 		vec4 = bounding.split(',').map(it.f32())
 		mode = 'rect'
 	}
-	return mode, vec4
+	return mode, vec4, has_z_index, z_index
+}
+
+// TODO: ?int does not work yet
+fn parse_boundiing_with_possible_zindex(left string, right string) ([]f32, bool, int) {
+	mut has_z_index, mut z_index := false, 0
+	mut tmp := left.find_between('(', ')')
+	mut vec4 := []f32{}
+	if !left.is_blank() {
+		vec4 = tmp.split(',').map(it.f32())
+		if vec4.len == 3 {
+			has_z_index = true
+			z_index = int(vec4[2])
+			vec4 = vec4[0..2]
+		}
+		tmp2 := right.find_between('(', ')')
+		vec4 << tmp2.split(',').map(it.f32())
+		if vec4.len != 4 {
+			return []f32{}, false, 0
+		}
+	}
+	return vec4, has_z_index, z_index
 }
 
 // absolute or relative size with respect to parent size
