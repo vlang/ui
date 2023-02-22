@@ -25,6 +25,7 @@ pub struct ColumnParams {
 	bg_radius  f64
 	title      string
 	scrollview bool
+	clipping   bool
 	children   []Widget
 }
 
@@ -46,6 +47,7 @@ pub fn column(c ColumnParams) &Stack {
 		bg_radius: f32(c.bg_radius)
 		title: c.title
 		scrollview: c.scrollview
+		clipping: c.clipping
 		children: c.children
 	)
 }

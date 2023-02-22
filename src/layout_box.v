@@ -438,6 +438,7 @@ fn (mut b BoxLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
 	// scrollview_set_children_orig_xy(b, false)
 	b.propose_size(width, height)
+	scrollview_set_children_orig_xy(b, false)
 }
 
 fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber {
@@ -481,6 +482,10 @@ pub fn (mut b BoxLayout) update_layout() {
 	b.set_children_pos_and_size()
 	for mut child in b.children {
 		if mut child is Stack {
+			child.update_layout()
+		} else if mut child is CanvasLayout {
+			child.update_layout()
+		} else if mut child is BoxLayout {
 			child.update_layout()
 		}
 	}

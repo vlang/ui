@@ -127,6 +127,7 @@ struct StackParams {
 	horizontal_alignments HorizontalAlignments
 	theme                 string = no_style
 	scrollview            bool
+	clipping              bool
 	children              []Widget
 }
 
@@ -145,6 +146,7 @@ fn stack(c StackParams) &Stack {
 		children: c.children
 		widths: c.widths
 		heights: c.heights
+		clipping: c.clipping
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
