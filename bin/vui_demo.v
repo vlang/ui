@@ -5,17 +5,19 @@ import gx
 import time
 import v.live
 import os
+import x.json2
 
 // vfmt off
 
 const (
 	time_sleep      = 500
 	help_text       = $embed_file('help/vui_demo.help').to_string()
-	src_codes       = {
-		'demo/widgets/button': $embed_file('demo/widgets/button_ui.vv').to_string()
-		'demo/widgets/label': $embed_file('demo/widgets/label_ui.vv').to_string()
-		'demo/layouts/box_layout': $embed_file('demo/layouts/box_layout_ui.vv').to_string()
-	}
+	demos_json       = $embed_file('assets/demos.json').to_string()
+	// src_codes       = {
+	// 	'demo/widgets/button': $embed_file('demo/widgets/button_ui.vv').to_string()
+	// 	'demo/widgets/label': $embed_file('demo/widgets/label_ui.vv').to_string()
+	// 	'demo/layouts/box_layout': $embed_file('demo/layouts/box_layout_ui.vv').to_string()
+	// }
 )
 
 [heap]
@@ -38,6 +40,14 @@ mut:
 	bounding_cur int
 	bounding_box_cur string
 	cache_code map[string]string
+}
+
+fn (mut app App) make_cache_code()  {
+	src_codes := (json2.raw_decode(demos_json) or {panic(err)}).as_map()
+	for key, val in src_codes {
+		app.cache_code[key] = val.str()	
+	}
+	
 }
 
 fn (mut app App) set_status(txt string) {
@@ -95,17 +105,19 @@ fn (mut app App) make_children() {
 		text_size: 24
 		text_font_name: 'fixed'
 		bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
-		text_value: src_codes[src_codes.keys()[0]]
+		text_value: app.cache_code[app.cache_code.keys()[0]]
 	)
 	app.treedemo = uic.treeview_stack(
 		id: 'treedemo'
 		trees: [
-			tools.treedir("demo",os.join_path(os.dir(@FILE),'demo'))
+			tools.treedir("widgets",os.join_path(os.dir(@FILE),'demo', 'widgets'))
+			tools.treedir("layouts",os.join_path(os.dir(@FILE),'demo', 'layouts'))
+			tools.treedir("components",os.join_path(os.dir(@FILE),'demo', 'components'))
 		],
 		on_click: fn [mut app](c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 			selected := tv.selected_full_title()
-			if selected in src_codes {
-				app.edit.set_text(src_codes[selected])
+			if selected in app.cache_code {
+				app.edit.set_text(app.cache_code[selected])
 			}
 		}
 	)
@@ -181,6 +193,27 @@ fn (mut app App) run() {
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
+layout = ui.box_layout(
+	children: {
+		"bl1: (0,0) -> (0.4, 0.5)": ui.box_layout(
+			children: {
+				"bl1/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.yellow)
+				"bl1/lab: (0, 0) ++ (300, 300)": ui.label(
+					text: "loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
+				)
+			}
+		)
+		"bl2: (0.5,0.5) -> (0.9, 1)": ui.box_layout(
+			children: {
+				"bl2/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.orange)
+				"bl2/lab: (0, 0) ++ (300, 300)": ui.label(
+					text: "clipped loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
+					clipping: true
+				)
+			}
+		)
+	}
+)
 // <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()
@@ -211,6 +244,7 @@ fn (mut app App) win_init(_ &ui.Window) {
 	app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
 	
 // <<BEGIN_WINDOW_INIT>>
+
 // <<END_WINDOW_INIT>>
 }
 
@@ -222,6 +256,7 @@ fn (mut app App) resize(_ &ui.Window, _ int, _ int) {
 
 fn main() {
 	mut app := App{}
+	app.make_cache_code()
 	app.make_children()
 	// PRE CODE HERE
 	app.make_precode()

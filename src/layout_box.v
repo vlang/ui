@@ -81,6 +81,7 @@ pub mut:
 	children         []Widget
 	drawing_children []Widget
 	hidden           bool
+	clipping         bool
 	is_root_layout   bool = true
 	// component state for composable widget
 	component voidptr
@@ -96,6 +97,7 @@ pub mut:
 	y        int
 	width    int
 	height   int
+	clipping bool = true
 	children map[string]Widget
 }
 
@@ -107,6 +109,7 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		y: c.y
 		width: c.width
 		height: c.height
+		clipping: c.clipping
 		ui: 0
 	}
 	for key, child in c.children {
@@ -409,6 +412,13 @@ fn (mut b BoxLayout) draw() {
 
 fn (mut b BoxLayout) draw_device(mut d DrawDevice) {
 	offset_start(mut b)
+	defer {
+		offset_end(mut b)
+	}
+	cstate := clipping_start(b, mut d) or { return }
+	defer {
+		clipping_end(b, mut d, cstate)
+	}
 	// Border
 	$if bldraw ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
@@ -419,7 +429,6 @@ fn (mut b BoxLayout) draw_device(mut d DrawDevice) {
 		// println("$b.id -> ${child.id} drawn at ${child.x}, ${child.y} ${child.size()}")
 		child.draw_device(mut d)
 	}
-	offset_end(mut b)
 }
 
 fn (b &BoxLayout) point_inside(x f64, y f64) bool {
