@@ -129,7 +129,7 @@ fn main() {
 		title: 'V UI: Build App'
 		mode: .resizable
 		on_init: app.win_init
-		children: [app.layout]
+		layout: app.layout
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
 	mut sc := ui.Shortcutable(app.window)

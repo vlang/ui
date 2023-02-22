@@ -140,6 +140,7 @@ pub:
 	on_init               WindowFn
 	on_draw               WindowFn
 	children              []Widget
+	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string
 	native_rendering      bool
 	resizable             bool
@@ -197,6 +198,13 @@ pub fn window(cfg WindowParams) &Window {
 		// size: int(m / cfg.lines)
 	}
 
+	children := if cfg.children.len == 0 && cfg.layout.id != empty_stack.id
+		&& (cfg.layout is Stack || cfg.layout is BoxLayout || cfg.layout is CanvasLayout) {
+		[cfg.layout]
+	} else {
+		cfg.children
+	}
+
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		title: cfg.title
@@ -206,7 +214,7 @@ pub fn window(cfg WindowParams) &Window {
 		theme_style: cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
-		children: cfg.children
+		children: children
 		on_init: cfg.on_init
 		on_draw: cfg.on_draw
 		click_fn: cfg.on_click

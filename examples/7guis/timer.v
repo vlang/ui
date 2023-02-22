@@ -47,31 +47,28 @@ fn main() {
 		height: win_height
 		title: 'Timer'
 		mode: .resizable
-		children: [
-			ui.column(
-				margin_: .05
-				spacing: .05
-				children: [
-					ui.row(
-						spacing: .1
-						widths: [left, ui.stretch]
-						children: [ui.label(text: 'Elapsed Time:', text_size: 1.0 / 10),
-							app.progress_bar]
-					),
-					ui.row(
-						spacing: .1
-						widths: [left, ui.stretch]
-						children: [ui.spacing(), app.lbl_elapsed_value]
-					),
-					ui.row(
-						spacing: .1
-						widths: [left, ui.stretch]
-						children: [ui.label(text: 'Duration:', text_size: 1.0 / 10), app.slider]
-					),
-					ui.button(text: 'Reset', on_click: app.on_reset),
-				]
-			),
-		]
+		layout: ui.column(
+			margin_: .05
+			spacing: .05
+			children: [
+				ui.row(
+					spacing: .1
+					widths: [left, ui.stretch]
+					children: [ui.label(text: 'Elapsed Time:', text_size: 1.0 / 10), app.progress_bar]
+				),
+				ui.row(
+					spacing: .1
+					widths: [left, ui.stretch]
+					children: [ui.spacing(), app.lbl_elapsed_value]
+				),
+				ui.row(
+					spacing: .1
+					widths: [left, ui.stretch]
+					children: [ui.label(text: 'Duration:', text_size: 1.0 / 10), app.slider]
+				),
+				ui.button(text: 'Reset', on_click: app.on_reset),
+			]
+		)
 	)
 	app.window = window
 

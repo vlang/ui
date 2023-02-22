@@ -61,7 +61,7 @@ fn main() {
 		width: 500
 		height: 300
 		mode: .resizable
-		children: [c]
+		layout: c
 	)
 	ui.run(w)
 }

@@ -14,13 +14,11 @@ fn main() {
 		title: 'V UI: File Browser'
 		native_message: false
 		mode: .resizable
-		children: [
-			uic.filebrowser_stack(
-				id: 'fb'
-				on_click_ok: on_click_ok
-				on_click_cancel: on_click_cancel
-			),
-		]
+		layout: uic.filebrowser_stack(
+			id: 'fb'
+			on_click_ok: on_click_ok
+			on_click_cancel: on_click_cancel
+		)
 	)
 	ui.run(window)
 }

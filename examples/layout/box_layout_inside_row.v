@@ -44,32 +44,29 @@ fn main() {
 		height: win_height
 		title: 'V UI: Rectangles inside BoxLayout'
 		mode: .resizable
-		children: [
-			ui.row(
-				margin_: 20
-				widths: ui.stretch
-				heights: ui.stretch
-				children: [
-					ui.box_layout(
-						id: 'bl'
-						children: {
-							'id1: (0,0) ++ (0.3,0.3)':     ui.rectangle(
-								color: gx.rgb(255, 100, 100)
-							)
-							'id2: (0.3,0.3) ++ (0.4,0.4)': ui.rectangle(
-								color: gx.rgb(100, 255, 100)
-							)
-							'id3: (0.7,0.7) ++ (0.3,0.3)': make_tb(mut app, mut text,
-								false)
-							'btn: (0.7,0.1) ++ (50,20)':   ui.button(
-								text: 'switch'
-								on_click: app.btn_click
-							)
-						}
-					),
-				]
-			),
-		]
+		layout: ui.row(
+			margin_: 20
+			widths: ui.stretch
+			heights: ui.stretch
+			children: [
+				ui.box_layout(
+					id: 'bl'
+					children: {
+						'id1: (0,0) ++ (0.3,0.3)':     ui.rectangle(
+							color: gx.rgb(255, 100, 100)
+						)
+						'id2: (0.3,0.3) ++ (0.4,0.4)': ui.rectangle(
+							color: gx.rgb(100, 255, 100)
+						)
+						'id3: (0.7,0.7) ++ (0.3,0.3)': make_tb(mut app, mut text, false)
+						'btn: (0.7,0.1) ++ (50,20)':   ui.button(
+							text: 'switch'
+							on_click: app.btn_click
+						)
+					}
+				),
+			]
+		)
 	)
 	ui.run(app.window)
 }

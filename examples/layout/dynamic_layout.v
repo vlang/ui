@@ -19,43 +19,41 @@ fn main() {
 		height: win_height
 		title: 'Dynamic layout'
 		mode: .resizable
-		children: [
-			ui.row(
-				id: 'row'
-				spacing: 10
-				widths: [.4, .6]
-				heights: ui.stretch
-				children: [
-					ui.column(
-						id: 'col1'
-						spacing: 10
-						margin_: 10
-						children: [
-							ui.button(text: 'add last', on_click: app.btn_add_click),
-							ui.button(text: 'add two', on_click: app.btn_add_two_click),
-							ui.button(text: 'remove last', on_click: btn_remove_click),
-							ui.button(text: 'remove second', on_click: btn_remove_second_click),
-							ui.button(text: 'hide', on_click: btn_show_hide_click),
-							ui.button(text: 'deactivate', on_click: btn_show_activate_click),
-							ui.button(text: 'move', on_click: btn_move_click),
-							ui.button(text: 'text last', on_click: btn_last_text_click),
-							ui.button(text: 'text third', on_click: btn_third_text_click),
-							ui.button(text: 'text below', on_click: btn_text_below_click),
-							ui.button(text: 'switch', on_click: btn_switch_click),
-							ui.button(text: 'migrate', on_click: btn_migrate_click),
-						]
-					),
-					ui.column(
-						id: 'col2'
-						spacing: 10
-						margin_: 10
-						children: [
-							ui.button(text: 'Button'),
-						]
-					),
-				]
-			),
-		]
+		layout: ui.row(
+			id: 'row'
+			spacing: 10
+			widths: [.4, .6]
+			heights: ui.stretch
+			children: [
+				ui.column(
+					id: 'col1'
+					spacing: 10
+					margin_: 10
+					children: [
+						ui.button(text: 'add last', on_click: app.btn_add_click),
+						ui.button(text: 'add two', on_click: app.btn_add_two_click),
+						ui.button(text: 'remove last', on_click: btn_remove_click),
+						ui.button(text: 'remove second', on_click: btn_remove_second_click),
+						ui.button(text: 'hide', on_click: btn_show_hide_click),
+						ui.button(text: 'deactivate', on_click: btn_show_activate_click),
+						ui.button(text: 'move', on_click: btn_move_click),
+						ui.button(text: 'text last', on_click: btn_last_text_click),
+						ui.button(text: 'text third', on_click: btn_third_text_click),
+						ui.button(text: 'text below', on_click: btn_text_below_click),
+						ui.button(text: 'switch', on_click: btn_switch_click),
+						ui.button(text: 'migrate', on_click: btn_migrate_click),
+					]
+				),
+				ui.column(
+					id: 'col2'
+					spacing: 10
+					margin_: 10
+					children: [
+						ui.button(text: 'Button'),
+					]
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

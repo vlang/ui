@@ -14,15 +14,13 @@ fn main() {
 		title: 'Grid'
 		mode: .resizable
 		on_init: win_init
-		children: [
-			ui.row(
-				children: [
-					uic.rasterview_canvaslayout(
-						id: 'rv'
-					),
-				]
-			),
-		]
+		layout: ui.row(
+			children: [
+				uic.rasterview_canvaslayout(
+					id: 'rv'
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

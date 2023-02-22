@@ -17,34 +17,32 @@ fn main() {
 		mode: .resizable
 		bg_color: gx.white
 		on_init: win_init
-		children: [
-			uic.datagrid_boxlayout(
-				id: 'grid'
-				is_focused: true
-				vars: {
-					'v1':   ['toto', 'titi', 'tata'].repeat(n)
-					'v2':   ['toti', 'tito', 'tato'].repeat(n)
-					'sex':  uic.Factor{
-						levels: ['Male', 'Female']
-						values: [0, 0, 1].repeat(n)
-					}
-					'csp':  uic.Factor{
-						levels: ['job1', 'job2', 'other']
-						values: [0, 1, 2].repeat(n)
-					}
-					'v3':   ['toto', 'titi', 'tata'].repeat(n)
-					'v4':   ['toti', 'tito', 'tato'].repeat(n)
-					'sex2': uic.Factor{
-						levels: ['Male', 'Female']
-						values: [0, 0, 1].repeat(n)
-					}
-					'csp2': uic.Factor{
-						levels: ['job1', 'job2', 'other']
-						values: [0, 1, 2].repeat(n)
-					}
+		layout: uic.datagrid_boxlayout(
+			id: 'grid'
+			is_focused: true
+			vars: {
+				'v1':   ['toto', 'titi', 'tata'].repeat(n)
+				'v2':   ['toti', 'tito', 'tato'].repeat(n)
+				'sex':  uic.Factor{
+					levels: ['Male', 'Female']
+					values: [0, 0, 1].repeat(n)
 				}
-			),
-		]
+				'csp':  uic.Factor{
+					levels: ['job1', 'job2', 'other']
+					values: [0, 1, 2].repeat(n)
+				}
+				'v3':   ['toto', 'titi', 'tata'].repeat(n)
+				'v4':   ['toti', 'tito', 'tato'].repeat(n)
+				'sex2': uic.Factor{
+					levels: ['Male', 'Female']
+					values: [0, 0, 1].repeat(n)
+				}
+				'csp2': uic.Factor{
+					levels: ['job1', 'job2', 'other']
+					values: [0, 1, 2].repeat(n)
+				}
+			}
+		)
 	)
 	ui.run(window)
 }
