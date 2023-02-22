@@ -436,7 +436,7 @@ fn (b &BoxLayout) get_ui() &UI {
 
 fn (mut b BoxLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
-	scrollview_set_children_orig_xy(b, false)
+	// scrollview_set_children_orig_xy(b, false)
 	b.propose_size(width, height)
 }
 
