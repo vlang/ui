@@ -476,7 +476,9 @@ pub fn (mut c CanvasLayout) update_layout() {
 	scrollview_update(c)
 	// println("$c.id update_layout")
 	c.set_drawing_children()
-	scrollview_widget_set_orig_xy(c, true)
+	// TODO: this make component/grid example failing
+	// otherwise layout/canas_layout example failing
+	scrollview_set_children_orig_xy(c, false)
 }
 
 // TODO: documentation

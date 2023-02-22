@@ -170,6 +170,27 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 	// }
 }
 
+// TODO: documentation
+pub fn scrollview_set_children_orig_xy(w Widget, reset_offset bool) {
+	if w is Stack {
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child, reset_offset)
+		}
+	} else if w is CanvasLayout {
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child, reset_offset)
+		}
+	} else if w is Group {
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child, reset_offset)
+		}
+	} else if w is BoxLayout {
+		for child in w.children {
+			scrollview_widget_set_orig_xy(child, reset_offset)
+		}
+	}
+}
+
 fn has_parent_scrolling(w Widget) bool {
 	pw := w.parent
 	if pw is ScrollableWidget {
@@ -437,10 +458,10 @@ pub mut:
 	height     int
 	adj_width  int
 	adj_height int
-	win_width  int
-	win_height int
-	ui         &UI = unsafe { nil }
-	parent     Layout
+	// win_width  int
+	// win_height int
+	ui     &UI = unsafe { nil }
+	parent Layout
 	// delta mouse
 	delta_mouse int = 50
 	// saved scrollview
@@ -684,6 +705,9 @@ pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 			sv.btn_w, ui.scrollbar_size, ui.scrollbar_size / 3, sv.btn_color_x)
 	}
 	if sv.active_y {
+		$if sv_draw ? {
+			println('sv_draw ${sv.widget.id} -> ${svx} + ${sv.width} - ${ui.scrollbar_size}, ${svy}, ${ui.scrollbar_size}, ${sv.sb_h}')
+		}
 		// vertical scrollbar
 		d.draw_rounded_rect_filled(svx + sv.width - ui.scrollbar_size, svy, ui.scrollbar_size,
 			sv.sb_h, ui.scrollbar_size / 3, ui.scrollbar_background_color)
@@ -763,12 +787,14 @@ fn scrollview_click(mut sv ScrollView, e &MouseEvent, _ voidptr) {
 		&& !has_child_with_active_scrollview(sv.widget, e.x, e.y)
 	if sv.active_x && sv.point_inside(e.x, e.y, .bar_x) {
 		sv.is_focused = true
+		println('svc x ${sv.widget.id}')
 		_, a_x := sv.x_offset_max_and_coef()
 		svx, _ := sv.orig_xy()
 		sv.offset_x = int((e.x - svx - sv.btn_w / 2) / a_x)
 		sv.change_value(.btn_x)
 	} else if sv.active_y && sv.point_inside(e.x, e.y, .bar_y) {
 		sv.is_focused = true
+		println('svc y ${sv.widget.id}')
 		_, a_y := sv.y_offset_max_and_coef()
 		_, svy := sv.orig_xy()
 		sv.offset_y = int((e.y - svy - sv.btn_h / 2) / a_y)

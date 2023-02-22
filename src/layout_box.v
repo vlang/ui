@@ -436,7 +436,7 @@ fn (b &BoxLayout) get_ui() &UI {
 
 fn (mut b BoxLayout) resize(width int, height int) {
 	// println("resize ${width}, ${height}")
-	scrollview_widget_set_orig_xy(b, false)
+	scrollview_set_children_orig_xy(b, false)
 	b.propose_size(width, height)
 }
 
@@ -485,10 +485,11 @@ pub fn (mut b BoxLayout) update_layout() {
 		}
 	}
 	b.set_drawing_children()
-	scrollview_widget_set_orig_xy(b, true)
+	scrollview_set_children_orig_xy(b, true)
 }
 
 fn (mut b BoxLayout) set_drawing_children() {
+	// println("fdfbfd: ${b.children.map(it.id)}")
 	for mut child in b.children {
 		if mut child is Stack {
 			child.set_drawing_children()
