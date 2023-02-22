@@ -181,7 +181,7 @@ pub fn (b &BoxLayout) free() {
 	}
 }
 
-fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) ? {
+pub fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) {
 	id, bounding := parse_boxlayout_child_key(key, b.id)
 	mode, bounding_vec, has_z_index, z_index := parse_boxlayout_child_bounding(bounding)
 	match mode {
@@ -510,6 +510,8 @@ pub fn (mut b BoxLayout) update_layout() {
 		} else if mut child is CanvasLayout {
 			child.update_layout()
 		} else if mut child is BoxLayout {
+			child.update_layout()
+		} else if mut child is SubWindow {
 			child.update_layout()
 		}
 	}

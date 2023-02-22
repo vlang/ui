@@ -749,6 +749,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 	} else if e.key == .f11 && super_key(e.mods) {
 		if !window.no_fullscreen {
 			gg.toggle_fullscreen()
+			window.update_layout()
 		}
 	} else {
 		// add user shortcuts for window
