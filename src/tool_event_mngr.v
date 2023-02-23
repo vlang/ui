@@ -74,8 +74,9 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse ? {
-			println('point_inside_receivers: ${w.id} ${w.is_visible()} && ${w.is_parent_visible(true)} && ${w.point_inside(e.x,
-				e.y)} ${w.has_parent_deactivated()}')
+			println('point_inside_receivers: ${w.id} [${w.is_visible() && w.is_parent_visible(true)
+				&& w.point_inside(e.x, e.y) && !w.has_parent_deactivated()}] (vis: ${w.is_visible()}) && (parentvis: ${w.is_parent_visible(true)}) && (inside: ${w.point_inside(e.x,
+				e.y)}) && (!parent deactivated : ${!w.has_parent_deactivated()})')
 		}
 		if w.is_visible() && w.is_parent_visible(true) && w.point_inside(e.x, e.y)
 			&& !w.has_parent_deactivated() {

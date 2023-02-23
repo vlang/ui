@@ -220,6 +220,10 @@ pub fn (mut s SubWindow) set_pos(x int, y int) {
 		// println("sw set_pos: $s.x, $s.y $s.decoration")
 		w.set_pos(x, y + if s.decoration { ui.sw_decoration } else { 0 })
 	}
+	if s.parent is BoxLayout { // could be done for other Layout???
+		// update pos in the parent
+		// ind := s.parent.child_id.index(s.id)
+	}
 }
 
 pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
@@ -270,6 +274,9 @@ fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
 
 fn (mut s SubWindow) resize(w int, h int) {
 	s.layout.resize(w, h)
+	if s.parent is BoxLayout {
+		// update the size of parent
+	}
 }
 
 pub fn (s &SubWindow) get_children() []Widget {
