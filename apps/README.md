@@ -1,7 +1,7 @@
 ## Applications as module
 
-Application interface provide a way to put all the code in a self-content module. 
-1) It is then possible to launch several applications together that can interact with each other (see wm).
+Application interface provide a way to develop an application as a self-content module. 
+1) It is then possible to launch several same applications together that can interact with each other (see wm).
 2) An application developed in a module can be also used as a simple application (see `example/apps` folder)
 
 ```{go}
@@ -21,7 +21,6 @@ fn main() {
 		title: 'V UI Demo'
 		mode: .resizable
 		bg_color: ui.color_solaris
-		// theme: 'red'
 		native_message: false
 	)
 	app.run()

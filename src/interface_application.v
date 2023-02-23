@@ -52,22 +52,36 @@ mut:
 	window &Window
 	layout &Layout
 	on_init WindowFn
-	run()
 }
 
 // start application (not related to WM)
-pub fn (mut app Application) start() {
-	// attach the layout to ui.window
-	if app.layout is Widget {
-		mut l := app.layout as Widget
-		app.window.children = [l]
-	}
+pub fn (mut app Application) add_window(p WindowParams) {
+	// create window
+	app.window = window(p)
+	app.window.children = [app.layout()]
 	app.window.on_init = fn [mut app] (mut win Window) {
 		if app.on_init != WindowFn(0) {
 			app.on_init(win)
 		}
 		app.window.update_layout()
 	}
+}
+
+// start application (not related to WM)
+pub fn (mut app Application) run() {
+	if app.window == unsafe { nil } {
+		app.add_window()
+	}
 	// run window
 	run(app.window)
+}
+
+// return Application layout as a Widget
+pub fn (mut app Application) layout() Widget {
+	if app.layout is Widget {
+		layout := app.layout as Widget
+		return layout
+	} else {
+		return empty_stack
+	}
 }

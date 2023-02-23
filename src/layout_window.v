@@ -111,10 +111,10 @@ pub mut:
 [params]
 pub struct WindowParams {
 pub:
-	width         int
-	height        int
+	width         int = 800
+	height        int = 500
 	font_path     string
-	title         string
+	title         string = 'V UI window'
 	no_fullscreen bool
 
 	bg_color gx.Color = no_color
@@ -144,7 +144,7 @@ pub:
 	custom_bold_font_path string
 	native_rendering      bool
 	resizable             bool
-	mode                  WindowSizeType
+	mode                  WindowSizeType = .resizable
 	immediate             bool
 	sample_count          int = 4
 	// Text Config
