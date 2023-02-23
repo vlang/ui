@@ -1,4 +1,3 @@
-import ui
 import ui.apps.editor
 
 const (
