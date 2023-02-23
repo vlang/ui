@@ -400,6 +400,8 @@ pub fn (mut b BoxLayout) set_children_pos() {
 		b.set_child_pos(i, mut child)
 		if mut child is Stack {
 			child.update_layout()
+		} else if mut child is SubWindow {
+			child.update_layout()
 		}
 	}
 }

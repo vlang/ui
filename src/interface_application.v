@@ -24,7 +24,12 @@ pub fn wm(cfg WindowParams) &WindowManager {
 	mut bg := rectangle(color: gx.orange)
 	wm.layout.set_child_bounding('bg: stretch', mut bg)
 	wm.window.children = [wm.layout]
-	wm.window.on_init = fn (mut win Window) {
+	wm.window.on_init = fn [mut wm] (mut win Window) {
+		for mut app in wm.apps {
+			if app.on_init != WindowFn(0) {
+				app.on_init(win)
+			}
+		}
 		win.update_layout()
 	}
 	return wm
@@ -46,6 +51,7 @@ mut:
 	id string
 	window &Window
 	layout &Layout
+	on_init WindowFn
 }
 
 // pub fn (mut app Application) run() {

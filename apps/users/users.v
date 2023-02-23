@@ -3,6 +3,13 @@ module users
 import ui
 import gx
 
+const (
+	nr_cols     = 4
+	cell_height = 25
+	cell_width  = 100
+	table_width = cell_width * nr_cols
+)
+
 struct User {
 	first_name string
 	last_name  string
@@ -16,6 +23,8 @@ pub mut:
 	id      string
 	window  &ui.Window = unsafe { nil }
 	layout  &ui.Layout = ui.empty_stack
+	on_init ui.WindowFn
+	//
 	users   []User
 	pbar    &ui.ProgressBar = unsafe { nil }
 	label   &ui.Label       = unsafe { nil }
@@ -133,14 +142,14 @@ pub fn (mut app AppUsers) make_layout() {
 								width: 60
 								text: 'Add user'
 								tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
-								// on_click: app.btn_add_click
+								on_click: app.btn_add_click
 								radius: .0
 							),
 							ui.button(
 								width: 40
 								tooltip: 'about'
 								text: '?'
-								// on_click: btn_help_click
+								on_click: btn_help_click
 								radius: .3
 							),
 						]
@@ -181,7 +190,7 @@ pub fn (mut app AppUsers) make_layout() {
 					ui.canvas_plus(
 						width: 400
 						height: 275
-						// on_draw: app.draw
+						on_draw: app.draw
 						bg_color: gx.Color{255, 220, 220, 150}
 						bg_radius: 10
 						// text_size: 20
@@ -196,4 +205,64 @@ pub fn (mut app AppUsers) make_layout() {
 			),
 		]
 	)
+}
+
+fn btn_help_click(b &ui.Button) {
+	// ui.message_box('Built with V UI')
+	b.ui.window.message('  Built with V UI\n  Thus \n  And')
+}
+
+/*
+fn (mut app App) btn_add_click(b &Button) {
+
+}
+*/
+fn (mut app AppUsers) btn_add_click(b &ui.Button) {
+	// println('nr users=$app.users.len')
+	// ui.notify('user', 'done')
+	// app.window.set_cursor(.hand)
+	if app.users.len >= 10 {
+		return
+	}
+	if app.first_name == '' || app.last_name == '' || app.age == '' {
+		app.is_error = true
+		return
+	}
+	new_user := User{
+		first_name: app.first_name // first_name.text
+		last_name: app.last_name // .text
+		age: app.age.int()
+		country: app.country.selected_value()
+	}
+	app.users << new_user
+	app.pbar.val++
+	app.first_name = ''
+	// app.first_name.focus()
+	app.last_name = ''
+	app.age = ''
+	app.password = ''
+	app.label.set_text('${app.users.len}/10')
+	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
+}
+
+fn (app &AppUsers) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
+	marginx, marginy := 20, 20
+	for i, user in app.users {
+		y := marginy + i * users.cell_height
+		// Outer border
+		c.draw_device_rect_empty(d, marginx, y, users.table_width, users.cell_height,
+			gx.gray)
+		// Vertical separators
+		c.draw_device_line(d, users.cell_width, y, users.cell_width, y + users.cell_height,
+			gx.gray)
+		c.draw_device_line(d, users.cell_width * 2, y, users.cell_width * 2, y + users.cell_height,
+			gx.gray)
+		c.draw_device_line(d, users.cell_width * 3, y, users.cell_width * 3, y + users.cell_height,
+			gx.gray)
+		// Text values
+		c.draw_device_text(d, marginx + 5, y + 5, user.first_name)
+		c.draw_device_text(d, marginx + 5 + users.cell_width, y + 5, user.last_name)
+		c.draw_device_text(d, marginx + 5 + users.cell_width * 2, y + 5, user.age.str())
+		c.draw_device_text(d, marginx + 5 + users.cell_width * 3, y + 5, user.country)
+	}
 }
