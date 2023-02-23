@@ -57,12 +57,17 @@ pub mut:
 	]
 }
 
-pub fn new(p AppUsersParams) &ui.Application {
+pub fn new(p AppUsersParams) &AppUsers {
 	mut app := &AppUsers{
 		id: p.id
 		users: p.users
 	}
 	app.make_layout()
+	return app
+}
+
+pub fn app(p AppUsersParams) &ui.Application {
+	app := new(p)
 	return &ui.Application(app)
 }
 

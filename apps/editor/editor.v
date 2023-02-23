@@ -22,11 +22,16 @@ pub mut:
 	id string
 }
 
-pub fn new(p AppEditorParams) &ui.Application {
+pub fn new(p AppEditorParams) &AppEditor {
 	mut app := &AppEditor{
 		id: p.id
 	}
 	app.make_layout()
+	return app
+}
+
+pub fn app(p AppEditorParams) &ui.Application {
+	app := new(p)
 	return &ui.Application(app)
 }
 

@@ -8,21 +8,8 @@ Application interface provide a way to develop an application as a self-content 
 import ui
 import ui.apps.editor
 
-const (
-	win_width   = 780
-	win_height  = 395
-)
-
 fn main() {
-	mut app := editor.new()
-	app.window = ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI Demo'
-		mode: .resizable
-		bg_color: ui.color_solaris
-		native_message: false
-	)
+	mut app := editor.app()
 	app.run()
 }
 ```
