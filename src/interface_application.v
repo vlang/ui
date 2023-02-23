@@ -52,8 +52,22 @@ mut:
 	window &Window
 	layout &Layout
 	on_init WindowFn
+	run()
 }
 
-// pub fn (mut app Application) run() {
-
-// }
+// start application (not related to WM)
+pub fn (mut app Application) start() {
+	// attach the layout to ui.window
+	if app.layout is Widget {
+		mut l := app.layout as Widget
+		app.window.children = [l]
+	}
+	app.window.on_init = fn [mut app] (mut win Window) {
+		if app.on_init != WindowFn(0) {
+			app.on_init(win)
+		}
+		app.window.update_layout()
+	}
+	// run window
+	run(app.window)
+}

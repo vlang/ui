@@ -66,6 +66,11 @@ pub fn new(p AppUsersParams) &AppUsers {
 	return app
 }
 
+pub fn (mut app AppUsers) run() {
+	mut appl := ui.Application(app)
+	appl.start()
+}
+
 pub fn (mut app AppUsers) make_layout() {
 	mut logo := 'v-logo'
 	$if android {

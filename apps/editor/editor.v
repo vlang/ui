@@ -30,6 +30,11 @@ pub fn new(p AppEditorParams) &AppEditor {
 	return app
 }
 
+pub fn (mut app AppEditor) run() {
+	mut appl := ui.Application(app)
+	appl.start()
+}
+
 pub fn (mut app AppEditor) make_layout() {
 	mut dirs := ['.']
 	dirs = dirs.map(os.real_path(it))
