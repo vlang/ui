@@ -3,6 +3,7 @@ module ui
 // import gx
 import gg
 import eventbus
+import regex
 
 const (
 	null_rect = gg.Rect{0.0, 0.0, 0.0, 0.0}
@@ -35,7 +36,8 @@ b) widget position and size:
 		(xLeft + left_offset, yTop + top_offset) -> (xRight + right_offset,yBottom + bottom_offset) => storage: Box{LeftTopToRightBottom} but with values being float which absolute value is the sum of integer and real between 0 and 1
 */
 
-// IMPORTANT: No margins since users can add relative or absolute ones manually
+// IMPORTANT: 1) No margins since users can add relative or absolute ones manually
+// 2) The box_layout <id> is RELATIVE to its own box_layout so this id is independent of the id of the widget
 
 struct LeftTopToRightBottom {
 mut:
@@ -77,7 +79,8 @@ pub mut:
 	// children
 	child_box        []Box
 	child_box_expr   map[string]string // for box_expression mode, i.e. specifically when some @id are used inside bounding expression
-	child_id         []string
+	child_id         []string // relative id
+	cid              []string // real child id defined inside its own constructor
 	child_mode       []BoxMode
 	children         []Widget
 	drawing_children []Widget
@@ -125,8 +128,8 @@ pub fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
 	mut ui := parent.get_ui()
 	b.ui = ui
-	for i, mut child in b.children {
-		child.id = b.child_id[i]
+	for _, mut child in b.children {
+		// DON'T DO THAT: child.id = b.child_id[i]
 		// println('$i) gl init child ${child.id} ')
 		child.init(b)
 		// unsafe{println('$i) end init ${b.child_box[i]}')}
@@ -184,7 +187,8 @@ pub fn (b &BoxLayout) free() {
 
 pub fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) {
 	id, mut bounding := parse_boxlayout_child_key(key, b.id)
-	bounding = b.update_child_current_box_expression(id, bounding)
+	// Non-sense here no underscore when setting a child bounding box
+	// bounding = b.update_child_current_box_expression(id, bounding)
 	mode, bounding_vec, has_z_index, z_index, box_expr := parse_boxlayout_child_bounding(bounding)
 	match mode {
 		'rect' { b.add_child_rect(id, child, bounding_vec) }
@@ -206,6 +210,7 @@ fn (mut b BoxLayout) add_child_lt2rb(id string, child Widget, vec4 []f32) {
 	}
 	// println(lt2rb)
 	b.child_id << id
+	b.cid << child.id
 	b.child_box << Box{
 		LeftTopToRightBottom: lt2rb
 	}
@@ -220,6 +225,7 @@ fn (mut b BoxLayout) add_child_rect(id string, child Widget, vec4 []f32) {
 		gg.Rect{0.0, 0.0, 0.0, 0.0}
 	}
 	b.child_id << id
+	b.cid << child.id
 	b.child_box << Box{
 		Rect: rect
 	}
@@ -229,12 +235,17 @@ fn (mut b BoxLayout) add_child_rect(id string, child Widget, vec4 []f32) {
 
 fn (mut b BoxLayout) add_child_box_expr(id string, child Widget, box_expr string) {
 	b.child_id << id
+	b.cid << child.id
 	b.child_box_expr[id] = box_expr
 	b.child_mode << if box_expr.contains('++') {
 		.left_top_width_height
 	} else {
 		.left_top_right_bottom
 	}
+	b.child_box << Box{
+		Rect: gg.Rect{0.001, 0.0, 0.0, 0.0}
+	}
+	// println("add_child_box_expr: $id ${b.child_box_expr[id]} ${(b.child_mode)[b.child_mode.len-1]}")
 	b.children << child
 }
 
@@ -352,6 +363,7 @@ fn (mut b BoxLayout) set_pos(x int, y int) {
 pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	mut x, mut y := 0, 0
 	unsafe {
+		// println("bl.set_child_pos $i ${b.child_mode[i]} ${b.child_box}")
 		match b.child_mode[i] {
 			.left_top_width_height {
 				x = b.x + absolute_or_relative_pos(b.child_box[i].x, b.width)
@@ -416,6 +428,32 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	child.propose_size(w, h)
 }
 
+fn (b BoxLayout) ids_repl(re regex.RE, in_txt string, start int, end int) string {
+	id := re.get_group_by_id(in_txt, 0)
+	field := re.get_group_by_id(in_txt, 1)
+	ind := b.child_id.index(id)
+	if ind >= 0 {
+		box := b.child_box[ind]
+		val := unsafe {
+			match field {
+				'xl' { box.x_left }
+				'xr' { box.x_right }
+				'yt' { box.y_top }
+				'yb' { box.y_bottom }
+				'x' { box.x }
+				'y' { box.y }
+				'w' { box.width }
+				'h' { box.height }
+				'xw' { box.x + box.width }
+				'yh' { box.y + box.height }
+				else { 0.0 }
+			}
+		}
+		return val.str()
+	}
+	return in_txt
+}
+
 fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 	// TODO: extract first the @id, replace by unsafe value in the expression
 	// the new bounding string is then evaluated to generate b.child_box[i]
@@ -425,11 +463,16 @@ fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 	// and return
 
 	if id in b.child_box_expr {
-		bounding := b.child_box_expr[id]
+		mut bounding := b.child_box_expr[id]
 		// extract @id
-		// TODO!!!!
+		query := r'@(\w+)\.(\w+)'
+
+		mut re := regex.regex_opt(query) or { panic(err) }
+
+		bounding = re.replace_by_fn(bounding, b.ids_repl)
 		// set the child_box[i] and child_mode[i] (already done normally)
 		mode, bounding_vec, _, _, _ := parse_boxlayout_child_bounding(bounding)
+		// println("preprocess $id $bounding_vec")
 		match mode {
 			'rect' { b.update_child_rect(id, bounding_vec) }
 			'lt2rb' { b.update_child_lt2rb(id, bounding_vec) }
@@ -445,7 +488,7 @@ pub fn (mut b BoxLayout) set_children_pos() {
 		// println('widget.set_pos($i) $widget.id ${int(start_x + w * b.child_box[i].x)}, ${int(
 		// start_y + h * b.child_box[i].y)})')
 		// println("size(${int(w * b.child_box[i].width)}, ${int(h * b.child_box[i].height)})")
-		b.preprocess_child_box_expression(i, child.id)
+		b.preprocess_child_box_expression(i, b.child_id[i])
 		b.set_child_pos(i, mut child)
 		if mut child is Stack {
 			child.update_layout()
@@ -462,7 +505,7 @@ fn (mut b BoxLayout) set_children_pos_and_size() {
 		}
 	}
 	for i, mut child in b.children {
-		b.preprocess_child_box_expression(i, child.id)
+		b.preprocess_child_box_expression(i, b.child_id[i])
 		b.set_child_pos(i, mut child)
 		b.set_child_size(i, mut child)
 	}
@@ -595,7 +638,7 @@ fn (mut b BoxLayout) set_drawing_children() {
 }
 
 pub fn (b &BoxLayout) is_box_hidden(id string) bool {
-	ind := b.child_id.index(id)
+	ind := b.cid.index(id)
 	// println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
 	if ind < 0 {
 		return false
@@ -609,7 +652,11 @@ pub fn (mut b BoxLayout) register_child(child Widget) {
 	window.register_child(child)
 }
 
-pub fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding string) string {
+// deal with underscore '_' syntax to update a box expression
+fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding string) string {
+	if !bounding.contains('_') {
+		return bounding
+	}
 	mut tmp, mut vec := []string{}, []string{}
 	mut res := bounding
 	ind := b.child_id.index(id)
@@ -619,6 +666,7 @@ pub fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding
 	box := b.child_box[ind]
 	if bounding.contains('++') {
 		tmp = bounding.split('++').map(it.trim_space())
+		tmp[0] = tmp[0].find_between('(', ')')
 		vec = tmp[0].split(',').map(it.trim_space())
 		if vec.len == 2 { // z_index (vec.len == 3) has no need to be preserved since it is the default behavior
 			if vec[0] == '_' {
@@ -640,8 +688,10 @@ pub fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding
 			res = '(${vec[0]},${vec[1]}) ++ (${vec[2]},${vec[3]})'
 		}
 	} else if bounding.contains('->') {
-		tmp = bounding.split('++').map(it.trim_space())
+		tmp = bounding.split('->').map(it.trim_space())
+		tmp[0] = tmp[0].find_between('(', ')')
 		vec = tmp[0].split(',').map(it.trim_space())
+		println(vec)
 		if vec.len == 2 { // z_index (vec.len == 3) has no need to be preserved since it is the default behavior
 			if vec[0] == '_' {
 				vec[0] = unsafe { box.x_left.str() }

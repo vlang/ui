@@ -99,6 +99,7 @@ fn (mut app App) make_children() {
 		children: [app.run_btn, app.help_btn, app.reset_btn, app.status]
 	)
 	app.edit = ui.textbox(
+		id: "edit"
 		mode: .multiline
 		scrollview: true
 		z_index: 20
@@ -124,6 +125,7 @@ fn (mut app App) make_children() {
 		}
 	)
 	app.treelayout = tools.layouttree_stack(
+		id: "treelayout"
 		widget: app.active
 		on_click: fn [mut app](c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 			app.bounding_box_cur = tv.titles[c.id]
