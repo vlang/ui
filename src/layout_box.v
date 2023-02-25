@@ -468,8 +468,11 @@ fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 		query := r'@(\w+)\.(\w+)'
 
 		mut re := regex.regex_opt(query) or { panic(err) }
-
+		// println("before: $bounding")
 		bounding = re.replace_by_fn(bounding, b.ids_repl)
+		// precompute formulae
+		bounding = b.precompute_box_expression(bounding)
+		// println("precompute:  $bounding")
 		// set the child_box[i] and child_mode[i] (already done normally)
 		mode, bounding_vec, _, _, _ := parse_boxlayout_child_bounding(bounding)
 		// println("preprocess $id $bounding_vec")
@@ -479,6 +482,28 @@ fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 			else {}
 		}
 	}
+}
+
+fn (b &BoxLayout) precompute_box_expression(bounding string) string {
+	mut res, mut bbs := bounding.trim_space(), []string{}
+	mut op := ''
+	if res.contains('++') {
+		op = '++'
+	} else {
+		op = '->'
+	}
+	mut tmp := res.split(op).map(it.trim_space()#[1..-1])
+	for i in 0 .. 2 {
+		if tmp[i].contains_any('+-*/()') {
+			bbs = tmp[i].split(',').map(it.trim_space())
+			tmp[i] = '${b.calculate(bbs[i * 2])}, ${b.calculate(bbs[i * 2 + 1])}'
+		}
+	}
+	return '(${tmp[0]}) ${op} (${tmp[1]})'
+}
+
+fn (b &BoxLayout) calculate(formula string) f32 {
+	return b.ui.window.calculate(formula)
 }
 
 // TODO: documentation

@@ -104,6 +104,7 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
+	mini_calc MiniCalc
 	mx        f64 // do not remove this, temporary
 	my        f64
 }
@@ -243,6 +244,7 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
+	window.mini_calc = mini_calc()
 	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
 			width: width
@@ -1566,6 +1568,11 @@ pub fn (mut w Window) register_child(child_ Widget) {
 			w.widgets[child.id] = child
 		}
 	}
+}
+
+pub fn (w &Window) calculate(formula string) f32 {
+	mut mc := w.mini_calc
+	return mc.calculate(formula)
 }
 
 // get_or_panic returns the widget with the given id and type,
