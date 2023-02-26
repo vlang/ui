@@ -325,11 +325,12 @@ pub fn (mut b BoxLayout) update_child(id string, mut child Widget) {
 	if ind < 0 {
 		return
 	}
-	child.id = b.children[ind].id
+	child_id := b.children[ind].id
 	b.children[ind].cleanup()
 	b.children[ind] = child
 	child.init(b)
 	b.register_child(child)
+	child.id = child_id
 	b.update_layout()
 }
 
@@ -391,7 +392,8 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 			}
 		}
 	}
-	// println("$child.id: x,y =($x, $y)")
+	//
+	println('${child.id}: x,y =(${x}, ${y})')
 	child.set_pos(x, y)
 }
 
@@ -424,7 +426,8 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 			}
 		}
 	}
-	// println('${child.id}: w,h=(${w}, ${h})')
+	//
+	println('${child.id}: w,h=(${w}, ${h}) (${b.width}, ${b.height})')
 	child.propose_size(w, h)
 }
 
@@ -526,7 +529,7 @@ pub fn (mut b BoxLayout) set_children_pos() {
 fn (mut b BoxLayout) set_children_pos_and_size() {
 	$if bl_scps ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
-			println('gridlayout scps ${b.id} size: (${b.width}, ${b.height})')
+			println('boxlayout scps ${b.id} size: (${b.width}, ${b.height})')
 		}
 	}
 	for i, mut child in b.children {
@@ -536,7 +539,7 @@ fn (mut b BoxLayout) set_children_pos_and_size() {
 	}
 	$if bl_scps ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
-			println('gridlayout scps ${b.id} size: (${b.width}, ${b.height})')
+			println('boxlayout scps ${b.id} size: (${b.width}, ${b.height})')
 		}
 	}
 }
@@ -583,6 +586,13 @@ fn (mut b BoxLayout) resize(width int, height int) {
 	// scrollview_set_children_orig_xy(b, false)
 	b.propose_size(width, height)
 	scrollview_set_children_orig_xy(b, false)
+	for mut child in b.children {
+		if mut child is Layout {
+			child.update_layout()
+		} else if mut child is SubWindow {
+			child.update_layout()
+		}
+	}
 }
 
 fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber {
@@ -775,14 +785,6 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int, st
 		if vec4.len == 4 {
 			mode = 'lt2rb'
 		}
-	} else if bounding.contains('x') { // (xLeft,yTop,xRight,yBottom) mode
-		tmp2 = bounding.split('x').map(it.trim_space())
-		vec4 = tmp2[0].split(',').map(it.f32())
-		vec4 << tmp2[1].split(',').map(it.f32())
-		mode = 'rect'
-	} else if bounding.contains(',') { // (x,y,w,h) mode
-		vec4 = bounding.split(',').map(it.f32())
-		mode = 'rect'
 	}
 	return mode, vec4, has_z_index, z_index, box_expr
 }

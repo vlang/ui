@@ -1,4 +1,4 @@
-module watcher
+module explorer
 
 import ui
 import gx

@@ -19,7 +19,7 @@ pub mut:
 [params]
 pub struct AppEditorParams {
 pub mut:
-	id string
+	id string = 'editor'
 }
 
 pub fn new(p AppEditorParams) &AppEditor {
@@ -40,13 +40,13 @@ pub fn (mut app AppEditor) make_layout() {
 	dirs = dirs.map(os.real_path(it))
 	app.line_numbers = true
 	app.layout = ui.row(
-		id: os.join_path(app.id, 'main')
+		id: ui.id(app.id, 'layout')
 		widths: [ui.stretch, ui.stretch * 2]
 		children: [
 			uic.hideable_stack(
-				id: os.join_path(app.id, 'hmenu')
+				id: ui.id(app.id, 'hmenu')
 				layout: uic.menufile_stack(
-					id: os.join_path(app.id, 'menu')
+					id: ui.id(app.id, 'menu')
 					dirs: dirs
 					on_file_changed: fn [mut app] (mut mf uic.MenuFileComponent) {
 						mf.layout.ui.window.set_title('V UI Edit: ${mf.file}')
@@ -92,9 +92,9 @@ pub fn (mut app AppEditor) make_layout() {
 	app.on_init = fn [mut app] (w &ui.Window) {
 		// add shortcut for hmenu
 		uic.hideable_add_shortcut(w, 'ctrl + o', fn [mut app] (w &ui.Window) {
-			uic.hideable_toggle(w, os.join_path(app.id, 'hmenu'))
+			uic.hideable_toggle(w, ui.id(app.id, 'hmenu'))
 		})
 		// At first hmenu open
-		uic.hideable_show(w, os.join_path(app.id, 'hmenu'))
+		uic.hideable_show(w, ui.id(app.id, 'hmenu'))
 	}
 }

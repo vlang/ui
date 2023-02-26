@@ -40,7 +40,7 @@ pub mut:
 [params]
 pub struct AppUsersParams {
 pub mut:
-	id    string
+	id    string = 'users'
 	users []User = [
 		User{
 			first_name: 'Sam'
@@ -89,6 +89,7 @@ pub fn (mut app AppUsers) make_layout() {
 	)
 	app.label = ui.label(id: 'counter', text: '2/10', text_font_name: 'fixed_bold_italic')
 	app.layout = ui.row(
+		id: ui.id(app.id, 'layout')
 		bg_color: gx.white
 		margin_: .02
 		spacing: .02
