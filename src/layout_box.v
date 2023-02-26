@@ -67,6 +67,8 @@ pub mut:
 	id          string
 	height      int
 	width       int
+	adj_height  int
+	adj_width   int
 	x           int
 	y           int
 	offset_x    int
@@ -87,6 +89,10 @@ pub mut:
 	hidden           bool
 	clipping         bool
 	is_root_layout   bool = true
+	// scrollview
+	has_scrollview   bool
+	scrollview       &ScrollView = unsafe { nil }
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed
@@ -96,13 +102,14 @@ pub mut:
 [params]
 pub struct BoxLayoutParams {
 pub mut:
-	id       string
-	x        int
-	y        int
-	width    int
-	height   int
-	clipping bool = true
-	children map[string]Widget
+	id         string
+	x          int
+	y          int
+	width      int
+	height     int
+	clipping   bool = true
+	scrollview bool
+	children   map[string]Widget
 }
 
 // TODO: documentation
@@ -120,6 +127,9 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		mut child_mut := child
 		b.set_child_bounding(key, mut child_mut)
 	}
+	if c.scrollview {
+		scrollview_add(mut b)
+	}
 	return b
 }
 
@@ -136,7 +146,14 @@ pub fn (mut b BoxLayout) init(parent Layout) {
 	}
 	b.decode_size()
 	b.set_children_pos_and_size()
+	b.set_adjusted_size(b.ui)
 	b.set_root_layout()
+	if has_scrollview(b) {
+		b.scrollview.init(parent)
+		b.ui.window.evt_mngr.add_receiver(b, [events.on_scroll])
+	} else {
+		scrollview_delegate_parent_scrollview(mut b)
+	}
 }
 
 // Determine wheither BoxLayout b is a root layout
@@ -559,6 +576,10 @@ fn (mut b BoxLayout) draw_device(mut d DrawDevice) {
 	defer {
 		clipping_end(b, mut d, cstate)
 	}
+	scrollview_draw_begin(mut b, d)
+	defer {
+		scrollview_draw_end(b, d)
+	}
 	// Border
 	$if bldraw ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
@@ -612,11 +633,73 @@ fn (mut b BoxLayout) propose_size(w int, h int) (int, int) {
 		}
 	}
 	b.set_children_pos_and_size()
+	scrollview_update(b)
 	return b.width, b.height
 }
 
 fn (b &BoxLayout) size() (int, int) {
 	return b.width, b.height
+}
+
+// TODO: documentation
+pub fn (mut b BoxLayout) set_adjusted_size(gui &UI) {
+	$if b_adj_size ? {
+		b.debug_ids = env('UI_IDS').split(',').clone()
+		b.debug_children_ids = []
+		if b.debug_ids.len == 0 || b.id in b.debug_ids {
+			println('bl set_adj ${b.id}')
+		}
+	}
+	mut w, mut h := 0, 0
+	$if b_adj_size ? {
+		if b.debug_ids.len == 0 || b.id in b.debug_ids {
+			println('bll ${b.id} children: ${b.children.map(it.id)}')
+		}
+	}
+	for mut child in b.children {
+		$if b_adj_size ? {
+			if b.debug_ids.len == 0 || b.id in b.debug_ids {
+				println('bl child ${child.id} ${child.z_index} > ${z_index_hidden}')
+			}
+		}
+		if child.z_index > z_index_hidden { // taking into account only visible widgets
+			child_width, child_height := child.size()
+
+			if child.x + child_width > w {
+				w = child.x + child_width
+			}
+			if child.y + child_height > h {
+				h = child.y + child_height
+			}
+			$if b_adj_size ? {
+				if b.debug_ids.len == 0 || b.id in b.debug_ids {
+					println('bl size child ${child.id} ${child.type_name()} -> (${child.x} + ${child_width}, ${child.y} + ${child_height}) -> (${w}, ${h})')
+				}
+			}
+		}
+	}
+	$if b_adj_size ? {
+		if b.debug_ids.len == 0 || b.id in b.debug_ids {
+			println('bl set_adj before: ${b.id} -> (${w}, ${h})')
+		}
+	}
+	if b.width > w {
+		w = b.width
+	}
+	if b.height > h {
+		h = b.height
+	}
+	$if b_adj_size ? {
+		if b.debug_ids.len == 0 || b.id in b.debug_ids {
+			println('bl set_adj after: ${b.id} -> (${w}, ${h})')
+		}
+	}
+	b.adj_width = w
+	b.adj_height = h
+}
+
+fn (b &BoxLayout) adj_size() (int, int) {
+	return b.adj_width, b.adj_height
 }
 
 fn (b &BoxLayout) get_children() []Widget {
@@ -647,6 +730,8 @@ pub fn (mut b BoxLayout) update_layout() {
 			child.update_layout()
 		}
 	}
+	b.set_adjusted_size(b.ui)
+	scrollview_update(b)
 	b.set_drawing_children()
 	scrollview_set_children_orig_xy(b, true)
 }
@@ -717,10 +802,18 @@ fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding str
 		vec << tmp[1].split(',').map(it.trim_space())
 		if vec.len == 4 {
 			if vec[2] == '_' {
-				vec[2] = unsafe { box.width.str() }
+				match b.child_mode[ind] {
+					.left_top_width_height { vec[2] = unsafe { box.width.str() } }
+					.left_top_right_bottom { vec[2] = unsafe { (box.x_right - box.x_left).str() } }
+					else {}
+				}
 			}
 			if vec[3] == '_' {
-				vec[3] = unsafe { box.height.str() }
+				match b.child_mode[ind] {
+					.left_top_width_height { vec[3] = unsafe { box.height.str() } }
+					.left_top_right_bottom { vec[3] = unsafe { (box.y_bottom - box.y_top).str() } }
+					else {}
+				}
 			}
 			res = '(${vec[0]},${vec[1]}) ++ (${vec[2]},${vec[3]})'
 		}
@@ -741,10 +834,18 @@ fn (mut b BoxLayout) update_child_current_box_expression(id string, bounding str
 		vec << tmp[1].split(',').map(it.trim_space())
 		if vec.len == 4 {
 			if vec[2] == '_' {
-				vec[2] = unsafe { box.x_right.str() }
+				match b.child_mode[ind] {
+					.left_top_width_height { vec[2] = unsafe { (box.x + box.width).str() } }
+					.left_top_right_bottom { vec[2] = unsafe { box.x_right.str() } }
+					else {}
+				}
 			}
 			if vec[3] == '_' {
-				vec[3] = unsafe { box.y_bottom.str() }
+				match b.child_mode[ind] {
+					.left_top_width_height { vec[3] = unsafe { (box.y + box.height).str() } }
+					.left_top_right_bottom { vec[3] = unsafe { box.y_bottom.str() } }
+					else {}
+				}
 			}
 			res = '(${vec[0]},${vec[1]}) -> (${vec[2]},${vec[3]})'
 		}

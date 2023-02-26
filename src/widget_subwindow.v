@@ -5,6 +5,7 @@ import gx
 
 pub const (
 	sw_decoration    = 20
+	sw_resize_border = 3
 	sw_z_index       = 10000
 	sw_z_index_top   = 1000
 	sw_z_index_child = 100
@@ -23,16 +24,21 @@ pub mut:
 	hidden                bool
 	ui                    &UI = unsafe { nil }
 	// dragging
-	drag     bool
-	dragging bool
-	drag_x   int
-	drag_y   int
+	drag         bool
+	dragging     bool
+	drag_mode    int // 0 = pos, 1 = size
+	drag_xy_down [2]int
+	drag_ltrb    [4]int
 	// decoration
-	decoration bool
+	decoration      bool
+	border_dir      [2]int // direction border in x (possible values: -1, 0, 1, 10)
+	prev_border_dir [2]int = [10, 10]!
 	// main unique layout attached to the subwindow
 	layout     Layout = empty_stack
 	is_focused bool
-	parent     Layout = empty_stack
+	// related to wm
+	is_top_wm bool
+	parent    Layout = empty_stack
 	// component state for composable widget
 	component voidptr
 }
@@ -138,16 +144,20 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 	if s.hidden {
 		return
 	}
-	// if !window.is_top_widget(s, events.on_mouse_down) {
-	// 	return
-	// }
-	// println("sw $s.id start dragging")
-	if s.decoration && s.point_inside_bar(e.x, e.y) {
+	if s.point_inside_border(e.x, e.y) {
+		println('drag mode 1')
+		s.drag_mode = 1
+		s.dragging = true
+		w, h := s.size()
+		s.drag_xy_down[0], s.drag_xy_down[1] = e.x, e.y
+		s.drag_ltrb[0], s.drag_ltrb[1] = s.x, s.y
+		s.drag_ltrb[2], s.drag_ltrb[3] = s.drag_ltrb[0] + w, s.drag_ltrb[1] + h
+	} else if s.decoration && s.point_inside_bar(e.x, e.y) {
+		s.drag_mode = 0
 		s.as_top_subwindow()
 		s.dragging = true
-		s.drag_x, s.drag_y = s.x - e.x, s.y - e.y
-		// w, h := s.size()
-		// println("drag down: ($s.drag_x, $s.drag_y) ($s.x, $s.y, ${s.x + w}, ${s.y + h}) }")
+		s.drag_xy_down[0], s.drag_xy_down[1] = e.x, e.y
+		s.drag_ltrb[0], s.drag_ltrb[1] = s.x, s.y
 	}
 }
 
@@ -157,6 +167,7 @@ fn sw_mouse_up(mut s SubWindow, e &MouseEvent, window &Window) {
 	}
 	s.dragging = false
 	s.delegate_pos()
+	s.delegate_size()
 }
 
 fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
@@ -164,20 +175,73 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 	if s.hidden {
 		return
 	}
-	if s.dragging {
-		w, _ := s.size()
-		new_x, new_y := s.drag_x + int(e.x), s.drag_y + int(e.y)
-		// println("($new_x, $new_y)")
-		if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
-			&& new_x + ui.sw_decoration <= s.ui.window.width
-			&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
-			s.set_pos(new_x, new_y)
-			// println("sw $s.id dragging $s.x, $s.y")
-			s.update_layout()
-			// window.update_layout()
+	if s.is_top_subwindow() {
+		// dragging for change of position or size
+		if s.dragging {
+			// two modes size or pos
+			if s.drag_mode == 1 {
+				// println("$s.drag_mode => $s.border_dir")
+				mut new_ltrb := s.drag_ltrb
+				match s.border_dir[0] {
+					-1 { new_ltrb[0] += int(e.x) - s.drag_xy_down[0] }
+					// 0 {}
+					1 { new_ltrb[2] += int(e.x) - s.drag_xy_down[0] }
+					else {}
+				}
+				match s.border_dir[1] {
+					-1 { new_ltrb[1] += int(e.y) - s.drag_xy_down[1] }
+					// 0 {}
+					1 { new_ltrb[3] += int(e.y) - s.drag_xy_down[1] }
+					else {}
+				}
+				s.set_pos(new_ltrb[0], new_ltrb[1])
+				s.propose_size(new_ltrb[2] - new_ltrb[0], new_ltrb[3] - new_ltrb[1])
+				s.update_layout()
+			} else if s.drag_mode == 0 {
+				w, _ := s.size()
+				new_x, new_y := s.drag_ltrb[0] + int(e.x) - s.drag_xy_down[0], s.drag_ltrb[1] +
+					int(e.y) - s.drag_xy_down[1]
+				// println("($new_x, $new_y)")
+				if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
+					&& new_x + ui.sw_decoration <= s.ui.window.width
+					&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
+					s.set_pos(new_x, new_y)
+					// println("sw $s.id dragging $s.x, $s.y")
+					s.update_layout()
+					// window.update_layout()
+				}
+			}
+		} else {
+			// icon management for border resizement
+			if s.point_inside_border(e.x, e.y) {
+				if s.prev_border_dir != s.border_dir {
+					s.prev_border_dir = s.border_dir
+					s.ui.window.mouse.start('_system_:resize_' +
+						(if s.border_dir[0] in [-1, 1] { 'ew' } else { 'ns' }))
+				}
+			} else {
+				s.border_dir = [10, 10]!
+				if s.prev_border_dir != s.border_dir {
+					s.ui.window.mouse.stop_last('_system_:resize_' +
+						(if s.prev_border_dir[0] in [-1, 1] { 'ew' } else { 'ns' }))
+					s.prev_border_dir = s.border_dir
+				}
+			}
 		}
 	}
 }
+
+// fn (mut sw SubWindow) mouse_enter(e &MouseMoveEvent) {
+
+// }
+
+// fn (mut sw SubWindow) mouse_leave(e &MouseMoveEvent) {
+// 	if sw.is_top_subwindow() {
+// 		sw.ui.window.mouse.stop_last('_system_:resize_' +
+// 					(if sw.prev_border_dir[0] in [-1,1] { 'ew' } else { 'ns' }))
+// 		sw.prev_border_dir = [10, 10]!
+// 	}
+// }
 
 pub fn (mut s SubWindow) update_layout() {
 	s.layout.update_layout()
@@ -194,6 +258,29 @@ fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {
 	} else {
 		return false
 	}
+}
+
+fn (mut s SubWindow) point_inside_border(x f64, y f64) bool {
+	w, h := s.size()
+	s.border_dir[0] = if x > s.x && x < s.x + ui.sw_resize_border {
+		-1
+	} else if x > s.x + ui.sw_resize_border && x < s.x + w - ui.sw_resize_border {
+		0
+	} else if x > s.x + w - ui.sw_resize_border && x < s.x + w {
+		1
+	} else {
+		10
+	}
+	s.border_dir[1] = if y > s.y && y < s.y + ui.sw_resize_border {
+		-1
+	} else if y > s.y + ui.sw_resize_border && y < s.y + h - ui.sw_resize_border {
+		0
+	} else if y > s.y + h - ui.sw_resize_border && y < s.y + h {
+		1
+	} else {
+		10
+	}
+	return s.border_dir[0] + s.border_dir[1] in [-2, -1, 1, 2]
 }
 
 fn (mut s SubWindow) point_inside(x f64, y f64) bool {
@@ -308,7 +395,7 @@ fn (mut s SubWindow) set_children_depth(z_inc int) {
 }
 
 fn (mut s SubWindow) is_top_subwindow() bool {
-	return s.ui.window.subwindows.map(it.id).first() == s.id
+	return s.ui.window.subwindows.map(it.id).last() == s.id
 }
 
 fn (mut s SubWindow) as_top_subwindow() {

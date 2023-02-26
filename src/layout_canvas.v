@@ -391,7 +391,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 }
 
 // TODO: documentation
-pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
+pub fn (mut c CanvasLayout) mouse_enter(e &MouseMoveEvent) {
 	// println("enter $c.id")
 	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{
@@ -404,7 +404,7 @@ pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
 }
 
 // TODO: documentation
-pub fn (mut c CanvasLayout) on_mouse_leave(e &MouseMoveEvent) {
+pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 	// println("leave $c.id")
 	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{

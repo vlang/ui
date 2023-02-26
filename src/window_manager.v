@@ -6,6 +6,7 @@ import os
 pub enum WMMode {
 	subwindow
 	free
+	tiling
 }
 
 [heap]
@@ -15,15 +16,24 @@ pub mut: // inside an unique sokol Window
 	apps    []Application
 	layout  &BoxLayout = unsafe { nil }
 	windows []&SubWindow
-	mode    WMMode
+	kind    WMMode
+}
+
+[params]
+pub struct WindowManagerParams {
+	WindowParams
+	scrollview bool
+	kind       WMMode
 }
 
 // ui.Window would play the role of WindowManager
 
-pub fn wm(cfg WindowParams) &WindowManager {
-	mut wm := &WindowManager{}
-	wm.layout = box_layout(id: 'wm_layout')
-	wm.window = window(cfg)
+pub fn wm(cfg WindowManagerParams) &WindowManager {
+	mut wm := &WindowManager{
+		kind: cfg.kind
+	}
+	wm.layout = box_layout(id: 'wm_layout', scrollview: cfg.scrollview)
+	wm.window = window(cfg.WindowParams)
 	wm.window.resizable = true
 	wm.window.bg_color = gx.orange
 	wm.window.title = 'VWM'
@@ -41,28 +51,31 @@ pub fn wm(cfg WindowParams) &WindowManager {
 	return wm
 }
 
-pub fn wmf(cfg WindowParams) &WindowManager {
-	mut wm_ := wm(cfg)
-	wm_.mode = .free
-	return wm_
-}
-
 pub fn (mut wm WindowManager) run() {
 	run(wm.window)
 }
 
 pub fn (mut wm WindowManager) add(key string, mut app Application) {
 	wm.apps << app
-	match wm.mode {
+	match wm.kind {
 		.subwindow {
 			mut subw := subwindow(id: os.join_path(app.id, 'win'), layout: app.layout)
+			subw.is_top_wm = true
+			wm.window.is_wm_mode = true
 			wm.windows << subw
 			wm.layout.set_child_bounding(key, mut subw)
 		}
-		.free {
+		.free, .tiling {
 			mut l := app.layout()
 			wm.layout.set_child_bounding(key, mut l)
 		}
+	}
+}
+
+pub fn (mut wm WindowManager) add_window_shortcuts(shortcuts map[string]WindowFn) {
+	mut sc := Shortcutable(wm.window)
+	for shortcut, callback in shortcuts {
+		sc.add_shortcut(shortcut, callback)
 	}
 }
 

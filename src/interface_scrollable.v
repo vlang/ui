@@ -146,9 +146,9 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is BoxLayout {
-		// if has_scrollview(w) {
-		// 	scrollview_set_orig_xy(w)
-		// }
+		if has_scrollview(w) {
+			scrollview_set_orig_xy(w, reset_offset)
+		}
 		for child in w.children {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}

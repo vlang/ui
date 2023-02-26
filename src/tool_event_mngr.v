@@ -78,6 +78,9 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 				&& w.point_inside(e.x, e.y) && !w.has_parent_deactivated()}] (vis: ${w.is_visible()}) && (parentvis: ${w.is_parent_visible(true)}) && (inside: ${w.point_inside(e.x,
 				e.y)}) && (!parent deactivated : ${!w.has_parent_deactivated()})')
 		}
+		if w.is_wm_mode() && !w.has_wm_parent_top_subwindow() {
+			continue
+		}
 		if w.is_visible() && w.is_parent_visible(true) && w.point_inside(e.x, e.y)
 			&& !w.has_parent_deactivated() {
 			em.point_inside[evt_type] << w

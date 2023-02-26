@@ -172,3 +172,22 @@ pub fn (w Widget) window() &Window {
 pub fn (w Widget) get[T](id string) &T {
 	return w.ui.window.get_or_panic[T](id)
 }
+
+//
+
+pub fn (w Widget) is_wm_mode() bool {
+	return w.ui.window.is_wm_mode
+}
+
+pub fn (w Widget) has_wm_parent_top_subwindow() bool {
+	if !w.is_wm_mode() || w.parent is Window {
+		return false
+	}
+	if w.ui.window.subwindows.len > 0 && w.parent.id == w.ui.window.subwindows.last().layout.id {
+		return true
+	} else {
+		mut pw := w.parent.as_widget()
+		return pw.has_wm_parent_top_subwindow()
+	}
+	return false
+}

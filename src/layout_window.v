@@ -96,6 +96,7 @@ pub mut:
 	evt_mngr EventMngr
 	// Top subwindows
 	subwindows []&SubWindow
+	is_wm_mode bool
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
