@@ -156,6 +156,7 @@ fn sw_mouse_up(mut s SubWindow, e &MouseEvent, window &Window) {
 		return
 	}
 	s.dragging = false
+	s.delegate_pos()
 }
 
 fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
@@ -220,9 +221,22 @@ pub fn (mut s SubWindow) set_pos(x int, y int) {
 		// println("sw set_pos: $s.x, $s.y $s.decoration")
 		w.set_pos(x, y + if s.decoration { ui.sw_decoration } else { 0 })
 	}
-	if s.parent is BoxLayout { // could be done for other Layout???
+}
+
+pub fn (mut s SubWindow) delegate_pos() {
+	if mut s.parent is BoxLayout { // could be done for other Layout???
 		// update pos in the parent
-		// ind := s.parent.child_id.index(s.id)
+		ind := s.parent.cid.index(s.id)
+		s.parent.update_child_bounding('${s.parent.child_id[ind]}: (${s.x},${s.y}) ++ (_,_)')
+	}
+}
+
+pub fn (mut s SubWindow) delegate_size() {
+	if mut s.parent is BoxLayout { // could be done for other Layout???
+		// update pos in the parent
+		ind := s.parent.cid.index(s.id)
+		w, h := s.size()
+		s.parent.update_child_bounding('${s.parent.child_id[ind]}: (_,_) ++ (${w},${h})')
 	}
 }
 

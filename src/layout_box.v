@@ -249,21 +249,25 @@ fn (mut b BoxLayout) add_child_box_expr(id string, child Widget, box_expr string
 	b.children << child
 }
 
+pub fn (mut b BoxLayout) update_child_bounding(key string) {
+	id, mut bounding := parse_boxlayout_child_key(key, b.id)
+	bounding = b.update_child_current_box_expression(id, bounding)
+	mode, bounding_vec, has_z_index, z_index, box_expr := parse_boxlayout_child_bounding(bounding)
+	match mode {
+		'rect' { b.update_child_rect(id, bounding_vec) }
+		'lt2rb' { b.update_child_lt2rb(id, bounding_vec) }
+		'box_expr' { b.update_child_box_expr(id, box_expr) }
+		else {}
+	}
+	if has_z_index {
+		b.update_child_depth(id, z_index)
+	}
+}
+
 // TODO: documentation
-pub fn (mut b BoxLayout) update_child_bounding(keys ...string) {
+pub fn (mut b BoxLayout) update_boundings(keys ...string) {
 	for key in keys {
-		id, mut bounding := parse_boxlayout_child_key(key, b.id)
-		bounding = b.update_child_current_box_expression(id, bounding)
-		mode, bounding_vec, has_z_index, z_index, box_expr := parse_boxlayout_child_bounding(bounding)
-		match mode {
-			'rect' { b.update_child_rect(id, bounding_vec) }
-			'lt2rb' { b.update_child_lt2rb(id, bounding_vec) }
-			'box_expr' { b.update_child_box_expr(id, box_expr) }
-			else {}
-		}
-		if has_z_index {
-			b.update_child_depth(id, z_index)
-		}
+		b.update_child_bounding(key)
 	}
 	b.update_visible_children()
 	b.update_layout()
@@ -392,8 +396,7 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 			}
 		}
 	}
-	//
-	println('${child.id}: x,y =(${x}, ${y})')
+	// println('${child.id}: x,y =(${x}, ${y})')
 	child.set_pos(x, y)
 }
 
@@ -426,8 +429,7 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 			}
 		}
 	}
-	//
-	println('${child.id}: w,h=(${w}, ${h}) (${b.width}, ${b.height})')
+	// println('${child.id}: w,h=(${w}, ${h}) (${b.width}, ${b.height})')
 	child.propose_size(w, h)
 }
 

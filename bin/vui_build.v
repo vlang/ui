@@ -141,23 +141,23 @@ fn main() {
 		if app.bounding_cur >= app.boundings.len {
 			app.bounding_cur = 0
 		}
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + v', fn (mut app App) {
 		app.bounding_cur = 2
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + 2', fn (mut app App) {
 		app.bounding_cur = 0
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	ui.run(app.window)
 }

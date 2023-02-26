@@ -73,5 +73,5 @@ fn main() {
 
 fn (mut app App) btn_click(_ &ui.Button) {
 	mut bl := app.window.get_or_panic[ui.BoxLayout]('bl')
-	bl.update_child_bounding('id3: (0.8,0.8) ++ (0.2,0.2)')
+	bl.update_boundings('id3: (0.8,0.8) ++ (0.2,0.2)')
 }

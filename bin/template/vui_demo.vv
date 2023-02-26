@@ -159,7 +159,7 @@ fn (mut app App) update_bounding_box() {
 		mut bb := app.window.widgets[app.bounding_box_cur]
 		w, h := bb.size()
 		// println("(${bb.x}, ${bb.y} ++ (${w}, ${h}))")
-		app.layout.update_child_bounding("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
+		app.layout.update_boundings("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
 		// app.layout.update_layout()
 	}
 }
@@ -230,7 +230,7 @@ fn (mut app App) win_init(_ &ui.Window) {
 	app.edit.tv.sh.set_lang('.v')
 	app.edit.is_line_number = true
 	app.bounding_cur = 3
-	app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+	app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	
 // <<BEGIN_WINDOW_INIT>>
 
@@ -268,38 +268,38 @@ fn main() {
 		if app.bounding_cur >= app.boundings.len {
 			app.bounding_cur = 0
 		}
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('shift + left', fn (mut app App) {
 		app.bounding_cur -= 1
 		if app.bounding_cur < 0 {
 			app.bounding_cur = app.boundings.len - 1
 		}
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + v', fn (mut app App) {
 		app.bounding_cur = 2
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + n', fn (mut app App) {
 		app.bounding_cur = 0
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + o', fn (mut app App) {
 		app.bounding_cur = 3
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + b', fn (mut app App) {
 		app.bounding_cur = 4
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 		// println(app.window.widgets.keys())
 		mut tvc := uic.treeview_component(app.treelayout)
 		tvc.activate_all()
