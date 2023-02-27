@@ -312,6 +312,9 @@ fn (mut c CanvasLayout) init_size() {
 }
 
 fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
+	if !c.point_inside(e.mouse_x / c.ui.window.dpi_scale, e.mouse_y / c.ui.window.dpi_scale) {
+		return
+	}
 	if c.on_delegate != CanvasLayoutDelegateFn(0) {
 		c.on_delegate(c, e)
 	}
