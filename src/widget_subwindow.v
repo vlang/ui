@@ -5,7 +5,7 @@ import gx
 
 pub const (
 	sw_decoration    = 20
-	sw_resize_border = 3
+	sw_resize_border = 4
 	sw_z_index       = 10000
 	sw_z_index_top   = 1000
 	sw_z_index_child = 100
