@@ -24,6 +24,7 @@ pub struct WindowManagerParams {
 	WindowParams
 	scrollview bool
 	kind       WMMode
+	apps       map[string]Application
 }
 
 // ui.Window would play the role of WindowManager
@@ -52,6 +53,11 @@ pub fn wm(cfg WindowManagerParams) &WindowManager {
 			}
 		}
 		win.update_layout()
+	}
+	// add declared app
+	for key, app in cfg.apps {
+		mut mut_app := app
+		wm.add(key, mut mut_app)
 	}
 	return wm
 }
