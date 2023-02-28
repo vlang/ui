@@ -1,7 +1,7 @@
 import ui.component as uic
 import ui
 import gx
-import ggapp.apps.v2048
+import ui.apps.v2048
 
 fn main() {
 	mut app := v2048.new_ui_app()
