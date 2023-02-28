@@ -5,20 +5,20 @@ import ui
 import gg
 
 [heap]
-struct GGAppComponent {
+struct GGComponent {
 	id string
 pub mut:
 	layout &ui.CanvasLayout = unsafe { nil }
-	app    ui.GGApp
+	app    ui.GGApplication
 }
 
 [params]
-pub struct GGAppComponentParams {
+pub struct GGComponentParams {
 	id  string = 'gg_app'
-	app ui.GGApp
+	app ui.GGApplication
 }
 
-pub fn gg_canvaslayout(p GGAppComponentParams) &ui.CanvasLayout {
+pub fn gg_canvaslayout(p GGComponentParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_plus(
 		id: ui.component_id(p.id, 'layout')
 		delegate_evt_mngr: true
@@ -26,7 +26,7 @@ pub fn gg_canvaslayout(p GGAppComponentParams) &ui.CanvasLayout {
 		on_delegate: gg_on_delegate
 		on_bounding_change: gg_on_bounding_change
 	)
-	mut ggc := &GGAppComponent{
+	mut ggc := &GGComponent{
 		id: p.id
 		layout: layout
 		app: p.app
@@ -37,11 +37,11 @@ pub fn gg_canvaslayout(p GGAppComponentParams) &ui.CanvasLayout {
 }
 
 // component access
-pub fn gg_component(w ui.ComponentChild) &GGAppComponent {
-	return unsafe { &GGAppComponent(w.component) }
+pub fn gg_component(w ui.ComponentChild) &GGComponent {
+	return unsafe { &GGComponent(w.component) }
 }
 
-pub fn gg_component_from_id(w ui.Window, id string) &GGAppComponent {
+pub fn gg_component_from_id(w ui.Window, id string) &GGComponent {
 	return gg_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 

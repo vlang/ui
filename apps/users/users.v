@@ -18,7 +18,7 @@ struct User {
 }
 
 [heap]
-pub struct AppUsers {
+pub struct AppUI {
 pub mut:
 	id      string
 	window  &ui.Window = unsafe { nil }
@@ -38,7 +38,7 @@ pub mut:
 }
 
 [params]
-pub struct AppUsersParams {
+pub struct AppUIParams {
 pub mut:
 	id    string = 'users'
 	users []User = [
@@ -57,8 +57,8 @@ pub mut:
 	]
 }
 
-pub fn new(p AppUsersParams) &AppUsers {
-	mut app := &AppUsers{
+pub fn new(p AppUIParams) &AppUI {
+	mut app := &AppUI{
 		id: p.id
 		users: p.users
 	}
@@ -66,12 +66,12 @@ pub fn new(p AppUsersParams) &AppUsers {
 	return app
 }
 
-pub fn app(p AppUsersParams) &ui.Application {
+pub fn app(p AppUIParams) &ui.Application {
 	app := new(p)
 	return &ui.Application(app)
 }
 
-pub fn (mut app AppUsers) make_layout() {
+pub fn (mut app AppUI) make_layout() {
 	mut logo := 'v-logo'
 	$if android {
 		logo = 'img/logo.png'
@@ -219,11 +219,11 @@ fn btn_help_click(b &ui.Button) {
 }
 
 /*
-fn (mut app App) btn_add_click(b &Button) {
+fn (mut app AppUI) btn_add_click(b &Button) {
 
 }
 */
-fn (mut app AppUsers) btn_add_click(b &ui.Button) {
+fn (mut app AppUI) btn_add_click(b &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)
@@ -251,7 +251,7 @@ fn (mut app AppUsers) btn_add_click(b &ui.Button) {
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
-fn (app &AppUsers) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &AppUI) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * users.cell_height

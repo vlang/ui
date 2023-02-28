@@ -6,6 +6,6 @@ import ui.apps.v2048
 // see examples/component/gg2048.v
 
 fn main() {
-	mut app := v2048.new()
+	mut app := v2048.new_gg_app()
 	app.run()
 }

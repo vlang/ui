@@ -915,7 +915,7 @@ $if emscripten ? {
 	#flag --embed-file ./examples/assets/fonts/RobotoMono-Regular.ttf@/assets/fonts/RobotoMono-Regular.ttf
 }
 
-pub fn new() &App {
+pub fn new_gg_app() &App {
 	mut app := &App{}
 	app.new_game()
 	mut font_path := os.join_path(os.dir(@FILE), '..', '..', 'assets', 'fonts', 'RobotoMono-Regular.ttf')
@@ -953,7 +953,7 @@ pub fn (mut app App) run() {
 // For V UI gg app
 
 pub fn new_ui_app() &App {
-	mut app := new()
+	mut app := new_gg_app()
 	app.ui_mode = true
 	return app
 }

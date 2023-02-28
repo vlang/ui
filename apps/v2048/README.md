@@ -1,3 +1,5 @@
+This code is a slight adaptation of the excellent 2048 game and it is proposed here as a module callable as a component and an inside v ui 
+
 # V 2048
 
 This is a simple 2048 game, written in [the V programming language](https://vlang.io/).
