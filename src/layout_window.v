@@ -42,6 +42,7 @@ pub mut:
 	title             string
 	width             int
 	height            int
+	no_fullscreen     bool
 	click_fn          WindowMouseFn
 	mouse_down_fn     WindowMouseFn
 	mouse_up_fn       WindowMouseFn
@@ -95,6 +96,7 @@ pub mut:
 	evt_mngr EventMngr
 	// Top subwindows
 	subwindows []&SubWindow
+	is_wm_mode bool
 	// ui mode on gg
 	immediate          bool
 	children_immediate []Widget
@@ -103,6 +105,7 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
+	mini_calc MiniCalc
 	mx        f64 // do not remove this, temporary
 	my        f64
 }
@@ -110,11 +113,11 @@ pub mut:
 [params]
 pub struct WindowParams {
 pub:
-	width         int
-	height        int
+	width         int = 800
+	height        int = 500
 	font_path     string
-	title         string
-	always_on_top bool
+	title         string = 'V UI window'
+	no_fullscreen bool
 
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
@@ -139,10 +142,11 @@ pub:
 	on_init               WindowFn
 	on_draw               WindowFn
 	children              []Widget
+	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string
 	native_rendering      bool
 	resizable             bool
-	mode                  WindowSizeType
+	mode                  WindowSizeType = .resizable
 	immediate             bool
 	sample_count          int = 4
 	// Text Config
@@ -163,8 +167,9 @@ pub fn window(cfg WindowParams) &Window {
 	}*/
 
 	mut width, mut height := cfg.width, cfg.height
-	mut resizable := cfg.resizable
-	mut fullscreen := false
+	mut resizable := cfg.resizable || cfg.mode.has(.resizable)
+	mut fullscreen := cfg.mode.has(.fullscreen)
+	mut no_fullscreen := cfg.no_fullscreen || cfg.mode.has(.no_fullscreen)
 
 	mut sc_size := gg.Size{width, height}
 
@@ -173,23 +178,16 @@ pub fn window(cfg WindowParams) &Window {
 		sc_size = gg.screen_size()
 	}
 
-	match cfg.mode {
-		.max_size {
-			if sc_size.width > 0 {
-				width, height = sc_size.width, sc_size.height
-				resizable = true
-			}
-		}
-		.fullscreen {
-			if sc_size.width > 10 {
-				width, height = sc_size.width, sc_size.height
-			}
-			fullscreen = true
-		}
-		.resizable {
+	if cfg.mode.has(.max_size) {
+		if sc_size.width > 0 {
+			width, height = sc_size.width, sc_size.height
 			resizable = true
 		}
-		else {}
+	} else if cfg.mode.has(.fullscreen) {
+		if sc_size.width > 10 {
+			width, height = sc_size.width, sc_size.height
+		}
+		fullscreen = true
 	}
 
 	// default text_cfg
@@ -202,15 +200,23 @@ pub fn window(cfg WindowParams) &Window {
 		// size: int(m / cfg.lines)
 	}
 
+	children := if cfg.children.len == 0 && cfg.layout.id != empty_stack.id
+		&& (cfg.layout is Stack || cfg.layout is BoxLayout || cfg.layout is CanvasLayout) {
+		[cfg.layout]
+	} else {
+		cfg.children
+	}
+
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		title: cfg.title
 		width: width
 		height: height
+		no_fullscreen: no_fullscreen
 		theme_style: cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
-		children: cfg.children
+		children: children
 		on_init: cfg.on_init
 		on_draw: cfg.on_draw
 		click_fn: cfg.on_click
@@ -239,6 +245,7 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
+	window.mini_calc = mini_calc()
 	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
 			width: width
@@ -742,6 +749,11 @@ fn window_key_down(event gg.Event, ui &UI) {
 		}
 	} else if e.key == .f10 && super_key(e.mods) {
 		window.layout_print()
+	} else if e.key == .f11 && super_key(e.mods) {
+		if !window.no_fullscreen {
+			gg.toggle_fullscreen()
+			window.update_layout()
+		}
 	} else {
 		// add user shortcuts for window
 		key_shortcut(e, window.shortcuts, window)
@@ -1286,8 +1298,6 @@ fn (mut w Window) focus_prev() {
 
 //---- unused
 
-pub fn (w &Window) always_on_top(val bool) {}
-
 pub fn (w &Window) set_cursor(cursor Cursor) {}
 
 pub fn (w &Window) onmousedown(cb voidptr) {}
@@ -1559,6 +1569,11 @@ pub fn (mut w Window) register_child(child_ Widget) {
 			w.widgets[child.id] = child
 		}
 	}
+}
+
+pub fn (w &Window) calculate(formula string) f32 {
+	mut mc := w.mini_calc
+	return mc.calculate(formula)
 }
 
 // get_or_panic returns the widget with the given id and type,

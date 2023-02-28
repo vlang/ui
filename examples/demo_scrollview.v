@@ -27,28 +27,26 @@ fn main() {
 				tb.tv.test_textwidth('abcdefghijklmnrputwxyz &éèdzefzefzef')
 			}
 		}
-		children: [
-			ui.row(
-				widths: ui.stretch
-				heights: ui.stretch
-				children: [
-					ui.textbox(
-						id: 'info'
-						mode: .multiline | .read_only
-						text: &app.info
-						text_size: 24
-					),
-					ui.textbox(
-						id: 'text'
-						mode: .multiline | .read_only
-						bg_color: gx.hex(0xfcf4e4ff)
-						text: &app.text
-						text_size: 24
-						on_scroll_change: on_scroll_change
-					),
-				]
-			),
-		]
+		layout: ui.row(
+			widths: ui.stretch
+			heights: ui.stretch
+			children: [
+				ui.textbox(
+					id: 'info'
+					mode: .multiline | .read_only
+					text: &app.info
+					text_size: 24
+				),
+				ui.textbox(
+					id: 'text'
+					mode: .multiline | .read_only
+					bg_color: gx.hex(0xfcf4e4ff)
+					text: &app.text
+					text_size: 24
+					on_scroll_change: on_scroll_change
+				),
+			]
+		)
 	)
 	ui.run(app.window)
 }

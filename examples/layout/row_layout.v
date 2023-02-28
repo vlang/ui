@@ -34,179 +34,177 @@ fn main() {
 		mode: .resizable
 		on_resize: win_resize
 		on_init: win_init
-		children: [
-			ui.column(
-				heights: [ui.compact, ui.compact, ui.stretch]
-				spacing: .01
-				children: [
-					ui.row(
-						widths: ui.compact
-						heights: ui.compact
-						margin_: 5
-						spacing: .03
-						children: [
-							ui.row(
-								id: 'row_btn1'
-								title: 'btn1'
-								margin_: .05
-								spacing: .1
-								widths: ui.compact
-								heights: ui.compact
-								children: [
-									ui.listbox(
-										id: 'lb1w'
-										height: lb_height
-										selection: 0
-										on_change: app.lb_change
-										items: {
-											'.3':             '.3'
-											'100':            '100'
-											'ui.stretch':     'ui.stretch'
-											'ui.compact':     'ui.compact'
-											'1.5*ui.stretch': '1.5 * ui.stretch'
-											'2*ui.stretch':   '2 * ui.stretch'
-											'3*ui.stretch':   '3 * ui.stretch'
-										}
-									),
-									ui.listbox(
-										id: 'lb1h'
-										height: lb_height
-										selection: 0
-										on_change: app.lb_change
-										items: {
-											'.3':         '.3'
-											'20':         '20'
-											'ui.stretch': 'ui.stretch'
-											'ui.compact': 'ui.compact'
-										}
-									),
-								]
-							),
-							ui.row(
-								id: 'row_btn2'
-								title: 'btn2'
-								margin_: .05
-								spacing: .1
-								widths: ui.compact
-								heights: ui.compact
-								children: [
-									ui.listbox(
-										id: 'lb2w'
-										height: lb_height
-										selection: 1
-										on_change: app.lb_change
-										items: {
-											'.3':             '.3'
-											'100':            '100'
-											'ui.stretch':     'ui.stretch'
-											'ui.compact':     'ui.compact'
-											'1.5*ui.stretch': '1.5 * ui.stretch'
-											'2*ui.stretch':   '2 * ui.stretch'
-											'3*ui.stretch':   '3 * ui.stretch'
-										}
-									),
-									ui.listbox(
-										id: 'lb2h'
-										height: lb_height
-										selection: 1
-										on_change: app.lb_change
-										items: {
-											'.3':         '.3'
-											'20':         '20'
-											'ui.stretch': 'ui.stretch'
-											'ui.compact': 'ui.compact'
-										}
-									),
-								]
-							),
-							ui.row(
-								id: 'row_space'
-								title: 'Margins and Spacing'
-								margin_: .05
-								spacing: .1
-								widths: ui.compact
-								heights: ui.compact
-								children: [
-									ui.listbox(
-										id: 'lbmargin'
-										height: lb_height
-										selection: 3
-										on_change: lb_change_sp
-										items: {
-											'20':  'margin_: 20'
-											'50':  'margin_: 50'
-											'.05': 'margin_: .05'
-											'.1':  'margin_: .1'
-										}
-									),
-									ui.listbox(
-										id: 'lbspace'
-										height: lb_height
-										selection: 3
-										on_change: lb_change_sp
-										items: {
-											'20':  'spacing: 20'
-											'50':  'spacing: 50'
-											'.05': 'spacing: .05'
-											'.1':  'spacing: .1'
-										}
-									),
-								]
-							),
-						]
-					),
-					ui.column(
-						margin: ui.Margin{
-							right: .05
-							left: .05
-						}
-						spacing: .01
-						widths: ui.stretch
-						bg_color: gx.Color{255, 255, 255, 128}
-						children: [
-							ui.label(
-								id: 'l_btns_sizes'
-								height: 25
-								text: 'Button 1 & 2 declaration: ui.button(width: 200, height: 30, ...)'
-							),
-							ui.label(
-								id: 'l_stack_sizes'
-								height: 25
-								text: 'Row (Stack) declaration:  ui.row( margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact])'
-							),
-						]
-					),
-					ui.row(
-						id: 'row'
-						widths: [
-							.3,
-							100,
-						]
-						heights: [
-							.3,
-							ui.compact,
-						]
-						margin_: .1
-						spacing: .1
-						bg_color: gx.Color{50, 100, 0, 50}
-						children: [
-							ui.button(
-								id: 'btn1'
-								width: 200
-								height: 30
-								text: 'Button 1'
-							),
-							ui.button(
-								id: 'btn2'
-								width: 200
-								height: 30
-								text: 'Button 2'
-							),
-						]
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			heights: [ui.compact, ui.compact, ui.stretch]
+			spacing: .01
+			children: [
+				ui.row(
+					widths: ui.compact
+					heights: ui.compact
+					margin_: 5
+					spacing: .03
+					children: [
+						ui.row(
+							id: 'row_btn1'
+							title: 'btn1'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lb1w'
+									height: lb_height
+									selection: 0
+									on_change: app.lb_change
+									items: {
+										'.3':             '.3'
+										'100':            '100'
+										'ui.stretch':     'ui.stretch'
+										'ui.compact':     'ui.compact'
+										'1.5*ui.stretch': '1.5 * ui.stretch'
+										'2*ui.stretch':   '2 * ui.stretch'
+										'3*ui.stretch':   '3 * ui.stretch'
+									}
+								),
+								ui.listbox(
+									id: 'lb1h'
+									height: lb_height
+									selection: 0
+									on_change: app.lb_change
+									items: {
+										'.3':         '.3'
+										'20':         '20'
+										'ui.stretch': 'ui.stretch'
+										'ui.compact': 'ui.compact'
+									}
+								),
+							]
+						),
+						ui.row(
+							id: 'row_btn2'
+							title: 'btn2'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lb2w'
+									height: lb_height
+									selection: 1
+									on_change: app.lb_change
+									items: {
+										'.3':             '.3'
+										'100':            '100'
+										'ui.stretch':     'ui.stretch'
+										'ui.compact':     'ui.compact'
+										'1.5*ui.stretch': '1.5 * ui.stretch'
+										'2*ui.stretch':   '2 * ui.stretch'
+										'3*ui.stretch':   '3 * ui.stretch'
+									}
+								),
+								ui.listbox(
+									id: 'lb2h'
+									height: lb_height
+									selection: 1
+									on_change: app.lb_change
+									items: {
+										'.3':         '.3'
+										'20':         '20'
+										'ui.stretch': 'ui.stretch'
+										'ui.compact': 'ui.compact'
+									}
+								),
+							]
+						),
+						ui.row(
+							id: 'row_space'
+							title: 'Margins and Spacing'
+							margin_: .05
+							spacing: .1
+							widths: ui.compact
+							heights: ui.compact
+							children: [
+								ui.listbox(
+									id: 'lbmargin'
+									height: lb_height
+									selection: 3
+									on_change: lb_change_sp
+									items: {
+										'20':  'margin_: 20'
+										'50':  'margin_: 50'
+										'.05': 'margin_: .05'
+										'.1':  'margin_: .1'
+									}
+								),
+								ui.listbox(
+									id: 'lbspace'
+									height: lb_height
+									selection: 3
+									on_change: lb_change_sp
+									items: {
+										'20':  'spacing: 20'
+										'50':  'spacing: 50'
+										'.05': 'spacing: .05'
+										'.1':  'spacing: .1'
+									}
+								),
+							]
+						),
+					]
+				),
+				ui.column(
+					margin: ui.Margin{
+						right: .05
+						left: .05
+					}
+					spacing: .01
+					widths: ui.stretch
+					bg_color: gx.Color{255, 255, 255, 128}
+					children: [
+						ui.label(
+							id: 'l_btns_sizes'
+							height: 25
+							text: 'Button 1 & 2 declaration: ui.button(width: 200, height: 30, ...)'
+						),
+						ui.label(
+							id: 'l_stack_sizes'
+							height: 25
+							text: 'Row (Stack) declaration:  ui.row( margin_: 20, spacing: 20, widths: [.3, 100], heights: [.3, ui.compact])'
+						),
+					]
+				),
+				ui.row(
+					id: 'row'
+					widths: [
+						.3,
+						100,
+					]
+					heights: [
+						.3,
+						ui.compact,
+					]
+					margin_: .1
+					spacing: .1
+					bg_color: gx.Color{50, 100, 0, 50}
+					children: [
+						ui.button(
+							id: 'btn1'
+							width: 200
+							height: 30
+							text: 'Button 1'
+						),
+						ui.button(
+							id: 'btn2'
+							width: 200
+							height: 30
+							text: 'Button 2'
+						),
+					]
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

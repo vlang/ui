@@ -43,27 +43,25 @@ fn main() {
 		title: w_title
 		mode: .resizable
 		// on_scroll: on_scroll
-		children: [
-			ui.column(
-				margin_: 8
-				heights: [ui.stretch, ui.compact]
-				children: [
-					ui.column(
-						id: 'entries_column'
-						heights: ui.compact
-						spacing: 4
-						scrollview: true
-						children: tasks(mut app)
-					),
-					ui.row(
-						widths: [ui.stretch, ui.compact]
-						spacing: 4
-						children: [ui.textbox(text: &app.input, on_enter: app.on_enter),
-							ui.button(text: '+', on_click: app.btn_add_task)]
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			margin_: 8
+			heights: [ui.stretch, ui.compact]
+			children: [
+				ui.column(
+					id: 'entries_column'
+					heights: ui.compact
+					spacing: 4
+					scrollview: true
+					children: tasks(mut app)
+				),
+				ui.row(
+					widths: [ui.stretch, ui.compact]
+					spacing: 4
+					children: [ui.textbox(text: &app.input, on_enter: app.on_enter),
+						ui.button(text: '+', on_click: app.btn_add_task)]
+				),
+			]
+		)
 	)
 
 	app.window = window

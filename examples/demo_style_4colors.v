@@ -8,35 +8,33 @@ fn main() {
 		mode: .resizable
 		on_init: win_init
 		height: 600
-		children: [
-			ui.column(
-				heights: [100.0, ui.stretch]
-				children: [
-					ui.row(
-						widths: ui.stretch
-						children: [
-							uic.colorbutton(
-								id: 'color0'
-								on_changed: on_changed
-							),
-							uic.colorbutton(
-								id: 'color1'
-								on_changed: on_changed
-							),
-							uic.colorbutton(
-								id: 'color2'
-								on_changed: on_changed
-							),
-							uic.colorbutton(
-								id: 'color3'
-								on_changed: on_changed
-							),
-						]
-					),
-					uic.demo_stack(),
-				]
-			),
-		]
+		layout: ui.column(
+			heights: [100.0, ui.stretch]
+			children: [
+				ui.row(
+					widths: ui.stretch
+					children: [
+						uic.colorbutton(
+							id: 'color0'
+							on_changed: on_changed
+						),
+						uic.colorbutton(
+							id: 'color1'
+							on_changed: on_changed
+						),
+						uic.colorbutton(
+							id: 'color2'
+							on_changed: on_changed
+						),
+						uic.colorbutton(
+							id: 'color3'
+							on_changed: on_changed
+						),
+					]
+				),
+				uic.demo_stack(),
+			]
+		)
 	)
 	uic.colorbox_subwindow_add(mut win)
 	ui.run(win)

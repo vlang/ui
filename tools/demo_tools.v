@@ -66,22 +66,7 @@ pub fn (mut dt DemoTemplate) update_blocks() {
 			''
 		}
 	}
-	println(dt.blocks)
-	// block_name := tools.demo_blocks[tools.demo_blocks.len - 1]
-	// start := block_format(block_name)
-	// dt.blocks[block_name] = if code.contains(start) {
-	// 	code.all_after(start)
-	// } else {
-	// 	''
-	// }
 }
-
-// pub fn update_demo_toolbar_edit(code string, mut tbs map[string]&ui.TextBox) {
-// 	blocks := parse_demo_blocks(code)
-// 	for block_name in ["layout", "callback"] {
-// 		unsafe{tbs[block_name].set_text(blocks[block_name])}
-// 	}
-// }
 
 pub fn (mut dt DemoTemplate) set_template() {
 	src := dt.code

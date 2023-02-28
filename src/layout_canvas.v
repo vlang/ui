@@ -19,6 +19,8 @@ pub type CanvasLayoutKeyFn = fn (c &CanvasLayout, e KeyEvent)
 
 pub type CanvasLayoutSizeFn = fn (c &CanvasLayout) (int, int)
 
+pub type CanvasLayoutBoundingFn = fn (c &CanvasLayout, bb gg.Rect)
+
 pub type CanvasLayoutDelegateFn = fn (c &CanvasLayout, e &gg.Event)
 
 [heap]
@@ -74,6 +76,7 @@ pub mut:
 	key_down_fn         CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
 	char_fn             CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
 	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
+	bounding_change_fn  CanvasLayoutBoundingFn   = CanvasLayoutBoundingFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
 	on_delegate         CanvasLayoutDelegateFn
 	parent              Layout = empty_stack
@@ -112,12 +115,13 @@ pub struct CanvasLayoutParams {
 	on_mouse_enter    CanvasLayoutMouseMoveFn  = unsafe { nil }
 	on_mouse_leave    CanvasLayoutMouseMoveFn  = unsafe { nil }
 	// resize_fn     ResizeFn
-	on_key_down      CanvasLayoutKeyFn      = unsafe { nil }
-	on_char          CanvasLayoutKeyFn      = unsafe { nil }
-	full_size_fn     CanvasLayoutSizeFn     = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn    = ScrollViewChangedFn(0)
-	on_delegate      CanvasLayoutDelegateFn = unsafe { nil }
-	children         []Widget
+	on_key_down        CanvasLayoutKeyFn      = unsafe { nil }
+	on_char            CanvasLayoutKeyFn      = unsafe { nil }
+	full_size_fn       CanvasLayoutSizeFn     = unsafe { nil }
+	on_bounding_change CanvasLayoutBoundingFn = unsafe { nil }
+	on_scroll_change   ScrollViewChangedFn    = ScrollViewChangedFn(0)
+	on_delegate        CanvasLayoutDelegateFn = unsafe { nil }
+	children           []Widget
 }
 
 // TODO: documentation
@@ -161,6 +165,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 		key_down_fn: c.on_key_down
 		scroll_fn: c.on_scroll
 		full_size_fn: c.full_size_fn
+		bounding_change_fn: c.on_bounding_change
 		char_fn: c.on_char
 		on_scroll_change: c.on_scroll_change
 		on_delegate: c.on_delegate
@@ -307,6 +312,9 @@ fn (mut c CanvasLayout) init_size() {
 }
 
 fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
+	if !c.point_inside(e.mouse_x / c.ui.window.dpi_scale, e.mouse_y / c.ui.window.dpi_scale) {
+		return
+	}
 	if c.on_delegate != CanvasLayoutDelegateFn(0) {
 		c.on_delegate(c, e)
 	}
@@ -391,7 +399,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 }
 
 // TODO: documentation
-pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
+pub fn (mut c CanvasLayout) mouse_enter(e &MouseMoveEvent) {
 	// println("enter $c.id")
 	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{
@@ -404,7 +412,7 @@ pub fn (mut c CanvasLayout) on_mouse_enter(e &MouseMoveEvent) {
 }
 
 // TODO: documentation
-pub fn (mut c CanvasLayout) on_mouse_leave(e &MouseMoveEvent) {
+pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 	// println("leave $c.id")
 	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{
@@ -476,7 +484,9 @@ pub fn (mut c CanvasLayout) update_layout() {
 	scrollview_update(c)
 	// println("$c.id update_layout")
 	c.set_drawing_children()
-	scrollview_widget_set_orig_xy(c, true)
+	// TODO: this make component/grid example failing
+	// otherwise layout/canas_layout example failing
+	scrollview_set_children_orig_xy(c, false)
 }
 
 // TODO: documentation
@@ -579,6 +589,7 @@ pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	scrollview_widget_save_offset(c)
 	c.x = x
 	c.y = y
+	c.bounding_changed()
 	scrollview_widget_restore_offset(c, true)
 	// scrollview_update_orig_size(c)
 	c.set_children_pos()
@@ -615,6 +626,12 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 	return fw, fh
 }
 
+pub fn (mut c CanvasLayout) bounding_changed() {
+	if c.bounding_change_fn != unsafe { nil } {
+		c.bounding_change_fn(c, gg.Rect{c.x, c.y, c.width, c.height})
+	}
+}
+
 // TODO: documentation
 pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 	// TODO: to check if this valid for everything
@@ -626,6 +643,7 @@ pub fn (mut c CanvasLayout) propose_size(w int, h int) (int, int) {
 			println('cl propose_size ${c.id}   size(${c.width}, ${c.height}) -> adj_size(${c.adj_width}, ${c.adj_height})')
 		}
 	}
+	c.bounding_changed()
 	return c.width, c.height
 }
 

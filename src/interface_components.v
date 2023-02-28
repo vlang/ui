@@ -10,6 +10,10 @@ module ui
 // Remark: To become possibly a member of a parent component, a component has to have this field `component` to be connected to
 //---
 
+const (
+	component_sep = '/' // ':::'
+)
+
 pub interface ComponentChild {
 mut:
 	id string
@@ -28,12 +32,12 @@ pub fn component_connect(comp voidptr, children ...ComponentChild) {
 pub fn component_id(id string, parts ...string) string {
 	mut part_id := [id]
 	part_id << parts.clone()
-	return part_id.join(':::')
+	return part_id.join(ui.component_sep)
 }
 
 // TODO: documentation
 pub fn component_parent_id(part_id string) string {
-	return part_id.split(':::')#[..-1].join(':::')
+	return part_id.split(ui.component_sep)#[..-1].join(ui.component_sep)
 }
 
 // TODO: documentation
@@ -43,7 +47,7 @@ pub fn component_id_from(from_id string, id string) string {
 
 // TODO: documentation
 pub fn component_parent_id_by(part_id string, level int) string {
-	return part_id.split(':::')#[..-level].join(':::')
+	return part_id.split(ui.component_sep)#[..-level].join(ui.component_sep)
 }
 
 // TODO: documentation

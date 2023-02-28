@@ -17,12 +17,10 @@ fn main() {
 		height: win_height
 		title: 'V UI: Toolbar'
 		native_message: false
-		children: [
-			ui.column(
-				heights: [ui.compact, ui.compact]
-				children: [cb_layout, rect]
-			),
-		]
+		layout: ui.column(
+			heights: [ui.compact, ui.compact]
+			children: [cb_layout, rect]
+		)
 	)
 	mut cb := uic.colorbox_component(cb_layout)
 	cb.connect(&rect.style.color)

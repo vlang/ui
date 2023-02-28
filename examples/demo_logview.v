@@ -16,25 +16,23 @@ fn main() {
 	app.window = ui.window(
 		mode: .resizable
 		height: 220
-		children: [
-			ui.column(
-				widths: ui.stretch
-				children: [
-					ui.textbox(
-						id: 'tb'
-						is_multiline: true
-						text: &app.log
-						height: 200
-						is_sync: true
-						// is_wordwrap: true
-						// scrollview: true
-						read_only: true
-						// text_size: 20
-					),
-					ui.button(text: 'start scan', on_click: app.btn_connect),
-				]
-			),
-		]
+		layout: ui.column(
+			widths: ui.stretch
+			children: [
+				ui.textbox(
+					id: 'tb'
+					is_multiline: true
+					text: &app.log
+					height: 200
+					is_sync: true
+					// is_wordwrap: true
+					// scrollview: true
+					read_only: true
+					// text_size: 20
+				),
+				ui.button(text: 'start scan', on_click: app.btn_connect),
+			]
+		)
 	)
 	ui.run(app.window)
 }

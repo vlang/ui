@@ -185,16 +185,14 @@ fn main() {
 		title: 'V UI: Accordion'
 		native_message: false
 		mode: .resizable
-		children: [
-			uic.accordion_stack(
-				id: 'demo'
-				text_color: gx.blue
-				titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
-				children: [rect, cr, rs, rg, cdd]
-				heights: [30.0, ui.compact]
-				scrollview: true
-			),
-		]
+		layout: uic.accordion_stack(
+			id: 'demo'
+			text_color: gx.blue
+			titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
+			children: [rect, cr, rs, rg, cdd]
+			heights: [30.0, ui.compact]
+			scrollview: true
+		)
 	)
 	app.window = window
 	ui.run(window)

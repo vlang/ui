@@ -27,7 +27,8 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
-	hidden bool
+	hidden   bool
+	clipping bool
 	// component state for composable widget
 	component voidptr
 }
@@ -35,12 +36,13 @@ pub mut:
 [params]
 pub struct LabelParams {
 	LabelStyleParams
-	id      string
-	width   int
-	height  int
-	z_index int
-	justify []f64 = [0.0, 0.0]
-	text    string
+	id       string
+	width    int
+	height   int
+	z_index  int
+	clipping bool
+	justify  []f64 = [0.0, 0.0]
+	text     string
 	// text_size f64
 	theme string = no_style
 }
@@ -53,6 +55,7 @@ pub fn label(c LabelParams) &Label {
 		height: c.height
 		ui: 0
 		z_index: c.z_index
+		clipping: c.clipping
 		// text_size: c.text_size
 		justify: c.justify
 		style_params: c.LabelStyleParams
@@ -149,10 +152,17 @@ fn (mut l Label) draw() {
 
 fn (mut l Label) draw_device(mut d DrawDevice) {
 	offset_start(mut l)
+	defer {
+		offset_end(mut l)
+	}
 	$if layout ? {
 		if l.ui.layout_print {
 			println('Label(${l.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height})')
 		}
+	}
+	cstate := clipping_start(l, mut d) or { return }
+	defer {
+		clipping_end(l, mut d, cstate)
 	}
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	height := l.ui.dd.text_height('W') // Get the height of the current font.
@@ -175,7 +185,6 @@ fn (mut l Label) draw_device(mut d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_widget(mut l, l.ui)
 	}
-	offset_end(mut l)
 }
 
 fn (mut l Label) set_visible(state bool) {

@@ -5,17 +5,14 @@ import gx
 import time
 import v.live
 import os
+import x.json2
 
 // vfmt off
 
 const (
 	time_sleep      = 500
 	help_text       = $embed_file('help/vui_demo.help').to_string()
-	src_codes       = {
-		'demo/widgets/button': $embed_file('demo/widgets/button_ui.vv').to_string()
-		'demo/widgets/label': $embed_file('demo/widgets/label_ui.vv').to_string()
-		'demo/layouts/box_layout': $embed_file('demo/layouts/box_layout_ui.vv').to_string()
-	}
+	demos_json       = $embed_file('assets/demos.json').to_string()
 )
 
 [heap]
@@ -30,6 +27,7 @@ mut:
 	toolbar &ui.Stack = unsafe{ nil }
 	run_btn   &ui.Button 	 = unsafe { nil }
 	help_btn   &ui.Button 	 = unsafe { nil }
+	reset_btn   &ui.Button 	 = unsafe { nil }
 	status &ui.TextBox   	 = unsafe { nil }
 	bounding_box  &ui.Rectangle = unsafe{ nil }
 	texts  map[string]string
@@ -38,6 +36,13 @@ mut:
 	bounding_cur int
 	bounding_box_cur string
 	cache_code map[string]string
+}
+
+fn (mut app App) make_cache_code()  {
+	src_codes := (json2.raw_decode(demos_json) or {panic(err)}).as_map()
+	for key, val in src_codes {
+		app.cache_code[key] = val.str()	
+	}
 }
 
 fn (mut app App) set_status(txt string) {
@@ -52,13 +57,13 @@ fn (mut app App) clear_status() {
 
 fn (mut app App) make_children() {
 	app.boundings = [
-		['toolbar: (0,0) -> (1,20)', 'bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) ++ (1,0.5)',
-			'active: (0, 0.5) ++ (1,0.5)'],
+		['toolbar: (0,0) -> (1,20)', 'bb: hidden', 'treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) -> (1,0.5)',
+			'active: (0, 0.5) -> (1,0.5)'],
 		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: (0,20) -> (1,1)',
 			'active: (0, 0) -> (0,0)'],
 		['toolbar: hidden','bb: hidden','treedemo: hidden', 'treelayout: hidden', 'edit: hidden  ', 'active: (0, 0) -> (1,1)'],
-		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: (0,20) ++ (0.3,1)', 'treelayout: hidden','edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
-		['toolbar: (0,0) -> (1,20)','bb: hidden','treelayout: (0,20) ++ (0.3,1)', 'treedemo: hidden', 'edit: (0.30,20) -> (1,0.5)  ', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treedemo: (0,20) -> (0.3,1)', 'treelayout: hidden','edit: (0.3,20) -> (1,0.5)', 'active: (0.3, 0.5) -> (1,1)'],
+		['toolbar: (0,0) -> (1,20)','bb: hidden','treelayout: (0,20) -> (0.3,1)', 'treedemo: hidden', 'edit: (0.3,20) -> (1,0.5)', 'active: (0.3, 0.5) -> (1,1)'],
 	]
 	app.active = ui.box_layout(id: "active")
 	app.run_btn = ui.button(
@@ -77,16 +82,24 @@ fn (mut app App) make_children() {
 			sw.set_visible(sw.hidden)
 		}
 	)
+	app.reset_btn = ui.button(
+		text: ' Reset '
+		bg_color: gx.orange
+		on_click: fn [mut app] (_ &ui.Button) {
+			app.reset()
+		}
+	)
 	app.status = ui.textbox(mode: .read_only)
 	app.toolbar = ui.row(
 		id: "toolbar"
 		margin_: 2
 		spacing: 2
 		bg_color: gx.black
-		widths: [ui.compact, ui.compact, ui.stretch]
-		children: [app.run_btn, app.help_btn, app.status]
+		widths: [ui.compact, ui.compact, ui.compact, ui.stretch]
+		children: [app.run_btn, app.help_btn, app.reset_btn, app.status]
 	)
 	app.edit = ui.textbox(
+		id: "edit"
 		mode: .multiline
 		scrollview: true
 		z_index: 20
@@ -95,21 +108,24 @@ fn (mut app App) make_children() {
 		text_size: 24
 		text_font_name: 'fixed'
 		bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
-		text_value: src_codes[src_codes.keys()[0]]
+		text_value: app.cache_code[app.cache_code.keys()[0]]
 	)
 	app.treedemo = uic.treeview_stack(
 		id: 'treedemo'
 		trees: [
-			tools.treedir("demo",os.join_path(os.dir(@FILE),'demo'))
+			tools.treedir("widgets",os.join_path(os.dir(@FILE),'demo', 'widgets'))
+			tools.treedir("layouts",os.join_path(os.dir(@FILE),'demo', 'layouts'))
+			tools.treedir("components",os.join_path(os.dir(@FILE),'demo', 'components'))
 		],
 		on_click: fn [mut app](c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 			selected := tv.selected_full_title()
-			if selected in src_codes {
-				app.edit.set_text(src_codes[selected])
+			if selected in app.cache_code {
+				app.edit.set_text(app.cache_code[selected])
 			}
 		}
 	)
 	app.treelayout = tools.layouttree_stack(
+		id: "treelayout"
 		widget: app.active
 		on_click: fn [mut app](c &ui.CanvasLayout, mut tv uic.TreeViewComponent) {
 			app.bounding_box_cur = tv.titles[c.id]
@@ -143,7 +159,7 @@ fn (mut app App) update_bounding_box() {
 		mut bb := app.window.widgets[app.bounding_box_cur]
 		w, h := bb.size()
 		// println("(${bb.x}, ${bb.y} ++ (${w}, ${h}))")
-		app.layout.update_child_bounding("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
+		app.layout.update_boundings("bb: (${bb.x}, ${bb.y} ++ (${w}, ${h}))") 
 		// app.layout.update_layout()
 	}
 }
@@ -177,10 +193,16 @@ fn (mut app App) run() {
 	spawn app.clear_status()
 }
 
+fn (mut app App) reset() {
+	app.edit.set_text("")
+	app.run()
+}
+
 [live]
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
+
 // <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()
@@ -208,9 +230,10 @@ fn (mut app App) win_init(_ &ui.Window) {
 	app.edit.tv.sh.set_lang('.v')
 	app.edit.is_line_number = true
 	app.bounding_cur = 3
-	app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+	app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	
 // <<BEGIN_WINDOW_INIT>>
+
 // <<END_WINDOW_INIT>>
 }
 
@@ -222,6 +245,7 @@ fn (mut app App) resize(_ &ui.Window, _ int, _ int) {
 
 fn main() {
 	mut app := App{}
+	app.make_cache_code()
 	app.make_children()
 	// PRE CODE HERE
 	app.make_precode()
@@ -232,7 +256,7 @@ fn main() {
 		mode: .resizable
 		on_init: app.win_init
 		on_resize: app.resize
-		children: [app.layout]
+		layout: app.layout
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
 	mut sc := ui.Shortcutable(app.window)
@@ -244,38 +268,38 @@ fn main() {
 		if app.bounding_cur >= app.boundings.len {
 			app.bounding_cur = 0
 		}
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('shift + left', fn (mut app App) {
 		app.bounding_cur -= 1
 		if app.bounding_cur < 0 {
 			app.bounding_cur = app.boundings.len - 1
 		}
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + v', fn (mut app App) {
 		app.bounding_cur = 2
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
 		app.bounding_cur = 1
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + n', fn (mut app App) {
 		app.bounding_cur = 0
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + o', fn (mut app App) {
 		app.bounding_cur = 3
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 	}, app)
 	sc.add_shortcut_with_context('ctrl + b', fn (mut app App) {
 		app.bounding_cur = 4
-		app.layout.update_child_bounding(...app.boundings[app.bounding_cur])
+		app.layout.update_boundings(...app.boundings[app.bounding_cur])
 		// println(app.window.widgets.keys())
 		mut tvc := uic.treeview_component(app.treelayout)
 		tvc.activate_all()

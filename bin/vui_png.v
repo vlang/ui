@@ -33,76 +33,74 @@ fn main() {
 		mode: .resizable
 		on_init: init
 		// on_char: on_char
-		children: [
-			ui.row(
-				id: 'main'
-				widths: [ui.stretch, ui.stretch * 2, 60]
-				heights: ui.stretch
-				children: [
-					uic.hideable_stack(
-						id: 'hmenu'
-						layout: uic.menufile_stack(
-							id: 'menu'
-							dirs: dirs
-							on_file_changed: fn (mut mf uic.MenuFileComponent) {
-								// println("hello $mf.file")
-								if os.file_ext(mf.file) == '.png' {
-									mf.layout.ui.window.set_title('V UI Png Edit: ${mf.file}')
-									mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-										'rv')
-									rv.load_image(mf.file)
-									colors := rv.top_colors()
-									mut cp := uic.colorpalette_component_from_id(mf.layout.ui.window,
-										'palette')
-									cp.update_colors(colors)
-									rv.sel_i, rv.sel_j = -1, -1
-									rv.cur_i, rv.cur_j = -1, -1
-									mut parent := rv.layout.parent
-									if mut parent is ui.Stack {
-										parent.update_layout()
-									}
-								}
-							}
-							on_new: fn (mf &uic.MenuFileComponent) {
-								// println('new $mf.file!!!')
-								if os.file_ext(mf.file) == '.png' {
-									// create image
-									mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-										'rv')
-									rv.extract_size(mf.file)
-									rv.new_image()
-									rv.save_image_as(mf.file)
-									rv.sel_i, rv.sel_j = -1, -1
-								}
-							}
-							on_save: fn (mf &uic.MenuFileComponent) {
-								// println("save $mf.file")
-								if os.file_ext(mf.file) == '.png' {
-									mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-										'rv')
-									rv.save_image_as(mf.file)
-									mf.layout.ui.window.root_layout.unfocus_all()
-								}
-							}
-						)
-					),
-					uic.rasterview_canvaslayout(
-						id: 'rv'
-						on_click: fn (rv &uic.RasterViewComponent) {
-							if rv.layout.ui.btn_down[1] {
-								mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
+		layout: ui.row(
+			id: 'main'
+			widths: [ui.stretch, ui.stretch * 2, 60]
+			heights: ui.stretch
+			children: [
+				uic.hideable_stack(
+					id: 'hmenu'
+					layout: uic.menufile_stack(
+						id: 'menu'
+						dirs: dirs
+						on_file_changed: fn (mut mf uic.MenuFileComponent) {
+							// println("hello $mf.file")
+							if os.file_ext(mf.file) == '.png' {
+								mf.layout.ui.window.set_title('V UI Png Edit: ${mf.file}')
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.load_image(mf.file)
+								colors := rv.top_colors()
+								mut cp := uic.colorpalette_component_from_id(mf.layout.ui.window,
 									'palette')
-								cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
+								cp.update_colors(colors)
+								rv.sel_i, rv.sel_j = -1, -1
+								rv.cur_i, rv.cur_j = -1, -1
+								mut parent := rv.layout.parent
+								if mut parent is ui.Stack {
+									parent.update_layout()
+								}
 							}
 						}
-					),
-					uic.hideable_stack(
-						id: 'hpalette'
-						layout: uic.colorpalette_stack(id: 'palette')
-					),
-				]
-			),
-		]
+						on_new: fn (mf &uic.MenuFileComponent) {
+							// println('new $mf.file!!!')
+							if os.file_ext(mf.file) == '.png' {
+								// create image
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.extract_size(mf.file)
+								rv.new_image()
+								rv.save_image_as(mf.file)
+								rv.sel_i, rv.sel_j = -1, -1
+							}
+						}
+						on_save: fn (mf &uic.MenuFileComponent) {
+							// println("save $mf.file")
+							if os.file_ext(mf.file) == '.png' {
+								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
+									'rv')
+								rv.save_image_as(mf.file)
+								mf.layout.ui.window.root_layout.unfocus_all()
+							}
+						}
+					)
+				),
+				uic.rasterview_canvaslayout(
+					id: 'rv'
+					on_click: fn (rv &uic.RasterViewComponent) {
+						if rv.layout.ui.btn_down[1] {
+							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
+								'palette')
+							cp.update_colorbutton(rv.get_pixel(rv.sel_i, rv.sel_j))
+						}
+					}
+				),
+				uic.hideable_stack(
+					id: 'hpalette'
+					layout: uic.colorpalette_stack(id: 'palette')
+				),
+			]
+		)
 	)
 	uic.colorbox_subwindow_add(mut window)
 	uic.messagebox_subwindow_add(mut window, id: 'help', text: help_text)

@@ -30,6 +30,11 @@ fn clipping_start(c ClippingWidget, mut d DrawDevice) !ClippingState {
 		if intersection.is_empty() {
 			return error('widget is occluded and can not be drawn')
 		}
+		$if clipping_start ? {
+			if c is ScrollableWidget {
+				println('clipping start ${c.id} ${intersection} ${existing} ${impose}')
+			}
+		}
 		d.set_clipping(intersection)
 		return existing
 	} else {
@@ -39,6 +44,11 @@ fn clipping_start(c ClippingWidget, mut d DrawDevice) !ClippingState {
 
 fn clipping_end(c ClippingWidget, mut d DrawDevice, s ClippingState) {
 	if c.clipping {
+		$if clipping_end ? {
+			if c is ScrollableWidget {
+				println('clipping end ${c.id} ${s}')
+			}
+		}
 		d.set_clipping(s)
 	}
 }

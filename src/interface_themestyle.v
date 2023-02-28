@@ -15,7 +15,7 @@ pub fn (mut w WidgetThemeStyle) update_theme_style(theme_style string) {
 // TODO: documentation
 pub fn (mut l Layout) update_theme_style(theme_style string) {
 	if mut l is WidgetThemeStyle {
-		mut w := l as WidgetThemeStyle
+		mut w := mut l as WidgetThemeStyle
 		w.update_theme_style(theme_style)
 		// println("$w.id update_theme_style load style")
 		w.load_style()
@@ -26,7 +26,7 @@ pub fn (mut l Layout) update_theme_style(theme_style string) {
 			w.update_theme_style(theme_style)
 		}
 		if mut child is WidgetThemeStyle {
-			mut w := child as WidgetThemeStyle
+			mut w := mut child as WidgetThemeStyle
 			w.update_theme_style(theme_style)
 			// println('$w.id update_theme_style load style')
 			w.load_style()
