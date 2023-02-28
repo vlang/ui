@@ -13,19 +13,17 @@ fn main() {
 		// on_key_down: fn(e ui.KeyEvent, wnd &ui.Window) {
 		// println('key down')
 		//}
-		children: [
-			ui.column(
-				// alignment: .center
-				spacing: 5
-				margin_: 5
-				widths: ui.stretch
-				heights: 25.0
-				children: [
-					uic.setting_font(id: 'color', text: 'toto'),
-					uic.setting_font(id: 'color2', text: 'toto2'),
-				]
-			),
-		]
+		layout: ui.column(
+			// alignment: .center
+			spacing: 5
+			margin_: 5
+			widths: ui.stretch
+			heights: 25.0
+			children: [
+				uic.setting_font(id: 'color', text: 'toto'),
+				uic.setting_font(id: 'color2', text: 'toto2'),
+			]
+		)
 	)
 	uic.fontchooser_subwindow_add(mut window)
 	println(font.default())

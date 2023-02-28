@@ -60,17 +60,15 @@ fn main() {
 		title: 'V nested scrollviews inside boxlayout '
 		on_key_down: win_key_down
 		mode: .resizable
-		children: [
-			ui.column(
-				scrollview: true
-				widths: ui.stretch
-				heights: ui.stretch
-				bg_color: gx.yellow
-				children: [
-					make_scroll_area(mut app),
-				]
-			),
-		]
+		layout: ui.column(
+			scrollview: true
+			widths: ui.stretch
+			heights: ui.stretch
+			bg_color: gx.yellow
+			children: [
+				make_scroll_area(mut app),
+			]
+		)
 	)
 	ui.run(win)
 }

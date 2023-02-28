@@ -23,27 +23,25 @@ fn main() {
 		height: win_height
 		title: 'RGB color displayed in rectangle'
 		mode: .resizable
-		children: [
-			ui.column(
-				margin_: 10
-				spacing: 5
-				heights: [ui.stretch, 2 * ui.stretch, 7 * ui.stretch]
-				children: [
-					ui.button(
-						id: 'rgb_btn'
-						text: 'Show rgb color'
-						on_click: btn_click
-					),
-					rect,
-					uic.colorsliders_stack(
-						id: 'colorsliders'
-						color: color
-						orientation: orientation
-						on_changed: on_rgb_changed
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			margin_: 10
+			spacing: 5
+			heights: [ui.stretch, 2 * ui.stretch, 7 * ui.stretch]
+			children: [
+				ui.button(
+					id: 'rgb_btn'
+					text: 'Show rgb color'
+					on_click: btn_click
+				),
+				rect,
+				uic.colorsliders_stack(
+					id: 'colorsliders'
+					color: color
+					orientation: orientation
+					on_changed: on_rgb_changed
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

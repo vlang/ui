@@ -53,23 +53,21 @@ fn main() {
 		height: win_height
 		title: 'V UI: Rectangles inside BoxLayout'
 		mode: .resizable
-		children: [
-			ui.box_layout(
-				id: 'bl'
-				children: {
-					'id1: (0,0) ++ (30,30)':          ui.rectangle(
-						color: gx.rgb(255, 100, 100)
-					)
-					'id2: (30,30) -> (-30.5,-30.5)':  ui.rectangle(
-						color: gx.rgb(100, 255, 100)
-					)
-					'id3: (0.5,0.5) ->  (1,1)':       make_tb(mut app, with_row)
-					'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
-						color: gx.white
-					)
-					'id5: (0.7,0.2) ++ (50,20)':      app.make_btn()
-				}
-			),
-		]
+		layout: ui.box_layout(
+			id: 'bl'
+			children: {
+				'id1: (0,0) ++ (30,30)':          ui.rectangle(
+					color: gx.rgb(255, 100, 100)
+				)
+				'id2: (30,30) -> (-30.5,-30.5)':  ui.rectangle(
+					color: gx.rgb(100, 255, 100)
+				)
+				'id3: (0.5,0.5) ->  (1,1)':       make_tb(mut app, with_row)
+				'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
+					color: gx.white
+				)
+				'id5: (0.7,0.2) ++ (50,20)':      app.make_btn()
+			}
+		)
 	))
 }

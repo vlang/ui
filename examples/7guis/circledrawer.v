@@ -138,42 +138,40 @@ fn main() {
 		height: 400
 		title: 'Circle drawer'
 		mode: .resizable
-		children: [
-			ui.column(
-				spacing: 10
-				margin_: 20
-				widths: ui.stretch
-				heights: [ui.compact, ui.stretch]
-				children: [
-					ui.row(
-						spacing: 20
-						widths: [ui.stretch, 40, 40, ui.stretch]
-						children: [ui.spacing(),
-							ui.button(
-								id: 'btn_undo'
-								text: 'Undo'
-								radius: 5
-								on_click: app.click_undo
-							),
-							ui.button(
-								id: 'btn_redo'
-								text: 'Redo'
-								radius: 5
-								on_click: app.click_redo
-							),
-							ui.spacing()]
-					),
-					ui.canvas_plus(
-						bg_color: gx.white
-						bg_radius: .025
-						clipping: true
-						on_draw: app.draw_circles
-						on_click: app.click_circles
-						on_mouse_move: app.mouse_move_circles
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			spacing: 10
+			margin_: 20
+			widths: ui.stretch
+			heights: [ui.compact, ui.stretch]
+			children: [
+				ui.row(
+					spacing: 20
+					widths: [ui.stretch, 40, 40, ui.stretch]
+					children: [ui.spacing(),
+						ui.button(
+							id: 'btn_undo'
+							text: 'Undo'
+							radius: 5
+							on_click: app.click_undo
+						),
+						ui.button(
+							id: 'btn_redo'
+							text: 'Redo'
+							radius: 5
+							on_click: app.click_redo
+						),
+						ui.spacing()]
+				),
+				ui.canvas_plus(
+					bg_color: gx.white
+					bg_radius: .025
+					clipping: true
+					on_draw: app.draw_circles
+					on_click: app.click_circles
+					on_mouse_move: app.mouse_move_circles
+				),
+			]
+		)
 	)
 	window.subwindows << sw_radius
 	ui.run(window)

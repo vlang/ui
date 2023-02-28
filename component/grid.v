@@ -262,7 +262,7 @@ fn grid_init(mut layout ui.CanvasLayout) {
 // callbacks
 
 fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
-	// println('grid_click $e.x $e.y')
+	// println('grid_click $c.id $e.x $e.y orig = (${c.scrollview.orig_x}, ${c.scrollview.orig_y}) offset=(${c.scrollview.offset_x}, ${c.scrollview.offset_y})')
 	mut g := grid_component(c)
 	g.sel_i, g.sel_j = g.get_index_pos(e.x, e.y)
 	rx, ry := g.layout.abs_pos(g.rowbar_width, g.colbar_height)

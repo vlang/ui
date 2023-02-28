@@ -44,21 +44,19 @@ fn main() {
 			mut tb := win.get_or_panic[ui.TextBox]('info')
 			tb.set_text('resize:\n (${w}, ${h})')
 		}
-		children: [
-			ui.row(
-				widths: ui.stretch
-				heights: ui.stretch
-				children: [
-					ui.textbox(
-						id: 'info'
-						mode: .multiline | .read_only
-						bg_color: gx.hex(0xfcf4e4ff)
-						// text: &app.info
-						text_size: 24
-					),
-				]
-			),
-		]
+		layout: ui.row(
+			widths: ui.stretch
+			heights: ui.stretch
+			children: [
+				ui.textbox(
+					id: 'info'
+					mode: .multiline | .read_only
+					bg_color: gx.hex(0xfcf4e4ff)
+					// text: &app.info
+					text_size: 24
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

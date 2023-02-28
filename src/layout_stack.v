@@ -127,6 +127,7 @@ struct StackParams {
 	horizontal_alignments HorizontalAlignments
 	theme                 string = no_style
 	scrollview            bool
+	clipping              bool
 	children              []Widget
 }
 
@@ -145,6 +146,7 @@ fn stack(c StackParams) &Stack {
 		children: c.children
 		widths: c.widths
 		heights: c.heights
+		clipping: c.clipping
 		vertical_alignments: c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
 		alignments: c.align
@@ -275,7 +277,8 @@ pub fn (mut s Stack) update_layout() {
 	// 6) set position for chilfren
 	s.set_children_pos()
 	// 7) set the origin sizes for scrollview
-	scrollview_widget_set_orig_xy(s, true)
+	// scrollview_widget_set_orig_xy(s, true)
+	scrollview_set_children_orig_xy(s, true)
 	// 8) update_layout children if CanvasLayout or BoxLayout
 	for mut child in s.children {
 		if mut child is CanvasLayout {
@@ -1293,7 +1296,8 @@ pub fn (mut s Stack) set_visible(state bool) {
 fn (mut s Stack) resize(width int, height int) {
 	s.init_size()
 	s.update_pos()
-	scrollview_widget_set_orig_xy(s, false)
+	// scrollview_widget_set_orig_xy(s, false)
+	// scrollview_set_children_orig_xy(s, false)
 	s.set_children_sizes()
 	s.set_children_pos()
 	// println("RESIZE: $width, $height")

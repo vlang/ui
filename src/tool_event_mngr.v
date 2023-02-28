@@ -74,8 +74,12 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse ? {
-			println('point_inside_receivers: ${w.id} ${w.is_visible()} && ${w.is_parent_visible(true)} && ${w.point_inside(e.x,
-				e.y)} ${w.has_parent_deactivated()}')
+			println('point_inside_receivers: ${w.id} [${w.is_visible() && w.is_parent_visible(true)
+				&& w.point_inside(e.x, e.y) && !w.has_parent_deactivated()}] (vis: ${w.is_visible()}) && (parentvis: ${w.is_parent_visible(true)}) && (inside: ${w.point_inside(e.x,
+				e.y)}) && (!parent deactivated : ${!w.has_parent_deactivated()})')
+		}
+		if w.is_wm_mode() && !w.has_wm_parent_top_subwindow() {
+			continue
 		}
 		if w.is_visible() && w.is_parent_visible(true) && w.point_inside(e.x, e.y)
 			&& !w.has_parent_deactivated() {
@@ -208,9 +212,13 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
 	if em.receivers[ui.events.on_delegate].len > 0 {
-		mut w := em.receivers[ui.events.on_delegate][0]
-		x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
-		return w.point_inside(x, y)
+		for mut w in em.receivers[ui.events.on_delegate] {
+			x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
+			if w.point_inside(x, y) {
+				return true
+			}
+		}
+		return false
 	} else {
 		return false
 	}

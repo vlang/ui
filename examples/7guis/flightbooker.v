@@ -23,39 +23,37 @@ fn main() {
 		title: 'Flight booker'
 		mode: .resizable
 		on_init: app.win_init
-		children: [
-			ui.column(
-				spacing: 5
-				margin_: 5
-				// widths: ui.stretch
-				// heights: ui.stretch
-				children: [
-					ui.dropdown(
-						id: 'dd_flight'
-						z_index: 10
-						selected_index: 0
-						on_selection_changed: app.dd_change
-						items: [
-							ui.DropdownItem{
-								text: 'one-way flight'
-							},
-							ui.DropdownItem{
-								text: 'return flight'
-							},
-						]
-					),
-					ui.textbox(id: 'tb_oneway', on_change: app.tb_change),
-					ui.textbox(id: 'tb_return', read_only: true, on_change: app.tb_change),
-					ui.button(
-						id: 'btn_book'
-						text: 'Book'
-						radius: 5
-						bg_color: gx.light_gray
-						on_click: app.btn_book_click
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			spacing: 5
+			margin_: 5
+			// widths: ui.stretch
+			// heights: ui.stretch
+			children: [
+				ui.dropdown(
+					id: 'dd_flight'
+					z_index: 10
+					selected_index: 0
+					on_selection_changed: app.dd_change
+					items: [
+						ui.DropdownItem{
+							text: 'one-way flight'
+						},
+						ui.DropdownItem{
+							text: 'return flight'
+						},
+					]
+				),
+				ui.textbox(id: 'tb_oneway', on_change: app.tb_change),
+				ui.textbox(id: 'tb_return', read_only: true, on_change: app.tb_change),
+				ui.button(
+					id: 'btn_book'
+					text: 'Book'
+					radius: 5
+					bg_color: gx.light_gray
+					on_click: app.btn_book_click
+				),
+			]
+		)
 	)
 	ui.run(window)
 }

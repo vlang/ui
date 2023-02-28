@@ -154,26 +154,24 @@ fn main() {
 		mode: .resizable
 		on_key_down: win_key
 		on_init: win_init
-		children: [
-			ui.column(
-				heights: [ui.stretch, 15.0, 15.0]
-				widths: ui.stretch
-				children: [
-					make_quad('', fn (q int) ui.Widget {
-						return make_quad('q${q}', fn [q] (b int) ui.Widget {
-							return make_box('b${q}${b}')
-						})
-					}),
-					ui.label(
-						text: &instructions
-					),
-					ui.label(
-						id: 'status'
-						text: &instructions2
-					),
-				]
-			),
-		]
+		layout: ui.column(
+			heights: [ui.stretch, 15.0, 15.0]
+			widths: ui.stretch
+			children: [
+				make_quad('', fn (q int) ui.Widget {
+					return make_quad('q${q}', fn [q] (b int) ui.Widget {
+						return make_box('b${q}${b}')
+					})
+				}),
+				ui.label(
+					text: &instructions
+				),
+				ui.label(
+					id: 'status'
+					text: &instructions2
+				),
+			]
+		)
 	)
 	ui.run(win)
 }

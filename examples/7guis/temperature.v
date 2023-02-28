@@ -14,24 +14,24 @@ fn main() {
 		height: win_height
 		title: 'Temperature Converter'
 		mode: .resizable
-		children: [
-			ui.row(
-				margin_: 10
-				spacing: 10
-				widths: [ui.stretch, ui.compact, ui.stretch, ui.compact]
-				heights: 20.0
-				children: [ui.textbox(
+		layout: ui.row(
+			margin_: 10
+			spacing: 10
+			widths: [ui.stretch, ui.compact, ui.stretch, ui.compact]
+			heights: 20.0
+			children: [
+				ui.textbox(
 					id: 'celsius'
 					on_change: on_change_celsius
 				),
-					ui.label(text: 'Celsius = '),
-					ui.textbox(
-						id: 'fahren'
-						on_change: on_change_fahren
-					),
-					ui.label(text: 'Fahrenheit')]
-			),
-		]
+				ui.label(text: 'Celsius = '),
+				ui.textbox(
+					id: 'fahren'
+					on_change: on_change_fahren
+				),
+				ui.label(text: 'Fahrenheit'),
+			]
+		)
 	)
 	ui.run(window)
 }

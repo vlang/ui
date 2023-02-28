@@ -89,15 +89,13 @@ fn main() {
 		title: 'V nested scrollviews'
 		on_key_down: win_key_down
 		mode: .resizable
-		children: [
-			ui.column(
-				heights: [ui.stretch, 20.0]
-				widths: ui.stretch
-				children: [make_scroll_area(mut app), ui.label(
-					text: &instructions
-				)]
-			),
-		]
+		layout: ui.column(
+			heights: [ui.stretch, 20.0]
+			widths: ui.stretch
+			children: [make_scroll_area(mut app), ui.label(
+				text: &instructions
+			)]
+		)
 	)
 	ui.run(win)
 }

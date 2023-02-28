@@ -17,6 +17,15 @@ mut:
 	draw()
 }
 
+pub fn (l Layout) as_widget() Widget {
+	return if l is Widget {
+		w := l as Widget
+		w
+	} else {
+		Widget(empty_stack)
+	}
+}
+
 // TODO: documentation
 pub fn (l &Layout) set_children_depth(z_index int) {
 	for mut child in l.get_children() {
