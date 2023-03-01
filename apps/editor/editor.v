@@ -6,7 +6,7 @@ import gx
 import os
 
 [heap]
-pub struct AppEditor {
+pub struct AppUI {
 pub mut:
 	id      string
 	window  &ui.Window = unsafe { nil }
@@ -17,25 +17,25 @@ pub mut:
 }
 
 [params]
-pub struct AppEditorParams {
+pub struct AppUIParams {
 pub mut:
 	id string = 'editor'
 }
 
-pub fn new(p AppEditorParams) &AppEditor {
-	mut app := &AppEditor{
+pub fn new(p AppUIParams) &AppUI {
+	mut app := &AppUI{
 		id: p.id
 	}
 	app.make_layout()
 	return app
 }
 
-pub fn app(p AppEditorParams) &ui.Application {
+pub fn app(p AppUIParams) &ui.Application {
 	app := new(p)
 	return &ui.Application(app)
 }
 
-pub fn (mut app AppEditor) make_layout() {
+pub fn (mut app AppUI) make_layout() {
 	mut dirs := ['.']
 	dirs = dirs.map(os.real_path(it))
 	app.line_numbers = true
