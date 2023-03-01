@@ -1,6 +1,6 @@
 module ui
 
-// import gx
+import gg
 
 pub interface Application {
 mut:
@@ -83,4 +83,17 @@ pub fn (mut app Application) layout() Widget {
 	} else {
 		return empty_stack
 	}
+}
+
+// Specific to external gg application
+
+interface GGApplication {
+mut:
+	gg &gg.Context
+	bounds gg.Rect // bounding box where to draw
+	on_init()
+	on_draw()
+	on_delegate(&gg.Event)
+	set_bounds(gg.Rect)
+	run()
 }
