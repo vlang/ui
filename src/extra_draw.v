@@ -89,8 +89,9 @@ mut:
 
 // No text_size to not conflict with
 fn get_text_size(w DrawText, text_ string) (int, int) {
-	w.ui.dd.set_text_cfg(w.text_cfg)
-	return w.ui.dd.text_size(text_)
+	dd := w.ui.dd
+	dd.set_text_cfg(w.text_cfg)
+	return dd.text_size(text_)
 }
 
 fn set_text_cfg_color(mut w DrawText, color gx.Color) {
@@ -145,8 +146,9 @@ fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
 // TODO: documentation
 pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
 	mut th := 0
+	dd := w.ui.dd
 	for line in lines {
-		w.ui.dd.draw_text(x, y + th, line, w.text_cfg)
+		dd.draw_text(x, y + th, line, w.text_cfg)
 		_, tmp := get_text_size(w, line)
 		th += tmp
 	}

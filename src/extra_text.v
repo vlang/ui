@@ -36,8 +36,9 @@ fn word_wrap_text_to_lines(s string, max_line_length int) []string {
 fn text_lines_size(lines []string, ui &UI) (int, int) {
 	mut width, mut height := 0, 0
 	mut tw, mut th := 0, 0
+	dd := ui.dd
 	for line in lines {
-		tw, th = ui.dd.text_size(line)
+		tw, th = dd.text_size(line)
 		// println("tt line: $line -> ($tw, $th)")
 		if tw > width {
 			width = tw
