@@ -27,6 +27,6 @@ fn main() {
 
 fn win_init(mut w ui.Window) {
 	mut rv := uic.rasterview_component_from_id(w, 'rv')
-	rv.load_image(os.resource_abs_path(os.join_path('assets/img', 'logo.png')))
+	rv.load_image(os.resource_abs_path(os.join_path('../../assets/img', 'logo.png')))
 	// rv.load_image('../assets/img/icons8-cursor-67.png')
 }

@@ -1,21 +1,19 @@
 import ui
+import gx
 
 fn main() {
 	ui.run(ui.window(
 		width: 300
 		height: 100
 		title: 'Name'
-		layout: ui.column(
-			// margin_: 20
-			widths: ui.stretch
-			heights: ui.compact
-			children: [
-				ui.label(
+		layout: ui.box_layout(
+			children: {
+				'rect: stretch': ui.rectangle(color: gx.white)
+				'lab: stretch':  ui.label(
 					text: 'Centered text'
-					justify: [0.5, 0.75]
-					// text_align: .center
-				),
-			]
+					justify: ui.center
+				)
+			}
 		)
 	))
 }

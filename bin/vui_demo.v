@@ -202,7 +202,27 @@ fn (mut app App) reset() {
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
-
+layout = ui.box_layout(
+	children: {
+		"bl1: (0,0) -> (0.4, 0.5)": ui.box_layout(
+			children: {
+				"bl1/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.yellow)
+				"bl1/lab: (0, 0) ++ (300, 300)": ui.label(
+					text: "loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
+				)
+			}
+		)
+		"bl2: (0.5,0.5) -> (0.9, 1)": ui.box_layout(
+			children: {
+				"bl2/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.orange)
+				"bl2/lab: (0, 0) ++ (300, 300)": ui.label(
+					text: "clipped loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
+					clipping: true
+				)
+			}
+		)
+	}
+)
 // <<END_LAYOUT>>
 	// To at least clean the event callers
 	app.layout.children[app.layout.child_id.index("active")].cleanup()

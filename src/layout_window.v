@@ -207,6 +207,8 @@ pub fn window(cfg WindowParams) &Window {
 		cfg.children
 	}
 
+	fp := if os.exists(cfg.font_path) { cfg.font_path } else { '' }
+
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		title: cfg.title
@@ -265,7 +267,7 @@ pub fn window(cfg WindowParams) &Window {
 			// native_frame_fn: frame_native
 			event_fn: on_event
 			user_data: window
-			font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
+			font_path: if fp == '' { font.default() } else { fp }
 			custom_bold_font_path: cfg.custom_bold_font_path
 			init_fn: gg_init
 			cleanup_fn: gg_cleanup
