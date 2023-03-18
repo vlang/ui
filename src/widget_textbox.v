@@ -34,15 +34,18 @@ type TextBoxFn = fn (&TextBox)
 [heap]
 pub struct TextBox {
 pub mut:
-	id         string
-	height     int
-	width      int
-	x          int
-	y          int
-	offset_x   int
-	offset_y   int
-	z_index    int
+	id       string
+	height   int
+	width    int
+	x        int
+	y        int
+	offset_x int
+	offset_y int
+	z_index  int
+	// Adjustable
 	justify    []f64
+	ax         int
+	ay         int
 	parent     Layout = empty_stack
 	is_focused bool
 	is_typing  bool
@@ -349,6 +352,8 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 			println('TextBox(${tb.id}): (${tb.x}, ${tb.y}, ${tb.width}, ${tb.height})')
 		}
 	}
+	// TODO: use properly adj_pos_x and adj_pos_y
+	// adj_pos_x, adj_pos_y := AdjustableWidget(tb).get_adjusted_pos()
 
 	// draw background
 	if tb.has_scrollview {

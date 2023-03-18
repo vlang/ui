@@ -35,8 +35,11 @@ pub mut:
 	on_click         CheckBoxFn
 	on_check_changed CheckBoxFn
 	text             string
-	justify          []f64
-	disabled         bool
+	// Adjustable
+	justify  []f64
+	ax       int
+	ay       int
+	disabled bool
 	// Style
 	theme_style  string
 	style        CheckBoxShapeStyle
@@ -203,15 +206,17 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 			println('CheckBox(${cb.id}): (${cb.x}, ${cb.y}, ${cb.width}, ${cb.height})')
 		}
 	}
+	adj_pos_x, adj_pos_y := AdjustableWidget(cb).get_adjusted_pos()
 	// if cb.style.bg_color != no_color {
-	d.draw_rect_filled(cb.x - (cb.width - cb.adj_width) / 2, cb.y - (cb.height - cb.adj_height) / 2,
+	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2, adj_pos_y - (cb.height - cb.adj_height) / 2,
 		cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
 	// }
-	d.draw_rect_filled(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, cb.style.bg_color) // progress_bar_color)
-	draw_device_inner_border(false, d, cb.x, cb.y, ui.check_mark_size, ui.check_mark_size,
+	d.draw_rect_filled(adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size, cb.style.bg_color) // progress_bar_color)
+	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size,
 		false)
 	if cb.is_focused {
-		d.draw_rect_empty(cb.x, cb.y, ui.check_mark_size, ui.check_mark_size, cb.style.border_color)
+		d.draw_rect_empty(adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size,
+			cb.style.border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
@@ -226,12 +231,12 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 		cb.ui.dd.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
 		cb.ui.dd.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
 		*/
-		d.draw_image(cb.x + 3, cb.y + 3, 8, 8, cb.ui.cb_image)
+		d.draw_image(adj_pos_x + 3, adj_pos_y + 3, 8, 8, cb.ui.cb_image)
 	}
 	// Text
 	mut dtw := DrawTextWidget(cb)
 	dtw.draw_device_load_style(d)
-	dtw.draw_device_text(d, cb.x + ui.check_mark_size + 5, cb.y, cb.text)
+	dtw.draw_device_text(d, adj_pos_x + ui.check_mark_size + 5, adj_pos_y, cb.text)
 	$if bb ? {
 		debug_draw_bb_widget(mut cb, cb.ui)
 	}

@@ -1,90 +1,46 @@
 import ui
-import ui.component as uic
-import ui.tools
-import gx
-import time
-import v.live
+// <<BEGIN_IMPORT>>// <<END_IMPORT>>
 
-// vfmt off
+const (
+	// <<BEGIN_CONST>>// <<END_CONST>>
+)
+
 [heap]
 struct App {
 mut:
 	window &ui.Window    = unsafe { nil }
-// <<BEGIN_APP>>// <<END_APP>>
+	layout = &ui.Layout
+	// <<BEGIN_APP>>// <<END_APP>>
 }
 
 fn (mut app App) make_root_layout() {
-	mut layout := ui.box_layout()
-// <<BEGIN_LAYOUT>>// <<END_LAYOUT>>
-	// To at least clean the event callers
-	app.layout.children[app.layout.child_id.index("active")].cleanup()
-	app.layout.update_child("active", mut layout)	
+	// <<BEGIN_LAYOUT>>// <<END_LAYOUT>>
+	app.layout = layout
 }
 
-[live]
 fn (mut app App) make_precode() {
-// <<BEGIN_MAIN_PRE>>// <<END_MAIN_PRE>>
+	// <<BEGIN_PRECODE>>// <<END_PRECODE>>
 }
 
-[live]
 fn (mut app App) make_postcode() {
-// <<BEGIN_MAIN_POST>>// <<END_MAIN_POST>>
+	// <<BEGIN_POSTCODE>>// <<END_POSTCODE>>
 }
 
-[live]
+// <<BEGIN_CALLBACK>>// <<END_CALLBACK>>
+
 fn (mut app App) win_init(_ &ui.Window) {
-	app.edit.scrollview.set(0, .btn_y)
-	ui.scrollview_reset(mut app.edit)
-	app.edit.tv.sh.set_lang('.v')
-	app.edit.is_line_number = true
-	
 // <<BEGIN_WINDOW_INIT>>// <<END_WINDOW_INIT>>
 }
 
-// vfmt on
-
 fn main() {
 	mut app := App{}
-	app.make_children()
-	// PRE CODE HERE
+	app.make_root_layout()
 	app.make_precode()
 	app.window = ui.window(
-		width: 1000
-		height: 800
-		title: 'V UI: Demo'
-		mode: .resizable
+		// <<BEGIN_WIN_CFG>>// <<END_WINCFG>>
 		on_init: app.win_init
-		children: [app.layout]
+		layout: app.layout
 	)
-	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
-	mut sc := ui.Shortcutable(app.window)
-	sc.add_shortcut_with_context('ctrl + r', fn (mut app App) {
-		app.run(app.run_btn)
-	}, app)
-	sc.add_shortcut_with_context('ctrl + l', fn (mut app App) {
-		app.bounding_cur += 1
-		if app.bounding_cur >= app.boundings.len {
-			app.bounding_cur = 0
-		}
-		app.layout.update_boundings(...app.boundings[app.bounding_cur])
-	}, app)
-	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
-		app.bounding_cur = 1
-		app.layout.update_boundings(...app.boundings[app.bounding_cur])
-	}, app)
-	sc.add_shortcut_with_context('ctrl + v', fn (mut app App) {
-		app.bounding_cur = 2
-		app.layout.update_boundings(...app.boundings[app.bounding_cur])
-	}, app)
-	sc.add_shortcut_with_context('ctrl + e', fn (mut app App) {
-		app.bounding_cur = 1
-		app.layout.update_boundings(...app.boundings[app.bounding_cur])
-	}, app)
-	sc.add_shortcut_with_context('ctrl + 2', fn (mut app App) {
-		app.bounding_cur = 0
-		app.layout.update_boundings(...app.boundings[app.bounding_cur])
-	}, app)
-	// POST CODE HERE
 	app.make_postcode()
 	ui.run(app.window)
 }

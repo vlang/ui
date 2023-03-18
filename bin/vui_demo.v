@@ -203,25 +203,29 @@ fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
 layout = ui.box_layout(
-	children: {
-		"bl1: (0,0) -> (0.4, 0.5)": ui.box_layout(
-			children: {
-				"bl1/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.yellow)
-				"bl1/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-				)
-			}
-		)
-		"bl2: (0.5,0.5) -> (0.9, 1)": ui.box_layout(
-			children: {
-				"bl2/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.orange)
-				"bl2/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "clipped loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-					clipping: true
-				)
-			}
-		)
-	}
+  children: {
+	'rect: (0.2, 0.4) -> (0.5,0.5)': ui.rectangle(
+		color: ui.alpha_colored(gx.yellow,30)
+	),
+	'rect2: (0.5, 0.5) -> (1,1)': ui.rectangle(
+		color: ui.alpha_colored(gx.blue, 30)
+	)
+	'rect3: (0.1, 0.1) -> (0.3,0.2)': ui.rectangle(
+		color: ui.alpha_colored(gx.orange, 30)
+	),
+	'lab: (0.2, 0.4) -> (0.5,0.5)': ui.label(
+		text: 'Centered text'
+		justify: ui.center // [0.5, 0.5]
+	),
+   'lab2: (0.5, 0.5) -> (1,1)': ui.label(
+		text: 'Centered text\n2nd line\n3rd line'
+		justify: ui.top_center // [0.0, 0.5]
+	),
+	'lab3: (0.1, 0.1) -> (0.3,0.2)': ui.label(
+		text: 'long texttttttttttttttttttttttttttttttttt'
+		clipping: true
+	),
+  }
 )
 // <<END_LAYOUT>>
 	// To at least clean the event callers

@@ -4,8 +4,8 @@ import ui
 import os
 
 const (
-	build_blocks               = ['import', 'app', 'callback', 'layout', 'main_pre', 'main_post',
-		'window_init'] // in the right order
+	build_blocks               = ['import', 'const', 'app', 'callback', 'layout', 'main_pre',
+		'main_post', 'window_init'] // in the right order
 	build_comment_block_delims = set_build_comment_block_delims()
 )
 
