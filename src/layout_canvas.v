@@ -46,8 +46,11 @@ pub mut:
 	adj_height       int
 	full_width       int
 	full_height      int
-	justify          []f64
-	is_canvas_layer  bool
+	// Adjustable
+	justify         []f64
+	ax              int
+	ay              int
+	is_canvas_layer bool
 	// Style
 	theme_style  string
 	style        CanvasLayoutShapeStyle

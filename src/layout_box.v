@@ -414,7 +414,13 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 		}
 	}
 	// println('${child.id}: x,y =(${x}, ${y})')
-	child.set_pos(x, y)
+	if mut child is AdjustableWidget {
+		mut w := child as AdjustableWidget
+		// println('$child.id: $x + $offset_x, $y + $offset_y')
+		w.set_adjusted_pos(x, y)
+	} else {
+		child.set_pos(x, y)
+	}
 }
 
 // TODO: documentation

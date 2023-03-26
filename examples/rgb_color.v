@@ -94,9 +94,9 @@ fn main() {
 		entering: entering
 		thumb_color: gx.light_blue
 	)
-	app.r_label = ui.label(text: 'R', justify: ui.top_center)
-	app.g_label = ui.label(text: 'G', justify: ui.top_center)
-	app.b_label = ui.label(text: 'B', justify: ui.top_center)
+	app.r_label = ui.label(text: 'R', justify: ui.top_center, width: 40)
+	app.g_label = ui.label(text: 'G', justify: ui.top_center, width: 40)
+	app.b_label = ui.label(text: 'B', justify: ui.top_center, width: 40)
 	app.r_textbox.text = &app.r_textbox_text
 	app.g_textbox.text = &app.g_textbox_text
 	app.b_textbox.text = &app.b_textbox_text
