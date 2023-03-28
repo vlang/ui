@@ -39,6 +39,10 @@ string vui_bundle_path() {
 	return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
+void vui_minimize_window(NSWindow* window) {
+	[window performMiniaturize:0];
+}
+
 /*
 void vui_take_screenshot(string s) {//void* w, string s) {
 	// NSWindow* win=(__bridge NSWindow*)w;
@@ -47,7 +51,7 @@ void vui_take_screenshot(string s) {//void* w, string s) {
 	NSArray<NSDictionary*> *windowInfoList = (__bridge_transfer id)
     CGWindowListCopyWindowInfo(kCGWindowListOptionAll, kCGNullWindowID);
 
-	NSArray<NSRunningApplication*> *apps = 
+	NSArray<NSRunningApplication*> *apps =
     [NSRunningApplication runningApplicationsWithBundleIdentifier:
         // Bundle ID of the application, e.g.:  @"com.apple.Safari"];
 	if (apps.count == 0) {
@@ -108,7 +112,7 @@ void vui_screenshot(void* w, string s) {
 	NSView *view = [win contentView];
 	NSImage *image = [[NSImage alloc] initWithData:[[win contentView] dataWithPDFInsideRect:[[win contentView] bounds]]];
 	// NSBitmapImageRep *imgRep = [[image representations] objectAtIndex: 0];
-	// NSData *imageData = [imgRep representationUsingType: NSPNGFileType properties: nil]; 
+	// NSData *imageData = [imgRep representationUsingType: NSPNGFileType properties: nil];
 	// NSData *imageData = [image TIFFRepresentation];
 	// [imageData writeToFile:fName atomically:NO];
 	vui_saveImage(image, path);

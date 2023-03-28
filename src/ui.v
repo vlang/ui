@@ -23,6 +23,7 @@ pub mut:
 	bmp            &DrawDeviceBitmap = unsafe { nil }
 	layout_print   bool
 	show_cursor    bool
+	has_cursor     bool // true only if there's a textbox in the window, if false, no need to constantly redraw the window
 	last_type_time i64
 	// used only in textbox.v
 	clipboard    &clipboard.Clipboard = unsafe { nil }
@@ -74,7 +75,15 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
-		gui.refresh()
+		if gui.has_cursor {
+			// println('has cursor, refreshing')
+			gui.refresh()
+			$if macos {
+				if gui.gg.native_rendering {
+					C.darwin_window_refresh()
+				}
+			}
+		}
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
