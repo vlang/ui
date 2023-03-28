@@ -39,6 +39,10 @@ pub fn wait_events() {
 	C.vui_wait_events()
 }
 
+fn C.sapp_macos_get_window() voidptr
+
+fn C.vui_minimize_window(voidptr)
+
 // pub fn take_snapshot(s string) {
 // 	win := sapp.macos_get_window()
 // 	// C.vui_take_screenshot( s)

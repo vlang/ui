@@ -39,8 +39,9 @@ string vui_bundle_path() {
 	return tos2([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
-void vui_minimize_window(NSWindow* window) {
-	[window performMiniaturize:0];
+void vui_minimize_window(void* window) {
+	NSLog(@"MINIMIZZZ!!!!!!!!!!!!!!");
+	[ (__bridge NSWindow *)(window) performMiniaturize:0];
 }
 
 /*

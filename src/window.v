@@ -1298,6 +1298,13 @@ fn (mut w Window) focus_prev() {
 	}
 }
 
+pub fn (w &Window) minimize() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_minimize_window(x)
+	}
+}
+
 //---- unused
 
 pub fn (w &Window) set_cursor(cursor Cursor) {}
