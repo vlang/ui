@@ -220,7 +220,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	g.tb_rowbar.set_visible(false)
 
 	g.widths = [p.width].repeat(p.vars.keys().len)
-	// g.index = []int{len: g.nrow, init: it}.reverse()
+	// g.index = []int{len: g.nrow, init: index}.reverse()
 	if p.fixed_height {
 		// g.heights.len == 0
 		g.cell_height = p.height
@@ -1146,7 +1146,7 @@ pub fn (mut g GridComponent) init_ranked_grid_data(vars []int, orders []int) {
 		return 0
 	}
 
-	mut rgd := []int{len: g.nrow(), init: it}
+	mut rgd := []int{len: g.nrow(), init: index}
 	if vars.len > 0 {
 		rgd.sort_with_compare(compare_grid_data)
 	}
