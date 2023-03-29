@@ -1305,6 +1305,21 @@ pub fn (w &Window) minimize() {
 	}
 }
 
+pub fn (w &Window) deminimize() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_deminimize_window(x)
+	}
+}
+
+// focus brings the window to front, back to focus
+pub fn (w &Window) focus() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_focus_window(x)
+	}
+}
+
 //---- unused
 
 pub fn (w &Window) set_cursor(cursor Cursor) {}

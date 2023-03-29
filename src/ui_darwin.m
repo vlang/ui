@@ -40,8 +40,17 @@ string vui_bundle_path() {
 }
 
 void vui_minimize_window(void* window) {
-	NSLog(@"MINIMIZZZ!!!!!!!!!!!!!!");
+	NSLog(@"MINIMIZE WINDOW");
 	[ (__bridge NSWindow *)(window) performMiniaturize:0];
+}
+
+void vui_deminimize_window(void* window) {
+	NSLog(@"DE-MINIMIZE WINDOW");
+	[ (__bridge NSWindow *)(window) deminiaturize:0];
+}
+
+void vui_focus_window(void* window) {
+  [(__bridge NSWindow*)(window) makeKeyAndOrderFront:nil];
 }
 
 /*
