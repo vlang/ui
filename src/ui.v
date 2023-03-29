@@ -139,8 +139,10 @@ fn (mut gui UI) load_imgs() {
 // complete the drawing system
 pub fn (mut gui UI) load_img(id string, b []u8, path string) {
 	if mut gui.dd is DrawDeviceContext {
-		gui.imgs[id] = gui.dd.create_image_from_byte_array(b)
-		gui.imgs[id].path = path
+		if img := gui.dd.create_image_from_byte_array(b) {
+			gui.imgs[id] = img
+			gui.imgs[id].path = path
+		}
 	}
 }
 
