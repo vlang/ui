@@ -1019,6 +1019,13 @@ pub fn (mut s Stack) set_children_pos() {
 }
 
 fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
+	// IMPORT1NT: THIS NEEDS TO BE REDESIGNED!!!!
+	// 1) there is AdjustableWidget
+	// 2) there is alignment
+	// => THIS IS CONFUSING SINCE IT DOES THE SAME THING
+	// N.B.: AdjsuatbleWidget is less intrusive since (ax, ay) are completing (x,y)
+	// As first I would remove alignment system since it modifies (x, y)
+
 	// Only alignment along the opposite direction (ex: .row if direction is .column and vice-versa) is considered
 	// TODO: alignment in the direct direction
 	// (for these different cases, container size in the direct direction is more complicated to compute)

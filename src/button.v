@@ -152,7 +152,9 @@ fn (mut b Button) init(parent Layout) {
 	b.ui = ui
 	if b.use_icon {
 		if mut b.ui.dd is DrawDeviceContext {
-			b.image = b.ui.dd.create_image(b.icon_path)
+			if img := b.ui.dd.create_image(b.icon_path) {
+				b.image = img
+			}
 		}
 	}
 	b.load_style()

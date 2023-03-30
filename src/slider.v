@@ -159,6 +159,9 @@ pub fn (s &Slider) free() {
 }
 
 pub fn (mut s Slider) set_pos(x int, y int) {
+	$if slider_sp ? {
+		println('slider set pos (${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height}) -> (${x}, ${y}) ')
+	}
 	s.x = x
 	s.y = y
 }

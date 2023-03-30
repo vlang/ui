@@ -9,6 +9,8 @@ mut:
 	justify []f64 // 0.0 means left, 0.5 center and 1.0 right (0.25 means 1/4 of the free space between size and adjusted size)
 	x int
 	y int
+	ax int // offset for adjusted x
+	ay int // offset for adjusted x
 	set_pos(int, int)
 	adj_size() (int, int)
 }
@@ -28,8 +30,14 @@ pub fn (mut w AdjustableWidget) get_align_offset(aw f64, ah f64) (int, int) {
 }
 
 fn (mut w AdjustableWidget) set_adjusted_pos(x int, y int) {
-	dx, dy := w.get_align_offset(w.justify[0], w.justify[1])
-	w.set_pos(x + dx, y + dy)
+	w.ax, w.ay = w.get_align_offset(w.justify[0], w.justify[1])
+	w.ax += x
+	w.ay += y
+	w.set_pos(x, y)
+}
+
+fn (w &AdjustableWidget) get_adjusted_pos() (int, int) {
+	return w.ax, w.ay
 }
 
 pub const (

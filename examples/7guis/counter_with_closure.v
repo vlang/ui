@@ -38,7 +38,8 @@ fn main() {
 					radius: 5
 					border_color: gx.gray
 					on_click: fn [mut app] (btn &ui.Button) {
-						app.counter = (app.counter.int() + 1).str()
+						cpt := app.counter.int() + 1
+						app.counter = cpt.str()
 					}
 				),
 			]

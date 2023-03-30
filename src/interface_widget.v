@@ -136,7 +136,8 @@ pub fn (w Widget) has_focus() bool {
 
 // TODO: documentation
 pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
-	w.ui.dd.draw_rect_empty(r.x, r.y, r.width, r.height, color)
+	dd := w.ui.dd
+	dd.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }
 
 // children contains pure widgets (no stack or group), canvas_layout considered here as a widget (as it is the case ver often for component)

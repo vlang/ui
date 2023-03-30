@@ -207,6 +207,8 @@ pub fn window(cfg WindowParams) &Window {
 		cfg.children
 	}
 
+	fp := if os.exists(cfg.font_path) { cfg.font_path } else { '' }
+
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
 		title: cfg.title
@@ -265,7 +267,7 @@ pub fn window(cfg WindowParams) &Window {
 			// native_frame_fn: frame_native
 			event_fn: on_event
 			user_data: window
-			font_path: if cfg.font_path == '' { font.default() } else { cfg.font_path }
+			font_path: if fp == '' { font.default() } else { fp }
 			custom_bold_font_path: cfg.custom_bold_font_path
 			init_fn: gg_init
 			cleanup_fn: gg_cleanup
@@ -1293,6 +1295,28 @@ fn (mut w Window) focus_prev() {
 	w.do_focus = false
 	if !Layout(w).set_focus_prev() {
 		Layout(w).set_focus_last()
+	}
+}
+
+pub fn (w &Window) minimize() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_minimize_window(x)
+	}
+}
+
+pub fn (w &Window) deminimize() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_deminimize_window(x)
+	}
+}
+
+// focus brings the window to front, back to focus
+pub fn (w &Window) focus() {
+	$if macos {
+		x := C.sapp_macos_get_window()
+		C.vui_focus_window(x)
 	}
 }
 

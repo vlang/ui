@@ -18,8 +18,11 @@ pub mut:
 	z_index    int
 	adj_width  int
 	adj_height int
-	justify    []f64
-	ui         &UI = unsafe { nil }
+	// Adjustable
+	justify []f64
+	ax      int
+	ay      int
+	ui      &UI = unsafe { nil }
 	// Style
 	theme_style  string
 	style        LabelStyle
@@ -99,6 +102,9 @@ pub fn (l &Label) free() {
 // }
 
 pub fn (mut l Label) set_pos(x int, y int) {
+	$if lab_sp ? {
+		println('label set pos (${l.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height}) -> (${x}, ${y}) ')
+	}
 	l.x = x
 	l.y = y
 }
@@ -164,22 +170,18 @@ fn (mut l Label) draw_device(mut d DrawDevice) {
 	defer {
 		clipping_end(l, mut d, cstate)
 	}
+	adj_pos_x, adj_pos_y := AdjustableWidget(l).get_adjusted_pos()
 	splits := l.text.split('\n') // Split the text into an array of lines.
 	height := l.ui.dd.text_height('W') // Get the height of the current font.
-	mut dx, mut dy := 0, 0
-	mut aw := AdjustableWidget(l)
 	mut dtw := DrawTextWidget(l)
 	dtw.draw_device_load_style(d)
 	for i, split in splits {
-		if l.justify != top_left {
-			dx, dy = aw.get_align_offset(l.justify[0], l.justify[1])
-		}
-		dtw.draw_device_text(d, l.x + dx, l.y + dy + (height * i), split)
+		dtw.draw_device_text(d, adj_pos_x, adj_pos_y + (height * i), split)
 		$if tbb ? {
 			w, h := l.ui.dd.text_size(split)
 			println('label: w, h := l.ui.dd.text_size(split)')
 			println('debug_draw_bb_text(l.x(${l.x}), l.y(${l.y}) + (height(${height}) * i(${i})), w(${w}), h(${h}), l.ui)')
-			debug_draw_bb_text(l.x, l.y + (height * i), w, h, l.ui)
+			debug_draw_bb_text(adj_pos_x, adj_pos_y + (height * i), w, h, l.ui)
 		}
 	}
 	$if bb ? {

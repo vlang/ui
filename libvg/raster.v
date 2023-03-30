@@ -69,7 +69,11 @@ pub fn (mut r Raster) load_image(mut ctx gg.Context, path string) {
 	if !os.exists(path) {
 		return
 	}
-	r.load(ctx.create_image(path))
+	img := ctx.create_image(path) or {
+		eprintln(err)
+		return
+	}
+	r.load(img)
 }
 
 // TODO: documentation

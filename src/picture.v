@@ -95,8 +95,11 @@ fn (mut pic Picture) init(parent Layout) {
 		if !pic.use_cache && pic.path in ui.resource_cache {
 			pic.image = ui.resource_cache[pic.path]
 		} else if mut pic.ui.dd is DrawDeviceContext {
-			pic.image = pic.ui.dd.create_image(pic.path)
-			ui.resource_cache[pic.path] = pic.image
+			dd := pic.ui.dd
+			if img := dd.create_image(pic.path) {
+				pic.image = img
+				ui.resource_cache[pic.path] = pic.image
+			}
 		}
 	}
 	$if android {

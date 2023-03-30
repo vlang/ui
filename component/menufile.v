@@ -163,7 +163,8 @@ pub fn menufile_init(layout &ui.Stack) {
 
 // treeview
 fn treeview_onclick(c &ui.CanvasLayout, mut tv TreeViewComponent) {
-	mut mf := menufile_component_from_id(c.ui.window, ui.component_parent_id(tv.id))
+	win := c.ui.window
+	mut mf := menufile_component_from_id(win, ui.component_parent_id(tv.id))
 	mf.item_selected = c.id
 	mf.file = tv.full_title(mf.item_selected)
 	if mf.on_file_changed != MenuFileFn(0) {

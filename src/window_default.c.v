@@ -2,7 +2,6 @@ module ui
 
 fn C.sapp_mouse_locked() bool
 
-// fn C.sapp_macos_get_window() voidptr
 fn C.sapp_set_window_title(&char)
 
 /*

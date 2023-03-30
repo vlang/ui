@@ -313,8 +313,8 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 			gx.gray
 		})
 		// Title
-		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, r.ui.dd.text_width(r.title) + 5,
-			10, r.parent.bg_color()) // r.ui.window.bg_color)
+		tw := r.ui.dd.text_width(r.title) + 5
+		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, tw, 10, r.parent.bg_color()) // r.ui.window.bg_color)
 
 		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
 	}
