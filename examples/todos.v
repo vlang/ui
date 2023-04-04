@@ -12,24 +12,24 @@ const (
 )
 
 struct Todo {
-	id int
-	title string
+	id        int
+	title     string
 	completed bool
 }
 
 [heap]
 struct State {
 mut:
-	id int
-	title string
+	id        int
+	title     string
 	completed bool
-	todos []Todo
-	pbar       &ui.ProgressBar
-	window     &ui.Window = unsafe { nil }
-	label      &ui.Label
-	txt_pos int
-	started bool
-	is_error bool
+	todos     []Todo
+	pbar      &ui.ProgressBar
+	window    &ui.Window = unsafe { nil }
+	label     &ui.Label
+	txt_pos   int
+	started   bool
+	is_error  bool
 }
 
 fn main() {
@@ -62,7 +62,7 @@ fn main() {
 		title: 'Todo Example - Max of V (5)'
 		children: [
 			ui.row(
-				margin: ui.Margin{10,10,10,10}
+				margin: ui.Margin{10, 10, 10, 10}
 				widths: [200.0, ui.stretch]
 				spacing: 30
 				children: [
@@ -121,7 +121,7 @@ fn main() {
 						]
 					),
 				]
-			)
+			),
 		]
 	)
 	app.window = window
@@ -134,7 +134,7 @@ fn (mut app State) add_todo(b &ui.Button) {
 		return
 	}
 	if app.todos.len == 5 {
-		ui.message_box("Max of 5 Todos reached. \nWiping the first Todo to make room!")
+		ui.message_box('Max of 5 Todos reached. \nWiping the first Todo to make room!')
 		app.todos = app.todos[1..5]
 	}
 
