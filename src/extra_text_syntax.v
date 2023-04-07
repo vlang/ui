@@ -260,8 +260,8 @@ fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune)
 }
 
 fn (mut sh SyntaxHighLighter) parse_chunk_numeric() {
-	if !sh.is_alpha_underscore_before(sh.start) && ((sh.ustr[sh.i] in ui.numeric_set)
-		|| sh.ustr[sh.i] == `-`) {
+	if !sh.is_alpha_underscore_before(sh.start)
+		&& (sh.ustr[sh.i] in ui.numeric_set || sh.ustr[sh.i] == `-`) {
 		sh.i++
 		for {
 			if sh.i == sh.ustr.len {
