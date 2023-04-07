@@ -105,7 +105,7 @@ pub mut:
 	// settings SettingsUI
 	// shortcuts
 	shortcuts Shortcuts
-	mini_calc MiniCalc
+	mini_calc MiniCalc = mini_calc()
 	mx        f64 // do not remove this, temporary
 	my        f64
 }
@@ -247,7 +247,6 @@ pub fn window(cfg WindowParams) &Window {
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
-	window.mini_calc = mini_calc()
 	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
 			width: width
