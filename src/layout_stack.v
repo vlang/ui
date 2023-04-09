@@ -1235,42 +1235,42 @@ fn (s &Stack) margin(side Side) int {
 		.bottom { s.margins.bottom }
 		.left { s.margins.left }
 	}
-	mut isize := int(size)
+	mut i_size := int(size)
 	if 0.0 < size && size < 1.0 {
 		psize := if side in [.left, .right] { s.real_width } else { s.real_height }
 		$if margin ? {
 			println('margin(${side}) = ${size} * ${psize}')
 		}
-		isize = int(size * f32(psize))
+		i_size = int(size * f32(psize))
 	}
 	$if margin ? {
-		println('margin(${side}) = ${isize}')
+		println('margin(${side}) = ${i_size}')
 	}
 	if s.title != '' {
 		text_height := s.ui.dd.text_height(s.title)
 		match side {
-			.top { isize += int(f32(text_height) * 1.25) }
-			.bottom { isize += int(f32(text_height) * 0.75) }
-			else { isize += text_height / 2 }
+			.top { i_size += int(f32(text_height) * 1.25) }
+			.bottom { i_size += int(f32(text_height) * 0.75) }
+			else { i_size += text_height / 2 }
 		}
 	}
-	return isize
+	return i_size
 }
 
 fn (s &Stack) spacing(i int) int {
 	size := s.spacings[i]
-	mut isize := int(size)
+	mut i_size := int(size)
 	if 0.0 < size && size < 1.0 {
 		psize := if s.direction == .row { s.real_width } else { s.real_height }
 		$if spacing ? {
 			println('spacing(${i}) = ${size} * ${psize}')
 		}
-		isize = int(size * f32(psize))
+		i_size = int(size * f32(psize))
 	}
 	$if spacing ? {
-		println('spacing(${i}) = ${isize}')
+		println('spacing(${i}) = ${i_size}')
 	}
-	return isize
+	return i_size
 }
 
 fn (s &Stack) total_spacing() int {
