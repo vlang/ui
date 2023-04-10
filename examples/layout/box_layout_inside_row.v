@@ -52,14 +52,14 @@ fn main() {
 				ui.box_layout(
 					id: 'bl'
 					children: {
-						'id1: (0,0) ++ (0.3,0.3)':     ui.rectangle(
+						'id1: (0,0) ++ (30%,30%)':     ui.rectangle(
 							color: gx.rgb(255, 100, 100)
 						)
-						'id2: (0.3,0.3) ++ (0.4,0.4)': ui.rectangle(
+						'id2: (0.3,0.3) ++ (40%,40%)': ui.rectangle(
 							color: gx.rgb(100, 255, 100)
 						)
-						'id3: (0.7,0.7) ++ (0.3,0.3)': make_tb(mut app, mut text, false)
-						'btn: (0.7,0.1) ++ (50,20)':   ui.button(
+						'id3: (70%,70%) ++ (30%,30%)': make_tb(mut app, mut text, false)
+						'btn: (70%,10%) ++ (50,20)':   ui.button(
 							text: 'switch'
 							on_click: app.btn_click
 						)
@@ -73,5 +73,5 @@ fn main() {
 
 fn (mut app App) btn_click(_ &ui.Button) {
 	mut bl := app.window.get_or_panic[ui.BoxLayout]('bl')
-	bl.update_boundings('id3: (0.8,0.8) ++ (0.2,0.2)')
+	bl.update_boundings('id3: (80%,80%) ++ (20%,20%)')
 }

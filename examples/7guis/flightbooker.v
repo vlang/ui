@@ -115,5 +115,5 @@ fn valid_date(date string) bool {
 	t := time.parse(ts) or { no_time }
 	// println("$t.day/$t.month/$t.year")
 	nd := time.days_in_month(t.month, t.year) or { -1 }
-	return (t != no_time) && (t.day <= nd)
+	return t != no_time && t.day <= nd
 }

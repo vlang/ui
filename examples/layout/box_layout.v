@@ -21,7 +21,7 @@ fn main() {
 				'id2: (30,30) -> (-30.5,-30.5)':          ui.rectangle(
 					color: gx.rgb(100, 255, 100)
 				)
-				'id3: (0.5,0.5) ->  (1,1)':               ui.rectangle(
+				'id3: (50%,50%) ->  (100%,100%)':         ui.rectangle(
 					color: gx.rgb(100, 100, 255)
 				)
 				'id4: (-30.5, -30.5) ++ (30,30)':         ui.rectangle(

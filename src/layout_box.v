@@ -97,6 +97,7 @@ pub mut:
 	component voidptr
 	// debug stuff to be removed
 	debug_ids []string
+	mc        MiniCalc = mini_calc()
 }
 
 [params]
@@ -206,7 +207,7 @@ pub fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) {
 	id, mut bounding := parse_boxlayout_child_key(key, b.id)
 	// Non-sense here no underscore when setting a child bounding box
 	// bounding = b.update_child_current_box_expression(id, bounding)
-	mode, bounding_vec, has_z_index, z_index, box_expr := parse_boxlayout_child_bounding(bounding)
+	mode, bounding_vec, has_z_index, z_index, box_expr := b.parse_boxlayout_child_bounding(bounding)
 	match mode {
 		'rect' { b.add_child_rect(id, child, bounding_vec) }
 		'lt2rb' { b.add_child_lt2rb(id, child, bounding_vec) }
@@ -269,7 +270,7 @@ fn (mut b BoxLayout) add_child_box_expr(id string, child Widget, box_expr string
 pub fn (mut b BoxLayout) update_child_bounding(key string) {
 	id, mut bounding := parse_boxlayout_child_key(key, b.id)
 	bounding = b.update_child_current_box_expression(id, bounding)
-	mode, bounding_vec, has_z_index, z_index, box_expr := parse_boxlayout_child_bounding(bounding)
+	mode, bounding_vec, has_z_index, z_index, box_expr := b.parse_boxlayout_child_bounding(bounding)
 	match mode {
 		'rect' { b.update_child_rect(id, bounding_vec) }
 		'lt2rb' { b.update_child_lt2rb(id, bounding_vec) }
@@ -502,7 +503,7 @@ fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 		bounding = b.precompute_box_expression(bounding)
 		// println("precompute:  $bounding")
 		// set the child_box[i] and child_mode[i] (already done normally)
-		mode, bounding_vec, _, _, _ := parse_boxlayout_child_bounding(bounding)
+		mode, bounding_vec, _, _, _ := b.parse_boxlayout_child_bounding(bounding)
 		// println("preprocess $id $bounding_vec")
 		match mode {
 			'rect' { b.update_child_rect(id, bounding_vec) }
@@ -524,14 +525,15 @@ fn (b &BoxLayout) precompute_box_expression(bounding string) string {
 	for i in 0 .. 2 {
 		if tmp[i].contains_any('+-*/()') {
 			bbs = tmp[i].split(',').map(it.trim_space())
-			tmp[i] = '${b.calculate(bbs[i * 2])}, ${b.calculate(bbs[i * 2 + 1])}'
+			tmp[i] = '${b.calculate(bbs[0])}, ${b.calculate(bbs[1])}'
 		}
 	}
 	return '(${tmp[0]}) ${op} (${tmp[1]})'
 }
 
 fn (b &BoxLayout) calculate(formula string) f32 {
-	return b.ui.window.calculate(formula)
+	mut mc := b.mc
+	return mc.calculate(formula)
 }
 
 // TODO: documentation
@@ -870,7 +872,7 @@ fn parse_boxlayout_child_key(key string, bl_id string) (string, string) {
 }
 
 // parse child bounding and return
-fn parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int, string) {
+fn (b &BoxLayout) parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int, string) {
 	mut vec4, mut mode, mut has_z_index, mut z_index, mut box_expr := []f32{}, '', false, 0, ''
 	mut tmp2 := []string{}
 	if bounding == 'hidden' {
@@ -884,13 +886,13 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int, st
 		mode = 'box_expr'
 	} else if bounding.contains('++') {
 		tmp2 = bounding.split('++').map(it.trim_space())
-		vec4, has_z_index, z_index = parse_bounding_with_possible_zindex(tmp2[0], tmp2[1])
+		vec4, has_z_index, z_index = b.parse_bounding_with_possible_zindex(tmp2[0], tmp2[1])
 		if vec4.len == 4 {
 			mode = 'rect'
 		}
 	} else if bounding.contains('->') {
 		tmp2 = bounding.split('->').map(it.trim_space())
-		vec4, has_z_index, z_index = parse_bounding_with_possible_zindex(tmp2[0], tmp2[1])
+		vec4, has_z_index, z_index = b.parse_bounding_with_possible_zindex(tmp2[0], tmp2[1])
 		if vec4.len == 4 {
 			mode = 'lt2rb'
 		}
@@ -899,19 +901,19 @@ fn parse_boxlayout_child_bounding(bounding string) (string, []f32, bool, int, st
 }
 
 // TODO: ?int does not work yet
-fn parse_bounding_with_possible_zindex(left string, right string) ([]f32, bool, int) {
+fn (b &BoxLayout) parse_bounding_with_possible_zindex(left string, right string) ([]f32, bool, int) {
 	mut has_z_index, mut z_index := false, 0
 	mut tmp := left.find_between('(', ')')
 	mut vec4 := []f32{}
 	if !left.is_blank() {
-		vec4 = tmp.split(',').map(it.f32())
+		vec4 = tmp.replace('%', '/100.0').split(',').map(b.calculate(it))
 		if vec4.len == 3 {
 			has_z_index = true
 			z_index = int(vec4[2])
 			vec4 = vec4[0..2]
 		}
 		tmp2 := right.find_between('(', ')')
-		vec4 << tmp2.split(',').map(it.f32())
+		vec4 << tmp2.replace('%', '/100.0').split(',').map(b.calculate(it))
 		if vec4.len != 4 {
 			return []f32{}, false, 0
 		}
