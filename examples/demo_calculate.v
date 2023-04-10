@@ -11,10 +11,10 @@ fn main() {
 		}
 		layout: ui.box_layout(
 			children: {
-				'rect: (0, 25) -> (1,1)': ui.rectangle(
+				'rect: (0, 25) -> (1,1)':  ui.rectangle(
 					color: gx.orange
 				)
-				'tb: (0,0) -> (1, 25)':   ui.textbox(
+				'tb: (0,0) -> (100%, 25)': ui.textbox(
 					id: 'tb'
 					text_value: '((23.3 + 10) / 4) - 3'
 					on_enter: fn (mut tb ui.TextBox) {
@@ -22,7 +22,7 @@ fn main() {
 						res.set_text(tb.ui.window.calculate(tb.get_text()).str())
 					}
 				)
-				'res: (0, 30) -> (1,1)':  ui.label(
+				'res: (0, 30) -> (1,1)':   ui.label(
 					id: 'res'
 					justify: ui.center
 					text_size: 24

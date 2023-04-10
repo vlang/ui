@@ -62,11 +62,11 @@ fn main() {
 				'id2: (30,30) -> (-30.5,-30.5)':  ui.rectangle(
 					color: gx.rgb(100, 255, 100)
 				)
-				'id3: (0.5,0.5) ->  (1,1)':       make_tb(mut app, with_row)
+				'id3: (50%,50%) ->  (100%,100%)': make_tb(mut app, with_row)
 				'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
 					color: gx.white
 				)
-				'id5: (0.7,0.2) ++ (50,20)':      app.make_btn()
+				'id5: (70%,20%) ++ (50,20)':      app.make_btn()
 			}
 		)
 	))
