@@ -33,7 +33,7 @@ mut:
 	s          f64 = 0.75
 	v          f64 = 0.75
 	rgb        gx.Color
-	linked     &gx.Color = &gx.Color(0)
+	linked     &gx.Color = &gx.Color(unsafe { nil })
 	colbtn     &ColorButtonComponent = unsafe { nil }
 	ind_sel    int
 	hsv_sel    []HSVColor = []HSVColor{len: component.cb_nc * component.cb_nr}
