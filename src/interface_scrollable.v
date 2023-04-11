@@ -14,7 +14,7 @@ pub const (
 	scrollbar_focused_button_color = gx.rgb(100, 100, 100)
 	scrollview_delta_key           = 5
 	// scrollview_delta_mouse         = 10
-	null_scrollview                = &ScrollView(0)
+	null_scrollview                = &ScrollView(unsafe { nil })
 )
 
 enum ScrollViewEvent {
@@ -69,7 +69,7 @@ pub fn get_scrollview(sw ScrollableWidget) (bool, &ScrollView) {
 	return has, if has {
 		sw.scrollview
 	} else {
-		&ScrollView(0)
+		&ScrollView(unsafe { nil })
 	}
 }
 
