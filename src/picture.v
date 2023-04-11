@@ -105,7 +105,7 @@ fn (mut pic Picture) init(parent Layout) {
 	$if android {
 		byte_ary := os.read_apk_asset(pic.path) or { panic(err) }
 		if mut pic.ui.dd is DrawDeviceContext {
-			pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary)
+			pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary) or { panic(err) }
 		}
 	}
 	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
