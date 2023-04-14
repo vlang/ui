@@ -739,7 +739,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 				// println('cleanup ${child.id()}')
 				child.cleanup()
 			}
-			window.child_window = &Window(0)
+			window.child_window = &Window(unsafe { nil })
 		} else {
 			if shift_key(e.mods) {
 				// draw_device_draw_print('toto.txt', mut window)

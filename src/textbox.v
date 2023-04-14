@@ -391,12 +391,25 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		if text == '' && placeholder != '' {
 			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
 				color: gx.gray)
+			// Native text rendering
+			$if macos {
+				if tb.ui.gg.native_rendering {
+					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
+						color: gx.gray)
+				}
+			}
 		}
 		// Text
 		else {
 			// Selection box
 			tb.draw_selection()
-			// The text doesn'tb fit, find the largest substring we can draw
+			// Native text rendering
+			$if macos {
+				if tb.ui.gg.native_rendering {
+					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+				}
+			}
+			// The text doesn't fit, find the largest substring we can draw
 			if tb.large_text { // width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
 				if !tb.is_focused || tb.read_only {
 					skip_idx := tb.skip_index_from_start(ustr, dtw)
