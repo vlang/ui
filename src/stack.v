@@ -379,6 +379,7 @@ fn (mut s Stack) set_children_sizes() {
 }
 
 fn (mut s Stack) children_sizes() ([]int, []int) {
+	// println('children_sizes() nr_children: ${s.children.len}')
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 
 	// free size without margin and spacing
