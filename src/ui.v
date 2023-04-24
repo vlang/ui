@@ -75,6 +75,8 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
+		gui.refresh()
+		/*
 		if gui.has_cursor {
 			// println('has cursor, refreshing')
 			gui.refresh()
@@ -84,6 +86,7 @@ fn (mut gui UI) idle_loop() {
 				}
 			}
 		}
+		*/
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
