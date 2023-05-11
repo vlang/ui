@@ -67,7 +67,9 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
-	lock_scrollview_key(tv.tb)
+	if tv.tb.has_scrollview {
+		lock_scrollview_key(tv.tb)
+	}
 }
 
 pub fn (tv &TextView) size() (int, int) {
@@ -193,13 +195,17 @@ fn (mut tv TextView) refresh_visible_lines() {
 
 fn (mut tv TextView) update_all_visible_lines() {
 	if tv.tlv.refresh_visible_lines {
-		// println("visible line ${time.now()}")
+		// println("visible line")
 		tv.tlv.from_i.clear()
 		tv.tlv.to_i.clear()
 		for j in tv.tlv.from_j .. tv.tlv.to_j + 1 {
-			tv.tlv.from_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x)
-			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x +
-				tv.tb.width)
+			tv.tlv.from_i << tv.text_pos_from_x(tv.tlv.lines[j], if tv.tb.has_scrollview {
+				tv.tb.scrollview.offset_x
+			} else {
+				0
+			})
+			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j],
+				if tv.tb.has_scrollview { tv.tb.scrollview.offset_x } else { 0 } + tv.tb.width)
 		}
 		// refresh_visible_lines done
 		tv.tlv.refresh_visible_lines = false
@@ -213,9 +219,7 @@ pub fn (mut tv TextView) update_lines() {
 		tv.tlv.lines = (*tv.text).split('\n')
 	}
 	// TO BE DONE AFTER newly created tv.tlv.lines
-	if tv.tb.has_scrollview {
-		tv.visible_lines()
-	}
+	tv.visible_lines()
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
 	tv.update_left_margin()
