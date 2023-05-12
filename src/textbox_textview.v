@@ -62,7 +62,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.update_line_height()
 	tv.sh = syntaxhighlighter()
 	tv.sh.init(tv)
-	// println('line height: $tv.line_height')
+	// println('INIT: line height: $tv.line_height')
 	tv.refresh_visible_lines()
 	tv.update_lines()
 	tv.cancel_selection()
@@ -213,7 +213,7 @@ fn (mut tv TextView) update_all_visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
-	if tv.is_wordwrap() {
+	if tv.is_wordwrap() && tv.tb.width > 30 {
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
@@ -893,6 +893,7 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 	}
 	words := s.split(' ')
 	max_line_width := tv.tb.width
+	// println("max_line_width = $max_line_width")
 	mut line := ''
 	mut line_width := 0
 	mut text_lines := []string{}
