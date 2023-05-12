@@ -820,11 +820,12 @@ pub fn (s &Stack) adj_size() (int, int) {
 			println('adj_size ${s.id}: fixed: (${s.fixed_width}, ${s.fixed_height}) adj: (${s.adj_width}, ${s.adj_height}) ')
 		}
 	}
-	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
+	mut w, mut h := if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
 		s.fixed_height
 	} else {
 		s.adj_height
 	}
+	return w + s.margin(.left) + s.margin(.right), h + s.margin(.top) + s.margin(.bottom)
 }
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
