@@ -86,7 +86,7 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 		w += tv.left_margin + ui.textview_margin
 	}
-	// println("tv size: $w, $h")
+	// println("tv size: $tv.tb.id $w, $h")
 	return w, h
 }
 
@@ -874,15 +874,17 @@ pub fn (mut tv TextView) scroll_y_to_end() {
 }
 
 fn (mut tv TextView) word_wrap_text() {
-	lines := (*tv.text).split('\n')
-	mut word_wrapped_lines := []string{}
-	// println('word_wrap_text: $tv.tlv.from_j -> $tv.tlv.to_j')
-	for line in lines {
-		ww_lines := tv.word_wrap_line(line)
-		word_wrapped_lines << ww_lines
+	if tv.tb.text != unsafe { nil } {
+		lines := (*tv.tb.text).split('\n')
+		mut word_wrapped_lines := []string{}
+		// println('word_wrap_text: $tv.tlv.from_j -> $tv.tlv.to_j')
+		for line in lines {
+			ww_lines := tv.word_wrap_line(line)
+			word_wrapped_lines << ww_lines
+		}
+		// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
+		tv.tlv.lines = word_wrapped_lines
 	}
-	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
-	tv.tlv.lines = word_wrapped_lines
 }
 
 fn (tv &TextView) word_wrap_line(s string) []string {

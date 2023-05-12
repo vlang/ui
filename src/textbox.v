@@ -306,7 +306,11 @@ fn (tb &TextBox) adj_size() (int, int) {
 }
 
 pub fn (tb &TextBox) size() (int, int) {
-	return tb.width, tb.height
+	if tb.is_multiline {
+		return tb.tv.size()
+	} else {
+		return tb.width, tb.height
+	}
 }
 
 const max_textbox_height = 25
