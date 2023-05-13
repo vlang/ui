@@ -392,7 +392,7 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		text_y := tb.y + ui.textbox_padding_y // TODO off by 1px
 
 		// Placeholder
-		if text == '' && placeholder != '' {
+		if text == '' && placeholder != '' && !tb.is_focused {
 			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
 				color: gx.gray)
 			// Native text rendering
