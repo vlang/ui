@@ -6,6 +6,7 @@ import gx
 
 const (
 	textview_margin = 10
+	wordwrap_border = 20
 )
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
@@ -75,7 +76,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 pub fn (tv &TextView) size() (int, int) {
 	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
-	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
+	// println('size ${tv.tb.id}: ${tv.tlv.lines} ${tv.tlv.lines.len} ${tv.tlv.to_j} (width= ${tv.tb.width})')
 	if tv.tlv.from_j > -1 && tv.tlv.from_j <= (tv.tlv.lines.len - 1) && tv.tlv.to_j > -1
 		&& tv.tlv.to_j <= (tv.tlv.lines.len - 1) {
 		for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
@@ -213,7 +214,7 @@ fn (mut tv TextView) update_all_visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
-	if tv.is_wordwrap() && tv.tb.width > 30 {
+	if tv.is_wordwrap() && tv.tb.width > 30 { // 30 is the default width when not set
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
@@ -895,15 +896,15 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 	max_line_width := tv.tb.width
 	// println("max_line_width = $max_line_width")
 	mut line := ''
-	mut line_width := 0
+	mut line_width := 0.0
 	mut text_lines := []string{}
 	for i, word in words {
 		if i == 0 { // at least the first
 			line = word
-			line_width = tv.text_width(word)
+			line_width = tv.text_width_additive(word)
 		} else {
-			word_width := tv.text_width(' ' + word)
-			if line_width + word_width < max_line_width {
+			word_width := tv.text_width_additive(' ' + word)
+			if line_width + word_width < max_line_width - ui.wordwrap_border {
 				line += ' ' + word
 				line_width += word_width
 			} else {
@@ -913,6 +914,7 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 			}
 		}
 	}
+	// println('line_Width = ${line_width} (${s})')
 	if line_width > 0 {
 		text_lines << line
 	}
