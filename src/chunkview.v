@@ -88,8 +88,6 @@ mut:
 	offset_y int
 	hidden   bool
 	parent   Layout = empty_stack
-	width    int
-	height   int
 	// ChunkView specific field
 	bb     Rect
 	chunks []ChunkContent // sorted with respect of ChunkList bounding box
@@ -97,6 +95,9 @@ mut:
 	text_styles TextStyles
 	// images
 	cache map[string]gg.Image
+pub mut:
+	width  int
+	height int
 }
 
 [params]
