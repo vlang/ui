@@ -211,8 +211,8 @@ pub fn (mut w Window) init_text_styles() {
 		w.ui.add_style(id: '_default_')
 	} $else {
 		w.ui.add_font('system', font_default())
-		noto_emoji_font := $embed_file("assets/fonts/noto_emoji_font/NotoEmoji.ttf")
-		emoji_font := os.temp_dir()+"/noto_emoji_font.ttf"
+		noto_emoji_font := $embed_file('../assets/fonts/noto_emoji_font/NotoEmoji.ttf')
+		emoji_font := os.temp_dir() + '/noto_emoji_font.ttf'
 		os.write_file(emoji_font, noto_emoji_font.to_string()) or {}
 		w.ui.add_font('noto_emoji', emoji_font)
 		// init default style

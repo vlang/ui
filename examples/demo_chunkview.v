@@ -6,7 +6,7 @@ fn main() {
 		id: 'cv'
 		chunks: [ui.textchunk(0, 0, 'toto titi', 'red'),
 			ui.textchunk(0, 30, 'toto titi tutu tatataaa', 'blue'),
-			ui.textchunk(0,60, '🥰😬','emoji')]
+			ui.textchunk(0, 60, '🥰😬', 'emoji')]
 	)
 	mut window := ui.window(
 		width: 800
