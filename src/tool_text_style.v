@@ -125,6 +125,10 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 	}
 }
 
+pub fn (mut w Window) add_style(ts TextStyle) {
+	w.ui.add_style(ts)
+}
+
 pub fn (mut u UI) update_style(ts TextStyleParams) {
 	if ts.id in u.text_styles {
 		mut ts_ := &(u.text_styles[ts.id])

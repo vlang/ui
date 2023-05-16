@@ -7,19 +7,7 @@ fn main() {
 		chunks: [ui.textchunk(0, 0, 'toto titi', 'red'),
 			ui.textchunk(0, 30, 'toto titi tutu tatataaa', 'blue')]
 	)
-	mut dtw := ui.DrawTextWidget(cv)
-	dtw.add_style(
-		id: 'red'
-		size: 30
-		font_name: 'fixed_bold_italic'
-		color: gx.red
-	)
-	dtw.add_style(
-		id: 'blue'
-		size: 20
-		color: gx.blue
-	)
-	window := ui.window(
+	mut window := ui.window(
 		width: 800
 		height: 600
 		title: 'V UI: ChunkView'
@@ -33,6 +21,20 @@ fn main() {
 				cv,
 			]
 		)
+	)
+	// add DrawTextWidget specific style
+	mut dtw := ui.DrawTextWidget(cv)
+	dtw.add_style(
+		id: 'red'
+		size: 30
+		font_name: 'fixed_bold_italic'
+		color: gx.red
+	)
+	// Add global style
+	window.add_style(
+		id: 'blue'
+		size: 20
+		color: gx.blue
 	)
 	ui.run(window)
 }
