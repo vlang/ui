@@ -28,12 +28,12 @@ pub fn textchunk(x int, y int, text string, style string) TextChunk {
 	}
 }
 
-fn (mut cc TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
+fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
-	dtw.draw_device_styled_text(d, cv.x + cc.bb.x, cv.y + cc.bb.y, cc.text, id: cc.style)
+	dtw.draw_device_styled_text(d, cv.x + c.bb.x, cv.y + c.bb.y, c.text, id: c.style)
 }
 
-fn (mut cc TextChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c TextChunk) update_bounding_box(cv &ChunkView) {
 }
 
 struct ImageChunk {
@@ -48,10 +48,10 @@ pub fn imgchunk(img string) ImageChunk {
 	}
 }
 
-fn (mut cc ImageChunk) draw_device(d DrawDevice, cv &ChunkView) {
+fn (mut c ImageChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
 
-fn (mut cc ImageChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c ImageChunk) update_bounding_box(cv &ChunkView) {
 }
 
 type DrawChunkFn = fn (&DrawChunk)
@@ -70,10 +70,38 @@ pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
 	}
 }
 
-fn (mut cc DrawChunk) draw_device(d DrawDevice, cv &ChunkView) {
+fn (mut c DrawChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
 
-fn (mut cc DrawChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c DrawChunk) update_bounding_box(cv &ChunkView) {
+}
+
+// Arrange chunk as a paragraph
+struct ParaChunk {
+mut:
+	x int
+	y int
+	bb Rect
+	content []string // format ["<style1>", "text1", "<style2>", "text2", ....]
+	chunks []TextChunk
+}
+
+pub fn parachunk(x int, y int, content []string) ParaChunk {
+	return ParaChunk{
+		x: x
+		y: y
+		content: content
+	}
+}
+
+fn (mut c ParaChunk) update_chunks() {
+
+}
+
+fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
+}
+
+fn (mut c ParaChunk) update_bounding_box(cv &ChunkView) {
 }
 
 [heap]
