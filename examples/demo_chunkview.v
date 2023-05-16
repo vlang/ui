@@ -5,7 +5,8 @@ fn main() {
 	mut cv := ui.chunkview(
 		id: 'cv'
 		chunks: [ui.textchunk(0, 0, 'toto titi', 'red'),
-			ui.textchunk(0, 30, 'toto titi tutu tatataaa', 'blue')]
+			ui.textchunk(0, 30, 'toto titi tutu tatataaa', 'blue'),
+			ui.textchunk(0,60, '🥰😬','emoji')]
 	)
 	mut window := ui.window(
 		width: 800
@@ -35,6 +36,12 @@ fn main() {
 		id: 'blue'
 		size: 20
 		color: gx.blue
+	)
+	// emoji
+	window.add_style(
+		id: 'emoji'
+		size: 30
+		font_name: 'noto_emoji'
 	)
 	ui.run(window)
 }
