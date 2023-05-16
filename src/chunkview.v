@@ -79,11 +79,11 @@ fn (mut c DrawChunk) update_bounding_box(cv &ChunkView) {
 // Arrange chunk as a paragraph
 struct ParaChunk {
 mut:
-	x int
-	y int
-	bb Rect
+	x       int
+	y       int
+	bb      Rect
 	content []string // format ["<style1>", "text1", "<style2>", "text2", ....]
-	chunks []TextChunk
+	chunks  []TextChunk
 }
 
 pub fn parachunk(x int, y int, content []string) ParaChunk {
@@ -95,7 +95,6 @@ pub fn parachunk(x int, y int, content []string) ParaChunk {
 }
 
 fn (mut c ParaChunk) update_chunks() {
-
 }
 
 fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
