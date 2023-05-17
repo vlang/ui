@@ -119,7 +119,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut ustr := ''.runes()
 	mut chunk := TextChunk{}
 	mut x, mut y := c.x + c.indent + c.margin, c.y
-	mut line, mut line_width, mut line_height, mut new_style := '', f64(x), 0, false
+	mut line, mut line_width, mut line_height := '', f64(x), 0
 	mut ww := dtw.text_width_additive(' ')
 	mut lw := 0.0
 	mut lh := 0

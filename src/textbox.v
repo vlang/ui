@@ -306,7 +306,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 }
 
 pub fn (tb &TextBox) size() (int, int) {
-	if tb.is_multiline {
+	if tb.is_multiline && !tb.has_scrollview {
 		return tb.tv.size()
 	} else {
 		return tb.width, tb.height
