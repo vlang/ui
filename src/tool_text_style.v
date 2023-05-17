@@ -31,7 +31,7 @@ pub mut:
 	color          gx.Color = gx.black
 	size           int      = 16
 	align          TextHorizontalAlign = .left
-	vertical_align TextVerticalAlign   = .top
+	vertical_align TextVerticalAlign   = .middle
 	mono           bool
 }
 
