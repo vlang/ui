@@ -6,6 +6,8 @@ import gg
 Goal: propose a viewer of chunk sequence
 */
 
+const text_chunk_wrap = 10
+
 interface ChunkContent {
 mut:
 	bb Rect
@@ -140,25 +142,36 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 			dtw.load_style()
 			ww = dtw.text_width_additive(' ')
 		} else {
-			words := blck.split(' ').filter(!(it.len == 0))
-			for word in words {
-				// println("lw = $blck ${dtw.text_width_additive(blck)}")
-				word_width := dtw.text_width_additive(word)
-				lh = dtw.text_height(word)
-				if lh > line_height {
-					line_height = lh
-				}
-				lw = line_width + word_width + if line.len > 0 { ww } else { 0.0 }
-				if line.len == 0 || lw < max_line_width - c.margin * 2 - 10 {
-					line += ' ' + word
-					line_width = lw
-				} else {
-					// newline
-					chunk = textchunk(x, y, line, style)
-					x = c.margin //
-					y += line_height + c.spacing
-					chunks << chunk
-					line, line_width, line_height = word, word_width, dtw.text_height(word)
+			bw := dtw.text_width_additive(blck)
+			if line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+				line = line + blck
+				line_width += bw
+				chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
+				chunk = textchunk(x, y, line, style)
+				x = int(line_width)
+				line = ''
+				chunks << chunk
+			} else {
+				words := blck.split(' ').filter(!(it.len == 0))
+				for word in words {
+					// println("lw = $blck ${dtw.text_width_additive(blck)}")
+					word_width := dtw.text_width_additive(word)
+					lh = dtw.text_height(word)
+					if lh > line_height {
+						line_height = lh
+					}
+					lw = line_width + word_width + if line.len > 0 { ww } else { 0.0 }
+					if line.len == 0 || lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+						line += ' ' + word
+						line_width = lw
+					} else {
+						// newline
+						chunk = textchunk(x, y, line, style)
+						x = c.margin //
+						y += line_height + c.spacing
+						chunks << chunk
+						line, line_width, line_height = word, word_width, dtw.text_height(word)
+					}
 				}
 			}
 		}
