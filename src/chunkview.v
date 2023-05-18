@@ -126,7 +126,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut bw := 0.0
 	mut lh := 0
 	mut ind := 0
-	mut force := false
+	mut add_chunk := false
 	for content in c.content {
 		style = content[0]
 		left = content[1].clone()
@@ -140,7 +140,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 				bw = dtw.text_width_additive(left)
 				// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
 				// println(line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
-				if force || line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+				if add_chunk || line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
 					// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 					line = line + left
 					line_width += bw
@@ -160,7 +160,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 					}
 					line = ''
 					chunks << chunk
-					force = false
+					add_chunk = false
 					ind = -2
 				} else {
 					ind = left.last_index(' ') or { -2 }
@@ -173,12 +173,10 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 						left = left[0..ind]
 					} else {
 						// add a chunk
-						force = true
+						add_chunk = true
 						ind = 0
 					}
 				}
-			}
-			if right.len == 0 {
 			}
 			// right cobsidered as a blck to consider
 			left = right
@@ -186,62 +184,11 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 			ind = 0
 		}
 	}
-
-	//  println('chunks=${chunks}')
-	c.chunks = chunks
-}
-
-/*
-fn (mut c ParaChunk) update_chunks_old(cv &ChunkView) {
-	max_line_width := cv.width
-	// println("max_line_width=${max_line_width}")
-	mut dtw := DrawTextWidget(cv)
-	// convert content to chunks
-	mut chunks := []TextChunk{}
-	mut style := "system"
-	mut ustr := ''.runes()
-	mut line, mut line_width := '', 0.0
-	mut chunk := TextChunk{}
-	mut x, mut y := f32(c.x + c.indent), f32(c.y)
-	for mut blck in c.content {
-		ustr = blck.trim_space().runes()
-		if ustr.first() == `<` && ustr.last() == `>` {
-			style = ustr#[1..-1].string()
-		} else {
-			words := blck.split(' ').filter(!(it.len == 0))
-			for i, word in words {
-				if i == 0 { // at least the first
-					line = word
-					line_width = dtw.text_width_additive(word)
-					// x += f32(line_width)
-				} else {
-					word_width := dtw.text_width_additive(' ' + word)
-					if x + word_width < max_line_width - c.margin * 2 {
-						line += ' ' + word
-						line_width += word_width
-						x += f32(word_width)
-					} else {
-						// newline
-						chunk = textchunk(int(x), int(y), line, style)
-						x = 0.0 //
-						y += dtw.text_height(line) + c.spacing
-						chunks << chunk
-						line = word
-						line_width = word_width
-					}
-				}
-			}
-			// println('line_Width = ${line_width} (${s})')
-			if line_width > 0 {
-				chunk = textchunk(int(x), int(y), line, style)
-				chunks << chunk
-			}
-			line, line_width = '', 0.0
-		}
+	$if parachunk ? {
+		println('chunks=${chunks}')
 	}
 	c.chunks = chunks
 }
-*/
 
 fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	for mut chunk in c.chunks {
