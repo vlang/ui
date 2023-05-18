@@ -16,8 +16,8 @@ const (
 
 pub struct UI {
 pub mut:
-	dd             &DrawDevice = unsafe { nil }
-	gg             &gg.Context       [deprecated: 'use `UI.dd` instead (smart casting to `DrawDeviceContext` if necessary)'] = unsafe { nil }
+	dd             &DrawDevice       = unsafe { nil }
+	gg             &gg.Context       = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
@@ -75,6 +75,8 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
+		gui.refresh()
+		/*
 		if gui.has_cursor {
 			// println('has cursor, refreshing')
 			gui.refresh()
@@ -84,6 +86,7 @@ fn (mut gui UI) idle_loop() {
 				}
 			}
 		}
+		*/
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
