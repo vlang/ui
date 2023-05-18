@@ -4,7 +4,7 @@ import gx
 fn main() {
 	mut cv := ui.chunkview(
 		id: 'cv'
-		chunks: [ui.textchunk(0, 0, 'toto titi', 'red'), ui.textchunk(0, 30, 'toto titi',
+		chunks: [ui.textchunk(0, 20, 'toto titi', 'red'), ui.textchunk(0, 40, 'toto titi',
 			'blue'),
 			ui.textchunk(0, 60, '😻🥰 😬🧿 🫥😴  ✔️💾', 'emoji'),
 			ui.parachunk(

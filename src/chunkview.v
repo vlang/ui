@@ -11,6 +11,7 @@ const text_chunk_wrap = 10
 interface ChunkContent {
 mut:
 	bb Rect
+	init(cv &ChunkView)
 	draw_device(d DrawDevice, cv &ChunkView)
 	update_bounding_box(cv &ChunkView)
 }
@@ -29,6 +30,8 @@ pub fn textchunk(x int, y int, text string, style string) TextChunk {
 		style: style
 	}
 }
+
+fn (mut c TextChunk) init(cv &ChunkView) {}
 
 fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
@@ -49,6 +52,8 @@ pub fn imgchunk(img string) ImageChunk {
 		img: img
 	}
 }
+
+fn (mut c ImageChunk) init(cv &ChunkView) {}
 
 fn (mut c ImageChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
@@ -72,6 +77,8 @@ pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
 	}
 }
 
+fn (mut c DrawChunk) init(cv &ChunkView) {}
+
 fn (mut c DrawChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
 
@@ -81,14 +88,15 @@ fn (mut c DrawChunk) update_bounding_box(cv &ChunkView) {
 // Arrange chunk as a paragraph
 struct ParaChunk {
 mut:
-	x       int
-	y       int
-	margin  int
-	indent  int
-	spacing int
-	bb      Rect
-	content [][2]string // format ["<style1>", "text1", "<style2>", "text2", ....]
-	chunks  []TextChunk
+	x           int
+	y           int
+	margin      int
+	indent      int
+	spacing     int
+	line_height int
+	bb          Rect
+	content     [][2]string // format [["<style1>", "text1"]!, ["<style2>", "text2"]!, ....]
+	chunks      []TextChunk
 }
 
 [params]
@@ -111,6 +119,25 @@ pub fn parachunk(c ParaChunkParams) ParaChunk {
 	}
 }
 
+fn (mut c ParaChunk) init(cv &ChunkView) {
+	c.update_line_height(cv)
+}
+
+fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
+	mut dtw := DrawTextWidget(cv)
+	mut lh := 0
+	for content in c.content {
+		style := content[0]
+		left := content[1].clone()
+		dtw.set_current_style(id: style) // to update style for text_width_additive
+		dtw.load_style()
+		lh = dtw.text_height(left)
+		if lh > c.line_height {
+			c.line_height = lh
+		}
+	}
+}
+
 fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	max_line_width := cv.width
 	// println("max_line_width=${max_line_width}")
@@ -122,11 +149,11 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut left, mut right := '', ''
 	mut chunk := TextChunk{}
 	mut x, mut y := c.x + c.indent + c.margin, c.y
-	mut line, mut line_width, mut line_height := '', f64(x), 0
-	mut bw := 0.0
-	mut lh := 0
+	mut line, mut line_width := '', f64(x)
+	mut lw := 0.0
 	mut ind := 0
 	mut add_chunk := false
+
 	for content in c.content {
 		style = content[0]
 		left = content[1].clone()
@@ -137,24 +164,19 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 			// println('left: <${left}>, right: <${right}>, ind: ${ind}')
 			ind = -1
 			for ind >= -1 {
-				bw = dtw.text_width_additive(left)
+				lw = dtw.text_width_additive(left)
 				// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
-				// println(line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
-				if add_chunk || line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+				// println(line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
+				if add_chunk || line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
 					// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 					line = line + left
-					line_width += bw
+					line_width += lw
 					chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
 					chunk = textchunk(x, y, line, style)
-					lh = dtw.text_height(left)
-					if lh > line_height {
-						line_height = lh
-					}
 					if ind >= 0 { // newline
 						x = c.x + c.margin
-						y += line_height + c.spacing
+						y += c.line_height + c.spacing
 						line_width = f32(x)
-						line_height = 0
 					} else {
 						x = int(line_width)
 					}
@@ -163,7 +185,8 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 					add_chunk = false
 					ind = -2
 				} else {
-					ind = left.last_index(' ') or { -2 }
+					// index of last whitespace except when at the end
+					ind = left.trim_right(' ').last_index(' ') or { -2 }
 					if ind >= 0 {
 						if right.len == 0 {
 							right = left[(ind + 1)..]
@@ -241,6 +264,9 @@ fn (mut cv ChunkView) init(parent Layout) {
 	cv.parent = parent
 	ui := parent.get_ui()
 	cv.ui = ui
+	for mut chunk in cv.chunks {
+		chunk.init(cv)
+	}
 }
 
 fn (mut cv ChunkView) set_pos(x int, y int) {
