@@ -9,9 +9,9 @@ fn main() {
 			ui.textchunk(0, 60, '😻🥰 😬🧿 🫥😴  ✔️💾', 'emoji'),
 			ui.parachunk(
 				y: 100
-				content: ['<red>', 'toto titi tata toto titi tata', '<blue>',
-					'toto titi tata toto titi tata toto titi tata', '<emoji>',
-					'😻🥰 😬🧿 🫥😴  ✔️💾']
+				content: [['red', 'toto titi tata toto titi tata ']!,
+					['blue', 'toto titi tata toto titi tata toto titi tata ']!,
+					['emoji', '😻🥰😬 🧿🫥😴  ✔️💾']!]
 			)]
 	)
 	mut window := ui.window(

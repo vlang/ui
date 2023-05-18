@@ -87,7 +87,7 @@ mut:
 	indent  int
 	spacing int
 	bb      Rect
-	content []string // format ["<style1>", "text1", "<style2>", "text2", ....]
+	content [][2]string // format ["<style1>", "text1", "<style2>", "text2", ....]
 	chunks  []TextChunk
 }
 
@@ -98,7 +98,7 @@ pub struct ParaChunkParams {
 	margin  int = 20
 	indent  int
 	spacing int = 10
-	content []string
+	content [][2]string
 }
 
 pub fn parachunk(c ParaChunkParams) ParaChunk {
@@ -118,68 +118,98 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	// convert content to chunks
 	mut chunks := []TextChunk{}
 	mut style := ''
-	mut ustr := ''.runes()
+	mut blck := ''
+	mut left, mut right := '', ''
 	mut chunk := TextChunk{}
 	mut x, mut y := c.x + c.indent + c.margin, c.y
 	mut line, mut line_width, mut line_height := '', f64(x), 0
 	mut ww := dtw.text_width_additive(' ')
-	mut lw := 0.0
+	mut bw := 0.0
 	mut lh := 0
-	for mut blck in c.content {
-		ustr = blck.trim_space().runes()
-		if ustr.first() == `<` && ustr.last() == `>` {
-			next_style := ustr#[1..-1].string()
-			if style != next_style {
-				if line_width > 0 && style != '' {
+	mut ind := 0
+	mut force := false
+	for content in c.content {
+		style = content[0]
+		left = content[1].clone()
+		right = ''
+		dtw.set_current_style(id: style) // to update style for text_width_additive
+		dtw.load_style()
+		for left.len > 0 {
+			println('left: <${left}>, right: <${right}>, ind: ${ind}')
+			ind = -1
+			for ind >= -1 {
+				bw = dtw.text_width_additive(left)
+				println('left2: <${left}>, right: <${right}>, ind: ${ind}')
+				println(line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
+				if force || line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+					println('left3: <${left}>, right: <${right}>, ind: ${ind}')
+					line = line + left
+					line_width += bw
+					chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
 					chunk = textchunk(x, y, line, style)
-					chunks << chunk
-					x = int(line_width + ww)
-					line = ''
-				}
-				style = next_style
-			}
-			dtw.set_current_style(id: style) // to update style for text_width_additive
-			dtw.load_style()
-			ww = dtw.text_width_additive(' ')
-		} else {
-			bw := dtw.text_width_additive(blck)
-			if line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
-				line = line + blck
-				line_width += bw
-				chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
-				chunk = textchunk(x, y, line, style)
-				x = int(line_width)
-				line = ''
-				chunks << chunk
-			} else {
-				words := blck.split(' ').filter(!(it.len == 0))
-				for word in words {
-					// println("lw = $blck ${dtw.text_width_additive(blck)}")
-					word_width := dtw.text_width_additive(word)
-					lh = dtw.text_height(word)
-					if lh > line_height {
-						line_height = lh
-					}
-					lw = line_width + word_width + if line.len > 0 { ww } else { 0.0 }
-					if line.len == 0 || lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
-						line += ' ' + word
-						line_width = lw
+					if ind >= 0 { // newline
+						x = c.x + c.margin
+						y += dtw.text_height(left) + c.spacing
+						line_width = 0
 					} else {
-						// newline
-						chunk = textchunk(x, y, line, style)
-						x = c.margin //
-						y += line_height + c.spacing
-						chunks << chunk
-						line, line_width, line_height = word, word_width, dtw.text_height(word)
+						x = int(line_width)
+					}
+					line = ''
+					chunks << chunk
+					force = false
+					ind = -2
+				} else {
+					ind = left.last_index(' ') or { -2 }
+					if ind >= 0 {
+						if right.len == 0 {
+							right = left[(ind + 1)..]
+						} else {
+							right = left[(ind + 1)..] + ' ' + right
+						}
+						left = left[0..ind]
+					} else {
+						// add a chunk
+						force = true
+						ind = 0
 					}
 				}
 			}
+			if right.len == 0 {
+			}
+			// right cobsidered as a blck to consider
+			left = right
+			right = ''
+			ind = 0
+			/*
+			words := blck.split(' ').filter(!(it.len == 0))
+			for word in words {
+				// println("lw = $blck ${dtw.text_width_additive(blck)}")
+				word_width := dtw.text_width_additive(word)
+				lh = dtw.text_height(word)
+				if lh > line_height {
+					line_height = lh
+				}
+				lw = line_width + word_width + if line.len > 0 { ww } else { 0.0 }
+				if line.len == 0 || lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+					line += ' ' + word
+					line_width = lw
+				} else {
+					// newline
+					chunk = textchunk(x, y, line, style)
+					x = c.margin //
+					y += line_height + c.spacing
+					chunks << chunk
+					line, line_width, line_height = word, word_width, dtw.text_height(word)
+				}
+			}
+			if line_width > 0 {
+				chunk = textchunk(x, y, line, style)
+				chunks << chunk
+			}
+			*/
 		}
 	}
-	if line_width > 0 {
-		chunk = textchunk(x, y, line, style)
-		chunks << chunk
-	}
+
 	println('chunks=${chunks}')
 	c.chunks = chunks
 }
