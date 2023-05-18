@@ -1,6 +1,7 @@
 module ui
 
 import gg
+import gx
 
 /*
 Goal: propose a viewer of chunk sequence
@@ -16,8 +17,16 @@ mut:
 	update_bounding_box(cv &ChunkView)
 }
 
+fn (cc ChunkContent) draw_bb(cv &ChunkView) {
+	col := gx.black
+	println('bb: ${cc.type_name()} (${cc.bb.x}, ${cc.bb.y} ,${cc.bb.w}, ${cc.bb.h})')
+	cv.ui.dd.draw_rect_empty(cv.x + cc.bb.x, cv.y + cc.bb.y, cc.bb.w, cc.bb.h, col)
+}
+
 struct TextChunk {
 mut:
+	x     int
+	y     int
 	bb    Rect
 	text  string
 	style string // related to ChunkView text_styles
@@ -25,7 +34,8 @@ mut:
 
 pub fn textchunk(x int, y int, text string, style string) TextChunk {
 	return TextChunk{
-		bb: Rect{x, y, 0, 0}
+		x: x
+		y: y
 		text: text
 		style: style
 	}
@@ -37,13 +47,16 @@ fn (mut c TextChunk) init(cv &ChunkView) {
 
 fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
-	dtw.draw_device_styled_text(d, cv.x + c.bb.x, cv.y + c.bb.y, c.text, id: c.style)
+	dtw.draw_device_styled_text(d, cv.x + c.x, cv.y + c.y, c.text, id: c.style)
 }
 
 fn (mut c TextChunk) update_bounding_box(cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
 	cv.load_style(c.style)
 	c.bb.w, c.bb.h = dtw.text_size(c.text)
+	// println("style: ${c.style} bb: ${c.bb} text_bounds ${dtw.text_bounds(c.x, c.y, c.text)}")
+	bb := dtw.text_bounds(c.x, c.y, c.text)
+	c.bb.x, c.bb.y, c.bb.w, c.bb.h = int(bb[0]), int(bb[1]) + int(bb[4]), int(bb[2]), int(bb[3])
 }
 
 struct ImageChunk {
@@ -220,10 +233,13 @@ fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	for mut chunk in c.chunks {
 		chunk.draw_device(d, cv)
 	}
+	$if c_bb ? {
+		ChunkContent(c).draw_bb(cv)
+	}
 }
 
 fn (mut c ParaChunk) update_bounding_box(cv &ChunkView) {
-	mut bb := Rect{}
+	mut bb := Rect{cv.x, cv.y, 0, 0}
 	for mut chunk in c.chunks {
 		chunk.update_bounding_box(cv)
 		bb = bb.combine(chunk.bb)
@@ -335,6 +351,9 @@ fn (mut cv ChunkView) draw_device(mut d DrawDevice) {
 	}
 	for mut chunk in cv.chunks {
 		chunk.draw_device(d, cv)
+	}
+	$if bb ? {
+		debug_draw_bb_widget(mut cv, cv.ui)
 	}
 }
 

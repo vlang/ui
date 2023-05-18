@@ -224,3 +224,12 @@ pub fn (w &DrawTextWidget) text_height(text string) int {
 	dd := w.ui.dd
 	return dd.text_height(text)
 }
+
+pub fn (w &DrawTextWidget) text_bounds(x int, y int, text string) []f32 {
+	dd := w.ui.dd
+	return if dd is DrawDeviceContext {
+		dd.text_bounds(x, y, text)
+	} else {
+		[]f32{}
+	}
+}
