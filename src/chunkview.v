@@ -123,7 +123,6 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut chunk := TextChunk{}
 	mut x, mut y := c.x + c.indent + c.margin, c.y
 	mut line, mut line_width, mut line_height := '', f64(x), 0
-	mut ww := dtw.text_width_additive(' ')
 	mut bw := 0.0
 	mut lh := 0
 	mut ind := 0
@@ -135,22 +134,27 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 		dtw.set_current_style(id: style) // to update style for text_width_additive
 		dtw.load_style()
 		for left.len > 0 {
-			println('left: <${left}>, right: <${right}>, ind: ${ind}')
+			// println('left: <${left}>, right: <${right}>, ind: ${ind}')
 			ind = -1
 			for ind >= -1 {
 				bw = dtw.text_width_additive(left)
-				println('left2: <${left}>, right: <${right}>, ind: ${ind}')
-				println(line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
+				// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
+				// println(line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
 				if force || line_width + bw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
-					println('left3: <${left}>, right: <${right}>, ind: ${ind}')
+					// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 					line = line + left
 					line_width += bw
 					chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
 					chunk = textchunk(x, y, line, style)
+					lh = dtw.text_height(left)
+					if lh > line_height {
+						line_height = lh
+					}
 					if ind >= 0 { // newline
 						x = c.x + c.margin
-						y += dtw.text_height(left) + c.spacing
-						line_width = 0
+						y += line_height + c.spacing
+						line_width = f32(x)
+						line_height = 0
 					} else {
 						x = int(line_width)
 					}
@@ -180,37 +184,10 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 			left = right
 			right = ''
 			ind = 0
-			/*
-			words := blck.split(' ').filter(!(it.len == 0))
-			for word in words {
-				// println("lw = $blck ${dtw.text_width_additive(blck)}")
-				word_width := dtw.text_width_additive(word)
-				lh = dtw.text_height(word)
-				if lh > line_height {
-					line_height = lh
-				}
-				lw = line_width + word_width + if line.len > 0 { ww } else { 0.0 }
-				if line.len == 0 || lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
-					line += ' ' + word
-					line_width = lw
-				} else {
-					// newline
-					chunk = textchunk(x, y, line, style)
-					x = c.margin //
-					y += line_height + c.spacing
-					chunks << chunk
-					line, line_width, line_height = word, word_width, dtw.text_height(word)
-				}
-			}
-			if line_width > 0 {
-				chunk = textchunk(x, y, line, style)
-				chunks << chunk
-			}
-			*/
 		}
 	}
 
-	println('chunks=${chunks}')
+	//  println('chunks=${chunks}')
 	c.chunks = chunks
 }
 
