@@ -31,7 +31,9 @@ pub fn textchunk(x int, y int, text string, style string) TextChunk {
 	}
 }
 
-fn (mut c TextChunk) init(cv &ChunkView) {}
+fn (mut c TextChunk) init(cv &ChunkView) {
+	c.update_bounding_box(cv)
+}
 
 fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
@@ -39,6 +41,9 @@ fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
 
 fn (mut c TextChunk) update_bounding_box(cv &ChunkView) {
+	mut dtw := DrawTextWidget(cv)
+	cv.load_style(c.style)
+	c.bb.w, c.bb.h = dtw.text_size(c.text)
 }
 
 struct ImageChunk {
@@ -128,9 +133,8 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut lh := 0
 	for content in c.content {
 		style := content[0]
+		cv.load_style(style)
 		left := content[1].clone()
-		dtw.set_current_style(id: style) // to update style for text_width_additive
-		dtw.load_style()
 		lh = dtw.text_height(left)
 		if lh > c.line_height {
 			c.line_height = lh
@@ -145,7 +149,6 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	// convert content to chunks
 	mut chunks := []TextChunk{}
 	mut style := ''
-	mut blck := ''
 	mut left, mut right := '', ''
 	mut chunk := TextChunk{}
 	mut x, mut y := c.x + c.indent + c.margin, c.y
@@ -156,10 +159,9 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 
 	for content in c.content {
 		style = content[0]
+		cv.load_style(style)
 		left = content[1].clone()
 		right = ''
-		dtw.set_current_style(id: style) // to update style for text_width_additive
-		dtw.load_style()
 		for left.len > 0 {
 			// println('left: <${left}>, right: <${right}>, ind: ${ind}')
 			ind = -1
@@ -171,7 +173,6 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 					// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 					line = line + left
 					line_width += lw
-					chunk.bb = Rect{x, y, int(line_width) - x, dtw.text_height(blck)}
 					chunk = textchunk(x, y, line, style)
 					if ind >= 0 { // newline
 						x = c.x + c.margin
@@ -207,10 +208,12 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 			ind = 0
 		}
 	}
-	$if parachunk ? {
-		println('chunks=${chunks}')
-	}
 	c.chunks = chunks
+	// update boundig boxes of all chunks
+	c.update_bounding_box(cv)
+	$if parachunk ? {
+		println('chunks=${c.chunks}')
+	}
 }
 
 fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
@@ -220,6 +223,12 @@ fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView) {
 }
 
 fn (mut c ParaChunk) update_bounding_box(cv &ChunkView) {
+	mut bb := Rect{}
+	for mut chunk in c.chunks {
+		chunk.update_bounding_box(cv)
+		bb = bb.combine(chunk.bb)
+	}
+	c.bb = bb
 }
 
 [heap]
@@ -269,6 +278,12 @@ fn (mut cv ChunkView) init(parent Layout) {
 	}
 }
 
+fn (cv &ChunkView) load_style(style string) {
+	mut dtw := DrawTextWidget(cv)
+	dtw.set_current_style(id: style) // to update style for text_width_additive
+	dtw.load_style()
+}
+
 fn (mut cv ChunkView) set_pos(x int, y int) {
 	cv.x, cv.y = x, y
 }
@@ -285,7 +300,8 @@ fn (mut cv ChunkView) propose_size(w int, h int) (int, int) {
 
 fn (mut cv ChunkView) update_bounding_box() {
 	mut bb := Rect{}
-	for chunk in cv.chunks {
+	for mut chunk in cv.chunks {
+		chunk.update_bounding_box(cv)
 		bb = bb.combine(chunk.bb)
 	}
 	cv.bb = bb

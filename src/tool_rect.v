@@ -3,7 +3,7 @@ module ui
 import math
 
 struct Rect {
-pub:
+pub mut:
 	x int
 	y int
 	w int
