@@ -146,12 +146,15 @@ fn (mut c ParaChunk) init(cv &ChunkView) {
 fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
 	mut lh := 0
+	mut style, mut left := '', ''
 	for content in c.content {
 		if content.index_after(ui.para_style_delim, 0) == 0 {
 			content_start := content.index_after(ui.para_style_delim, 1)
-			style := content[1..content_start]
+			if content_start > 1 { // empty style means same style
+				style = content[1..content_start]
+			}
 			cv.load_style(style)
-			left := content[(content_start + 1)..]
+			left = content[(content_start + 1)..]
 			lh = dtw.text_height(left)
 			if lh > c.line_height {
 				c.line_height = lh
@@ -178,7 +181,9 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	for content in c.content {
 		if content.index_after(ui.para_style_delim, 0) == 0 {
 			content_start := content.index_after(ui.para_style_delim, 1)
-			style = content[1..content_start]
+			if content_start > 1 { // empty style means same style
+				style = content[1..content_start]
+			}
 			cv.load_style(style)
 			left = content[(content_start + 1)..]
 			right = ''

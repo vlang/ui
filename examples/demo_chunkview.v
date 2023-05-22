@@ -21,7 +21,7 @@ fn main() {
 			ui.parachunk(
 				y: 240
 				indent: 20
-				content: ['|red|toto titi tata toto titi tata ',
+				content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 					'|blue|toto titi tata toto titi tata toto titi tata ',
 					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 			),
