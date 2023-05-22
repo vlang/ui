@@ -9,6 +9,8 @@ Goal: propose a viewer of chunk sequence
 
 const text_chunk_wrap = 10
 
+const para_style_delim = '|'
+
 interface ChunkContent {
 mut:
 	bb Rect
@@ -113,7 +115,7 @@ mut:
 	spacing     int
 	line_height int
 	bb          Rect
-	content     [][2]string // format [["<style1>", "text1"]!, ["<style2>", "text2"]!, ....]
+	content     []string // format ["|style1|text1", "|style2|text2", ....]
 	chunks      []TextChunk
 }
 
@@ -124,7 +126,7 @@ pub struct ParaChunkParams {
 	margin  int = 20
 	indent  int
 	spacing int = 10
-	content [][2]string
+	content []string
 }
 
 pub fn parachunk(c ParaChunkParams) ParaChunk {
@@ -145,12 +147,15 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
 	mut lh := 0
 	for content in c.content {
-		style := content[0]
-		cv.load_style(style)
-		left := content[1].clone()
-		lh = dtw.text_height(left)
-		if lh > c.line_height {
-			c.line_height = lh
+		if content.index_after(ui.para_style_delim, 0) == 0 {
+			content_start := content.index_after(ui.para_style_delim, 1)
+			style := content[1..content_start]
+			cv.load_style(style)
+			left := content[(content_start + 1)..]
+			lh = dtw.text_height(left)
+			if lh > c.line_height {
+				c.line_height = lh
+			}
 		}
 	}
 }
@@ -171,54 +176,58 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut add_chunk := false
 
 	for content in c.content {
-		style = content[0]
-		cv.load_style(style)
-		left = content[1].clone()
-		right = ''
-		for left.len > 0 {
-			// println('left: <${left}>, right: <${right}>, ind: ${ind}')
-			ind = -1
-			for ind >= -1 {
-				lw = dtw.text_width_additive(left)
-				// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
-				// println(line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
-				if add_chunk || line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
-					// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
-					line = line + left
-					line_width += lw
-					chunk = textchunk(x, y, line, style)
-					if ind >= 0 { // newline
-						x = c.x + c.margin
-						y += c.line_height + c.spacing
-						line_width = f32(x)
-					} else {
-						x = int(line_width)
-					}
-					line = ''
-					chunks << chunk
-					add_chunk = false
-					ind = -2
-				} else {
-					// index of last whitespace except when at the end
-					ind = left.trim_right(' ').last_index(' ') or { -2 }
-					if ind >= 0 {
-						if right.len == 0 {
-							right = left[(ind + 1)..]
+		if content.index_after(ui.para_style_delim, 0) == 0 {
+			content_start := content.index_after(ui.para_style_delim, 1)
+			style = content[1..content_start]
+			cv.load_style(style)
+			left = content[(content_start + 1)..]
+			right = ''
+			for left.len > 0 {
+				// println('left: <${left}>, right: <${right}>, ind: ${ind}')
+				ind = -1
+				for ind >= -1 {
+					lw = dtw.text_width_additive(left)
+					// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
+					// println(line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
+					if add_chunk
+						|| line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+						// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
+						line = line + left
+						line_width += lw
+						chunk = textchunk(x, y, line, style)
+						if ind >= 0 { // newline
+							x = c.x + c.margin
+							y += c.line_height + c.spacing
+							line_width = f32(x)
 						} else {
-							right = left[(ind + 1)..] + ' ' + right
+							x = int(line_width)
 						}
-						left = left[0..ind]
+						line = ''
+						chunks << chunk
+						add_chunk = false
+						ind = -2
 					} else {
-						// add a chunk
-						add_chunk = true
-						ind = 0
+						// index of last whitespace except when at the end
+						ind = left.trim_right(' ').last_index(' ') or { -2 }
+						if ind >= 0 {
+							if right.len == 0 {
+								right = left[(ind + 1)..]
+							} else {
+								right = left[(ind + 1)..] + ' ' + right
+							}
+							left = left[0..ind]
+						} else {
+							// add a chunk
+							add_chunk = true
+							ind = 0
+						}
 					}
 				}
+				// right cobsidered as a blck to consider
+				left = right
+				right = ''
+				ind = 0
 			}
-			// right cobsidered as a blck to consider
-			left = right
-			right = ''
-			ind = 0
 		}
 	}
 	c.chunks = chunks
@@ -245,6 +254,70 @@ fn (mut c ParaChunk) update_bounding_box(cv &ChunkView) {
 		bb = bb.combine(chunk.bb)
 	}
 	c.bb = bb
+}
+
+struct GroupChunk {
+mut:
+	x      int
+	y      int
+	bb     Rect
+	chunks []ChunkContent
+	// style
+	bg_radius    int
+	bg_color     gx.Color
+	border_color gx.Color
+}
+
+[params]
+struct GroupChunkParams {
+	x      int
+	y      int
+	chunks []ChunkContent
+	// style
+	bg_radius    int
+	bg_color     gx.Color
+	border_color gx.Color
+}
+
+pub fn groupchunk(p GroupChunkParams) GroupChunk {
+	return GroupChunk{
+		x: p.x
+		y: p.y
+		chunks: p.chunks
+		bg_radius: p.bg_radius
+		bg_color: p.bg_color
+		border_color: p.border_color
+	}
+}
+
+fn (mut gc GroupChunk) init(cv &ChunkView) {
+	for mut chunk in gc.chunks {
+		chunk.init(cv)
+	}
+}
+
+fn (mut gc GroupChunk) draw_device(d DrawDevice, cv &ChunkView) {
+	if gc.bg_color != no_color {
+		if gc.bg_radius > 0 {
+			radius := relative_size(gc.bg_radius, cv.width, cv.height)
+			d.draw_rounded_rect_filled(gc.x, gc.y, gc.bb.w, gc.bb.h, radius, gc.bg_color)
+		} else {
+			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
+			d.draw_rect_filled(gc.x, gc.y, gc.bb.w, gc.bb.h, gc.bg_color)
+		}
+	}
+	for mut chunk in gc.chunks {
+		chunk.draw_device(d, cv)
+	}
+}
+
+fn (mut gc GroupChunk) update_bounding_box(cv &ChunkView) {
+	mut bb := Rect{cv.x, cv.y, 0, 0}
+	for mut chunk in gc.chunks {
+		chunk.update_bounding_box(cv)
+		bb = bb.combine(chunk.bb)
+	}
+	gc.bb = bb
 }
 
 [heap]

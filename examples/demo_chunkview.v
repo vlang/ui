@@ -8,7 +8,7 @@ fn main() {
 			ui.parachunk(
 				y: 20
 				margin: 5
-				content: [['h2', 'TextChunk']!]
+				content: ['|h2|TextChunk']
 			),
 			ui.textchunk(0, 60, 'toto titi', 'red'),
 			ui.textchunk(0, 80, 'toto titi', 'blue'),
@@ -16,14 +16,14 @@ fn main() {
 			ui.parachunk(
 				y: 200
 				margin: 5
-				content: [['h2', 'ParaChunk']!]
+				content: ['|h2|ParaChunk']
 			),
 			ui.parachunk(
 				y: 240
 				indent: 20
-				content: [['red', 'toto titi tata toto titi tata ']!,
-					['blue', 'toto titi tata toto titi tata toto titi tata ']!,
-					['emoji', '😻🥰😬 🧿🫥😴  ✔️💾']!]
+				content: ['|red|toto titi tata toto titi tata ',
+					'|blue|toto titi tata toto titi tata toto titi tata ',
+					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 			),
 		]
 	)
