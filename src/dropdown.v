@@ -85,8 +85,8 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 
 pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
-	ui := parent.get_ui()
-	dd.ui = ui
+	gui := parent.get_ui()
+	dd.ui = gui
 	dd.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)

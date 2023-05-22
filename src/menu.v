@@ -120,8 +120,8 @@ fn (mut m Menu) build(mut win Window) {
 
 fn (mut m Menu) init(parent Layout) {
 	m.parent = parent
-	ui := parent.get_ui()
-	m.ui = ui
+	gui := parent.get_ui()
+	m.ui = gui
 	m.update_size()
 	if m.is_root_menu() {
 		m.propagate_connection()

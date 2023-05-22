@@ -23,16 +23,16 @@ fn debug_draw_bb_stack(s &Stack) {
 		col)
 }
 
-fn debug_draw_bb_widget(mut wi Widget, ui &UI) {
+fn debug_draw_bb_widget(mut wi Widget, gui &UI) {
 	col := gx.black
 	w, h := wi.size()
 	println('bb: ${wi.type_name()} (${wi.x}, ${wi.y} ,${w}, ${h})')
-	ui.dd.draw_rect_empty(wi.x, wi.y, w, h, col)
+	gui.dd.draw_rect_empty(wi.x, wi.y, w, h, col)
 }
 
-fn debug_draw_bb_text(x int, y int, w int, h int, ui &UI) {
+fn debug_draw_bb_text(x int, y int, w int, h int, gui &UI) {
 	col := gx.gray
-	ui.dd.draw_rect_empty(x, y, w, h, col)
+	gui.dd.draw_rect_empty(x, y, w, h, col)
 }
 
 // Debug function

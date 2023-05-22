@@ -177,8 +177,8 @@ fn (mut s Stack) build(win &Window) {
 
 pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
-	mut ui := parent.get_ui()
-	s.ui = ui
+	gui := parent.get_ui()
+	s.ui = gui
 	s.init_size()
 	s.load_style()
 	// Init all children recursively

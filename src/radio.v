@@ -104,8 +104,8 @@ pub fn radio(c RadioParams) &Radio {
 
 fn (mut r Radio) init(parent Layout) {
 	r.parent = parent
-	ui := parent.get_ui()
-	r.ui = ui
+	gui := parent.get_ui()
+	r.ui = gui
 	// Get max value text width
 	if r.width == 0 {
 		r.set_size_from_values()
