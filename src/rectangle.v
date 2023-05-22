@@ -89,8 +89,8 @@ pub fn spacing(c RectangleParams) &Rectangle {
 
 fn (mut r Rectangle) init(parent Layout) {
 	r.parent = parent
-	gui := parent.get_ui()
-	r.ui = gui
+	u := parent.get_ui()
+	r.ui = u
 	// r.init_style()
 	r.load_style()
 }

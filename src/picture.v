@@ -73,8 +73,8 @@ pub fn picture(c PictureParams) &Picture {
 
 fn (mut pic Picture) init(parent Layout) {
 	pic.parent = parent
-	mut gui := parent.get_ui()
-	pic.ui = gui
+	mut u := parent.get_ui()
+	pic.ui = u
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, pic_click, pic)
 	subscriber.subscribe_method(events.on_mouse_down, pic_mouse_down, pic)
@@ -82,23 +82,23 @@ fn (mut pic Picture) init(parent Layout) {
 	/*
 	if pic.image.width > 0 {
 		// .image was set by the user, skip path  TODO
-		ui.resource_cache[pic.path] = pic.image
+		u.resource_cache[pic.path] = pic.image
 		return
 	}
 	*/
-	if gui.has_img(pic.path) {
-		pic.image = gui.img(pic.path)
+	if u.has_img(pic.path) {
+		pic.image = u.img(pic.path)
 	} else {
 		if !os.exists(pic.path) {
 			eprintln('V UI: picture file "${pic.path}" not found')
 		}
-		if !pic.use_cache && pic.path in gui.resource_cache {
-			pic.image = gui.resource_cache[pic.path]
+		if !pic.use_cache && pic.path in u.resource_cache {
+			pic.image = u.resource_cache[pic.path]
 		} else if mut pic.ui.dd is DrawDeviceContext {
 			dd := pic.ui.dd
 			if img := dd.create_image(pic.path) {
 				pic.image = img
-				gui.resource_cache[pic.path] = pic.image
+				u.resource_cache[pic.path] = pic.image
 			}
 		}
 	}
@@ -114,7 +114,7 @@ fn (mut pic Picture) init(parent Layout) {
 		pic.height = pic.image.height
 	}
 	if pic.tooltip.text != '' {
-		mut win := gui.window
+		mut win := u.window
 		win.tooltip.append(pic, pic.tooltip)
 	}
 }

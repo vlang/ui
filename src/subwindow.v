@@ -98,8 +98,8 @@ pub fn (mut s SubWindow) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_down, s)
 	subscriber.unsubscribe_method(events.on_mouse_move, s)
 	subscriber.unsubscribe_method(events.on_mouse_up, s)
-	mut gui := s.get_ui()
-	gui.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
+	mut u := s.get_ui()
+	u.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
 	unsafe { s.free() }
 }
 
@@ -247,7 +247,7 @@ pub fn (mut s SubWindow) update_layout() {
 	s.layout.update_layout()
 }
 
-fn (mut s SubWindow) set_adjusted_size(gui &UI) {
+fn (mut s SubWindow) set_adjusted_size(u &UI) {
 }
 
 fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {

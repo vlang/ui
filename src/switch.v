@@ -66,8 +66,8 @@ pub fn switcher(c SwitchParams) &Switch {
 
 fn (mut s Switch) init(parent Layout) {
 	s.parent = parent
-	gui := parent.get_ui()
-	s.ui = gui
+	u := parent.get_ui()
+	s.ui = u
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
 	subscriber.subscribe_method(events.on_click, sw_click, s)

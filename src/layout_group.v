@@ -70,8 +70,8 @@ pub fn group(c GroupParams) &Group {
 
 fn (mut g Group) init(parent Layout) {
 	g.parent = parent
-	gui := parent.get_ui()
-	g.ui = gui
+	u := parent.get_ui()
+	g.ui = u
 	g.decode_size()
 	for mut child in g.children {
 		child.init(g)
@@ -201,7 +201,7 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber {
 	return parent.get_subscriber()
 }
 
-fn (mut g Group) set_adjusted_size(i int, gui &UI) {
+fn (mut g Group) set_adjusted_size(i int, u &UI) {
 	mut h, mut w := 0, 0
 	for mut child in g.children {
 		mut child_width, mut child_height := child.size()

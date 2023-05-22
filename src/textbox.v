@@ -219,8 +219,8 @@ pub fn textbox(c TextBoxParams) &TextBox {
 
 pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
-	gui := parent.get_ui()
-	tb.ui = gui
+	u := parent.get_ui()
+	tb.ui = u
 	// tb.init_style()
 	tb.load_style()
 	// TODO: Maybe in a method later to allow font size update

@@ -137,8 +137,8 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 // TODO: documentation
 pub fn (mut b BoxLayout) init(parent Layout) {
 	b.parent = parent
-	mut gui := parent.get_ui()
-	b.ui = gui
+	mut u := parent.get_ui()
+	b.ui = u
 	for _, mut child in b.children {
 		// DON'T DO THAT: child.id = b.child_id[i]
 		// println('$i) gl init child ${child.id} ')

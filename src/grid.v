@@ -47,8 +47,8 @@ pub fn grid(c GridParams) &Grid {
 
 fn (mut gv Grid) init(parent Layout) {
 	gv.parent = parent
-	gui := parent.get_ui()
-	gv.ui = gui
+	u := parent.get_ui()
+	gv.ui = u
 }
 
 [manualfree]

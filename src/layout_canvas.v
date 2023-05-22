@@ -189,8 +189,8 @@ fn (mut c CanvasLayout) build(win &Window) {
 
 fn (mut c CanvasLayout) init(parent Layout) {
 	c.parent = parent
-	gui := parent.get_ui()
-	c.ui = gui
+	u := parent.get_ui()
+	c.ui = u
 	c.init_size()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
@@ -222,7 +222,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	}
 	c.load_style()
 
-	c.set_adjusted_size(gui)
+	c.set_adjusted_size(u)
 	c.set_children_pos()
 	c.set_root_layout()
 
