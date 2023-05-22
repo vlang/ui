@@ -23,6 +23,9 @@ fn main() {
 				indent: 20
 				content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 					'|blue|toto titi tata toto titi tata toto titi tata ',
+					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+					'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+					'|blue|toto2 titi tata toto titi tata toto titi tata ',
 					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 			),
 		]

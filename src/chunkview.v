@@ -233,6 +233,12 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 				right = ''
 				ind = 0
 			}
+		} else {
+			if content == 'br' {
+				// new line
+				x, y = c.x + c.indent + c.margin, y + c.line_height + c.spacing
+				line, line_width = '', f64(x)
+			}
 		}
 	}
 	c.chunks = chunks
