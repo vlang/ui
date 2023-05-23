@@ -23,15 +23,33 @@ fn main() {
 				margin: 5
 				content: ['|h2|ParaChunk']
 			),
-			ui.parachunk(
+			// ui.parachunk(
+			// 	y: 240
+			// 	indent: 20
+			// 	content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
+			// 		'|blue|toto titi tata toto titi tata toto titi tata ',
+			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+			// 		'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+			// 		'|blue|toto2 titi tata toto titi tata toto titi tata ',
+			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+			// ),
+			ui.groupchunk(
 				y: 240
-				indent: 20
-				content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
-					'|blue|toto titi tata toto titi tata toto titi tata ',
-					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-					'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
-					'|blue|toto2 titi tata toto titi tata toto titi tata ',
-					'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+				spacing: 10
+				bg_color: gx.black
+				bg_radius: 10
+				chunks: [
+					ui.parachunk(
+						indent: 20
+						content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
+							'|blue|toto titi tata toto titi tata toto titi tata ',
+							'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+							'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+							'|blue|toto2 titi tata toto titi tata toto titi tata ',
+							'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+					),
+					ui.textchunk(text: 'toto titi', style: 'red'),
+				]
 			),
 		]
 	)
