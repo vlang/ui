@@ -34,12 +34,20 @@ mut:
 	style string // related to ChunkView text_styles
 }
 
-pub fn textchunk(x int, y int, text string, style string) TextChunk {
+[params]
+pub struct TextChunkParams {
+	x     int
+	y     int
+	text  string
+	style string // related to ChunkView text_styles
+}
+
+pub fn textchunk(p TextChunkParams) TextChunk {
 	return TextChunk{
-		x: x
-		y: y
-		text: text
-		style: style
+		x: p.x
+		y: p.y
+		text: p.text
+		style: p.style
 	}
 }
 
@@ -199,7 +207,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 						// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 						line = line + left
 						line_width += lw
-						chunk = textchunk(x, y, line, style)
+						chunk = textchunk(x: x, y: y, text: line, style: style)
 						if ind >= 0 { // newline
 							x = c.x + c.margin
 							y += c.line_height + c.spacing

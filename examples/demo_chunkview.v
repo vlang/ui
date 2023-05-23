@@ -10,9 +10,14 @@ fn main() {
 				margin: 5
 				content: ['|h2|TextChunk']
 			),
-			ui.textchunk(0, 60, 'toto titi', 'red'),
-			ui.textchunk(0, 80, 'toto titi', 'blue'),
-			ui.textchunk(0, 100, '😻🥰 😬🧿 🫥😴  ✔️💾', 'emoji'),
+			ui.textchunk(x: 0, y: 60, text: 'toto titi', style: 'red'),
+			ui.textchunk(x: 0, y: 80, text: 'toto titi', style: 'blue'),
+			ui.textchunk(
+				x: 0
+				y: 100
+				text: '😻🥰 😬🧿 🫥😴  ✔️💾'
+				style: 'emoji'
+			),
 			ui.parachunk(
 				y: 200
 				margin: 5
