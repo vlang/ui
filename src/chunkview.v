@@ -35,6 +35,7 @@ fn (cc ChunkContent) draw_bb(cv &ChunkView, delta Delta) {
 		cc.bb.h, col)
 }
 
+// ChunkView, ParaChunk, GroupChunk
 interface ChunkContainer {
 mut:
 	x int
@@ -42,6 +43,8 @@ mut:
 	bb Rect
 	chunks []ChunkContent
 	size() (int, int)
+	inner_pos() (int, int)
+	inner_size() (int, int)
 	update_chunks(cv &ChunkView)
 }
 
@@ -316,6 +319,14 @@ fn (mut c ParaChunk) size() (int, int) {
 	return c.bb.w, c.bb.h
 }
 
+fn (mut c ParaChunk) inner_pos() (int, int) {
+	return c.x, c.y
+}
+
+fn (mut c ParaChunk) inner_size() (int, int) {
+	return c.size()
+}
+
 // Aligned chunks (not ParaChunk)
 
 struct VerticalAlignChunk {
@@ -344,16 +355,16 @@ pub fn valignchunk(p VerticalAlignChunkParams) VerticalAlignChunk {
 	}
 }
 
-fn (mut vac VerticalAlignChunk) init(cv &ChunkView) {
-	for mut chunk in vac.chunks {
+fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
+	for mut chunk in c.chunks {
 		chunk.init(cv)
 	}
 }
 
-fn (mut vac VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
 }
 
-fn (mut vac VerticalAlignChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView) {
 }
 
 // Group Chunk (also a ChunkContainer)
@@ -398,55 +409,63 @@ pub fn groupchunk(p GroupChunkParams) GroupChunk {
 	}
 }
 
-fn (mut gc GroupChunk) init(cv &ChunkView) {
-	if gc.parent == none {
-		gc.parent = cv
+fn (mut c GroupChunk) init(cv &ChunkView) {
+	if c.parent == none {
+		c.parent = cv
 	}
-	for mut chunk in gc.chunks {
+	for mut chunk in c.chunks {
 		chunk.init(cv)
 	}
-	gc.update_bounding_box(cv)
+	c.update_bounding_box(cv)
 }
 
-fn (mut gc GroupChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
-	if gc.bg_color != no_color {
-		if gc.bg_radius > 0 {
-			radius := relative_size(gc.bg_radius, gc.bb.w, gc.bb.h)
-			d.draw_rounded_rect_filled(cv.x + gc.x, cv.y + gc.y, gc.bb.w, gc.bb.h, radius,
-				gc.bg_color)
+fn (mut c GroupChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+	if c.bg_color != no_color {
+		if c.bg_radius > 0 {
+			radius := relative_size(c.bg_radius, c.bb.w, c.bb.h)
+			d.draw_rounded_rect_filled(cv.x + c.x, cv.y + c.y, c.bb.w, c.bb.h, radius,
+				c.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			d.draw_rect_filled(gc.x, gc.y, gc.bb.w, gc.bb.h, gc.bg_color)
+			d.draw_rect_filled(c.x, c.y, c.bb.w, c.bb.h, c.bg_color)
 		}
 	}
-	mut dx, mut dy := gc.x + delta.x, gc.y + delta.y
-	for mut chunk in gc.chunks {
+	mut dx, mut dy := c.x + delta.x, c.y + delta.y
+	for mut chunk in c.chunks {
 		chunk.draw_device(d, cv, Delta{dx, dy})
-		dy += chunk.bb.h + gc.spacing
+		dy += chunk.bb.h + c.spacing
 	}
 }
 
-fn (mut gc GroupChunk) update_bounding_box(cv &ChunkView) {
-	mut bb := Rect{cv.x + gc.x, cv.y + gc.y, 0, 0}
-	for mut chunk in gc.chunks {
+fn (mut c GroupChunk) update_bounding_box(cv &ChunkView) {
+	mut bb := Rect{cv.x + c.x, cv.y + c.y, 0, 0}
+	for mut chunk in c.chunks {
 		chunk.update_bounding_box(cv)
 		bb = bb.combine(chunk.bb)
 	}
 
-	gc.bb = bb
+	c.bb = bb
 }
 
-fn (mut gc GroupChunk) size() (int, int) {
-	return gc.bb.w, gc.bb.h
+fn (mut c GroupChunk) size() (int, int) {
+	return c.bb.w, c.bb.h
 }
 
-fn (mut gc GroupChunk) update_chunks(cv &ChunkView) {
-	gc.update_bounding_box(cv)
-	for mut chunk in gc.chunks {
+fn (mut c GroupChunk) update_chunks(cv &ChunkView) {
+	c.update_bounding_box(cv)
+	for mut chunk in c.chunks {
 		if mut chunk is ChunkContainer {
 			chunk.update_chunks(cv)
 		}
 	}
+}
+
+fn (mut c GroupChunk) inner_pos() (int, int) {
+	return c.x, c.y
+}
+
+fn (mut c GroupChunk) inner_size() (int, int) {
+	return c.size()
 }
 
 [heap]
@@ -529,6 +548,14 @@ fn (mut cv ChunkView) adj_size() (int, int) {
 
 fn (mut cv ChunkView) size() (int, int) {
 	return cv.width, cv.height
+}
+
+fn (mut cv ChunkView) inner_pos() (int, int) {
+	return cv.x, cv.y
+}
+
+fn (mut cv ChunkView) inner_size() (int, int) {
+	return cv.size()
 }
 
 fn (mut cv ChunkView) point_inside(x f64, y f64) bool {
