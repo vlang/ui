@@ -18,11 +18,6 @@ fn main() {
 				text: '😻🥰 😬🧿 🫥😴  ✔️💾'
 				style: 'emoji'
 			),
-			ui.parachunk(
-				y: 200
-				margin: 5
-				content: ['|h2|ParaChunk']
-			),
 			// ui.parachunk(
 			// 	y: 240
 			// 	indent: 20
@@ -35,22 +30,50 @@ fn main() {
 			// ),
 			ui.rowchunk(
 				x: 0 // 30
-				y: 240
-				spacing: 10
-				margin: 20
-				bg_color: gx.dark_gray
-				bg_radius: 10
+				y: 140
+				margin: 10
+				spacing: 20
 				chunks: [
 					ui.parachunk(
-						indent: 20
-						content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
-							'|blue|toto titi tata toto titi tata toto titi tata ',
-							'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-							'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
-							'|blue|toto2 titi tata toto titi tata toto titi tata ',
-							'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+						margin: 5
+						content: ['|h2|RowChunk with ParaChunk']
 					),
-					ui.textchunk(text: 'toto titi', style: 'red'),
+					ui.rowchunk(
+						spacing: 10
+						margin: 20
+						bg_color: gx.dark_gray
+						bg_radius: 10
+						chunks: [
+							ui.parachunk(
+								indent: 20
+								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
+									'|blue|toto titi tata toto titi tata toto titi tata ',
+									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+									'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+									'|blue|toto2 titi tata toto titi tata toto titi tata ',
+									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+							),
+							ui.textchunk(text: 'toto titi', style: 'red'),
+						]
+					),
+					ui.rowchunk(
+						spacing: 10
+						margin: 20
+						bg_color: gx.black
+						bg_radius: 10
+						chunks: [
+							ui.parachunk(
+								indent: 20
+								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
+									'|blue|toto titi tata toto titi tata toto titi tata ',
+									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+									'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+									'|blue|toto2 titi tata toto titi tata toto titi tata ',
+									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+							),
+							ui.textchunk(text: 'toto titi', style: 'red'),
+						]
+					),
 				]
 			),
 		]

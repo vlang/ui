@@ -429,8 +429,7 @@ fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.bb.w, c.bb.h)
-			d.draw_rounded_rect_filled(c.bb.x - c.margin, c.bb.y - c.margin, c.bb.w + 2 * c.margin,
-				c.bb.h + 2 * c.margin, radius, c.bg_color)
+			d.draw_rounded_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, radius, c.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			d.draw_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, c.bg_color)
@@ -456,6 +455,10 @@ fn (mut c RowChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 	}
 
 	c.bb = bb
+	c.bb.x -= c.margin
+	c.bb.y -= c.margin
+	c.bb.w += 2 * c.margin
+	c.bb.h += 2 * c.margin
 }
 
 fn (mut c RowChunk) size() (int, int) {
@@ -476,7 +479,7 @@ fn (mut c RowChunk) inner_pos() (int, int) {
 }
 
 fn (mut c RowChunk) inner_size() (int, int) {
-	w, h := c.container?.size()
+	w, h := c.container?.inner_size()
 	return w - 2 * c.margin, h - 2 * c.margin
 }
 
