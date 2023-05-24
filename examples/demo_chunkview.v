@@ -59,11 +59,11 @@ fn main() {
 					ui.rowchunk(
 						spacing: 10
 						margin: 20
-						bg_color: gx.black
+						bg_color: gx.yellow
 						bg_radius: 10
 						chunks: [
-							ui.parachunk(
-								indent: 20
+							ui.leftchunk(
+								// indent: 20
 								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 									'|blue|toto titi tata toto titi tata toto titi tata ',
 									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',

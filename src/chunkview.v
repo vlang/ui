@@ -34,7 +34,7 @@ fn (cc ChunkContent) draw_bb(cv &ChunkView) {
 	cv.ui.dd.draw_rect_empty(cc.bb.x, cc.bb.y, cc.bb.w, cc.bb.h, col)
 }
 
-// ChunkView, ParaChunk, RowChunk
+// ChunkView, ParaChunk, RowChunk, VerticalAlignChunk
 interface ChunkContainer {
 mut:
 	x int
@@ -172,21 +172,22 @@ pub struct ParaChunkParams {
 	container ?ChunkContainer
 }
 
-pub fn parachunk(c ParaChunkParams) ParaChunk {
+pub fn parachunk(p ParaChunkParams) ParaChunk {
 	return ParaChunk{
-		x: c.x
-		y: c.y
-		margin: c.margin
-		indent: c.indent
-		content: c.content
-		container: c.container
+		x: p.x
+		y: p.y
+		margin: p.margin
+		spacing: p.spacing
+		indent: p.indent
+		content: p.content
+		container: p.container
 	}
 }
 
 fn (mut c ParaChunk) init(cv &ChunkView) {
-	if c.container == none {
-		c.container = cv
-	}
+	// if c.container == none {
+	// 	c.container = cv
+	// }
 	c.update_line_height(cv)
 	c.update_chunks(cv)
 }
@@ -331,19 +332,31 @@ fn (mut c ParaChunk) inner_size() (int, int) {
 
 struct VerticalAlignChunk {
 mut:
-	x      int
-	y      int
-	bb     Rect
-	align  f32 // in [0,1]
-	chunks []ChunkContent
+	x           int
+	y           int
+	bb          Rect
+	align       f32 // in [0,1]
+	spacing     int
+	line_height int
+	content     []string
+	line_chunks [][]ChunkContent
+	chunks      []ChunkContent
+	container   ?ChunkContainer
+}
+
+[params]
+pub struct AlignChunkParams {
+	x         int
+	y         int
+	spacing   int = 10
+	content   []string
+	container ?ChunkContainer
 }
 
 [params]
 pub struct VerticalAlignChunkParams {
-	x      int
-	y      int
-	align  f32 // in [0,1]
-	chunks []ChunkContent
+	AlignChunkParams
+	align f32 // in [0,1]
 }
 
 pub fn valignchunk(p VerticalAlignChunkParams) VerticalAlignChunk {
@@ -351,20 +364,179 @@ pub fn valignchunk(p VerticalAlignChunkParams) VerticalAlignChunk {
 		x: p.x
 		y: p.y
 		align: p.align
-		chunks: p.chunks
+		spacing: p.spacing
+		content: p.content
+	}
+}
+
+pub fn leftchunk(p AlignChunkParams) VerticalAlignChunk {
+	return VerticalAlignChunk{
+		x: p.x
+		y: p.y
+		align: 0.0
+		spacing: p.spacing
+		content: p.content
+	}
+}
+
+pub fn rightchunk(p AlignChunkParams) VerticalAlignChunk {
+	return VerticalAlignChunk{
+		x: p.x
+		y: p.y
+		align: 1.0
+		spacing: p.spacing
+		content: p.content
 	}
 }
 
 fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
 	for mut chunk in c.chunks {
+		if mut chunk is ChunkContainer {
+			chunk.container = c
+		}
 		chunk.init(cv)
 	}
+	c.init_line_chunks(cv)
 }
 
 fn (mut c VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
+	for mut chunk in c.chunks {
+		chunk.draw_device(d, cv, offset)
+	}
+	$if p_bb ? {
+		ChunkContent(c).draw_bb(cv)
+	}
 }
 
 fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+}
+
+fn (mut c VerticalAlignChunk) size() (int, int) {
+	return 0, 0
+}
+
+fn (mut c VerticalAlignChunk) inner_pos() (int, int) {
+	return 0, 0
+}
+
+fn (mut c VerticalAlignChunk) inner_size() (int, int) {
+	return 0, 0
+}
+
+fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
+	mut dtw := DrawTextWidget(cv)
+	mut lh := 0
+	mut style, mut left := '', ''
+	for content in c.content {
+		if content.index_after(ui.para_style_delim, 0) == 0 {
+			content_start := content.index_after(ui.para_style_delim, 1)
+			if content_start > 1 { // empty style means same style
+				style = content[1..content_start]
+			}
+			cv.load_style(style)
+			left = content[(content_start + 1)..]
+			lh = dtw.text_height(left)
+			if lh > c.line_height {
+				c.line_height = lh
+			}
+		}
+	}
+}
+
+// only once in init
+fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
+	mut dtw := DrawTextWidget(cv)
+	// split c.content into the lines 'br' being the separator
+	mut contents := [][]string{}
+	mut lines := []string{}
+	for content in c.content {
+		if content.index_after(ui.para_style_delim, 0) == 0 {
+			if lines.len > 0 && lines[0] == 'br' {
+				contents << lines
+				lines = []string{}
+			}
+			lines << content
+		} else {
+			if content == 'br' {
+				if lines.len > 0 && lines[0] != 'br' {
+					contents << lines
+					lines = []string{}
+				}
+				lines << content
+			}
+		}
+	}
+	if c.content.len > 0 {
+		contents << lines
+	}
+	//
+	println('contents: ${contents}')
+	// convert content to chunks
+	c.line_chunks = [][]ChunkContent{}
+	mut style := ''
+	mut text := ''
+	mut x, mut y := 0, c.y // x = 0 at start but will be modified by offset when drawn if visible
+	mut tw := 0.0
+	for line_content in contents {
+		if line_content.len > 0 && line_content[0] == 'br' {
+			// jump line
+			y += line_content.len * (c.line_height + c.spacing)
+			x = 0
+		} else {
+			mut chunks := []ChunkContent{}
+			c.line_chunks << chunks
+			for content in line_content {
+				// TextChunk
+				if content.index_after(ui.para_style_delim, 0) == 0 {
+					content_start := content.index_after(ui.para_style_delim, 1)
+					if content_start > 1 { // empty style means same style
+						style = content[1..content_start]
+					}
+					cv.load_style(style)
+					text = content[(content_start + 1)..]
+					tw = dtw.text_width_additive(text)
+					mut chunk := textchunk(x: x, y: y, text: text, style: style)
+					chunk.bb = Rect{x, y, int(tw), c.line_height}
+					x += int(tw)
+					c.line_chunks.last() << chunk
+				} else {
+					// Maybe to deal with ImageChunk and DrawChunk
+				}
+			}
+		}
+	}
+	// println("line_chunks = $c.line_chunks")
+}
+
+fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
+	max_line_width, _ := c.container?.inner_size()
+	winf, wsup := -(f32(1) - c.align) * max_line_width, c.align * max_line_width
+	// this is a selection step required after resizing
+	c.chunks = []ChunkContent{}
+	for line_chunk in c.line_chunks {
+		last := line_chunk[line_chunk.len - 1]
+		delta := -(f32(1) - c.align) * last.bb.w
+		for chunk in line_chunk {
+			// This is the visible part
+			binf := chunk.bb.x + delta
+			bsup := binf + chunk.bb.w
+			if bsup >= winf || binf <= wsup {
+				if chunk is TextChunk {
+					mut new_chunk := textchunk(
+						x: int(binf - winf)
+						y: chunk.bb.y
+						text: chunk.text
+						style: chunk.style
+					)
+					new_chunk.bb.x = int(binf - winf)
+					new_chunk.bb.y = chunk.bb.y
+					new_chunk.bb.w = chunk.bb.w
+					new_chunk.bb.h = chunk.bb.h
+					c.chunks << new_chunk
+				}
+			}
+		}
+	}
 }
 
 // Row Layout Chunk (also a ChunkContainer)
