@@ -10,11 +10,11 @@ fn main() {
 				margin: 5
 				content: ['|h2|TextChunk']
 			),
-			ui.textchunk(x: 0, y: 60, text: 'toto titi', style: 'red'),
-			ui.textchunk(x: 0, y: 80, text: 'toto titi', style: 'blue'),
+			ui.textchunk(x: 0, y: 40, text: 'toto titi', style: 'red'),
+			ui.textchunk(x: 0, y: 60, text: 'toto titi', style: 'blue'),
 			ui.textchunk(
 				x: 0
-				y: 100
+				y: 80
 				text: '😻🥰 😬🧿 🫥😴  ✔️💾'
 				style: 'emoji'
 			),
@@ -30,7 +30,7 @@ fn main() {
 			// ),
 			ui.rowchunk(
 				x: 0 // 30
-				y: 140
+				y: 120
 				margin: 10
 				spacing: 20
 				chunks: [
@@ -79,8 +79,8 @@ fn main() {
 		]
 	)
 	mut window := ui.window(
-		width: 800
-		height: 600
+		width: 1200
+		height: 800
 		title: 'V UI: ChunkView'
 		layout: ui.column(
 			heights: [ui.compact, ui.stretch]
