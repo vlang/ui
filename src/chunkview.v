@@ -11,10 +11,10 @@ const text_chunk_wrap = 10
 
 const para_style_delim = '|'
 
-const empty_chunk_container = groupchunk()
+// const empty_chunk_container = rowlayoutchunk()
 
 [params]
-pub struct Delta {
+pub struct Offset {
 mut:
 	x int
 	y int
@@ -24,18 +24,18 @@ interface ChunkContent {
 mut:
 	bb Rect
 	init(cv &ChunkView)
-	draw_device(d DrawDevice, cv &ChunkView, delta Delta) // delta only used for groupchunk children
-	update_bounding_box(cv &ChunkView)
+	draw_device(d DrawDevice, cv &ChunkView, offset Offset) // offset only used for groupchunk children
+	update_bounding_box(cv &ChunkView, offset Offset)
 }
 
-fn (cc ChunkContent) draw_bb(cv &ChunkView, delta Delta) {
+fn (cc ChunkContent) draw_bb(cv &ChunkView, offset Offset) {
 	col := gx.black
 	println('bb: ${cc.type_name()} (${cc.bb.x}, ${cc.bb.y} ,${cc.bb.w}, ${cc.bb.h})')
-	cv.ui.dd.draw_rect_empty(cv.x + delta.x + cc.bb.x, cv.y + delta.y + cc.bb.y, cc.bb.w,
-		cc.bb.h, col)
+	cv.ui.dd.draw_rect_empty(offset.x + cc.bb.x, offset.y + cc.bb.y, cc.bb.w, cc.bb.h,
+		col)
 }
 
-// ChunkView, ParaChunk, GroupChunk
+// ChunkView, ParaChunk, RowChunk
 interface ChunkContainer {
 mut:
 	x int
@@ -78,18 +78,18 @@ fn (mut c TextChunk) init(cv &ChunkView) {
 	c.update_bounding_box(cv)
 }
 
-fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c TextChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	mut dtw := DrawTextWidget(cv)
-	dtw.draw_device_styled_text(d, cv.x + delta.x + c.x, cv.y + delta.y + c.y, c.text,
+	dtw.draw_device_styled_text(d, cv.x + offset.x + c.x, cv.y + offset.y + c.y, c.text,
 		id: c.style)
 }
 
-fn (mut c TextChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c TextChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 	mut dtw := DrawTextWidget(cv)
 	cv.load_style(c.style)
-	c.bb.w, c.bb.h = dtw.text_size(c.text)
+	// c.bb.w, c.bb.h = dtw.text_size(c.text)
 	// println("style: ${c.style} bb: ${c.bb} text_bounds ${dtw.text_bounds(c.x, c.y, c.text)}")
-	bb := dtw.text_bounds(c.x, c.y, c.text)
+	bb := dtw.text_bounds(cv.x + offset.x + c.x, cv.y + offset.y + c.y, c.text)
 	c.bb.x, c.bb.y, c.bb.w, c.bb.h = int(bb[0]), int(bb[1]) + int(bb[4]), int(bb[2]), int(bb[3])
 }
 
@@ -116,10 +116,10 @@ pub fn imgchunk(p ImageChunkParams) ImageChunk {
 
 fn (mut c ImageChunk) init(cv &ChunkView) {}
 
-fn (mut c ImageChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c ImageChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 }
 
-fn (mut c ImageChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c ImageChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 }
 
 type DrawChunkFn = fn (&DrawChunk)
@@ -140,10 +140,10 @@ pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
 
 fn (mut c DrawChunk) init(cv &ChunkView) {}
 
-fn (mut c DrawChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c DrawChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 }
 
-fn (mut c DrawChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c DrawChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 }
 
 // Arrange chunk as a paragraph
@@ -297,19 +297,19 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	}
 }
 
-fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	for mut chunk in c.chunks {
-		chunk.draw_device(d, cv, delta)
+		chunk.draw_device(d, cv, offset)
 	}
 	$if c_bb ? {
-		ChunkContent(c).draw_bb(cv, delta)
+		ChunkContent(c).draw_bb(cv, offset)
 	}
 }
 
-fn (mut c ParaChunk) update_bounding_box(cv &ChunkView) {
-	mut bb := Rect{cv.x, cv.y, 0, 0}
+fn (mut c ParaChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+	mut bb := Rect{} // Rect{cv.x + c.x, cv.y + c.y, 0, 0}
 	for mut chunk in c.chunks {
-		chunk.update_bounding_box(cv)
+		chunk.update_bounding_box(cv, offset)
 		bb = bb.combine(chunk.bb)
 	}
 	c.bb = bb
@@ -361,18 +361,18 @@ fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
 	}
 }
 
-fn (mut c VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 }
 
-fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView) {
+fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 }
 
-// Group Chunk (also a ChunkContainer)
-struct GroupChunk {
+// Row Layout Chunk (also a ChunkContainer)
+struct RowChunk {
 mut:
 	x       int
 	y       int
-	delta   Delta // used to locate chunks one after one
+	offset  Offset // used to locate chunks one after one
 	bb      Rect
 	chunks  []ChunkContent
 	spacing int
@@ -384,7 +384,7 @@ mut:
 }
 
 [params]
-pub struct GroupChunkParams {
+pub struct RowChunkParams {
 	x       int
 	y       int
 	chunks  []ChunkContent
@@ -392,12 +392,12 @@ pub struct GroupChunkParams {
 	parent  ?ChunkContainer
 	// style
 	bg_radius    int
-	bg_color     gx.Color
+	bg_color     gx.Color = no_color
 	border_color gx.Color
 }
 
-pub fn groupchunk(p GroupChunkParams) GroupChunk {
-	return GroupChunk{
+pub fn rowchunk(p RowChunkParams) RowChunk {
+	return RowChunk{
 		x: p.x
 		y: p.y
 		chunks: p.chunks
@@ -409,7 +409,7 @@ pub fn groupchunk(p GroupChunkParams) GroupChunk {
 	}
 }
 
-fn (mut c GroupChunk) init(cv &ChunkView) {
+fn (mut c RowChunk) init(cv &ChunkView) {
 	if c.parent == none {
 		c.parent = cv
 	}
@@ -419,7 +419,7 @@ fn (mut c GroupChunk) init(cv &ChunkView) {
 	c.update_bounding_box(cv)
 }
 
-fn (mut c GroupChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
+fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.bb.w, c.bb.h)
@@ -427,44 +427,46 @@ fn (mut c GroupChunk) draw_device(d DrawDevice, cv &ChunkView, delta Delta) {
 				c.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			d.draw_rect_filled(c.x, c.y, c.bb.w, c.bb.h, c.bg_color)
+			d.draw_rect_filled(cv.x + c.x, cv.y + c.y, c.bb.w, c.bb.h, c.bg_color)
 		}
 	}
-	mut dx, mut dy := c.x + delta.x, c.y + delta.y
+	mut dx, mut dy := c.x + offset.x, c.y + offset.y
 	for mut chunk in c.chunks {
-		chunk.draw_device(d, cv, Delta{dx, dy})
+		chunk.draw_device(d, cv, Offset{dx, dy})
 		dy += chunk.bb.h + c.spacing
 	}
 }
 
-fn (mut c GroupChunk) update_bounding_box(cv &ChunkView) {
-	mut bb := Rect{cv.x + c.x, cv.y + c.y, 0, 0}
+fn (mut c RowChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+	mut bb := Rect{} // Rect{cv.x + c.x, cv.y + c.y, 0, 0}
+	mut dx, mut dy := c.x + offset.x, c.y + offset.y
 	for mut chunk in c.chunks {
-		chunk.update_bounding_box(cv)
+		chunk.update_bounding_box(cv, Offset{dx, dy})
 		bb = bb.combine(chunk.bb)
+		dy += chunk.bb.h + c.spacing
 	}
 
 	c.bb = bb
 }
 
-fn (mut c GroupChunk) size() (int, int) {
+fn (mut c RowChunk) size() (int, int) {
 	return c.bb.w, c.bb.h
 }
 
-fn (mut c GroupChunk) update_chunks(cv &ChunkView) {
-	c.update_bounding_box(cv)
+fn (mut c RowChunk) update_chunks(cv &ChunkView) {
 	for mut chunk in c.chunks {
 		if mut chunk is ChunkContainer {
 			chunk.update_chunks(cv)
 		}
 	}
+	c.update_bounding_box(cv)
 }
 
-fn (mut c GroupChunk) inner_pos() (int, int) {
+fn (mut c RowChunk) inner_pos() (int, int) {
 	return c.x, c.y
 }
 
-fn (mut c GroupChunk) inner_size() (int, int) {
+fn (mut c RowChunk) inner_size() (int, int) {
 	return c.size()
 }
 
@@ -527,7 +529,7 @@ fn (mut cv ChunkView) set_pos(x int, y int) {
 
 fn (mut cv ChunkView) propose_size(w int, h int) (int, int) {
 	cv.width, cv.height = w, h
-	println('propose_size ${cv.id}: ${cv.size()}')
+	// println('propose_size ${cv.id}: ${cv.size()}')
 	cv.update_chunks(cv)
 	return cv.size()
 }

@@ -33,11 +33,11 @@ fn main() {
 			// 		'|blue|toto2 titi tata toto titi tata toto titi tata ',
 			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 			// ),
-			ui.groupchunk(
+			ui.rowchunk(
 				y: 240
 				spacing: 10
 				bg_color: gx.black
-				bg_radius: 10
+				// bg_radius: 10
 				chunks: [
 					ui.parachunk(
 						indent: 20
