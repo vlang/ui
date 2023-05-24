@@ -289,7 +289,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	}
 	c.chunks = chunks
 	// update boundig boxes of all chunks
-	c.update_bounding_box(cv)
+	// c.update_bounding_box(cv)
 	$if parachunk ? {
 		println('chunks=${c.chunks}')
 		println('max_line_width=${max_line_width}')
@@ -300,7 +300,7 @@ fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	for mut chunk in c.chunks {
 		chunk.draw_device(d, cv, offset)
 	}
-	$if c_bb ? {
+	$if p_bb ? {
 		ChunkContent(c).draw_bb(cv)
 	}
 }
@@ -422,17 +422,19 @@ fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.bb.w, c.bb.h)
-			d.draw_rounded_rect_filled(cv.x + c.x, cv.y + c.y, c.bb.w, c.bb.h, radius,
-				c.bg_color)
+			d.draw_rounded_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, radius, c.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
-			d.draw_rect_filled(cv.x + c.x, cv.y + c.y, c.bb.w, c.bb.h, c.bg_color)
+			d.draw_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, c.bg_color)
 		}
 	}
 	mut dx, mut dy := c.x + offset.x, c.y + offset.y
 	for mut chunk in c.chunks {
 		chunk.draw_device(d, cv, Offset{dx, dy})
 		dy += chunk.bb.h + c.spacing
+	}
+	$if r_bb ? {
+		ChunkContent(c).draw_bb(cv)
 	}
 }
 
