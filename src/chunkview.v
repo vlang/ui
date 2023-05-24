@@ -41,6 +41,7 @@ mut:
 	y int
 	bb Rect
 	chunks []ChunkContent
+	container ?ChunkContainer
 	size() (int, int)
 	inner_pos() (int, int)
 	inner_size() (int, int)
@@ -157,18 +158,18 @@ mut:
 	bb          Rect
 	content     []string // format ["|style1|text1", "|style2|text2", ....]
 	chunks      []ChunkContent
-	parent      ?ChunkContainer
+	container   ?ChunkContainer
 }
 
 [params]
 pub struct ParaChunkParams {
-	x       int
-	y       int
-	margin  int
-	indent  int
-	spacing int = 10
-	content []string
-	parent  ?ChunkContainer
+	x         int
+	y         int
+	margin    int
+	indent    int
+	spacing   int = 10
+	content   []string
+	container ?ChunkContainer
 }
 
 pub fn parachunk(c ParaChunkParams) ParaChunk {
@@ -178,13 +179,13 @@ pub fn parachunk(c ParaChunkParams) ParaChunk {
 		margin: c.margin
 		indent: c.indent
 		content: c.content
-		parent: c.parent
+		container: c.container
 	}
 }
 
 fn (mut c ParaChunk) init(cv &ChunkView) {
-	if c.parent == none {
-		c.parent = cv
+	if c.container == none {
+		c.container = cv
 	}
 	c.update_line_height(cv)
 	c.update_chunks(cv)
@@ -211,7 +212,7 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 }
 
 fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
-	max_line_width, _ := c.parent?.size()
+	max_line_width, _ := c.container?.inner_size()
 	// println("max_line_width=${max_line_width}")
 	mut dtw := DrawTextWidget(cv)
 	// convert content to chunks
@@ -369,13 +370,14 @@ fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView, offset Offset) 
 // Row Layout Chunk (also a ChunkContainer)
 struct RowChunk {
 mut:
-	x       int
-	y       int
-	offset  Offset // used to locate chunks one after one
-	bb      Rect
-	chunks  []ChunkContent
-	spacing int
-	parent  ?ChunkContainer
+	x         int
+	y         int
+	offset    Offset // used to locate chunks one after one
+	bb        Rect
+	chunks    []ChunkContent
+	spacing   int
+	margin    int
+	container ?ChunkContainer
 	// style
 	bg_radius    int
 	bg_color     gx.Color
@@ -384,11 +386,12 @@ mut:
 
 [params]
 pub struct RowChunkParams {
-	x       int
-	y       int
-	chunks  []ChunkContent
-	spacing int
-	parent  ?ChunkContainer
+	x         int
+	y         int
+	chunks    []ChunkContent
+	spacing   int
+	margin    int
+	container ?ChunkContainer
 	// style
 	bg_radius    int
 	bg_color     gx.Color = no_color
@@ -401,7 +404,8 @@ pub fn rowchunk(p RowChunkParams) RowChunk {
 		y: p.y
 		chunks: p.chunks
 		spacing: p.spacing
-		parent: p.parent
+		margin: p.margin
+		container: p.container
 		bg_radius: p.bg_radius
 		bg_color: p.bg_color
 		border_color: p.border_color
@@ -409,10 +413,13 @@ pub fn rowchunk(p RowChunkParams) RowChunk {
 }
 
 fn (mut c RowChunk) init(cv &ChunkView) {
-	if c.parent == none {
-		c.parent = cv
+	if c.container == none {
+		c.container = cv
 	}
 	for mut chunk in c.chunks {
+		if mut chunk is ChunkContainer {
+			chunk.container = c
+		}
 		chunk.init(cv)
 	}
 	c.update_bounding_box(cv)
@@ -422,13 +429,14 @@ fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, c.bb.w, c.bb.h)
-			d.draw_rounded_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, radius, c.bg_color)
+			d.draw_rounded_rect_filled(c.bb.x - c.margin, c.bb.y - c.margin, c.bb.w + 2 * c.margin,
+				c.bb.h + 2 * c.margin, radius, c.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			d.draw_rect_filled(c.bb.x, c.bb.y, c.bb.w, c.bb.h, c.bg_color)
 		}
 	}
-	mut dx, mut dy := c.x + offset.x, c.y + offset.y
+	mut dx, mut dy := c.x + c.margin + offset.x, c.y + c.margin + offset.y
 	for mut chunk in c.chunks {
 		chunk.draw_device(d, cv, Offset{dx, dy})
 		dy += chunk.bb.h + c.spacing
@@ -440,7 +448,7 @@ fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 
 fn (mut c RowChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 	mut bb := Rect{}
-	mut dx, mut dy := c.x + offset.x, c.y + offset.y
+	mut dx, mut dy := c.x + c.margin + offset.x, c.y + c.margin + offset.y
 	for mut chunk in c.chunks {
 		chunk.update_bounding_box(cv, Offset{dx, dy})
 		bb = bb.combine(chunk.bb)
@@ -464,25 +472,27 @@ fn (mut c RowChunk) update_chunks(cv &ChunkView) {
 }
 
 fn (mut c RowChunk) inner_pos() (int, int) {
-	return c.x, c.y
+	return c.x + c.margin, c.y + c.margin
 }
 
 fn (mut c RowChunk) inner_size() (int, int) {
-	return c.size()
+	w, h := c.container?.size()
+	return w - 2 * c.margin, h - 2 * c.margin
 }
 
 [heap]
 struct ChunkView {
 mut:
-	ui       &UI = unsafe { nil }
-	id       string
-	x        int
-	y        int
-	z_index  int
-	offset_x int
-	offset_y int
-	hidden   bool
-	parent   Layout = empty_stack
+	ui        &UI = unsafe { nil }
+	id        string
+	x         int
+	y         int
+	z_index   int
+	offset_x  int
+	offset_y  int
+	hidden    bool
+	parent    Layout = empty_stack
+	container ?ChunkContainer
 	// ChunkView specific field
 	bb     Rect
 	chunks []ChunkContent // sorted with respect of ChunkList bounding box

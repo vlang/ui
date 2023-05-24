@@ -37,7 +37,8 @@ fn main() {
 				x: 0 // 30
 				y: 240
 				spacing: 10
-				bg_color: gx.black
+				margin: 20
+				bg_color: gx.dark_gray
 				bg_radius: 10
 				chunks: [
 					ui.parachunk(
