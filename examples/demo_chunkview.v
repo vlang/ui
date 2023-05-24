@@ -34,6 +34,7 @@ fn main() {
 			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 			// ),
 			ui.rowchunk(
+				x: 0 // 30
 				y: 240
 				spacing: 10
 				bg_color: gx.black

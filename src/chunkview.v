@@ -28,11 +28,10 @@ mut:
 	update_bounding_box(cv &ChunkView, offset Offset)
 }
 
-fn (cc ChunkContent) draw_bb(cv &ChunkView, offset Offset) {
-	col := gx.black
+fn (cc ChunkContent) draw_bb(cv &ChunkView) {
+	col := gx.red
 	println('bb: ${cc.type_name()} (${cc.bb.x}, ${cc.bb.y} ,${cc.bb.w}, ${cc.bb.h})')
-	cv.ui.dd.draw_rect_empty(offset.x + cc.bb.x, offset.y + cc.bb.y, cc.bb.w, cc.bb.h,
-		col)
+	cv.ui.dd.draw_rect_empty(cc.bb.x, cc.bb.y, cc.bb.w, cc.bb.h, col)
 }
 
 // ChunkView, ParaChunk, RowChunk
@@ -302,12 +301,12 @@ fn (mut c ParaChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 		chunk.draw_device(d, cv, offset)
 	}
 	$if c_bb ? {
-		ChunkContent(c).draw_bb(cv, offset)
+		ChunkContent(c).draw_bb(cv)
 	}
 }
 
 fn (mut c ParaChunk) update_bounding_box(cv &ChunkView, offset Offset) {
-	mut bb := Rect{} // Rect{cv.x + c.x, cv.y + c.y, 0, 0}
+	mut bb := Rect{}
 	for mut chunk in c.chunks {
 		chunk.update_bounding_box(cv, offset)
 		bb = bb.combine(chunk.bb)
@@ -438,7 +437,7 @@ fn (mut c RowChunk) draw_device(d DrawDevice, cv &ChunkView, offset Offset) {
 }
 
 fn (mut c RowChunk) update_bounding_box(cv &ChunkView, offset Offset) {
-	mut bb := Rect{} // Rect{cv.x + c.x, cv.y + c.y, 0, 0}
+	mut bb := Rect{}
 	mut dx, mut dy := c.x + offset.x, c.y + offset.y
 	for mut chunk in c.chunks {
 		chunk.update_bounding_box(cv, Offset{dx, dy})
