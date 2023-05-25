@@ -389,6 +389,16 @@ pub fn rightchunk(p AlignChunkParams) VerticalAlignChunk {
 	}
 }
 
+pub fn centerchunk(p AlignChunkParams) VerticalAlignChunk {
+	return VerticalAlignChunk{
+		x: p.x
+		y: p.y
+		align: 0.5
+		spacing: p.spacing
+		content: p.content
+	}
+}
+
 fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
 	for mut chunk in c.chunks {
 		if mut chunk is ChunkContainer {
@@ -396,6 +406,7 @@ fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
 		}
 		chunk.init(cv)
 	}
+	c.update_line_height(cv)
 	c.init_line_chunks(cv)
 }
 
@@ -409,18 +420,24 @@ fn (mut c VerticalAlignChunk) draw_device(d DrawDevice, cv &ChunkView, offset Of
 }
 
 fn (mut c VerticalAlignChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+	mut bb := Rect{}
+	for mut chunk in c.chunks {
+		chunk.update_bounding_box(cv, offset)
+		bb = bb.combine(chunk.bb)
+	}
+	c.bb = bb
 }
 
 fn (mut c VerticalAlignChunk) size() (int, int) {
-	return 0, 0
+	return c.bb.w, c.bb.h
 }
 
 fn (mut c VerticalAlignChunk) inner_pos() (int, int) {
-	return 0, 0
+	return c.x, c.y
 }
 
 fn (mut c VerticalAlignChunk) inner_size() (int, int) {
-	return 0, 0
+	return c.size()
 }
 
 fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
@@ -469,8 +486,7 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 	if c.content.len > 0 {
 		contents << lines
 	}
-	//
-	println('contents: ${contents}')
+	// println('contents: ${contents}')
 	// convert content to chunks
 	c.line_chunks = [][]ChunkContent{}
 	mut style := ''
@@ -510,17 +526,17 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 
 fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
 	max_line_width, _ := c.container?.inner_size()
-	winf, wsup := -(f32(1) - c.align) * max_line_width, c.align * max_line_width
+	winf, wsup := -c.align * max_line_width, (f32(1) - c.align) * max_line_width
 	// this is a selection step required after resizing
 	c.chunks = []ChunkContent{}
 	for line_chunk in c.line_chunks {
 		last := line_chunk[line_chunk.len - 1]
-		delta := -(f32(1) - c.align) * last.bb.w
+		delta := -c.align * (last.bb.x + last.bb.w)
 		for chunk in line_chunk {
 			// This is the visible part
 			binf := chunk.bb.x + delta
 			bsup := binf + chunk.bb.w
-			if bsup >= winf || binf <= wsup {
+			if bsup >= winf && wsup >= binf {
 				if chunk is TextChunk {
 					mut new_chunk := textchunk(
 						x: int(binf - winf)

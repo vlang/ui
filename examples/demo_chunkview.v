@@ -62,13 +62,14 @@ fn main() {
 						bg_color: gx.yellow
 						bg_radius: 10
 						chunks: [
-							ui.leftchunk(
+							ui.rightchunk(
 								// indent: 20
 								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 									'|blue|toto titi tata toto titi tata toto titi tata ',
 									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-									'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
-									'|blue|toto2 titi tata toto titi tata toto titi tata ',
+									'|red|toto2 titi tata toto titi tata ', 'br', '||tutu2 tete ',
+									'br', '|blue|toto2 titi tata toto titi tata toto titi tata ',
+									'br', '||tutu2 tete ',
 									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
 							),
 							ui.textchunk(text: 'toto titi', style: 'red'),
