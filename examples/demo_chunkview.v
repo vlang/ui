@@ -62,7 +62,7 @@ fn main() {
 						bg_color: gx.yellow
 						bg_radius: 10
 						chunks: [
-							ui.rightchunk(
+							ui.centerchunk(
 								// indent: 20
 								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 									'|blue|toto titi tata toto titi tata toto titi tata ',
