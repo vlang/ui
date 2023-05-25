@@ -4,8 +4,10 @@ import gx
 fn main() {
 	mut cv := ui.chunkview(
 		id: 'cv'
+		clipping: false
 		chunks: [
 			ui.parachunk(
+				x: 0
 				y: 20
 				margin: 5
 				content: ['|h2|TextChunk']
@@ -62,7 +64,7 @@ fn main() {
 						bg_color: gx.yellow
 						bg_radius: 10
 						chunks: [
-							ui.centerchunk(
+							ui.rightchunk(
 								// indent: 20
 								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
 									'|blue|toto titi tata toto titi tata toto titi tata ',

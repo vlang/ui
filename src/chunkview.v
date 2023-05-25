@@ -414,9 +414,18 @@ fn (mut c VerticalAlignChunk) init(cv &ChunkView) {
 	c.init_line_chunks(cv)
 }
 
+fn (mut c VerticalAlignChunk) update_clipping() {
+	if container := c.container {
+		if container is RowChunk {
+			c.x, c.y, c.width, c.height = container.full_width_bb.x, container.full_width_bb.y, container.full_width_bb.w, container.full_width_bb.h
+		}
+	}
+}
+
 fn (mut c VerticalAlignChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
-	c.x, c.y = c.bb.x, c.bb.y // c.container?.bb.x, c.container?.bb.y
-	c.width, c.height = c.bb.w, c.bb.h // c.container?.bb.w, c.container?.bb.h
+	// c.x, c.y =  c.container?.inner_pos()
+	// c.width, c.height = c.container?.inner_size()
+	c.update_clipping()
 	// println("$c.x, $c.y, $c.width, $c.height")
 	cstate := clipping_start(c, mut d) or { return }
 	defer {
@@ -538,7 +547,8 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 }
 
 fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
-	max_line_width, _ := c.container?.inner_size()
+	c.update_clipping()
+	max_line_width := c.width - 10 // c.container?.inner_size()
 	winf, wsup := -c.align * max_line_width, (f32(1) - c.align) * max_line_width
 	// this is a selection step required after resizing
 	c.chunks = []ChunkContent{}
@@ -580,10 +590,11 @@ mut:
 	margin    int
 	container ?ChunkContainer
 	// style
-	full_width   bool
-	bg_radius    int
-	bg_color     gx.Color
-	border_color gx.Color
+	full_width    bool
+	full_width_bb Rect
+	bg_radius     int
+	bg_color      gx.Color
+	border_color  gx.Color
 }
 
 [params]
@@ -631,16 +642,7 @@ fn (mut c RowChunk) init(cv &ChunkView) {
 
 fn (mut c RowChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
-		mut x, y := c.bb.x, c.bb.y
-		mut w, h := c.bb.w, c.bb.h
-		if c.full_width {
-			x, _ = c.container?.inner_pos()
-			x += c.margin
-			w, _ = c.container?.inner_size()
-		}
-
-		// x, y := c.container?.inner_pos()
-		// w, h := c.container?.inner_size()
+		x, y, w, h := c.full_width_bb.x, c.full_width_bb.y, c.full_width_bb.w, c.full_width_bb.h
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
 			d.draw_rounded_rect_filled(x, y, w, h, radius, c.bg_color)
@@ -673,6 +675,18 @@ fn (mut c RowChunk) update_bounding_box(cv &ChunkView, offset Offset) {
 	c.bb.y -= c.margin
 	c.bb.w += 2 * c.margin
 	c.bb.h += 2 * c.margin
+
+	// full_width mode
+	mut x, y := c.bb.x, c.bb.y - c.margin
+	mut w, h := c.bb.w, c.bb.h
+	if c.full_width {
+		x, _ = c.inner_pos()
+		// x, _ = c.container?.inner_pos()
+		x += c.margin + offset.x
+		// w, _ = c.container?.inner_size()
+		w, _ = c.inner_size()
+	}
+	c.full_width_bb = Rect{x, y, w, h}
 }
 
 fn (mut c RowChunk) size() (int, int) {
