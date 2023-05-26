@@ -6,75 +6,99 @@ fn main() {
 		id: 'cv'
 		clipping: false
 		chunks: [
-			ui.parachunk(
-				x: 0
-				y: 20
-				margin: 5
-				content: ['|h2|TextChunk']
-			),
-			ui.textchunk(x: 0, y: 40, text: 'toto titi', style: 'red'),
-			ui.textchunk(x: 0, y: 60, text: 'toto titi', style: 'blue'),
-			ui.textchunk(
-				x: 0
-				y: 80
-				text: '😻🥰 😬🧿 🫥😴  ✔️💾'
-				style: 'emoji'
-			),
-			// ui.parachunk(
-			// 	y: 240
-			// 	indent: 20
-			// 	content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
-			// 		'|blue|toto titi tata toto titi tata toto titi tata ',
-			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-			// 		'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
-			// 		'|blue|toto2 titi tata toto titi tata toto titi tata ',
-			// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
-			// ),
 			ui.rowchunk(
-				x: 0 // 30
-				y: 120
-				margin: 10
+				y: 20
 				spacing: 20
+				margin: 20
 				chunks: [
-					ui.parachunk(
-						margin: 5
-						content: ['|h2|RowChunk with ParaChunk']
-					),
 					ui.rowchunk(
-						spacing: 10
-						margin: 20
-						bg_color: gx.dark_gray
-						bg_radius: 10
+						spacing: 5
 						chunks: [
 							ui.parachunk(
-								indent: 20
-								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
-									'|blue|toto titi tata toto titi tata toto titi tata ',
-									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-									'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
-									'|blue|toto2 titi tata toto titi tata toto titi tata ',
-									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+								margin: 5
+								content: ['|h2|TextChunk']
 							),
 							ui.textchunk(text: 'toto titi', style: 'red'),
+							ui.textchunk(text: 'toto titi', style: 'blue'),
+							ui.textchunk(
+								text: '😻🥰 😬🧿 🫥😴  ✔️💾'
+								style: 'emoji'
+							),
 						]
 					),
+					// ui.parachunk(
+					// 	y: 240
+					// 	indent: 20
+					// 	content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
+					// 		'|blue|toto titi tata toto titi tata toto titi tata ',
+					// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
+					// 		'|red|toto2 titi tata toto titi tata ', '||tutu2 tete ',
+					// 		'|blue|toto2 titi tata toto titi tata toto titi tata ',
+					// 		'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+					// ),
 					ui.rowchunk(
-						spacing: 10
-						margin: 20
-						bg_color: gx.yellow
-						bg_radius: 10
+						// x: 0 // 30
+						// y: 100
+						margin: 10
+						spacing: 20
 						chunks: [
-							ui.rightchunk(
-								// indent: 20
-								content: ['|red|toto titi tata toto titi tata ', '||tutu tete ',
-									'|blue|toto titi tata toto titi tata toto titi tata ',
-									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾', 'br', 'br',
-									'|red|toto2 titi tata toto titi tata ', 'br', '||tutu2 tete ',
-									'br', '|blue|toto2 titi tata toto titi tata toto titi tata ',
-									'br', '||tutu2 tete ',
-									'|emoji|😻🥰😬 🧿🫥😴  ✔️💾']
+							ui.parachunk(
+								margin: 5
+								content: ['|h2|RowChunk with ParaChunk']
 							),
-							ui.textchunk(text: 'toto titi', style: 'red'),
+							ui.rowchunk(
+								spacing: 10
+								margin: 20
+								bg_color: gx.dark_gray
+								bg_radius: 10
+								chunks: [
+									ui.parachunk(
+										indent: 20
+										content: [
+											'|red|toto titi tata toto titi tata ',
+											'||tutu tete ',
+											'|blue|toto titi tata toto titi tata toto titi tata ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+											'br',
+											'br',
+											'|red|toto2 titi tata toto titi tata ',
+											'||tutu2 tete ',
+											'|blue|toto2 titi tata toto titi tata toto titi tata ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+										]
+									),
+									ui.textchunk(text: 'toto titi', style: 'red'),
+								]
+							),
+							ui.rowchunk(
+								spacing: 10
+								margin: 20
+								bg_color: gx.yellow
+								bg_radius: 10
+								chunks: [
+									ui.valignchunk(
+										// indent: 20
+										align: 0.5
+										content: [
+											'|red|toto titi tata toto titi tata ',
+											'||tutu tete ',
+											'|blue|toto titi tata toto titi tata toto titi tata ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+											'br',
+											'br',
+											'|red|toto2 titi tata toto titi tata ',
+											'br',
+											'||tutu2 tete ',
+											'br',
+											'|blue|toto2 titi tata toto titi tata toto titi tata ',
+											'br',
+											'||tutu2 tete ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+										]
+									),
+									ui.textchunk(text: 'toto titi', style: 'red'),
+								]
+							),
 						]
 					),
 				]
@@ -86,8 +110,26 @@ fn main() {
 		height: 800
 		title: 'V UI: ChunkView'
 		layout: ui.column(
-			heights: [ui.compact, ui.stretch]
+			heights: [ui.compact, ui.compact, ui.stretch]
 			children: [
+				ui.slider(
+					width: 200
+					height: 30
+					orientation: .horizontal
+					min: 0
+					max: 100
+					val: 50
+					on_value_changed: fn (slider &ui.Slider) {
+						mut cv := ui.Widget(slider).get[ui.ChunkView]('cv')
+						mut res := cv.chunk(0, 1, 2, 0)
+						if mut res is ui.VerticalAlignChunk {
+							res.align = f32(slider.val) / 100.0
+						}
+						cv.update()
+						// app.hor_text = int(app.hor_slider.val).str()
+						// app.hor_textbox.border_accentuated = false
+					}
+				),
 				ui.rectangle(
 					height: 30
 					color: gx.rgb(255, 100, 100)

@@ -159,6 +159,10 @@ mut:
 	content     []string // format ["|style1|text1", "|style2|text2", ....]
 	chunks      []ChunkContent
 	container   ?ChunkContainer
+	// clipping
+	clipping bool = true
+	width    int
+	height   int
 }
 
 [params]
@@ -192,6 +196,18 @@ fn (mut c ParaChunk) init(cv &ChunkView) {
 	c.update_chunks(cv)
 }
 
+fn (mut c ParaChunk) update_clipping() {
+	if mut container := c.container {
+		if mut container is RowChunk {
+			// println("HHHHHHHH ${container.inner_size()}")
+			c.width, c.height = container.full_width_bb.w, container.full_width_bb.h
+		}
+	} else {
+		c.width, c.height = c.bb.w, c.bb.h
+	}
+	// println("$c.x, $c.y, $c.width, $c.height")
+}
+
 fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut dtw := DrawTextWidget(cv)
 	mut lh := 0
@@ -213,7 +229,9 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 }
 
 fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
-	max_line_width, _ := c.container?.inner_size()
+	c.update_clipping()
+	max_line_width := c.width - 10
+	// max_line_width, _ := c.container?.inner_size()
 	// println("max_line_width=${max_line_width}")
 	mut dtw := DrawTextWidget(cv)
 	// convert content to chunks
@@ -299,6 +317,11 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 }
 
 fn (mut c ParaChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
+	// c.update_clipping()
+	// cstate := clipping_start(c, mut d) or { return }
+	// defer {
+	// 	clipping_end(c, mut d, cstate)
+	// }
 	for mut chunk in c.chunks {
 		chunk.draw_device(mut d, cv, offset)
 	}
@@ -330,13 +353,11 @@ fn (mut c ParaChunk) inner_size() (int, int) {
 
 // Aligned chunks (not ParaChunk)
 
-struct VerticalAlignChunk {
+pub struct VerticalAlignChunk {
 mut:
 	x           int
 	y           int
 	bb          Rect
-	align       f32 // in [0,1]
-	spacing     int
 	line_height int
 	content     []string
 	line_chunks [][]ChunkContent
@@ -346,6 +367,9 @@ mut:
 	clipping bool = true
 	width    int
 	height   int
+pub mut:
+	align   f32 // in [0,1]
+	spacing int
 }
 
 [params]
@@ -420,13 +444,11 @@ fn (mut c VerticalAlignChunk) update_clipping() {
 			c.x, c.y, c.width, c.height = container.full_width_bb.x, container.full_width_bb.y, container.full_width_bb.w, container.full_width_bb.h
 		}
 	}
+	// println("$c.x, $c.y, $c.width, $c.height")
 }
 
 fn (mut c VerticalAlignChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
-	// c.x, c.y =  c.container?.inner_pos()
-	// c.width, c.height = c.container?.inner_size()
 	c.update_clipping()
-	// println("$c.x, $c.y, $c.width, $c.height")
 	cstate := clipping_start(c, mut d) or { return }
 	defer {
 		clipping_end(c, mut d, cstate)
@@ -585,7 +607,6 @@ mut:
 	y         int
 	offset    Offset // used to locate chunks one after one
 	bb        Rect
-	chunks    []ChunkContent
 	spacing   int
 	margin    int
 	container ?ChunkContainer
@@ -595,6 +616,8 @@ mut:
 	bg_radius     int
 	bg_color      gx.Color
 	border_color  gx.Color
+pub mut:
+	chunks []ChunkContent
 }
 
 [params]
@@ -712,7 +735,7 @@ fn (mut c RowChunk) inner_size() (int, int) {
 }
 
 [heap]
-struct ChunkView {
+pub struct ChunkView {
 mut:
 	ui        &UI = unsafe { nil }
 	id        string
@@ -726,8 +749,7 @@ mut:
 	container ?ChunkContainer
 	clipping  bool
 	// ChunkView specific field
-	bb     Rect
-	chunks []ChunkContent // sorted with respect of ChunkList bounding box
+	bb Rect
 	// text styles
 	text_styles TextStyles
 	// images
@@ -735,6 +757,7 @@ mut:
 pub mut:
 	width  int
 	height int
+	chunks []ChunkContent // sorted with respect of ChunkList bounding box
 }
 
 [params]
@@ -842,4 +865,29 @@ fn (mut cv ChunkView) update_chunks(cv2 &ChunkView) {
 			chunk.update_chunks(cv2)
 		}
 	}
+}
+
+pub fn (mut cv ChunkView) update() {
+	cv.update_chunks(cv)
+}
+
+pub fn (mut cv ChunkView) chunk(from ...int) ChunkContent {
+	if from.len > 0 {
+		mut chunks := cv.chunks
+		for i, ind in from {
+			// println("c $i $ind")
+			c := chunks[ind]
+			// println("c2 $i $ind")
+			if i == from.len - 1 {
+				// println("last")
+				return c
+			}
+			if c is RowChunk {
+				// println("chunk $i $ind")
+				chunks = c.chunks
+				// println("chunk2 $i $ind")
+			}
+		}
+	}
+	return textchunk()
 }
