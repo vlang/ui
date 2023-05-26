@@ -49,30 +49,6 @@ fn main() {
 							ui.rowchunk(
 								spacing: 10
 								margin: 20
-								bg_color: gx.dark_gray
-								bg_radius: 10
-								chunks: [
-									ui.parachunk(
-										indent: 20
-										content: [
-											'|red|toto titi tata toto titi tata ',
-											'||tutu tete ',
-											'|blue|toto titi tata toto titi tata toto titi tata ',
-											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
-											'br',
-											'br',
-											'|red|toto2 titi tata toto titi tata ',
-											'||tutu2 tete ',
-											'|blue|toto2 titi tata toto titi tata toto titi tata ',
-											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
-										]
-									),
-									ui.textchunk(text: 'toto titi', style: 'red'),
-								]
-							),
-							ui.rowchunk(
-								spacing: 10
-								margin: 20
 								bg_color: gx.yellow
 								bg_radius: 10
 								chunks: [
@@ -99,6 +75,30 @@ fn main() {
 									ui.textchunk(text: 'toto titi', style: 'red'),
 								]
 							),
+							ui.rowchunk(
+								spacing: 10
+								margin: 20
+								bg_color: gx.dark_gray
+								bg_radius: 10
+								chunks: [
+									ui.parachunk(
+										indent: 20
+										content: [
+											'|red|toto titi tata toto titi tata ',
+											'||tutu tete ',
+											'|blue|toto titi tata toto titi tata toto titi tata ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+											'br',
+											'br',
+											'|red|toto2 titi tata toto titi tata ',
+											'||tutu2 tete ',
+											'|blue|toto2 titi tata toto titi tata toto titi tata ',
+											'|emoji|😻🥰😬 🧿🫥😴  ✔️💾',
+										]
+									),
+									ui.textchunk(text: 'toto titi', style: 'red'),
+								]
+							),
 						]
 					),
 				]
@@ -112,23 +112,30 @@ fn main() {
 		layout: ui.column(
 			heights: [ui.compact, ui.compact, ui.stretch]
 			children: [
-				ui.slider(
-					width: 200
-					height: 30
-					orientation: .horizontal
-					min: 0
-					max: 100
-					val: 50
-					on_value_changed: fn (slider &ui.Slider) {
-						mut cv := ui.Widget(slider).get[ui.ChunkView]('cv')
-						mut res := cv.chunk(0, 1, 2, 0)
-						if mut res is ui.VerticalAlignChunk {
-							res.align = f32(slider.val) / 100.0
-						}
-						cv.update()
-						// app.hor_text = int(app.hor_slider.val).str()
-						// app.hor_textbox.border_accentuated = false
-					}
+				ui.row(
+					bg_color: gx.white
+					children: [
+						ui.slider(
+							width: 200
+							height: 20
+							orientation: .horizontal
+							min: 0
+							max: 100
+							val: 50
+							on_value_changed: fn (slider &ui.Slider) {
+								mut cv := ui.Widget(slider).get[ui.ChunkView]('cv')
+								mut res := cv.chunk(0, 1, 1, 0)
+								if mut res is ui.VerticalAlignChunk {
+									res.align = f32(slider.val) / 100.0
+								}
+								cv.update()
+							}
+						),
+						ui.label(text: '  First RowChunk '),
+						ui.switcher(open: true, id: 'sw1', on_click: on_switch),
+						ui.label(text: '  Second RowChunk '),
+						ui.switcher(open: true, id: 'sw2', on_click: on_switch),
+					]
 				),
 				ui.rectangle(
 					height: 30
@@ -183,4 +190,26 @@ fn main() {
 		mono: false
 	)
 	ui.run(window)
+}
+
+fn on_switch(switcher &ui.Switch) {
+	i := match switcher.id {
+		'sw1' { 1 }
+		else { 2 }
+	}
+	color := match switcher.id {
+		'sw2' { gx.dark_gray }
+		else { gx.yellow }
+	}
+	mut cv := ui.Widget(switcher).get[ui.ChunkView]('cv')
+	mut res := cv.chunk(0, 1, i)
+	if mut res is ui.RowChunk {
+		// res.align = f32(slider.val) / 100.0
+		if res.bg_color == color {
+			res.bg_color = ui.no_color
+		} else {
+			res.bg_color = color
+		}
+	}
+	cv.update()
 }

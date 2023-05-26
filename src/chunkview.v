@@ -601,7 +601,7 @@ fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
 }
 
 // Row Layout Chunk (also a ChunkContainer)
-struct RowChunk {
+pub struct RowChunk {
 mut:
 	x         int
 	y         int
@@ -613,11 +613,11 @@ mut:
 	// style
 	full_width    bool
 	full_width_bb Rect
-	bg_radius     int
-	bg_color      gx.Color
-	border_color  gx.Color
 pub mut:
-	chunks []ChunkContent
+	chunks       []ChunkContent
+	bg_radius    int
+	bg_color     gx.Color
+	border_color gx.Color
 }
 
 [params]
