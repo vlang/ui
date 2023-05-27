@@ -4,7 +4,7 @@ import gx
 fn main() {
 	mut cv := ui.chunkview(
 		id: 'cv'
-		clipping: false
+		scrollview: false
 		chunks: [
 			ui.rowchunk(
 				y: 20

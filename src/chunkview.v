@@ -754,17 +754,25 @@ mut:
 	text_styles TextStyles
 	// images
 	cache map[string]gg.Image
+	// scrollview
+	has_scrollview   bool
+	scrollview       &ScrollView
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 pub mut:
-	width  int
-	height int
-	chunks []ChunkContent // sorted with respect of ChunkList bounding box
+	bg_color gx.Color
+	width    int
+	height   int
+	chunks   []ChunkContent // sorted with respect of ChunkList bounding box
 }
 
 [params]
 pub struct ChunkViewParams {
-	id       string
-	chunks   []ChunkContent
-	clipping bool = true
+	id               string
+	chunks           []ChunkContent
+	clipping         bool     = true
+	bg_color         gx.Color = gx.white
+	scrollview       bool     = true
+	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn chunkview(p ChunkViewParams) &ChunkView {
@@ -772,6 +780,11 @@ pub fn chunkview(p ChunkViewParams) &ChunkView {
 		id: p.id
 		chunks: p.chunks
 		clipping: p.clipping
+		bg_color: p.bg_color
+		on_scroll_change: p.on_scroll_change
+	}
+	if p.scrollview {
+		scrollview_add(mut cv)
 	}
 	return cv
 }
@@ -783,6 +796,11 @@ fn (mut cv ChunkView) init(parent Layout) {
 	for mut chunk in cv.chunks {
 		chunk.init(cv)
 	}
+	if has_scrollview(cv) {
+		cv.scrollview.init(parent)
+		cv.ui.window.evt_mngr.add_receiver(cv, [events.on_scroll])
+		scrollview_update(cv)
+	}
 }
 
 fn (cv &ChunkView) load_style(style string) {
@@ -792,13 +810,15 @@ fn (cv &ChunkView) load_style(style string) {
 }
 
 fn (mut cv ChunkView) set_pos(x int, y int) {
+	scrollview_widget_save_offset(cv)
 	cv.x, cv.y = x, y
+	scrollview_widget_restore_offset(cv, true)
 }
 
 fn (mut cv ChunkView) propose_size(w int, h int) (int, int) {
 	cv.width, cv.height = w, h
 	// println('propose_size ${cv.id}: ${cv.size()}')
-	cv.update_chunks(cv)
+	cv.update()
 	return cv.size()
 }
 
@@ -825,11 +845,19 @@ fn (mut cv ChunkView) inner_pos() (int, int) {
 }
 
 fn (mut cv ChunkView) inner_size() (int, int) {
-	return cv.size()
+	if cv.has_scrollview {
+		return cv.bb.w, cv.bb.h
+	} else {
+		return cv.size()
+	}
 }
 
 fn (mut cv ChunkView) point_inside(x f64, y f64) bool {
-	return point_inside(cv, x, y)
+	if cv.has_scrollview {
+		return cv.scrollview.point_inside(x, y, .view)
+	} else {
+		return point_inside(cv, x, y)
+	}
 }
 
 fn (mut cv ChunkView) set_visible(state bool) {
@@ -845,9 +873,16 @@ fn (mut cv ChunkView) draw_device(mut d DrawDevice) {
 	defer {
 		offset_end(mut cv)
 	}
+	scrollview_draw_begin(mut cv, d)
+	defer {
+		scrollview_draw_end(cv, d)
+	}
 	cstate := clipping_start(cv, mut d) or { return }
 	defer {
 		clipping_end(cv, mut d, cstate)
+	}
+	if cv.bg_color != no_color {
+		d.draw_rect_filled(cv.x, cv.y, cv.width, cv.height, cv.bg_color)
 	}
 	for mut chunk in cv.chunks {
 		chunk.draw_device(mut d, cv)
@@ -856,6 +891,8 @@ fn (mut cv ChunkView) draw_device(mut d DrawDevice) {
 		debug_draw_bb_widget(mut cv, cv.ui)
 	}
 }
+
+fn (cv &ChunkView) set_children_pos() {}
 
 fn (mut cv ChunkView) cleanup() {}
 
@@ -869,6 +906,7 @@ fn (mut cv ChunkView) update_chunks(cv2 &ChunkView) {
 
 pub fn (mut cv ChunkView) update() {
 	cv.update_chunks(cv)
+	scrollview_update(cv)
 }
 
 pub fn (mut cv ChunkView) chunk(from ...int) ChunkContent {
