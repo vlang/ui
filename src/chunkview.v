@@ -756,7 +756,7 @@ mut:
 	cache map[string]gg.Image
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView
+	scrollview       &ScrollView = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 pub mut:
 	bg_color gx.Color

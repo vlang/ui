@@ -2,9 +2,13 @@ import ui
 import gx
 
 fn main() {
+	mut sc_cv := false
+	$if sc_cv ? {
+		sc_cv = true
+	}
 	mut cv := ui.chunkview(
 		id: 'cv'
-		scrollview: false
+		scrollview: sc_cv
 		chunks: [
 			ui.rowchunk(
 				y: 20

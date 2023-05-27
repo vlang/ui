@@ -134,6 +134,10 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 		if has_scrollview(w) {
 			scrollview_set_orig_xy(w, reset_offset)
 		}
+	} else if w is ChunkView {
+		if has_scrollview(w) {
+			scrollview_set_orig_xy(w, reset_offset)
+		}
 	} else if w is TextBox {
 		if has_scrollview(w) {
 			scrollview_set_orig_xy(w, reset_offset)
