@@ -9,6 +9,7 @@ fn main() {
 	mut cv := ui.chunkview(
 		id: 'cv'
 		scrollview: sc_cv
+		bg_color: gx.white
 		chunks: [
 			ui.rowchunk(
 				y: 20
@@ -117,6 +118,7 @@ fn main() {
 			heights: [ui.compact, ui.compact, ui.stretch]
 			children: [
 				ui.row(
+					margin_: 5
 					bg_color: gx.white
 					children: [
 						ui.slider(

@@ -2,6 +2,7 @@ module ui
 
 import gg
 import gx
+import math
 
 /*
 Goal: propose a viewer of chunk sequence
@@ -448,10 +449,12 @@ fn (mut c VerticalAlignChunk) update_clipping() {
 }
 
 fn (mut c VerticalAlignChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
-	c.update_clipping()
-	cstate := clipping_start(c, mut d) or { return }
-	defer {
-		clipping_end(c, mut d, cstate)
+	if !cv.has_scrollview {
+		c.update_clipping()
+		cstate := clipping_start(c, mut d) or { return }
+		defer {
+			clipping_end(c, mut d, cstate)
+		}
 	}
 	for mut chunk in c.chunks {
 		chunk.draw_device(mut d, cv, offset)
@@ -665,7 +668,11 @@ fn (mut c RowChunk) init(cv &ChunkView) {
 
 fn (mut c RowChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
 	if c.bg_color != no_color {
-		x, y, w, h := c.full_width_bb.x, c.full_width_bb.y, c.full_width_bb.w, c.full_width_bb.h
+		mut x, mut y, w, h := c.full_width_bb.x, c.full_width_bb.y, c.full_width_bb.w, c.full_width_bb.h
+		if cv.has_scrollview {
+			x -= cv.scrollview.offset_x
+			y -= cv.scrollview.offset_y
+		}
 		if c.bg_radius > 0 {
 			radius := relative_size(c.bg_radius, w, h)
 			d.draw_rounded_rect_filled(x, y, w, h, radius, c.bg_color)
@@ -841,14 +848,18 @@ fn (mut cv ChunkView) size() (int, int) {
 }
 
 fn (mut cv ChunkView) inner_pos() (int, int) {
-	return cv.x, cv.y
+	if cv.has_scrollview {
+		return cv.x + cv.scrollview.offset_x, cv.y + cv.scrollview.offset_y
+	} else {
+		return cv.x, cv.y
+	}
 }
 
 fn (mut cv ChunkView) inner_size() (int, int) {
 	if cv.has_scrollview {
 		return cv.bb.w, cv.bb.h
 	} else {
-		return cv.size()
+		return math.max(cv.width,cv.bb.w), math.max(cv.height,cv.bb.h)
 	}
 }
 
@@ -882,7 +893,8 @@ fn (mut cv ChunkView) draw_device(mut d DrawDevice) {
 		clipping_end(cv, mut d, cstate)
 	}
 	if cv.bg_color != no_color {
-		d.draw_rect_filled(cv.x, cv.y, cv.width, cv.height, cv.bg_color)
+		x, y := cv.inner_pos()
+		d.draw_rect_filled(x , y, cv.width, cv.height, cv.bg_color)
 	}
 	for mut chunk in cv.chunks {
 		chunk.draw_device(mut d, cv)
