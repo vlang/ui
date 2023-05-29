@@ -743,7 +743,7 @@ fn (mut c RowChunk) inner_size() (int, int) {
 
 [heap]
 pub struct ChunkView {
-mut:
+pub mut:
 	ui        &UI = unsafe { nil }
 	id        string
 	x         int
@@ -765,11 +765,10 @@ mut:
 	has_scrollview   bool
 	scrollview       &ScrollView = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
-pub mut:
-	bg_color gx.Color
-	width    int
-	height   int
-	chunks   []ChunkContent // sorted with respect of ChunkList bounding box
+	bg_color         gx.Color
+	width            int
+	height           int
+	chunks           []ChunkContent // sorted with respect of ChunkList bounding box
 }
 
 [params]
