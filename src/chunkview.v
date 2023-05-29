@@ -923,7 +923,7 @@ pub fn (mut cv ChunkView) update() {
 
 pub fn (mut cv ChunkView) chunk(from ...int) ChunkContent {
 	if from.len > 0 {
-		mut chunks := cv.chunks
+		mut chunks := cv.chunks.clone()
 		for i, ind in from {
 			// println("c $i $ind")
 			c := chunks[ind]
@@ -934,7 +934,7 @@ pub fn (mut cv ChunkView) chunk(from ...int) ChunkContent {
 			}
 			if c is RowChunk {
 				// println("chunk $i $ind")
-				chunks = c.chunks
+				chunks = c.chunks.clone()
 				// println("chunk2 $i $ind")
 			}
 		}
