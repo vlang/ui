@@ -243,7 +243,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut line, mut line_width := '', f64(x)
 	mut lw := 0.0
 	mut ind := 0
-	mut add_chunk := false
+	mut add_chunk := cv.has_scrollview // false
 
 	for content in c.content {
 		if content.index_after(ui.para_style_delim, 0) == 0 {
@@ -276,7 +276,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 						}
 						line = ''
 						chunks << chunk
-						add_chunk = false
+						add_chunk = cv.has_scrollview // false
 						ind = -2
 					} else {
 						// index of last whitespace except when at the end
@@ -859,7 +859,7 @@ fn (mut cv ChunkView) inner_size() (int, int) {
 	if cv.has_scrollview {
 		return cv.bb.w, cv.bb.h
 	} else {
-		return math.max(cv.width,cv.bb.w), math.max(cv.height,cv.bb.h)
+		return math.max(cv.width, cv.bb.w), math.max(cv.height, cv.bb.h)
 	}
 }
 
@@ -894,7 +894,7 @@ fn (mut cv ChunkView) draw_device(mut d DrawDevice) {
 	}
 	if cv.bg_color != no_color {
 		x, y := cv.inner_pos()
-		d.draw_rect_filled(x , y, cv.width, cv.height, cv.bg_color)
+		d.draw_rect_filled(x, y, cv.width, cv.height, cv.bg_color)
 	}
 	for mut chunk in cv.chunks {
 		chunk.draw_device(mut d, cv)
