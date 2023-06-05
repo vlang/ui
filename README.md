@@ -12,7 +12,19 @@
 
 
 ```v
-ui.window(
+import ui
+
+
+struct App {
+mut:
+	window     &ui.Window = unsafe { nil }
+	first_name string
+	last_name  string
+}
+
+fn main() {
+	mut app := &App{}
+	app.window = ui.window(
     width: 600
     height: 400
     title: 'V UI Demo'
@@ -42,6 +54,9 @@ ui.window(
         )
     ]
 )
+	ui.run(app.window)
+}
+
 ````
 
 ### Installation
