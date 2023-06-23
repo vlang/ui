@@ -527,8 +527,32 @@ fn on_event(e &gg.Event, mut window Window) {
 
 	// delegation
 	if window.evt_mngr.has_delegation(e, window.ui) {
-		window.eventbus.publish(events.on_delegate, window, e)
-		return
+		x, y := e.mouse_x / window.ui.window.dpi_scale, e.mouse_y / window.ui.window.dpi_scale
+
+		mut highest_selected_delegated_widget := window.evt_mngr.receivers[events.on_delegate][0]
+
+		for mut widget in window.evt_mngr.receivers[events.on_delegate] {
+			if widget.point_inside(x, y) {
+				highest_selected_delegated_widget = widget
+			}
+		}
+
+		mut highest_selected_widget_z_index := -1
+
+		for _, mut value in window.widgets {
+			if value.hidden || value.id == highest_selected_delegated_widget.id {
+				continue
+			}
+
+			if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
+				highest_selected_widget_z_index = value.z_index
+			}
+		}
+
+		if highest_selected_delegated_widget.z_index > highest_selected_widget_z_index {
+			window.eventbus.publish(events.on_delegate, window, e)
+			return
+		}
 	}
 
 	$if macos {
