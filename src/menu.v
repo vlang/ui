@@ -417,6 +417,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 
 pub fn (mut m Menu) add_item(p MenuItemParams) {
 	m.items << menuitem(p)
+	m.update_size()
 }
 
 pub fn (mut m Menu) set_visible(state bool) {
