@@ -533,7 +533,7 @@ fn on_event(e &gg.Event, mut window Window) {
 
 		for mut widget in window.evt_mngr.receivers[events.on_delegate] {
 			if widget.point_inside(x, y) {
-				highest_selected_delegated_widget = widget
+				highest_selected_delegated_widget = *widget
 			}
 		}
 
