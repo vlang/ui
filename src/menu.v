@@ -420,6 +420,10 @@ pub fn (mut m Menu) add_item(p MenuItemParams) {
 	m.update_size()
 }
 
+pub fn (mut m Menu) get_items_count() int {
+	return m.items.len
+}
+
 pub fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
 }
