@@ -527,8 +527,32 @@ fn on_event(e &gg.Event, mut window Window) {
 
 	// delegation
 	if window.evt_mngr.has_delegation(e, window.ui) {
-		window.eventbus.publish(events.on_delegate, window, e)
-		return
+		x, y := e.mouse_x / window.ui.window.dpi_scale, e.mouse_y / window.ui.window.dpi_scale
+
+		mut highest_selected_delegated_widget := window.evt_mngr.receivers[events.on_delegate][0]
+
+		for mut widget in window.evt_mngr.receivers[events.on_delegate] {
+			if widget.point_inside(x, y) {
+				highest_selected_delegated_widget = *widget
+			}
+		}
+
+		mut highest_selected_widget_z_index := -1
+
+		for _, mut value in window.widgets {
+			if value.hidden || value.id == highest_selected_delegated_widget.id {
+				continue
+			}
+
+			if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
+				highest_selected_widget_z_index = value.z_index
+			}
+		}
+
+		if highest_selected_delegated_widget.z_index > highest_selected_widget_z_index {
+			window.eventbus.publish(events.on_delegate, window, e)
+			return
+		}
 	}
 
 	$if macos {
@@ -692,8 +716,8 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 }
 
-fn window_resize(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_resize(event gg.Event, u &UI) {
+	mut window := u.window
 	if !window.resizable {
 		return
 	}
@@ -711,9 +735,9 @@ fn window_resize(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_key_down(event gg.Event, ui &UI) {
+fn window_key_down(event gg.Event, u &UI) {
 	// println('keydown char=$event.char_code')
-	mut window := ui.window
+	mut window := u.window
 	// C.printf(c'g child=%p\n', child)
 	// println('window_keydown $event')
 	e := KeyEvent{
@@ -780,10 +804,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 	*/
 }
 
-fn window_char(event gg.Event, ui &UI) {
+fn window_char(event gg.Event, u &UI) {
 	// println('keychar char=$event.char_code')
 	// println("window_char: $event")
-	window := ui.window
+	window := u.window
 	e := KeyEvent{
 		codepoint: event.char_code
 		mods: unsafe { KeyMod(event.modifiers) }
@@ -796,9 +820,9 @@ fn window_char(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_char, window, e)
 }
 
-fn window_mouse_down(event gg.Event, mut ui UI) {
+fn window_mouse_down(event gg.Event, mut u UI) {
 	// println("typ mouse down $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / window.dpi_scale)
@@ -806,9 +830,9 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
-	ui.keymods = unsafe { KeyMod(event.modifiers) }
+	u.keymods = unsafe { KeyMod(event.modifiers) }
 	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = true
+		u.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(window, e)
@@ -831,9 +855,9 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	}
 }
 
-fn window_mouse_move(event gg.Event, ui &UI) {
+fn window_mouse_move(event gg.Event, u &UI) {
 	// println("typ mouse move $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / window.dpi_scale
 		y: event.mouse_y / window.dpi_scale
@@ -857,9 +881,9 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
-fn window_mouse_up(event gg.Event, mut ui UI) {
+fn window_mouse_up(event gg.Event, mut u UI) {
 	// println("typ mouse up $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseEvent{
 		action: .up
 		x: int(event.mouse_x / window.dpi_scale)
@@ -892,14 +916,14 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		}
 		drag_child_dropped(mut window)
 	}
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	gui.keymods = unsafe { KeyMod(0) }
 }
 
 // OBSOLETE see window_click_or_touch_pad
 /*
-fn window_click(event gg.Event, mut ui UI) {
-	window := ui.window
+fn window_click(event gg.Event, mut u UI) {
+	window := u.window
 	// println("typ click $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
@@ -927,8 +951,8 @@ fn window_click(event gg.Event, mut ui UI) {
 	}
 }*/
 
-fn window_scroll(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_scroll(event gg.Event, u &UI) {
+	mut window := u.window
 	// println('title =$window.title')
 	e := ScrollEvent{
 		mouse_x: event.mouse_x / window.dpi_scale
@@ -943,8 +967,8 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_touch_down(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_touch_down(event gg.Event, u &UI) {
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: window.touch.start.pos.x
@@ -957,8 +981,8 @@ fn window_touch_down(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_down, window, e)
 }
 
-fn window_touch_move(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_move(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseMoveEvent{
 		x: f64(window.touch.move.pos.x)
 		y: f64(window.touch.move.pos.y)
@@ -970,8 +994,8 @@ fn window_touch_move(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_move, window, e)
 }
 
-fn window_touch_up(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_up(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseEvent{
 		action: .up
 		x: window.touch.end.pos.x
@@ -983,9 +1007,9 @@ fn window_touch_up(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_up, window, e)
 }
 
-fn window_click_or_touch_tap(event gg.Event, ui &UI) {
+fn window_click_or_touch_tap(event gg.Event, u &UI) {
 	// println("typ on_tap $event.typ")
-	window := ui.window
+	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
@@ -1003,14 +1027,14 @@ fn window_click_or_touch_tap(event gg.Event, ui &UI) {
 		window.eventbus.publish(events.on_click, window, e)
 	}
 
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	if int(event.mouse_button) < 3 {
 		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
-fn window_touch_scroll(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_touch_scroll(event gg.Event, u &UI) {
+	mut window := u.window
 	// println('title =$window.title')
 	s, m := window.touch.start, window.touch.move
 	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
@@ -1027,8 +1051,8 @@ fn window_touch_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_touch_swipe(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_swipe(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
@@ -1045,25 +1069,25 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 	} else {
 		window.eventbus.publish(events.on_swipe, window, e)
 	}
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	if int(event.mouse_button) < 3 {
 		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
-fn window_click_or_touch_tap_and_swipe(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_click_or_touch_tap_and_swipe(event gg.Event, u &UI) {
+	window := u.window
 	s, e := window.touch.start, window.touch.end
 	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
 	if math.max(adx, ady) < 10 {
-		window_click_or_touch_tap(event, ui)
+		window_click_or_touch_tap(event, u)
 	} else {
-		window_touch_swipe(event, ui)
+		window_touch_swipe(event, u)
 	}
 }
 
-fn window_files_droped(event gg.Event, mut ui UI) {
-	mut window := ui.window
+fn window_files_droped(event gg.Event, mut u UI) {
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / window.dpi_scale)

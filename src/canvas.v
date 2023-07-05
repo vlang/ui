@@ -53,8 +53,8 @@ pub fn canvas(c CanvasParams) &Canvas {
 
 fn (mut c Canvas) init(parent Layout) {
 	c.parent = parent
-	ui := parent.get_ui()
-	c.ui = ui
+	u := parent.get_ui()
+	c.ui = u
 }
 
 [manualfree]

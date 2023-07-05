@@ -64,23 +64,23 @@ mut:
 	hash map[string]int
 }
 
-pub fn (mut ui UI) add_font(font_name string, font_path string) {
+pub fn (mut u UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
 		println('add font ${font_name} at ${font_path}')
 	}
-	if mut ui.dd is DrawDeviceContext {
+	if mut u.dd is DrawDeviceContext {
 		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
 		// (in fons__getGlyph, added becomes 0)
-		ui.dd.ft.fons.reset_atlas(512, 512)
+		u.dd.ft.fons.reset_atlas(512, 512)
 
 		bytes := os.read_bytes(font_path) or { []u8{} }
-		// gg := ui.gg
-		// mut f := ui.fonts
+		// gg := u.gg
+		// mut f := u.fonts
 		if bytes.len > 0 {
-			font_ := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
+			font_ := u.dd.ft.fons.add_font_mem('sans', bytes, false)
 			if font_ >= 0 {
-				ui.font_paths[font_name] = font_path
-				ui.fonts.hash[font_name] = font_
+				u.font_paths[font_name] = font_path
+				u.fonts.hash[font_name] = font_
 				$if fontset ? {
 					println('font ${font_} ${font_name} added (${font_path})')
 				}
@@ -100,12 +100,12 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		}
 	}
 	$if fontset ? {
-		println('${ui.fonts}')
+		println('${u.fonts}')
 	}
 }
 
 // define style to be used with drawtext method
-pub fn (mut ui UI) add_style(ts TextStyle) {
+pub fn (mut u UI) add_style(ts TextStyle) {
 	mut id := ts.id
 	if id == '' {
 		if ts.font_name == '' {
@@ -114,7 +114,7 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 		}
 		id = ts.font_name
 	}
-	ui.text_styles[id] = TextStyle{
+	u.text_styles[id] = TextStyle{
 		id: id
 		font_name: ts.font_name
 		color: ts.color

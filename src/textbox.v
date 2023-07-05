@@ -219,8 +219,8 @@ pub fn textbox(c TextBoxParams) &TextBox {
 
 pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
-	ui := parent.get_ui()
-	tb.ui = ui
+	u := parent.get_ui()
+	tb.ui = u
 	// tb.init_style()
 	tb.load_style()
 	// TODO: Maybe in a method later to allow font size update
@@ -394,12 +394,14 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		// Placeholder
 		if text == '' && placeholder != '' {
 			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
-				color: gx.gray)
+				color: gx.gray
+			)
 			// Native text rendering
 			$if macos {
 				if tb.ui.gg.native_rendering {
 					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
-						color: gx.gray)
+						color: gx.gray
+					)
 				}
 			}
 		}

@@ -326,7 +326,6 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-		
 		color: gx.gray
 	)
 }

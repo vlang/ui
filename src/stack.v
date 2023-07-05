@@ -177,8 +177,8 @@ fn (mut s Stack) build(win &Window) {
 
 pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
-	mut ui := parent.get_ui()
-	s.ui = ui
+	u := parent.get_ui()
+	s.ui = u
 	s.init_size()
 	s.load_style()
 	// Init all children recursively
@@ -1112,7 +1112,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
-		if child.z_index > s.z_index {
+		if s.z_index > child.z_index {
 			s.z_index = child.z_index - 1
 		}
 	}

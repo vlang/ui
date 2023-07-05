@@ -59,8 +59,8 @@ pub fn progressbar(c ProgressBarParams) &ProgressBar {
 
 fn (mut pb ProgressBar) init(parent Layout) {
 	pb.parent = parent
-	ui := parent.get_ui()
-	pb.ui = ui
+	u := parent.get_ui()
+	pb.ui = u
 	pb.load_style()
 }
 
