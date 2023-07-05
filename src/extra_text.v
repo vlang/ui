@@ -33,10 +33,10 @@ fn word_wrap_text_to_lines(s string, max_line_length int) []string {
 	return word_wrapped_lines
 }
 
-fn text_lines_size(lines []string, ui &UI) (int, int) {
+fn text_lines_size(lines []string, u &UI) (int, int) {
 	mut width, mut height := 0, 0
 	mut tw, mut th := 0, 0
-	dd := ui.dd
+	dd := u.dd
 	for line in lines {
 		tw, th = dd.text_size(line)
 		// println("tt line: $line -> ($tw, $th)")

@@ -55,8 +55,8 @@ pub fn transition(c TransitionParams) &Transition {
 
 fn (mut t Transition) init(parent Layout) {
 	t.parent = parent
-	ui := parent.get_ui()
-	t.ui = ui
+	u := parent.get_ui()
+	t.ui = u
 }
 
 [manualfree]

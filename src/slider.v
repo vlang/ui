@@ -110,8 +110,8 @@ pub fn slider(c SliderParams) &Slider {
 
 fn (mut s Slider) init(parent Layout) {
 	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
+	u := parent.get_ui()
+	s.ui = u
 	s.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
