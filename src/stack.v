@@ -1111,7 +1111,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
-		if child.z_index > s.z_index {
+		if s.z_index > child.z_index {
 			s.z_index = child.z_index - 1
 		}
 	}
