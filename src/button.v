@@ -148,8 +148,8 @@ pub fn button(c ButtonParams) &Button {
 
 fn (mut b Button) init(parent Layout) {
 	b.parent = parent
-	ui := parent.get_ui()
-	b.ui = ui
+	u := parent.get_ui()
+	b.ui = u
 	if b.use_icon {
 		if mut b.ui.dd is DrawDeviceContext {
 			if img := b.ui.dd.create_image(b.icon_path) {
@@ -160,7 +160,7 @@ fn (mut b Button) init(parent Layout) {
 	b.load_style()
 	b.set_text_size()
 	if b.tooltip.text != '' {
-		mut win := ui.window
+		mut win := u.window
 		win.tooltip.append(b, b.tooltip)
 	}
 	mut subscriber := parent.get_subscriber()

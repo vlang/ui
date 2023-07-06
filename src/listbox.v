@@ -136,8 +136,8 @@ pub fn listbox(c ListBoxParams) &ListBox {
 
 fn (mut lb ListBox) init(parent Layout) {
 	lb.parent = parent
-	ui := parent.get_ui()
-	lb.ui = ui
+	u := parent.get_ui()
+	lb.ui = u
 	lb.init_style()
 	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()

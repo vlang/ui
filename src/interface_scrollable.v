@@ -471,8 +471,8 @@ pub mut:
 
 fn (mut sv ScrollView) init(parent Layout) {
 	mut widget := sv.widget
-	ui := widget.ui // get_ui()
-	sv.ui = ui
+	u := widget.ui // get_ui()
+	sv.ui = u
 	sv.parent = parent
 
 	mut subscriber := parent.get_subscriber()

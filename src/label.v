@@ -68,8 +68,8 @@ pub fn label(c LabelParams) &Label {
 }
 
 fn (mut l Label) init(parent Layout) {
-	ui := parent.get_ui()
-	l.ui = ui
+	u := parent.get_ui()
+	l.ui = u
 	l.load_style()
 	// l.init_style()
 	l.init_size()
