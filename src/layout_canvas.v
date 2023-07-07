@@ -802,7 +802,7 @@ fn (mut c CanvasLayout) resize(width int, height int) {
 	c.propose_size(width, height)
 }
 
-fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber {
+fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber[string] {
 	parent := c.parent
 	return parent.get_subscriber()
 }
