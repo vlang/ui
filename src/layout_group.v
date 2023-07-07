@@ -196,7 +196,7 @@ fn (g &Group) get_ui() &UI {
 fn (g &Group) resize(width int, height int) {
 }
 
-fn (g &Group) get_subscriber() &eventbus.Subscriber {
+fn (g &Group) get_subscriber() &eventbus.Subscriber[string] {
 	parent := g.parent
 	return parent.get_subscriber()
 }
