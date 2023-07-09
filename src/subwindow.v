@@ -368,7 +368,7 @@ fn (s &SubWindow) get_ui() &UI {
 	return s.ui
 }
 
-fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
+fn (s &SubWindow) get_subscriber() &eventbus.Subscriber[string] {
 	parent := s.parent
 	return parent.get_subscriber()
 }

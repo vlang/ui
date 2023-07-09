@@ -1072,7 +1072,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	}
 }
 
-fn (s &Stack) get_subscriber() &eventbus.Subscriber {
+fn (s &Stack) get_subscriber() &eventbus.Subscriber[string] {
 	parent := s.parent
 	return parent.get_subscriber()
 }

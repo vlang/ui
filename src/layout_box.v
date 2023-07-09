@@ -626,7 +626,7 @@ fn (mut b BoxLayout) resize(width int, height int) {
 	}
 }
 
-fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber {
+fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber[string] {
 	parent := b.parent
 	return parent.get_subscriber()
 }

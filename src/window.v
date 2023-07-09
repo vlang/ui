@@ -62,7 +62,7 @@ pub mut:
 	unfocused_fn      WindowFn
 	on_init           WindowFn
 	on_draw           WindowFn
-	eventbus          &eventbus.EventBus = eventbus.new()
+	eventbus          &eventbus.EventBus[string] = eventbus.new[string]()
 	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
 	mode              WindowSizeType
 	root_layout       Layout = empty_stack
@@ -1254,7 +1254,7 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
+pub fn (w &Window) get_subscriber() &eventbus.Subscriber[string] {
 	return w.eventbus.subscriber
 }
 
