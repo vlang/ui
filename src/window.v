@@ -544,7 +544,21 @@ fn on_event(e &gg.Event, mut window Window) {
 				continue
 			}
 
-			if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
+			// NOTE: this is have a place because submenus are not in widgets list.
+			// We also can't do that check in the Menu point_inside() because
+			// this method used for other purposes too and checking submenu there
+			// generates strange bugs.
+			if mut value is Menu {
+				for item in value.items {
+					if item.has_menu() {
+						if item.submenu.hidden == false
+							&& item.submenu.z_index > highest_selected_widget_z_index
+							&& item.submenu.point_inside(x, y) {
+							highest_selected_widget_z_index = item.submenu.z_index
+						}
+					}
+				}
+			} else if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
 				highest_selected_widget_z_index = value.z_index
 			}
 		}
