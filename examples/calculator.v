@@ -94,7 +94,7 @@ fn (mut app App) btn_click(btn &ui.Button) {
 	if number.contains('.') {
 		app.is_float = true
 	}
-	if op in ['+', '-', '÷', '*', '±', '='] {
+	if op in ['+', '-', '÷', '*', '±', '=', '^'] {
 		if !app.new_number {
 			app.new_number = true
 			app.operands << number.f64()
@@ -173,6 +173,9 @@ fn (mut app App) calculate() {
 					b = 0.0000000001
 				}
 				result = a / b
+			}
+			'^' {
+				result = math.pow(a, b)
 			}
 			else {
 				operands << a
