@@ -35,7 +35,7 @@ struct C.WebKitWebView {
 
 fn C.webkit_web_view_new() &C.WebKitWebView
 
-fn C.webkit_web_view_load_uri(webview voidptr, uri string)
+fn C.webkit_web_view_load_uri(webview voidptr, uri &char)
 
 fn create_linux_web_view(url string, title string) {
 	C.gtk_init(0, unsafe { nil })
