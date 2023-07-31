@@ -47,7 +47,10 @@ pub fn exec(scriptSource string) {
 }
 
 pub fn get_global_js_val() string {
-	return C.darwin_get_webview_js_val()
+	$if macos {
+		return C.darwin_get_webview_js_val()
+	}
+	return ''
 }
 
 pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {

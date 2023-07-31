@@ -95,7 +95,7 @@ fn (mut pic Picture) init(parent Layout) {
 		if !pic.use_cache && pic.path in u.resource_cache {
 			pic.image = u.resource_cache[pic.path]
 		} else if mut pic.ui.dd is DrawDeviceContext {
-			dd := pic.ui.dd
+			mut dd := pic.ui.dd
 			if img := dd.create_image(pic.path) {
 				pic.image = img
 				u.resource_cache[pic.path] = pic.image

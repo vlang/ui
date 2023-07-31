@@ -10,7 +10,7 @@ pub interface Layout {
 	get_ui() &UI
 	size() (int, int)
 	get_children() []Widget
-	get_subscriber() &eventbus.Subscriber
+	get_subscriber() &eventbus.Subscriber[string]
 mut:
 	resize(w int, h int)
 	update_layout()

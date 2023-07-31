@@ -64,6 +64,11 @@ pub fn (mut gui UI) refresh() {
 }
 
 fn (mut gui UI) idle_loop() {
+	$if macos {
+		if gui.gg.native_rendering {
+			return
+		}
+	}
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
 	// the cursor will blink at a rate of 1Hz, even if
