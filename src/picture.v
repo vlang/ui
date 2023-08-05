@@ -30,7 +30,7 @@ mut:
 	path      string
 	ui        &UI = unsafe { nil }
 	image     gg.Image
-	on_click  PictureFn
+	on_click  PictureFn = unsafe { nil }
 	use_cache bool
 	tooltip   TooltipMessage
 }
@@ -43,9 +43,9 @@ pub struct PictureParams {
 	height       int
 	z_index      int
 	movable      bool
-	on_click     PictureFn
-	use_cache    bool     = true
-	ref          &Picture = unsafe { nil }
+	on_click     PictureFn = unsafe { nil }
+	use_cache    bool      = true
+	ref          &Picture  = unsafe { nil }
 	image        gg.Image
 	tooltip      string
 	tooltip_side Side = .top

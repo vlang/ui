@@ -94,8 +94,8 @@ pub mut:
 	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
-	on_build  BuildFn
-	on_init   InitFn
+	on_build  BuildFn = unsafe { nil }
+	on_init   InitFn  = unsafe { nil }
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView = unsafe { nil }

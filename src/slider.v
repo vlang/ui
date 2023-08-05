@@ -38,7 +38,7 @@ pub mut:
 	max                  int = 100
 	is_focused           bool
 	dragging             bool
-	on_value_changed     SliderFn
+	on_value_changed     SliderFn = unsafe { nil }
 	focus_on_thumb_only  bool
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -66,10 +66,10 @@ pub struct SliderParams {
 	max                  int
 	val                  f32
 	orientation          Orientation
-	theme                string = no_style
-	radius               int    = 5
-	on_value_changed     SliderFn
-	focus_on_thumb_only  bool = true
+	theme                string   = no_style
+	radius               int      = 5
+	on_value_changed     SliderFn = unsafe { nil }
+	focus_on_thumb_only  bool     = true
 	rev_min_max_pos      bool
 	thumb_in_track       bool
 	track_line_displayed bool = true

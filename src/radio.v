@@ -58,14 +58,14 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// selected_value string
-	on_click RadioFn
+	on_click RadioFn = unsafe { nil }
 }
 
 [params]
 pub struct RadioParams {
 	RadioStyleParams
 	id       string
-	on_click RadioFn
+	on_click RadioFn = unsafe { nil }
 	values   []string
 	title    string
 	width    int

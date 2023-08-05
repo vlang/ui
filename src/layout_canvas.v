@@ -61,8 +61,8 @@ pub mut:
 	component         voidptr
 	active_evt_mngr   bool
 	delegate_evt_mngr bool
-	on_build          BuildFn
-	on_init           InitFn
+	on_build          BuildFn = unsafe { nil }
+	on_init           InitFn  = unsafe { nil }
 	// scrollview
 	has_scrollview bool
 	scrollview     &ScrollView = unsafe { nil }
@@ -81,7 +81,7 @@ pub mut:
 	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
 	bounding_change_fn  CanvasLayoutBoundingFn   = CanvasLayoutBoundingFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
-	on_delegate         CanvasLayoutDelegateFn
+	on_delegate         CanvasLayoutDelegateFn   = unsafe { nil }
 	parent              Layout = empty_stack
 mut:
 	// To keep track of original position

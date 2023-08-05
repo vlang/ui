@@ -33,9 +33,9 @@ pub mut:
 	parent      Layout = empty_stack
 	is_focused  bool
 	open        bool
-	ui          &UI = unsafe { nil }
-	on_click    SwitchFn
-	on_key_down SwitchU32Fn
+	ui          &UI         = unsafe { nil }
+	on_click    SwitchFn    = unsafe { nil }
+	on_key_down SwitchU32Fn = unsafe { nil }
 	hidden      bool
 	// component state for composable widget
 	component voidptr
@@ -45,8 +45,8 @@ pub mut:
 pub struct SwitchParams {
 	id          string
 	z_index     int
-	on_click    SwitchFn
-	on_key_down SwitchU32Fn
+	on_click    SwitchFn    = unsafe { nil }
+	on_key_down SwitchU32Fn = unsafe { nil }
 	open        bool
 }
 

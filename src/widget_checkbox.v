@@ -31,9 +31,9 @@ pub mut:
 	parent           Layout = empty_stack
 	is_focused       bool
 	checked          bool
-	ui               &UI = unsafe { nil }
-	on_click         CheckBoxFn
-	on_check_changed CheckBoxFn
+	ui               &UI        = unsafe { nil }
+	on_click         CheckBoxFn = unsafe { nil }
+	on_check_changed CheckBoxFn = unsafe { nil }
 	text             string
 	// Adjustable
 	justify  []f64
@@ -61,8 +61,8 @@ pub struct CheckBoxParams {
 	y                int
 	z_index          int
 	text             string
-	on_click         CheckBoxFn
-	on_check_changed CheckBoxFn
+	on_click         CheckBoxFn = unsafe { nil }
+	on_check_changed CheckBoxFn = unsafe { nil }
 	checked          bool
 	disabled         bool
 	justify          []f64  = [0.0, 0.0]

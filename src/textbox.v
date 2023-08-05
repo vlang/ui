@@ -153,8 +153,8 @@ pub struct TextBoxParams {
 	// text_size          f64
 	theme         string = no_style
 	fitted_height bool
-	on_key_down   TextBoxU32Fn
-	on_char       TextBoxU32Fn
+	on_key_down   TextBoxU32Fn = unsafe { nil }
+	on_char       TextBoxU32Fn = unsafe { nil }
 	// on_key_up          KeyUpFn
 	on_enter         TextBoxFn = TextBoxFn(0)
 	on_change        TextBoxFn = TextBoxFn(0)
