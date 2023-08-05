@@ -43,25 +43,25 @@ pub mut:
 	width             int
 	height            int
 	no_fullscreen     bool
-	click_fn          WindowMouseFn
-	mouse_down_fn     WindowMouseFn
-	mouse_up_fn       WindowMouseFn
-	files_droped_fn   WindowMouseFn
-	swipe_fn          WindowMouseFn
-	mouse_move_fn     WindowMouseMoveFn
-	scroll_fn         WindowScrollFn
-	key_down_fn       WindowKeyFn
-	char_fn           WindowKeyFn
-	resize_fn         WindowResizeFn
-	iconified_fn      WindowFn
-	restored_fn       WindowFn
-	quit_requested_fn WindowFn
-	suspended_fn      WindowFn
-	resumed_fn        WindowFn
-	focused_fn        WindowFn
-	unfocused_fn      WindowFn
-	on_init           WindowFn
-	on_draw           WindowFn
+	click_fn          WindowMouseFn     = unsafe { nil }
+	mouse_down_fn     WindowMouseFn     = unsafe { nil }
+	mouse_up_fn       WindowMouseFn     = unsafe { nil }
+	files_droped_fn   WindowMouseFn     = unsafe { nil }
+	swipe_fn          WindowMouseFn     = unsafe { nil }
+	mouse_move_fn     WindowMouseMoveFn = unsafe { nil }
+	scroll_fn         WindowScrollFn    = unsafe { nil }
+	key_down_fn       WindowKeyFn       = unsafe { nil }
+	char_fn           WindowKeyFn       = unsafe { nil }
+	resize_fn         WindowResizeFn    = unsafe { nil }
+	iconified_fn      WindowFn = unsafe { nil }
+	restored_fn       WindowFn = unsafe { nil }
+	quit_requested_fn WindowFn = unsafe { nil }
+	suspended_fn      WindowFn = unsafe { nil }
+	resumed_fn        WindowFn = unsafe { nil }
+	focused_fn        WindowFn = unsafe { nil }
+	unfocused_fn      WindowFn = unsafe { nil }
+	on_init           WindowFn = unsafe { nil }
+	on_draw           WindowFn = unsafe { nil }
 	eventbus          &eventbus.EventBus[string] = eventbus.new[string]()
 	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
 	mode              WindowSizeType
@@ -122,25 +122,25 @@ pub:
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
 
-	on_click              WindowMouseFn
-	on_mouse_down         WindowMouseFn
-	on_mouse_up           WindowMouseFn
-	on_files_droped       WindowMouseFn
-	on_swipe              WindowMouseFn
-	on_key_down           WindowKeyFn
-	on_char               WindowKeyFn
-	on_scroll             WindowScrollFn
-	on_resize             WindowResizeFn
-	on_iconify            WindowFn
-	on_restore            WindowFn
-	on_quit_request       WindowFn
-	on_suspend            WindowFn
-	on_resume             WindowFn
-	on_focus              WindowFn
-	on_unfocus            WindowFn
-	on_mouse_move         WindowMouseMoveFn
-	on_init               WindowFn
-	on_draw               WindowFn
+	on_click              WindowMouseFn     = unsafe { nil }
+	on_mouse_down         WindowMouseFn     = unsafe { nil }
+	on_mouse_up           WindowMouseFn     = unsafe { nil }
+	on_files_droped       WindowMouseFn     = unsafe { nil }
+	on_swipe              WindowMouseFn     = unsafe { nil }
+	on_key_down           WindowKeyFn       = unsafe { nil }
+	on_char               WindowKeyFn       = unsafe { nil }
+	on_scroll             WindowScrollFn    = unsafe { nil }
+	on_resize             WindowResizeFn    = unsafe { nil }
+	on_iconify            WindowFn          = unsafe { nil }
+	on_restore            WindowFn          = unsafe { nil }
+	on_quit_request       WindowFn          = unsafe { nil }
+	on_suspend            WindowFn          = unsafe { nil }
+	on_resume             WindowFn          = unsafe { nil }
+	on_focus              WindowFn          = unsafe { nil }
+	on_unfocus            WindowFn          = unsafe { nil }
+	on_mouse_move         WindowMouseMoveFn = unsafe { nil }
+	on_init               WindowFn = unsafe { nil }
+	on_draw               WindowFn = unsafe { nil }
 	children              []Widget
 	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string

@@ -26,23 +26,23 @@ pub fn (mut app Application) add_window(p WindowParams) {
 
 [params]
 pub struct WindowCallbackParams {
-	on_click        WindowMouseFn
-	on_mouse_down   WindowMouseFn
-	on_mouse_up     WindowMouseFn
-	on_files_droped WindowMouseFn
-	on_swipe        WindowMouseFn
-	on_mouse_move   WindowMouseMoveFn
-	on_key_down     WindowKeyFn
-	on_char         WindowKeyFn
-	on_scroll       WindowScrollFn
-	on_resize       WindowResizeFn
-	on_iconify      WindowFn
-	on_restore      WindowFn
-	on_quit_request WindowFn
-	on_suspend      WindowFn
-	on_resume       WindowFn
-	on_focus        WindowFn
-	on_unfocus      WindowFn
+	on_click        WindowMouseFn     = unsafe { nil }
+	on_mouse_down   WindowMouseFn     = unsafe { nil }
+	on_mouse_up     WindowMouseFn     = unsafe { nil }
+	on_files_droped WindowMouseFn     = unsafe { nil }
+	on_swipe        WindowMouseFn     = unsafe { nil }
+	on_mouse_move   WindowMouseMoveFn = unsafe { nil }
+	on_key_down     WindowKeyFn       = unsafe { nil }
+	on_char         WindowKeyFn       = unsafe { nil }
+	on_scroll       WindowScrollFn    = unsafe { nil }
+	on_resize       WindowResizeFn    = unsafe { nil }
+	on_iconify      WindowFn = unsafe { nil }
+	on_restore      WindowFn = unsafe { nil }
+	on_quit_request WindowFn = unsafe { nil }
+	on_suspend      WindowFn = unsafe { nil }
+	on_resume       WindowFn = unsafe { nil }
+	on_focus        WindowFn = unsafe { nil }
+	on_unfocus      WindowFn = unsafe { nil }
 }
 
 // add ability to complete app.window callbacks without add_window which is called only in app

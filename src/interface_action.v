@@ -10,7 +10,7 @@ pub type Actions = map[string]Action
 
 pub struct Action {
 pub mut:
-	action_fn ActionFn
+	action_fn ActionFn = unsafe { nil }
 	context   voidptr
 }
 

@@ -49,15 +49,15 @@ pub mut:
 	text_height int
 	parent      Layout = empty_stack
 	is_focused  bool
-	ui          &UI = unsafe { nil }
-	on_click    ButtonFn
+	ui          &UI      = unsafe { nil }
+	on_click    ButtonFn = unsafe { nil }
 	// TODO: same convention for all callback
-	on_key_down    ButtonU32Fn
-	on_mouse_down  ButtonMouseFn
-	on_mouse_up    ButtonMouseFn
-	on_mouse_move  ButtonMouseMoveFn
-	on_mouse_enter ButtonMouseMoveFn
-	on_mouse_leave ButtonMouseMoveFn
+	on_key_down    ButtonU32Fn       = unsafe { nil }
+	on_mouse_down  ButtonMouseFn     = unsafe { nil }
+	on_mouse_up    ButtonMouseFn     = unsafe { nil }
+	on_mouse_move  ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_enter ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_leave ButtonMouseMoveFn = unsafe { nil }
 	text           string
 	icon_path      string
 	image          gg.Image
@@ -94,13 +94,13 @@ pub struct ButtonParams {
 	id             string
 	text           string
 	icon_path      string
-	on_click       ButtonFn
-	on_key_down    ButtonU32Fn
-	on_mouse_down  ButtonMouseFn
-	on_mouse_up    ButtonMouseFn
-	on_mouse_move  ButtonMouseMoveFn
-	on_mouse_enter ButtonMouseMoveFn
-	on_mouse_leave ButtonMouseMoveFn
+	on_click       ButtonFn          = unsafe { nil }
+	on_key_down    ButtonU32Fn       = unsafe { nil }
+	on_mouse_down  ButtonMouseFn     = unsafe { nil }
+	on_mouse_up    ButtonMouseFn     = unsafe { nil }
+	on_mouse_move  ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_enter ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_leave ButtonMouseMoveFn = unsafe { nil }
 	height         int
 	width          int
 	z_index        int

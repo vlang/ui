@@ -56,7 +56,7 @@ pub mut:
 pub struct Shortcut {
 pub mut:
 	mods    KeyMod
-	key_fn  ShortcutFn
+	key_fn  ShortcutFn = unsafe { nil }
 	context voidptr
 }
 

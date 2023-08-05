@@ -496,7 +496,7 @@ pub mut:
 	parent_item &MenuItem = unsafe { nil }
 	width       int
 mut:
-	action MenuItemFn
+	action MenuItemFn = unsafe { nil }
 }
 
 [params]

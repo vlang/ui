@@ -24,7 +24,7 @@ pub mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed DropDownFn
+	on_selection_changed DropDownFn = unsafe { nil }
 	hidden               bool
 	// bg_color             gx.Color = ui.dropdown_color
 	// Style
@@ -50,8 +50,8 @@ pub struct DropdownParams {
 	z_index        int = 10
 	selected_index int = -1
 	// text_size            f64
-	theme                string = no_style
-	on_selection_changed DropDownFn
+	theme                string     = no_style
+	on_selection_changed DropDownFn = unsafe { nil }
 	items                []DropdownItem
 	texts                []string
 }
