@@ -46,7 +46,7 @@ pub mut:
 	click_fn          WindowMouseFn     = unsafe { nil }
 	mouse_down_fn     WindowMouseFn     = unsafe { nil }
 	mouse_up_fn       WindowMouseFn     = unsafe { nil }
-	files_droped_fn   WindowMouseFn     = unsafe { nil }
+	files_dropped_fn  WindowMouseFn     = unsafe { nil }
 	swipe_fn          WindowMouseFn     = unsafe { nil }
 	mouse_move_fn     WindowMouseMoveFn = unsafe { nil }
 	scroll_fn         WindowScrollFn    = unsafe { nil }
@@ -125,7 +125,7 @@ pub:
 	on_click              WindowMouseFn     = unsafe { nil }
 	on_mouse_down         WindowMouseFn     = unsafe { nil }
 	on_mouse_up           WindowMouseFn     = unsafe { nil }
-	on_files_droped       WindowMouseFn     = unsafe { nil }
+	on_files_dropped      WindowMouseFn     = unsafe { nil }
 	on_swipe              WindowMouseFn     = unsafe { nil }
 	on_key_down           WindowKeyFn       = unsafe { nil }
 	on_char               WindowKeyFn       = unsafe { nil }
@@ -228,7 +228,7 @@ pub fn window(cfg WindowParams) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
-		files_droped_fn: cfg.on_files_droped
+		files_dropped_fn: cfg.on_files_dropped
 		swipe_fn: cfg.on_swipe
 		resizable: resizable
 		mode: cfg.mode
@@ -616,8 +616,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			}
 			window_click_or_touch_tap_and_swipe(e, window.ui)
 		}
-		.files_droped {
-			window_files_droped(e, mut window.ui)
+		.files_dropped {
+			window_files_dropped(e, mut window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -1100,7 +1100,7 @@ fn window_click_or_touch_tap_and_swipe(event gg.Event, u &UI) {
 	}
 }
 
-fn window_files_droped(event gg.Event, mut u UI) {
+fn window_files_dropped(event gg.Event, mut u UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .down
@@ -1109,15 +1109,15 @@ fn window_files_droped(event gg.Event, mut u UI) {
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
-	if window.files_droped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
-		window.files_droped_fn(window, e)
+	if window.files_dropped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+		window.files_dropped_fn(window, e)
 	}
-	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_droped)
+	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_dropped)
 	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_files_droped, window.child_window, e)
+		window.eventbus.publish(events.on_files_dropped, window.child_window, e)
 	} else {
-		window.eventbus.publish(events.on_files_droped, window, e)
+		window.eventbus.publish(events.on_files_dropped, window, e)
 	}
 }
 
