@@ -7,9 +7,9 @@ import ui.component as uic
 pub struct AppUI {
 pub mut:
 	id      string
-	window  &ui.Window = unsafe { nil }
-	layout  &ui.Layout = ui.empty_stack
-	on_init ui.WindowFn
+	window  &ui.Window  = unsafe { nil }
+	layout  &ui.Layout  = ui.empty_stack
+	on_init ui.WindowFn = unsafe { nil }
 	// s
 	app &App = unsafe { nil }
 }

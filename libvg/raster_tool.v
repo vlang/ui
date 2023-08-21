@@ -677,7 +677,7 @@ pub fn (mut r Raster) draw_text_block(text string, block TextBlockParams) {
 					// bmp.box(x + left_offset,y + y_base - int((bmp.tf.y_min)*bmp.scale), x + txt_w + left_offset, y + y_base - int((bmp.tf.y_max) * bmp.scale), u32(0x00ff_0000) )
 					//---------------
 					y += y_base
-					txt1 = txt1[c..]
+					txt1 = unsafe { txt1[c..] }
 					c = txt1.len
 					//---- DEBUG ----
 					// txt2 := txt1.join(' ')

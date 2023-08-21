@@ -26,7 +26,7 @@ pub mut:
 	r_textbox_text string
 	g_textbox_text string
 	b_textbox_text string
-	on_changed     ColorSlidersFn
+	on_changed     ColorSlidersFn = ColorSlidersFn(0)
 }
 
 [params]
@@ -34,7 +34,7 @@ pub struct ColorSlidersParams {
 	id          string
 	color       gx.Color       = gx.white
 	orientation ui.Orientation = .vertical
-	on_changed  ColorSlidersFn
+	on_changed  ColorSlidersFn = ColorSlidersFn(0)
 }
 
 // TODO: documentation

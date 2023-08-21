@@ -910,7 +910,7 @@ fn (b &BoxLayout) parse_bounding_with_possible_zindex(left string, right string)
 		if vec4.len == 3 {
 			has_z_index = true
 			z_index = int(vec4[2])
-			vec4 = vec4[0..2]
+			vec4 = unsafe { vec4[0..2] }
 		}
 		tmp2 := right.find_between('(', ')')
 		vec4 << tmp2.replace('%', '/100.0').split(',').map(b.calculate(it))
