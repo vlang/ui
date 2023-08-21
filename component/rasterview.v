@@ -46,7 +46,7 @@ pub mut:
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
 	// callback
-	on_click RasterViewFn
+	on_click RasterViewFn = RasterViewFn(0)
 }
 
 [params]

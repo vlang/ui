@@ -11,8 +11,8 @@ pub mut:
 	widget     &ui.Button
 	bg_color   gx.Color = gx.white
 	alpha      int
-	on_click   ColorButtonFn
-	on_changed ColorButtonFn
+	on_click   ColorButtonFn = ColorButtonFn(0)
+	on_changed ColorButtonFn = ColorButtonFn(0)
 	left_side  bool
 }
 
@@ -28,9 +28,9 @@ pub struct ColorButtonParams {
 	radius       f64 // = 5.0
 	padding      f64
 	left_side    bool
-	bg_color     &gx.Color = unsafe { nil }
-	on_click     ColorButtonFn
-	on_changed   ColorButtonFn
+	bg_color     &gx.Color     = unsafe { nil }
+	on_click     ColorButtonFn = ColorButtonFn(0)
+	on_changed   ColorButtonFn = ColorButtonFn(0)
 }
 
 // TODO: documentation

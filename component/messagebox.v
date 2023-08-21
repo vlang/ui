@@ -11,14 +11,14 @@ pub struct MessageBoxComponent {
 	tb       &ui.TextBox
 	btn      &ui.Button
 	text     string
-	on_click MessageBoxFn
+	on_click MessageBoxFn = MessageBoxFn(0)
 }
 
 [params]
 pub struct MessageBoxParams {
 	id       string
 	text     string
-	on_click MessageBoxFn
+	on_click MessageBoxFn = MessageBoxFn(0)
 	width    int
 	height   int
 }

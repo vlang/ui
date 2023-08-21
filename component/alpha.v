@@ -12,7 +12,7 @@ pub mut:
 	layout     &ui.Stack
 	slider     &ui.Slider
 	textbox    &ui.TextBox
-	on_changed AlphaFn
+	on_changed AlphaFn = AlphaFn(0)
 }
 
 [params]

@@ -147,7 +147,7 @@ pub mut:
 	// mode
 	mode string
 	// event
-	on_click TreeViewClickFn
+	on_click TreeViewClickFn = TreeViewClickFn(0)
 }
 
 // constructors
