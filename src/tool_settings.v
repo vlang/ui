@@ -1,6 +1,9 @@
 module ui
 
 import toml
+import os
+
+const settings_styles_dir = os.join_path_single(settings_dir, 'styles')
 
 // Tool for TOML
 pub fn load_settings() {
