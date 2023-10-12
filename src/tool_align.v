@@ -6,13 +6,13 @@ module ui
 import math
 
 pub enum VerticalAlignment {
-	top = 0
+	top    = 0
 	center
 	bottom
 }
 
 pub enum HorizontalAlignment {
-	left = 0
+	left   = 0
 	center
 	right
 }

@@ -302,10 +302,10 @@ pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 		width: w
 		height: h
 		num_mipmaps: 0
-		//min_filter: .linear
-		//mag_filter: .linear
-		//wrap_u: .clamp_to_edge
-		//wrap_v: .clamp_to_edge
+		// min_filter: .linear
+		// mag_filter: .linear
+		// wrap_u: .clamp_to_edge
+		// wrap_v: .clamp_to_edge
 		label: &u8(0)
 		d3d11_texture: 0
 	}
@@ -331,11 +331,11 @@ pub fn create_dynamic_texture(w int, h int) C.sg_image {
 		width: w
 		height: h
 		num_mipmaps: 0
-		//min_filter: .linear
-		//mag_filter: .linear
+		// min_filter: .linear
+		// mag_filter: .linear
 		usage: .dynamic
-		//wrap_u: .clamp_to_edge
-		//wrap_v: .clamp_to_edge
+		// wrap_u: .clamp_to_edge
+		// wrap_v: .clamp_to_edge
 		label: &u8(0)
 		d3d11_texture: 0
 	}
@@ -371,7 +371,7 @@ pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 		y1 := f32((cy + c.height) * ctx.scale)
 		sgl.load_pipeline(ctx.pipeline.alpha)
 		sgl.enable_texture()
-		//sgl.texture(simg)
+		// sgl.texture(simg)
 		sgl.begin_quads()
 		sgl.c4b(255, 255, 255, 255)
 		sgl.v2f_t2f(x0, y0, u0, v0)
