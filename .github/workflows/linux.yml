@@ -19,10 +19,7 @@ jobs:
         with:
           path: ui
       - name: Setup V UI module
-        shell: bash
-        run: |
-          mv ui ${{ env.MOD_PATH }}
-          find $HOME/.vmodules
+        run: mv ui ${{ env.MOD_PATH }}
       - name: Cache
         uses: actions/cache/save@v3
         with:
