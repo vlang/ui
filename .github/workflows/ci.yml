@@ -7,82 +7,14 @@ on:
     - cron: '31 1,12 * * *'
 
 jobs:
-  code-style:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout V
-        uses: actions/checkout@v2
-        with:
-          repository: vlang/v
-      - name: Checkout V UI
-        uses: actions/checkout@v2
-        with:
-          path: vlib/ui
-      - name: Build V
-        run: make
-#      - name: v vet
-#        run: ./v vet vlib/ui
-      - name: v fmt -verify
-        run: ./v fmt -verify vlib/ui
+  lint:
+    uses: ./.github/workflows/lint.yml
 
-  ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout V
-        uses: actions/checkout@v2
-        with:
-          repository: vlang/v
-      - name: Checkout V UI
-        uses: actions/checkout@v2
-        with:
-          path: vlib/ui
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --quiet -y libglfw3-dev libxi-dev libxcursor-dev
-      - name: Build V
-        run: make && ./v symlink
-      - name: Build UI examples
-        run: v run vlib/ui/examples/build_examples.vsh
-      - name: Build users.v with -prod
-        run: v -prod vlib/ui/examples/users.v
+  linux:
+    uses: ./.github/workflows/linux.yml
 
   macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout V
-        uses: actions/checkout@v2
-        with:
-          repository: vlang/v
-      - name: Checkout V UI
-        uses: actions/checkout@v2
-        with:
-          path: vlib/ui
-      - name: Build V
-        run: make && ./v symlink
-      - name: Build UI examples
-        run: v run vlib/ui/examples/build_examples.vsh
-      - name: Build users.v with -prod
-        run: v -prod vlib/ui/examples/users.v
+    uses: ./.github/workflows/macos.yml
 
-  windows-msvc:
-    runs-on: windows-latest
-    env:
-      VFLAGS: -cc msvc
-    steps:
-      - name: Checkout V
-        uses: actions/checkout@v2
-        with:
-          repository: vlang/v
-      - name: Checkout V UI
-        uses: actions/checkout@v2
-        with:
-          path: vlib/ui
-      - name: Build V
-        run: .\make.bat -msvc
-      # Don't move applying V directory to PATH, to other steps
-      # otherwise this step and V script won't see V executable.
-      - name: Build UI examples
-        run: .\v.exe run vlib\ui\examples\build_examples.vsh
-      - name: Build users.v with -prod
-        run: .\v.exe -prod vlib\ui\examples\users.v
+  windows:
+    uses: ./.github/workflows/windows.yml
