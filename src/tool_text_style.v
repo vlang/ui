@@ -7,17 +7,17 @@ import os.font
 const no_string = '_none_'
 
 pub enum TextHorizontalAlign {
-	@none = -10
-	left = C.FONS_ALIGN_LEFT
+	@none  = -10
+	left   = C.FONS_ALIGN_LEFT
 	center = C.FONS_ALIGN_CENTER
-	right = C.FONS_ALIGN_RIGHT
+	right  = C.FONS_ALIGN_RIGHT
 }
 
 pub enum TextVerticalAlign {
-	@none = -10
-	top = C.FONS_ALIGN_TOP
-	middle = C.FONS_ALIGN_MIDDLE
-	bottom = C.FONS_ALIGN_BOTTOM
+	@none    = -10
+	top      = C.FONS_ALIGN_TOP
+	middle   = C.FONS_ALIGN_MIDDLE
+	bottom   = C.FONS_ALIGN_BOTTOM
 	baseline = C.FONS_ALIGN_BASELINE
 }
 

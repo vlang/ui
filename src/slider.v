@@ -12,7 +12,7 @@ const (
 type SliderFn = fn (&Slider)
 
 pub enum Orientation {
-	vertical = 0
+	vertical   = 0
 	horizontal = 1
 }
 
