@@ -37,13 +37,13 @@ struct GridCellBlock {
 
 struct GridFormulaMngr {
 mut:
-	formulas               map[string]GridFormula
+	formulas map[string]GridFormula
 	// list of formula: key string is the alphacell of the formula
 	active_cell_to_formula map[string]string
 	// key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
-	active_cells           []ActiveCells
-	cells_to_activate      []AlphaCell
-	sel_formula            string
+	active_cells      []ActiveCells
+	cells_to_activate []AlphaCell
+	sel_formula       string
 }
 
 // constructor

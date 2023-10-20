@@ -5,7 +5,7 @@ import ui
 [heap]
 pub struct DoubleListBoxComponent {
 pub mut:
-	layout    &ui.Stack   = unsafe { nil }
+	layout &ui.Stack = unsafe { nil }
 	// required
 	lb_left   &ui.ListBox = unsafe { nil }
 	lb_right  &ui.ListBox = unsafe { nil }

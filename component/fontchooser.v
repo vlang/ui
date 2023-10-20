@@ -13,7 +13,7 @@ pub struct FontChooserComponent {
 pub mut:
 	layout &ui.Stack = unsafe { nil }
 	// required
-	dtw    ui.DrawTextWidget
+	dtw ui.DrawTextWidget
 }
 
 [params]

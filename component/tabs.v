@@ -11,8 +11,8 @@ enum TabsMode {
 [heap]
 pub struct TabsComponent {
 pub mut:
-	id                 string
-	layout             &ui.Stack = unsafe { nil }
+	id     string
+	layout &ui.Stack = unsafe { nil }
 	// required
 	active             string
 	prev_active        string

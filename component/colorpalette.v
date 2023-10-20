@@ -7,10 +7,10 @@ import math
 [heap]
 pub struct ColorPaletteComponent {
 pub mut:
-	id       string
-	layout   &ui.Stack  = unsafe { nil }
+	id     string
+	layout &ui.Stack = unsafe { nil }
 	// required
-	colbtn   &ui.Button = unsafe { nil }
+	colbtn &ui.Button = unsafe { nil }
 	// current
 	ncolors  int
 	alpha    &AlphaComponent = unsafe { nil }

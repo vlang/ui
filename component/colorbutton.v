@@ -27,11 +27,11 @@ pub struct ColorButtonParams {
 	tooltip_side ui.Side = .top
 	radius       f64
 	// = 5.0
-	padding      f64
-	left_side    bool
-	bg_color     &gx.Color     = unsafe { nil }
-	on_click     ColorButtonFn = ColorButtonFn(0)
-	on_changed   ColorButtonFn = ColorButtonFn(0)
+	padding    f64
+	left_side  bool
+	bg_color   &gx.Color     = unsafe { nil }
+	on_click   ColorButtonFn = ColorButtonFn(0)
+	on_changed ColorButtonFn = ColorButtonFn(0)
 }
 
 // TODO: documentation

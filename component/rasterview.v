@@ -18,7 +18,7 @@ pub mut:
 	// height     int
 	// channels   int = 4
 	// data       []byte
-	size       int = 11
+	size int = 11
 	// pixel_size + inter
 	inter      int = 1
 	pixel_size int = 10

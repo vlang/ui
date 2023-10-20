@@ -45,12 +45,12 @@ mut:
 	// options
 	light bool
 	// light theme
-	hsl   bool
+	hsl bool
 	// use hsl instead of hsv
-	drag  bool
+	drag bool
 	// drag mode for canvas on h
 pub mut:
-	layout     &ui.Stack        = unsafe { nil }
+	layout &ui.Stack = unsafe { nil }
 	// required
 	cv_h       &ui.CanvasLayout = unsafe { nil }
 	cv_sv      &ui.CanvasLayout = unsafe { nil }

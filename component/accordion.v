@@ -6,7 +6,7 @@ import gx
 [heap]
 pub struct AccordionComponent {
 pub mut:
-	layout     &ui.Stack = unsafe { nil }
+	layout &ui.Stack = unsafe { nil }
 	// required
 	titles     map[string]string
 	selected   map[string]bool

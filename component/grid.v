@@ -48,7 +48,7 @@ pub mut:
 	// height
 	cell_height int
 	// when > 0 all cells have same height to speed up visible_cells
-	min_height  int
+	min_height int
 	// index for swap of rows
 	index []int
 	// current
