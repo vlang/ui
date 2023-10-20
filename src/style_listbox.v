@@ -4,7 +4,6 @@ import gx
 import toml
 
 // ListBox
-
 pub struct ListBoxShapeStyle {
 pub mut:
 	radius           f32
@@ -75,6 +74,7 @@ pub fn (mut lb ListBox) load_style() {
 		style = lb.style_params.style
 	}
 	lb.update_theme_style(style)
+
 	// forced overload default style
 	lb.update_style(lb.style_params)
 }

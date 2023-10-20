@@ -22,8 +22,10 @@ fn main() {
 		layout: ui.row(
 			margin_: 10
 			spacing: 10
-			widths: [ui.compact, ui.stretch] // 350.0]
-			heights: [ui.compact, ui.stretch] // 300.0]
+			widths: [ui.compact, ui.stretch]
+			// 350.0]
+			heights: [ui.compact, ui.stretch]
+			// 300.0]
 			// scrollview: true
 			children: [
 				ui.picture(

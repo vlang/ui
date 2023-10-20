@@ -19,6 +19,7 @@ fn main() {
 					text_size: 20
 					on_change: fn (tb_text &ui.TextBox) {
 						mut tb := tb_text.ui.window.get_or_panic[ui.TextBox]('info')
+
 						// that's weird text_width is not additive function
 						ustr := tb_text.text.runes()
 						mut total_twa, mut total_tw, mut total_ts := 0.0, 0.0, 0.0

@@ -57,6 +57,7 @@ pub fn (w &Widget) get_depth() int {
 // TODO: documentation
 pub fn (mut w Widget) set_depth(z_index int) {
 	w.z_index = z_index
+
 	// w.set_visible(z_index != ui.z_index_hidden)
 }
 
@@ -175,7 +176,6 @@ pub fn (w Widget) get[T](id string) &T {
 }
 
 //
-
 pub fn (w Widget) is_wm_mode() bool {
 	return w.ui.window.is_wm_mode
 }

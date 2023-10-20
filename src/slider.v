@@ -19,12 +19,15 @@ pub enum Orientation {
 [heap]
 pub struct Slider {
 pub mut:
-	id                   string
-	height               int // track width
-	width                int // track height
-	thumb_width          int
-	thumb_height         int
-	slider_size          int // fixed size (width) of the slider
+	id     string
+	height int
+	// track width
+	width int
+	// track height
+	thumb_width  int
+	thumb_height int
+	slider_size  int
+	// fixed size (width) of the slider
 	orientation          Orientation
 	x                    int
 	y                    int
@@ -184,11 +187,14 @@ pub fn (mut s Slider) propose_size(w int, h int) (int, int) {
 	$if debug_slider ? {
 		println('slider propose_size: (${s.width},${s.height}) -> (${w}, ${h}) | s.orientation: ${s.orientation}')
 	}
+
 	// if s.orientation == .horizontal {
 	s.width = w
+
 	// s.height = s.slider_size
 	// } else {
 	s.height = h
+
 	// s.width = s.slider_size
 	// }
 	s.set_thumb_size()
@@ -206,6 +212,7 @@ fn (mut s Slider) draw_device(mut d DrawDevice) {
 			println('Slider(${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height})')
 		}
 	}
+
 	// Draw the track
 	x, y, w, h := if s.orientation == .horizontal {
 		s.x, s.y + (s.height - s.slider_size) / 2, s.width, s.slider_size
@@ -227,6 +234,7 @@ fn (mut s Slider) draw_device(mut d DrawDevice) {
 	} else {
 		s.style.bg_border_color
 	})
+
 	// Draw the thumb
 	s.draw_device_thumb(d)
 	$if bb ? {
@@ -333,6 +341,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		} else {
 			t_x := middle - tol
 			t_y := pos - f32(s.thumb_height) / 2 - tol
+
 			// println('slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${
 			// 	t_y + f32(s.thumb_height)}')
 			return x >= t_x && x <= t_x + f32(s.thumb_width) + tol * 2 && y >= t_y
@@ -347,6 +356,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 		} else {
 			t_x := middle
 			t_y := pos - f32(s.thumb_height) / 2
+
 			// println("slider inside: $x >= $t_x && $x <= ${t_x + f32(s.thumb_width)} && $y >= $t_y && $y <= ${t_y + f32(s.thumb_height)}")
 			return x >= t_x && x <= t_x + f32(s.thumb_width) && y >= t_y
 				&& y <= t_y + f32(s.thumb_height)
@@ -372,6 +382,7 @@ fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
 	if s.hidden {
 		return
 	}
+
 	// println('slider touchup  NO MORE DRAGGING')
 	if int(e.button) == 0 && s.point_inside_thumb(e.x, e.y) {
 		// println('slider touch move DRAGGING ${e.button}')
@@ -416,6 +427,7 @@ fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 fn (mut s Slider) change_value(x int, y int) {
 	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
+
 	// TODO parser bug ` - axis`
 	mut pos := if s.orientation == .horizontal { x } else { y }
 	pos -= axis

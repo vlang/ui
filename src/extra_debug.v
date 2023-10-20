@@ -117,6 +117,7 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 			}
 		}
 		println('= ${total} == ${s.real_width}')
+
 		// max rule for heights
 		println('MaxRule(${s.id})  top: ${s.margin(.top)} = ${s.margins.top} * ${s.real_height}')
 		total = 0 // s.margin(.left)
@@ -144,6 +145,7 @@ fn debug_set_children_sizes(s &Stack, widths []int, heights []int, c CachedSizes
 			}
 		}
 		println('= ${total} == ${s.real_height}')
+
 		// max rule for heights
 		println('MaxRule(${s.id})  top: ${s.margin(.left)} = ${s.margins.left} * ${s.real_width}')
 		total = 0 // s.margin(.left)

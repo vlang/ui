@@ -2,7 +2,6 @@ module ui
 
 // Adding shortcuts field for a Widget or Component (having id field) makes it react as user-dedined shortcuts
 // see tool_key for parsing shortcut as string
-
 pub interface Shortcutable {
 	id string
 mut:

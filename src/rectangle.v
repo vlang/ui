@@ -91,6 +91,7 @@ fn (mut r Rectangle) init(parent Layout) {
 	r.parent = parent
 	u := parent.get_ui()
 	r.ui = u
+
 	// r.init_style()
 	r.load_style()
 }
@@ -100,7 +101,6 @@ fn (mut r Rectangle) init(parent Layout) {
 // 	dtw.init_style()
 // 	dtw.update_text_size(r.text_size)
 // }
-
 [manualfree]
 pub fn (mut r Rectangle) cleanup() {
 	unsafe { r.free() }
@@ -157,6 +157,7 @@ fn (mut r Rectangle) draw_device(mut d DrawDevice) {
 			d.draw_rect_empty(r.x, r.y, r.width, r.height, r.style.border_color)
 		}
 	}
+
 	// Display rectangle text
 	if r.text != '' {
 		mut dtw := DrawTextWidget(r)
@@ -171,6 +172,7 @@ fn (mut r Rectangle) draw_device(mut d DrawDevice) {
 			dy = 0
 		}
 		dtw.draw_device_text(d, r.x + dx, r.y + dy, r.text)
+
 		// draw_text(r, r.x + dx, r.y + dy, r.text)
 	}
 	offset_end(mut r)
@@ -204,7 +206,6 @@ fn (mut r Rectangle) draw_device(mut d DrawDevice) {
 // 	}
 // 	offset_end(mut r)
 // }
-
 fn (mut r Rectangle) set_visible(state bool) {
 	r.hidden = !state
 }

@@ -43,6 +43,7 @@ pub fn (mut l Label) load_style() {
 		style = l.style_params.style
 	}
 	l.update_theme_style(style)
+
 	// forced overload default style
 	l.update_style(l.style_params)
 }

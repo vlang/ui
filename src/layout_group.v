@@ -107,9 +107,11 @@ pub fn (g &Group) free() {
 
 fn (mut g Group) decode_size() {
 	parent_width, parent_height := g.parent.size()
+
 	// Relative sizes
 	g.width = relative_size_from_parent(g.width, parent_width)
 	g.height = relative_size_from_parent(g.height, parent_height)
+
 	// }
 	// println('g size: ($g.width, $g.height) ($parent_width, $parent_height) ')
 	// debug_show_size(s, "decode after -> ")
@@ -173,6 +175,7 @@ fn (mut g Group) draw_device(mut d DrawDevice) {
 		title = if target_len < 0 { '' } else { title.substr(0, target_len) + '..' }
 		text_width = g.ui.dd.text_width(title)
 	}
+
 	// Title
 	d.draw_rect_filled(g.x + check_mark_size, g.y, text_width + 5, 10, g.ui.window.bg_color)
 	g.ui.dd.draw_text_def(g.x + check_mark_size + 3, g.y - 2, title)
@@ -230,6 +233,7 @@ fn (g &Group) adj_size() (int, int) {
 fn (mut g Group) propose_size(w int, h int) (int, int) {
 	g.width = w
 	g.height = h
+
 	// println('g prop size: ($w, $h)')
 	$if gps ? {
 		if g.debug_ids.len == 0 || g.id in g.debug_ids {

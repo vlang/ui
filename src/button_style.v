@@ -4,7 +4,6 @@ import gx
 import toml
 
 // Button
-
 pub struct ButtonShapeStyle {
 pub mut:
 	radius           f32
@@ -75,6 +74,7 @@ pub fn (mut b Button) load_style() {
 		style = b.style_params.style
 	}
 	b.update_theme_style(style)
+
 	// forced overload default style
 	b.update_style(b.style_params)
 }

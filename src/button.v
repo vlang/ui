@@ -17,7 +17,8 @@ const (
 )
 
 enum ButtonState {
-	normal   = 1 // synchronized with .button_normal
+	normal   = 1
+	// synchronized with .button_normal
 	pressed
 	hovering
 }
@@ -66,11 +67,12 @@ pub mut:
 	padding        f32
 	hidden         bool
 	disabled       bool
-	movable        bool // drag, transition or anything allowing offset yo be updated
-	just_dragged   bool
-	drag_type      string = 'btn'
-	hoverable      bool
-	tooltip        TooltipMessage
+	movable        bool
+	// drag, transition or anything allowing offset yo be updated
+	just_dragged bool
+	drag_type    string = 'btn'
+	hoverable    bool
+	tooltip      TooltipMessage
 	// style
 	// radius   f32
 	bg_color &gx.Color = unsafe { nil }
@@ -195,8 +197,10 @@ pub fn (b &Button) free() {
 		b.id.free()
 		b.text.free()
 		b.icon_path.free()
+
 		// s.on_click   ButtonClickFn
 		b.tooltip.free()
+
 		// s.theme     ColorThemeCfg = 'classic'
 
 		// if b.component != voidptr(0) {
@@ -251,6 +255,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	if !b.is_focused {
 		return
 	}
+
 	// unclickable if dragged
 	if b.just_dragged {
 		b.just_dragged = false
@@ -361,6 +366,7 @@ pub fn (mut b Button) propose_size(w int, h int) (int, int) {
 	if h != 0 {
 		b.height = h
 	}
+
 	// b.height = h
 	// b.width = b.ui.ft.text_width(b.text) + ui.button_horizontal_padding
 	// b.height = 20 // vertical padding
@@ -408,6 +414,7 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 	}
 	if b.style.radius > 0 {
 		radius := relative_size(b.style.radius, int(width), int(height))
+
 		// println("draw $b.id ${bg_color}")
 		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
 		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
@@ -470,6 +477,7 @@ pub fn (mut b Button) set_text_size() {
 		if b.id == 'hi' {
 			println('${b.text_width}')
 		}
+
 		// b.text_width, b.text_height = text_size(b, b.text)
 
 		// b.text_width = int(f32(b.text_width))

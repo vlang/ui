@@ -143,6 +143,7 @@ fn update_status(w &ui.Window) {
 		status += ' ${clip}'
 	}
 	w.get_or_panic[ui.Label]('status').text = status
+
 	//	w.get_widget_by_id_or_panic[ui.Label]('status').text = status
 }
 

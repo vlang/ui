@@ -106,7 +106,6 @@ pub fn (mut gui UI) update_style_from_4colors() {
 }
 
 // Accent colors as a particular case of 4 colors style
-
 pub fn (mut w Window) load_accent_color_style(accent_color []int) {
 	w.ui.update_accent_color_style(accent_color)
 	mut l := Layout(w)

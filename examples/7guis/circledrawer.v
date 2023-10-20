@@ -7,7 +7,6 @@ const (
 )
 
 // Circle
-
 struct Circle {
 	x f32
 	y f32
@@ -33,6 +32,7 @@ fn (mut state State) add_action(action Action) {
 
 fn (mut state State) reset_history() {
 	state.history.delete_many(state.current_action, state.history.len - state.current_action - 1)
+
 	// println(state.history)
 }
 
@@ -62,7 +62,6 @@ fn (state State) point_inside(x f32, y f32) int {
 }
 
 // Action
-
 interface Action {
 	do(mut state State)
 	undo(mut state State)
@@ -99,7 +98,6 @@ fn (a ActionSetCircleRadius) undo(mut state State) {
 }
 
 // App
-
 [heap]
 struct App {
 mut:

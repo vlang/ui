@@ -12,7 +12,6 @@ const (
 )
 
 // type CheckChangedFn = fn (voidptr, bool)
-
 type CheckBoxFn = fn (&CheckBox)
 
 [heap]
@@ -72,7 +71,8 @@ pub struct CheckBoxParams {
 pub fn checkbox(c CheckBoxParams) &CheckBox {
 	mut cb := &CheckBox{
 		id: c.id
-		height: ui.check_mark_size + 5 // TODO
+		height: ui.check_mark_size + 5
+		// TODO
 		z_index: c.z_index
 		ui: 0
 		text: c.text
@@ -94,6 +94,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	dtw.load_style()
 	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
 	cb.load_style()
+
 	// cb.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
@@ -124,7 +125,6 @@ pub fn (cb &CheckBox) free() {
 // 	dtw.init_style()
 // 	dtw.update_text_size(cb.text_size)
 // }
-
 fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
@@ -137,9 +137,11 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	if !cb.is_focused {
 		return
 	}
+
 	// default behavior like click for space and enter
 	if e.key in [.enter, .space] {
 		cb.checked = !cb.checked
+
 		// println("checked: $cb.checked")
 		if cb.on_check_changed != CheckBoxFn(0) {
 			cb.on_check_changed(cb)
@@ -156,6 +158,7 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	}
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
+
 		// println("checked: $cb.checked")
 		if cb.on_check_changed != CheckBoxFn(0) {
 			cb.on_check_changed(cb)
@@ -189,8 +192,10 @@ pub fn (cb &CheckBox) size() (int, int) {
 pub fn (mut cb CheckBox) propose_size(w int, h int) (int, int) {
 	// println("propose_size $cb.id ($w, $h)")
 	cb.width = w
+
 	// TODO: fix height
 	cb.height = h
+
 	// width := check_mark_size + 5 + cb.ui.ft.text_width(cb.text)
 	return cb.width, cb.height
 }
@@ -207,6 +212,7 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 		}
 	}
 	adj_pos_x, adj_pos_y := AdjustableWidget(cb).get_adjusted_pos()
+
 	// if cb.style.bg_color != no_color {
 	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2, adj_pos_y - (cb.height - cb.adj_height) / 2,
 		cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
@@ -218,6 +224,7 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 		d.draw_rect_empty(adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size,
 			cb.style.border_color)
 	}
+
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
 		// cb.ui.dd.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
@@ -233,6 +240,7 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 		*/
 		d.draw_image(adj_pos_x + 3, adj_pos_y + 3, 8, 8, cb.ui.cb_image)
 	}
+
 	// Text
 	mut dtw := DrawTextWidget(cb)
 	dtw.draw_device_load_style(d)

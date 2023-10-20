@@ -26,11 +26,11 @@ mut:
 	last_name  string
 	age        string
 	password   string
-	pbar       &ui.ProgressBar
+	pbar       &ui.ProgressBar = unsafe { nil }
 	users      []User
 	window     &ui.Window = unsafe { nil }
-	label      &ui.Label
-	country    &ui.Radio
+	label      &ui.Label  = unsafe { nil }
+	country    &ui.Radio  = unsafe { nil }
 	txt_pos    int
 	started    bool
 	is_error   bool
@@ -186,7 +186,6 @@ fn main() {
 
 // fn menu_click() {
 // }
-
 fn btn_help_click(b voidptr) {
 	ui.message_box('Built with V UI')
 }
@@ -203,19 +202,23 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 		return
 	}
 	new_user := User{
-		first_name: app.first_name // first_name.text
-		last_name: app.last_name // .text
+		first_name: app.first_name
+		// first_name.text
+		last_name: app.last_name
+		// .text
 		age: app.age.int()
 		country: app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
 	app.first_name = ''
+
 	// app.first_name.focus()
 	app.last_name = ''
 	app.age = ''
 	app.password = ''
 	app.label.set_text('${app.users.len}/10')
+
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
@@ -226,12 +229,15 @@ fn (app &State) canvas_draw(gg_ &gg.Context, c &ui.Canvas) { // x_offset int, y_
 	gg_.draw_rect_filled(x - 20, 0, w + 120, h + 120, gx.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
+
 		// Outer border
 		gg_.draw_rect_empty(x, y, table_width, cell_height, gx.gray)
+
 		// Vertical separators
 		gg_.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
 		gg_.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
 		gg_.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
+
 		// Text values
 		gg_.draw_text_def(x + 5, y + 5, user.first_name)
 		gg_.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)

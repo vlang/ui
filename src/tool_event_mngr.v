@@ -43,6 +43,7 @@ pub fn (mut em EventMngr) add_receiver(widget Widget, evt_types []string) {
 				em.list_receivers(evt_type)
 			}
 		}
+
 		// sort it
 		em.sorted_receivers(evt_type)
 	}
@@ -53,12 +54,14 @@ pub fn (mut em EventMngr) rm_receiver(widget Widget, evt_types []string) {
 		$if em_rc ? {
 			println('rm_receivers from ${evt_type} widget ${widget.id}')
 		}
+
 		// BUG: ind := em.mouse_down_receivers.index(widget)
 		// WORKAROUND with id
 		ind := em.receivers[evt_type].map(it.id).index(widget.id)
 		if ind >= 0 {
 			em.receivers[evt_type].delete(ind)
 		}
+
 		// sort it
 		em.sorted_receivers(evt_type)
 	}
@@ -209,7 +212,6 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 }
 
 // delegation (useful for iui interconnection)
-
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
 	if em.receivers[ui.events.on_delegate].len > 0 {
 		for mut w in em.receivers[ui.events.on_delegate] {

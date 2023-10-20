@@ -114,9 +114,11 @@ fn (mut pb ProgressBar) draw_device(mut d DrawDevice) {
 			println('ProgressBar(${pb.id}): (${pb.x}, ${pb.y}, ${pb.width}, ${pb.height})')
 		}
 	}
+
 	// Draw the gray background
 	d.draw_rect_filled(pb.x, pb.y, pb.width, pb.height, pb.style.bg_color)
 	d.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, pb.style.bg_border_color)
+
 	// Draw the value
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
 	d.draw_rect_empty(pb.x, pb.y, width, pb.height, pb.style.border_color) // gx.Black)

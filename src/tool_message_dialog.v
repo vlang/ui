@@ -4,7 +4,6 @@ import gx
 
 //=== Basic Message Dialog ===/
 // Before sokol deals with multiple window (soon)
-
 fn (mut win Window) add_message_dialog() {
 	mut dlg := column(
 		id: '_msg_dlg_col'
@@ -50,6 +49,7 @@ pub fn (win &Window) message(s string) {
 			tw = 200
 		}
 		th += 50
+
 		// println("msg: ($tw, $th) $s")
 		dlg.propose_size(tw, th)
 		ww, wh := win.size()

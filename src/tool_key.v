@@ -6,6 +6,7 @@ module ui
 pub fn parse_shortcut(s string) (KeyMod, int, string) {
 	mods, key := parse_mods_shortcut(s)
 	code := parse_key(key)
+
 	// N.B.: if code == 0 => char mode shortcut
 	$if parse_shortcut ? {
 		println([mods.str(), code.str(), key])
@@ -92,13 +93,16 @@ pub fn parse_key(key_str string) int {
 }
 
 // BitMask
-
 [flag]
 pub enum KeyMod {
-	shift //= 1 // (1<<0)
-	ctrl //= 2 // (1<<1)
-	alt //= 4 // (1<<2)
-	super //= 8 // (1<<3)
+	shift
+	//= 1 // (1<<0)
+	ctrl
+	//= 2 // (1<<1)
+	alt
+	//= 4 // (1<<2)
+	super
+	//= 8 // (1<<3)
 }
 
 pub enum KeyState {
@@ -121,11 +125,16 @@ pub:
 pub enum Key {
 	invalid       = 0
 	space         = 32
-	apostrophe    = 39 // '
-	comma         = 44 // ,
-	minus         = 45 // -
-	period        = 46 // .
-	slash         = 47 // /
+	apostrophe    = 39
+	// '
+	comma         = 44
+	// ,
+	minus         = 45
+	// -
+	period        = 46
+	// .
+	slash         = 47
+	// /
 	_0            = 48
 	_1            = 49
 	_2            = 50
@@ -136,8 +145,10 @@ pub enum Key {
 	_7            = 55
 	_8            = 56
 	_9            = 57
-	semicolon     = 59 // ;
-	equal         = 61 // =
+	semicolon     = 59
+	// ;
+	equal         = 61
+	// =
 	a             = 65
 	b             = 66
 	c             = 67
@@ -164,12 +175,18 @@ pub enum Key {
 	x             = 88
 	y             = 89
 	z             = 90
-	left_bracket  = 91 // [
-	backslash     = 92 // \
-	right_bracket = 93 // ]
-	grave_accent  = 96 // `
-	world_1       = 161 // non-us #1
-	world_2       = 162 // non-us #2
+	left_bracket  = 91
+	// [
+	backslash     = 92
+	// \
+	right_bracket = 93
+	// ]
+	grave_accent  = 96
+	// `
+	world_1       = 161
+	// non-us #1
+	world_2       = 162
+	// non-us #2
 	escape        = 256
 	enter         = 257
 	tab           = 258

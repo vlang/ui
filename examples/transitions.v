@@ -10,11 +10,11 @@ const (
 [heap]
 struct App {
 mut:
-	window       &ui.Window = unsafe { nil }
-	x_transition &ui.Transition
-	y_transition &ui.Transition
-	picture      &ui.Picture
-	button       &ui.Button = unsafe { nil }
+	window       &ui.Window     = unsafe { nil }
+	x_transition &ui.Transition = unsafe { nil }
+	y_transition &ui.Transition = unsafe { nil }
+	picture      &ui.Picture    = unsafe { nil }
+	button       &ui.Button     = unsafe { nil }
 	state        int
 }
 
@@ -42,7 +42,8 @@ fn main() {
 		mode: .resizable
 		children: [
 			ui.column(
-				widths: ui.compact // or ui.compact
+				widths: ui.compact
+				// or ui.compact
 				margin: ui.Margin{25, 25, 25, 25}
 				children: [app.button, app.picture]
 			),

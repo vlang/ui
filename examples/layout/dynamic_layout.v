@@ -60,6 +60,7 @@ fn main() {
 
 fn btn_switch_click(btn &ui.Button) {
 	window := btn.ui.window
+
 	// Without id:
 	// mut s := window.child() //root_layout
 	// if mut s is ui.Stack {

@@ -6,7 +6,6 @@ import os
 
 // define style outside Widget definition
 // all styles would be collected inside one map attached to ui
-
 pub const (
 	no_style    = '_no_style_'
 	no_color    = gx.Color{0, 0, 0, 0}
@@ -97,7 +96,6 @@ pub fn style_toml_file(style_id string) string {
 }
 
 // load styles
-
 pub fn (mut gui UI) load_styles() {
 	// ensure some theme styles are predefined
 	$if no_load_styles ? {
@@ -112,12 +110,12 @@ pub fn (mut gui UI) load_styles() {
 
 pub fn (mut gui UI) load_style_from_file(style_id string) {
 	style := parse_style_toml_file(style_toml_file(style_id))
+
 	// println("$style_id: $style")
 	gui.styles[style_id] = style
 }
 
 // predefined style
-
 fn create_theme_styles() {
 	if !os.exists(settings_styles_dir) {
 		os.mkdir_all(settings_styles_dir) or { panic(err) }
@@ -185,11 +183,13 @@ pub fn blue_style() Style {
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+			bg_color: ui.transparent
+			// gx.rgb(220, 220, 255)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+			bg_color: ui.transparent
+			// gx.rgb(220, 220, 255)
 		}
 	}
 }
@@ -226,11 +226,13 @@ pub fn red_style() Style {
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: ui.transparent // gx.rgb(255, 220, 220)
+			bg_color: ui.transparent
+			// gx.rgb(255, 220, 220)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: ui.transparent // gx.rgb(255, 220, 220)
+			bg_color: ui.transparent
+			// gx.rgb(255, 220, 220)
 		}
 	}
 }
@@ -240,7 +242,6 @@ pub fn create_red_style_file() {
 }
 
 // parent style
-
 pub fn (l Layout) bg_color() gx.Color {
 	mut col := ui.no_color
 	if l is Stack {

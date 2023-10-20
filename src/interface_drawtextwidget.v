@@ -57,6 +57,7 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 		vertical_align: ts.vertical_align
 		mono: ts.mono
 	}
+
 	// println(w.text_styles.hash)
 }
 
@@ -110,6 +111,7 @@ pub fn (mut w DrawTextWidget) update_style(ts TextStyleParams) {
 pub fn (mut w DrawTextWidget) update_text_size(size f64) {
 	if size > 0 {
 		_, win_height := w.ui.window.size()
+
 		// ts := w.text_styles.current
 		// ts.size = text_size_as_int(size, win_height)
 		w.text_styles.current = TextStyle{
@@ -162,6 +164,7 @@ pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			descender := f32(0.0)
 			lh := f32(0.0)
 			fons.vert_metrics(&ascender, &descender, &lh)
+
 			// println("load style $ascender, $descender ${}")
 		}
 	}
@@ -182,6 +185,7 @@ pub fn (mut w DrawTextWidget) load_style() {
 // TODO: documentation
 pub fn (mut w DrawTextWidget) draw_device_load_style(d DrawDevice) {
 	ts := w.current_style()
+
 	// println("lds $w.id current style: $ts")
 	w.load_style_(d, ts)
 }

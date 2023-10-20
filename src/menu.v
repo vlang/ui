@@ -34,7 +34,8 @@ pub mut:
 	height      int
 	item_width  int
 	item_height int
-	real_width  int // expanded_width
+	real_width  int
+	// expanded_width
 	fixed_width bool
 	hovered     int = -1
 	selected    int = -1
@@ -314,6 +315,7 @@ pub fn (mut m Menu) propose_size(w int, h int) (int, int) {
 	m.width = w
 	m.real_width = w
 	m.height = h
+
 	// println("w=$m.width h=$m.height")
 	m.update_size()
 	return m.width, m.height

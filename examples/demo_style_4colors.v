@@ -43,6 +43,7 @@ fn main() {
 fn on_changed(mut cbc uic.ColorButtonComponent) {
 	mut gui := cbc.widget.ui
 	i := cbc.widget.id[5..].int()
+
 	// println("$cbc.widget.id changed -> $i")
 	// println(gui.style_colors)
 	gui.style_colors[i] = cbc.bg_color

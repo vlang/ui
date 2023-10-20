@@ -49,7 +49,6 @@ pub fn (w Draggable) intersect(b gg.Rect) bool {
 }
 
 //** Drag stuff ***//
-
 struct Dragger {
 pub mut:
 	typ       string
@@ -80,6 +79,7 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 				window.dragger.widget = d
 				window.dragger.start_x = e.x - d.offset_x
 				window.dragger.start_y = e.y - d.offset_y
+
 				// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
 				window.dragger.pos_x = e.x
 				window.dragger.pos_y = e.y
@@ -91,6 +91,7 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 			window.dragger.widget = d
 			window.dragger.start_x = e.x - d.offset_x
 			window.dragger.start_y = e.y - d.offset_y
+
 			// println('drag: ($e.x, $e.y, ${window.dragger.start_x},${window.dragger.start_y})')
 			window.dragger.pos_x = e.x
 			window.dragger.pos_y = e.y
@@ -107,7 +108,6 @@ fn drag_register(d Draggable, e &MouseEvent) bool {
 // 		d.extra = extra
 // 	}
 // }
-
 fn drag_active(window &Window) bool {
 	return window.dragger.activated
 }
@@ -128,8 +128,8 @@ fn drag_child(mut window Window, x f64, y f64) {
 
 		dx := (x - window.dragger.pos_x) / dt
 		dy := (y - window.dragger.pos_y) / dt
-		// println("dt=$dt dx=$dx dy=$dy")
 
+		// println("dt=$dt dx=$dx dy=$dy")
 		w.offset_x = int(x + dx - window.dragger.start_x)
 		w.offset_y = int(y + dy - window.dragger.start_y)
 
@@ -151,7 +151,6 @@ fn drag_child_dropped(mut window Window) {
 }
 
 // DropZone
-
 interface DropZone {
 	ui &UI
 	id string
@@ -179,7 +178,6 @@ pub fn (mut dz DropZone) set_drop_types(dt []string) {
 }
 
 // Interaction Between Dragger and DropZone
-
 fn dragger_inside_dropzone(mut d DropZone) bool {
 	dragger := d.ui.window.dragger
 	if dragger.activated {

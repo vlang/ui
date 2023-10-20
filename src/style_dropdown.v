@@ -4,7 +4,6 @@ import gx
 import toml
 
 // Dropdown
-
 pub struct DropdownShapeStyle {
 pub mut:
 	bg_color     gx.Color = gx.rgb(240, 240, 240)
@@ -61,6 +60,7 @@ fn (mut dd Dropdown) load_style() {
 		style = dd.style_params.style
 	}
 	dd.update_theme_style(style)
+
 	// forced overload default style
 	dd.update_style(dd.style_params)
 }

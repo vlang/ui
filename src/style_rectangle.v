@@ -4,11 +4,11 @@ import gx
 import toml
 
 // Rectangle
-
 pub struct RectangleShapeStyle {
 pub mut:
-	border_color gx.Color // = rect_border_color
-	color        gx.Color = transparent
+	border_color gx.Color
+	// = rect_border_color
+	color gx.Color = transparent
 }
 
 pub struct RectangleStyle {
@@ -63,6 +63,7 @@ pub fn (mut rect Rectangle) load_style() {
 		style = rect.style_params.style
 	}
 	rect.update_theme_style(style)
+
 	// forced overload default style
 	rect.update_style(rect.style_params)
 }

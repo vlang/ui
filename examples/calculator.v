@@ -12,7 +12,7 @@ const (
 struct App {
 mut:
 	text       string
-	window     &ui.Window
+	window     &ui.Window = unsafe { nil }
 	rows       []&ui.Layout
 	result     f64
 	is_float   bool
@@ -183,11 +183,13 @@ fn (mut app App) calculate() {
 			}
 		}
 		operands << result
+
 		// eprintln('i: ${i:4d} | res: ${result} | op: $op | operands: $operands | operations: $operations')
 	}
 	app.operations = operations
 	app.operands = operands
 	app.result = result
+
 	// eprintln('----------------------------------------------------')
 	// eprintln('Operands: $app.operands  | Operations: $app.operations ')
 	// eprintln('-------- result: $result | i: $i -------------------')

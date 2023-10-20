@@ -9,7 +9,6 @@ module ui
 // All members (layout and children) are then all connected as ComponentChild having `component` field.
 // Remark: To become possibly a member of a parent component, a component has to have this field `component` to be connected to
 //---
-
 const (
 	component_sep = '/' // ':::'
 )

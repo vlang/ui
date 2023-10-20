@@ -58,7 +58,8 @@ fn main() {
 						text: &tbm
 						height: 200
 						text_size: 24
-						bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+						bg_color: gx.hex(0xfcf4e4ff)
+						// gx.rgb(252, 244, 228)
 					)
 				)
 			)

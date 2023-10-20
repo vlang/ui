@@ -4,10 +4,10 @@ import gx
 import toml
 
 // Radio
-
 pub struct RadioShapeStyle {
 pub mut:
-	radio_mode   string = 'radio' // or "radio_white" and maybe one day "square" and "square_white"
+	radio_mode string = 'radio'
+	// or "radio_white" and maybe one day "square" and "square_white"
 	border_color gx.Color
 	bg_color     gx.Color = gx.white
 }
@@ -67,6 +67,7 @@ pub fn (mut r Radio) load_style() {
 		style = r.style_params.style
 	}
 	r.update_theme_style(style)
+
 	// forced overload default style
 	r.update_style(r.style_params)
 	r.ui.radio_selected_image = r.ui.img(r.style.radio_mode + '_selected')

@@ -65,11 +65,13 @@ fn window_init(mut w ui.Window) {
 
 	// c := w.get_or_panic[ui.CanvasLayout]('c')
 	mut lb := w.get_or_panic[ui.ListBox]('lb')
+
 	// dtw := ui.DrawTextWidget(c)
 	for fp in font_paths {
 		lb.add_item(fp, os.file_name(fp))
 	}
 	w.update_layout()
+
 	// w.ui.add_style(
 	// 	id: 'brush'
 	// 	font_name: 'brush'
@@ -107,6 +109,7 @@ fn (mut app App) lb_change(lb &ui.ListBox) {
 	c := w.get_or_panic[ui.CanvasLayout]('c')
 	mut dtw := ui.DrawTextWidget(c)
 	fp, id := lb.selected() or { 'classic', '' }
+
 	// println("$id, $fp")
 	$if windows {
 		w.ui.add_font(id, 'C:/windows/fonts/${fp}')

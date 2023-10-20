@@ -33,11 +33,12 @@ pub struct Window {
 	id string = '_window_'
 pub mut:
 	// pub:
-	ui                &UI = unsafe { nil }
-	children          []Widget
-	child_window      &Window = unsafe { nil }
-	parent_window     &Window = unsafe { nil }
-	has_textbox       bool // for initial focus
+	ui            &UI = unsafe { nil }
+	children      []Widget
+	child_window  &Window = unsafe { nil }
+	parent_window &Window = unsafe { nil }
+	has_textbox   bool
+	// for initial focus
 	just_tabbed       bool
 	title             string
 	width             int
@@ -63,11 +64,13 @@ pub mut:
 	on_init           WindowFn = unsafe { nil }
 	on_draw           WindowFn = unsafe { nil }
 	eventbus          &eventbus.EventBus[string] = eventbus.new[string]()
-	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
-	mode              WindowSizeType
-	root_layout       Layout = empty_stack
-	top_layer         CanvasLayout // For absolute coordinates widgets located on top
-	dpi_scale         f32
+	resizable         bool
+	// resizable has limitation https://github.com/vlang/ui/issues/231
+	mode        WindowSizeType
+	root_layout Layout = empty_stack
+	top_layer   CanvasLayout
+	// For absolute coordinates widgets located on top
+	dpi_scale f32
 	// saved origin sizes
 	orig_width   int
 	orig_height  int
@@ -106,8 +109,9 @@ pub mut:
 	// shortcuts
 	shortcuts Shortcuts
 	mini_calc MiniCalc = mini_calc()
-	mx        f64 // do not remove this, temporary
-	my        f64
+	mx        f64
+	// do not remove this, temporary
+	my f64
 }
 
 [params]
@@ -122,27 +126,28 @@ pub:
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
 
-	on_click              WindowMouseFn     = unsafe { nil }
-	on_mouse_down         WindowMouseFn     = unsafe { nil }
-	on_mouse_up           WindowMouseFn     = unsafe { nil }
-	on_files_dropped      WindowMouseFn     = unsafe { nil }
-	on_swipe              WindowMouseFn     = unsafe { nil }
-	on_key_down           WindowKeyFn       = unsafe { nil }
-	on_char               WindowKeyFn       = unsafe { nil }
-	on_scroll             WindowScrollFn    = unsafe { nil }
-	on_resize             WindowResizeFn    = unsafe { nil }
-	on_iconify            WindowFn          = unsafe { nil }
-	on_restore            WindowFn          = unsafe { nil }
-	on_quit_request       WindowFn          = unsafe { nil }
-	on_suspend            WindowFn          = unsafe { nil }
-	on_resume             WindowFn          = unsafe { nil }
-	on_focus              WindowFn          = unsafe { nil }
-	on_unfocus            WindowFn          = unsafe { nil }
-	on_mouse_move         WindowMouseMoveFn = unsafe { nil }
-	on_init               WindowFn = unsafe { nil }
-	on_draw               WindowFn = unsafe { nil }
-	children              []Widget
-	layout                Widget = empty_stack // simplest way to fulfill children
+	on_click         WindowMouseFn     = unsafe { nil }
+	on_mouse_down    WindowMouseFn     = unsafe { nil }
+	on_mouse_up      WindowMouseFn     = unsafe { nil }
+	on_files_dropped WindowMouseFn     = unsafe { nil }
+	on_swipe         WindowMouseFn     = unsafe { nil }
+	on_key_down      WindowKeyFn       = unsafe { nil }
+	on_char          WindowKeyFn       = unsafe { nil }
+	on_scroll        WindowScrollFn    = unsafe { nil }
+	on_resize        WindowResizeFn    = unsafe { nil }
+	on_iconify       WindowFn          = unsafe { nil }
+	on_restore       WindowFn          = unsafe { nil }
+	on_quit_request  WindowFn          = unsafe { nil }
+	on_suspend       WindowFn          = unsafe { nil }
+	on_resume        WindowFn          = unsafe { nil }
+	on_focus         WindowFn          = unsafe { nil }
+	on_unfocus       WindowFn          = unsafe { nil }
+	on_mouse_move    WindowMouseMoveFn = unsafe { nil }
+	on_init          WindowFn = unsafe { nil }
+	on_draw          WindowFn = unsafe { nil }
+	children         []Widget
+	layout           Widget = empty_stack
+	// simplest way to fulfill children
 	custom_bold_font_path string
 	native_rendering      bool
 	resizable             bool
@@ -192,7 +197,6 @@ pub fn window(cfg WindowParams) &Window {
 
 	// default text_cfg
 	// m := f32(math.min(width, height))
-
 	mut text_cfg := gx.TextCfg{
 		color: gx.rgb(38, 38, 38)
 		align: gx.align_left
@@ -251,8 +255,10 @@ pub fn window(cfg WindowParams) &Window {
 		Context: gg.new_context(
 			width: width
 			height: height
-			use_ortho: true // This is needed for 2D drawing
-			create_window: true // TODO: Unused ?
+			use_ortho: true
+			// This is needed for 2D drawing
+			create_window: true
+			// TODO: Unused ?
 			window_title: cfg.title
 			resizable: resizable
 			fullscreen: fullscreen
@@ -272,7 +278,8 @@ pub fn window(cfg WindowParams) &Window {
 			cleanup_fn: gg_cleanup
 			// keydown_fn: window_key_down
 			// char_fn: window_char
-			bg_color: window.bg_color // gx.rgb(230,230,230)
+			bg_color: window.bg_color
+			// gx.rgb(230,230,230)
 			// window_state: ui
 			native_rendering: cfg.native_rendering
 			ui_mode: !cfg.immediate
@@ -300,14 +307,12 @@ pub fn window(cfg WindowParams) &Window {
 
 	// q := int(window)
 	// println('created window $q.hex()')
-
 	return window
 }
 
 pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 	// q := int(parent_window)
 	// println('child_window() q=$q.hex() parent={parent_window:p} ${cfg.on_draw:p}')
-
 	mut window := &Window{
 		parent_window: parent_window
 		// state: parent_window.state
@@ -333,12 +338,12 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 		parent_window.register_child(*child)
 		child.init(parent_window)
 	}
+
 	// window.set_cursor()
 	return window
 }
 
 //----
-
 fn gg_init(mut window Window) {
 	window.mouse.init(window)
 	window.tooltip.init(window.ui)
@@ -351,6 +356,7 @@ fn gg_init(mut window Window) {
 		window.width, window.height = window_size.width, window_size.height
 		window.orig_width, window.orig_height = window.width, window.height
 	}
+
 	// This add experimental ui message system
 	if !window.native_message {
 		window.add_message_dialog()
@@ -361,6 +367,7 @@ fn gg_init(mut window Window) {
 		window.register_child(*child)
 		child.init(window)
 	}
+
 	// then subwindows
 	for mut sw in window.subwindows {
 		// println('init $child.id')
@@ -378,6 +385,7 @@ fn gg_init(mut window Window) {
 	if window.on_init != WindowFn(0) {
 		window.on_init(window)
 	}
+
 	// update theme style recursively
 	mut l := Layout(window)
 	l.update_theme_style(window.theme_style)
@@ -420,6 +428,7 @@ fn frame(mut w Window) {
 
 	// draw dragger if active
 	draw_dragger(mut w)
+
 	// draw tooltip if active
 	w.tooltip.draw()
 
@@ -499,18 +508,19 @@ fn frame_native(mut w Window) {
 	*/
 
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
+
 	// if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for mut child in children {
 		child.draw()
 	}
+
 	// println('ui.frame_native() done')
 	//}
 	// w.ui.needs_refresh = false
 }
 
 //----
-
 fn on_event(e &gg.Event, mut window Window) {
 	/*
 	if false && e.typ != .mouse_move {
@@ -522,6 +532,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		}
 	}
 	*/
+
 	// window.ui.needs_refresh = true
 	// window.refresh()
 
@@ -577,6 +588,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		}
 	}
 	window.ui.ticks = 0
+
 	// window.ui.ticks_since_refresh = 0
 	// println("on_event: $e.typ")
 	window.mouse.update_event(e)
@@ -584,6 +596,7 @@ fn on_event(e &gg.Event, mut window Window) {
 		.mouse_down {
 			// println("mouse down")
 			window_mouse_down(e, mut window.ui)
+
 			// IMPORTANT: No more need since inside window_handle_tap:
 			//  window_click(e, window.ui)
 			// touch like
@@ -600,11 +613,13 @@ fn on_event(e &gg.Event, mut window Window) {
 			} else {
 				window.ui.nb_click = 1
 			}
+
 			// println("nb_click = $window.ui.nb_click")
 		}
 		.mouse_up {
 			// println('mouseup')
 			window_mouse_up(e, mut window.ui)
+
 			// NOT THERE since already done
 			// touch-like
 			window.touch.end = Touch{
@@ -684,6 +699,7 @@ fn on_event(e &gg.Event, mut window Window) {
 				}
 				window.touch.button = 0
 				window_touch_down(e, window.ui)
+
 				// println("touch BEGIN: ${window.touch.start} $e")
 			}
 		}
@@ -698,6 +714,7 @@ fn on_event(e &gg.Event, mut window Window) {
 					time: time.now()
 				}
 				window.touch.button = -1
+
 				// println("touch END: ${window.touch.end} $window.touch.button")
 				window_touch_up(e, window.ui)
 				window_click_or_touch_tap_and_swipe(e, window.ui)
@@ -752,6 +769,7 @@ fn window_resize(event gg.Event, u &UI) {
 fn window_key_down(event gg.Event, u &UI) {
 	// println('keydown char=$event.char_code')
 	mut window := u.window
+
 	// C.printf(c'g child=%p\n', child)
 	// println('window_keydown $event')
 	e := KeyEvent{
@@ -762,6 +780,7 @@ fn window_key_down(event gg.Event, u &UI) {
 		// action: action
 		// mods: mod
 	}
+
 	// TODO: [Ctl]+[Tab] and [Ctl]+[Shift]+[Tab] not captured by sokol
 	if e.key == .tab {
 		if shift_key(e.mods) {
@@ -801,6 +820,7 @@ fn window_key_down(event gg.Event, u &UI) {
 	if window.key_down_fn != WindowKeyFn(0) {
 		window.key_down_fn(window, e)
 	}
+
 	// TODO
 	if true { // action == 2 || action == 1 {
 		window.eventbus.publish(events.on_key_down, window, e)
@@ -920,6 +940,7 @@ fn window_mouse_up(event gg.Event, mut u UI) {
 	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
 		window.eventbus.publish(events.on_mouse_up, window.child_window, e)
+
 		// window.eventbus.unsubscribe()
 	} else {
 		window.eventbus.publish(events.on_mouse_up, window, e)
@@ -967,6 +988,7 @@ fn window_click(event gg.Event, mut u UI) {
 
 fn window_scroll(event gg.Event, u &UI) {
 	mut window := u.window
+
 	// println('title =$window.title')
 	e := ScrollEvent{
 		mouse_x: event.mouse_x / window.dpi_scale
@@ -1025,7 +1047,8 @@ fn window_click_or_touch_tap(event gg.Event, u &UI) {
 	// println("typ on_tap $event.typ")
 	window := u.window
 	e := MouseEvent{
-		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		action: MouseAction.up
+		// if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
 		y: window.touch.end.pos.y
 		// button: MouseButton(event.mouse_button)
@@ -1049,6 +1072,7 @@ fn window_click_or_touch_tap(event gg.Event, u &UI) {
 
 fn window_touch_scroll(event gg.Event, u &UI) {
 	mut window := u.window
+
 	// println('title =$window.title')
 	s, m := window.touch.start, window.touch.move
 	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
@@ -1068,7 +1092,8 @@ fn window_touch_scroll(event gg.Event, u &UI) {
 fn window_touch_swipe(event gg.Event, u &UI) {
 	window := u.window
 	e := MouseEvent{
-		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
+		action: MouseAction.up
+		// if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
 		y: window.touch.end.pos.y
 		// button: MouseButton(event.mouse_button)
@@ -1112,6 +1137,7 @@ fn window_files_dropped(event gg.Event, mut u UI) {
 	if window.files_dropped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.files_dropped_fn(window, e)
 	}
+
 	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_dropped)
 	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
@@ -1122,7 +1148,6 @@ fn window_files_dropped(event gg.Event, mut u UI) {
 }
 
 //----
-
 pub fn (mut w Window) set_title(title string) {
 	w.title = title
 	/*
@@ -1203,6 +1228,7 @@ pub fn (w &Window) child(from ...int) Widget {
 			}
 		}
 	}
+
 	// by default returns root_layout
 	// expected when `from` is empty
 	root := w.root_layout
@@ -1229,6 +1255,7 @@ pub fn (w &Window) free() {
 		w.ui.free()
 		w.children.free()
 		w.title.free()
+
 		// w.eventbus.free()
 		w.widgets.free()
 		w.widgets_counts.free()
@@ -1241,7 +1268,6 @@ pub fn (w &Window) free() {
 }
 
 //----  Layout Interface Methods
-
 pub fn (w &Window) get_ui() &UI {
 	return w.ui
 }
@@ -1313,7 +1339,6 @@ pub fn (w &Window) update_layout_without_pos() {
 fn (w &Window) draw() {}
 
 //---- Window focusable methods
-
 pub fn (w &Window) unlocked_focus() bool {
 	$if focus ? {
 		println('locked focus = <${w.locked_focus}>')
@@ -1358,7 +1383,6 @@ pub fn (w &Window) focus() {
 }
 
 //---- unused
-
 pub fn (w &Window) set_cursor(cursor Cursor) {}
 
 pub fn (w &Window) onmousedown(cb voidptr) {}
@@ -1366,7 +1390,6 @@ pub fn (w &Window) onmousedown(cb voidptr) {}
 pub fn (w &Window) close() {}
 
 //---- child widgets
-
 pub fn (mut w Window) register_children(mut children []Widget) {
 	for mut child in children {
 		// println('init <$child.id>')

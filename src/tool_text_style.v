@@ -74,6 +74,7 @@ pub fn (mut u UI) add_font(font_name string, font_path string) {
 		u.dd.ft.fons.reset_atlas(512, 512)
 
 		bytes := os.read_bytes(font_path) or { []u8{} }
+
 		// gg := u.gg
 		// mut f := u.fonts
 		if bytes.len > 0 {
@@ -207,6 +208,7 @@ pub fn (mut w Window) init_text_styles() {
 		w.ui.add_style(id: '_default_')
 	} $else {
 		w.ui.add_font('system', font_default())
+
 		// init default style
 		w.ui.add_style(id: '_default_')
 		fs := new_font_searcher()

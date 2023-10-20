@@ -4,7 +4,6 @@ import gx
 import toml
 
 // Menu
-
 pub struct MenuShapeStyle {
 pub mut:
 	border_color   gx.Color = menu_border_color
@@ -71,6 +70,7 @@ pub fn (mut m Menu) load_style() {
 		style = m.style_params.style
 	}
 	m.update_theme_style(style)
+
 	// forced overload default style
 	m.update_style(m.style_params)
 }

@@ -44,10 +44,13 @@ fn main() {
 fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 	color := cs.color()
 	mut gui := cs.layout.ui
+
 	// load accnt color for the window
 	gui.window.load_accent_color_style([int(color.r), color.g, color.b])
+
 	// get current accent colors
 	colors := gui.style_colors
+
 	// show the 4 accent colors
 	for i in 0 .. 4 {
 		mut rect := gui.window.get_or_panic[ui.Rectangle]('rect${i}')

@@ -25,7 +25,8 @@ fn main() {
 				spacing: 5
 				children: [
 					ui.label(
-						text: 'Text input' //&app.tb
+						text: 'Text input'
+						//&app.tb
 					),
 				]
 			),

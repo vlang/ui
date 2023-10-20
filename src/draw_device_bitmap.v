@@ -75,6 +75,7 @@ pub fn (d &DrawDeviceBitmap) set_text_style(font_name string, font_path string, 
 	ts.color = color
 	ts.set_align(align)
 	ts.set_vertical_align(vertical_align)
+
 	// font
 	if font_path !in d.r.ttf_fonts {
 		mut r := d.r
@@ -98,6 +99,7 @@ pub fn (d &DrawDeviceBitmap) draw_text(x int, y int, text string, cfg gx.TextCfg
 	d.apply_text_config(mut &ts, cfg)
 	mut r := d.r
 	r.init_style(ts)
+
 	// r.get_info_string()
 	dy := int(r.get_y_base() * d.ts.vertical_align)
 	println('draw text bmp (${text}) (${x}, ${y}) dy := ${dy} = ${r.get_y_base()} * ${d.ts.vertical_align}} ')
@@ -109,6 +111,7 @@ pub fn (d &DrawDeviceBitmap) draw_text_default(x int, y int, text string) {
 	// println('$d.id draw_text_default($x, $y, $text) $d.ts')
 	mut r := d.r
 	r.init_style(d.ts)
+
 	// r.get_info_string()
 	dy := int(r.get_y_base() * d.ts.vertical_align)
 	println('draw text bmp (${text}) (${x}, ${y}) dy := ${dy} = ${r.get_y_base()} * ${d.ts.vertical_align}} ')

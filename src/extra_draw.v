@@ -66,7 +66,6 @@ import sokol.sgl
 
 //--------- DrawText interface (for Tooltip and Message)
 // Rmk: this can be used for Widget having these fields too
-
 interface DrawText {
 	ui &UI
 mut:
@@ -252,6 +251,7 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 	} else if v == b {
 		h = ((r - g) / d + 4.0) / 6.0
 	}
+
 	// println("h: $h")
 	if v != 0 {
 		s = d / v
@@ -285,6 +285,7 @@ pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
 		h = ((r - g) / d + 4.0) / 6.0
 	}
 	l := (v + m) / 2.0
+
 	// println("h: $h")
 	if v != 0 {
 		s = d / (1.0 - math.abs(2 * l - 1.0))
@@ -371,6 +372,7 @@ pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 		y1 := f32((cy + c.height) * ctx.scale)
 		sgl.load_pipeline(ctx.pipeline.alpha)
 		sgl.enable_texture()
+
 		// sgl.texture(simg)
 		sgl.begin_quads()
 		sgl.c4b(255, 255, 255, 255)

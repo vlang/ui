@@ -108,6 +108,7 @@ fn (mut pic Picture) init(parent Layout) {
 			pic.image = pic.ui.gg.create_image_from_byte_array(byte_ary) or { panic(err) }
 		}
 	}
+
 	// If the user didn't set width or height, use the image's dimensions, otherwise it won't be displayed
 	if pic.width == 0 || pic.height == 0 {
 		pic.width = pic.image.width

@@ -118,6 +118,7 @@ fn (mut app App) win_init(win &ui.Window) {
 	app.tb_filter = win.get_or_panic[ui.TextBox]('tb_filter')
 	app.tb_name = win.get_or_panic[ui.TextBox]('tb_name')
 	app.tb_surname = win.get_or_panic[ui.TextBox]('tb_surname')
+
 	// init listbox content
 	app.update_listbox()
 }

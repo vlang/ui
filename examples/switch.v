@@ -8,7 +8,7 @@ const (
 [heap]
 struct App {
 mut:
-	label    &ui.Label
+	label    &ui.Label  = unsafe { nil }
 	switcher &ui.Switch = unsafe { nil }
 	window   &ui.Window = unsafe { nil }
 }

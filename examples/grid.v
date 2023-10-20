@@ -7,8 +7,8 @@ const (
 
 struct App {
 mut:
-	grid   &ui.Grid
-	window &ui.Window
+	grid   &ui.Grid   = unsafe { nil }
+	window &ui.Window = unsafe { nil }
 }
 
 fn main() {

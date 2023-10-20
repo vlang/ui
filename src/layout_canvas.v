@@ -131,6 +131,7 @@ pub struct CanvasLayoutParams {
 pub fn canvas_layout(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := canvas_plus(c)
 	canvas.children = c.children
+
 	// Saves the original position of children
 	// used in set_children_pos
 	for i, child in c.children {
@@ -192,6 +193,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	u := parent.get_ui()
 	c.ui = u
 	c.init_size()
+
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, canvas_layout_click, c)
@@ -216,6 +218,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	for mut child in c.children {
 		child.init(c)
 	}
+
 	// init for component
 	if c.on_init != InitFn(0) {
 		c.on_init(c)
@@ -242,6 +245,7 @@ fn (mut c CanvasLayout) set_root_layout() {
 		mut window := unsafe { c.parent }
 		if c.is_root_layout {
 			window.root_layout = c
+
 			// window.update_layout()
 		} else {
 			c.update_layout()
@@ -293,6 +297,7 @@ pub fn (c &CanvasLayout) free() {
 		c.id.free()
 		c.drawing_children.free()
 		c.children.free()
+
 		// if c.has_scrollview {
 		// 	c.scrollview.free()
 		// }
@@ -347,6 +352,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 			action: e.action
 			mods: e.mods
 		}
+
 		// println('$c.id $e2.x $e2.y')
 		c.click_fn(c, e2)
 	}
@@ -470,6 +476,7 @@ pub fn (mut c CanvasLayout) update_layout() {
 	if c.is_canvas_layer {
 		return
 	}
+
 	// TODO: test if this is necessary
 	if c.is_root_layout {
 		window := c.ui.window
@@ -485,8 +492,10 @@ pub fn (mut c CanvasLayout) update_layout() {
 	// update size and scrollview if necessary
 	c.set_adjusted_size(c.ui)
 	scrollview_update(c)
+
 	// println("$c.id update_layout")
 	c.set_drawing_children()
+
 	// TODO: this make component/grid example failing
 	// otherwise layout/canas_layout example failing
 	scrollview_set_children_orig_xy(c, false)
@@ -570,6 +579,7 @@ pub fn (mut c CanvasLayout) set_children_pos() {
 	for i, mut child in c.children {
 		// scrollview_widget_save_offset(child)
 		child.set_pos(c.pos_[i].x + c.x + c.offset_x, c.pos_[i].y + c.y + c.offset_y)
+
 		// scrollview_widget_restore_offset(child, true)
 		if mut child is Stack {
 			child.update_layout()
@@ -594,6 +604,7 @@ pub fn (mut c CanvasLayout) set_pos(x int, y int) {
 	c.y = y
 	c.bounding_changed()
 	scrollview_widget_restore_offset(c, true)
+
 	// scrollview_update_orig_size(c)
 	c.set_children_pos()
 }
@@ -611,6 +622,7 @@ pub fn (c CanvasLayout) size() (int, int) {
 // possibly dynamic full size
 pub fn (c &CanvasLayout) full_size() (int, int) {
 	mut fw, mut fh := c.full_width, c.full_height
+
 	// println('full_size $fw, $fh')
 	if c.full_width == -1 || c.full_height == -1 {
 		if c.full_size_fn == unsafe { nil } {
@@ -625,6 +637,7 @@ pub fn (c &CanvasLayout) full_size() (int, int) {
 			}
 		}
 	}
+
 	// println('$fw, $fh')
 	return fw, fh
 }
@@ -659,6 +672,7 @@ fn (mut c CanvasLayout) set_drawing_children() {
 		} else if mut child is BoxLayout {
 			child.set_drawing_children()
 		}
+
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > c.z_index {
 			$if cl_z_index_update ? {
@@ -696,6 +710,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	}
 	mut dtw := DrawTextWidget(c)
 	dtw.draw_device_load_style(d)
+
 	// if scrollview_clip(mut c) {
 	// 	c.set_children_pos()
 	// 	c.scrollview.children_to_update = false
@@ -713,6 +728,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 			w = int(f32(fw) * c.ui.window.dpi_scale)
 			h = int(f32(fh) * c.ui.window.dpi_scale)
 		}
+
 		// println("$c.id ($w, $h)")
 		if c.style.bg_radius > 0 {
 			radius := relative_size(c.style.bg_radius, w, h)
@@ -725,6 +741,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	if c.draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
 		c.draw_device_fn(mut d, c)
 	}
+
 	//$if cdraw_scroll ? {
 	//	if Layout(c).has_scrollview_or_parent_scrollview() {
 	//		// if c.scrollview != 0 {
@@ -745,6 +762,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 		$if cl_draw_children ? {
 			println('draw <${c.id}>: ${c.drawing_children.map(it.id)} at ${c.drawing_children.map(it.x)}')
 		}
+
 		// if active_scrollview {
 		// 	// TODO: calculate whether child falls outside clipping rect and
 		// 	// continue (i.e., skip child drawing)
@@ -775,7 +793,6 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	//		child.draw_device(mut d)
 	//	}
 	//}
-
 	if c.post_draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
 		c.post_draw_device_fn(mut *d, c)
 	}
@@ -874,6 +891,7 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
 	mut dtw := DrawTextWidget(c)
+
 	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
 	dtw.draw_device_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
@@ -1020,7 +1038,6 @@ pub fn (c &CanvasLayout) draw_device_empty_poly(d DrawDevice, points []f32, colo
 }
 
 // special stuff for surrounding rectangle
-
 pub fn (c &CanvasLayout) draw_device_rect_surrounded(d DrawDevice, x f32, y f32, w f32, h f32, size int, color gx.Color) {
 	c.draw_device_rect_filled(d, x - size, y - size, w + 2 * size, size, color)
 	c.draw_device_rect_filled(d, x - size, y + h, w + 2 * size, size, color)

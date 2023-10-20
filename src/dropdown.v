@@ -139,7 +139,6 @@ pub fn (dd &Dropdown) free() {
 // 	// dtw.init_style(align: .center, vertical_align: .middle)
 // 	dtw.update_text_size(dd.text_size)
 // }
-
 pub fn (mut dd Dropdown) set_pos(x int, y int) {
 	dd.x = x
 	dd.y = y
@@ -151,6 +150,7 @@ pub fn (mut dd Dropdown) size() (int, int) {
 
 pub fn (mut dd Dropdown) propose_size(w int, h int) (int, int) {
 	dd.width = w
+
 	// dd.height = h
 	return w, dd.dropdown_height
 }
@@ -168,6 +168,7 @@ pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	}
 	mut dtw := DrawTextWidget(dd)
 	dtw.draw_device_load_style(d)
+
 	// draw the main dropdown
 	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.style.bg_color)
 	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
@@ -183,6 +184,7 @@ pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 		dtw.draw_device_text(d, dd.x + 5, dd.y + 5, dd.def_text)
 	}
 	dd.draw_device_open(d)
+
 	// draw the arrow
 	d.draw_image(dd.x + (dd.width - 28), dd.y - 3, 28, 28, dd.ui.down_arrow)
 	offset_end(mut dd)
@@ -202,6 +204,7 @@ fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 				color)
 			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				dd.style.border_color)
+
 			// dd.ui.dd.draw_text_def(dd.x + 5, y + i * dd.dropdown_height + 5, item.text)
 			DrawTextWidget(dd).draw_device_text(d, dd.x + 5, y + i * dd.dropdown_height + 5,
 				item.text)
@@ -275,6 +278,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		dd.open_drawer()
 	} else if dd.open {
 		index := int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
+
 		// println("$index : ($e.y - $dd.y) / dd.dropdown_height - 1")
 		dd.selected_index = index
 		if dd.on_selection_changed != DropDownFn(0) {
@@ -289,6 +293,7 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	if dd.hidden {
 		return
 	}
+
 	// println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
 	if dd.point_inside(e.x, e.y) {
 		dd.focus()

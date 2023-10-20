@@ -5,8 +5,9 @@ module ui
 
 import gg
 
-pub type DrawFn = fn (ctx &gg.Context, c &Canvas) // x_offset int, y_offset int)
+pub type DrawFn = fn (ctx &gg.Context, c &Canvas)
 
+// x_offset int, y_offset int)
 [heap]
 pub struct Canvas {
 pub mut:

@@ -24,14 +24,16 @@ pub mut:
 	hidden                bool
 	ui                    &UI = unsafe { nil }
 	// dragging
-	drag         bool
-	dragging     bool
-	drag_mode    int // 0 = pos, 1 = size
+	drag      bool
+	dragging  bool
+	drag_mode int
+	// 0 = pos, 1 = size
 	drag_xy_down [2]int
 	drag_ltrb    [4]int
 	// decoration
-	decoration      bool
-	border_dir      [2]int // direction border in x (possible values: -1, 0, 1, 10)
+	decoration bool
+	border_dir [2]int
+	// direction border in x (possible values: -1, 0, 1, 10)
 	prev_border_dir [2]int = [10, 10]!
 	// main unique layout attached to the subwindow
 	layout     Layout = empty_stack
@@ -71,12 +73,14 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.parent = parent
 	pui := parent.get_ui()
 	s.ui = pui
+
 	// Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_mouse_down, sw_mouse_down, s)
 	subscriber.subscribe_method(events.on_mouse_move, sw_mouse_move, s)
 	subscriber.subscribe_method(events.on_mouse_up, sw_mouse_up, s)
 	s.ui.window.evt_mngr.add_receiver(s, [events.on_mouse_down])
+
 	// children initialized after so that subcribe_method
 	mut l := s.layout
 	if mut l is Widget {
@@ -112,6 +116,7 @@ fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 		return
 	}
 	offset_start(mut s)
+
 	// possibly add window decoration
 	if s.decoration {
 		w, _ := s.size()
@@ -201,13 +206,16 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 				w, _ := s.size()
 				new_x, new_y := s.drag_ltrb[0] + int(e.x) - s.drag_xy_down[0], s.drag_ltrb[1] +
 					int(e.y) - s.drag_xy_down[1]
+
 				// println("($new_x, $new_y)")
 				if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
 					&& new_x + ui.sw_decoration <= s.ui.window.width
 					&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
 					s.set_pos(new_x, new_y)
+
 					// println("sw $s.id dragging $s.x, $s.y")
 					s.update_layout()
+
 					// window.update_layout()
 				}
 			}
@@ -242,7 +250,6 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 // 		sw.prev_border_dir = [10, 10]!
 // 	}
 // }
-
 pub fn (mut s SubWindow) update_layout() {
 	s.layout.update_layout()
 }
@@ -287,11 +294,13 @@ fn (mut s SubWindow) point_inside(x f64, y f64) bool {
 	// add possible decoration
 	if s.decoration {
 		w, h := s.size()
+
 		// println('point_inside $s.id $w, $h')
 		return x > s.x && x < s.x + w && y > s.y && y < s.y + h + ui.sw_decoration
 	} else {
 		if s.layout is Widget {
 			mut w := s.layout as Widget
+
 			// println(" ${w.point_inside(x, y)}")
 			return w.point_inside(x, y)
 		} else {
@@ -305,6 +314,7 @@ pub fn (mut s SubWindow) set_pos(x int, y int) {
 	s.y = y
 	if s.layout is Widget {
 		mut w := s.layout as Widget
+
 		// println("sw set_pos: $s.x, $s.y $s.decoration")
 		w.set_pos(x, y + if s.decoration { ui.sw_decoration } else { 0 })
 	}
@@ -345,6 +355,7 @@ pub fn (s SubWindow) size() (int, int) {
 	if s.decoration {
 		h += ui.sw_decoration
 	}
+
 	// println("subw $s.id (layout: $s.layout.id) $w, $h")
 	return w, h
 }
@@ -412,6 +423,7 @@ fn (mut s SubWindow) as_top_subwindow() {
 	sws << s
 	mut win := s.ui.window
 	win.subwindows = sws
+
 	// println("atp sws: ${win.subwindows.map(it.id)}")
 	for mut sw in sws {
 		sw.update_depth(sw.id == s.id)
@@ -425,11 +437,13 @@ fn (mut s SubWindow) as_top_subwindow() {
 fn (mut s SubWindow) update_depth(top bool) {
 	// reset first the children
 	s.set_children_depth(-s.z_index - ui.sw_z_index_child)
+
 	// inc z_index
 	s.z_index = ui.sw_z_index
 	if top {
 		s.z_index += ui.sw_z_index_top
 	}
+
 	// propagate to children
 	// println("z_index: ${s.z_index + sw_z_index_child}")
 	s.set_children_depth(s.z_index + ui.sw_z_index_child)

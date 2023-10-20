@@ -71,6 +71,7 @@ pub fn (mut app Application) run() {
 	if app.window == unsafe { nil } {
 		app.add_window()
 	}
+
 	// run window
 	run(app.window)
 }
@@ -86,11 +87,11 @@ pub fn (mut app Application) layout() Widget {
 }
 
 // Specific to external gg application
-
 interface GGApplication {
 mut:
 	gg &gg.Context
-	bounds gg.Rect // bounding box where to draw
+	bounds gg.Rect
+	// bounding box where to draw
 	on_init()
 	on_draw()
 	on_delegate(&gg.Event)

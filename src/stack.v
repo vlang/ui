@@ -62,25 +62,28 @@ pub mut:
 	ui                   &UI    = unsafe { nil }
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacings             []f32 // []int // int
-	stretch              bool
-	direction            Direction
-	margins              Margins
-	real_x               int = -1
-	real_y               int = -1
-	real_width           int
-	real_height          int
-	adj_width            int
-	adj_height           int
-	fixed_width          int
-	fixed_height         int
-	title                string
+	spacings             []f32
+	// []int // int
+	stretch      bool
+	direction    Direction
+	margins      Margins
+	real_x       int = -1
+	real_y       int = -1
+	real_width   int
+	real_height  int
+	adj_width    int
+	adj_height   int
+	fixed_width  int
+	fixed_height int
+	title        string
 	// children related
-	children              []Widget
-	drawing_children      []Widget
-	widths                []f32 // children sizes
-	heights               []f32
-	vertical_alignments   VerticalAlignments // Flexible alignments by index overriding alignment.
+	children         []Widget
+	drawing_children []Widget
+	widths           []f32
+	// children sizes
+	heights             []f32
+	vertical_alignments VerticalAlignments
+	// Flexible alignments by index overriding alignment.
 	horizontal_alignments HorizontalAlignments
 	alignments            Alignments
 	hidden                bool
@@ -108,19 +111,22 @@ pub mut:
 [params]
 struct StackParams {
 	StackStyleParams
-	id                   string
-	width                int // useful for root_layout to init size
+	id    string
+	width int
+	// useful for root_layout to init size
 	height               int
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
-	spacings             []f32 // Spacing = Spacing(0) // int
-	spacing              f32
-	stretch              bool
-	direction            Direction
-	margins              Margins
+	spacings             []f32
+	// Spacing = Spacing(0) // int
+	spacing   f32
+	stretch   bool
+	direction Direction
+	margins   Margins
 	// children related
-	title                 string
-	widths                []f32 // children sizes
+	title  string
+	widths []f32
+	// children sizes
 	heights               []f32
 	align                 Alignments
 	vertical_alignments   VerticalAlignments
@@ -135,8 +141,10 @@ fn stack(c StackParams) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
 		id: c.id
-		height: c.height // become real_height
-		width: c.width // become real_width
+		height: c.height
+		// become real_height
+		width: c.width
+		// become real_width
 		vertical_alignment: c.vertical_alignment
 		horizontal_alignment: c.horizontal_alignment
 		spacings: c.spacings
@@ -163,6 +171,7 @@ fn stack(c StackParams) &Stack {
 	}
 	if c.scrollview {
 		scrollview_add(mut s)
+
 		// to restrict drawing to visible children
 	}
 	return s
@@ -181,10 +190,12 @@ pub fn (mut s Stack) init(parent Layout) {
 	s.ui = u
 	s.init_size()
 	s.load_style()
+
 	// Init all children recursively
 	for mut child in s.children {
 		child.init(s)
 	}
+
 	// init for component attached to s when it is the layout of a component
 	if s.on_init != InitFn(0) {
 		s.on_init(s)
@@ -211,6 +222,7 @@ fn (mut s Stack) set_root_layout() {
 		if s.is_root_layout {
 			window.root_layout = s
 			s.real_x, s.real_y = 0, 0
+
 			// window.update_layout()
 		} else {
 			s.update_layout()
@@ -247,6 +259,7 @@ pub fn (s &Stack) free() {
 		s.drawing_children.free()
 		s.widths.free()
 		s.heights.free()
+
 		// if s.has_scrollview {
 		// 	s.scrollview.free()
 		// }
@@ -262,23 +275,30 @@ pub fn (mut s Stack) update_layout() {
 	// Only once for all children recursively
 	// 1) find all the adjusted sizes
 	s.set_adjusted_size(0, true, s.ui)
+
 	// 2) set cache sizes
 	s.set_cache_sizes()
 	$if cache ? {
 		debug_show_cache(mut s, 0, '')
 	}
+
 	// 3) set all the sizes (could be updated possibly for resizing)
 	s.set_children_sizes()
+
 	// All sizes have to be set before positionning widgets
 	// 4) Set the position of this stack (anchor could possibly be defined inside set_pos later as suggested by Kahsa)
 	s.update_pos()
+
 	// 5) children z_index
 	s.set_drawing_children()
+
 	// 6) set position for chilfren
 	s.set_children_pos()
+
 	// 7) set the origin sizes for scrollview
 	// scrollview_widget_set_orig_xy(s, true)
 	scrollview_set_children_orig_xy(s, true)
+
 	// 8) update_layout children if CanvasLayout or BoxLayout
 	for mut child in s.children {
 		if mut child is CanvasLayout {
@@ -287,6 +307,7 @@ pub fn (mut s Stack) update_layout() {
 			child.update_layout()
 		}
 	}
+
 	// Only wheither s is window.root_layout
 	if s.is_root_layout {
 		window := s.ui.window
@@ -304,6 +325,7 @@ pub fn (mut s Stack) update_layout_without_pos() {
 	s.set_adjusted_size(0, true, s.ui)
 	s.set_cache_sizes()
 	s.set_children_sizes()
+
 	// N.B.: s.update_pos() removed!
 	s.set_drawing_children()
 	s.set_children_pos()
@@ -316,6 +338,7 @@ fn (mut s Stack) init_size() {
 		s.debug_ids = env('UI_IDS').split(',').clone()
 		if s.id in s.debug_ids {
 			println('parent size: ${s.id} (${parent_width}, ${parent_height}) root_layout? ${s.is_root_layout}')
+
 			// debug_show_sizes(mut s, "decode before -> ")
 		}
 	}
@@ -345,6 +368,7 @@ fn (mut s Stack) set_children_sizes() {
 	$if s_scs ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
 	}
+
 	// set children sizes
 	for i, mut child in s.children {
 		mut w, mut h := child.size()
@@ -370,6 +394,7 @@ fn (mut s Stack) set_children_sizes() {
 			child.set_children_sizes()
 		}
 	}
+
 	// Only for debug stuff
 	$if s_scsd ? {
 		if s.debug_ids.len == 0 || s.id in s.debug_ids {
@@ -389,7 +414,6 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 
 	// free_width -= c.fixed_width
 	// free_height -= c.fixed_height
-
 	$if s_cs ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
 		s.debug_children_ids = env('UI_CIDS').split(',').clone()
@@ -437,6 +461,7 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 				if child.z_index == z_index_hidden {
 					weight = 0
 				}
+
 				// println("$child.id mch= $weight * $s.real_height")
 				mch[i] = int(weight * f32(s.real_height))
 				if s.direction == .column {
@@ -527,13 +552,16 @@ fn (mut s Stack) children_sizes() ([]int, []int) {
 fn (mut s Stack) set_cache_sizes() {
 	//
 	s.default_sizes()
+
 	//
 	len := s.children.len
 	mut c := unsafe { &s.cache }
+
 	// size preallocated
 	c.fixed_width, c.fixed_height = 0, 0
 	c.min_width, c.min_height = 0, 0
 	c.width_mass, c.height_mass = 0.0, 0.0
+
 	// fixed_<size>s and weight_<size>s are cached in the Stack struct as private fields
 	// since once they are determined, they would never be updated
 	// above all, they would be used when resizing
@@ -606,6 +634,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// weighted size
 			c.width_type[i] = .weighted
 			c.weight_widths[i] = cw
+
 			// Internally, fixed_widths[i] is set to minimal fixed size
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row { // sum rule
@@ -636,6 +665,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// even reducing their size!!!
 			c.width_type[i] = .weighted_stretch
 			c.weight_widths[i] = -cw
+
 			// This is the initial size
 			c.fixed_widths[i] = adj_child_width
 			if s.direction == .row { // sum rule
@@ -683,6 +713,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// weighted size
 			c.height_type[i] = .weighted
 			c.weight_heights[i] = ch
+
 			// Internally, fixed_heights[i] is set to minimal fixed size
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column { // sum rule
@@ -713,6 +744,7 @@ fn (mut s Stack) set_cache_sizes() {
 			// even reducing their size!!!
 			c.height_type[i] = .weighted_stretch
 			c.weight_heights[i] = -cw
+
 			// This is the initial size
 			c.fixed_heights[i] = adj_child_height
 			if s.direction == .column { // sum rule
@@ -739,6 +771,7 @@ fn (mut s Stack) set_cache_sizes() {
 				}
 			}
 		}
+
 		// recursively do the same for Stack children
 		if mut child is Stack {
 			child.set_cache_sizes()
@@ -749,6 +782,7 @@ fn (mut s Stack) set_cache_sizes() {
 // default values for s.widths and s.heights
 fn (mut s Stack) default_sizes() {
 	st := f32(stretch)
+
 	// comp := f32(ui.compact)
 	p_equi := f32(1) / f32(s.children.len)
 	if s.direction == .row {
@@ -762,6 +796,7 @@ fn (mut s Stack) default_sizes() {
 				s.heights << st // if child is Stack || child is Group { st } else { comp }
 			}
 		}
+
 		// println("1) nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
 		nb = s.widths.len
 		if nb < s.children.len {
@@ -779,6 +814,7 @@ fn (mut s Stack) default_sizes() {
 				s.widths << p
 			}
 		}
+
 		// println("2) nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
 	} else {
 		mut nb := s.widths.len
@@ -791,6 +827,7 @@ fn (mut s Stack) default_sizes() {
 				s.widths << st // if child is Stack || child is Group { st } else { comp }
 			}
 		}
+
 		// println("3) nb=$nb child_len=${s.children.len}  w_len= ${s.widths.len} ")
 		nb = s.heights.len
 		if nb < s.children.len {
@@ -808,6 +845,7 @@ fn (mut s Stack) default_sizes() {
 				s.heights << p
 			}
 		}
+
 		// println("4) nb=$nb child_len=${s.children.len}  h_len= ${s.heights.len} ")
 	}
 }
@@ -838,7 +876,6 @@ pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
 
 	// println("${s.id} propose size ${w}, ${h} => ${s.width}, ${s.height} ")
-
 	scrollview_update(s)
 	return s.real_width, s.real_height
 }
@@ -860,6 +897,7 @@ fn (s &Stack) free_size() (int, int) {
 fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 	mut h := 0
 	mut w := 0
+
 	// Comment/uncomment
 	$if s_adj_size ? {
 		s.debug_ids = env('UI_IDS').split(',').clone()
@@ -913,6 +951,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 						println('set_adj_size ${s.id} (cvl): child(${child.id}) child_width = ${child_width}  child_height = ${child_height})')
 					}
 				}
+
 				//$else {
 				//} // because of a bug mixing $if and else
 			} else {
@@ -941,6 +980,7 @@ fn (mut s Stack) set_adjusted_size(i int, force bool, gui &UI) {
 			println('set_adj_size (${s.id}) (before spacing): (${w}, ${h})')
 		}
 	}
+
 	// adding total spacing between children
 	if s.direction == .column {
 		h += s.total_spacing()
@@ -984,6 +1024,7 @@ pub fn (mut s Stack) set_children_pos() {
 	$if scp ? {
 		println('Stack  ${s.id} pos: (${x}, ${y})')
 	}
+
 	// z_index < ui.z_index_ hidden => hidden and without positionning
 	mut children := s.children.filter(it.z_index > z_index_hidden)
 	for i, mut child in children {
@@ -1060,6 +1101,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 
 	if mut child is AdjustableWidget {
 		mut w := child as AdjustableWidget
+
 		// println('$child.id: $x + $offset_x, $y + $offset_y')
 		w.set_adjusted_pos(x + offset_x, y + offset_y)
 	} else {
@@ -1110,6 +1152,7 @@ pub fn (mut s Stack) set_drawing_children() {
 				child.set_drawing_children()
 			}
 		}
+
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if s.z_index > child.z_index {
 			s.z_index = child.z_index - 1
@@ -1159,6 +1202,7 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	$if bb ? {
 		debug_draw_bb_stack(s)
 	}
+
 	//$if sdraw_scroll ? {
 	//	if Layout(s).has_scrollview_or_parent_scrollview() {
 	//		// if s.scrollview != 0 {
@@ -1172,10 +1216,10 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	//		}
 	//	}
 	//}
-
 	$if s_draw_children ? {
 		println('draw ${s.id}: ${s.children.map(it.id)} ${s.drawing_children.map(it.id)} ${s.drawing_children.map(it.z_index)}')
 	}
+
 	// REMARK: DO NOT REMOVE -> not used maybe update later
 	// active_scrollview := Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s)
 	for mut child in s.drawing_children {
@@ -1215,9 +1259,11 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	// scrollview_draw_end(s, d)
 	if s.title != '' {
 		text_width, text_height := s.ui.dd.text_size(s.title)
+
 		// draw rectangle around stack
 		d.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height,
 			s.real_height + int(f32(text_height) * .75), gx.black)
+
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3
 		ty := s.y - int(f32(text_height) * 1.25)
@@ -1276,12 +1322,14 @@ fn (s &Stack) spacing(i int) int {
 
 fn (s &Stack) total_spacing() int {
 	mut total_spacing := 0
+
 	// println('len $s.children.len $s.spacings')
 	if s.spacings.len > 0 && s.children.len > 1 {
 		for i in 0 .. (s.children.len - 1) {
 			total_spacing += s.spacing(i)
 		}
 	}
+
 	// println('len $total_spacing')
 	return total_spacing
 }
@@ -1304,10 +1352,12 @@ pub fn (mut s Stack) set_visible(state bool) {
 fn (mut s Stack) resize(width int, height int) {
 	s.init_size()
 	s.update_pos()
+
 	// scrollview_widget_set_orig_xy(s, false)
 	// scrollview_set_children_orig_xy(s, false)
 	s.set_children_sizes()
 	s.set_children_pos()
+
 	// println("RESIZE: $width, $height")
 }
 
@@ -1481,6 +1531,7 @@ pub fn (mut s Stack) remove(cfg ChildrenParams) {
 		mut child := s.children[pos]
 		child.set_visible(false)
 		child.cleanup()
+
 		// delete child in the children tree
 		s.children.delete(pos)
 		s.update_widths(cfg, .remove)
@@ -1501,8 +1552,10 @@ pub fn (mut s Stack) move(cfg ChildrenParams) {
 				to_pos--
 			}
 			mut child := s.children[from_pos]
+
 			// remove
 			s.children.delete(from_pos)
+
 			// add the new one
 			s.children.insert(to_pos, child)
 			window := s.ui.window
@@ -1517,11 +1570,13 @@ pub fn (mut s Stack) move(cfg ChildrenParams) {
 			&& target_pos <= target_s.children.len {
 			println('migrate from ${from_pos} to ${target_pos}')
 			child := s.children[from_pos]
+
 			// remove
 			s.children.delete(from_pos)
 			s.update_widths(cfg, .remove)
 			s.update_heights(cfg, .remove)
 			s.update_spacings(cfg, .remove)
+
 			// add the new one
 			target_s.children.insert(target_pos, child)
 			target_s.update_widths(cfg, .migrate)
@@ -1656,6 +1711,7 @@ pub fn (s &Stack) child(from ...int) Widget {
 			}
 		}
 	}
+
 	// by default returns s itself
 	return s
 }

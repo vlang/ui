@@ -35,6 +35,7 @@ pub fn set_offset(mut w Widget, ox int, oy int) {
 			set_offset(mut child, ox, oy)
 		}
 	}
+
 	// if mut w is Stack {
 	//	for mut child in w.children {
 	//		set_offset(mut child, ox, oy)

@@ -16,14 +16,15 @@ const (
 
 pub struct UI {
 pub mut:
-	dd             &DrawDevice       = unsafe { nil }
-	gg             &gg.Context       = unsafe { nil }
-	window         &Window           = unsafe { nil }
-	svg            &DrawDeviceSVG    = unsafe { nil }
-	bmp            &DrawDeviceBitmap = unsafe { nil }
-	layout_print   bool
-	show_cursor    bool
-	has_cursor     bool // true only if there's a textbox in the window, if false, no need to constantly redraw the window
+	dd           &DrawDevice       = unsafe { nil }
+	gg           &gg.Context       = unsafe { nil }
+	window       &Window           = unsafe { nil }
+	svg          &DrawDeviceSVG    = unsafe { nil }
+	bmp          &DrawDeviceBitmap = unsafe { nil }
+	layout_print bool
+	show_cursor  bool
+	has_cursor   bool
+	// true only if there's a textbox in the window, if false, no need to constantly redraw the window
 	last_type_time i64
 	// used only in textbox.v
 	clipboard    &clipboard.Clipboard = unsafe { nil }
@@ -69,6 +70,7 @@ fn (mut gui UI) idle_loop() {
 			return
 		}
 	}
+
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
 	// the cursor will blink at a rate of 1Hz, even if

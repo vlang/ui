@@ -10,7 +10,6 @@ import gx
 // 2) It is assumed that there is only one tooltip drawn at the same time
 // Rmk: popups are a bit different.
 // 3) This is also devoted to simple widgets needing a quick system of help.
-
 const (
 	tooltip_margin = 5
 )
@@ -51,6 +50,7 @@ pub fn (t &Tooltip) free() {
 			line.free()
 		}
 		t.lines.free()
+
 		// t.id.free()
 	}
 	$if free ? {
@@ -62,6 +62,7 @@ pub fn (t &Tooltip) free() {
 pub fn (t &TooltipMessage) free() {
 	unsafe {
 		t.text.free()
+
 		// t.id.free()
 	}
 	$if free ? {

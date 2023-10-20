@@ -90,6 +90,7 @@ fn (mut gv Grid) draw_device(mut d DrawDevice) {
 	mut y := gv.y
 	mut text_width := 0
 	mut text_height := 0
+
 	// Outer border
 	d.draw_rect_filled(x, y, gv.width, gv.height, gx.white)
 	d.draw_rect_empty(x, y, cell_width * header.len, cell_height, gx.gray)
@@ -98,6 +99,7 @@ fn (mut gv Grid) draw_device(mut d DrawDevice) {
 		if i != 0 {
 			d.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height, gx.gray)
 		}
+
 		// Text values
 		text_width = gv.ui.dd.text_width(c)
 		text_height = gv.ui.dd.text_height(c)
@@ -114,6 +116,7 @@ fn (mut gv Grid) draw_device(mut d DrawDevice) {
 				d.draw_line(x + cell_width * i, y, x + cell_width * i, y + cell_height * body.len,
 					gx.gray)
 			}
+
 			// Text values
 			text_width = gv.ui.dd.text_width(c)
 			text_height = gv.ui.dd.text_height(c)

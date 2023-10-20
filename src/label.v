@@ -71,6 +71,7 @@ fn (mut l Label) init(parent Layout) {
 	u := parent.get_ui()
 	l.ui = u
 	l.load_style()
+
 	// l.init_style()
 	l.init_size()
 }
@@ -100,7 +101,6 @@ pub fn (l &Label) free() {
 // 	dtw.init_style()
 // 	dtw.update_text_size(l.text_size)
 // }
-
 pub fn (mut l Label) set_pos(x int, y int) {
 	$if lab_sp ? {
 		println('label set pos (${l.id}): (${l.x}, ${l.y}, ${l.width}, ${l.height}) -> (${x}, ${y}) ')
@@ -112,11 +112,13 @@ pub fn (mut l Label) set_pos(x int, y int) {
 fn (mut l Label) adj_size() (int, int) {
 	if l.adj_width == 0 || l.adj_height == 0 {
 		mut dtw := DrawTextWidget(l)
+
 		// println(dtw.current_style().size)
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		if !l.text.contains('\n') {
 			w, h = dtw.text_width(l.text), dtw.current_style().size
+
 			// println("$w, $h, $l.text ${dtw.text_height(l.text)}")
 		} else {
 			for line in l.text.split('\n') {

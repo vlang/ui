@@ -38,7 +38,6 @@ b) widget position and size:
 
 // IMPORTANT: 1) No margins since users can add relative or absolute ones manually
 // 2) The box_layout <id> is RELATIVE to its own box_layout so this id is independent of the id of the widget
-
 struct LeftTopToRightBottom {
 mut:
 	x_left   f32
@@ -53,10 +52,14 @@ union Box {
 }
 
 enum BoxMode {
-	left_top_width_height // width>0, height>0
-	right_top_width_height // width<0, height>0
-	right_bottom_width_height // width<0, height<0
-	left_bottom_width_height // width>0, height<0
+	left_top_width_height
+	// width>0, height>0
+	right_top_width_height
+	// width<0, height>0
+	right_bottom_width_height
+	// width<0, height<0
+	left_bottom_width_height
+	// width>0, height<0
 	left_top_right_bottom
 }
 
@@ -79,10 +82,13 @@ pub mut:
 	parent      Layout = empty_stack
 	ui          &UI    = unsafe { nil }
 	// children
-	child_box        []Box
-	child_box_expr   map[string]string // for box_expression mode, i.e. specifically when some @id are used inside bounding expression
-	child_id         []string // relative id
-	cid              []string // real child id defined inside its own constructor
+	child_box      []Box
+	child_box_expr map[string]string
+	// for box_expression mode, i.e. specifically when some @id are used inside bounding expression
+	child_id []string
+	// relative id
+	cid []string
+	// real child id defined inside its own constructor
 	child_mode       []BoxMode
 	children         []Widget
 	drawing_children []Widget
@@ -143,6 +149,7 @@ pub fn (mut b BoxLayout) init(parent Layout) {
 		// DON'T DO THAT: child.id = b.child_id[i]
 		// println('$i) gl init child ${child.id} ')
 		child.init(b)
+
 		// unsafe{println('$i) end init ${b.child_box[i]}')}
 	}
 	b.decode_size()
@@ -165,6 +172,7 @@ fn (mut b BoxLayout) set_root_layout() {
 		mut window := unsafe { b.parent }
 		if b.is_root_layout {
 			window.root_layout = b
+
 			// window.update_layout()
 		} else {
 			b.update_layout()
@@ -205,6 +213,7 @@ pub fn (b &BoxLayout) free() {
 
 pub fn (mut b BoxLayout) set_child_bounding(key string, mut child Widget) {
 	id, mut bounding := parse_boxlayout_child_key(key, b.id)
+
 	// Non-sense here no underscore when setting a child bounding box
 	// bounding = b.update_child_current_box_expression(id, bounding)
 	mode, bounding_vec, has_z_index, z_index, box_expr := b.parse_boxlayout_child_bounding(bounding)
@@ -226,6 +235,7 @@ fn (mut b BoxLayout) add_child_lt2rb(id string, child Widget, vec4 []f32) {
 	} else {
 		LeftTopToRightBottom{0.0, 0.0, 0.0, 0.0}
 	}
+
 	// println(lt2rb)
 	b.child_id << id
 	b.cid << child.id
@@ -263,6 +273,7 @@ fn (mut b BoxLayout) add_child_box_expr(id string, child Widget, box_expr string
 	b.child_box << Box{
 		Rect: gg.Rect{0.001, 0.0, 0.0, 0.0}
 	}
+
 	// println("add_child_box_expr: $id ${b.child_box_expr[id]} ${(b.child_mode)[b.child_mode.len-1]}")
 	b.children << child
 }
@@ -368,9 +379,11 @@ fn (mut b BoxLayout) decode_size() {
 		// full size from window
 		b.width, b.height = -100, -100
 	}
+
 	// Relative sizes
 	b.width = relative_size_from_parent(b.width, parent_width)
 	b.height = relative_size_from_parent(b.height, parent_height)
+
 	// }
 	// println('b size: ($b.width, $b.height) ($parent_width, $parent_height) ')
 	// debug_show_size(s, "decode after -> ")
@@ -417,6 +430,7 @@ pub fn (b &BoxLayout) set_child_pos(i int, mut child Widget) {
 	// println('${child.id}: x,y =(${x}, ${y})')
 	if mut child is AdjustableWidget {
 		mut w := child as AdjustableWidget
+
 		// println('$child.id: $x + $offset_x, $y + $offset_y')
 		w.set_adjusted_pos(x, y)
 	} else {
@@ -490,20 +504,24 @@ fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
 	// call again set_child_pos with the
 	// restore b.child_mode[i] to .box_expression
 	// and return
-
 	if id in b.child_box_expr {
 		mut bounding := b.child_box_expr[id]
+
 		// extract @id
 		query := r'@(\w+)\.(\w+)'
 
 		mut re := regex.regex_opt(query) or { panic(err) }
+
 		// println("before: $bounding")
 		bounding = re.replace_by_fn(bounding, b.ids_repl)
+
 		// precompute formulae
 		bounding = b.precompute_box_expression(bounding)
+
 		// println("precompute:  $bounding")
 		// set the child_box[i] and child_mode[i] (already done normally)
 		mode, bounding_vec, _, _, _ := b.parse_boxlayout_child_bounding(bounding)
+
 		// println("preprocess $id $bounding_vec")
 		match mode {
 			'rect' { b.update_child_rect(id, bounding_vec) }
@@ -588,6 +606,7 @@ fn (mut b BoxLayout) draw_device(mut d DrawDevice) {
 	defer {
 		scrollview_draw_end(b, d)
 	}
+
 	// Border
 	$if bldraw ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
@@ -634,6 +653,7 @@ fn (b &BoxLayout) get_subscriber() &eventbus.Subscriber[string] {
 fn (mut b BoxLayout) propose_size(w int, h int) (int, int) {
 	b.width = w
 	b.height = h
+
 	// println('b prop size: ($w, $h)')
 	$if bps ? {
 		if b.debug_ids.len == 0 || b.id in b.debug_ids {
@@ -754,6 +774,7 @@ fn (mut b BoxLayout) set_drawing_children() {
 		} else if mut child is BoxLayout {
 			child.set_drawing_children()
 		}
+
 		// println("z_index: ${child.type_name()} $child.z_index")
 		if child.z_index > b.z_index {
 			$if cl_z_index_update ? {
@@ -769,6 +790,7 @@ fn (mut b BoxLayout) set_drawing_children() {
 
 pub fn (b &BoxLayout) is_box_hidden(id string) bool {
 	ind := b.cid.index(id)
+
 	// println('is_box_hidden: ${b.id}  ${id} -> ${ind}')
 	if ind < 0 {
 		return false
@@ -948,6 +970,7 @@ fn absolute_or_relative_size(size f32, parent_size int) int {
 		int(size) // absolute size
 	} else if size >= -1 && size <= 1 { // size inside ]-1.0,1.0[
 		new_size := size * parent_size
+
 		// println('relative size: ${size} ${new_size} -> ${percent} * ${parent_size}) ')
 		int(new_size)
 	} else if size < 0 { // non integer < -1

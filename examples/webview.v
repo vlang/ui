@@ -4,7 +4,7 @@ import ui
 [heap]
 struct App {
 mut:
-	webview &webview.WebView
+	webview &webview.WebView = unsafe { nil }
 }
 
 fn main() {

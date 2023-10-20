@@ -6,11 +6,14 @@ pub interface AdjustableWidget {
 	size() (int, int)
 mut:
 	id string
-	justify []f64 // 0.0 means left, 0.5 center and 1.0 right (0.25 means 1/4 of the free space between size and adjusted size)
+	justify []f64
+	// 0.0 means left, 0.5 center and 1.0 right (0.25 means 1/4 of the free space between size and adjusted size)
 	x int
 	y int
-	ax int // offset for adjusted x
-	ay int // offset for adjusted x
+	ax int
+	// offset for adjusted x
+	ay int
+	// offset for adjusted x
 	set_pos(int, int)
 	adj_size() (int, int)
 }

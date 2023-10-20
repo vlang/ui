@@ -39,6 +39,7 @@ fn text_lines_size(lines []string, u &UI) (int, int) {
 	dd := u.dd
 	for line in lines {
 		tw, th = dd.text_size(line)
+
 		// println("tt line: $line -> ($tw, $th)")
 		if tw > width {
 			width = tw

@@ -28,7 +28,6 @@ pub struct WindowManagerParams {
 }
 
 // ui.Window would play the role of WindowManager
-
 pub fn wm(cfg WindowManagerParams) &WindowManager {
 	mut wm := &WindowManager{
 		kind: cfg.kind
@@ -54,6 +53,7 @@ pub fn wm(cfg WindowManagerParams) &WindowManager {
 		}
 		win.update_layout()
 	}
+
 	// add declared app
 	for key, app in cfg.apps {
 		mut mut_app := app

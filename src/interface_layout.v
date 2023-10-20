@@ -45,6 +45,7 @@ pub fn (l &Layout) incr_children_depth(z_inc int) {
 			l2 := child as Layout
 			l2.incr_children_depth(z_inc)
 		}
+
 		// println("child $child.id z_index +($z_inc)")
 		child.z_index += z_inc
 	}

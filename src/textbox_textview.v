@@ -1,9 +1,9 @@
 module ui
 
 import gx
+
 // import time
 // import encoding.utf8
-
 const (
 	textview_margin = 10
 )
@@ -20,7 +20,8 @@ pub mut:
 	// synchronised lines for the text (or maybe a part)
 	tlv TextLinesView
 	// textbox
-	tb &TextBox = unsafe { nil } // needed for textwidth and for is_wordwrap
+	tb &TextBox = unsafe { nil }
+	// needed for textwidth and for is_wordwrap
 	// line_number
 	left_margin int
 	// Syntax Highlighter
@@ -30,7 +31,6 @@ pub mut:
 // Structure to help for drawing text line by line and cursor update between lines
 // Insertion and deletion would be made directly on TextView.text field and then synchronized
 // on textlines except for cursor vertical motion
-
 /*
 In the process to make lines only dealing with visible lines:
 - if <from> is the line starting the visibility and <to> the line ending the visibility
@@ -62,6 +62,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.update_line_height()
 	tv.sh = syntaxhighlighter()
 	tv.sh.init(tv)
+
 	// println('line height: $tv.line_height')
 	tv.refresh_visible_lines()
 	tv.update_lines()
@@ -73,6 +74,7 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 pub fn (tv &TextView) size() (int, int) {
 	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
+
 	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
 	if tv.tlv.from_j > -1 && tv.tlv.from_j <= (tv.tlv.lines.len - 1) && tv.tlv.to_j > -1
 		&& tv.tlv.to_j <= (tv.tlv.lines.len - 1) {
@@ -84,6 +86,7 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 		w += tv.left_margin + ui.textview_margin
 	}
+
 	// println("tv size: $w, $h")
 	return w, h
 }
@@ -173,10 +176,12 @@ pub fn (mut tv TextView) visible_lines() {
 		j2 = tv.tb.height / tv.line_height
 	}
 	jmax := tv.tlv.lines.len - 1
+
 	// println("j1 $j1 $jmax")
 	if j1 > jmax {
 		j1 = jmax
 	}
+
 	// println("j2 $j2 $jmax")
 	if j2 > jmax {
 		j2 = jmax
@@ -201,6 +206,7 @@ fn (mut tv TextView) update_all_visible_lines() {
 			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x +
 				tv.tb.width)
 		}
+
 		// refresh_visible_lines done
 		tv.tlv.refresh_visible_lines = false
 	}
@@ -212,10 +218,12 @@ pub fn (mut tv TextView) update_lines() {
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
 	}
+
 	// TO BE DONE AFTER newly created tv.tlv.lines
 	if tv.tb.has_scrollview {
 		tv.visible_lines()
 	}
+
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
 	tv.update_left_margin()
@@ -241,6 +249,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 		tv.update_lines()
 	}
 	tv.load_style()
+
 	// draw selection
 	tv.draw_device_selection(d)
 
@@ -249,6 +258,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	if tv.tb.has_scrollview {
 		y += (tv.tlv.from_j) * tv.line_height
 	}
+
 	// TODO: only parse chunks when resizing or scrolling
 	tv.sh.reset_chunks()
 	for j, line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
@@ -276,6 +286,7 @@ pub fn (mut tv TextView) draw_device_visible_line(d DrawDevice, j int, y int, te
 	}
 	imin, imax := tv.tlv.from_i[j] or { 0 }, tv.tlv.to_i[j] or { tv.tlv.to_i.len - 1 }
 	ustr := text.runes()
+
 	// println("draw visible $imin, $imax $ustr")
 	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr#[0..imin].string()),
 		y, ustr#[imin..imax].string())
@@ -296,11 +307,13 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 	} else {
 		// otherwise draw all the selected lines one by one after sorting the position
 		start_i, end_i, start_j, end_j := tv.ordered_lines_selection()
+
 		// here the first line
 		mut ustr := tv.line(start_j)
 		mut sel_from, mut sel_width := tv.text_xminmax_from_pos(ustr, start_i, ustr.len)
 		d.draw_rect_filled(tv.tb.x + tv.left_margin + sel_from, tv.tb.y + textbox_padding_y +
 			start_j * tv.line_height, sel_width, tv.line_height, selection_color)
+
 		// then all the intermediate lines
 		if end_j - start_j > 1 {
 			for j in (start_j + 1) .. end_j {
@@ -311,6 +324,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 					selection_color)
 			}
 		}
+
 		// and finally the last one
 		ustr = tv.line(end_j)
 		sel_from, sel_width = tv.text_xminmax_from_pos(ustr, 0, end_i)
@@ -366,6 +380,7 @@ fn (mut tv TextView) delete_prev_word() {
 		return
 	}
 	mut ustr := tv.text.runes()
+
 	// Delete until previous whitespace
 	// TODO!!!!
 	// mut i := tv.cursor_pos
@@ -403,6 +418,7 @@ fn (mut tv TextView) delete_selection() {
 	tv.refresh_visible_lines()
 	tv.update_lines()
 	mut tb := tv.tb
+
 	// Only if scrollview become inactive, reset the scrollview
 	scrollview_reset(mut tb)
 	tv.cancel_selection()
@@ -421,11 +437,13 @@ fn (mut tv TextView) start_selection(x int, y int) {
 	tv.tlv.cursor_pos_i = tv.text_pos_from_x(tv.current_line(), x)
 	if tv.tb.dragging {
 		tv.tlv.sel_start_i, tv.tlv.sel_start_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
+
 		// put sel_end at the sel_start position too to make selection active
 		tv.tlv.sel_end_i, tv.tlv.sel_end_j = tv.tlv.cursor_pos_i, tv.tlv.cursor_pos_j
 	}
 	tv.sync_text_pos()
 	tv.visible_lines()
+
 	// tv.info()
 }
 
@@ -441,6 +459,7 @@ fn (mut tv TextView) end_selection(x int, y int) {
 	}
 	tv.tlv.sel_end_i = tv.text_pos_from_x(tv.tlv.lines[tv.tlv.sel_end_j], x)
 	tv.sync_text_pos()
+
 	// tv.info()
 	// println('$tv.sel_end ($tv.tlv.sel_end_i,$tv.tlv.sel_end_j)')
 }
@@ -525,12 +544,14 @@ pub fn (mut tv TextView) cursor_allways_visible() {
 	if !tv.tb.has_scrollview {
 		return
 	}
+
 	// vertically
 	if tv.tlv.cursor_pos_j <= tv.tlv.from_j {
 		tv.scroll_y_to_cursor(false)
 	} else if tv.tlv.cursor_pos_j >= tv.tlv.to_j {
 		tv.scroll_y_to_cursor(true)
 	}
+
 	// horizontally
 	ustr := tv.tlv.lines[tv.tlv.cursor_pos_j].runes()
 	ulen := tv.text_width(ustr[..(tv.tlv.cursor_pos_i)].string())
@@ -554,6 +575,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 		if tv.tb.read_only {
 			return
 		}
+
 		// println("insert multi ${int(e.codepoint)}")
 		if tv.is_sel_active() {
 			tv.delete_selection()
@@ -587,6 +609,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 			else {}
 		}
 	}
+
 	// println(e.key)
 	// println('mods=$e.mods')
 	defer {
@@ -596,6 +619,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 			}
 		}
 	}
+
 	// println("tb key_down $e.key ${int(e.codepoint)}")
 	if tv.tb.read_only {
 		return
@@ -613,6 +637,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			}
 		}
 	}
+
 	// println("tb key_down $e.key ${int(e.codepoint)}")
 	if tv.tb.read_only {
 		return
@@ -642,10 +667,12 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 		}
 		.backspace {
 			tv.tb.ui.show_cursor = true
+
 			// println('backspace cursor_pos=($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j) len=${(*tv.text).len} \n <${*tv.text}>')
 			if *tv.text == '' {
 				return
 			}
+
 			// Delete the entire selection
 			if tv.is_sel_active() {
 				tv.delete_selection()
@@ -871,11 +898,13 @@ pub fn (mut tv TextView) scroll_y_to_end() {
 fn (mut tv TextView) word_wrap_text() {
 	lines := (*tv.text).split('\n')
 	mut word_wrapped_lines := []string{}
+
 	// println('word_wrap_text: $tv.tlv.from_j -> $tv.tlv.to_j')
 	for line in lines {
 		ww_lines := tv.word_wrap_line(line)
 		word_wrapped_lines << ww_lines
 	}
+
 	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
 	tv.tlv.lines = word_wrapped_lines
 }
@@ -920,6 +949,7 @@ pub fn (tv &TextView) text_pos_at(i int, j int) int {
 		pos += lines[k].runes().len + 1 // +1 for \n or space
 	}
 	pos += i
+
 	// if pos < 0 {
 	// 	pos = 0
 	// } else if pos > tv.text.len - 1 {
@@ -953,6 +983,7 @@ pub fn (tv &TextView) text_line_at(pos int) (int, int) {
 		j++
 		i = 0
 	}
+
 	// println('text_lines_row_column_at: $pos -> ($i, $j)')
 	return i, j
 }
@@ -985,6 +1016,7 @@ pub fn (tv &TextView) text_xminmax_from_pos(text string, x1 int, x2 int) (int, i
 		// println('warning: text_xminmax_from_pos $x_min < 0')
 		x_min = 0
 	}
+
 	// println("xminmax: ${ustr.len} $x_min $x_max")
 	left := ustr[..x_min].string()
 	right := ustr[x_max..].string()
@@ -1001,12 +1033,14 @@ pub fn (tv &TextView) text_pos_from_x(text string, x int) int {
 		xx = x - tv.left_margin
 	}
 	tv.load_style()
+
 	// println(DrawTextWidget(tv.tb).current_style().size)
 	mut prev_width := 0.0
 	ustr := text.runes()
 	mut width, mut width_cur := 0.0, 0.0
 	for i in 0 .. ustr.len {
 		width += width_cur
+
 		// if width != tv.text_width(ustr[..i].string()) {
 		// 	// println("widthhhh $i $width ${tv.text_width(ustr[..i].string())}")
 		// }
@@ -1052,7 +1086,6 @@ fn (tv &TextView) fix_tab_char(txt string) string {
 // fn (tv &TextView) draw_text(x int, y int, text string) {
 // 	DrawTextWidget(tv.tb).draw_text(x, y, tv.fix_tab_char(text))
 // }
-
 fn (tv &TextView) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	tv.draw_device_styled_text(tv.tb.ui.dd, x, y, text, ts)
 }
@@ -1082,6 +1115,7 @@ fn (tv &TextView) text_size(text string) (int, int) {
 fn (mut tv TextView) update_line_height() {
 	tv.load_style()
 	tv.line_height = int(f64(tv.text_height('W')) * (1.0 + tv.tb.line_height_factor))
+
 	// println("line_height = $tv.line_height (${DrawTextWidget(tv.tb).current_style().size})")
 }
 

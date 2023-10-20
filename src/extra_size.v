@@ -51,7 +51,6 @@ pub fn relative_size_from_parent(size int, parent_free_size int) int {
 }
 
 //***********  cache **********
-
 pub enum ChildSize {
 	compact
 	fixed
@@ -95,7 +94,6 @@ pub fn (c &CachedSizes) free() {
 }
 
 //********** Margin *********
-
 pub enum Side {
 	top
 	left
@@ -129,7 +127,6 @@ fn margins(m f64, ms Margin) Margins {
 }
 
 //******** spacings ***********
-
 fn spacings(sp f64, sps []f64, len int) []f32 {
 	if len < 0 {
 		return []f32{}

@@ -7,10 +7,12 @@ interface DrawDevice {
 	// text style
 	has_text_style() bool
 	set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int)
-	draw_text_default(x int, y int, text string) // (ui) default ui TextStyle
+	draw_text_default(x int, y int, text string)
+	// (ui) default ui TextStyle
 	// text
 	draw_text(x int, y int, text string, cfg gx.TextCfg)
-	draw_text_def(x int, y int, text string) // (gg.Context) use set_text_cfg
+	draw_text_def(x int, y int, text string)
+	// (gg.Context) use set_text_cfg
 	set_text_cfg(gx.TextCfg)
 	text_size(string) (int, int)
 	text_width(string) int
@@ -57,6 +59,7 @@ fn (mut d DrawDevice) draw_window(mut w Window) {
 
 	// draw dragger if active
 	draw_dragger(mut w)
+
 	// draw tooltip if active
 	w.tooltip.draw_device(mut d)
 

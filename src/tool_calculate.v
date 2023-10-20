@@ -4,7 +4,6 @@ import regex
 
 // calculation of very simple numeric expression based on regex
 // no parenthesis only digit real number
-
 pub struct MiniCalc {
 mut:
 	op_re    []regex.RE
@@ -29,6 +28,7 @@ fn compute_repl(re regex.RE, in_txt string, start int, end int) string {
 	left := re.get_group_by_id(in_txt, 0)
 	op := re.get_group_by_id(in_txt, 1)
 	right := re.get_group_by_id(in_txt, 2)
+
 	// println("<$left> <$op> <$right>")
 	res := match op {
 		'*' { left.f32() * right.f32() }
@@ -51,6 +51,7 @@ pub fn (mut mc MiniCalc) calculate(formula string) f32 {
 			break
 		}
 	}
+
 	// compute
 	mc.compute_ops()
 	mc.res = mc.res_str.f32()
@@ -83,10 +84,12 @@ fn (mut mc MiniCalc) simplify_paren() {
 		if start >= 0 {
 			// print("res: $op -> $result")
 			formula := mc.res_str[(start + 1)..(stop - 1)]
+
 			// if formula.contains_any("+-*/") {
 			mut mc_expr := mini_calc()
 			_ := mc_expr.calculate(formula)
 			mc.res_str = mc.paren_re.replace_simple(mc.res_str, mc_expr.res_str)
+
 			// } else {
 			// 	mc.res_str = mc.paren_re.replace_simple(mc.res_str,r'\0')
 			// }

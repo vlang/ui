@@ -119,19 +119,24 @@ fn (mut t Transition) draw_device(mut d DrawDevice) {
 	if t.animating {
 		// Get the current progress of start_time -> start_time+duration
 		x := f32(time.ticks() - t.started_time + 1) / f32(t.duration)
+
 		// Map the progress value [0 -> 1] to [0 -> delta value]
 		// Using the defined EasingFunction
 		mut mapped := t.start_value + int(t.easing(x) * f64(t.target_value - t.start_value))
+
 		// Animation finished
 		if x >= 1 {
 			t.animating = false
 			mapped = t.target_value
 		}
+
 		// Update the target value and request a redraw
 		(*t.animated_value) = mapped
 		t.ui.window.refresh()
+
 		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value
+
 		// Update last draw time to calculate frame delta
 		t.last_draw_time = time.ticks()
 	}

@@ -106,11 +106,13 @@ fn (mut r Radio) init(parent Layout) {
 	r.parent = parent
 	u := parent.get_ui()
 	r.ui = u
+
 	// Get max value text width
 	if r.width == 0 {
 		r.set_size_from_values()
 	}
 	r.load_style()
+
 	// r.init_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
@@ -149,7 +151,6 @@ pub fn (r &Radio) free() {
 // 	dtw.init_style()
 // 	dtw.update_text_size(r.text_size)
 // }
-
 fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
@@ -162,6 +163,7 @@ fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
 	if !r.is_focused {
 		return
 	}
+
 	// default behavior like click for space and enter
 	match e.key {
 		.enter, .space, .right, .down {
@@ -212,6 +214,7 @@ fn radio_click(mut r Radio, e &MouseEvent, window &Window) {
 	if r.on_click != RadioFn(0) {
 		r.on_click(r)
 	}
+
 	// println(r.selected_index)
 }
 
@@ -246,6 +249,7 @@ pub fn (mut r Radio) propose_size(w int, h int) (int, int) {
 		r.width = w
 	}
 	r.update_size()
+
 	// r.height = 20//default_font_size
 	return r.real_width, r.real_height
 }
@@ -312,12 +316,13 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 		} else {
 			gx.gray
 		})
+
 		// Title
 		tw := r.ui.dd.text_width(r.title) + 5
 		d.draw_rect_filled(r.x + check_mark_size, r.y - 5, tw, 10, r.parent.bg_color()) // r.ui.window.bg_color)
-
 		dtw.draw_device_text(d, r.x + check_mark_size + 3, r.y - 7, r.title)
 	}
+
 	// Values
 	dy := if r.title == '' { 0 } else { 15 }
 	mut x, mut y := r.x + 5, r.y + dy
@@ -335,6 +340,7 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 		} else {
 			r.ui.radio_image
 		})
+
 		// if i != r.selected_index {
 		// 	d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
 		// 	// r.ui.dd.draw_image(x, y-3, 16, 16, r.ui.circle_image)

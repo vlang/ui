@@ -15,6 +15,7 @@ fn (mut app App) init(window &ui.Window) {
 	auto.call_static_method(pkg + '.setVAppPointer(long) void', app_ref)
 
 	app.show_soft_input()
+
 	// show_soft_input(mut app)
 }
 

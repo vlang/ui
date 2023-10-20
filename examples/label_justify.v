@@ -15,11 +15,13 @@ fn main() {
 			)
 			'lab: (0.2, 0.4) -> (0.5,0.5)':   ui.label(
 				text: 'Centered text'
-				justify: ui.center // [0.5, 0.5]
+				justify: ui.center
+				// [0.5, 0.5]
 			)
 			'lab2: (0.5, 0.5) -> (1,1)':      ui.label(
 				text: 'Centered text\n2nd line\n3rd line'
-				justify: ui.top_center // [0.0, 0.5]
+				justify: ui.top_center
+				// [0.0, 0.5]
 			)
 			'lab3: (0.1, 0.1) -> (0.3,0.2)':  ui.label(
 				text: 'long texttttttttttttttttttttttttttttttttt'

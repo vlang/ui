@@ -69,7 +69,6 @@ pub enum Cursor {
 }
 
 // Inspiration from 2048 game
-
 struct Pos {
 mut:
 	x int = -1
@@ -147,6 +146,7 @@ pub fn (mut m Mouse) stop() {
 		// println("stop mouse")
 		m.states.delete_last()
 		m.start('_system_')
+
 		// println("${m.states}")
 		m.update()
 	}
@@ -157,6 +157,7 @@ pub fn (mut m Mouse) stop_last(id string) {
 		// println("stop last mouse $id")
 		m.states.delete_last()
 		m.start('_system_')
+
 		// println("${m.states}")
 		m.update()
 	}

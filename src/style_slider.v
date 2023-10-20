@@ -4,7 +4,6 @@ import gx
 import toml
 
 // Slider
-
 pub struct SliderStyle {
 pub mut:
 	thumb_color             gx.Color = gx.rgb(87, 153, 245)
@@ -50,6 +49,7 @@ fn (mut s Slider) load_style() {
 		style = s.style_params.style
 	}
 	s.update_theme_style(style)
+
 	// forced overload default style
 	s.update_style(s.style_params)
 }

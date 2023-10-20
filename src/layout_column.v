@@ -7,18 +7,24 @@ import gx
 
 [params]
 pub struct ColumnParams {
-	id        string
-	width     int // To remove soon
-	height    int // To remove soon
+	id    string
+	width int
+	// To remove soon
+	height int
+	// To remove soon
 	alignment HorizontalAlignment
-	spacing   f64 // Size = Size(0.0) // Spacing = Spacing(0) // int
-	spacings  []f64 = []f64{}
-	stretch   bool // to remove ui.stretch doing the job from parent
-	margin    Margin
-	margin_   f64
+	spacing   f64
+	// Size = Size(0.0) // Spacing = Spacing(0) // int
+	spacings []f64 = []f64{}
+	stretch  bool
+	// to remove ui.stretch doing the job from parent
+	margin  Margin
+	margin_ f64
 	// children related
-	widths     Size //[]f64 // children sizes
-	heights    Size //[]f64
+	widths Size
+	//[]f64 // children sizes
+	heights Size
+	//[]f64
 	alignments HorizontalAlignments
 	align      Alignments
 	bg_color   gx.Color = no_color
@@ -39,8 +45,10 @@ pub fn column(c ColumnParams) &Stack {
 		stretch: c.stretch
 		direction: .column
 		margins: margins(c.margin_, c.margin)
-		heights: c.heights.as_f32_array(c.children.len) //.map(f32(it))
-		widths: c.widths.as_f32_array(c.children.len) //.map(f32(it))
+		heights: c.heights.as_f32_array(c.children.len)
+		//.map(f32(it))
+		widths: c.widths.as_f32_array(c.children.len)
+		//.map(f32(it))
 		horizontal_alignments: c.alignments
 		align: c.align
 		bg_color: c.bg_color

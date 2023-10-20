@@ -4,7 +4,6 @@ import gx
 import toml
 
 // CanvasLayout
-
 pub struct CanvasLayoutShapeStyle {
 pub mut:
 	bg_radius f32
@@ -53,6 +52,7 @@ fn (mut l CanvasLayout) load_style() {
 		style = l.style_params.style
 	}
 	l.update_theme_style(style)
+
 	// forced overload default style
 	l.update_style(l.style_params)
 }
@@ -102,7 +102,6 @@ pub fn (mut l CanvasLayout) update_style_params(p CanvasLayoutStyleParams) {
 }
 
 // Stack
-
 pub struct StackShapeStyle {
 pub mut:
 	bg_radius f32
@@ -156,8 +155,10 @@ fn (mut l Stack) load_style() {
 		style = l.style_params.style
 	}
 	l.update_theme_style(style)
+
 	// forced overload default style
 	l.update_style(l.style_params)
+
 	// println("s ls $l.theme_style $l.style $l.style_params")
 }
 

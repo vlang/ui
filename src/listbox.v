@@ -81,10 +81,12 @@ mut:
 	on_change     ListBoxFn = ListBoxFn(0)
 	item_height   int       = ui.listbox_item_height
 	text_offset_y int       = ui.listbox_text_offset_y
-	id            string // To use one callback for multiple ListBoxes
+	id            string
+	// To use one callback for multiple ListBoxes
 	// TODO
-	draw_lines bool // Draw a rectangle around every item?
-	theme      string = no_style
+	draw_lines bool
+	// Draw a rectangle around every item?
+	theme string = no_style
 	// related to text drawing
 	text_size  f64
 	selection  int  = -1
@@ -101,8 +103,10 @@ mut:
 // Keys of the items map are IDs of the elements, values are text
 pub fn listbox(c ListBoxParams) &ListBox {
 	mut list := &ListBox{
-		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
-		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }
+		x: c.x
+		// if c.draw_lines { c.x } else { c.x - 1 }
+		y: c.y
+		// if c.draw_lines { c.y } else { c.y - 1 }
 		width: c.width
 		height: c.height
 		z_index: c.z_index
@@ -164,9 +168,11 @@ fn (mut lb ListBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_up, lb_mouse_up, lb)
 	subscriber.subscribe_method(events.on_key_up, lb_key_up, lb)
 	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down, events.on_scroll])
+
 	// println("lb $lb.files_dropped")
 	if lb.files_dropped {
 		subscriber.subscribe_method(events.on_files_dropped, on_files_dropped, lb)
+
 		// lb.ui.window.evt_mngr.add_receiver(lb, [events.on_files_dropped])
 	}
 }
@@ -182,6 +188,7 @@ fn (mut lb ListBox) cleanup() {
 	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down, events.on_scroll])
 	if lb.files_dropped {
 		subscriber.unsubscribe_method(events.on_files_dropped, lb)
+
 		// lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_files_dropped])
 	}
 
@@ -222,6 +229,7 @@ fn (mut lb ListBox) init_style() {
 	mut dtw := DrawTextWidget(lb)
 	dtw.init_style()
 	dtw.update_text_size(lb.text_size)
+
 	// }
 }
 
@@ -231,6 +239,7 @@ fn (mut lb ListBox) init_items() {
 		item.draw_to = lb.get_draw_to(item.text)
 		item.x = 0
 		item.y = lb.item_height * i
+
 		// println("item init $i, $item.text, $item.x $item.y")
 	}
 }
@@ -287,10 +296,12 @@ pub fn (mut lb ListBox) insert_at(i int, item &ListItem) {
 	if i < 0 || i > lb.items.len {
 		return
 	}
+
 	// println('item $item.id inserted at $i in $lb.id')
 	lb.items.insert(i, item)
 	lb.update_adj_size()
 	lb.init_items()
+
 	// println("${lb.items.map(it.id)} ${lb.items.map(it.y)}")
 }
 
@@ -534,6 +545,7 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 		println('draw ${lb.id} scrollview=${lb.has_scrollview} ${lb.x}, ${lb.y}, ${lb.width} ${lb.height} ${height}')
 	}
 	d.draw_rect_filled(lb.x, lb.y, lb.width, height, lb.style.bg_color)
+
 	// println("draw rect")
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
@@ -577,6 +589,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 			draw_to--
 		}
 	}
+
 	// println('width $width >= real_w $real_w draw_to: $draw_to, $text, ${text[0..draw_to]}')
 	return draw_to
 }
@@ -601,6 +614,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 	if e.action != .up {
 		return
 	}
+
 	// unclickable if dragged
 	if lb.just_dragged {
 		lb.just_dragged = false
@@ -616,6 +630,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 			if !lb.has_scrollview && inx >= lb.draw_count {
 				break
 			}
+
 			// println(' $item.id -> ($e.x,$e.y)')
 			if item.point_inside(e.x, e.y) {
 				if lb.set_item_selected(inx, ctrl_key(lb.ui.keymods)) {
@@ -660,6 +675,7 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
 				}
 			}
 		}
+
 		// lb.state = .pressed
 	}
 }
@@ -678,6 +694,7 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 		lb.items[dragged_item].offset_x, lb.items[dragged_item].offset_y = 0, 0
 		lb.call_on_change()
 	}
+
 	// b.state = .normal
 }
 
@@ -698,11 +715,14 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 					$if lb_move ? {
 						println('lb mouse move reparent ${lb.id} from ${dragged.list.id}')
 					}
+
 					// remove previous lb N.B.: dragged.remove()
 					dragged.list.delete_at(lb.ui.window.dragger.extra_int)
+
 					// reparent dragged item
 					j := lb.current_pos(int(e.y))
 					dragged.update_parent(mut lb, j)
+
 					// change origin for dragger
 					lb.ui.window.dragger.start_x = int(e.x) - dragged.offset_x
 					lb.ui.window.dragger.start_y = int(e.y) - dragged.offset_y
@@ -731,10 +751,12 @@ fn on_files_dropped(mut lb ListBox, e &MouseEvent, window &Window) {
 	if lb.hidden {
 		return
 	}
+
 	// println("on files: inside ${lb.point_inside(e.x, e.y)}")
 	if !lb.point_inside(e.x, e.y) {
 		return
 	}
+
 	// println("${lb.ui.window.point_inside_receivers(events.on_files_dropped)}")
 	// if !lb.ui.window.is_top_widget(lb, events.on_files_dropped) {
 	// 	return
@@ -811,16 +833,19 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		dtw.load_style()
 		for item in lb.items {
 			width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
+
 			// println('$item.text -> $width')
 			if width > lb.adj_width {
 				lb.adj_width = width
 			}
 		}
+
 		// println("adj_width: $lb.adj_width")
 	}
 	if lb.adj_height == 0 {
 		lb.adj_height = lb.items.len * lb.item_height + 2 * lb.text_offset_y
 	}
+
 	// println("lb adj: ($lb.adj_width, $lb.adj_height) size: ($lb.width, $lb.height)")
 	return lb.adj_width, lb.adj_height
 }
@@ -831,6 +856,7 @@ fn (mut lb ListBox) update_adj_size() {
 	dtw.load_style()
 	for item in lb.items {
 		width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
+
 		// println('$item.text -> $width')
 		if width > lb.adj_width {
 			lb.adj_width = width
@@ -935,7 +961,8 @@ pub fn listitem(p ListItemParams) &ListItem {
 		id: p.id
 		text: p.text
 		list: unsafe { p.list }
-		draw_to: p.draw_to // p.text[0..p.draw_to]
+		draw_to: p.draw_to
+		// p.text[0..p.draw_to]
 		offset_x: p.offset_x
 		offset_y: p.offset_y
 		z_index: p.z_index
@@ -952,6 +979,7 @@ fn (item &ListItem) free() {
 	unsafe {
 		// Failing: item.id.free()
 		item.text.free()
+
 		// Failing: free(item)
 	}
 	$if free ? {
@@ -1012,12 +1040,14 @@ pub fn (mut li ListItem) update_parent(mut lb ListBox, at int) {
 	li_x := li.x + li.offset_x + li.list.x
 	li_y := li.y + li.offset_y + li.list.y
 	li.list = lb
+
 	// insert
 	j := lb.fit_at(at)
 	$if li_upar ? {
 		println('update parent ${li.id} in ${lb.id} insert_at ${j}')
 	}
 	lb.insert_at(j, li)
+
 	// recompute offset
 	li.offset_x = li_x - (li.x + li.list.x)
 	li.offset_y = li_y - (li.y + li.list.y)

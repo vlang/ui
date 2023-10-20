@@ -4,7 +4,6 @@ import gx
 import toml
 
 // TextBox
-
 pub struct TextBoxShapeStyle {
 pub mut:
 	bg_radius f32
@@ -53,6 +52,7 @@ fn (mut t TextBox) load_style() {
 		style = t.style_params.style
 	}
 	t.update_theme_style(style)
+
 	// forced overload default style
 	t.update_style(t.style_params)
 }

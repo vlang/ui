@@ -3,7 +3,6 @@ module ui
 import gx
 
 // Embedded in most Widget Styles
-
 pub struct WidgetTextStyle {
 pub mut:
 	text_font_name      string = 'system'
@@ -25,7 +24,6 @@ pub mut:
 }
 
 // Style with Text
-
 interface DrawTextWidgetStyle {
 mut:
 	text_font_name string

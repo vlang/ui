@@ -24,11 +24,11 @@ mut:
 	last_name  string
 	age        string
 	password   string
-	pbar       &ui.ProgressBar
+	pbar       &ui.ProgressBar = unsafe { nil }
 	users      []User
 	window     &ui.Window = unsafe { nil }
-	label      &ui.Label
-	country    &ui.Radio
+	label      &ui.Label  = unsafe { nil }
+	country    &ui.Radio  = unsafe { nil }
 	txt_pos    int
 	started    bool
 	is_error   bool
@@ -78,7 +78,8 @@ fn main() {
 		layout: ui.row(
 			margin_: .02
 			spacing: .02
-			widths: [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
+			widths: [ui.compact, ui.stretch]
+			// 1.0 == .64 + .3 + .02 + 2 * .02
 			children: [
 				ui.column(
 					spacing: 10
@@ -227,19 +228,23 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 		return
 	}
 	new_user := User{
-		first_name: app.first_name // first_name.text
-		last_name: app.last_name // .text
+		first_name: app.first_name
+		// first_name.text
+		last_name: app.last_name
+		// .text
 		age: app.age.int()
 		country: app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
 	app.first_name = ''
+
 	// app.first_name.focus()
 	app.last_name = ''
 	app.age = ''
 	app.password = ''
 	app.label.set_text('${app.users.len}/10')
+
 	// ui.message_box('$new_user.first_name $new_user.last_name has been added')
 }
 
@@ -247,12 +252,15 @@ fn (app &State) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	marginx, marginy := 20, 20
 	for i, user in app.users {
 		y := marginy + i * cell_height
+
 		// Outer border
 		c.draw_device_rect_empty(d, marginx, y, table_width, cell_height, gx.gray)
+
 		// Vertical separators
 		c.draw_device_line(d, cell_width, y, cell_width, y + cell_height, gx.gray)
 		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
 		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
+
 		// Text values
 		c.draw_device_text(d, marginx + 5, y + 5, user.first_name)
 		c.draw_device_text(d, marginx + 5 + cell_width, y + 5, user.last_name)

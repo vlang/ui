@@ -46,6 +46,7 @@ pub fn (mut d DrawDeviceSVG) screenshot_window(filename string, mut w Window) {
 pub fn (d &DrawDeviceSVG) begin(win_bg_color gx.Color) {
 	mut s := d.s
 	s.begin()
+
 	// window.bg_color
 	s.fill(hex_color(win_bg_color))
 }
@@ -59,6 +60,7 @@ pub fn (d &DrawDeviceSVG) end() {
 // TODO: documentation
 pub fn (d &DrawDeviceSVG) save(filepath string) {
 	mut s := d.s
+
 	// println("save $filepath")
 	s.save(filepath) or {}
 }
@@ -82,6 +84,7 @@ pub fn (d &DrawDeviceSVG) set_text_style(font_name string, font_path string, siz
 	ts.color = color
 	ts.set_align(align)
 	ts.set_vertical_align(vertical_align)
+
 	// println('set_text_style: $d.ts')
 }
 

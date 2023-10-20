@@ -6,6 +6,7 @@ fn main() {
 	mut vars := {
 		'A': uic.GridData([''].repeat(100))
 	}
+
 	// from B to Z
 	for i in 66 .. (66 + 25) {
 		vars[[u8(i)].bytestr()] = uic.GridData([''].repeat(100))

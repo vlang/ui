@@ -65,6 +65,7 @@ fn (mut sh SyntaxHighLighter) init(tv &TextView) {
 	sh.multiline = {}
 	sh.between_one_rune = {}
 	sh.is_multiline = {}
+
 	// load language
 	sh.lang_exts = {
 		'v': ['.v', '.vv', '.vsh']
@@ -173,6 +174,7 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 
 	sh.ustr = line.runes()
 	l := line.trim_space()
+
 	// single line comment
 	for typ, vals in sh.singleline[sh.lang] {
 		for val in vals {
@@ -197,6 +199,7 @@ fn (mut sh SyntaxHighLighter) parse_chunks(j int, y int, line string) {
 		sh.start = sh.i
 		sh.parse_chunk_numeric()
 		sh.parse_chunk_between()
+
 		// Keyword
 		for keyword, _ in sh.keywords[sh.lang] {
 			sh.parse_chunk_keyword(keyword)
@@ -279,6 +282,7 @@ fn (mut sh SyntaxHighLighter) parse_chunk_numeric() {
 			// sh.i--
 		} else {
 			sh.add_chunk('numeric', sh.y, sh.start, sh.i + 1)
+
 			// println("numeric ${sh.ustr[sh.start..(sh.i + 1)].string()}")
 			if sh.i < sh.ustr.len - 1 {
 				sh.i++
@@ -301,6 +305,7 @@ fn (mut sh SyntaxHighLighter) parse_chunk_keyword(typ string) {
 	if i > 0 {
 		sh.i = i
 		sh.add_chunk(typ, sh.y, sh.start, sh.i)
+
 		// println("$typ ${sh.ustr[sh.start..sh.i].string()} ") // ${sh.keywords[sh.lang][typ]}")
 		sh.start = sh.i
 	} else {
@@ -322,6 +327,7 @@ fn (sh &SyntaxHighLighter) is_not_included(from int, to int) bool {
 
 fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 	x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width_additive(sh.ustr[0..start].string()))
+
 	// x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width(sh.ustr[0..start].string()))
 	text := sh.ustr[start..end].string()
 	chunk := Chunk{
@@ -337,6 +343,7 @@ fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 // Not used yet since one needs to find out how to use it to compute chunks only once when needed
 fn (mut sh SyntaxHighLighter) parse_all_lines() {
 	tv := sh.tv
+
 	// only visible text lines
 	mut y := tv.tb.y + textbox_padding_y
 	if tv.tb.has_scrollview {
@@ -353,6 +360,7 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 	if !sh.is_lang_loaded() {
 		return
 	}
+
 	// println("-".repeat(80))
 	tv := sh.tv
 	style := sh.styles[sh.style]

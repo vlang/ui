@@ -4,10 +4,10 @@ import gx
 import toml
 
 // CheckBox
-
 pub struct CheckBoxShapeStyle {
 pub mut:
-	check_mode   string   = 'check' // or "check_white" and maybe one day "square" and "square_white"
+	check_mode string = 'check'
+	// or "check_white" and maybe one day "square" and "square_white"
 	border_color gx.Color = cb_border_color
 	bg_color     gx.Color = gx.white
 }
@@ -67,6 +67,7 @@ pub fn (mut cb CheckBox) load_style() {
 		style = cb.style_params.style
 	}
 	cb.update_theme_style(style)
+
 	// forced overload default style
 	cb.update_style(cb.style_params)
 	cb.ui.cb_image = cb.ui.img(cb.style.check_mode)

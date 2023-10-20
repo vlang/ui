@@ -242,6 +242,7 @@ fn (app &App) lb_change(lb &ui.ListBox) {
 	}
 
 	mut s := win.get_or_panic[ui.Stack]('row')
+
 	// if mut s is ui.Stack {
 	if iw >= 0 {
 		if key == 'ui.compact' {
@@ -260,6 +261,7 @@ fn (app &App) lb_change(lb &ui.ListBox) {
 	set_output_label(win)
 	win.update_layout()
 	set_sizes_labels(win)
+
 	// } else {
 	// 	println('$s.type_name()')
 	// }

@@ -4,7 +4,6 @@ import gx
 import toml
 
 // ProgressBar
-
 pub struct ProgressBarStyle {
 pub mut:
 	color           gx.Color
@@ -50,6 +49,7 @@ fn (mut pb ProgressBar) load_style() {
 		style = pb.style_params.style
 	}
 	pb.update_theme_style(style)
+
 	// forced overload default style
 	pb.update_style(pb.style_params)
 }

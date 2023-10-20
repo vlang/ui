@@ -5,7 +5,6 @@ module ui
 // * Focusable interface and its methods
 // * methods for Window
 // * methods for Layout interface
-
 interface Focusable {
 	ui &UI
 mut:
@@ -51,6 +50,7 @@ pub fn (mut f Focusable) set_focus() {
 			}
 		}
 	}
+
 	// update drawing_children when focus is taken
 	f.update_parent_drawing_children()
 }
