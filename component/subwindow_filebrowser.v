@@ -18,6 +18,7 @@ pub struct FileBrowserSubWindowParams {
 // TODO: documentation
 pub fn filebrowser_subwindow_add(mut w ui.Window, p FileBrowserSubWindowParams) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {
 	id := p.FileBrowserParams.id
+
 	// only once
 	if !ui.Layout(w).has_child_id(ui.component_id(id, component.filebrowser_subwindow_id)) {
 		w.subwindows << ui.subwindow(

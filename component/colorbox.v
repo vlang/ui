@@ -43,21 +43,25 @@ mut:
 	rgb_to_hsv RgbToHsv = ui.rgb_to_hsv
 	hsv_to_rgb HsvToRgb = ui.hsv_to_rgb
 	// options
-	light bool // light theme
-	hsl   bool // use hsl instead of hsv
-	drag  bool // drag mode for canvas on h
+	light bool
+	// light theme
+	hsl   bool
+	// use hsl instead of hsv
+	drag  bool
+	// drag mode for canvas on h
 pub mut:
-	layout     &ui.Stack // required
-	cv_h       &ui.CanvasLayout
-	cv_sv      &ui.CanvasLayout
-	r_rgb_cur  &ui.Rectangle
-	cv_hsv_sel &ui.CanvasLayout
-	tb_r       &ui.TextBox
-	tb_g       &ui.TextBox
-	tb_b       &ui.TextBox
-	lb_r       &ui.Label
-	lb_g       &ui.Label
-	lb_b       &ui.Label
+	layout     &ui.Stack        = unsafe { nil }
+	// required
+	cv_h       &ui.CanvasLayout = unsafe { nil }
+	cv_sv      &ui.CanvasLayout = unsafe { nil }
+	r_rgb_cur  &ui.Rectangle    = unsafe { nil }
+	cv_hsv_sel &ui.CanvasLayout = unsafe { nil }
+	tb_r       &ui.TextBox      = unsafe { nil }
+	tb_g       &ui.TextBox      = unsafe { nil }
+	tb_b       &ui.TextBox      = unsafe { nil }
+	lb_r       &ui.Label        = unsafe { nil }
+	lb_g       &ui.Label        = unsafe { nil }
+	lb_b       &ui.Label        = unsafe { nil }
 }
 
 [params]
@@ -157,6 +161,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	tb_r.text = &cb.txt_r
 	tb_g.text = &cb.txt_g
 	tb_b.text = &cb.txt_b
+
 	// init component
 	layout.on_init = colorbox_init
 	return layout
@@ -178,6 +183,7 @@ fn colorbox_init(layout &ui.Stack) {
 	mut cb := colorbox_component(layout)
 	cb.update_hsl()
 	cb.update_cur_color(true)
+
 	// init all hsv colors
 	for i in 0 .. (component.cb_nc * component.cb_nr) {
 		cb.hsv_sel[i] = HSVColor{f64(i) / (component.cb_nc * component.cb_nr), .75, .75}
@@ -278,6 +284,7 @@ fn cv_sel_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	i := (e.x - component.cb_sp) / (component.cb_sp + component.cb_hsv_col)
 	j := (e.y - component.cb_sp) / (component.cb_sp + component.cb_hsv_col)
 	cb.ind_sel = i + j * component.cb_nc
+
 	// println("($i, $j) -> ${cb.ind_sel}")
 	hsv := cb.hsv_sel[cb.ind_sel]
 	cb.h, cb.s, cb.v = hsv.h, hsv.s, hsv.v
@@ -354,6 +361,7 @@ pub fn (mut cb ColorBoxComponent) update_buffer() {
 	}
 	unsafe {
 		cb.simg = ui.create_texture(256, 256, buf)
+
 		// update_text_texture(cb.simg, 256, 256, buf)
 		free(buf)
 	}
@@ -371,12 +379,15 @@ pub fn (mut cb ColorBoxComponent) update_from_rgb(r int, g int, b int) {
 		if 0 <= g && g < 256 {
 			if 0 <= b && b < 256 {
 				col := gx.rgb(u8(r), u8(g), u8(b))
+
 				// println("ggggg $r, $g, $b ${col}")
 				h, s, v := cb.rgb_to_hsv(col)
+
 				// println("hsv: $r, $g, $b ->  $h, $s, $v")
 				cb.h, cb.s, cb.v = h, s, v
 				cb.update_buffer()
 				cb.update_cur_color(false)
+
 				// cb.update_sel_color()
 			}
 		}

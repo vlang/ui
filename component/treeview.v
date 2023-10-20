@@ -89,10 +89,12 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 				tmp := to_expand.split(component.root_sep)
 				path := tmp[0].trim_space()
 				fpath := tmp[1..].join(component.root_sep).trim_space()
+
 				// update tree
 				mut new_tree := treedir(path, fpath, true, tv.hidden_files)
 				t.items[i] = TreeItem(new_tree)
 				l.children << new_tree.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
+
 				// update scrollview field
 				ui.scrollview_delegate_parent_scrollview(mut l)
 			}
@@ -115,7 +117,8 @@ type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeViewComponent)
 pub struct TreeViewComponent {
 pub mut:
 	id         string
-	layout     &ui.Stack // required
+	layout     &ui.Stack = unsafe { nil }
+	// required
 	trees      []Tree
 	icon_paths map[string]string
 	text_color gx.Color
@@ -151,7 +154,6 @@ pub mut:
 }
 
 // constructors
-
 [params]
 pub struct TreeViewParams {
 	id           string
@@ -229,8 +231,10 @@ pub fn dirtreeview_stack(p TreeViewDirParams) &ui.Stack {
 		incr_mode: p.incr_mode
 		trees: p.trees.map(treedir(it, it, p.incr_mode, p.hidden_files))
 		icons: {
-			'root': 'tata' // later
-			'file': 'toto' // later
+			'root': 'tata'
+			// later
+			'file': 'toto'
+			// later
 		}
 		text_color: p.text_color
 		bg_color: p.bg_color
@@ -252,7 +256,6 @@ pub fn treeview_component_from_id(w ui.Window, id string) &TreeViewComponent {
 }
 
 // callbacks
-
 fn treeview_init(layout &ui.Stack) {
 	mut tv := treeview_component(layout)
 	if !tv.incr_mode {
@@ -284,6 +287,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 	}
 	tv.old_sel_id = tv.sel_id
 	tv.sel_id = c.id
+
 	// println("${c.id} clicked")
 	if tv.types[c.id] == 'root' {
 		tv.selected[c.id] = !tv.selected[c.id]
@@ -292,6 +296,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 			mut t := tv.root_trees[c.id]
 			mut l := c.ui.window.get_or_panic[ui.Stack](tv.views[c.id])
 			t.add_root_children(mut tv, mut l, tv.id_root[c.id], tv.levels[c.id] + 1)
+
 			// needs init for children
 			is_swp, swp := ui.Widget(l).subwindow_parent()
 			for mut child in l.children {
@@ -367,6 +372,7 @@ pub fn (tv &TreeViewComponent) full_title(id string) string {
 			break
 		}
 	}
+
 	// println(res)
 	res = res.reverse()
 	return os.join_path(res[0], ...res[1..])
@@ -447,6 +453,7 @@ pub fn treedir(path string, fpath string, incr_mode bool, hidden_files bool) Tre
 	if !hidden_files {
 		files = files.filter(!it.starts_with('.'))
 	}
+
 	// println(fpath)
 	// println(files)
 	t := Tree{

@@ -7,9 +7,9 @@ import os
 [heap]
 pub struct FileBrowserComponent {
 pub mut:
-	layout     &ui.Stack
-	btn_cancel &ui.Button
-	btn_ok     &ui.Button
+	layout     &ui.Stack  = unsafe { nil }
+	btn_cancel &ui.Button = unsafe { nil }
+	btn_ok     &ui.Button = unsafe { nil }
 	tv         &TreeViewComponent = unsafe { nil }
 	dir        string
 }
@@ -27,7 +27,8 @@ pub struct FileBrowserParams {
 	filter_types    []string
 	with_fpath      bool
 	hidden          bool
-	bg_color        gx.Color    = gx.red // gx.hex(0xfcf4e4ff)
+	bg_color        gx.Color    = gx.red
+	// gx.hex(0xfcf4e4ff)
 	on_click_ok     ui.ButtonFn = ui.ButtonFn(0)
 	on_click_cancel ui.ButtonFn = ui.ButtonFn(0)
 }

@@ -37,8 +37,10 @@ struct GridCellBlock {
 
 struct GridFormulaMngr {
 mut:
-	formulas               map[string]GridFormula // list of formula: key string is the alphacell of the formula
-	active_cell_to_formula map[string]string      // key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
+	formulas               map[string]GridFormula
+	// list of formula: key string is the alphacell of the formula
+	active_cell_to_formula map[string]string
+	// key string is "Block cells" or a "Cell" and the value string is the formula cell (AlphaCell)
 	active_cells           []ActiveCells
 	cells_to_activate      []AlphaCell
 	sel_formula            string
@@ -73,6 +75,7 @@ pub fn (mut gfm GridFormulaMngr) init_active_cells() {
 fn (mut gfm GridFormulaMngr) init_formula(cell string, mut formula GridFormula) {
 	_, active_cells_set := parse_formula(formula.formula)
 	formula.active_cells.clear()
+
 	// println("init formula: $cell $active_cells_set $formula.formula")
 	for active_cells in active_cells_set {
 		gfm.active_cell_to_formula[active_cells] = cell
@@ -96,6 +99,7 @@ pub fn (mut g GridComponent) new_formula(gc GridCell, formula string) {
 		formula: formula
 	}
 	g.formula_mngr.init_formula(ac, mut g.formula_mngr.formulas[ac])
+
 	// println(gfm)
 	g.update_formula(g.formula_mngr.formulas[ac], true)
 	g.formula_mngr.init_active_cells()
@@ -162,6 +166,7 @@ pub fn (mut g GridComponent) update_formula(formula GridFormula, activate bool) 
 	for active_cells in formula.active_cells {
 		vals << g.values_at(active_cells).map(it.f64())
 	}
+
 	// SUM FROM NOW
 	g.set_value(formula.cell.i, formula.cell.j, sum(...vals).str())
 	if activate { // used to activate a formula cell
@@ -230,7 +235,6 @@ pub fn parse_formula(formula string) (string, []string) {
 }
 
 // GridComponent methods
-
 fn (mut g GridComponent) value_at(c AlphaCell) string {
 	gc := c.gridcell()
 	res, _ := g.value(gc.i, gc.j)
@@ -258,6 +262,7 @@ fn (mut g GridComponent) values_at(c ActiveCells) []string {
 
 fn (mut g GridComponent) is_formula() bool {
 	ac := GridCell{g.sel_i, g.sel_j}.alphacell()
+
 	// println("is_formula sel = ($g.sel_i, $g.sel_j) <$ac> in ${g.formula_mngr.formulas.keys()}")
 	is_f := ac in g.formula_mngr.formulas.keys()
 	if is_f {
@@ -272,9 +277,11 @@ fn (mut g GridComponent) show_formula() {
 	g.unselect()
 	g.cur_i, g.cur_j = g.sel_i, g.sel_j
 	id := ui.component_id(g.id, 'tb_formula')
+
 	// println('tb_sel $id selected')
 	mut tb := g.layout.ui.window.get_or_panic[ui.TextBox](id)
 	tb.set_visible(true)
+
 	// println('tb $tb.id')
 	tb.z_index = 1000
 	pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
@@ -336,6 +343,7 @@ pub fn (gc GridCell) alphacell() string {
 	for {
 		r = int(math.mod(z, 26))
 		z /= 26
+
 		// println('$z, $r')
 		acj << u8(65 + r)
 		if z <= 26 {
@@ -371,6 +379,7 @@ fn (acb AlphaCellBlock) contains(ac AlphaCell) bool {
 
 fn (aacb []ActiveCells) which_contains(ac AlphaCell) []string {
 	mut res := []string{}
+
 	// println("which contains $ac => $aacb")
 	for acb in aacb {
 		match acb {

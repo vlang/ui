@@ -24,6 +24,7 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	pg.id = ui.component_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)
+
 	// add shortcut
 	mut sc := ui.Shortcutable(g)
 	sc.add_shortcut('ctrl + o', fn (g &GridComponent) {
@@ -55,6 +56,7 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 		grid: g
 		settings: gs
 	}
+
 	// println("dg comp: <$dg.layout.id> <$dg.grid.id>")
 	ui.component_connect(dg, layout)
 	return layout
@@ -81,6 +83,7 @@ pub fn datagrid_boxlayout(p DataGridBoxLayoutParams) &ui.BoxLayout {
 	pg.id = ui.component_id(p.id, 'grid')
 	gl := grid_canvaslayout(pg)
 	mut g := grid_component(gl)
+
 	// add shortcut
 	mut sc := ui.Shortcutable(g)
 	sc.add_shortcut('ctrl + o', fn (g &GridComponent) {
@@ -89,6 +92,7 @@ pub fn datagrid_boxlayout(p DataGridBoxLayoutParams) &ui.BoxLayout {
 		// mut h := hideable_component(l)
 		// h.toggle()
 	})
+
 	// gsl := gridsettings_stack(
 	// 	id: ui.component_id(p.id, 'gridsettings')
 	// 	grid: g
@@ -107,6 +111,7 @@ pub fn datagrid_boxlayout(p DataGridBoxLayoutParams) &ui.BoxLayout {
 		grid: g
 		// settings: gs
 	}
+
 	// println("dg comp: <$dg.layout.id> <$dg.grid.id>")
 	ui.component_connect(dg, layout)
 	return layout

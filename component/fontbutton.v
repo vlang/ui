@@ -6,7 +6,7 @@ import gx
 [heap]
 pub struct FontButtonComponent {
 pub mut:
-	btn &ui.Button
+	btn &ui.Button = unsafe { nil }
 	dtw ui.DrawTextWidget
 }
 
@@ -61,6 +61,7 @@ pub fn fontbutton_component_from_id(w ui.Window, id string) &FontButtonComponent
 
 fn font_button_click(mut b ui.Button) {
 	fb := fontbutton_component(b)
+
 	// println('fb_click $fb.dtw.id')
 	fontchooser_connect(b.ui.window, fb.dtw)
 	fontchooser_subwindow_visible(b.ui.window)

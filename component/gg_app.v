@@ -1,7 +1,7 @@
 module component
 
-import ui
 // import time
+import ui
 import gg
 
 [heap]

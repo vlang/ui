@@ -5,12 +5,13 @@ import ui
 [heap]
 pub struct DoubleListBoxComponent {
 pub mut:
-	layout    &ui.Stack // required
-	lb_left   &ui.ListBox
-	lb_right  &ui.ListBox
-	btn_left  &ui.Button
-	btn_right &ui.Button
-	btn_clear &ui.Button
+	layout    &ui.Stack   = unsafe { nil }
+	// required
+	lb_left   &ui.ListBox = unsafe { nil }
+	lb_right  &ui.ListBox = unsafe { nil }
+	btn_left  &ui.Button  = unsafe { nil }
+	btn_right &ui.Button  = unsafe { nil }
+	btn_clear &ui.Button  = unsafe { nil }
 }
 
 [params]
@@ -65,8 +66,10 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 		btn_right: btn_right
 		btn_clear: btn_clear
 	}
+
 	// link to one component all the components
 	ui.component_connect(dbl_lb, layout, lb_left, lb_right, btn_left, btn_right, btn_clear)
+
 	// This needs to be added to the children tree
 	return layout
 }
@@ -105,6 +108,7 @@ fn doublelistbox_move_right(btn &ui.Button) {
 	mut dlb := doublelistbox_component(btn)
 	if dlb.lb_left.is_selected() {
 		_, item := dlb.lb_left.selected() or { '', '' }
+
 		// println("move >> $item")
 		if item !in dlb.lb_right.values() {
 			dlb.lb_right.add_item(item, item)

@@ -12,23 +12,28 @@ type RasterViewFn = fn (rv &RasterViewComponent)
 pub struct RasterViewComponent {
 pub mut:
 	id     string
-	layout &ui.CanvasLayout
-	r      &libvg.Raster
+	layout &ui.CanvasLayout = unsafe { nil }
+	r      &libvg.Raster    = unsafe { nil }
 	// width      int
 	// height     int
 	// channels   int = 4
 	// data       []byte
-	size       int = 11 // pixel_size + inter
+	size       int = 11
+	// pixel_size + inter
 	inter      int = 1
 	pixel_size int = 10
 	// cur_pos
 	cur_i int = -1
 	cur_j int = -1
 	// bounds
-	bounds_i int // top
-	bounds_j int // left
-	bounds_w int // width
-	bounds_h int // height
+	bounds_i int
+	// top
+	bounds_j int
+	// left
+	bounds_w int
+	// width
+	bounds_h int
+	// height
 	// selection
 	sel_i int = -1
 	sel_j int = -1
@@ -113,6 +118,7 @@ pub fn (mut rv RasterViewComponent) connect_palette(pa &ColorPaletteComponent) {
 fn rv_init(mut layout ui.CanvasLayout) {
 	mut rv := rasterview_component(layout)
 	rv.visible_pixels()
+
 	// println('init rasterview')
 	ui.lock_scrollview_key(layout)
 }
@@ -133,6 +139,7 @@ fn rv_scroll_change(sw ui.ScrollableWidget) {
 fn rv_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
+
 	// N.B.: rv.size = rv.pixel_size + rv.inter
 	c.draw_device_rect_empty(d, 0, 0, rv.width() * rv.size, rv.height() * rv.size, gx.gray)
 	mut pos_x, mut pos_y := rv.from_x, rv.from_y
@@ -226,6 +233,7 @@ fn rv_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
 fn rv_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 	// TODO: to fix
 	mut rv := rasterview_component(c)
+
 	// println("scroll: ${int(e.mouse_x)}, ${int(e.mouse_y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
 	if rv.point_inside(int(e.mouse_x), int(e.mouse_y)) {
 		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.mouse_x), int(e.mouse_y))
@@ -236,6 +244,7 @@ fn rv_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
 
 fn rv_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	mut rv := rasterview_component(c)
+
 	// println("move $c.id: ${int(e.x)}, ${int(e.y)} in $c.x + $c.offset_x + $c.adj_width=${c.x + c.offset_x + c.adj_width},   $c.y + $c.offset_y + $c.adj_height=${c.y + c.offset_y + c.adj_height}")
 	if rv.point_inside(int(e.x), int(e.y)) {
 		rv.cur_i, rv.cur_j = rv.get_index_pos(int(e.x), int(e.y))
@@ -251,6 +260,7 @@ fn rv_mouse_enter(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 && rv.cur_j != -1 {
 	c.ui.window.mouse.start(ui.mouse_hidden)
+
 	// }
 }
 
@@ -258,6 +268,7 @@ fn rv_mouse_leave(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 || rv.cur_j != -1 {
 	c.ui.window.mouse.stop_last(ui.mouse_hidden)
+
 	// }
 }
 
@@ -312,6 +323,7 @@ pub fn (rv &RasterViewComponent) top_colors() []gx.Color {
 			table[ind_color] += 1
 		}
 	}
+
 	// sort
 	mut table_sorted := []Int2{}
 	for k, v in table {
@@ -380,6 +392,7 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 		rv.from_i, rv.to_i, rv.from_y = 0, rv.height(), 0
 		rv.from_j, rv.to_j, rv.from_x = 0, rv.width(), 0
 	}
+
 	// println('i: ($rv.from_i, $rv.to_i, $rv.from_y)  j: ($rv.from_j, $rv.to_j, $rv.from_x)')
 }
 
@@ -472,6 +485,7 @@ pub fn (mut rv RasterViewComponent) update_bounds() {
 			}
 		}
 	}
+
 	// println("rv bounds: $rv.bounds_i, $rv.bounds_h, $rv.bounds_j, $rv.bounds_w (${rv.width()}, ${rv.height()})")
 }
 
@@ -514,6 +528,7 @@ pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 		ii := i * step_i
 		for j := from_j * step_j; j >= to_j * step_j; j -= 1 {
 			jj := j * step_j
+
 			// println("${ii} -> ${ii + di} ($rv.height), ${jj} -> ${jj + dj} (($rv.width))")
 			rv.set_pixel(ii + di, jj + dj, rv.get_pixel(ii, jj))
 			rv.set_pixel(ii, jj, ui.no_color)

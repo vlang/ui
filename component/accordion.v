@@ -6,7 +6,8 @@ import gx
 [heap]
 pub struct AccordionComponent {
 pub mut:
-	layout     &ui.Stack // required
+	layout     &ui.Stack = unsafe { nil }
+	// required
 	titles     map[string]string
 	selected   map[string]bool
 	views      map[string]int
@@ -63,12 +64,14 @@ pub fn accordion_stack(c AccordionParams) &ui.Stack {
 		layout.children << title_cp
 		layout.children << c.children[i]
 		acc.titles[title_id] = title
+
 		// println('$i $title_id ${acc.titles[title_id]}')
 		acc.selected[title_id] = false
 		acc.views[title_id] = i * 2 + 1
 		acc.z_index[title_id] = c.children[i].z_index // save original z_index of child
 	}
 	layout.spacings = [f32(5)].repeat(layout.children.len - 1)
+
 	// println('here $layout.children.len $acc.titles.len')
 	// init component
 	layout.on_init = accordion_init
@@ -98,6 +101,7 @@ fn accordion_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 
 fn accordion_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut acc := accordion_component(c)
+
 	// println("accordion clicked $c.id")
 	acc.selected[c.id] = !acc.selected[c.id]
 	if acc.selected[c.id] {
@@ -105,9 +109,11 @@ fn accordion_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	} else {
 		acc.deactivate(c.id)
 	}
+
 	// To update scrollview
 	acc.layout.update_layout_without_pos()
 	ui.scrollview_update(acc.layout)
+
 	// c.ui.window.update_layout_without_pos()
 	// ui.Layout(acc.layout).debug_show_children_tree(0)
 }

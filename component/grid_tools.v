@@ -63,8 +63,10 @@ pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 		lb_right: lbr
 		grid: p.grid
 	}
+
 	// println('gridsettings <$gs.id> grid: <$gs.grid.id> <$layout.id>')
 	ui.component_connect(gs, layout, lbl, lbr, btn)
+
 	// init component
 	layout.on_init = gridsettings_init
 	return layout
@@ -105,6 +107,7 @@ fn gs_sort_click(mut b ui.Button) {
 // TODO: documentation
 pub fn (mut gs GridSettingsComponent) update_sorted_vars() {
 	g := gs.grid
+
 	// println("update sorted vars <$gs.id> ${typeof(g).name} <$g.id>")
 	mut headers := ['.id']
 	headers << g.headers

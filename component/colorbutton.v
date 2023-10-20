@@ -8,8 +8,8 @@ type ColorButtonFn = fn (b &ColorButtonComponent)
 [heap]
 pub struct ColorButtonComponent {
 pub mut:
-	widget     &ui.Button
-	bg_color   gx.Color = gx.white
+	widget     &ui.Button = unsafe { nil }
+	bg_color   gx.Color   = gx.white
 	alpha      int
 	on_click   ColorButtonFn = ColorButtonFn(0)
 	on_changed ColorButtonFn = ColorButtonFn(0)
@@ -25,7 +25,8 @@ pub struct ColorButtonParams {
 	z_index      int
 	tooltip      string
 	tooltip_side ui.Side = .top
-	radius       f64 // = 5.0
+	radius       f64
+	// = 5.0
 	padding      f64
 	left_side    bool
 	bg_color     &gx.Color     = unsafe { nil }
@@ -73,9 +74,11 @@ pub fn colorbutton_component_from_id(w ui.Window, id string) &ColorButtonCompone
 
 fn colorbutton_click(mut b ui.Button) {
 	cbc := colorbutton_component(b)
+
 	// println("here $b.ui.keymods")
 	if b.ui.btn_down[1] {
 		colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .toggle)
+
 		// move only if s.x and s.y == 0 first use
 		mut s := b.ui.window.get_or_panic[ui.SubWindow](colorbox_subwindow_id)
 		if s.x == 0 && s.y == 0 {
@@ -94,6 +97,7 @@ fn colorbutton_click(mut b ui.Button) {
 			colorbox_subwindow_connect(b.ui.window, b.bg_color, cbc, .show)
 		}
 	}
+
 	// on_click initialization if necessary
 	if cbc.on_click != ColorButtonFn(0) {
 		cbc.on_click(cbc)

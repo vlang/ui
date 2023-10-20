@@ -12,10 +12,11 @@ enum TabsMode {
 pub struct TabsComponent {
 pub mut:
 	id                 string
-	layout             &ui.Stack // required
+	layout             &ui.Stack = unsafe { nil }
+	// required
 	active             string
 	prev_active        string
-	tab_bar            &ui.Stack
+	tab_bar            &ui.Stack = unsafe { nil }
 	pages              map[string]ui.Widget
 	z_index            map[string]int
 	mode               TabsMode
@@ -55,6 +56,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 			]
 		)
 	}
+
 	// Layout
 	mut tab_bar := ui.row(
 		id: '${c.id}_tabbar'
@@ -70,8 +72,8 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 
 	tab_active := tab_id(c.id, c.active)
-	// println('active: $tab_active')
 
+	// println('active: $tab_active')
 	mut layout := ui.column(
 		id: ui.component_id(c.id, 'layout')
 		widths: [ui.compact, ui.stretch]
@@ -112,6 +114,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 
 	ui.component_connect(tabs, layout, tab_bar)
+
 	// layout.on_build = tabs_build
 	layout.on_init = tabs_init
 	return layout
@@ -131,7 +134,6 @@ pub fn tabs_component_from_id(w ui.Window, id string) &TabsComponent {
 // 	mut tabs := tabs_component(layout)
 // 	tabs.update_pos(win)
 // }
-
 fn tabs_init(layout &ui.Stack) {
 	mut tabs := tabs_component(layout)
 	tabs.update_pos(layout.ui.window)
@@ -148,6 +150,7 @@ fn tabs_init(layout &ui.Stack) {
 	tabs.update_tab_colors()
 	tabs.on_top()
 	tabs.layout.update_layout()
+
 	// println("${tabs.tab_bar.children.map(it.id)}")
 	// tabs.print_styles()
 }
@@ -161,13 +164,16 @@ fn tab_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 
 fn tab_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut tabs := tabs_component(c)
+
 	// println("selected $c.id")
 	tabs.layout.children[1] = tabs.pages[c.id]
 	tabs.layout.update_layout()
 	win := tabs.layout.ui.window
 	win.update_layout()
+
 	// previous active
 	tabs.prev_active = tabs.active
+
 	// set current
 	tabs.active = c.id
 	tabs.update_tab_colors()
@@ -188,6 +194,7 @@ fn (mut tabs TabsComponent) on_top() {
 			} else {
 				l.deactivate()
 			}
+
 			// l.update_drawing_children()
 			// tabs.layout.ui.window.update_layout()
 		}
@@ -210,13 +217,14 @@ fn (mut tabs TabsComponent) on_top() {
 // 		}
 // 	}
 // }
-
 fn (mut tabs TabsComponent) update_tab_colors() {
 	for mut tab in tabs.tab_bar.children {
 		if mut tab is ui.CanvasLayout {
 			color := if tab.id == tabs.active { tabs.bg_color_selection } else { tabs.bg_color }
+
 			// println("$tab.id == $tabs.active -> $color")
 			tab.update_style(bg_color: color)
+
 			// println("$tab.id $tab.style.bg_color")
 		}
 	}
@@ -252,12 +260,15 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		lab.ui = win.ui
 		mut dtw := ui.DrawTextWidget(lab)
 		w, h := dtw.text_size(lab.text)
+
 		// println(tabs.justify)
 		// println("$lab.text ($w, $h) in (${int(tabs.tab_bar.widths[i])}, ${int(tabs.tab_bar.heights[i])})")
 		dx, dy := ui.get_align_offset_from_size(w, h, int(tabs.tab_bar.widths[i]), int(tabs.tab_bar.heights[i]),
 			tabs.justify[0], tabs.justify[1])
+
 		// println("$dx, $dy $lab.x $lab.y")
 		lab.set_pos(dx, dy)
+
 		// println("$dx, $dy $lab.x $lab.y")
 		mut c := win.get_or_panic[ui.CanvasLayout](tab_id(tabs.id, i))
 		c.set_child_relative_pos(lab_id, dx, dy)

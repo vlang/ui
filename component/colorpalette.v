@@ -8,8 +8,10 @@ import math
 pub struct ColorPaletteComponent {
 pub mut:
 	id       string
-	layout   &ui.Stack  // required
-	colbtn   &ui.Button // current
+	layout   &ui.Stack  = unsafe { nil }
+	// required
+	colbtn   &ui.Button = unsafe { nil }
+	// current
 	ncolors  int
 	alpha    &AlphaComponent = unsafe { nil }
 	color    &gx.Color       = unsafe { nil }
@@ -49,6 +51,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		on_changed: fn (ac &AlphaComponent) {
 			parent_id := ui.component_parent_id(ac.id)
 			cpc := colorpalette_component_from_id(ac.layout.ui.window, parent_id)
+
 			// println("alpha on_chnaged selected: $cpc.selected")
 			mut cbc := colorbutton_component_from_id(ac.layout.ui.window, cpc.selected)
 			cbc.bg_color.a = u8(ac.alpha)
@@ -87,6 +90,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		ncolors: p.ncolors
 		alpha: alpha_component(alpha)
 	}
+
 	// init selection
 	cp.selected = ui.component_id(p.id, 'colbtn')
 	ui.component_connect(cp, layout)
@@ -112,6 +116,7 @@ pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 		if child is ui.Button {
 			mut cb := colorbutton_component_from_id(cp.layout.ui.window, child.id)
 			cb.bg_color = colors[i]
+
 			// println("color $i: ${colors[i]} -> ${cb.bg_color}")
 		}
 	}

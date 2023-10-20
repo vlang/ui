@@ -11,7 +11,8 @@ const (
 [heap]
 pub struct FontChooserComponent {
 pub mut:
-	layout &ui.Stack // required
+	layout &ui.Stack = unsafe { nil }
+	// required
 	dtw    ui.DrawTextWidget
 }
 
@@ -19,7 +20,8 @@ pub mut:
 pub struct FontChooserParams {
 	id         string = component.fontchooser_lb_id
 	draw_lines bool   = true
-	dtw        ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
+	dtw        ui.DrawTextWidget = ui.canvas_plus()
+	// since it requires an intialisation
 }
 
 // TODO: documentation
@@ -84,9 +86,11 @@ pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
 fn fontchooser_lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
 	fc := fontchooser_component(lb)
+
 	// println('fc_lb_change: $lb.id')
 	mut dtw := ui.DrawTextWidget(fc.dtw)
 	fp, id := lb.selected() or { 'classic', '' }
+
 	// println("$id, $fp")
 	w.add_font(id, fp)
 

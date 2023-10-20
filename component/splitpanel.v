@@ -9,9 +9,9 @@ const splitpanel_btn_size = 6
 pub struct SplitPanelComponent {
 pub mut:
 	id        string
-	layout    &ui.Stack
-	child1    &ui.Widget
-	child2    &ui.Widget
+	layout    &ui.Stack  = unsafe { nil }
+	child1    &ui.Widget = unsafe { nil }
+	child2    &ui.Widget = unsafe { nil }
 	direction ui.Direction
 	active    bool
 	weight    f32
@@ -21,8 +21,8 @@ pub mut:
 [params]
 pub struct SplitPanelParams {
 	id        string
-	child1    &ui.Widget
-	child2    &ui.Widget
+	child1    &ui.Widget   = unsafe { nil }
+	child2    &ui.Widget   = unsafe { nil }
 	direction ui.Direction = .row
 	weight    f64 = 50.0
 	btn_size  int = component.splitpanel_btn_size
@@ -112,8 +112,10 @@ fn splitpanel_btn_mouse_move(b &ui.Button, e &ui.MouseMoveEvent) {
 			} else {
 				sp.weight = f32(e.x - sp.layout.x) / f32(w) * 100.0
 			}
+
 			// println("$e.x $sp.layout.x $w = > $sp.weight")
 			sp.layout.widths = [sp.weight * ui.stretch, sp.btn_size, (100.0 - sp.weight) * ui.stretch]
+
 			// sp.layout.widths = [ui.stretch ]
 		} else {
 			_, h := sp.layout.size()
@@ -124,12 +126,15 @@ fn splitpanel_btn_mouse_move(b &ui.Button, e &ui.MouseMoveEvent) {
 			} else {
 				sp.weight = f32(e.y - sp.layout.y) / f32(h) * 100.0
 			}
+
 			// println("${e.y - sp.layout.y} / $h")
 			sp.layout.heights = [sp.weight * ui.stretch, sp.btn_size,
 				(100.0 - sp.weight) * ui.stretch]
 		}
+
 		// println("toto $sp.weight")
 		sp.layout.update_layout()
+
 		// b.ui.window.update_layout()
 	}
 }

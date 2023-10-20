@@ -10,7 +10,7 @@ pub type MenuFileFn = fn (&MenuFileComponent)
 pub struct MenuFileComponent {
 pub mut:
 	id              string
-	layout          &ui.Stack
+	layout          &ui.Stack = unsafe { nil }
 	hidden_files    bool
 	file            string
 	folder_to_open  string
@@ -147,6 +147,7 @@ pub fn (mf &MenuFileComponent) treeview_component() &TreeViewComponent {
 // TODO: documentation
 pub fn menufile_init(layout &ui.Stack) {
 	mut window := layout.ui.window
+
 	// println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
 	filebrowser_subwindow_add(mut window,
 		id: ui.component_id_from(layout.id, 'fb')

@@ -15,7 +15,8 @@ type ColorSlidersFn = fn (cs &ColorSlidersComponent)
 pub struct ColorSlidersComponent {
 	id string
 pub mut:
-	layout         &ui.Stack // required
+	layout         &ui.Stack = unsafe { nil }
+	// required
 	orientation    ui.Orientation
 	r_slider       &ui.Slider  = unsafe { nil }
 	r_textbox      &ui.TextBox = unsafe { nil }
@@ -176,6 +177,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	cs.b_textbox.text = &cs.b_textbox_text
 	ui.component_connect(cs, layout, r_slider, g_slider, b_slider, r_textbox, g_textbox,
 		b_textbox)
+
 	// layout.on_init = colorsliders_init
 	return layout
 }

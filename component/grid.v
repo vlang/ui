@@ -25,7 +25,7 @@ type GridData = Factor | []bool | []f64 | []int | []string
 pub struct GridComponent {
 pub mut:
 	id           string
-	layout       &ui.CanvasLayout
+	layout       &ui.CanvasLayout = unsafe { nil }
 	vars         []GridVar
 	types        []GridType
 	formula_mngr GridFormulaMngr
@@ -46,7 +46,8 @@ pub mut:
 	colbar_height int = 25
 	header_size   int = 3
 	// height
-	cell_height int // when > 0 all cells have same height to speed up visible_cells
+	cell_height int
+	// when > 0 all cells have same height to speed up visible_cells
 	min_height  int
 	// index for swap of rows
 	index []int
@@ -117,6 +118,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		formula_mngr: grid_formula_mngr(p.formulas)
 	}
 	ui.component_connect(g, layout)
+
 	// check vars same length
 	g.nrow = -1
 	g.ncol = p.vars.len
@@ -171,6 +173,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 			}
 		}
 	}
+
 	// textbox formula
 	mut tb_formula := ui.textbox(
 		id: ui.component_id(p.id, 'tb_formula')
@@ -180,12 +183,14 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	layout.children << tb_formula
 	g.selectors << tb_formula
 	ui.component_connect(g, tb_formula)
+
 	// textbox selector
 	mut tb_sel := ui.textbox(
 		id: ui.component_id(p.id, 'tb_sel')
 		on_enter: grid_tb_enter
 		// on_char: grid_tb_char
 	)
+
 	// println("tb_sel $tb_sel.id created inside $p.id")
 	tb_sel.set_visible(false)
 	layout.children << tb_sel
@@ -197,6 +202,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 		id: ui.component_id(p.id, 'cb_sel')
 		on_click: grid_cb_clicked
 	)
+
 	// println("cb_sel $cb_sel.id created inside $p.id")
 	cb_sel.set_visible(false)
 	layout.children << cb_sel
@@ -220,6 +226,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	g.tb_rowbar.set_visible(false)
 
 	g.widths = [p.width].repeat(p.vars.keys().len)
+
 	// g.index = []int{len: g.nrow, init: index}.reverse()
 	if p.fixed_height {
 		// g.heights.len == 0
@@ -260,7 +267,6 @@ fn grid_init(mut layout ui.CanvasLayout) {
 }
 
 // callbacks
-
 fn grid_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	// println('grid_click $c.id $e.x $e.y orig = (${c.scrollview.orig_x}, ${c.scrollview.orig_y}) offset=(${c.scrollview.offset_x}, ${c.scrollview.offset_y})')
 	mut g := grid_component(c)
@@ -456,6 +462,7 @@ fn grid_tb_enter(mut tb ui.TextBox) {
 		mut gtb := g.vars[g.sel_j]
 		if mut gtb is GridTextBox {
 			gtb.var[g.ind(g.sel_i)] = new_text
+
 			// println("gtb.var = ${gtb.var}")
 		}
 	}
@@ -466,6 +473,7 @@ fn grid_tb_enter(mut tb ui.TextBox) {
 	g.activate_cell(GridCell{g.sel_i, g.sel_j}.alphacell())
 	tb.z_index = ui.z_index_hidden
 	g.layout.update_layout()
+
 	// println("tb_entered: ${g.layout.get_children().map(it.id)}")
 }
 
@@ -475,6 +483,7 @@ fn grid_dd_changed(mut dd ui.Dropdown) {
 	mut gdd := g.vars[g.sel_j]
 	if mut gdd is GridDropdown {
 		gdd.var.values[g.ind(g.sel_i)] = dd.selected_index
+
 		// println('$dd.id  selection changed: gdd.var($g.sel_j).values[$g.sel_i] = dd.selected_index $dd.selected_index')
 	}
 	dd.set_visible(false)
@@ -487,6 +496,7 @@ fn grid_cb_clicked(mut cb ui.CheckBox) {
 	mut gcb := g.vars[g.sel_j]
 	if mut gcb is GridCheckBox {
 		gcb.var[g.ind(g.sel_i)] = cb.checked
+
 		// println('$cb.id  selection changed: gcb.var($g.sel_j).values[$g.sel_i] = cb.checked')
 	}
 	cb.set_visible(false)
@@ -495,16 +505,16 @@ fn grid_cb_clicked(mut cb ui.CheckBox) {
 }
 
 // main actions
-
 fn grid_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// println("draw begin")
 	mut g := grid_component(c)
 	g.pos_x = g.from_x + c.x + c.offset_x
-	// println("$g.rowbar_width == $g.pos_x")
 
+	// println("$g.rowbar_width == $g.pos_x")
 	for j in g.from_j .. g.to_j {
 		g.vars[j].draw_device(mut d, j, mut g)
 		g.pos_x += g.widths[j]
+
 		// println("draw $j")
 	}
 
@@ -515,6 +525,7 @@ fn grid_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 
 	//
 	ui.scrollview_update(c)
+
 	// println("draw end")
 }
 
@@ -528,11 +539,11 @@ fn grid_post_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	g.draw_device_colbar(mut d)
 
 	ui.scrollview_update(c)
+
 	// println("post draw end")
 }
 
 // methods
-
 fn (g &GridComponent) value(i int, j int) (string, GridType) {
 	// println("g[$i, $j] = <${g.vars[j].value(i)}>")
 	return g.vars[j].value(i)
@@ -575,6 +586,7 @@ fn (mut g GridComponent) draw_device_colbar(mut d ui.DrawDevice) {
 	mut pos_x := g.layout.x + g.layout.offset_x + g.rowbar_width + g.header_size
 	for j, var in g.headers {
 		tb.set_pos(pos_x, g.pos_y)
+
 		// println("$j) $g.pos_x, $g.pos_y, ${g.widths[j]} ${var}")
 		tb.propose_size(g.widths[j], g.colbar_height)
 		unsafe {
@@ -601,6 +613,7 @@ fn (mut g GridComponent) draw_device_rowbar(mut d ui.DrawDevice) {
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
 	for i in g.from_i .. g.to_i {
 		tb.set_pos(g.pos_x, g.pos_y)
+
 		// println("$i) ${g.widths[j]}, ${g.height(i]} ${gtb.var[i)}")
 		tb.propose_size(g.rowbar_width, g.height(i))
 		unsafe {
@@ -648,14 +661,17 @@ fn (mut g GridComponent) show_selected() {
 	}
 	g.unselect()
 	g.cur_i, g.cur_j = g.sel_i, g.sel_j
+
 	// type
 	name := g.headers[g.sel_j]
 	match g.types[g.sel_j] {
 		.tb_string {
 			id := ui.component_id(g.id, 'tb_sel')
+
 			// println('tb_sel $id selected')
 			mut tb := g.layout.ui.window.get_or_panic[ui.TextBox](id)
 			tb.set_visible(true)
+
 			// println('tb $tb.id')
 			tb.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
@@ -672,6 +688,7 @@ fn (mut g GridComponent) show_selected() {
 		}
 		.dd_factor {
 			id := ui.component_id(g.id, 'dd_sel' + '_' + name)
+
 			// println('dd_sel $id selected $g.sel_i, $g.sel_j')
 			mut dd := g.layout.ui.window.get_or_panic[ui.Dropdown](id)
 			dd.set_visible(true)
@@ -688,9 +705,11 @@ fn (mut g GridComponent) show_selected() {
 		}
 		.cb_bool {
 			id := ui.component_id(g.id, 'cb_sel')
+
 			// println('cb_sel $id selected')
 			mut cb := g.layout.ui.window.get_or_panic[ui.CheckBox](id)
 			cb.set_visible(true)
+
 			// println('cb $cb.id')
 			cb.z_index = 1000
 			pos_x, pos_y := g.get_pos(g.sel_i, g.sel_j)
@@ -711,14 +730,15 @@ fn (mut g GridComponent) show_selected() {
 }
 
 // depending on g.index
-
 fn (g &GridComponent) get_index_pos_x(x int) int {
 	mut sel_j := -1
 
 	mut cum := g.from_x
+
 	// println("dv $y")
 	for j in g.from_j .. g.to_j {
 		cum += g.widths[j]
+
 		// println("dv  $y > $g.colbar_height && $y < $cum ")
 		if x > g.from_x && x < cum {
 			sel_j = j
@@ -733,9 +753,11 @@ fn (g &GridComponent) get_index_pos_y(y int) int {
 	mut sel_i := -1
 
 	mut cum := g.from_y
+
 	// println("dv $y")
 	for i in g.from_i .. g.to_i {
 		cum += g.height(i)
+
 		// println("dv  $y > $g.colbar_height && $y < $cum ")
 		if y > g.from_y && y < cum {
 			sel_i = i
@@ -752,6 +774,7 @@ fn (g &GridComponent) get_index_pos(x int, y int) (int, int) {
 
 fn (g &GridComponent) get_pos(i int, j int) (int, int) {
 	mut x, mut y := g.rowbar_width + g.header_size, g.colbar_height + g.header_size
+
 	// TODO: when fixed it is easier
 	for k in 0 .. i {
 		y += g.height(k)
@@ -770,9 +793,11 @@ fn (g &GridComponent) get_index_edge_x(x int) int {
 	mut sel_j := -1
 
 	mut cum := g.from_x
+
 	// println("dv $y")
 	for j in g.from_j .. g.to_j {
 		cum += g.widths[j]
+
 		// println("dv  $y > $g.colbar_height && $y < $cum ")
 		if x > g.from_x && x > cum - g.edge_size && x < cum {
 			sel_j = j
@@ -813,8 +838,8 @@ fn (mut g GridComponent) visible_cells() {
 	} else {
 		g.from_i, g.to_i, g.from_y = 0, g.nrow(), 0
 	}
-	// println("vc $g.from_i, $g.to_i, $g.from_y")
 
+	// println("vc $g.from_i, $g.to_i, $g.from_y")
 	if g.layout.has_scrollview {
 		g.from_j, g.to_j, g.from_x = -1, -1, 0
 		mut cum := g.rowbar_width + g.header_size
@@ -847,6 +872,7 @@ pub fn (mut g GridComponent) visible_fixed_cells() {
 	g.to_i = math.min((g.layout.scrollview.offset_y +
 		g.layout.height - g.colbar_height - g.header_size) / g.cell_height, g.nrow() - 1) + 1
 	g.from_y = g.from_i * g.cell_height + g.colbar_height + g.header_size
+
 	// println("vfc $g.from_i, $g.to_i")
 }
 
@@ -855,6 +881,7 @@ pub fn (mut g GridComponent) cur_allways_visible() {
 	if !ui.has_scrollview(g.layout) {
 		return
 	}
+
 	// vertically
 	x, y := g.get_pos(g.cur_i, g.cur_j)
 	if y < g.layout.scrollview.offset_y + g.height(g.cur_i) {
@@ -864,6 +891,7 @@ pub fn (mut g GridComponent) cur_allways_visible() {
 		// println("scroll y end $g.cur_i")
 		g.scroll_y_to_cur(true)
 	}
+
 	// horizontally
 	if x < g.layout.scrollview.offset_x + g.widths[g.cur_j] {
 		// println("scroll x begin $g.cur_j")
@@ -910,7 +938,6 @@ pub fn (mut g GridComponent) scroll_y_to_end() {
 }
 
 // GridVar interface and its "instances"
-
 interface GridVar {
 	id string
 	grid &GridComponent
@@ -968,10 +995,12 @@ fn (gtb &GridTextBox) draw_device(mut d ui.DrawDevice, j int, mut g GridComponen
 	tb.read_only = true
 	tb.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+
 	// println("from_i=$g.from_i to_i=$g.to_i")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		tb.set_pos(g.pos_x, g.pos_y)
+
 		// println("$i) ${g.widths[j]}")
 		// println("${g.height(i)}")
 		// println("${g.ind(i)}")
@@ -1040,10 +1069,12 @@ fn (gdd &GridDropdown) draw_device(mut d ui.DrawDevice, j int, mut g GridCompone
 	mut dd := g.dd_factor[gdd.name] or { return }
 	dd.set_visible(false)
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+
 	// println("ddd $j $gdd.var.values.len")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		dd.set_pos(g.pos_x, g.pos_y)
+
 		// println("$i) ${g.widths[j]}, ${g.height(i)}")
 		dd.propose_size(g.widths[j], g.height(i))
 		dd.selected_index = gdd.var.values[g.ind(i)]
@@ -1103,12 +1134,14 @@ fn (gcb &GridCheckBox) draw_device(mut d ui.DrawDevice, j int, mut g GridCompone
 	mut aw := ui.AdjustableWidget(cb)
 	mut dx, mut dy := 0, 0
 	g.pos_y = g.from_y + g.layout.y + g.layout.offset_y
+
 	// println("from_i=$g.from_i to_i=$g.to_i")
 	for i in g.from_i .. g.to_i {
 		// println("$i) $g.pos_x, $g.pos_y")
 		cb.propose_size(g.widths[j], g.height(i))
 		dx, dy = aw.get_align_offset(0.5, 0.5)
 		cb.set_pos(g.pos_x + dx, g.pos_y + dy)
+
 		// unsafe {
 		// 	*cb.text = gtb.var[g.ind(i)].clone()
 		// }
@@ -1119,7 +1152,6 @@ fn (gcb &GridCheckBox) draw_device(mut d ui.DrawDevice, j int, mut g GridCompone
 }
 
 // using closure
-
 type RankedGridData = int
 
 // TODO: documentation

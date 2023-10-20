@@ -7,7 +7,7 @@ import gx
 pub struct HideableComponent {
 pub mut:
 	id              string
-	layout          &ui.Stack
+	layout          &ui.Stack = unsafe { nil }
 	child_layout_id string
 	window          &ui.Window = &ui.Window(unsafe { nil })
 	z_index         map[string]int
@@ -20,8 +20,8 @@ pub mut:
 pub struct HideableParams {
 	id       string
 	bg_color gx.Color
-	layout   &ui.Stack
-	hidden   bool = true
+	layout   &ui.Stack = unsafe { nil }
+	hidden   bool      = true
 	shortcut string
 	open     bool = true
 }
