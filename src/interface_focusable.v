@@ -6,7 +6,7 @@ module ui
 // * methods for Window
 // * methods for Layout interface
 
-interface Focusable {
+pub interface Focusable {
 	ui &UI
 mut:
 	id string

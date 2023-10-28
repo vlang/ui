@@ -87,7 +87,7 @@ pub fn (mut app Application) layout() Widget {
 
 // Specific to external gg application
 
-interface GGApplication {
+pub interface GGApplication {
 mut:
 	gg &gg.Context
 	bounds gg.Rect // bounding box where to draw

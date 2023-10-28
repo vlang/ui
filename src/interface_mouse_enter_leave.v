@@ -1,6 +1,6 @@
 module ui
 
-interface EnterLeaveWidget {
+pub interface EnterLeaveWidget {
 mut:
 	id string
 	mouse_enter(e &MouseMoveEvent)
