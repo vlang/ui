@@ -69,7 +69,7 @@ v install ui
 ```bash
 cd examples
 v run users.v
-v run temperature.v
+v run rgb_color.v
 v run ...
 ```
 
@@ -80,7 +80,7 @@ for Windows, macOS, Linux, Android, and soon iOS and the web (JS/WASM). V UI
 uses native widgets on Windows and macOS, on all other platforms the widgets
 are drawn by V UI. Right now only the non-native widgets are available.
 
-This is a very early version of the library, lots of features are missing, lots of things will change.
+This is a very early version of the library, lots of features are missing, and lots of things will change.
 
 The API is declarative, and there will be hot reloading, similar to SwiftUI and Flutter.
 
