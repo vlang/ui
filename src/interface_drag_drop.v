@@ -3,7 +3,7 @@ module ui
 import time
 import gg
 
-interface Draggable {
+pub interface Draggable {
 	id string
 	x int
 	y int
@@ -152,7 +152,7 @@ fn drag_child_dropped(mut window Window) {
 
 // DropZone
 
-interface DropZone {
+pub interface DropZone {
 	ui &UI
 	id string
 	size() (int, int)

@@ -1,6 +1,6 @@
 module ui
 
-interface WidgetBuild {
+pub interface WidgetBuild {
 mut:
 	id string
 	ui &UI
