@@ -17,7 +17,7 @@ pub mut:
 	// width      int
 	// height     int
 	// channels   int = 4
-	// data       []byte
+	// data       []u8
 	size       int = 11 // pixel_size + inter
 	inter      int = 1
 	pixel_size int = 10
@@ -82,7 +82,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		// width: p.width
 		// height: p.height
 		// channels: p.channels
-		// data: []byte{len: p.width * p.height * p.channels}
+		// data: []u8{len: p.width * p.height * p.channels}
 		r: libvg.raster(
 			width: p.width
 			height: p.height

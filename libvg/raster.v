@@ -20,7 +20,7 @@ pub mut:
 	width     int
 	height    int
 	channels  int = 4
-	data      []byte
+	data      []u8
 	ttf_font  &ttf.TTF_File = unsafe { nil }
 	ttf_fonts map[string]ttf.TTF_File
 	bmp       &ttf.BitMap = unsafe { nil }
@@ -43,14 +43,14 @@ pub fn raster(p RasterParams) &Raster {
 		width: p.width
 		height: p.height
 		channels: p.channels
-		data: []byte{len: p.width * p.height * p.channels}
+		data: []u8{len: p.width * p.height * p.channels}
 	}
 	return r
 }
 
 // TODO: documentation
 pub fn (mut r Raster) clear() {
-	r.data = []byte{len: r.width * r.height * r.channels}
+	r.data = []u8{len: r.width * r.height * r.channels}
 }
 
 // TODO: documentation
@@ -59,7 +59,7 @@ pub fn (mut r Raster) load(img &gg.Image) {
 	// println("$img.ok, $img.simg_ok")
 
 	r.width, r.height, r.channels = img.width, img.height, img.nr_channels
-	r.data = []byte{len: r.width * r.height * r.channels}
+	r.data = []u8{len: r.width * r.height * r.channels}
 	// println("${r.data.len}")
 	unsafe { C.memcpy(r.data.data, img.data, r.data.len) }
 }
