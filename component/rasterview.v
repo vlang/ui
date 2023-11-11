@@ -556,7 +556,7 @@ pub fn (rv &RasterViewComponent) channels() int {
 }
 
 // TODO: documentation
-pub fn (rv &RasterViewComponent) data() &byte {
+pub fn (rv &RasterViewComponent) data() &u8 {
 	return rv.r.data.data
 }
 
