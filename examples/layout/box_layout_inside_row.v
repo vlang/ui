@@ -6,7 +6,7 @@ const (
 	win_height = 300
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	text   string

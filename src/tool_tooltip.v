@@ -44,7 +44,7 @@ pub struct TooltipMessage {
 	side Side = .right
 }
 
-[unsafe]
+@[unsafe]
 pub fn (t &Tooltip) free() {
 	unsafe {
 		for line in t.lines {
@@ -58,7 +58,7 @@ pub fn (t &Tooltip) free() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (t &TooltipMessage) free() {
 	unsafe {
 		t.text.free()

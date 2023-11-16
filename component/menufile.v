@@ -6,7 +6,7 @@ import os
 
 pub type MenuFileFn = fn (&MenuFileComponent)
 
-[heap]
+@[heap]
 pub struct MenuFileComponent {
 pub mut:
 	id              string
@@ -20,7 +20,7 @@ pub mut:
 	on_file_changed MenuFileFn = MenuFileFn(0)
 }
 
-[params]
+@[params]
 pub struct MenuFileParams {
 	id              string
 	hidden_files    bool

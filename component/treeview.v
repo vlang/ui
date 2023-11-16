@@ -111,7 +111,7 @@ fn (mut t Tree) create_layout(mut tv TreeViewComponent, mut layout ui.Stack, id_
 
 type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeViewComponent)
 
-[heap]
+@[heap]
 pub struct TreeViewComponent {
 pub mut:
 	id         string
@@ -152,7 +152,7 @@ pub mut:
 
 // constructors
 
-[params]
+@[params]
 pub struct TreeViewParams {
 	id           string
 	trees        []Tree
@@ -206,7 +206,7 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 	return layout
 }
 
-[params]
+@[params]
 pub struct TreeViewDirParams {
 	id           string = 'tvd'
 	trees        []string

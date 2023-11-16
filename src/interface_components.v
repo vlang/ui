@@ -16,7 +16,7 @@ const (
 
 pub interface ComponentChild {
 mut:
-	id string
+	id        string
 	component voidptr
 }
 

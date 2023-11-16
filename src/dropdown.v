@@ -5,7 +5,7 @@ module ui
 
 pub type DropDownFn = fn (&Dropdown)
 
-[heap]
+@[heap]
 pub struct Dropdown {
 pub mut:
 	id                   string
@@ -38,7 +38,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct DropdownParams {
 	DropdownStyleParams
 	id             string
@@ -100,7 +100,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.ui.window.evt_mngr.add_receiver(dd, [events.on_mouse_down])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut dd Dropdown) cleanup() {
 	mut subscriber := dd.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, dd)
@@ -115,7 +115,7 @@ fn (mut dd Dropdown) cleanup() {
 	unsafe { dd.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (dd &Dropdown) free() {
 	$if free ? {
 		print('dropdown ${dd.id}')

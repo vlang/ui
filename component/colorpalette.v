@@ -4,7 +4,7 @@ import ui
 import gx
 import math
 
-[heap]
+@[heap]
 pub struct ColorPaletteComponent {
 pub mut:
 	id       string
@@ -16,7 +16,7 @@ pub mut:
 	selected string
 }
 
-[params]
+@[params]
 pub struct ColorPaletteParams {
 	id        string
 	title     string

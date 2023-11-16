@@ -15,7 +15,7 @@ const (
 	listbox_text_offset_x  = 5
 )
 
-[heap]
+@[heap]
 pub struct ListBox {
 pub mut:
 	height        int
@@ -69,7 +69,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-[params]
+@[params]
 pub struct ListBoxParams {
 	ListBoxStyleParams
 mut:
@@ -171,7 +171,7 @@ fn (mut lb ListBox) init(parent Layout) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 fn (mut lb ListBox) cleanup() {
 	mut subscriber := lb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, lb)
@@ -188,7 +188,7 @@ fn (mut lb ListBox) cleanup() {
 	unsafe { lb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (lb &ListBox) free() {
 	$if free ? {
 		print('listbox ${lb.id}')
@@ -458,7 +458,7 @@ pub fn (mut lb ListBox) set_text(id string, text string) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut lb ListBox) clear() {
 	for item in lb.items {
 		unsafe { item.free() }
@@ -896,7 +896,7 @@ fn (lb &ListBox) fit_at(at int) int {
 	return inx
 }
 
-[heap]
+@[heap]
 struct ListItem {
 mut:
 	id       string
@@ -913,7 +913,7 @@ pub mut:
 	selected bool
 }
 
-[params]
+@[params]
 struct ListItemParams {
 	id       string
 	list     &ListBox = unsafe { nil }
@@ -944,7 +944,7 @@ pub fn listitem(p ListItemParams) &ListItem {
 	}
 }
 
-[unsafe]
+@[unsafe]
 fn (item &ListItem) free() {
 	$if free ? {
 		print('\tlistbox item ${item.id}')

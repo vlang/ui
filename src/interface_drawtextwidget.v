@@ -7,7 +7,7 @@ import sokol.sfons
 pub interface DrawTextWidget {
 	id string
 mut:
-	ui &UI
+	ui          &UI
 	text_styles TextStyles
 }
 

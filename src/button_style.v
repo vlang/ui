@@ -24,7 +24,7 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .middle
 }
 
-[params]
+@[params]
 pub struct ButtonStyleParams {
 	WidgetTextStyleParams
 pub mut:

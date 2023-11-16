@@ -14,7 +14,7 @@ import x.ttf
 // 	raw
 // }
 
-[heap]
+@[heap]
 pub struct Raster {
 pub mut:
 	width     int
@@ -30,7 +30,7 @@ pub mut:
 	style  ttf.Style
 }
 
-[params]
+@[params]
 pub struct RasterParams {
 	width    int = 16
 	height   int = 16

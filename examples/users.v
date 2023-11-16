@@ -19,7 +19,7 @@ struct User {
 	country    string
 }
 
-[heap]
+@[heap]
 struct State {
 mut:
 	first_name string

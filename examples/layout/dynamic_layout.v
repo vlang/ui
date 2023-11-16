@@ -5,7 +5,7 @@ const (
 	win_height = 600
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	cpt int

@@ -45,7 +45,7 @@ N.B.:
 	* opposite size is the converse
 ***********************************/
 
-[heap]
+@[heap]
 pub struct Stack {
 	cache CachedSizes
 pub mut:
@@ -105,7 +105,7 @@ pub mut:
 	debug_children_ids []string
 }
 
-[params]
+@[params]
 struct StackParams {
 	StackStyleParams
 	id                   string
@@ -220,7 +220,7 @@ fn (mut s Stack) set_root_layout() {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
@@ -233,7 +233,7 @@ pub fn (mut s Stack) cleanup() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Stack) free() {
 	$if free ? {
 		print('stack ${s.id}')
@@ -1421,7 +1421,7 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 // }
 
 //**** ChildrenParams *****
-[params]
+@[params]
 pub struct ChildrenParams {
 mut:
 	// add or remove or migrate

@@ -2,7 +2,7 @@ import ui
 import gx
 import os
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window    &ui.Window = unsafe { nil }

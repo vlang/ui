@@ -35,7 +35,7 @@ pub mut:
 	mono           bool
 }
 
-[params]
+@[params]
 pub struct TextStyleParams {
 pub mut:
 	// text style identifier

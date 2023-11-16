@@ -168,7 +168,7 @@ pub fn (gui &UI) draw_device_img(d DrawDevice, id string, x int, y int, w int, h
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (gui &UI) free() {
 	unsafe {
 		// dd             &DrawDevice = voidptr(0)

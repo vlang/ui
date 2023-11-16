@@ -8,7 +8,7 @@ const (
 )
 
 // Subwindow
-[params]
+@[params]
 pub struct FileBrowserSubWindowParams {
 	FileBrowserParams
 	x int

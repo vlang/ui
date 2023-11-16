@@ -5,7 +5,7 @@ const (
 	win_height = 250
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	label    &ui.Label

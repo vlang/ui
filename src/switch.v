@@ -18,7 +18,7 @@ type SwitchFn = fn (&Switch)
 
 type SwitchU32Fn = fn (&Switch, u32)
 
-[heap]
+@[heap]
 pub struct Switch {
 pub mut:
 	id          string
@@ -41,7 +41,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SwitchParams {
 	id          string
 	z_index     int
@@ -73,7 +73,7 @@ fn (mut s Switch) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, sw_click, s)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Switch) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, s)
@@ -81,7 +81,7 @@ pub fn (mut s Switch) cleanup() {
 	unsafe { s.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Switch) free() {
 	$if free ? {
 		print('switch ${s.id}')

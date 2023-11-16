@@ -7,7 +7,7 @@ import math
 import gx
 import eventbus
 
-[heap]
+@[heap]
 pub struct Group {
 pub mut:
 	id            string
@@ -38,7 +38,7 @@ pub mut:
 	debug_ids []string
 }
 
-[params]
+@[params]
 pub struct GroupParams {
 pub mut:
 	id       string
@@ -79,7 +79,7 @@ fn (mut g Group) init(parent Layout) {
 	g.calculate_child_positions()
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut g Group) cleanup() {
 	for mut child in g.children {
 		child.cleanup()
@@ -89,7 +89,7 @@ pub fn (mut g Group) cleanup() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (g &Group) free() {
 	$if free ? {
 		print('group ${g.id}')

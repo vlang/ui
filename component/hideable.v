@@ -3,7 +3,7 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct HideableComponent {
 pub mut:
 	id              string
@@ -16,7 +16,7 @@ pub mut:
 	open            bool
 }
 
-[params]
+@[params]
 pub struct HideableParams {
 	id       string
 	bg_color gx.Color

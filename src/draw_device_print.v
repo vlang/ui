@@ -9,7 +9,7 @@ struct DrawDevicePrint {
 	filename string
 }
 
-[params]
+@[params]
 pub struct DrawDevicePrintParams {
 	id       string = 'dd_print'
 	filename string

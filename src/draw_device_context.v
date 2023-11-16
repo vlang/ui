@@ -55,7 +55,7 @@ pub fn (d DrawDeviceContext) text_bounds(x int, y int, text string) []f32 {
 		asc / ctx.scale, desc / ctx.scale, lineh / ctx.scale]
 }
 
-[deprecated: 'use `widget.clipping` flag instead']
+@[deprecated: 'use `widget.clipping` flag instead']
 pub fn (d &DrawDeviceContext) scissor_rect(x int, y int, w int, h int) {
 	d.Context.scissor_rect(x, y, w, h)
 }

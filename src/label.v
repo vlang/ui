@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-[heap]
+@[heap]
 pub struct Label {
 pub mut:
 	id         string
@@ -36,7 +36,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct LabelParams {
 	LabelStyleParams
 	id       string
@@ -75,12 +75,12 @@ fn (mut l Label) init(parent Layout) {
 	l.init_size()
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut l Label) cleanup() {
 	unsafe { l.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (l &Label) free() {
 	$if free ? {
 		print('label ${l.id}')

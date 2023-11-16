@@ -14,7 +14,7 @@ const para_style_delim = '|'
 
 // const empty_chunk_container = rowlayoutchunk()
 
-[params]
+@[params]
 pub struct Offset {
 mut:
 	x int
@@ -38,10 +38,10 @@ fn (cc ChunkContent) draw_bb(cv &ChunkView) {
 // ChunkView, ParaChunk, RowChunk, VerticalAlignChunk
 interface ChunkContainer {
 mut:
-	x int
-	y int
-	bb Rect
-	chunks []ChunkContent
+	x         int
+	y         int
+	bb        Rect
+	chunks    []ChunkContent
 	container ?ChunkContainer
 	size() (int, int)
 	inner_pos() (int, int)
@@ -58,7 +58,7 @@ mut:
 	style string // related to ChunkView text_styles
 }
 
-[params]
+@[params]
 pub struct TextChunkParams {
 	x     int
 	y     int
@@ -81,8 +81,7 @@ fn (mut c TextChunk) init(cv &ChunkView) {
 
 fn (mut c TextChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
 	mut dtw := DrawTextWidget(cv)
-	dtw.draw_device_styled_text(d, cv.x + offset.x + c.x, cv.y + offset.y + c.y, c.text,
-		id: c.style)
+	dtw.draw_device_styled_text(d, cv.x + offset.x + c.x, cv.y + offset.y + c.y, c.text, id: c.style)
 }
 
 fn (mut c TextChunk) update_bounding_box(cv &ChunkView, offset Offset) {
@@ -128,8 +127,8 @@ type DrawChunkFn = fn (&DrawChunk)
 struct DrawChunk {
 mut:
 	bb     Rect
-	state  voidptr = unsafe { nil }
-	drawfn DrawChunkFn
+	state  voidptr     = unsafe { nil }
+	drawfn DrawChunkFn = unsafe { nil }
 }
 
 pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
@@ -166,7 +165,7 @@ mut:
 	height   int
 }
 
-[params]
+@[params]
 pub struct ParaChunkParams {
 	x         int
 	y         int
@@ -373,7 +372,7 @@ pub mut:
 	spacing int
 }
 
-[params]
+@[params]
 pub struct AlignChunkParams {
 	x         int
 	y         int
@@ -382,7 +381,7 @@ pub struct AlignChunkParams {
 	container ?ChunkContainer
 }
 
-[params]
+@[params]
 pub struct VerticalAlignChunkParams {
 	AlignChunkParams
 	align f32 // in [0,1]
@@ -623,7 +622,7 @@ pub mut:
 	border_color gx.Color
 }
 
-[params]
+@[params]
 pub struct RowChunkParams {
 	x         int
 	y         int
@@ -737,11 +736,15 @@ fn (mut c RowChunk) inner_pos() (int, int) {
 }
 
 fn (mut c RowChunk) inner_size() (int, int) {
-	w, h := c.container?.inner_size()
-	return w - 2 * c.margin, h - 2 * c.margin
+	if mut container := c.container {
+		w, h := container.inner_size()
+		return w - 2 * c.margin, h - 2 * c.margin
+	} else {
+		return -1, -1
+	}
 }
 
-[heap]
+@[heap]
 pub struct ChunkView {
 pub mut:
 	ui        &UI = unsafe { nil }
@@ -771,7 +774,7 @@ pub mut:
 	chunks           []ChunkContent // sorted with respect of ChunkList bounding box
 }
 
-[params]
+@[params]
 pub struct ChunkViewParams {
 	id               string
 	chunks           []ChunkContent
@@ -797,8 +800,8 @@ pub fn chunkview(p ChunkViewParams) &ChunkView {
 
 fn (mut cv ChunkView) init(parent Layout) {
 	cv.parent = parent
-	ui := parent.get_ui()
-	cv.ui = ui
+	ui_ := parent.get_ui()
+	cv.ui = ui_
 	for mut chunk in cv.chunks {
 		chunk.init(cv)
 	}

@@ -3,7 +3,7 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct AccordionComponent {
 pub mut:
 	layout     &ui.Stack // required
@@ -16,7 +16,7 @@ pub mut:
 	bg_color   gx.Color
 }
 
-[params]
+@[params]
 pub struct AccordionParams {
 	id         string
 	titles     []string

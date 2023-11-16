@@ -11,7 +11,7 @@ pub const (
 	sw_z_index_child = 100
 )
 
-[heap]
+@[heap]
 pub struct SubWindow {
 pub mut:
 	id                    string
@@ -43,7 +43,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SubWindowParams {
 	id         string
 	x          int
@@ -92,7 +92,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.set_visible(!s.hidden)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s SubWindow) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_mouse_down, s)
@@ -125,7 +125,7 @@ fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 	offset_end(mut s)
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &SubWindow) free() {
 	$if free ? {
 		print('canvas_layout ${s.id}')

@@ -3,7 +3,7 @@ module main
 import ui
 import time
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window &ui.Window = unsafe { nil }

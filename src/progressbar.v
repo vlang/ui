@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-[heap]
+@[heap]
 pub struct ProgressBar {
 pub mut:
 	id       string
@@ -28,7 +28,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct ProgressBarParams {
 	ProgressBarStyleParams
 	id      string
@@ -64,12 +64,12 @@ fn (mut pb ProgressBar) init(parent Layout) {
 	pb.load_style()
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut pb ProgressBar) cleanup() {
 	unsafe { pb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (pb &ProgressBar) free() {
 	$if free ? {
 		print('progress_bar ${pb.id}')

@@ -122,7 +122,7 @@ pub fn (mut r Raster) fline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Col
 ******************************************************************************/
 
 // aline draw an aliased line on the bitmap
-[inline]
+@[inline]
 pub fn (mut r Raster) aline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
 	mut x0 := f32(in_x0)
 	mut x1 := f32(in_x1)
@@ -597,7 +597,7 @@ fn color_multiply_alpha(c gx.Color, a f64) gx.Color {
 	return gx.Color{c.r, c.g, c.b, u8(c.a * a)}
 }
 
-[params]
+@[params]
 pub struct TextBlockParams {
 	x         int  // x postion of the left high corner
 	y         int  // y postion of the left high corner

@@ -8,7 +8,7 @@ import gg
 
 type PictureFn = fn (&Picture)
 
-[heap]
+@[heap]
 pub struct Picture {
 pub mut:
 	id       string
@@ -35,7 +35,7 @@ mut:
 	tooltip   TooltipMessage
 }
 
-[params]
+@[params]
 pub struct PictureParams {
 	id           string
 	path         string
@@ -119,7 +119,7 @@ fn (mut pic Picture) init(parent Layout) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut p Picture) cleanup() {
 	mut subscriber := p.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, p)
@@ -128,7 +128,7 @@ pub fn (mut p Picture) cleanup() {
 	unsafe { p.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (p &Picture) free() {
 	$if free ? {
 		print('picture ${p.id}')

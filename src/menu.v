@@ -15,7 +15,7 @@ const (
 	menu_border_color   = gx.rgb(123, 123, 123)
 )
 
-[heap]
+@[heap]
 pub struct Menu {
 pub mut:
 	id       string
@@ -53,7 +53,7 @@ mut:
 	orientation Orientation = Orientation.vertical
 }
 
-[params]
+@[params]
 pub struct MenuParams {
 	MenuStyleParams
 	id          string
@@ -133,7 +133,7 @@ fn (mut m Menu) init(parent Layout) {
 	m.ui.window.evt_mngr.add_receiver(m, [events.on_mouse_down])
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut m Menu) cleanup() {
 	mut subscriber := m.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, m)
@@ -141,7 +141,7 @@ pub fn (mut m Menu) cleanup() {
 	unsafe { m.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (m &Menu) free() {
 	$if free ? {
 		print('menu ${m.id}')
@@ -485,7 +485,7 @@ pub fn (m &Menu) show_all_states() {
 
 pub type MenuItemFn = fn (item &MenuItem)
 
-[heap]
+@[heap]
 pub struct MenuItem {
 pub mut:
 	id          string
@@ -499,7 +499,7 @@ mut:
 	action MenuItemFn = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct MenuItemParams {
 	id      string
 	text    string

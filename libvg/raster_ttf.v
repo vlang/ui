@@ -42,7 +42,7 @@ pub fn (r &Raster) get_info_string() {
 	println(r.ttf_font.get_info_string())
 }
 
-[params]
+@[params]
 pub struct SetFontSizeParams {
 	font_size  int
 	device_dpi int = 72

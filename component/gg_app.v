@@ -4,7 +4,7 @@ import ui
 // import time
 import gg
 
-[heap]
+@[heap]
 struct GGComponent {
 	id string
 pub mut:
@@ -12,7 +12,7 @@ pub mut:
 	app    ui.GGApplication
 }
 
-[params]
+@[params]
 pub struct GGComponentParams {
 	id      string = 'gg_app'
 	app     ui.GGApplication

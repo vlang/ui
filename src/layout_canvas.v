@@ -23,7 +23,7 @@ pub type CanvasLayoutBoundingFn = fn (c &CanvasLayout, bb gg.Rect)
 
 pub type CanvasLayoutDelegateFn = fn (c &CanvasLayout, e &gg.Event)
 
-[heap]
+@[heap]
 pub struct CanvasLayout {
 pub mut:
 	id               string
@@ -91,7 +91,7 @@ mut:
 	debug_children_ids []string
 }
 
-[params]
+@[params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
 	id                string
@@ -252,7 +252,7 @@ fn (mut c CanvasLayout) set_root_layout() {
 }
 
 // TODO: documentation
-[manualfree]
+@[manualfree]
 pub fn (mut c CanvasLayout) cleanup() {
 	mut subscriber := c.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, c)
@@ -284,7 +284,7 @@ pub fn (mut c CanvasLayout) cleanup() {
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (c &CanvasLayout) free() {
 	$if free ? {
 		print('canvas_layout ${c.id}')

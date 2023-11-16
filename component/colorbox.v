@@ -25,7 +25,7 @@ struct HSVColor {
 	v f64
 }
 
-[heap]
+@[heap]
 pub struct ColorBoxComponent {
 mut:
 	simg       C.sg_image
@@ -60,7 +60,7 @@ pub mut:
 	lb_b       &ui.Label
 }
 
-[params]
+@[params]
 pub struct ColorBoxParams {
 	id    string
 	light bool

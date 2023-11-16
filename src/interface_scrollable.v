@@ -52,12 +52,12 @@ type ScrollViewChangedFn = fn (sw ScrollableWidget)
 pub interface ScrollableWidget {
 	ClippingWidget
 mut:
-	has_scrollview bool
-	scrollview &ScrollView
-	id string
-	ui &UI
-	offset_x int
-	offset_y int
+	has_scrollview   bool
+	scrollview       &ScrollView
+	id               string
+	ui               &UI
+	offset_x         int
+	offset_y         int
 	on_scroll_change ScrollViewChangedFn
 	adj_size() (int, int)
 	size() (int, int)
@@ -425,7 +425,7 @@ pub fn unlock_scrollview_key(w ScrollableWidget) {
 	sv.key_locked = false
 }
 
-[heap]
+@[heap]
 pub struct ScrollView {
 pub mut:
 	widget &Widget = unsafe { nil }
@@ -494,7 +494,7 @@ fn (mut sv ScrollView) init(parent Layout) {
 }
 
 // TODO: documentation
-[manualfree]
+@[manualfree]
 pub fn (mut sv ScrollView) cleanup() {
 	mut subscriber := sv.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, sv)
@@ -512,7 +512,7 @@ pub fn (mut sv ScrollView) cleanup() {
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (sv &ScrollView) free() {
 	unsafe { free(sv) }
 }

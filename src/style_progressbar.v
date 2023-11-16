@@ -13,7 +13,7 @@ pub mut:
 	bg_border_color gx.Color
 }
 
-[params]
+@[params]
 pub struct ProgressBarStyleParams {
 pub mut:
 	style           string   = no_style

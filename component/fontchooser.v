@@ -8,14 +8,14 @@ const (
 	fontchooser_lb_id  = '_lb_sw_font'
 )
 
-[heap]
+@[heap]
 pub struct FontChooserComponent {
 pub mut:
 	layout &ui.Stack // required
 	dtw    ui.DrawTextWidget
 }
 
-[params]
+@[params]
 pub struct FontChooserParams {
 	id         string = component.fontchooser_lb_id
 	draw_lines bool   = true

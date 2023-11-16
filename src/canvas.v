@@ -7,7 +7,7 @@ import gg
 
 pub type DrawFn = fn (ctx &gg.Context, c &Canvas) // x_offset int, y_offset int)
 
-[heap]
+@[heap]
 pub struct Canvas {
 pub mut:
 	id       string
@@ -28,7 +28,7 @@ mut:
 	draw_fn DrawFn = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct CanvasParams {
 	id       string
 	width    int
@@ -57,12 +57,12 @@ fn (mut c Canvas) init(parent Layout) {
 	c.ui = u
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut c Canvas) cleanup() {
 	unsafe { c.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (c &Canvas) free() {
 	$if free ? {
 		print('canvas ${c.id}')

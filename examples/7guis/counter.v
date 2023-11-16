@@ -6,7 +6,7 @@ const (
 	win_height = 40
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	counter string = '0'

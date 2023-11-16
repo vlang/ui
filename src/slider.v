@@ -16,7 +16,7 @@ pub enum Orientation {
 	horizontal = 1
 }
 
-[heap]
+@[heap]
 pub struct Slider {
 pub mut:
 	id                   string
@@ -54,7 +54,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SliderParams {
 	SliderStyleParams
 	id                   string
@@ -127,7 +127,7 @@ fn (mut s Slider) init(parent Layout) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Slider) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, s)
@@ -144,7 +144,7 @@ pub fn (mut s Slider) cleanup() {
 	unsafe { s.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Slider) free() {
 	$if free ? {
 		print('slider ${s.id}')

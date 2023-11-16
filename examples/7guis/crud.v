@@ -6,7 +6,7 @@ struct Person {
 	surname string
 }
 
-[heap]
+@[heap]
 struct App {
 mut:
 	people     []Person
