@@ -1,0 +1,51 @@
+name: Windows CI
+
+on:
+  workflow_call:
+
+env:
+  # Path where the module is installed for usage as V module.
+  MOD_PATH: $HOME/.vmodules/ui
+
+jobs:
+  setup:
+    runs-on: windows-latest
+    steps:
+      - name: Setup V
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+      - uses: actions/checkout@v4
+        with:
+          path: ui
+      - name: Setup V UI module
+        shell: bash
+        run: mv ui ${{ env.MOD_PATH }}
+      - name: Cache
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            vlang
+            ~/.vmodules
+          key: ${{ runner.os }}-${{ github.sha }}
+
+  build:
+    needs: setup
+    runs-on: windows-latest
+    steps:
+      - name: Restore V cache
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            vlang
+            ~/.vmodules
+          key: ${{ runner.os }}-${{ github.sha }}
+          fail-on-cache-miss: true
+      - name: Setup V
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+      - name: Build UI examples
+        run: v run ${{ env.MOD_PATH }}/examples/build_examples.vsh
+      - name: Build users.v with -prod
+        run: v -prod ${{ env.MOD_PATH }}/examples/users.v

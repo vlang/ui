@@ -128,7 +128,9 @@ fn (mut t Transition) draw_device(mut d DrawDevice) {
 			mapped = t.target_value
 		}
 		// Update the target value and request a redraw
-		(*t.animated_value) = mapped
+		unsafe {
+			(*t.animated_value) = mapped
+		}
 		t.ui.window.refresh()
 		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value

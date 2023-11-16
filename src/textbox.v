@@ -8,7 +8,7 @@ import time
 // import sokol.sapp
 
 enum SelectionDirection {
-	non = 0
+	non           = 0
 	left_to_right
 	right_to_left
 }

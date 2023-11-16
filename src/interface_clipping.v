@@ -1,6 +1,6 @@
 module ui
 
-interface ClippingWidget {
+pub interface ClippingWidget {
 mut:
 	clipping bool
 	width int

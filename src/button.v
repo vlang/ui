@@ -17,7 +17,7 @@ const (
 )
 
 enum ButtonState {
-	normal = 1 // synchronized with .button_normal
+	normal   = 1 // synchronized with .button_normal
 	pressed
 	hovering
 }

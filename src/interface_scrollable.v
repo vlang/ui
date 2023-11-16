@@ -49,7 +49,7 @@ pub enum ScrollViewPart {
 
 type ScrollViewChangedFn = fn (sw ScrollableWidget)
 
-interface ScrollableWidget {
+pub interface ScrollableWidget {
 	ClippingWidget
 mut:
 	has_scrollview bool

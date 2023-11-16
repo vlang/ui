@@ -3,7 +3,7 @@ module ui
 import gx
 import gg
 
-interface DrawDevice {
+pub interface DrawDevice {
 	// text style
 	has_text_style() bool
 	set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int)

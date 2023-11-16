@@ -10,7 +10,7 @@ fn main() {
 				ui.listbox(
 					id: 'lb'
 					draw_lines: true
-					files_droped: true
+					files_dropped: true
 				),
 			]
 		)
