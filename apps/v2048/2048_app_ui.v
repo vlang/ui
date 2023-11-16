@@ -3,7 +3,7 @@ module v2048
 import ui
 import ui.component as uic
 
-[heap]
+@[heap]
 pub struct AppUI {
 pub mut:
 	id      string
@@ -14,7 +14,7 @@ pub mut:
 	app &App = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct AppUIParams {
 pub mut:
 	id  string = 'v2048'

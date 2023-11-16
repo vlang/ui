@@ -12,7 +12,7 @@ mut:
 	done  bool
 }
 
-[heap]
+@[heap]
 struct State {
 pub mut:
 	tasks     map[int]Task

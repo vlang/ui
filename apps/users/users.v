@@ -17,7 +17,7 @@ struct User {
 	country    string
 }
 
-[heap]
+@[heap]
 pub struct AppUI {
 pub mut:
 	id      string
@@ -37,7 +37,7 @@ pub mut:
 	is_error   bool
 }
 
-[params]
+@[params]
 pub struct AppUIParams {
 pub mut:
 	id    string = 'users'
