@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-[heap]
+@[heap]
 pub struct Rectangle {
 pub mut:
 	id string
@@ -34,7 +34,7 @@ mut:
 	hidden bool
 }
 
-[params]
+@[params]
 pub struct RectangleParams {
 	RectangleStyleParams
 	id      string
@@ -101,12 +101,12 @@ fn (mut r Rectangle) init(parent Layout) {
 // 	dtw.update_text_size(r.text_size)
 // }
 
-[manualfree]
+@[manualfree]
 pub fn (mut r Rectangle) cleanup() {
 	unsafe { r.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (r &Rectangle) free() {
 	$if free ? {
 		print('rectangle ${r.id}')

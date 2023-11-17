@@ -15,7 +15,7 @@ const (
 	demos_json       = $embed_file('assets/demos.json').to_string()
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	dt &tools.DemoTemplate = unsafe{nil}
@@ -198,28 +198,27 @@ fn (mut app App) reset() {
 	app.run()
 }
 
-[live]
+@[live]
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
+tb := ui.textbox(
+	mode: .multiline
+	bg_color: gx.yellow
+	text_value: 'blah blah blah\n'.repeat(10)
+)
 layout = ui.box_layout(
+	id: 'bl'
 	children: {
-		"bl1: (0,0) -> (0.4, 0.5)": ui.box_layout(
-			children: {
-				"bl1/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.yellow)
-				"bl1/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-				)
-			}
+		'id1: (0,0) ++ (30,30)':          ui.rectangle(
+			color: gx.rgb(255, 100, 100)
 		)
-		"bl2: (0.5,0.5) -> (0.9, 1)": ui.box_layout(
-			children: {
-				"bl2/rect: (0, 0) ++ (300, 300)": ui.rectangle(color: gx.orange)
-				"bl2/lab: (0, 0) ++ (300, 300)": ui.label(
-					text: "clipped loooonnnnnggggg ttteeeeeeexxxxxxxtttttttttt\nwoulbe clipped inside a boxlayout when reducing the window"
-					clipping: true
-				)
-			}
+		'id2: (30,30) -> (-30.5,-30.5)':  ui.rectangle(
+			color: gx.rgb(100, 255, 100)
+		)
+		'id3: (0.5,0.5) ->  (1,1)':       tb
+		'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
+			color: gx.white
 		)
 	}
 )
@@ -231,19 +230,19 @@ layout = ui.box_layout(
 	app.update_treelayout()
 }
 
-[live]
+@[live]
 fn (mut app App) make_precode() {
 // <<BEGIN_MAIN_PRE>>
 // <<END_MAIN_PRE>>
 }
 
-[live]
+@[live]
 fn (mut app App) make_postcode() {
 // <<BEGIN_MAIN_POST>>
 // <<END_MAIN_POST>>
 }
 
-[live]
+@[live]
 fn (mut app App) win_init(_ &ui.Window) {
 	app.edit.scrollview.set(0, .btn_y)
 	ui.scrollview_reset(mut app.edit)

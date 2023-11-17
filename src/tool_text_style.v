@@ -31,11 +31,11 @@ pub mut:
 	color          gx.Color = gx.black
 	size           int      = 16
 	align          TextHorizontalAlign = .left
-	vertical_align TextVerticalAlign   = .top
+	vertical_align TextVerticalAlign   = .baseline
 	mono           bool
 }
 
-[params]
+@[params]
 pub struct TextStyleParams {
 pub mut:
 	// text style identifier
@@ -125,6 +125,10 @@ pub fn (mut u UI) add_style(ts TextStyle) {
 	}
 }
 
+pub fn (mut w Window) add_style(ts TextStyle) {
+	w.ui.add_style(ts)
+}
+
 pub fn (mut u UI) update_style(ts TextStyleParams) {
 	if ts.id in u.text_styles {
 		mut ts_ := &(u.text_styles[ts.id])
@@ -207,6 +211,12 @@ pub fn (mut w Window) init_text_styles() {
 		w.ui.add_style(id: '_default_')
 	} $else {
 		w.ui.add_font('system', font_default())
+
+		noto_emoji_font := $embed_file('../assets/fonts/noto_emoji_font/NotoEmoji.ttf')
+		emoji_font := os.temp_dir() + '/noto_emoji_font.ttf'
+		os.write_file(emoji_font, noto_emoji_font.to_string()) or {}
+		w.ui.add_font('noto_emoji', emoji_font)
+
 		// init default style
 		w.ui.add_style(id: '_default_')
 		fs := new_font_searcher()

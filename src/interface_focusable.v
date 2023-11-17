@@ -9,8 +9,8 @@ module ui
 pub interface Focusable {
 	ui &UI
 mut:
-	id string
-	hidden bool
+	id         string
+	hidden     bool
 	is_focused bool
 	focus()
 	unfocus()

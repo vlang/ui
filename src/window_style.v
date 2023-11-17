@@ -10,7 +10,7 @@ pub mut:
 	bg_color gx.Color
 }
 
-[params]
+@[params]
 pub struct WindowStyleParams {
 mut:
 	style    string   = no_style

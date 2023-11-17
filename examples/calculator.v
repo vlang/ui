@@ -8,7 +8,7 @@ const (
 	bpadding        = 5
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	text       string

@@ -10,7 +10,7 @@ const (
 	lb_height  = 0
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	sizes map[string]f64

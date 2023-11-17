@@ -9,7 +9,7 @@ const (
 	slider_val = (slider_max + slider_min) / 2
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window         &ui.Window    = unsafe { nil }

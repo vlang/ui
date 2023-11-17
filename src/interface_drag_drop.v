@@ -5,8 +5,8 @@ import gg
 
 pub interface Draggable {
 	id string
-	x int
-	y int
+	x  int
+	y  int
 	size() (int, int)
 	get_window() &Window
 	drag_type() string
@@ -14,7 +14,7 @@ pub interface Draggable {
 mut:
 	offset_x int
 	offset_y int
-	z_index int
+	z_index  int
 	draw()
 }
 
@@ -157,8 +157,8 @@ pub interface DropZone {
 	id string
 	size() (int, int)
 mut:
-	x int
-	y int
+	x          int
+	y          int
 	drop_types []string
 }
 

@@ -13,7 +13,7 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .middle
 }
 
-[params]
+@[params]
 pub struct WidgetTextStyleParams {
 pub mut:
 	// text_style TextStyle
@@ -28,18 +28,18 @@ pub mut:
 
 interface DrawTextWidgetStyle {
 mut:
-	text_font_name string
-	text_color gx.Color
-	text_size int
-	text_align TextHorizontalAlign
+	text_font_name      string
+	text_color          gx.Color
+	text_size           int
+	text_align          TextHorizontalAlign
 	text_vertical_align TextVerticalAlign
 }
 
 interface DrawTextWidgetStyleParams {
-	text_font_name string
-	text_color gx.Color
-	text_size f64
-	text_align TextHorizontalAlign
+	text_font_name      string
+	text_color          gx.Color
+	text_size           f64
+	text_align          TextHorizontalAlign
 	text_vertical_align TextVerticalAlign
 }
 

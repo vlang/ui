@@ -4,7 +4,7 @@ import ui
 
 type AlphaFn = fn (ac &AlphaComponent)
 
-[heap]
+@[heap]
 pub struct AlphaComponent {
 pub mut:
 	id         string
@@ -15,7 +15,7 @@ pub mut:
 	on_changed AlphaFn = AlphaFn(0)
 }
 
-[params]
+@[params]
 pub struct AlphaParams {
 	id         string
 	alpha      int

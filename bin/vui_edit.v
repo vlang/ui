@@ -19,13 +19,13 @@ fn main() {
 		window: 0
 	}
 	// TODO: use a proper parser loop, or even better - the `flag` module
-	mut args := os.args#[1..]
+	mut args := os.args#[1..].clone()
 	mut hidden_files := false
 	if args.len > 0 {
 		hidden_files = (args[0] in ['-H', '--hidden-files'])
 	}
 	if hidden_files {
-		args = args#[1..]
+		args = args#[1..].clone()
 	}
 	app.line_numbers = true
 	if args.len > 0 {
@@ -34,7 +34,7 @@ fn main() {
 		}
 	}
 	if app.line_numbers {
-		args = args#[1..]
+		args = args#[1..].clone()
 	}
 	mut dirs := args.clone()
 	if dirs.len == 0 {

@@ -6,7 +6,7 @@ const (
 	no_time = time.Time{}
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	dd_flight &ui.Dropdown = unsafe { nil }

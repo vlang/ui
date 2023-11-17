@@ -11,7 +11,7 @@ const (
 
 type ColorSlidersFn = fn (cs &ColorSlidersComponent)
 
-[heap]
+@[heap]
 pub struct ColorSlidersComponent {
 	id string
 pub mut:
@@ -29,7 +29,7 @@ pub mut:
 	on_changed     ColorSlidersFn = ColorSlidersFn(0)
 }
 
-[params]
+@[params]
 pub struct ColorSlidersParams {
 	id          string
 	color       gx.Color       = gx.white

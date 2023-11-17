@@ -8,7 +8,7 @@ import ui.libvg
 
 type RasterViewFn = fn (rv &RasterViewComponent)
 
-[heap]
+@[heap]
 pub struct RasterViewComponent {
 pub mut:
 	id     string
@@ -49,7 +49,7 @@ pub mut:
 	on_click RasterViewFn = RasterViewFn(0)
 }
 
-[params]
+@[params]
 pub struct RasterViewParams {
 	id       string
 	width    int = 16

@@ -3,14 +3,14 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct FontButtonComponent {
 pub mut:
 	btn &ui.Button
 	dtw ui.DrawTextWidget
 }
 
-[params]
+@[params]
 pub struct FontButtonParams {
 	id           string
 	dtw          ui.DrawTextWidget = ui.canvas_plus()

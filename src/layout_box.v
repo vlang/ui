@@ -61,7 +61,7 @@ enum BoxMode {
 }
 
 // TODO: add bg_color
-[heap]
+@[heap]
 pub struct BoxLayout {
 pub mut:
 	id          string
@@ -100,7 +100,7 @@ pub mut:
 	mc        MiniCalc = mini_calc()
 }
 
-[params]
+@[params]
 pub struct BoxLayoutParams {
 pub mut:
 	id         string
@@ -175,7 +175,7 @@ fn (mut b BoxLayout) set_root_layout() {
 }
 
 // TODO: documentation
-[manualfree]
+@[manualfree]
 pub fn (mut b BoxLayout) cleanup() {
 	for mut child in b.children {
 		child.cleanup()
@@ -186,7 +186,7 @@ pub fn (mut b BoxLayout) cleanup() {
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (b &BoxLayout) free() {
 	$if free ? {
 		print('group ${b.id}')

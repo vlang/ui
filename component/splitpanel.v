@@ -5,7 +5,7 @@ import gx
 
 const splitpanel_btn_size = 6
 
-[heap]
+@[heap]
 pub struct SplitPanelComponent {
 pub mut:
 	id        string
@@ -18,7 +18,7 @@ pub mut:
 	btn_size  int
 }
 
-[params]
+@[params]
 pub struct SplitPanelParams {
 	id        string
 	child1    &ui.Widget

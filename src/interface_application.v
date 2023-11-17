@@ -4,9 +4,9 @@ import gg
 
 pub interface Application {
 mut:
-	id string
-	window &Window
-	layout &Layout
+	id      string
+	window  &Window
+	layout  &Layout
 	on_init WindowFn
 }
 
@@ -24,7 +24,7 @@ pub fn (mut app Application) add_window(p WindowParams) {
 	}
 }
 
-[params]
+@[params]
 pub struct WindowCallbackParams {
 	on_click         WindowMouseFn     = unsafe { nil }
 	on_mouse_down    WindowMouseFn     = unsafe { nil }
@@ -89,7 +89,7 @@ pub fn (mut app Application) layout() Widget {
 
 pub interface GGApplication {
 mut:
-	gg &gg.Context
+	gg     &gg.Context
 	bounds gg.Rect // bounding box where to draw
 	on_init()
 	on_draw()

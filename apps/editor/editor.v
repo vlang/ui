@@ -5,7 +5,7 @@ import ui.component as uic
 import gx
 import os
 
-[heap]
+@[heap]
 pub struct AppUI {
 pub mut:
 	id      string
@@ -16,7 +16,7 @@ pub mut:
 	line_numbers bool
 }
 
-[params]
+@[params]
 pub struct AppUIParams {
 pub mut:
 	id string = 'editor'

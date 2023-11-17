@@ -10,7 +10,7 @@ const (
 	left       = 60.0
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	lbl_elapsed_value &ui.Label

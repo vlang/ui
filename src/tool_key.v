@@ -93,7 +93,7 @@ pub fn parse_key(key_str string) int {
 
 // BitMask
 
-[flag]
+@[flag]
 pub enum KeyMod {
 	shift //= 1 // (1<<0)
 	ctrl //= 2 // (1<<1)

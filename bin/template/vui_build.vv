@@ -5,7 +5,7 @@ const (
 	// <<BEGIN_CONST>>// <<END_CONST>>
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window &ui.Window    = unsafe { nil }

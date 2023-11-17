@@ -5,7 +5,7 @@ module ui
 
 import time
 
-[heap]
+@[heap]
 pub struct Transition {
 mut:
 	// pub:
@@ -30,7 +30,7 @@ pub mut:
 	animated_value &int
 }
 
-[params]
+@[params]
 pub struct TransitionParams {
 	z_index        int
 	duration       int
@@ -59,12 +59,12 @@ fn (mut t Transition) init(parent Layout) {
 	t.ui = u
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut t Transition) cleanup() {
 	unsafe { t.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (t &Transition) free() {
 	$if free ? {
 		print('transition ${t.id}')

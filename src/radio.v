@@ -17,7 +17,7 @@ enum RadioState {
 */
 type RadioFn = fn (radio &Radio)
 
-[heap]
+@[heap]
 pub struct Radio {
 pub mut:
 	id             string
@@ -61,7 +61,7 @@ pub mut:
 	on_click RadioFn = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct RadioParams {
 	RadioStyleParams
 	id       string
@@ -117,7 +117,7 @@ fn (mut r Radio) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut r Radio) cleanup() {
 	mut subscriber := r.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, r)
@@ -125,7 +125,7 @@ pub fn (mut r Radio) cleanup() {
 	unsafe { r.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (r &Radio) free() {
 	$if free ? {
 		print('radio ${r.id}')

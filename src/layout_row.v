@@ -5,7 +5,7 @@ module ui
 
 import gx
 
-[params]
+@[params]
 pub struct RowParams {
 pub:
 	id        string

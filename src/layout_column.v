@@ -5,7 +5,7 @@ module ui
 
 import gx
 
-[params]
+@[params]
 pub struct ColumnParams {
 	id        string
 	width     int // To remove soon

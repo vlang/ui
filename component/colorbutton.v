@@ -5,7 +5,7 @@ import gx
 
 type ColorButtonFn = fn (b &ColorButtonComponent)
 
-[heap]
+@[heap]
 pub struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button
@@ -16,7 +16,7 @@ pub mut:
 	left_side  bool
 }
 
-[params]
+@[params]
 pub struct ColorButtonParams {
 	id           string
 	text         string

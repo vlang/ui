@@ -8,7 +8,7 @@ const (
 	demo_comment_block_delims = set_demo_comment_block_delims()
 )
 
-[heap]
+@[heap]
 pub struct DemoTemplate {
 	file string
 	code string

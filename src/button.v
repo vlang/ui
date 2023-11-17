@@ -30,7 +30,7 @@ type ButtonMouseFn = fn (&Button, &MouseEvent)
 
 type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
 
-[heap]
+@[heap]
 pub struct Button {
 	// init size read-only
 	width_  int
@@ -88,7 +88,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct ButtonParams {
 	ButtonStyleParams
 	id             string
@@ -174,7 +174,7 @@ fn (mut b Button) init(parent Layout) {
 	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down, events.on_mouse_move])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut b Button) cleanup() {
 	mut subscriber := b.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, b)
@@ -186,7 +186,7 @@ fn (mut b Button) cleanup() {
 	unsafe { b.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (b &Button) free() {
 	$if free ? {
 		print('button ${b.id}')

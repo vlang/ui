@@ -21,7 +21,7 @@ enum GridType {
 
 type GridData = Factor | []bool | []f64 | []int | []string
 
-[heap]
+@[heap]
 pub struct GridComponent {
 pub mut:
 	id           string
@@ -76,7 +76,7 @@ pub mut:
 	shortcuts ui.Shortcuts
 }
 
-[params]
+@[params]
 pub struct GridParams {
 	vars         map[string]GridData
 	formulas     map[string]string
@@ -912,7 +912,7 @@ pub fn (mut g GridComponent) scroll_y_to_end() {
 // GridVar interface and its "instances"
 
 interface GridVar {
-	id string
+	id   string
 	grid &GridComponent
 	compare(a int, b int) int
 	draw_device(mut d ui.DrawDevice, j int, mut g GridComponent)
@@ -922,7 +922,7 @@ mut:
 }
 
 // TextBox GridVar
-[heap]
+@[heap]
 struct GridTextBox {
 	grid &GridComponent = unsafe { nil }
 mut:
@@ -988,7 +988,7 @@ fn (gtb &GridTextBox) draw_device(mut d ui.DrawDevice, j int, mut g GridComponen
 }
 
 // Dropdown GridVar
-[heap]
+@[heap]
 struct GridDropdown {
 	grid &GridComponent = unsafe { nil }
 mut:
@@ -1053,7 +1053,7 @@ fn (gdd &GridDropdown) draw_device(mut d ui.DrawDevice, j int, mut g GridCompone
 }
 
 // CheckBox GridVar
-[heap]
+@[heap]
 struct GridCheckBox {
 	grid &GridComponent = unsafe { nil }
 mut:

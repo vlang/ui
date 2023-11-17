@@ -4,7 +4,7 @@ import gx
 import ui
 import os
 
-[heap]
+@[heap]
 pub struct FileBrowserComponent {
 pub mut:
 	layout     &ui.Stack
@@ -14,7 +14,7 @@ pub mut:
 	dir        string
 }
 
-[params]
+@[params]
 pub struct FileBrowserParams {
 	id              string
 	dirs            []string = [os.expand_tilde_to_home('~'), '/']

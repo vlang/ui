@@ -28,7 +28,7 @@ pub type WindowMouseMoveFn = fn (window &Window, e MouseMoveEvent)
 
 pub type WindowScrollFn = fn (window &Window, e ScrollEvent)
 
-[heap]
+@[heap]
 pub struct Window {
 	id string = '_window_'
 pub mut:
@@ -110,7 +110,7 @@ pub mut:
 	my        f64
 }
 
-[params]
+@[params]
 pub struct WindowParams {
 pub:
 	width         int = 800
@@ -383,7 +383,7 @@ fn gg_init(mut window Window) {
 	l.update_theme_style(window.theme_style)
 }
 
-[manualfree]
+@[manualfree]
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
@@ -1220,7 +1220,7 @@ pub fn (w &Window) is_registred(widget &Widget) bool {
 	return widget.id in w.widgets
 }
 
-[unsafe]
+@[unsafe]
 pub fn (w &Window) free() {
 	$if free ? {
 		println('window ${w.title}')
@@ -1658,8 +1658,8 @@ pub fn (w &Window) get[T](id string) !&T {
 }
 
 // direct access of registered widget by id
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) button(id string) &Button {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Button {
@@ -1669,8 +1669,8 @@ pub fn (w &Window) button(id string) &Button {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) label(id string) &Label {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Label {
@@ -1680,8 +1680,8 @@ pub fn (w &Window) label(id string) &Label {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) listbox(id string) &ListBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is ListBox {
@@ -1691,8 +1691,8 @@ pub fn (w &Window) listbox(id string) &ListBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) dropdown(id string) &Dropdown {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Dropdown {
@@ -1702,8 +1702,8 @@ pub fn (w &Window) dropdown(id string) &Dropdown {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) textbox(id string) &TextBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is TextBox {
@@ -1713,8 +1713,8 @@ pub fn (w &Window) textbox(id string) &TextBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) radio(id string) &Radio {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Radio {
@@ -1724,8 +1724,8 @@ pub fn (w &Window) radio(id string) &Radio {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) slider(id string) &Slider {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Slider {
@@ -1735,8 +1735,8 @@ pub fn (w &Window) slider(id string) &Slider {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) checkbox(id string) &CheckBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CheckBox {
@@ -1746,8 +1746,8 @@ pub fn (w &Window) checkbox(id string) &CheckBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) stack(id string) &Stack {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Stack {
@@ -1757,8 +1757,8 @@ pub fn (w &Window) stack(id string) &Stack {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) group(id string) &Group {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Group {
@@ -1768,8 +1768,8 @@ pub fn (w &Window) group(id string) &Group {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CanvasLayout {
@@ -1779,8 +1779,8 @@ pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) menu(id string) &Menu {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Menu {
@@ -1790,8 +1790,8 @@ pub fn (w &Window) menu(id string) &Menu {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) rectangle(id string) &Rectangle {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Rectangle {
@@ -1801,8 +1801,8 @@ pub fn (w &Window) rectangle(id string) &Rectangle {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) subwindow(id string) &SubWindow {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is SubWindow {
@@ -1812,7 +1812,7 @@ pub fn (w &Window) subwindow(id string) &SubWindow {
 	}
 }
 
-[noreturn]
+@[noreturn]
 fn panic_widget_type_mismatch(id string, expected_type string, actual_type string) {
 	panic('widget `${id}` is not a ${expected_type} but a ${actual_type}')
 }

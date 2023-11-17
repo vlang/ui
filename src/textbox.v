@@ -31,7 +31,7 @@ type TextBoxU32Fn = fn (&TextBox, u32)
 // The two previous one can be changed with
 type TextBoxFn = fn (&TextBox)
 
-[heap]
+@[heap]
 pub struct TextBox {
 pub mut:
 	id       string
@@ -110,7 +110,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-[flag]
+@[flag]
 pub enum TextBoxMode {
 	read_only
 	multiline
@@ -118,7 +118,7 @@ pub enum TextBoxMode {
 	line_numbers
 }
 
-[params]
+@[params]
 pub struct TextBoxParams {
 	TextBoxStyleParams
 	id                 string
@@ -246,7 +246,7 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut tb TextBox) cleanup() {
 	mut subscriber := tb.parent.get_subscriber()
 	// subscriber.unsubscribe_method(events.on_click, tb)
@@ -262,7 +262,7 @@ fn (mut tb TextBox) cleanup() {
 	unsafe { tb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (tb &TextBox) free() {
 	$if free ? {
 		print('textbox ${tb.id}')
@@ -306,7 +306,11 @@ fn (tb &TextBox) adj_size() (int, int) {
 }
 
 pub fn (tb &TextBox) size() (int, int) {
-	return tb.width, tb.height
+	if tb.is_multiline && !tb.has_scrollview {
+		return tb.tv.size()
+	} else {
+		return tb.width, tb.height
+	}
 }
 
 const max_textbox_height = 25

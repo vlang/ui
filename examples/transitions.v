@@ -7,7 +7,7 @@ const (
 	picture_width_and_height = 100
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window       &ui.Window = unsafe { nil }

@@ -17,7 +17,7 @@ mut:
 	btn_font &ui.Button
 }
 
-[params]
+@[params]
 pub struct SettingFontParams {
 	id    string
 	param string

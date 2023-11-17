@@ -70,7 +70,7 @@ import sokol.sgl
 interface DrawText {
 	ui &UI
 mut:
-	text_cfg gx.TextCfg
+	text_cfg  gx.TextCfg
 	text_size f64
 }
 

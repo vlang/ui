@@ -8,15 +8,15 @@ import gx
 
 pub interface Widget {
 mut:
-	ui &UI
-	id string
-	x int
-	y int
-	z_index int
+	ui       &UI
+	id       string
+	x        int
+	y        int
+	z_index  int
 	offset_x int
 	offset_y int
-	hidden bool
-	parent Layout
+	hidden   bool
+	parent   Layout
 	init(Layout)
 	set_pos(x int, y int)
 	propose_size(w int, h int) (int, int)

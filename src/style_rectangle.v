@@ -21,7 +21,7 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .top
 }
 
-[params]
+@[params]
 pub struct RectangleStyleParams {
 	WidgetTextStyleParams
 mut:

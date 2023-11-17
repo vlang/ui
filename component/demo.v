@@ -4,7 +4,7 @@ import ui
 
 // demo component to test all the widgets
 
-[heap]
+@[heap]
 pub struct DemoComponent {
 pub mut:
 	layout   &ui.Stack = unsafe { nil } // required
@@ -13,7 +13,7 @@ pub mut:
 	'blah\n').repeat(20)
 }
 
-[params]
+@[params]
 pub struct DemoParams {
 	id string = 'demo'
 }

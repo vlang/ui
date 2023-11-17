@@ -9,7 +9,7 @@ pub enum WMMode {
 	tiling
 }
 
-[heap]
+@[heap]
 pub struct WindowManager {
 pub mut: // inside an unique sokol Window
 	window  &Window = unsafe { nil }
@@ -19,7 +19,7 @@ pub mut: // inside an unique sokol Window
 	kind    WMMode
 }
 
-[params]
+@[params]
 pub struct WindowManagerParams {
 	WindowParams
 	scrollview bool

@@ -45,7 +45,7 @@ N.B.:
 	* opposite size is the converse
 ***********************************/
 
-[heap]
+@[heap]
 pub struct Stack {
 	cache CachedSizes
 pub mut:
@@ -105,7 +105,7 @@ pub mut:
 	debug_children_ids []string
 }
 
-[params]
+@[params]
 struct StackParams {
 	StackStyleParams
 	id                   string
@@ -220,7 +220,7 @@ fn (mut s Stack) set_root_layout() {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
@@ -233,7 +233,7 @@ pub fn (mut s Stack) cleanup() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Stack) free() {
 	$if free ? {
 		print('stack ${s.id}')
@@ -820,11 +820,12 @@ pub fn (s &Stack) adj_size() (int, int) {
 			println('adj_size ${s.id}: fixed: (${s.fixed_width}, ${s.fixed_height}) adj: (${s.adj_width}, ${s.adj_height}) ')
 		}
 	}
-	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
+	mut w, mut h := if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
 		s.fixed_height
 	} else {
 		s.adj_height
 	}
+	return w + s.margin(.left) + s.margin(.right), h + s.margin(.top) + s.margin(.bottom)
 }
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
@@ -1111,7 +1112,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
-		if s.z_index > child.z_index {
+		if s.z_index < child.z_index {
 			s.z_index = child.z_index - 1
 		}
 	}
@@ -1420,7 +1421,7 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 // }
 
 //**** ChildrenParams *****
-[params]
+@[params]
 pub struct ChildrenParams {
 mut:
 	// add or remove or migrate

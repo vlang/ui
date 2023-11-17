@@ -12,7 +12,7 @@ pub mut:
 	r &libvg.Raster = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct DrawDeviceBitmapParams {
 	id string = 'dd_bitmap'
 }
