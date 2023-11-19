@@ -4,7 +4,7 @@ module webview
 
 type NavFinishedFn = fn (url string)
 
-[heap]
+@[heap]
 pub struct WebView {
 	// widget ui.Widget
 	url string

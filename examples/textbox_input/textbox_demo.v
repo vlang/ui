@@ -1,6 +1,6 @@
 import ui
 
-[heap]
+@[heap]
 struct App {
 mut:
 	tb                     string
