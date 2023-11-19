@@ -3,17 +3,13 @@ module ui
 import toml
 import os
 
-const (
-	settings_dir        = os.join_path(os.home_dir(), '.vui')
-	settings_styles_dir = os.join_path(os.home_dir(), '.vui', 'styles')
-)
+const settings_styles_dir = os.join_path_single(settings_dir, 'styles')
 
 // Tool for TOML
-
 pub fn load_settings() {
 }
 
-[params]
+@[params]
 struct PrintTomlParams {
 	title string
 }

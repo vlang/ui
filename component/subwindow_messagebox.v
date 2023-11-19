@@ -2,7 +2,7 @@ module component
 
 import ui
 
-[params]
+@[params]
 pub struct MessageBoxSubWindowParams {
 	id       string
 	text     string

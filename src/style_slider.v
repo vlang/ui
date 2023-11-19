@@ -13,7 +13,7 @@ pub mut:
 	focused_bg_border_color gx.Color = gx.rgb(255, 0, 0)
 }
 
-[params]
+@[params]
 pub struct SliderStyleParams {
 pub mut:
 	style                   string   = no_style

@@ -10,7 +10,7 @@ pub const (
 	z_index_focus  = 10
 )
 
-[flag]
+@[flag]
 pub enum WindowSizeType {
 	normal_size
 	resizable
@@ -79,7 +79,7 @@ mut:
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (c &CachedSizes) free() {
 	unsafe {
 		c.width_type.free()

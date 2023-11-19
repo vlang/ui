@@ -28,7 +28,7 @@ type SyntaxMapArrayStrings = map[string][][]string
 
 type SyntaxMapRunes = map[string][]rune
 
-[heap]
+@[heap]
 struct SyntaxHighLighter {
 mut:
 	tv               &TextView = unsafe { nil }

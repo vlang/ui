@@ -23,7 +23,7 @@ pub type CanvasLayoutBoundingFn = fn (c &CanvasLayout, bb gg.Rect)
 
 pub type CanvasLayoutDelegateFn = fn (c &CanvasLayout, e &gg.Event)
 
-[heap]
+@[heap]
 pub struct CanvasLayout {
 pub mut:
 	id               string
@@ -61,8 +61,8 @@ pub mut:
 	component         voidptr
 	active_evt_mngr   bool
 	delegate_evt_mngr bool
-	on_build          BuildFn
-	on_init           InitFn
+	on_build          BuildFn = unsafe { nil }
+	on_init           InitFn  = unsafe { nil }
 	// scrollview
 	has_scrollview bool
 	scrollview     &ScrollView = unsafe { nil }
@@ -81,7 +81,7 @@ pub mut:
 	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
 	bounding_change_fn  CanvasLayoutBoundingFn   = CanvasLayoutBoundingFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
-	on_delegate         CanvasLayoutDelegateFn
+	on_delegate         CanvasLayoutDelegateFn   = unsafe { nil }
 	parent              Layout = empty_stack
 mut:
 	// To keep track of original position
@@ -91,7 +91,7 @@ mut:
 	debug_children_ids []string
 }
 
-[params]
+@[params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
 	id                string
@@ -189,8 +189,8 @@ fn (mut c CanvasLayout) build(win &Window) {
 
 fn (mut c CanvasLayout) init(parent Layout) {
 	c.parent = parent
-	ui := parent.get_ui()
-	c.ui = ui
+	u := parent.get_ui()
+	c.ui = u
 	c.init_size()
 	// IMPORTANT: Subscriber needs here to be before initialization of all its children
 	mut subscriber := parent.get_subscriber()
@@ -222,7 +222,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 	}
 	c.load_style()
 
-	c.set_adjusted_size(ui)
+	c.set_adjusted_size(u)
 	c.set_children_pos()
 	c.set_root_layout()
 
@@ -252,7 +252,7 @@ fn (mut c CanvasLayout) set_root_layout() {
 }
 
 // TODO: documentation
-[manualfree]
+@[manualfree]
 pub fn (mut c CanvasLayout) cleanup() {
 	mut subscriber := c.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, c)
@@ -284,7 +284,7 @@ pub fn (mut c CanvasLayout) cleanup() {
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (c &CanvasLayout) free() {
 	$if free ? {
 		print('canvas_layout ${c.id}')
@@ -802,7 +802,7 @@ fn (mut c CanvasLayout) resize(width int, height int) {
 	c.propose_size(width, height)
 }
 
-fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber {
+fn (c &CanvasLayout) get_subscriber() &eventbus.Subscriber[string] {
 	parent := c.parent
 	return parent.get_subscriber()
 }

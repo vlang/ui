@@ -1,0 +1,32 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup V
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+      - uses: actions/checkout@v4
+        with:
+          path: ui
+      - name: Check formatting
+        run: v fmt -verify ui/
+
+  vet:
+    runs-on: ubuntu-latest
+    if: false # TODO: satisfy vet tool
+    steps:
+      - name: Setup V
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+      - uses: actions/checkout@v4
+        with:
+          path: ui
+      - name: Run vet
+        run: v vet ui/

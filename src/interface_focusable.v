@@ -6,11 +6,11 @@ module ui
 // * methods for Window
 // * methods for Layout interface
 
-interface Focusable {
+pub interface Focusable {
 	ui &UI
 mut:
-	id string
-	hidden bool
+	id         string
+	hidden     bool
 	is_focused bool
 	focus()
 	unfocus()

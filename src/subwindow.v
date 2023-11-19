@@ -11,7 +11,7 @@ pub const (
 	sw_z_index_child = 100
 )
 
-[heap]
+@[heap]
 pub struct SubWindow {
 pub mut:
 	id                    string
@@ -43,7 +43,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SubWindowParams {
 	id         string
 	x          int
@@ -92,14 +92,14 @@ fn (mut s SubWindow) init(parent Layout) {
 	s.set_visible(!s.hidden)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s SubWindow) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_mouse_down, s)
 	subscriber.unsubscribe_method(events.on_mouse_move, s)
 	subscriber.unsubscribe_method(events.on_mouse_up, s)
-	mut ui := s.get_ui()
-	ui.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
+	mut u := s.get_ui()
+	u.window.evt_mngr.rm_receiver(s, [events.on_mouse_down])
 	unsafe { s.free() }
 }
 
@@ -125,7 +125,7 @@ fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 	offset_end(mut s)
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &SubWindow) free() {
 	$if free ? {
 		print('canvas_layout ${s.id}')
@@ -247,7 +247,7 @@ pub fn (mut s SubWindow) update_layout() {
 	s.layout.update_layout()
 }
 
-fn (mut s SubWindow) set_adjusted_size(ui &UI) {
+fn (mut s SubWindow) set_adjusted_size(u &UI) {
 }
 
 fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {
@@ -368,7 +368,7 @@ fn (s &SubWindow) get_ui() &UI {
 	return s.ui
 }
 
-fn (s &SubWindow) get_subscriber() &eventbus.Subscriber {
+fn (s &SubWindow) get_subscriber() &eventbus.Subscriber[string] {
 	parent := s.parent
 	return parent.get_subscriber()
 }

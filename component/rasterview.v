@@ -8,7 +8,7 @@ import ui.libvg
 
 type RasterViewFn = fn (rv &RasterViewComponent)
 
-[heap]
+@[heap]
 pub struct RasterViewComponent {
 pub mut:
 	id     string
@@ -17,7 +17,7 @@ pub mut:
 	// width      int
 	// height     int
 	// channels   int = 4
-	// data       []byte
+	// data       []u8
 	size       int = 11 // pixel_size + inter
 	inter      int = 1
 	pixel_size int = 10
@@ -46,10 +46,10 @@ pub mut:
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
 	// callback
-	on_click RasterViewFn
+	on_click RasterViewFn = RasterViewFn(0)
 }
 
-[params]
+@[params]
 pub struct RasterViewParams {
 	id       string
 	width    int = 16
@@ -82,7 +82,7 @@ pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 		// width: p.width
 		// height: p.height
 		// channels: p.channels
-		// data: []byte{len: p.width * p.height * p.channels}
+		// data: []u8{len: p.width * p.height * p.channels}
 		r: libvg.raster(
 			width: p.width
 			height: p.height
@@ -556,7 +556,7 @@ pub fn (rv &RasterViewComponent) channels() int {
 }
 
 // TODO: documentation
-pub fn (rv &RasterViewComponent) data() &byte {
+pub fn (rv &RasterViewComponent) data() &u8 {
 	return rv.r.data.data
 }
 

@@ -100,7 +100,7 @@ fn (a ActionSetCircleRadius) undo(mut state State) {
 
 // App
 
-[heap]
+@[heap]
 struct App {
 mut:
 	sel        int

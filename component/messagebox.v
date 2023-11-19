@@ -4,21 +4,21 @@ import ui
 
 type MessageBoxFn = fn (&MessageBoxComponent)
 
-[heap]
+@[heap]
 pub struct MessageBoxComponent {
 	id       string
 	layout   &ui.Stack
 	tb       &ui.TextBox
 	btn      &ui.Button
 	text     string
-	on_click MessageBoxFn
+	on_click MessageBoxFn = MessageBoxFn(0)
 }
 
-[params]
+@[params]
 pub struct MessageBoxParams {
 	id       string
 	text     string
-	on_click MessageBoxFn
+	on_click MessageBoxFn = MessageBoxFn(0)
 	width    int
 	height   int
 }

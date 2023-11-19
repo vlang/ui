@@ -17,7 +17,7 @@ enum RadioState {
 */
 type RadioFn = fn (radio &Radio)
 
-[heap]
+@[heap]
 pub struct Radio {
 pub mut:
 	id             string
@@ -58,14 +58,14 @@ pub mut:
 	// component state for composable widget
 	component voidptr
 	// selected_value string
-	on_click RadioFn
+	on_click RadioFn = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct RadioParams {
 	RadioStyleParams
 	id       string
-	on_click RadioFn
+	on_click RadioFn = unsafe { nil }
 	values   []string
 	title    string
 	width    int
@@ -104,8 +104,8 @@ pub fn radio(c RadioParams) &Radio {
 
 fn (mut r Radio) init(parent Layout) {
 	r.parent = parent
-	ui := parent.get_ui()
-	r.ui = ui
+	u := parent.get_ui()
+	r.ui = u
 	// Get max value text width
 	if r.width == 0 {
 		r.set_size_from_values()
@@ -117,7 +117,7 @@ fn (mut r Radio) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, radio_click, r)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut r Radio) cleanup() {
 	mut subscriber := r.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, r)
@@ -125,7 +125,7 @@ pub fn (mut r Radio) cleanup() {
 	unsafe { r.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (r &Radio) free() {
 	$if free ? {
 		print('radio ${r.id}')

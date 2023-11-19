@@ -3,18 +3,18 @@ module v2048
 import ui
 import ui.component as uic
 
-[heap]
+@[heap]
 pub struct AppUI {
 pub mut:
 	id      string
-	window  &ui.Window = unsafe { nil }
-	layout  &ui.Layout = ui.empty_stack
-	on_init ui.WindowFn
+	window  &ui.Window  = unsafe { nil }
+	layout  &ui.Layout  = ui.empty_stack
+	on_init ui.WindowFn = unsafe { nil }
 	// s
 	app &App = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct AppUIParams {
 pub mut:
 	id  string = 'v2048'

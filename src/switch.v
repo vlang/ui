@@ -18,7 +18,7 @@ type SwitchFn = fn (&Switch)
 
 type SwitchU32Fn = fn (&Switch, u32)
 
-[heap]
+@[heap]
 pub struct Switch {
 pub mut:
 	id          string
@@ -33,20 +33,20 @@ pub mut:
 	parent      Layout = empty_stack
 	is_focused  bool
 	open        bool
-	ui          &UI = unsafe { nil }
-	on_click    SwitchFn
-	on_key_down SwitchU32Fn
+	ui          &UI         = unsafe { nil }
+	on_click    SwitchFn    = unsafe { nil }
+	on_key_down SwitchU32Fn = unsafe { nil }
 	hidden      bool
 	// component state for composable widget
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SwitchParams {
 	id          string
 	z_index     int
-	on_click    SwitchFn
-	on_key_down SwitchU32Fn
+	on_click    SwitchFn    = unsafe { nil }
+	on_key_down SwitchU32Fn = unsafe { nil }
 	open        bool
 }
 
@@ -66,14 +66,14 @@ pub fn switcher(c SwitchParams) &Switch {
 
 fn (mut s Switch) init(parent Layout) {
 	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
+	u := parent.get_ui()
+	s.ui = u
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
 	subscriber.subscribe_method(events.on_click, sw_click, s)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Switch) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, s)
@@ -81,7 +81,7 @@ pub fn (mut s Switch) cleanup() {
 	unsafe { s.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Switch) free() {
 	$if free ? {
 		print('switch ${s.id}')

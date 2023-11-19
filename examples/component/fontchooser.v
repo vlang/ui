@@ -26,7 +26,9 @@ fn main() {
 		on_init: fn (win &ui.Window) {
 			mut btn := win.get_or_panic[ui.Button]('txt_color')
 			tb := win.get_or_panic[ui.TextBox]('tb')
-			(*btn.bg_color) = tb.text_styles.current.color
+			unsafe {
+				(*btn.bg_color) = tb.text_styles.current.color
+			}
 		}
 		layout: ui.column(
 			margin_: 10

@@ -5,7 +5,7 @@ module ui
 
 pub type DropDownFn = fn (&Dropdown)
 
-[heap]
+@[heap]
 pub struct Dropdown {
 pub mut:
 	id                   string
@@ -24,7 +24,7 @@ pub mut:
 	selected_index       int
 	hover_index          int
 	is_focused           bool
-	on_selection_changed DropDownFn
+	on_selection_changed DropDownFn = unsafe { nil }
 	hidden               bool
 	// bg_color             gx.Color = ui.dropdown_color
 	// Style
@@ -38,7 +38,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct DropdownParams {
 	DropdownStyleParams
 	id             string
@@ -50,8 +50,8 @@ pub struct DropdownParams {
 	z_index        int = 10
 	selected_index int = -1
 	// text_size            f64
-	theme                string = no_style
-	on_selection_changed DropDownFn
+	theme                string     = no_style
+	on_selection_changed DropDownFn = unsafe { nil }
 	items                []DropdownItem
 	texts                []string
 }
@@ -85,8 +85,8 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 
 pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.parent = parent
-	ui := parent.get_ui()
-	dd.ui = ui
+	u := parent.get_ui()
+	dd.ui = u
 	dd.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
@@ -100,7 +100,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 	dd.ui.window.evt_mngr.add_receiver(dd, [events.on_mouse_down])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut dd Dropdown) cleanup() {
 	mut subscriber := dd.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, dd)
@@ -115,7 +115,7 @@ fn (mut dd Dropdown) cleanup() {
 	unsafe { dd.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (dd &Dropdown) free() {
 	$if free ? {
 		print('dropdown ${dd.id}')

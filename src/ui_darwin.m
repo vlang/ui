@@ -50,6 +50,7 @@ void vui_deminimize_window(void* window) {
 }
 
 void vui_focus_window(void* window) {
+	[NSApp activateIgnoringOtherApps:YES];
   [(__bridge NSWindow*)(window) makeKeyAndOrderFront:nil];
 }
 

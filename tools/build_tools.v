@@ -9,7 +9,7 @@ const (
 	build_comment_block_delims = set_build_comment_block_delims()
 )
 
-[heap]
+@[heap]
 pub struct BuildTemplate {
 	file string
 	code string

@@ -17,7 +17,7 @@ const (
 )
 
 enum ButtonState {
-	normal = 1 // synchronized with .button_normal
+	normal   = 1 // synchronized with .button_normal
 	pressed
 	hovering
 }
@@ -30,7 +30,7 @@ type ButtonMouseFn = fn (&Button, &MouseEvent)
 
 type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
 
-[heap]
+@[heap]
 pub struct Button {
 	// init size read-only
 	width_  int
@@ -49,15 +49,15 @@ pub mut:
 	text_height int
 	parent      Layout = empty_stack
 	is_focused  bool
-	ui          &UI = unsafe { nil }
-	on_click    ButtonFn
+	ui          &UI      = unsafe { nil }
+	on_click    ButtonFn = unsafe { nil }
 	// TODO: same convention for all callback
-	on_key_down    ButtonU32Fn
-	on_mouse_down  ButtonMouseFn
-	on_mouse_up    ButtonMouseFn
-	on_mouse_move  ButtonMouseMoveFn
-	on_mouse_enter ButtonMouseMoveFn
-	on_mouse_leave ButtonMouseMoveFn
+	on_key_down    ButtonU32Fn       = unsafe { nil }
+	on_mouse_down  ButtonMouseFn     = unsafe { nil }
+	on_mouse_up    ButtonMouseFn     = unsafe { nil }
+	on_mouse_move  ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_enter ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_leave ButtonMouseMoveFn = unsafe { nil }
 	text           string
 	icon_path      string
 	image          gg.Image
@@ -88,19 +88,19 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct ButtonParams {
 	ButtonStyleParams
 	id             string
 	text           string
 	icon_path      string
-	on_click       ButtonFn
-	on_key_down    ButtonU32Fn
-	on_mouse_down  ButtonMouseFn
-	on_mouse_up    ButtonMouseFn
-	on_mouse_move  ButtonMouseMoveFn
-	on_mouse_enter ButtonMouseMoveFn
-	on_mouse_leave ButtonMouseMoveFn
+	on_click       ButtonFn          = unsafe { nil }
+	on_key_down    ButtonU32Fn       = unsafe { nil }
+	on_mouse_down  ButtonMouseFn     = unsafe { nil }
+	on_mouse_up    ButtonMouseFn     = unsafe { nil }
+	on_mouse_move  ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_enter ButtonMouseMoveFn = unsafe { nil }
+	on_mouse_leave ButtonMouseMoveFn = unsafe { nil }
 	height         int
 	width          int
 	z_index        int
@@ -148,8 +148,8 @@ pub fn button(c ButtonParams) &Button {
 
 fn (mut b Button) init(parent Layout) {
 	b.parent = parent
-	ui := parent.get_ui()
-	b.ui = ui
+	u := parent.get_ui()
+	b.ui = u
 	if b.use_icon {
 		if mut b.ui.dd is DrawDeviceContext {
 			if img := b.ui.dd.create_image(b.icon_path) {
@@ -160,7 +160,7 @@ fn (mut b Button) init(parent Layout) {
 	b.load_style()
 	b.set_text_size()
 	if b.tooltip.text != '' {
-		mut win := ui.window
+		mut win := u.window
 		win.tooltip.append(b, b.tooltip)
 	}
 	mut subscriber := parent.get_subscriber()
@@ -174,7 +174,7 @@ fn (mut b Button) init(parent Layout) {
 	b.ui.window.evt_mngr.add_receiver(b, [events.on_mouse_down, events.on_mouse_move])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut b Button) cleanup() {
 	mut subscriber := b.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, b)
@@ -186,7 +186,7 @@ fn (mut b Button) cleanup() {
 	unsafe { b.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (b &Button) free() {
 	$if free ? {
 		print('button ${b.id}')

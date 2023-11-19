@@ -12,7 +12,7 @@ pub mut:
 	r &libvg.Raster = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct DrawDeviceBitmapParams {
 	id string = 'dd_bitmap'
 }
@@ -152,7 +152,7 @@ pub fn (d &DrawDeviceBitmap) set_clipping(rect Rect) {
 // TODO: documentation
 pub fn (d &DrawDeviceBitmap) get_clipping() Rect {
 	// TODO: implement
-	return Rect{0, 0, math.max_i32, math.max_i32}
+	return Rect{0, 0, int(math.max_i32), int(math.max_i32)}
 }
 
 // TODO: documentation

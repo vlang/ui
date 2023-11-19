@@ -3,7 +3,7 @@ import os
 import gx
 import ui
 
-[heap]
+@[heap]
 struct App {
 mut:
 	text       string

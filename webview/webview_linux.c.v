@@ -1,7 +1,7 @@
 module webview
 
 #flag linux -I /usr/include/harfbuzz
-#pkgconfig gtk+-3.0 webkit2gtk-4.0
+#pkgconfig gtk4 webkit2gtk-4.0
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
@@ -35,7 +35,7 @@ struct C.WebKitWebView {
 
 fn C.webkit_web_view_new() &C.WebKitWebView
 
-fn C.webkit_web_view_load_uri(webview voidptr, uri string)
+fn C.webkit_web_view_load_uri(webview voidptr, uri &char)
 
 fn create_linux_web_view(url string, title string) {
 	C.gtk_init(0, unsafe { nil })

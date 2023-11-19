@@ -9,7 +9,7 @@ struct DrawDevicePrint {
 	filename string
 }
 
-[params]
+@[params]
 pub struct DrawDevicePrintParams {
 	id       string = 'dd_print'
 	filename string
@@ -83,7 +83,7 @@ pub fn (d &DrawDevicePrint) set_clipping(rect Rect) {
 // TODO: documentation
 pub fn (d &DrawDevicePrint) get_clipping() Rect {
 	// TODO: implement
-	return Rect{0, 0, math.max_i32, math.max_i32}
+	return Rect{0, 0, int(math.max_i32), int(math.max_i32)}
 }
 
 // TODO: documentation

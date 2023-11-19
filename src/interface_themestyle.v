@@ -1,6 +1,6 @@
 module ui
 
-interface WidgetThemeStyle {
+pub interface WidgetThemeStyle {
 	id string
 mut:
 	theme_style string

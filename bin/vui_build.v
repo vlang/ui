@@ -13,7 +13,7 @@ const (
 )
 
 // vfmt off
-[heap]
+@[heap]
 struct App {
 mut:
 	window &ui.Window    = unsafe { nil }

@@ -15,7 +15,7 @@ const (
 	listbox_text_offset_x  = 5
 )
 
-[heap]
+@[heap]
 pub struct ListBox {
 pub mut:
 	height        int
@@ -50,8 +50,8 @@ pub mut:
 	text_size   f64
 	hidden      bool
 	clipping    bool
-	// files droped
-	files_droped bool
+	// files dropped
+	files_dropped bool
 	// ordered
 	ordered      bool
 	just_dragged bool
@@ -69,7 +69,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-[params]
+@[params]
 pub struct ListBoxParams {
 	ListBoxStyleParams
 mut:
@@ -93,7 +93,7 @@ mut:
 	scrollview bool = true
 	items      map[string]string
 	// files droped
-	files_droped bool
+	files_dropped bool
 	// ordered
 	ordered bool
 }
@@ -118,7 +118,7 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		text_offset_y: c.text_offset_y
 		text_size: c.text_size
 		style_params: c.ListBoxStyleParams
-		files_droped: c.files_droped
+		files_dropped: c.files_dropped
 		ordered: c.ordered
 		id: c.id
 		ui: 0
@@ -136,8 +136,8 @@ pub fn listbox(c ListBoxParams) &ListBox {
 
 fn (mut lb ListBox) init(parent Layout) {
 	lb.parent = parent
-	ui := parent.get_ui()
-	lb.ui = ui
+	u := parent.get_ui()
+	lb.ui = u
 	lb.init_style()
 	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
@@ -164,14 +164,14 @@ fn (mut lb ListBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_up, lb_mouse_up, lb)
 	subscriber.subscribe_method(events.on_key_up, lb_key_up, lb)
 	lb.ui.window.evt_mngr.add_receiver(lb, [events.on_mouse_down, events.on_scroll])
-	// println("lb $lb.files_droped")
-	if lb.files_droped {
-		subscriber.subscribe_method(events.on_files_droped, on_files_droped, lb)
-		// lb.ui.window.evt_mngr.add_receiver(lb, [events.on_files_droped])
+	// println("lb $lb.files_dropped")
+	if lb.files_dropped {
+		subscriber.subscribe_method(events.on_files_dropped, on_files_dropped, lb)
+		// lb.ui.window.evt_mngr.add_receiver(lb, [events.on_files_dropped])
 	}
 }
 
-[manualfree]
+@[manualfree]
 fn (mut lb ListBox) cleanup() {
 	mut subscriber := lb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, lb)
@@ -180,15 +180,15 @@ fn (mut lb ListBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_up, lb)
 	subscriber.unsubscribe_method(events.on_key_up, lb)
 	lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_mouse_down, events.on_scroll])
-	if lb.files_droped {
-		subscriber.unsubscribe_method(events.on_files_droped, lb)
-		// lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_files_droped])
+	if lb.files_dropped {
+		subscriber.unsubscribe_method(events.on_files_dropped, lb)
+		// lb.ui.window.evt_mngr.rm_receiver(lb, [events.on_files_dropped])
 	}
 
 	unsafe { lb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (lb &ListBox) free() {
 	$if free ? {
 		print('listbox ${lb.id}')
@@ -458,7 +458,7 @@ pub fn (mut lb ListBox) set_text(id string, text string) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut lb ListBox) clear() {
 	for item in lb.items {
 		unsafe { item.free() }
@@ -539,7 +539,7 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	if lb.items.len == 0 {
 		dtw = DrawTextWidget(lb)
 		dtw.draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x, lb.y + lb.text_offset_y,
-			if lb.files_droped {
+			if lb.files_dropped {
 			'Empty listbox. Drop files here ...'
 		} else {
 			''
@@ -726,8 +726,8 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 	}
 }
 
-fn on_files_droped(mut lb ListBox, e &MouseEvent, window &Window) {
-	// println("on_files_droped")
+fn on_files_dropped(mut lb ListBox, e &MouseEvent, window &Window) {
+	// println("on_files_dropped")
 	if lb.hidden {
 		return
 	}
@@ -735,8 +735,8 @@ fn on_files_droped(mut lb ListBox, e &MouseEvent, window &Window) {
 	if !lb.point_inside(e.x, e.y) {
 		return
 	}
-	// println("${lb.ui.window.point_inside_receivers(events.on_files_droped)}")
-	// if !lb.ui.window.is_top_widget(lb, events.on_files_droped) {
+	// println("${lb.ui.window.point_inside_receivers(events.on_files_dropped)}")
+	// if !lb.ui.window.is_top_widget(lb, events.on_files_dropped) {
 	// 	return
 	// }
 	num_dropped := get_num_dropped_files()
@@ -896,7 +896,7 @@ fn (lb &ListBox) fit_at(at int) int {
 	return inx
 }
 
-[heap]
+@[heap]
 struct ListItem {
 mut:
 	id       string
@@ -913,7 +913,7 @@ pub mut:
 	selected bool
 }
 
-[params]
+@[params]
 struct ListItemParams {
 	id       string
 	list     &ListBox = unsafe { nil }
@@ -944,7 +944,7 @@ pub fn listitem(p ListItemParams) &ListItem {
 	}
 }
 
-[unsafe]
+@[unsafe]
 fn (item &ListItem) free() {
 	$if free ? {
 		print('\tlistbox item ${item.id}')

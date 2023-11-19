@@ -3,20 +3,20 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct HideableComponent {
 pub mut:
 	id              string
 	layout          &ui.Stack
 	child_layout_id string
-	window          &ui.Window = &ui.Window(0)
+	window          &ui.Window = &ui.Window(unsafe { nil })
 	z_index         map[string]int
 	children        map[string]ui.Widget
 	shortcut        string
 	open            bool
 }
 
-[params]
+@[params]
 pub struct HideableParams {
 	id       string
 	bg_color gx.Color

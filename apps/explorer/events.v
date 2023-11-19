@@ -3,7 +3,7 @@ module explorer
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct AppEvents {
 pub mut:
 	id      string
@@ -13,7 +13,7 @@ pub mut:
 	//
 }
 
-[params]
+@[params]
 pub struct AppEventsParams {
 pub mut:
 	id string

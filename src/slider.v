@@ -12,11 +12,11 @@ const (
 type SliderFn = fn (&Slider)
 
 pub enum Orientation {
-	vertical = 0
+	vertical   = 0
 	horizontal = 1
 }
 
-[heap]
+@[heap]
 pub struct Slider {
 pub mut:
 	id                   string
@@ -38,7 +38,7 @@ pub mut:
 	max                  int = 100
 	is_focused           bool
 	dragging             bool
-	on_value_changed     SliderFn
+	on_value_changed     SliderFn = unsafe { nil }
 	focus_on_thumb_only  bool
 	rev_min_max_pos      bool
 	thumb_in_track       bool
@@ -54,7 +54,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct SliderParams {
 	SliderStyleParams
 	id                   string
@@ -66,10 +66,10 @@ pub struct SliderParams {
 	max                  int
 	val                  f32
 	orientation          Orientation
-	theme                string = no_style
-	radius               int    = 5
-	on_value_changed     SliderFn
-	focus_on_thumb_only  bool = true
+	theme                string   = no_style
+	radius               int      = 5
+	on_value_changed     SliderFn = unsafe { nil }
+	focus_on_thumb_only  bool     = true
 	rev_min_max_pos      bool
 	thumb_in_track       bool
 	track_line_displayed bool = true
@@ -110,8 +110,8 @@ pub fn slider(c SliderParams) &Slider {
 
 fn (mut s Slider) init(parent Layout) {
 	s.parent = parent
-	ui := parent.get_ui()
-	s.ui = ui
+	u := parent.get_ui()
+	s.ui = u
 	s.load_style()
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
@@ -127,7 +127,7 @@ fn (mut s Slider) init(parent Layout) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Slider) cleanup() {
 	mut subscriber := s.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, s)
@@ -144,7 +144,7 @@ pub fn (mut s Slider) cleanup() {
 	unsafe { s.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Slider) free() {
 	$if free ? {
 		print('slider ${s.id}')

@@ -5,18 +5,18 @@ import ui.component as uic
 import gx
 import os
 
-[heap]
+@[heap]
 pub struct AppUI {
 pub mut:
 	id      string
-	window  &ui.Window = unsafe { nil }
-	layout  &ui.Layout = ui.empty_stack
-	on_init ui.WindowFn
+	window  &ui.Window  = unsafe { nil }
+	layout  &ui.Layout  = ui.empty_stack
+	on_init ui.WindowFn = unsafe { nil }
 	// s
 	line_numbers bool
 }
 
-[params]
+@[params]
 pub struct AppUIParams {
 pub mut:
 	id string = 'editor'

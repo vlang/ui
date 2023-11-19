@@ -5,7 +5,7 @@ module ui
 
 import time
 
-[heap]
+@[heap]
 pub struct Transition {
 mut:
 	// pub:
@@ -18,7 +18,7 @@ mut:
 	started_time     i64
 	duration         i64
 	animating        bool
-	easing           EasingFunction
+	easing           EasingFunction = unsafe { nil }
 	parent           Layout = empty_stack
 	start_value      int
 	last_draw_target int
@@ -30,13 +30,13 @@ pub mut:
 	animated_value &int
 }
 
-[params]
+@[params]
 pub struct TransitionParams {
 	z_index        int
 	duration       int
 	animated_value &int = unsafe { nil }
-	easing         EasingFunction
-	ref            &Transition = unsafe { nil }
+	easing         EasingFunction = unsafe { nil }
+	ref            &Transition    = unsafe { nil }
 }
 
 pub fn transition(c TransitionParams) &Transition {
@@ -55,16 +55,16 @@ pub fn transition(c TransitionParams) &Transition {
 
 fn (mut t Transition) init(parent Layout) {
 	t.parent = parent
-	ui := parent.get_ui()
-	t.ui = ui
+	u := parent.get_ui()
+	t.ui = u
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut t Transition) cleanup() {
 	unsafe { t.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (t &Transition) free() {
 	$if free ? {
 		print('transition ${t.id}')
@@ -128,7 +128,9 @@ fn (mut t Transition) draw_device(mut d DrawDevice) {
 			mapped = t.target_value
 		}
 		// Update the target value and request a redraw
-		(*t.animated_value) = mapped
+		unsafe {
+			(*t.animated_value) = mapped
+		}
 		t.ui.window.refresh()
 		// Set last_draw_target to check for target_value changes between renders.
 		t.last_draw_target = t.target_value

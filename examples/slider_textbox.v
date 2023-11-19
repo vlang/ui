@@ -11,7 +11,7 @@ const (
 	hor_slider_val  = (hor_slider_max + hor_slider_min) / 2
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window       &ui.Window  = unsafe { nil }

@@ -7,7 +7,7 @@ import math
 import gx
 import eventbus
 
-[heap]
+@[heap]
 pub struct Group {
 pub mut:
 	id            string
@@ -38,7 +38,7 @@ pub mut:
 	debug_ids []string
 }
 
-[params]
+@[params]
 pub struct GroupParams {
 pub mut:
 	id       string
@@ -70,8 +70,8 @@ pub fn group(c GroupParams) &Group {
 
 fn (mut g Group) init(parent Layout) {
 	g.parent = parent
-	ui := parent.get_ui()
-	g.ui = ui
+	u := parent.get_ui()
+	g.ui = u
 	g.decode_size()
 	for mut child in g.children {
 		child.init(g)
@@ -79,7 +79,7 @@ fn (mut g Group) init(parent Layout) {
 	g.calculate_child_positions()
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut g Group) cleanup() {
 	for mut child in g.children {
 		child.cleanup()
@@ -89,7 +89,7 @@ pub fn (mut g Group) cleanup() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (g &Group) free() {
 	$if free ? {
 		print('group ${g.id}')
@@ -196,12 +196,12 @@ fn (g &Group) get_ui() &UI {
 fn (g &Group) resize(width int, height int) {
 }
 
-fn (g &Group) get_subscriber() &eventbus.Subscriber {
+fn (g &Group) get_subscriber() &eventbus.Subscriber[string] {
 	parent := g.parent
 	return parent.get_subscriber()
 }
 
-fn (mut g Group) set_adjusted_size(i int, ui &UI) {
+fn (mut g Group) set_adjusted_size(i int, u &UI) {
 	mut h, mut w := 0, 0
 	for mut child in g.children {
 		mut child_width, mut child_height := child.size()

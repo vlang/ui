@@ -7,7 +7,7 @@ const (
 	win_height = 600
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	window &ui.Window = unsafe { nil }

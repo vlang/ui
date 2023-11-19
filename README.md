@@ -12,36 +12,49 @@
 
 
 ```v
-ui.window(
-    width: 600
-    height: 400
-    title: 'V UI Demo'
-    children: [
-        ui.row(
-            margin: ui.Margin{10, 10, 10, 10}
-            children: [
-                ui.column(
-                    width: 200
-                    spacing: 13
-                    children: [
-                        ui.textbox(
-                            max_len: 20
-                            width: 200
-                            placeholder: 'First name'
-                            text: &app.first_name
-                        ),
-                        ui.textbox(
-                            max_len: 50
-                            width: 200
-                            placeholder: 'Last name'
-                            text: &app.last_name
-                        )
-                    ]
-                )
-            ]
-        )
-    ]
-)
+import ui
+
+struct App {
+mut:
+	window     &ui.Window = unsafe { nil }
+	first_name string
+	last_name  string
+}
+
+fn main() {
+	mut app := &App{}
+	app.window = ui.window(
+		width: 600
+		height: 400
+		title: 'V UI Demo'
+		children: [
+			ui.row(
+				margin: ui.Margin{10, 10, 10, 10}
+				children: [
+					ui.column(
+						width: 200
+						spacing: 13
+						children: [
+							ui.textbox(
+								max_len: 20
+								width: 200
+								placeholder: 'First name'
+								text: &app.first_name
+							),
+							ui.textbox(
+								max_len: 50
+								width: 200
+								placeholder: 'Last name'
+								text: &app.last_name
+							),
+						]
+					),
+				]
+			),
+		]
+	)
+	ui.run(app.window)
+}
 ````
 
 ### Installation
@@ -56,7 +69,7 @@ v install ui
 ```bash
 cd examples
 v run users.v
-v run temperature.v
+v run rgb_color.v
 v run ...
 ```
 
@@ -67,7 +80,7 @@ for Windows, macOS, Linux, Android, and soon iOS and the web (JS/WASM). V UI
 uses native widgets on Windows and macOS, on all other platforms the widgets
 are drawn by V UI. Right now only the non-native widgets are available.
 
-This is a very early version of the library, lots of features are missing, lots of things will change.
+This is a very early version of the library, lots of features are missing, and lots of things will change.
 
 The API is declarative, and there will be hot reloading, similar to SwiftUI and Flutter.
 

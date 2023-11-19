@@ -45,7 +45,7 @@ N.B.:
 	* opposite size is the converse
 ***********************************/
 
-[heap]
+@[heap]
 pub struct Stack {
 	cache CachedSizes
 pub mut:
@@ -94,8 +94,8 @@ pub mut:
 	text_styles TextStyles
 	// component state for composable widget
 	component voidptr
-	on_build  BuildFn
-	on_init   InitFn
+	on_build  BuildFn = unsafe { nil }
+	on_init   InitFn  = unsafe { nil }
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView = unsafe { nil }
@@ -105,7 +105,7 @@ pub mut:
 	debug_children_ids []string
 }
 
-[params]
+@[params]
 struct StackParams {
 	StackStyleParams
 	id                   string
@@ -177,8 +177,8 @@ fn (mut s Stack) build(win &Window) {
 
 pub fn (mut s Stack) init(parent Layout) {
 	s.parent = parent
-	mut ui := parent.get_ui()
-	s.ui = ui
+	u := parent.get_ui()
+	s.ui = u
 	s.init_size()
 	s.load_style()
 	// Init all children recursively
@@ -220,7 +220,7 @@ fn (mut s Stack) set_root_layout() {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut s Stack) cleanup() {
 	for mut child in s.children {
 		child.cleanup()
@@ -233,7 +233,7 @@ pub fn (mut s Stack) cleanup() {
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (s &Stack) free() {
 	$if free ? {
 		print('stack ${s.id}')
@@ -379,6 +379,7 @@ fn (mut s Stack) set_children_sizes() {
 }
 
 fn (mut s Stack) children_sizes() ([]int, []int) {
+	// println('children_sizes() nr_children: ${s.children.len}')
 	mut mcw, mut mch := [0].repeat(s.children.len), [0].repeat(s.children.len)
 
 	// free size without margin and spacing
@@ -819,11 +820,12 @@ pub fn (s &Stack) adj_size() (int, int) {
 			println('adj_size ${s.id}: fixed: (${s.fixed_width}, ${s.fixed_height}) adj: (${s.adj_width}, ${s.adj_height}) ')
 		}
 	}
-	return if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
+	mut w, mut h := if s.fixed_width != 0 { s.fixed_width } else { s.adj_width }, if s.fixed_height != 0 {
 		s.fixed_height
 	} else {
 		s.adj_height
 	}
+	return w + s.margin(.left) + s.margin(.right), h + s.margin(.top) + s.margin(.bottom)
 }
 
 pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
@@ -1071,7 +1073,7 @@ fn (s &Stack) set_child_pos(mut child Widget, i int, x int, y int) {
 	}
 }
 
-fn (s &Stack) get_subscriber() &eventbus.Subscriber {
+fn (s &Stack) get_subscriber() &eventbus.Subscriber[string] {
 	parent := s.parent
 	return parent.get_subscriber()
 }
@@ -1110,7 +1112,7 @@ pub fn (mut s Stack) set_drawing_children() {
 			}
 		}
 		// println("z_index: ${child.type_name()} $child.z_index")
-		if child.z_index > s.z_index {
+		if s.z_index < child.z_index {
 			s.z_index = child.z_index - 1
 		}
 	}
@@ -1419,7 +1421,7 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 // }
 
 //**** ChildrenParams *****
-[params]
+@[params]
 pub struct ChildrenParams {
 mut:
 	// add or remove or migrate

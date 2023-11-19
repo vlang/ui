@@ -2,7 +2,7 @@ module ui
 
 import gx
 
-[heap]
+@[heap]
 pub struct Grid {
 pub mut:
 	id          string
@@ -22,7 +22,7 @@ pub mut:
 	hidden      bool
 }
 
-[params]
+@[params]
 pub struct GridParams {
 	header      []string
 	body        [][]string
@@ -47,16 +47,16 @@ pub fn grid(c GridParams) &Grid {
 
 fn (mut gv Grid) init(parent Layout) {
 	gv.parent = parent
-	ui := parent.get_ui()
-	gv.ui = ui
+	u := parent.get_ui()
+	gv.ui = u
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut g Grid) cleanup() {
 	unsafe { g.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (g &Grid) free() {
 	unsafe {
 		g.id.free()

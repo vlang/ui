@@ -7,7 +7,7 @@ import sokol.sfons
 pub interface DrawTextWidget {
 	id string
 mut:
-	ui &UI
+	ui          &UI
 	text_styles TextStyles
 }
 
@@ -223,4 +223,13 @@ pub fn (w &DrawTextWidget) text_width_additive(text string) f64 {
 pub fn (w &DrawTextWidget) text_height(text string) int {
 	dd := w.ui.dd
 	return dd.text_height(text)
+}
+
+pub fn (w &DrawTextWidget) text_bounds(x int, y int, text string) []f32 {
+	dd := w.ui.dd
+	return if dd is DrawDeviceContext {
+		dd.text_bounds(x, y, text)
+	} else {
+		[]f32{}
+	}
 }

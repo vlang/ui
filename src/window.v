@@ -28,7 +28,7 @@ pub type WindowMouseMoveFn = fn (window &Window, e MouseMoveEvent)
 
 pub type WindowScrollFn = fn (window &Window, e ScrollEvent)
 
-[heap]
+@[heap]
 pub struct Window {
 	id string = '_window_'
 pub mut:
@@ -43,26 +43,26 @@ pub mut:
 	width             int
 	height            int
 	no_fullscreen     bool
-	click_fn          WindowMouseFn
-	mouse_down_fn     WindowMouseFn
-	mouse_up_fn       WindowMouseFn
-	files_droped_fn   WindowMouseFn
-	swipe_fn          WindowMouseFn
-	mouse_move_fn     WindowMouseMoveFn
-	scroll_fn         WindowScrollFn
-	key_down_fn       WindowKeyFn
-	char_fn           WindowKeyFn
-	resize_fn         WindowResizeFn
-	iconified_fn      WindowFn
-	restored_fn       WindowFn
-	quit_requested_fn WindowFn
-	suspended_fn      WindowFn
-	resumed_fn        WindowFn
-	focused_fn        WindowFn
-	unfocused_fn      WindowFn
-	on_init           WindowFn
-	on_draw           WindowFn
-	eventbus          &eventbus.EventBus = eventbus.new()
+	click_fn          WindowMouseFn     = unsafe { nil }
+	mouse_down_fn     WindowMouseFn     = unsafe { nil }
+	mouse_up_fn       WindowMouseFn     = unsafe { nil }
+	files_dropped_fn  WindowMouseFn     = unsafe { nil }
+	swipe_fn          WindowMouseFn     = unsafe { nil }
+	mouse_move_fn     WindowMouseMoveFn = unsafe { nil }
+	scroll_fn         WindowScrollFn    = unsafe { nil }
+	key_down_fn       WindowKeyFn       = unsafe { nil }
+	char_fn           WindowKeyFn       = unsafe { nil }
+	resize_fn         WindowResizeFn    = unsafe { nil }
+	iconified_fn      WindowFn = unsafe { nil }
+	restored_fn       WindowFn = unsafe { nil }
+	quit_requested_fn WindowFn = unsafe { nil }
+	suspended_fn      WindowFn = unsafe { nil }
+	resumed_fn        WindowFn = unsafe { nil }
+	focused_fn        WindowFn = unsafe { nil }
+	unfocused_fn      WindowFn = unsafe { nil }
+	on_init           WindowFn = unsafe { nil }
+	on_draw           WindowFn = unsafe { nil }
+	eventbus          &eventbus.EventBus[string] = eventbus.new[string]()
 	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
 	mode              WindowSizeType
 	root_layout       Layout = empty_stack
@@ -110,7 +110,7 @@ pub mut:
 	my        f64
 }
 
-[params]
+@[params]
 pub struct WindowParams {
 pub:
 	width         int = 800
@@ -122,25 +122,25 @@ pub:
 	bg_color gx.Color = no_color
 	theme    string   = 'default'
 
-	on_click              WindowMouseFn
-	on_mouse_down         WindowMouseFn
-	on_mouse_up           WindowMouseFn
-	on_files_droped       WindowMouseFn
-	on_swipe              WindowMouseFn
-	on_key_down           WindowKeyFn
-	on_char               WindowKeyFn
-	on_scroll             WindowScrollFn
-	on_resize             WindowResizeFn
-	on_iconify            WindowFn
-	on_restore            WindowFn
-	on_quit_request       WindowFn
-	on_suspend            WindowFn
-	on_resume             WindowFn
-	on_focus              WindowFn
-	on_unfocus            WindowFn
-	on_mouse_move         WindowMouseMoveFn
-	on_init               WindowFn
-	on_draw               WindowFn
+	on_click              WindowMouseFn     = unsafe { nil }
+	on_mouse_down         WindowMouseFn     = unsafe { nil }
+	on_mouse_up           WindowMouseFn     = unsafe { nil }
+	on_files_dropped      WindowMouseFn     = unsafe { nil }
+	on_swipe              WindowMouseFn     = unsafe { nil }
+	on_key_down           WindowKeyFn       = unsafe { nil }
+	on_char               WindowKeyFn       = unsafe { nil }
+	on_scroll             WindowScrollFn    = unsafe { nil }
+	on_resize             WindowResizeFn    = unsafe { nil }
+	on_iconify            WindowFn          = unsafe { nil }
+	on_restore            WindowFn          = unsafe { nil }
+	on_quit_request       WindowFn          = unsafe { nil }
+	on_suspend            WindowFn          = unsafe { nil }
+	on_resume             WindowFn          = unsafe { nil }
+	on_focus              WindowFn          = unsafe { nil }
+	on_unfocus            WindowFn          = unsafe { nil }
+	on_mouse_move         WindowMouseMoveFn = unsafe { nil }
+	on_init               WindowFn = unsafe { nil }
+	on_draw               WindowFn = unsafe { nil }
 	children              []Widget
 	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string
@@ -228,7 +228,7 @@ pub fn window(cfg WindowParams) &Window {
 		mouse_move_fn: cfg.on_mouse_move
 		mouse_down_fn: cfg.on_mouse_down
 		mouse_up_fn: cfg.on_mouse_up
-		files_droped_fn: cfg.on_files_droped
+		files_dropped_fn: cfg.on_files_dropped
 		swipe_fn: cfg.on_swipe
 		resizable: resizable
 		mode: cfg.mode
@@ -383,7 +383,7 @@ fn gg_init(mut window Window) {
 	l.update_theme_style(window.theme_style)
 }
 
-[manualfree]
+@[manualfree]
 fn gg_cleanup(mut window Window) {
 	// All the ckeanup goes here
 	for mut child in window.children {
@@ -527,8 +527,46 @@ fn on_event(e &gg.Event, mut window Window) {
 
 	// delegation
 	if window.evt_mngr.has_delegation(e, window.ui) {
-		window.eventbus.publish(events.on_delegate, window, e)
-		return
+		x, y := e.mouse_x / window.ui.window.dpi_scale, e.mouse_y / window.ui.window.dpi_scale
+
+		mut highest_selected_delegated_widget := window.evt_mngr.receivers[events.on_delegate][0]
+
+		for mut widget in window.evt_mngr.receivers[events.on_delegate] {
+			if widget.point_inside(x, y) {
+				highest_selected_delegated_widget = *widget
+			}
+		}
+
+		mut highest_selected_widget_z_index := -1
+
+		for _, mut value in window.widgets {
+			if value.hidden || value.id == highest_selected_delegated_widget.id {
+				continue
+			}
+
+			// NOTE: this is have a place because submenus are not in widgets list.
+			// We also can't do that check in the Menu point_inside() because
+			// this method used for other purposes too and checking submenu there
+			// generates strange bugs.
+			if mut value is Menu {
+				for item in value.items {
+					if item.has_menu() {
+						if item.submenu.hidden == false
+							&& item.submenu.z_index > highest_selected_widget_z_index
+							&& item.submenu.point_inside(x, y) {
+							highest_selected_widget_z_index = item.submenu.z_index
+						}
+					}
+				}
+			} else if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
+				highest_selected_widget_z_index = value.z_index
+			}
+		}
+
+		if highest_selected_delegated_widget.z_index > highest_selected_widget_z_index {
+			window.eventbus.publish(events.on_delegate, window, e)
+			return
+		}
 	}
 
 	$if macos {
@@ -578,8 +616,8 @@ fn on_event(e &gg.Event, mut window Window) {
 			}
 			window_click_or_touch_tap_and_swipe(e, window.ui)
 		}
-		.files_droped {
-			window_files_droped(e, mut window.ui)
+		.files_dropped {
+			window_files_dropped(e, mut window.ui)
 		}
 		.key_down {
 			// println('key down')
@@ -692,8 +730,8 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 }
 
-fn window_resize(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_resize(event gg.Event, u &UI) {
+	mut window := u.window
 	if !window.resizable {
 		return
 	}
@@ -711,9 +749,9 @@ fn window_resize(event gg.Event, ui &UI) {
 	}
 }
 
-fn window_key_down(event gg.Event, ui &UI) {
+fn window_key_down(event gg.Event, u &UI) {
 	// println('keydown char=$event.char_code')
-	mut window := ui.window
+	mut window := u.window
 	// C.printf(c'g child=%p\n', child)
 	// println('window_keydown $event')
 	e := KeyEvent{
@@ -739,7 +777,7 @@ fn window_key_down(event gg.Event, ui &UI) {
 				// println('cleanup ${child.id()}')
 				child.cleanup()
 			}
-			window.child_window = &Window(0)
+			window.child_window = &Window(unsafe { nil })
 		} else {
 			if shift_key(e.mods) {
 				// draw_device_draw_print('toto.txt', mut window)
@@ -780,10 +818,10 @@ fn window_key_down(event gg.Event, ui &UI) {
 	*/
 }
 
-fn window_char(event gg.Event, ui &UI) {
+fn window_char(event gg.Event, u &UI) {
 	// println('keychar char=$event.char_code')
 	// println("window_char: $event")
-	window := ui.window
+	window := u.window
 	e := KeyEvent{
 		codepoint: event.char_code
 		mods: unsafe { KeyMod(event.modifiers) }
@@ -796,9 +834,9 @@ fn window_char(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_char, window, e)
 }
 
-fn window_mouse_down(event gg.Event, mut ui UI) {
+fn window_mouse_down(event gg.Event, mut u UI) {
 	// println("typ mouse down $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / window.dpi_scale)
@@ -806,9 +844,9 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
-	ui.keymods = unsafe { KeyMod(event.modifiers) }
+	u.keymods = unsafe { KeyMod(event.modifiers) }
 	if int(event.mouse_button) < 3 {
-		ui.btn_down[int(event.mouse_button)] = true
+		u.btn_down[int(event.mouse_button)] = true
 	}
 	if window.mouse_down_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.mouse_down_fn(window, e)
@@ -831,9 +869,9 @@ fn window_mouse_down(event gg.Event, mut ui UI) {
 	}
 }
 
-fn window_mouse_move(event gg.Event, ui &UI) {
+fn window_mouse_move(event gg.Event, u &UI) {
 	// println("typ mouse move $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseMoveEvent{
 		x: event.mouse_x / window.dpi_scale
 		y: event.mouse_y / window.dpi_scale
@@ -857,9 +895,9 @@ fn window_mouse_move(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_mouse_move, window, e)
 }
 
-fn window_mouse_up(event gg.Event, mut ui UI) {
+fn window_mouse_up(event gg.Event, mut u UI) {
 	// println("typ mouse up $event.typ")
-	mut window := ui.window
+	mut window := u.window
 	e := MouseEvent{
 		action: .up
 		x: int(event.mouse_x / window.dpi_scale)
@@ -892,14 +930,14 @@ fn window_mouse_up(event gg.Event, mut ui UI) {
 		}
 		drag_child_dropped(mut window)
 	}
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	gui.keymods = unsafe { KeyMod(0) }
 }
 
 // OBSOLETE see window_click_or_touch_pad
 /*
-fn window_click(event gg.Event, mut ui UI) {
-	window := ui.window
+fn window_click(event gg.Event, mut u UI) {
+	window := u.window
 	// println("typ click $event.typ")
 	e := MouseEvent{
 		action: if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
@@ -927,8 +965,8 @@ fn window_click(event gg.Event, mut ui UI) {
 	}
 }*/
 
-fn window_scroll(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_scroll(event gg.Event, u &UI) {
+	mut window := u.window
 	// println('title =$window.title')
 	e := ScrollEvent{
 		mouse_x: event.mouse_x / window.dpi_scale
@@ -943,8 +981,8 @@ fn window_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_touch_down(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_touch_down(event gg.Event, u &UI) {
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: window.touch.start.pos.x
@@ -957,8 +995,8 @@ fn window_touch_down(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_down, window, e)
 }
 
-fn window_touch_move(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_move(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseMoveEvent{
 		x: f64(window.touch.move.pos.x)
 		y: f64(window.touch.move.pos.y)
@@ -970,8 +1008,8 @@ fn window_touch_move(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_move, window, e)
 }
 
-fn window_touch_up(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_up(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseEvent{
 		action: .up
 		x: window.touch.end.pos.x
@@ -983,9 +1021,9 @@ fn window_touch_up(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_touch_up, window, e)
 }
 
-fn window_click_or_touch_tap(event gg.Event, ui &UI) {
+fn window_click_or_touch_tap(event gg.Event, u &UI) {
 	// println("typ on_tap $event.typ")
-	window := ui.window
+	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
@@ -1003,14 +1041,14 @@ fn window_click_or_touch_tap(event gg.Event, ui &UI) {
 		window.eventbus.publish(events.on_click, window, e)
 	}
 
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	if int(event.mouse_button) < 3 {
 		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
-fn window_touch_scroll(event gg.Event, ui &UI) {
-	mut window := ui.window
+fn window_touch_scroll(event gg.Event, u &UI) {
+	mut window := u.window
 	// println('title =$window.title')
 	s, m := window.touch.start, window.touch.move
 	adx, ady := m.pos.x - s.pos.x, m.pos.y - s.pos.y
@@ -1027,8 +1065,8 @@ fn window_touch_scroll(event gg.Event, ui &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_touch_swipe(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_touch_swipe(event gg.Event, u &UI) {
+	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
 		x: window.touch.end.pos.x
@@ -1045,25 +1083,25 @@ fn window_touch_swipe(event gg.Event, ui &UI) {
 	} else {
 		window.eventbus.publish(events.on_swipe, window, e)
 	}
-	mut gui := unsafe { ui }
+	mut gui := unsafe { u }
 	if int(event.mouse_button) < 3 {
 		gui.btn_down[int(event.mouse_button)] = false
 	}
 }
 
-fn window_click_or_touch_tap_and_swipe(event gg.Event, ui &UI) {
-	window := ui.window
+fn window_click_or_touch_tap_and_swipe(event gg.Event, u &UI) {
+	window := u.window
 	s, e := window.touch.start, window.touch.end
 	adx, ady := math.abs(e.pos.x - s.pos.x), math.abs(e.pos.y - s.pos.y)
 	if math.max(adx, ady) < 10 {
-		window_click_or_touch_tap(event, ui)
+		window_click_or_touch_tap(event, u)
 	} else {
-		window_touch_swipe(event, ui)
+		window_touch_swipe(event, u)
 	}
 }
 
-fn window_files_droped(event gg.Event, mut ui UI) {
-	mut window := ui.window
+fn window_files_dropped(event gg.Event, mut u UI) {
+	mut window := u.window
 	e := MouseEvent{
 		action: .down
 		x: int(event.mouse_x / window.dpi_scale)
@@ -1071,15 +1109,15 @@ fn window_files_droped(event gg.Event, mut ui UI) {
 		button: MouseButton(event.mouse_button)
 		mods: unsafe { KeyMod(event.modifiers) }
 	}
-	if window.files_droped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
-		window.files_droped_fn(window, e)
+	if window.files_dropped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+		window.files_dropped_fn(window, e)
 	}
-	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_droped)
+	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_dropped)
 	if unsafe { window.child_window != 0 } {
 		// If there's a child window, use it, so that the widget receives correct user pointer
-		window.eventbus.publish(events.on_files_droped, window.child_window, e)
+		window.eventbus.publish(events.on_files_dropped, window.child_window, e)
 	} else {
-		window.eventbus.publish(events.on_files_droped, window, e)
+		window.eventbus.publish(events.on_files_dropped, window, e)
 	}
 }
 
@@ -1182,7 +1220,7 @@ pub fn (w &Window) is_registred(widget &Widget) bool {
 	return widget.id in w.widgets
 }
 
-[unsafe]
+@[unsafe]
 pub fn (w &Window) free() {
 	$if free ? {
 		println('window ${w.title}')
@@ -1216,7 +1254,7 @@ pub fn (w &Window) get_children() []Widget {
 	return w.children
 }
 
-pub fn (w &Window) get_subscriber() &eventbus.Subscriber {
+pub fn (w &Window) get_subscriber() &eventbus.Subscriber[string] {
 	return w.eventbus.subscriber
 }
 
@@ -1620,8 +1658,8 @@ pub fn (w &Window) get[T](id string) !&T {
 }
 
 // direct access of registered widget by id
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) button(id string) &Button {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Button {
@@ -1631,8 +1669,8 @@ pub fn (w &Window) button(id string) &Button {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) label(id string) &Label {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Label {
@@ -1642,8 +1680,8 @@ pub fn (w &Window) label(id string) &Label {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) listbox(id string) &ListBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is ListBox {
@@ -1653,8 +1691,8 @@ pub fn (w &Window) listbox(id string) &ListBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) dropdown(id string) &Dropdown {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Dropdown {
@@ -1664,8 +1702,8 @@ pub fn (w &Window) dropdown(id string) &Dropdown {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) textbox(id string) &TextBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is TextBox {
@@ -1675,8 +1713,8 @@ pub fn (w &Window) textbox(id string) &TextBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) radio(id string) &Radio {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Radio {
@@ -1686,8 +1724,8 @@ pub fn (w &Window) radio(id string) &Radio {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) slider(id string) &Slider {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Slider {
@@ -1697,8 +1735,8 @@ pub fn (w &Window) slider(id string) &Slider {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) checkbox(id string) &CheckBox {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CheckBox {
@@ -1708,8 +1746,8 @@ pub fn (w &Window) checkbox(id string) &CheckBox {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) stack(id string) &Stack {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Stack {
@@ -1719,8 +1757,8 @@ pub fn (w &Window) stack(id string) &Stack {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) group(id string) &Group {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Group {
@@ -1730,8 +1768,8 @@ pub fn (w &Window) group(id string) &Group {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is CanvasLayout {
@@ -1741,8 +1779,8 @@ pub fn (w &Window) canvas_layout(id string) &CanvasLayout {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) menu(id string) &Menu {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Menu {
@@ -1752,8 +1790,8 @@ pub fn (w &Window) menu(id string) &Menu {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) rectangle(id string) &Rectangle {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is Rectangle {
@@ -1763,8 +1801,8 @@ pub fn (w &Window) rectangle(id string) &Rectangle {
 	}
 }
 
-[deprecated: 'use get_or_panic() instead']
-[deprecated_after: '2023-01-20']
+@[deprecated: 'use get_or_panic() instead']
+@[deprecated_after: '2023-01-20']
 pub fn (w &Window) subwindow(id string) &SubWindow {
 	widget := w.widgets[id] or { panic('widget with id `${id}` does not exist') }
 	if widget is SubWindow {
@@ -1774,7 +1812,7 @@ pub fn (w &Window) subwindow(id string) &SubWindow {
 	}
 }
 
-[noreturn]
+@[noreturn]
 fn panic_widget_type_mismatch(id string, expected_type string, actual_type string) {
 	panic('widget `${id}` is not a ${expected_type} but a ${actual_type}')
 }

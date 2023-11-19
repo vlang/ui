@@ -3,10 +3,10 @@ module ui
 import time
 import gg
 
-interface Draggable {
+pub interface Draggable {
 	id string
-	x int
-	y int
+	x  int
+	y  int
 	size() (int, int)
 	get_window() &Window
 	drag_type() string
@@ -14,7 +14,7 @@ interface Draggable {
 mut:
 	offset_x int
 	offset_y int
-	z_index int
+	z_index  int
 	draw()
 }
 
@@ -152,13 +152,13 @@ fn drag_child_dropped(mut window Window) {
 
 // DropZone
 
-interface DropZone {
+pub interface DropZone {
 	ui &UI
 	id string
 	size() (int, int)
 mut:
-	x int
-	y int
+	x          int
+	y          int
 	drop_types []string
 }
 

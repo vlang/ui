@@ -49,7 +49,7 @@ pub fn tree_layout(layout ui.Layout) uic.Tree {
 	return t
 }
 
-[params]
+@[params]
 pub struct TreeViewLayoutParams {
 	id     string    = 'tvlc'
 	layout ui.Layout = ui.empty_stack

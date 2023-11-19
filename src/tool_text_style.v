@@ -7,17 +7,17 @@ import os.font
 const no_string = '_none_'
 
 pub enum TextHorizontalAlign {
-	@none = -10
-	left = C.FONS_ALIGN_LEFT
+	@none  = -10
+	left   = C.FONS_ALIGN_LEFT
 	center = C.FONS_ALIGN_CENTER
-	right = C.FONS_ALIGN_RIGHT
+	right  = C.FONS_ALIGN_RIGHT
 }
 
 pub enum TextVerticalAlign {
-	@none = -10
-	top = C.FONS_ALIGN_TOP
-	middle = C.FONS_ALIGN_MIDDLE
-	bottom = C.FONS_ALIGN_BOTTOM
+	@none    = -10
+	top      = C.FONS_ALIGN_TOP
+	middle   = C.FONS_ALIGN_MIDDLE
+	bottom   = C.FONS_ALIGN_BOTTOM
 	baseline = C.FONS_ALIGN_BASELINE
 }
 
@@ -31,11 +31,11 @@ pub mut:
 	color          gx.Color = gx.black
 	size           int      = 16
 	align          TextHorizontalAlign = .left
-	vertical_align TextVerticalAlign   = .top
+	vertical_align TextVerticalAlign   = .baseline
 	mono           bool
 }
 
-[params]
+@[params]
 pub struct TextStyleParams {
 pub mut:
 	// text style identifier
@@ -64,23 +64,23 @@ mut:
 	hash map[string]int
 }
 
-pub fn (mut ui UI) add_font(font_name string, font_path string) {
+pub fn (mut u UI) add_font(font_name string, font_path string) {
 	$if fontset ? {
 		println('add font ${font_name} at ${font_path}')
 	}
-	if mut ui.dd is DrawDeviceContext {
+	if mut u.dd is DrawDeviceContext {
 		// IMPORTANT: This fix issue that makes DrawTextFont not working for fontstash
 		// (in fons__getGlyph, added becomes 0)
-		ui.dd.ft.fons.reset_atlas(512, 512)
+		u.dd.ft.fons.reset_atlas(512, 512)
 
 		bytes := os.read_bytes(font_path) or { []u8{} }
-		// gg := ui.gg
-		// mut f := ui.fonts
+		// gg := u.gg
+		// mut f := u.fonts
 		if bytes.len > 0 {
-			font_ := ui.dd.ft.fons.add_font_mem('sans', bytes, false)
+			font_ := u.dd.ft.fons.add_font_mem('sans', bytes, false)
 			if font_ >= 0 {
-				ui.font_paths[font_name] = font_path
-				ui.fonts.hash[font_name] = font_
+				u.font_paths[font_name] = font_path
+				u.fonts.hash[font_name] = font_
 				$if fontset ? {
 					println('font ${font_} ${font_name} added (${font_path})')
 				}
@@ -100,12 +100,12 @@ pub fn (mut ui UI) add_font(font_name string, font_path string) {
 		}
 	}
 	$if fontset ? {
-		println('${ui.fonts}')
+		println('${u.fonts}')
 	}
 }
 
 // define style to be used with drawtext method
-pub fn (mut ui UI) add_style(ts TextStyle) {
+pub fn (mut u UI) add_style(ts TextStyle) {
 	mut id := ts.id
 	if id == '' {
 		if ts.font_name == '' {
@@ -114,7 +114,7 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 		}
 		id = ts.font_name
 	}
-	ui.text_styles[id] = TextStyle{
+	u.text_styles[id] = TextStyle{
 		id: id
 		font_name: ts.font_name
 		color: ts.color
@@ -123,6 +123,10 @@ pub fn (mut ui UI) add_style(ts TextStyle) {
 		vertical_align: ts.vertical_align
 		mono: ts.mono
 	}
+}
+
+pub fn (mut w Window) add_style(ts TextStyle) {
+	w.ui.add_style(ts)
 }
 
 pub fn (mut u UI) update_style(ts TextStyleParams) {
@@ -207,6 +211,12 @@ pub fn (mut w Window) init_text_styles() {
 		w.ui.add_style(id: '_default_')
 	} $else {
 		w.ui.add_font('system', font_default())
+
+		noto_emoji_font := $embed_file('../assets/fonts/noto_emoji_font/NotoEmoji.ttf')
+		emoji_font := os.temp_dir() + '/noto_emoji_font.ttf'
+		os.write_file(emoji_font, noto_emoji_font.to_string()) or {}
+		w.ui.add_font('noto_emoji', emoji_font)
+
 		// init default style
 		w.ui.add_style(id: '_default_')
 		fs := new_font_searcher()

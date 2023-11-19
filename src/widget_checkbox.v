@@ -15,7 +15,7 @@ const (
 
 type CheckBoxFn = fn (&CheckBox)
 
-[heap]
+@[heap]
 pub struct CheckBox {
 pub mut:
 	id               string
@@ -31,9 +31,9 @@ pub mut:
 	parent           Layout = empty_stack
 	is_focused       bool
 	checked          bool
-	ui               &UI = unsafe { nil }
-	on_click         CheckBoxFn
-	on_check_changed CheckBoxFn
+	ui               &UI        = unsafe { nil }
+	on_click         CheckBoxFn = unsafe { nil }
+	on_check_changed CheckBoxFn = unsafe { nil }
 	text             string
 	// Adjustable
 	justify  []f64
@@ -53,7 +53,7 @@ pub mut:
 	component voidptr
 }
 
-[params]
+@[params]
 pub struct CheckBoxParams {
 	CheckBoxStyleParams
 	id               string
@@ -61,8 +61,8 @@ pub struct CheckBoxParams {
 	y                int
 	z_index          int
 	text             string
-	on_click         CheckBoxFn
-	on_check_changed CheckBoxFn
+	on_click         CheckBoxFn = unsafe { nil }
+	on_check_changed CheckBoxFn = unsafe { nil }
 	checked          bool
 	disabled         bool
 	justify          []f64  = [0.0, 0.0]
@@ -100,7 +100,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
 }
 
-[manualfree]
+@[manualfree]
 pub fn (mut cb CheckBox) cleanup() {
 	mut subscriber := cb.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_key_down, cb)
@@ -108,7 +108,7 @@ pub fn (mut cb CheckBox) cleanup() {
 	unsafe { cb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (cb &CheckBox) free() {
 	$if free ? {
 		print('checkbox ${cb.id}')

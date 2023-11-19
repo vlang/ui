@@ -4,9 +4,9 @@ import gg
 
 pub interface Application {
 mut:
-	id string
-	window &Window
-	layout &Layout
+	id      string
+	window  &Window
+	layout  &Layout
 	on_init WindowFn
 }
 
@@ -24,25 +24,25 @@ pub fn (mut app Application) add_window(p WindowParams) {
 	}
 }
 
-[params]
+@[params]
 pub struct WindowCallbackParams {
-	on_click        WindowMouseFn
-	on_mouse_down   WindowMouseFn
-	on_mouse_up     WindowMouseFn
-	on_files_droped WindowMouseFn
-	on_swipe        WindowMouseFn
-	on_mouse_move   WindowMouseMoveFn
-	on_key_down     WindowKeyFn
-	on_char         WindowKeyFn
-	on_scroll       WindowScrollFn
-	on_resize       WindowResizeFn
-	on_iconify      WindowFn
-	on_restore      WindowFn
-	on_quit_request WindowFn
-	on_suspend      WindowFn
-	on_resume       WindowFn
-	on_focus        WindowFn
-	on_unfocus      WindowFn
+	on_click         WindowMouseFn     = unsafe { nil }
+	on_mouse_down    WindowMouseFn     = unsafe { nil }
+	on_mouse_up      WindowMouseFn     = unsafe { nil }
+	on_files_dropped WindowMouseFn     = unsafe { nil }
+	on_swipe         WindowMouseFn     = unsafe { nil }
+	on_mouse_move    WindowMouseMoveFn = unsafe { nil }
+	on_key_down      WindowKeyFn       = unsafe { nil }
+	on_char          WindowKeyFn       = unsafe { nil }
+	on_scroll        WindowScrollFn    = unsafe { nil }
+	on_resize        WindowResizeFn    = unsafe { nil }
+	on_iconify       WindowFn = unsafe { nil }
+	on_restore       WindowFn = unsafe { nil }
+	on_quit_request  WindowFn = unsafe { nil }
+	on_suspend       WindowFn = unsafe { nil }
+	on_resume        WindowFn = unsafe { nil }
+	on_focus         WindowFn = unsafe { nil }
+	on_unfocus       WindowFn = unsafe { nil }
 }
 
 // add ability to complete app.window callbacks without add_window which is called only in app
@@ -50,7 +50,7 @@ pub fn (mut app Application) add_window_callback(p WindowCallbackParams) {
 	app.window.click_fn = p.on_click
 	app.window.mouse_down_fn = p.on_mouse_down
 	app.window.mouse_up_fn = p.on_mouse_up
-	app.window.files_droped_fn = p.on_files_droped
+	app.window.files_dropped_fn = p.on_files_dropped
 	app.window.swipe_fn = p.on_swipe
 	app.window.mouse_move_fn = p.on_mouse_move
 	app.window.key_down_fn = p.on_key_down
@@ -87,9 +87,9 @@ pub fn (mut app Application) layout() Widget {
 
 // Specific to external gg application
 
-interface GGApplication {
+pub interface GGApplication {
 mut:
-	gg &gg.Context
+	gg     &gg.Context
 	bounds gg.Rect // bounding box where to draw
 	on_init()
 	on_draw()

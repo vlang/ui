@@ -21,7 +21,7 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .top
 }
 
-[params]
+@[params]
 pub struct CanvasLayoutStyleParams {
 	WidgetTextStyleParams
 pub mut:
@@ -119,7 +119,7 @@ pub mut:
 	text_vertical_align TextVerticalAlign   = .top
 }
 
-[params]
+@[params]
 pub struct StackStyleParams {
 pub mut:
 	style     string = no_style

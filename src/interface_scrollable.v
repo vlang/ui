@@ -14,7 +14,7 @@ pub const (
 	scrollbar_focused_button_color = gx.rgb(100, 100, 100)
 	scrollview_delta_key           = 5
 	// scrollview_delta_mouse         = 10
-	null_scrollview                = &ScrollView(0)
+	null_scrollview                = &ScrollView(unsafe { nil })
 )
 
 enum ScrollViewEvent {
@@ -49,15 +49,15 @@ pub enum ScrollViewPart {
 
 type ScrollViewChangedFn = fn (sw ScrollableWidget)
 
-interface ScrollableWidget {
+pub interface ScrollableWidget {
 	ClippingWidget
 mut:
-	has_scrollview bool
-	scrollview &ScrollView
-	id string
-	ui &UI
-	offset_x int
-	offset_y int
+	has_scrollview   bool
+	scrollview       &ScrollView
+	id               string
+	ui               &UI
+	offset_x         int
+	offset_y         int
 	on_scroll_change ScrollViewChangedFn
 	adj_size() (int, int)
 	size() (int, int)
@@ -69,7 +69,7 @@ pub fn get_scrollview(sw ScrollableWidget) (bool, &ScrollView) {
 	return has, if has {
 		sw.scrollview
 	} else {
-		&ScrollView(0)
+		&ScrollView(unsafe { nil })
 	}
 }
 
@@ -131,6 +131,10 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is ListBox {
+		if has_scrollview(w) {
+			scrollview_set_orig_xy(w, reset_offset)
+		}
+	} else if w is ChunkView {
 		if has_scrollview(w) {
 			scrollview_set_orig_xy(w, reset_offset)
 		}
@@ -421,7 +425,7 @@ pub fn unlock_scrollview_key(w ScrollableWidget) {
 	sv.key_locked = false
 }
 
-[heap]
+@[heap]
 pub struct ScrollView {
 pub mut:
 	widget &Widget = unsafe { nil }
@@ -471,8 +475,8 @@ pub mut:
 
 fn (mut sv ScrollView) init(parent Layout) {
 	mut widget := sv.widget
-	ui := widget.ui // get_ui()
-	sv.ui = ui
+	u := widget.ui // get_ui()
+	sv.ui = u
 	sv.parent = parent
 
 	mut subscriber := parent.get_subscriber()
@@ -490,7 +494,7 @@ fn (mut sv ScrollView) init(parent Layout) {
 }
 
 // TODO: documentation
-[manualfree]
+@[manualfree]
 pub fn (mut sv ScrollView) cleanup() {
 	mut subscriber := sv.parent.get_subscriber()
 	subscriber.unsubscribe_method(events.on_click, sv)
@@ -508,7 +512,7 @@ pub fn (mut sv ScrollView) cleanup() {
 }
 
 // TODO: documentation
-[unsafe]
+@[unsafe]
 pub fn (sv &ScrollView) free() {
 	unsafe { free(sv) }
 }

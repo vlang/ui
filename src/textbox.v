@@ -8,7 +8,7 @@ import time
 // import sokol.sapp
 
 enum SelectionDirection {
-	non = 0
+	non           = 0
 	left_to_right
 	right_to_left
 }
@@ -31,7 +31,7 @@ type TextBoxU32Fn = fn (&TextBox, u32)
 // The two previous one can be changed with
 type TextBoxFn = fn (&TextBox)
 
-[heap]
+@[heap]
 pub struct TextBox {
 pub mut:
 	id       string
@@ -110,7 +110,7 @@ pub mut:
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
-[flag]
+@[flag]
 pub enum TextBoxMode {
 	read_only
 	multiline
@@ -118,7 +118,7 @@ pub enum TextBoxMode {
 	line_numbers
 }
 
-[params]
+@[params]
 pub struct TextBoxParams {
 	TextBoxStyleParams
 	id                 string
@@ -153,8 +153,8 @@ pub struct TextBoxParams {
 	// text_size          f64
 	theme         string = no_style
 	fitted_height bool
-	on_key_down   TextBoxU32Fn
-	on_char       TextBoxU32Fn
+	on_key_down   TextBoxU32Fn = unsafe { nil }
+	on_char       TextBoxU32Fn = unsafe { nil }
 	// on_key_up          KeyUpFn
 	on_enter         TextBoxFn = TextBoxFn(0)
 	on_change        TextBoxFn = TextBoxFn(0)
@@ -219,8 +219,8 @@ pub fn textbox(c TextBoxParams) &TextBox {
 
 pub fn (mut tb TextBox) init(parent Layout) {
 	tb.parent = parent
-	ui := parent.get_ui()
-	tb.ui = ui
+	u := parent.get_ui()
+	tb.ui = u
 	// tb.init_style()
 	tb.load_style()
 	// TODO: Maybe in a method later to allow font size update
@@ -246,7 +246,7 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 }
 
-[manualfree]
+@[manualfree]
 fn (mut tb TextBox) cleanup() {
 	mut subscriber := tb.parent.get_subscriber()
 	// subscriber.unsubscribe_method(events.on_click, tb)
@@ -262,7 +262,7 @@ fn (mut tb TextBox) cleanup() {
 	unsafe { tb.free() }
 }
 
-[unsafe]
+@[unsafe]
 pub fn (tb &TextBox) free() {
 	$if free ? {
 		print('textbox ${tb.id}')
@@ -306,7 +306,11 @@ fn (tb &TextBox) adj_size() (int, int) {
 }
 
 pub fn (tb &TextBox) size() (int, int) {
-	return tb.width, tb.height
+	if tb.is_multiline && !tb.has_scrollview {
+		return tb.tv.size()
+	} else {
+		return tb.width, tb.height
+	}
 }
 
 const max_textbox_height = 25
@@ -390,13 +394,28 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		// Placeholder
 		if text == '' && placeholder != '' {
 			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
-				color: gx.gray)
+				color: gx.gray
+			)
+			// Native text rendering
+			$if macos {
+				if tb.ui.gg.native_rendering {
+					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
+						color: gx.gray
+					)
+				}
+			}
 		}
 		// Text
 		else {
 			// Selection box
 			tb.draw_selection()
-			// The text doesn'tb fit, find the largest substring we can draw
+			// Native text rendering
+			$if macos {
+				if tb.ui.gg.native_rendering {
+					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
+				}
+			}
+			// The text doesn't fit, find the largest substring we can draw
 			if tb.large_text { // width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
 				if !tb.is_focused || tb.read_only {
 					skip_idx := tb.skip_index_from_start(ustr, dtw)

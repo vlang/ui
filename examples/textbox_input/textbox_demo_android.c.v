@@ -18,7 +18,7 @@ fn (mut app App) init(window &ui.Window) {
 	// show_soft_input(mut app)
 }
 
-[export: 'JNI_OnLoad']
+@[export: 'JNI_OnLoad']
 fn jni_on_load(vm &jni.JavaVM, reserved voidptr) int {
 	jni.set_java_vm(vm)
 	$if android {
@@ -36,7 +36,7 @@ fn jni_on_load(vm &jni.JavaVM, reserved voidptr) int {
 // it needs to be cast back to it's original type since Java has no concept of pointers.
 // The method is called in Java to notify you that:
 // within `jstr`, the `count` characters beginning at `start` have just replaced old text that had `length` before.
-[export: 'JNICALL Java_io_v_android_ui_VUIActivity_onSoftInput']
+@[export: 'JNICALL Java_io_v_android_ui_VUIActivity_onSoftInput']
 fn on_soft_input(env &jni.Env, thiz jni.JavaObject, app_ptr i64, jstr jni.JavaString, start int, before int, count int) {
 	if app_ptr == 0 {
 		return

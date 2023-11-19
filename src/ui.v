@@ -16,8 +16,8 @@ const (
 
 pub struct UI {
 pub mut:
-	dd             &DrawDevice = unsafe { nil }
-	gg             &gg.Context       [deprecated: 'use `UI.dd` instead (smart casting to `DrawDeviceContext` if necessary)'] = unsafe { nil }
+	dd             &DrawDevice       = unsafe { nil }
+	gg             &gg.Context       = unsafe { nil }
 	window         &Window           = unsafe { nil }
 	svg            &DrawDeviceSVG    = unsafe { nil }
 	bmp            &DrawDeviceBitmap = unsafe { nil }
@@ -64,6 +64,11 @@ pub fn (mut gui UI) refresh() {
 }
 
 fn (mut gui UI) idle_loop() {
+	$if macos {
+		if gui.gg.native_rendering {
+			return
+		}
+	}
 	// This method is called by window.run to ensure
 	// that the window will be redrawn slowly, and that
 	// the cursor will blink at a rate of 1Hz, even if
@@ -75,6 +80,8 @@ fn (mut gui UI) idle_loop() {
 		} else {
 			gui.show_cursor = !gui.show_cursor
 		}
+		gui.refresh()
+		/*
 		if gui.has_cursor {
 			// println('has cursor, refreshing')
 			gui.refresh()
@@ -84,6 +91,7 @@ fn (mut gui UI) idle_loop() {
 				}
 			}
 		}
+		*/
 		gui.ticks = 0
 
 		// glfw.post_empty_event()
@@ -160,7 +168,7 @@ pub fn (gui &UI) draw_device_img(d DrawDevice, id string, x int, y int, w int, h
 	}
 }
 
-[unsafe]
+@[unsafe]
 pub fn (gui &UI) free() {
 	unsafe {
 		// dd             &DrawDevice = voidptr(0)

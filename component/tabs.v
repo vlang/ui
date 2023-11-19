@@ -8,7 +8,7 @@ enum TabsMode {
 	horizontal
 }
 
-[heap]
+@[heap]
 pub struct TabsComponent {
 pub mut:
 	id                 string
@@ -27,7 +27,7 @@ pub mut:
 	justify            []f64    = ui.center_center
 }
 
-[params]
+@[params]
 pub struct TabsParams {
 	id          string
 	mode        TabsMode = .vertical

@@ -6,6 +6,7 @@ import gx
 
 const (
 	textview_margin = 10
+	wordwrap_border = 20
 )
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
@@ -62,18 +63,20 @@ pub fn (mut tv TextView) init(tb &TextBox) {
 	tv.update_line_height()
 	tv.sh = syntaxhighlighter()
 	tv.sh.init(tv)
-	// println('line height: $tv.line_height')
+	// println('INIT: line height: $tv.line_height')
 	tv.refresh_visible_lines()
 	tv.update_lines()
 	tv.cancel_selection()
 	tv.sync_text_pos()
-	lock_scrollview_key(tv.tb)
+	if tv.tb.has_scrollview {
+		lock_scrollview_key(tv.tb)
+	}
 }
 
 pub fn (tv &TextView) size() (int, int) {
 	tv.load_style()
 	mut w, mut h := 0, textbox_padding_y * 2 + tv.line_height * tv.tlv.lines.len
-	// println("size $tv.tb.id: $tv.tlv.lines $tv.tlv.lines.len $tv.tlv.to_j")
+	// println('size ${tv.tb.id}: ${tv.tlv.lines} ${tv.tlv.lines.len} ${tv.tlv.to_j} (width= ${tv.tb.width})')
 	if tv.tlv.from_j > -1 && tv.tlv.from_j <= (tv.tlv.lines.len - 1) && tv.tlv.to_j > -1
 		&& tv.tlv.to_j <= (tv.tlv.lines.len - 1) {
 		for line in tv.tlv.lines[tv.tlv.from_j..(tv.tlv.to_j + 1)] {
@@ -84,7 +87,7 @@ pub fn (tv &TextView) size() (int, int) {
 		}
 		w += tv.left_margin + ui.textview_margin
 	}
-	// println("tv size: $w, $h")
+	// println("tv size: $tv.tb.id $w, $h")
 	return w, h
 }
 
@@ -193,13 +196,17 @@ fn (mut tv TextView) refresh_visible_lines() {
 
 fn (mut tv TextView) update_all_visible_lines() {
 	if tv.tlv.refresh_visible_lines {
-		// println("visible line ${time.now()}")
+		// println("visible line")
 		tv.tlv.from_i.clear()
 		tv.tlv.to_i.clear()
 		for j in tv.tlv.from_j .. tv.tlv.to_j + 1 {
-			tv.tlv.from_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x)
-			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j], tv.tb.scrollview.offset_x +
-				tv.tb.width)
+			tv.tlv.from_i << tv.text_pos_from_x(tv.tlv.lines[j], if tv.tb.has_scrollview {
+				tv.tb.scrollview.offset_x
+			} else {
+				0
+			})
+			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j],
+				if tv.tb.has_scrollview { tv.tb.scrollview.offset_x } else { 0 } + tv.tb.width)
 		}
 		// refresh_visible_lines done
 		tv.tlv.refresh_visible_lines = false
@@ -207,15 +214,13 @@ fn (mut tv TextView) update_all_visible_lines() {
 }
 
 pub fn (mut tv TextView) update_lines() {
-	if tv.is_wordwrap() {
+	if tv.is_wordwrap() && tv.tb.width > 30 { // 30 is the default width when not set
 		tv.word_wrap_text()
 	} else {
 		tv.tlv.lines = (*tv.text).split('\n')
 	}
 	// TO BE DONE AFTER newly created tv.tlv.lines
-	if tv.tb.has_scrollview {
-		tv.visible_lines()
-	}
+	tv.visible_lines()
 	// println(tv.tlv.lines)
 	tv.sync_text_lines()
 	tv.update_left_margin()
@@ -321,7 +326,6 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-		
 		color: gx.gray
 	)
 }
@@ -804,7 +808,7 @@ pub fn (mut tv TextView) do_zoom_up() {
 	tv.update_lines()
 }
 
-[params]
+@[params]
 pub struct LogViewParams {
 	nb_lines int = 5
 }
@@ -870,15 +874,17 @@ pub fn (mut tv TextView) scroll_y_to_end() {
 }
 
 fn (mut tv TextView) word_wrap_text() {
-	lines := (*tv.text).split('\n')
-	mut word_wrapped_lines := []string{}
-	// println('word_wrap_text: $tv.tlv.from_j -> $tv.tlv.to_j')
-	for line in lines {
-		ww_lines := tv.word_wrap_line(line)
-		word_wrapped_lines << ww_lines
+	if tv.tb.text != unsafe { nil } {
+		lines := (*tv.tb.text).split('\n')
+		mut word_wrapped_lines := []string{}
+		// println('word_wrap_text: $tv.tlv.from_j -> $tv.tlv.to_j')
+		for line in lines {
+			ww_lines := tv.word_wrap_line(line)
+			word_wrapped_lines << ww_lines
+		}
+		// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
+		tv.tlv.lines = word_wrapped_lines
 	}
-	// println('tl: $lines \n $word_wrapped_lines.len $word_wrapped_lines')
-	tv.tlv.lines = word_wrapped_lines
 }
 
 fn (tv &TextView) word_wrap_line(s string) []string {
@@ -887,16 +893,17 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 	}
 	words := s.split(' ')
 	max_line_width := tv.tb.width
+	// println("max_line_width = $max_line_width")
 	mut line := ''
-	mut line_width := 0
+	mut line_width := 0.0
 	mut text_lines := []string{}
 	for i, word in words {
 		if i == 0 { // at least the first
 			line = word
-			line_width = tv.text_width(word)
+			line_width = tv.text_width_additive(word)
 		} else {
-			word_width := tv.text_width(' ' + word)
-			if line_width + word_width < max_line_width {
+			word_width := tv.text_width_additive(' ' + word)
+			if line_width + word_width < max_line_width - ui.wordwrap_border {
 				line += ' ' + word
 				line_width += word_width
 			} else {
@@ -906,6 +913,7 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 			}
 		}
 	}
+	// println('line_Width = ${line_width} (${s})')
 	if line_width > 0 {
 		text_lines << line
 	}

@@ -3,7 +3,7 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct GridSettingsComponent {
 pub mut:
 	id       string
@@ -13,7 +13,7 @@ pub mut:
 	lb_right &ui.ListBox    = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct GridSettingsParams {
 	id       string
 	bg_color gx.Color       = gx.light_blue

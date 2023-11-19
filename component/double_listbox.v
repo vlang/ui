@@ -2,7 +2,7 @@ module component
 
 import ui
 
-[heap]
+@[heap]
 pub struct DoubleListBoxComponent {
 pub mut:
 	layout    &ui.Stack // required
@@ -13,7 +13,7 @@ pub mut:
 	btn_clear &ui.Button
 }
 
-[params]
+@[params]
 pub struct DoubleListBoxParams {
 	id    string
 	title string

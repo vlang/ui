@@ -1,12 +1,12 @@
 module ui
 
-interface ClippingWidget {
+pub interface ClippingWidget {
 mut:
 	clipping bool
-	width int
-	height int
-	x int
-	y int
+	width    int
+	height   int
+	x        int
+	y        int
 }
 
 type ClippingState = Rect

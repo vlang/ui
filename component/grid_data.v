@@ -3,7 +3,7 @@ module component
 import ui
 import gx
 
-[heap]
+@[heap]
 pub struct DataGridComponent {
 pub mut:
 	layout   &ui.Stack      = unsafe { nil }
@@ -11,7 +11,7 @@ pub mut:
 	settings &GridSettingsComponent = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct DataGridParams {
 	GridParams // for settings prepended by settings_
 	settings_bg_color gx.Color = gx.light_blue
@@ -60,7 +60,7 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 	return layout
 }
 
-[heap]
+@[heap]
 pub struct DataGridBoxLayoutComponent {
 pub mut:
 	layout &ui.BoxLayout  = unsafe { nil }
@@ -68,7 +68,7 @@ pub mut:
 	// settings &GridSettingsComponent = unsafe { nil }
 }
 
-[params]
+@[params]
 pub struct DataGridBoxLayoutParams {
 	GridParams // for settings prepended by settings_
 	// settings_bg_color gx.Color = gx.light_blue

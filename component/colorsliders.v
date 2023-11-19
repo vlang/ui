@@ -11,7 +11,7 @@ const (
 
 type ColorSlidersFn = fn (cs &ColorSlidersComponent)
 
-[heap]
+@[heap]
 pub struct ColorSlidersComponent {
 	id string
 pub mut:
@@ -26,15 +26,15 @@ pub mut:
 	r_textbox_text string
 	g_textbox_text string
 	b_textbox_text string
-	on_changed     ColorSlidersFn
+	on_changed     ColorSlidersFn = ColorSlidersFn(0)
 }
 
-[params]
+@[params]
 pub struct ColorSlidersParams {
 	id          string
 	color       gx.Color       = gx.white
 	orientation ui.Orientation = .vertical
-	on_changed  ColorSlidersFn
+	on_changed  ColorSlidersFn = ColorSlidersFn(0)
 }
 
 // TODO: documentation

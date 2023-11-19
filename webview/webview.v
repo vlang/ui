@@ -2,23 +2,23 @@
 // Use of this source code is governed by a GPL license that can be found in the LICENSE file.
 module webview
 
-[heap]
+type NavFinishedFn = fn (url string)
+
+@[heap]
 pub struct WebView {
 	// widget ui.Widget
 	url string
 	obj voidptr
 mut:
-	nav_finished_fn NavFinishedFn
+	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
 }
-
-type NavFinishedFn = fn (url string)
 
 pub struct Config {
 	url   string
 	title string
 	// parent          &ui.Window
 mut:
-	nav_finished_fn NavFinishedFn
+	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
 	js_on_init      string
 }
 
@@ -47,7 +47,10 @@ pub fn exec(scriptSource string) {
 }
 
 pub fn get_global_js_val() string {
-	return C.darwin_get_webview_js_val()
+	$if macos {
+		return C.darwin_get_webview_js_val()
+	}
+	return ''
 }
 
 pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
@@ -55,7 +58,9 @@ pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
 }
 
 pub fn (mut wv WebView) on_navigate(url string) {
-	wv.nav_finished_fn(url)
+	if wv.nav_finished_fn != NavFinishedFn(0) {
+		wv.nav_finished_fn(url)
+	}
 }
 
 pub fn (mut wv WebView) navigate(url string) {

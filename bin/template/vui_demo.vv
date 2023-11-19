@@ -15,7 +15,7 @@ const (
 	demos_json       = $embed_file('assets/demos.json').to_string()
 )
 
-[heap]
+@[heap]
 struct App {
 mut:
 	dt &tools.DemoTemplate = unsafe{nil}
@@ -198,7 +198,7 @@ fn (mut app App) reset() {
 	app.run()
 }
 
-[live]
+@[live]
 fn (mut app App) update_interactive() {
 	mut layout := ui.box_layout()
 // <<BEGIN_LAYOUT>>
@@ -211,19 +211,19 @@ fn (mut app App) update_interactive() {
 	app.update_treelayout()
 }
 
-[live]
+@[live]
 fn (mut app App) make_precode() {
 // <<BEGIN_MAIN_PRE>>
 // <<END_MAIN_PRE>>
 }
 
-[live]
+@[live]
 fn (mut app App) make_postcode() {
 // <<BEGIN_MAIN_POST>>
 // <<END_MAIN_POST>>
 }
 
-[live]
+@[live]
 fn (mut app App) win_init(_ &ui.Window) {
 	app.edit.scrollview.set(0, .btn_y)
 	ui.scrollview_reset(mut app.edit)

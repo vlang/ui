@@ -6,7 +6,7 @@ import os
 
 pub type MenuFileFn = fn (&MenuFileComponent)
 
-[heap]
+@[heap]
 pub struct MenuFileComponent {
 pub mut:
 	id              string
@@ -15,20 +15,20 @@ pub mut:
 	file            string
 	folder_to_open  string
 	item_selected   string
-	on_save         MenuFileFn
-	on_new          MenuFileFn
-	on_file_changed MenuFileFn
+	on_save         MenuFileFn = MenuFileFn(0)
+	on_new          MenuFileFn = MenuFileFn(0)
+	on_file_changed MenuFileFn = MenuFileFn(0)
 }
 
-[params]
+@[params]
 pub struct MenuFileParams {
 	id              string
 	hidden_files    bool
 	dirs            []string
-	on_save         MenuFileFn
-	on_new          MenuFileFn
-	on_file_changed MenuFileFn
-	bg_color        gx.Color = ui.color_solaris
+	on_save         MenuFileFn = MenuFileFn(0)
+	on_new          MenuFileFn = MenuFileFn(0)
+	on_file_changed MenuFileFn = MenuFileFn(0)
+	bg_color        gx.Color   = ui.color_solaris
 }
 
 // TODO: documentation

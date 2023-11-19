@@ -1,3 +1,9 @@
+* text=auto eol=lf
+*.bat eol=crlf
+
+**/*.v linguist-language=V
+**/*.vv linguist-language=V
+**/*.vsh linguist-language=V
+**/v.mod linguist-language=V
+
 webview/windows/* linguist-vendored
-*.v linguist-language=V
-*.mod linguist-language=V
