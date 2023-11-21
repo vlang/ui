@@ -135,7 +135,7 @@ pub fn (d &DrawDeviceSVG) set_clipping(rect Rect) {
 // TODO: documentation
 pub fn (d &DrawDeviceSVG) get_clipping() Rect {
 	// TODO: implement
-	return Rect{0, 0, int(math.max_i32), int(math.max_i32)}
+	return Rect{0, 0, int(max_i32), int(max_i32)}
 }
 
 // TODO: documentation
