@@ -9,9 +9,9 @@ const splitpanel_btn_size = 6
 pub struct SplitPanelComponent {
 pub mut:
 	id        string
-	layout    &ui.Stack
-	child1    &ui.Widget
-	child2    &ui.Widget
+	layout    &ui.Stack  = unsafe { nil }
+	child1    &ui.Widget = unsafe { nil }
+	child2    &ui.Widget = unsafe { nil }
 	direction ui.Direction
 	active    bool
 	weight    f32
@@ -21,8 +21,8 @@ pub mut:
 @[params]
 pub struct SplitPanelParams {
 	id        string
-	child1    &ui.Widget
-	child2    &ui.Widget
+	child1    &ui.Widget   = unsafe { nil }
+	child2    &ui.Widget   = unsafe { nil }
 	direction ui.Direction = .row
 	weight    f64 = 50.0
 	btn_size  int = component.splitpanel_btn_size

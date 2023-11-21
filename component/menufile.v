@@ -10,7 +10,7 @@ pub type MenuFileFn = fn (&MenuFileComponent)
 pub struct MenuFileComponent {
 pub mut:
 	id              string
-	layout          &ui.Stack
+	layout          &ui.Stack = unsafe { nil }
 	hidden_files    bool
 	file            string
 	folder_to_open  string

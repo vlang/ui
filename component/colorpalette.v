@@ -8,8 +8,8 @@ import math
 pub struct ColorPaletteComponent {
 pub mut:
 	id       string
-	layout   &ui.Stack  // required
-	colbtn   &ui.Button // current
+	layout   &ui.Stack  = unsafe { nil } // required
+	colbtn   &ui.Button = unsafe { nil } // current
 	ncolors  int
 	alpha    &AlphaComponent = unsafe { nil }
 	color    &gx.Color       = unsafe { nil }

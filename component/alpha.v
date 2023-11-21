@@ -9,10 +9,10 @@ pub struct AlphaComponent {
 pub mut:
 	id         string
 	alpha      int
-	layout     &ui.Stack
-	slider     &ui.Slider
-	textbox    &ui.TextBox
-	on_changed AlphaFn = AlphaFn(0)
+	layout     &ui.Stack   = unsafe { nil }
+	slider     &ui.Slider  = unsafe { nil }
+	textbox    &ui.TextBox = unsafe { nil }
+	on_changed AlphaFn     = AlphaFn(0)
 }
 
 @[params]

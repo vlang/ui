@@ -11,7 +11,7 @@ const (
 @[heap]
 pub struct FontChooserComponent {
 pub mut:
-	layout &ui.Stack // required
+	layout &ui.Stack = unsafe { nil } // required
 	dtw    ui.DrawTextWidget
 }
 

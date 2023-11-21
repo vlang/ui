@@ -15,7 +15,7 @@ type ColorSlidersFn = fn (cs &ColorSlidersComponent)
 pub struct ColorSlidersComponent {
 	id string
 pub mut:
-	layout         &ui.Stack // required
+	layout         &ui.Stack = unsafe { nil } // required
 	orientation    ui.Orientation
 	r_slider       &ui.Slider  = unsafe { nil }
 	r_textbox      &ui.TextBox = unsafe { nil }

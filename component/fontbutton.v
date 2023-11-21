@@ -6,7 +6,7 @@ import gx
 @[heap]
 pub struct FontButtonComponent {
 pub mut:
-	btn &ui.Button
+	btn &ui.Button = unsafe { nil }
 	dtw ui.DrawTextWidget
 }
 
