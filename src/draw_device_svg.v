@@ -3,7 +3,6 @@ module ui
 import gx
 import gg
 import ui.libvg
-import math
 
 struct DrawDeviceSVG {
 mut:
