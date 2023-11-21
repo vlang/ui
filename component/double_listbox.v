@@ -5,12 +5,12 @@ import ui
 @[heap]
 pub struct DoubleListBoxComponent {
 pub mut:
-	layout    &ui.Stack // required
-	lb_left   &ui.ListBox
-	lb_right  &ui.ListBox
-	btn_left  &ui.Button
-	btn_right &ui.Button
-	btn_clear &ui.Button
+	layout    &ui.Stack   = unsafe { nil } // required
+	lb_left   &ui.ListBox = unsafe { nil }
+	lb_right  &ui.ListBox = unsafe { nil }
+	btn_left  &ui.Button  = unsafe { nil }
+	btn_right &ui.Button  = unsafe { nil }
+	btn_clear &ui.Button  = unsafe { nil }
 }
 
 @[params]

@@ -25,7 +25,7 @@ type GridData = Factor | []bool | []f64 | []int | []string
 pub struct GridComponent {
 pub mut:
 	id           string
-	layout       &ui.CanvasLayout
+	layout       &ui.CanvasLayout = unsafe { nil }
 	vars         []GridVar
 	types        []GridType
 	formula_mngr GridFormulaMngr

@@ -8,8 +8,8 @@ type ColorButtonFn = fn (b &ColorButtonComponent)
 @[heap]
 pub struct ColorButtonComponent {
 pub mut:
-	widget     &ui.Button
-	bg_color   gx.Color = gx.white
+	widget     &ui.Button = unsafe { nil }
+	bg_color   gx.Color   = gx.white
 	alpha      int
 	on_click   ColorButtonFn = ColorButtonFn(0)
 	on_changed ColorButtonFn = ColorButtonFn(0)

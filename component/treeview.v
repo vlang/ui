@@ -115,7 +115,7 @@ type TreeViewClickFn = fn (c &ui.CanvasLayout, mut tv TreeViewComponent)
 pub struct TreeViewComponent {
 pub mut:
 	id         string
-	layout     &ui.Stack // required
+	layout     &ui.Stack = unsafe { nil } // required
 	trees      []Tree
 	icon_paths map[string]string
 	text_color gx.Color

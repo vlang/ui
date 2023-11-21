@@ -7,9 +7,9 @@ import os
 @[heap]
 pub struct FileBrowserComponent {
 pub mut:
-	layout     &ui.Stack
-	btn_cancel &ui.Button
-	btn_ok     &ui.Button
+	layout     &ui.Stack  = unsafe { nil }
+	btn_cancel &ui.Button = unsafe { nil }
+	btn_ok     &ui.Button = unsafe { nil }
 	tv         &TreeViewComponent = unsafe { nil }
 	dir        string
 }
