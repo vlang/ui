@@ -12,8 +12,8 @@ type RasterViewFn = fn (rv &RasterViewComponent)
 pub struct RasterViewComponent {
 pub mut:
 	id     string
-	layout &ui.CanvasLayout
-	r      &libvg.Raster
+	layout &ui.CanvasLayout = unsafe { nil }
+	r      &libvg.Raster    = unsafe { nil }
 	// width      int
 	// height     int
 	// channels   int = 4

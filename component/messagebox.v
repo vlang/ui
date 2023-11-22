@@ -7,9 +7,9 @@ type MessageBoxFn = fn (&MessageBoxComponent)
 @[heap]
 pub struct MessageBoxComponent {
 	id       string
-	layout   &ui.Stack
-	tb       &ui.TextBox
-	btn      &ui.Button
+	layout   &ui.Stack   = unsafe { nil }
+	tb       &ui.TextBox = unsafe { nil }
+	btn      &ui.Button  = unsafe { nil }
 	text     string
 	on_click MessageBoxFn = MessageBoxFn(0)
 }

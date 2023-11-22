@@ -11,10 +11,10 @@ pub struct SettingFont {
 	param   string
 	lb_text string
 mut:
-	layout   &ui.Stack
-	lb_param &ui.Label
-	lb_font  &ui.Label
-	btn_font &ui.Button
+	layout   &ui.Stack  = unsafe { nil }
+	lb_param &ui.Label  = unsafe { nil }
+	lb_font  &ui.Label  = unsafe { nil }
+	btn_font &ui.Button = unsafe { nil }
 }
 
 @[params]

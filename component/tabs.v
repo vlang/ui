@@ -12,10 +12,10 @@ enum TabsMode {
 pub struct TabsComponent {
 pub mut:
 	id                 string
-	layout             &ui.Stack // required
+	layout             &ui.Stack = unsafe { nil } // required
 	active             string
 	prev_active        string
-	tab_bar            &ui.Stack
+	tab_bar            &ui.Stack = unsafe { nil }
 	pages              map[string]ui.Widget
 	z_index            map[string]int
 	mode               TabsMode

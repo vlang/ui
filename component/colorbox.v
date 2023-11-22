@@ -47,17 +47,17 @@ mut:
 	hsl   bool // use hsl instead of hsv
 	drag  bool // drag mode for canvas on h
 pub mut:
-	layout     &ui.Stack // required
-	cv_h       &ui.CanvasLayout
-	cv_sv      &ui.CanvasLayout
-	r_rgb_cur  &ui.Rectangle
-	cv_hsv_sel &ui.CanvasLayout
-	tb_r       &ui.TextBox
-	tb_g       &ui.TextBox
-	tb_b       &ui.TextBox
-	lb_r       &ui.Label
-	lb_g       &ui.Label
-	lb_b       &ui.Label
+	layout     &ui.Stack        = unsafe { nil } // required
+	cv_h       &ui.CanvasLayout = unsafe { nil }
+	cv_sv      &ui.CanvasLayout = unsafe { nil }
+	r_rgb_cur  &ui.Rectangle    = unsafe { nil }
+	cv_hsv_sel &ui.CanvasLayout = unsafe { nil }
+	tb_r       &ui.TextBox      = unsafe { nil }
+	tb_g       &ui.TextBox      = unsafe { nil }
+	tb_b       &ui.TextBox      = unsafe { nil }
+	lb_r       &ui.Label        = unsafe { nil }
+	lb_g       &ui.Label        = unsafe { nil }
+	lb_b       &ui.Label        = unsafe { nil }
 }
 
 @[params]

@@ -3,7 +3,6 @@ module ui
 import gx
 import gg
 import ui.libvg
-import math
 
 struct DrawDeviceBitmap {
 	id string = 'dd_bitmap'
@@ -152,7 +151,7 @@ pub fn (d &DrawDeviceBitmap) set_clipping(rect Rect) {
 // TODO: documentation
 pub fn (d &DrawDeviceBitmap) get_clipping() Rect {
 	// TODO: implement
-	return Rect{0, 0, int(math.max_i32), int(math.max_i32)}
+	return Rect{0, 0, int(max_i32), int(max_i32)}
 }
 
 // TODO: documentation
