@@ -14,7 +14,7 @@ mut:
 
 fn main() {
 	mut app := &App{
-		window: 0
+		window: unsafe { nil }
 	}
 	// TODO: use a proper parser loop, or even better - the `flag` module
 	mut args := os.args#[1..].clone()
