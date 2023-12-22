@@ -7,11 +7,9 @@ import os
 // define style outside Widget definition
 // all styles would be collected inside one map attached to ui
 
-pub const (
-	no_style    = '_no_style_'
-	no_color    = gx.Color{0, 0, 0, 0}
-	transparent = gx.Color{0, 0, 0, 1}
-)
+pub const no_style = '_no_style_'
+pub const no_color = gx.Color{0, 0, 0, 0}
+pub const transparent = gx.Color{0, 0, 0, 1}
 
 pub struct Style {
 pub mut:

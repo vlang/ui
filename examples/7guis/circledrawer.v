@@ -2,9 +2,7 @@ import ui
 import gx
 import math
 
-const (
-	default_radius = 20
-)
+const default_radius = 20
 
 // Circle
 

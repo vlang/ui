@@ -1,9 +1,7 @@
 import ui
 
-const (
-	win_width  = 300
-	win_height = 250
-)
+const win_width = 300
+const win_height = 250
 
 @[heap]
 struct App {

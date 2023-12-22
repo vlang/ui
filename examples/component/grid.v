@@ -2,10 +2,8 @@ import ui
 import ui.component as uic
 import gx
 
-const (
-	win_width  = 600
-	win_height = 600
-)
+const win_width = 600
+const win_height = 600
 
 fn main() {
 	n := 1000000

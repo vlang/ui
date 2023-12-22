@@ -5,9 +5,7 @@ import gx
 import math
 import regex
 
-const (
-	no_cell = GridCell{-1, -1}
-)
+const no_cell = GridCell{-1, -1}
 
 // Spreadsheet-like (ex: A1, B4, ...)
 type AlphaCell = string

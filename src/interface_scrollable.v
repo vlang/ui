@@ -6,16 +6,14 @@ import gx
 // Is it not a widget but attached to a widget.
 // A ScrollableWidget would have a field scrollview
 
-pub const (
-	scrollbar_size                 = 10
-	scroolbar_thumb_color          = gx.rgb(87, 153, 245)
-	scrollbar_background_color     = gx.rgb(219, 219, 219)
-	scrollbar_button_color         = gx.rgb(150, 150, 150)
-	scrollbar_focused_button_color = gx.rgb(100, 100, 100)
-	scrollview_delta_key           = 5
-	// scrollview_delta_mouse         = 10
-	null_scrollview                = &ScrollView(unsafe { nil })
-)
+pub const scrollbar_size = 10
+pub const scroolbar_thumb_color = gx.rgb(87, 153, 245)
+pub const scrollbar_background_color = gx.rgb(219, 219, 219)
+pub const scrollbar_button_color = gx.rgb(150, 150, 150)
+pub const scrollbar_focused_button_color = gx.rgb(100, 100, 100)
+pub const scrollview_delta_key = 5
+// scrollview_delta_mouse         = 10
+pub const null_scrollview = &ScrollView(unsafe { nil })
 
 enum ScrollViewEvent {
 	all
@@ -100,7 +98,7 @@ pub fn scrollview_add[T](mut w T) {
 	mut sv := &ScrollView{
 		parent: w.parent
 		widget: unsafe { w }
-		ui: 0
+		ui: unsafe { nil }
 	}
 	// IMPORTANT (sort of bug):
 	// declaring `widget: w` inside struct before work for stack but not for canvas_layout

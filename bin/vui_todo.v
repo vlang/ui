@@ -1,10 +1,8 @@
 import ui
 
-const (
-	w_width  = 400
-	w_height = 600
-	w_title  = 'V DO'
-)
+const w_width = 400
+const w_height = 600
+const w_title = 'V DO'
 
 struct Task {
 mut:

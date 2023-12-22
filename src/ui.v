@@ -9,10 +9,8 @@ import gx
 import os
 import clipboard
 
-const (
-	version           = '0.0.4'
-	cursor_show_delay = 100 // ms
-)
+const version = '0.0.4'
+const cursor_show_delay = 100 // ms
 
 pub struct UI {
 pub mut:

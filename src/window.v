@@ -11,10 +11,8 @@ import math
 import os.font
 import os
 
-const (
-	default_window_color = gx.rgb(236, 236, 236)
-	default_font_size    = 13
-)
+const default_window_color = gx.rgb(236, 236, 236)
+const default_font_size = 13
 
 pub type WindowFn = fn (window &Window)
 
@@ -527,45 +525,51 @@ fn on_event(e &gg.Event, mut window Window) {
 
 	// delegation
 	if window.evt_mngr.has_delegation(e, window.ui) {
-		x, y := e.mouse_x / window.ui.window.dpi_scale, e.mouse_y / window.ui.window.dpi_scale
-
-		mut highest_selected_delegated_widget := window.evt_mngr.receivers[events.on_delegate][0]
-
-		for mut widget in window.evt_mngr.receivers[events.on_delegate] {
-			if widget.point_inside(x, y) {
-				highest_selected_delegated_widget = *widget
-			}
-		}
-
-		mut highest_selected_widget_z_index := -1
-
-		for _, mut value in window.widgets {
-			if value.hidden || value.id == highest_selected_delegated_widget.id {
-				continue
-			}
-
-			// NOTE: this is have a place because submenus are not in widgets list.
-			// We also can't do that check in the Menu point_inside() because
-			// this method used for other purposes too and checking submenu there
-			// generates strange bugs.
-			if mut value is Menu {
-				for item in value.items {
-					if item.has_menu() {
-						if item.submenu.hidden == false
-							&& item.submenu.z_index > highest_selected_widget_z_index
-							&& item.submenu.point_inside(x, y) {
-							highest_selected_widget_z_index = item.submenu.z_index
-						}
-					}
-				}
-			} else if value.z_index > highest_selected_widget_z_index && value.point_inside(x, y) {
-				highest_selected_widget_z_index = value.z_index
-			}
-		}
-
-		if highest_selected_delegated_widget.z_index > highest_selected_widget_z_index {
+		$if simple_delegate ? {
 			window.eventbus.publish(events.on_delegate, window, e)
 			return
+		} $else {
+			x, y := e.mouse_x / window.ui.window.dpi_scale, e.mouse_y / window.ui.window.dpi_scale
+
+			mut highest_selected_delegated_widget := window.evt_mngr.receivers[events.on_delegate][0]
+
+			for mut widget in window.evt_mngr.receivers[events.on_delegate] {
+				if widget.point_inside(x, y) {
+					highest_selected_delegated_widget = *widget
+				}
+			}
+
+			mut highest_selected_widget_z_index := -1
+
+			for _, mut value in window.widgets {
+				if value.hidden || value.id == highest_selected_delegated_widget.id {
+					continue
+				}
+
+				// NOTE: this is have a place because submenus are not in widgets list.
+				// We also can't do that check in the Menu point_inside() because
+				// this method used for other purposes too and checking submenu there
+				// generates strange bugs.
+				if mut value is Menu {
+					for item in value.items {
+						if item.has_menu() {
+							if item.submenu.hidden == false
+								&& item.submenu.z_index > highest_selected_widget_z_index
+								&& item.submenu.point_inside(x, y) {
+								highest_selected_widget_z_index = item.submenu.z_index
+							}
+						}
+					}
+				} else if value.z_index > highest_selected_widget_z_index
+					&& value.point_inside(x, y) {
+					highest_selected_widget_z_index = value.z_index
+				}
+			}
+
+			if highest_selected_delegated_widget.z_index > highest_selected_widget_z_index {
+				window.eventbus.publish(events.on_delegate, window, e)
+				return
+			}
 		}
 	}
 
@@ -1211,7 +1215,7 @@ pub fn (w &Window) child(from ...int) Widget {
 	} else {
 		// required but never goes here
 		return &Stack{
-			ui: 0
+			ui: unsafe { nil }
 		}
 	}
 }

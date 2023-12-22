@@ -2,10 +2,8 @@ module component
 
 import ui
 
-const (
-	filebrowser_subwindow_id    = '_sw_filebrowser'
-	newfilebrowser_subwindow_id = '_sw_newfilebrowser'
-)
+const filebrowser_subwindow_id = '_sw_filebrowser'
+const newfilebrowser_subwindow_id = '_sw_newfilebrowser'
 
 // Subwindow
 @[params]

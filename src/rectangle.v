@@ -68,7 +68,7 @@ pub fn rectangle(c RectangleParams) &Rectangle {
 		// color: c.color
 		border: c.border
 		// border_color: c.border_color
-		ui: 0
+		ui: unsafe { nil }
 		x: c.x
 		y: c.y
 		// text_size: c.text_size
@@ -81,7 +81,7 @@ pub fn rectangle(c RectangleParams) &Rectangle {
 pub fn spacing(c RectangleParams) &Rectangle {
 	mut rect := &Rectangle{
 		// color: c.color
-		ui: 0
+		ui: unsafe { nil }
 	}
 	rect.hidden = true
 	return rect

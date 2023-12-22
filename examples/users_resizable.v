@@ -1,14 +1,12 @@
 import ui
 import gx
 
-const (
-	win_width   = 780
-	win_height  = 395
-	nr_cols     = 4
-	cell_height = 25
-	cell_width  = 100
-	table_width = cell_width * nr_cols
-)
+const win_width = 780
+const win_height = 395
+const nr_cols = 4
+const cell_height = 25
+const cell_width = 100
+const table_width = cell_width * nr_cols
 
 struct User {
 	first_name string

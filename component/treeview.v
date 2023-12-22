@@ -4,10 +4,8 @@ import ui
 import gx
 import os
 
-const (
-	tree_sep = ':'
-	root_sep = '_|||_'
-)
+const tree_sep = ':'
+const root_sep = '_|||_'
 
 type TreeItem = Tree | string
 

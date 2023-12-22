@@ -5,15 +5,13 @@ module ui
 
 import gx
 
-const (
-	menu_height         = 30
-	menu_width          = 150
-	menu_padding        = 10
-	menu_bar_color      = gx.rgb(230, 230, 230)
-	menu_bg_color       = gx.rgb(240, 240, 240)
-	menu_bg_color_hover = gx.rgb(220, 220, 220)
-	menu_border_color   = gx.rgb(123, 123, 123)
-)
+const menu_height = 30
+const menu_width = 150
+const menu_padding = 10
+const menu_bar_color = gx.rgb(230, 230, 230)
+const menu_bg_color = gx.rgb(240, 240, 240)
+const menu_bg_color_hover = gx.rgb(220, 220, 220)
+const menu_border_color = gx.rgb(123, 123, 123)
 
 @[heap]
 pub struct Menu {
@@ -78,7 +76,7 @@ pub fn menu(c MenuParams) &Menu {
 		item_width: c.width
 		item_height: c.height
 		fixed_width: c.fixed_width
-		ui: 0
+		ui: unsafe { nil }
 		z_index: c.z_index
 		style_params: c.MenuStyleParams
 		hidden: c.hidden

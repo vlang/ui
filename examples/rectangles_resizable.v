@@ -1,10 +1,8 @@
 import ui
 import gx
 
-const (
-	win_width  = 64 * 4 + 25
-	win_height = 74
-)
+const win_width = 64 * 4 + 25
+const win_height = 74
 
 fn main() {
 	rect := ui.rectangle(

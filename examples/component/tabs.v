@@ -2,10 +2,8 @@ import ui
 import ui.component as uic
 import gx
 
-const (
-	win_width  = 600
-	win_height = 400
-)
+const win_width = 600
+const win_height = 400
 
 fn main() {
 	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)

@@ -11,9 +11,7 @@ import gx
 // Rmk: popups are a bit different.
 // 3) This is also devoted to simple widgets needing a quick system of help.
 
-const (
-	tooltip_margin = 5
-)
+const tooltip_margin = 5
 
 struct TextLines {
 mut:

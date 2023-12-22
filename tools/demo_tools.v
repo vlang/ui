@@ -3,10 +3,9 @@ module tools
 import ui
 import os
 
-const (
-	demo_blocks               = ['layout', 'main_pre', 'main_post', 'window_init'] // in the right order
-	demo_comment_block_delims = set_demo_comment_block_delims()
-)
+const demo_blocks = ['layout', 'main_pre', 'main_post', 'window_init'] // in the right order
+
+const demo_comment_block_delims = set_demo_comment_block_delims()
 
 @[heap]
 pub struct DemoTemplate {

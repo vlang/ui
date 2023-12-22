@@ -3,10 +3,8 @@ import regex
 import gx
 import math
 
-const (
-	win_width  = 400
-	win_height = 41
-)
+const win_width = 400
+const win_height = 41
 
 fn main() {
 	window := ui.window(

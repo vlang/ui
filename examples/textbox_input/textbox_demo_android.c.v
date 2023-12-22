@@ -2,9 +2,7 @@ import ui
 import jni
 import jni.auto
 
-const (
-	pkg = 'io.v.android.ui.VUIActivity'
-)
+const pkg = 'io.v.android.ui.VUIActivity'
 
 fn (mut app App) init(window &ui.Window) {
 	// Pass app reference off to Java so we

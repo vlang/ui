@@ -1,10 +1,8 @@
 import ui
 import gx
 
-const (
-	win_width  = 550
-	win_height = 385
-)
+const win_width = 550
+const win_height = 385
 
 fn main() {
 	mut text := 'gcghchc\n fvfyfy' + 'titi\n'.repeat(10)

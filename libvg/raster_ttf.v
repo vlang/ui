@@ -6,7 +6,7 @@ import os
 // TODO: documentation
 pub fn (mut r Raster) attach_bitmap() {
 	bmp := ttf.BitMap{
-		tf: 0
+		tf: unsafe { nil }
 		buf: r.data.data
 		buf_size: r.width * r.height * r.channels
 		width: r.width

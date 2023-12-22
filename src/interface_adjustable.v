@@ -40,15 +40,13 @@ fn (w &AdjustableWidget) get_adjusted_pos() (int, int) {
 	return w.ax, w.ay
 }
 
-pub const (
-	top_left      = [0.0, 0.0]
-	top_center    = [0.5, 0.0]
-	top_right     = [1.0, 0.0]
-	center_left   = [0.0, 0.5]
-	center        = [0.5, 0.5]
-	center_center = [0.5, 0.5]
-	center_right  = [1.0, 0.5]
-	bottom_left   = [0.0, 1.0]
-	bottom_center = [0.5, 1.0]
-	bottom_right  = [1.0, 1.0]
-)
+pub const top_left = [0.0, 0.0]
+pub const top_center = [0.5, 0.0]
+pub const top_right = [1.0, 0.0]
+pub const center_left = [0.0, 0.5]
+pub const center = [0.5, 0.5]
+pub const center_center = [0.5, 0.5]
+pub const center_right = [1.0, 0.5]
+pub const bottom_left = [0.0, 1.0]
+pub const bottom_center = [0.5, 1.0]
+pub const bottom_right = [1.0, 1.0]

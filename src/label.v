@@ -56,7 +56,7 @@ pub fn label(c LabelParams) &Label {
 		text: c.text
 		width: c.width
 		height: c.height
-		ui: 0
+		ui: unsafe { nil }
 		z_index: c.z_index
 		clipping: c.clipping
 		// text_size: c.text_size

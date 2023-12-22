@@ -1,13 +1,11 @@
 import ui
 import gx
 
-const (
-	win_width  = 200
-	win_height = 400
-	slider_min = 0
-	slider_max = 255
-	slider_val = (slider_max + slider_min) / 2
-)
+const win_width = 200
+const win_height = 400
+const slider_min = 0
+const slider_max = 255
+const slider_val = (slider_max + slider_min) / 2
 
 @[heap]
 struct App {

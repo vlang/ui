@@ -2,10 +2,8 @@ import ui
 import gx
 import os
 
-const (
-	win_width  = 550
-	win_height = 385
-)
+const win_width = 550
+const win_height = 385
 
 fn main() {
 	mut logo := os.resource_abs_path(os.join_path('../assets/img', 'logo.png'))

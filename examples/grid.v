@@ -1,9 +1,7 @@
 import ui
 
-const (
-	win_width  = 500
-	win_height = 500
-)
+const win_width = 500
+const win_height = 500
 
 struct App {
 mut:

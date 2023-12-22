@@ -2,10 +2,8 @@ import ui
 import ui.component as uic
 // import gx
 
-const (
-	win_width  = 800
-	win_height = 600
-)
+const win_width = 800
+const win_height = 600
 
 fn main() {
 	window := ui.window(

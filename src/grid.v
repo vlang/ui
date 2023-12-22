@@ -40,7 +40,7 @@ pub fn grid(c GridParams) &Grid {
 		cell_height: c.cell_height
 		header: c.header
 		body: c.body
-		ui: 0
+		ui: unsafe { nil }
 	}
 	return gv
 }

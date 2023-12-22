@@ -5,14 +5,12 @@ module ui
 
 import gx
 
-const (
-	sw_height         = 20
-	sw_width          = 40
-	sw_dot_size       = 16
-	sw_open_bg_color  = gx.rgb(19, 206, 102)
-	sw_close_bg_color = gx.rgb(220, 223, 230)
-	sw_focus_bg_color = gx.rgb(50, 50, 50)
-)
+const sw_height = 20
+const sw_width = 40
+const sw_dot_size = 16
+const sw_open_bg_color = gx.rgb(19, 206, 102)
+const sw_close_bg_color = gx.rgb(220, 223, 230)
+const sw_focus_bg_color = gx.rgb(50, 50, 50)
 
 type SwitchFn = fn (&Switch)
 
@@ -59,7 +57,7 @@ pub fn switcher(c SwitchParams) &Switch {
 		open: c.open
 		on_click: c.on_click
 		on_key_down: c.on_key_down
-		ui: 0
+		ui: unsafe { nil }
 	}
 	return s
 }

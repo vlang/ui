@@ -3,10 +3,8 @@ module component
 import ui
 import gx
 
-const (
-	colorbox_subwindow_id        = '_sw_cbox'
-	colorbox_subwindow_layout_id = ui.component_id('_sw_cbox', 'layout')
-)
+const colorbox_subwindow_id = '_sw_cbox'
+const colorbox_subwindow_layout_id = ui.component_id('_sw_cbox', 'layout')
 
 // Append colorbox to window
 pub fn colorbox_subwindow_add(mut w ui.Window) {

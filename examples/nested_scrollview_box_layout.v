@@ -1,13 +1,11 @@
 import ui
 import gx
 
-const (
-	win_width  = 550
-	win_height = 300
+const win_width = 550
+const win_height = 300
 
-	box_width  = 110
-	box_height = 90
-)
+const box_width = 110
+const box_height = 90
 
 struct App {
 mut:

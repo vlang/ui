@@ -1,20 +1,18 @@
 import ui
 
-const (
-	win_width              = 550
-	win_height             = 300
+const win_width = 550
+const win_height = 300
 
-	box_width              = 110
-	box_height             = 90
+const box_width = 110
+const box_height = 90
 
-	area_width             = 600
-	area_height            = 400
-	area_spacing           = 10
+const area_width = 600
+const area_height = 400
+const area_spacing = 10
 
-	instructions           = 'Run v -d ui_scroll_nest and scroll inside/outside scrollviews'
+const instructions = 'Run v -d ui_scroll_nest and scroll inside/outside scrollviews'
 
-	single_column_of_boxes = false
-)
+const single_column_of_boxes = false
 
 struct App {
 mut:

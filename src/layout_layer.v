@@ -1,8 +1,6 @@
 module ui
 
-const (
-	id_append_top_layer = '___ON_TOP_LAYER___'
-)
+const id_append_top_layer = '___ON_TOP_LAYER___'
 
 // CanvasLayout as Layer
 

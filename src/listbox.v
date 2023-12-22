@@ -5,15 +5,13 @@ import gg
 
 type ListBoxFn = fn (&ListBox)
 
-const (
-	listbox_item_height    = 20
-	listbox_bg_color       = gx.white
-	listbox_color_pressed  = gx.light_blue
-	listbox_color_disabled = gx.light_gray
-	listbox_border_color   = gx.gray
-	listbox_text_offset_y  = 3
-	listbox_text_offset_x  = 5
-)
+const listbox_item_height = 20
+const listbox_bg_color = gx.white
+const listbox_color_pressed = gx.light_blue
+const listbox_color_disabled = gx.light_gray
+const listbox_border_color = gx.gray
+const listbox_text_offset_y = 3
+const listbox_text_offset_x = 5
 
 @[heap]
 pub struct ListBox {
@@ -121,7 +119,7 @@ pub fn listbox(c ListBoxParams) &ListBox {
 		files_dropped: c.files_dropped
 		ordered: c.ordered
 		id: c.id
-		ui: 0
+		ui: unsafe { nil }
 	}
 	list.style_params.style = c.theme
 	for id, text in c.items {

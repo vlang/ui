@@ -4,10 +4,8 @@ import gx
 // import time
 // import encoding.utf8
 
-const (
-	textview_margin = 10
-	wordwrap_border = 20
-)
+const textview_margin = 10
+const wordwrap_border = 20
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 pub struct TextView {
