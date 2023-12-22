@@ -28,7 +28,7 @@ fn main() {
 		['0', '.', '±', '='],
 	]
 	mut app := &App{
-		window: 0
+		window: unsafe { nil }
 	}
 	mut children := []ui.Widget{}
 	children = [

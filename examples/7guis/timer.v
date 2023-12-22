@@ -30,7 +30,7 @@ fn main() {
 			color: gx.green
 			border_color: gx.dark_green
 		)
-		window: 0
+		window: unsafe { nil }
 	}
 	app.slider = ui.slider(
 		width: 180

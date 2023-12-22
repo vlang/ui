@@ -13,7 +13,7 @@ fn main() {
 	h := ['One', 'Two', 'Three']
 	b := [['body one', 'body two', 'body three'], ['V', 'UI is', 'Beautiful']]
 	mut app := &App{
-		window: 0
+		window: unsafe { nil }
 		grid: ui.grid(header: h, body: b, width: win_width - 10, height: win_height)
 	}
 	app.window = ui.window(
