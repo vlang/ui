@@ -2,10 +2,8 @@ import ui
 import ui.component as uic
 import gx
 
-const (
-	win_width  = 200
-	win_height = 400
-)
+const win_width = 200
+const win_height = 400
 
 fn main() {
 	mut orientation := ui.Orientation.vertical

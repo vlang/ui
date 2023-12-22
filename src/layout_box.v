@@ -5,9 +5,7 @@ import gg
 import eventbus
 import regex
 
-const (
-	null_rect = gg.Rect{0.0, 0.0, 0.0, 0.0}
-)
+const null_rect = gg.Rect{0.0, 0.0, 0.0, 0.0}
 
 /*
 Goal:
@@ -122,7 +120,7 @@ pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 		width: c.width
 		height: c.height
 		clipping: c.clipping
-		ui: 0
+		ui: unsafe { nil }
 	}
 	for key, child in c.children {
 		mut child_mut := child

@@ -2,15 +2,13 @@ import ui
 import gx
 import math
 
-const (
-	win_width     = 500
-	win_height    = 385
-	margin        = 10
-	spill         = 1000
+const win_width = 500
+const win_height = 385
+const margin = 10
+const spill = 1000
 
-	instructions  = ' Click on a box to toggle clipping in boxes'
-	instructions2 = ' Use keys 1-4 to toggle clipping in quadrants:'
-)
+const instructions = ' Click on a box to toggle clipping in boxes'
+const instructions2 = ' Use keys 1-4 to toggle clipping in quadrants:'
 
 type ContentFn = fn (int) ui.Widget
 

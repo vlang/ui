@@ -39,7 +39,7 @@ pub fn fontbutton(c FontButtonParams) &ui.Button {
 		on_click: font_button_click
 		style_params: ui.button_style(radius: f32(c.radius))
 		padding: f32(c.padding)
-		ui: 0
+		ui: unsafe { nil }
 	}
 	mut fb := &FontButtonComponent{
 		btn: b

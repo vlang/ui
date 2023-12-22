@@ -3,11 +3,9 @@ module component
 import ui
 import gx
 
-const (
-	slider_min = 0
-	slider_max = 255
-	slider_val = (slider_max + slider_min) / 2
-)
+const slider_min = 0
+const slider_max = 255
+const slider_val = (slider_max + slider_min) / 2
 
 type ColorSlidersFn = fn (cs &ColorSlidersComponent)
 

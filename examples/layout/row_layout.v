@@ -1,14 +1,12 @@
 import ui
 import gx
 
-const (
-	win_width  = 1200
-	win_height = 500
-	btn_width  = 200
-	btn_height = 30
-	port       = 1337
-	lb_height  = 0
-)
+const win_width = 1200
+const win_height = 500
+const btn_width = 200
+const btn_height = 30
+const port = 1337
+const lb_height = 0
 
 @[heap]
 struct App {

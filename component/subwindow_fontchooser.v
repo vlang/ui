@@ -2,9 +2,7 @@ module component
 
 import ui
 
-const (
-	fontchooser_subwindow_id = '_sw_font'
-)
+const fontchooser_subwindow_id = '_sw_font'
 
 // Append fontchooser to window
 pub fn fontchooser_subwindow_add(mut w ui.Window) { //}, fontchooser_lb_change ui.ListBoxSelectionChangedFn) {

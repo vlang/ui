@@ -10,10 +10,8 @@ pub type BuildFn = fn (layout voidptr, win &Window)
 
 pub type InitFn = fn (layout voidptr)
 
-pub const (
-	empty_stack           = stack(id: '_empty_stack_')
-	scrollview_empty_rect = Rect{}
-)
+pub const empty_stack = stack(id: '_empty_stack_')
+pub const scrollview_empty_rect = Rect{}
 
 pub enum Direction {
 	row
@@ -152,7 +150,7 @@ fn stack(c StackParams) &Stack {
 		alignments: c.align
 		style_params: c.StackStyleParams
 		title: c.title
-		ui: 0
+		ui: unsafe { nil }
 	}
 	s.style_params.style = c.theme
 	if c.width > 0 {

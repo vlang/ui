@@ -5,9 +5,7 @@ module ui
 
 import gx
 
-const (
-	radio_focus_color = gx.rgb(50, 50, 50)
-)
+const radio_focus_color = gx.rgb(50, 50, 50)
 
 /*
 enum RadioState {
@@ -87,7 +85,7 @@ pub fn radio(c RadioParams) &Radio {
 		style_params: c.RadioStyleParams
 		horizontal: c.horizontal
 		compact: c.compact
-		ui: 0
+		ui: unsafe { nil }
 		on_click: c.on_click
 	}
 	r.style_params.style = c.theme

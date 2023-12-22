@@ -1,10 +1,8 @@
 import ui
 import gx
 
-const (
-	win_width  = 200
-	win_height = 40
-)
+const win_width = 200
+const win_height = 40
 
 @[heap]
 struct App {

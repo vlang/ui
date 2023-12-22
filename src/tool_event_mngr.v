@@ -60,7 +60,7 @@ pub fn (mut em EventMngr) rm_receiver(widget Widget, evt_types []string) {
 			em.receivers[evt_type].delete(ind)
 		}
 		// sort it
-		em.sorted_receivers(evt_type)
+		// bug if uncommented: em.sorted_receivers(evt_type)
 	}
 }
 
@@ -165,7 +165,7 @@ pub fn (mut em EventMngr) sorted_receivers(evt_type string) {
 	mut sw := []SortedWidget{}
 	mut sorted := []Widget{}
 	$if em_sr ? {
-		println('Before sort: ')
+		println('Before sort: (${evt_type})')
 		em.list_receivers(evt_type)
 	}
 	for i, child in em.receivers[evt_type] {
@@ -200,7 +200,7 @@ pub fn (w Window) point_inside_receivers(evt_type string) []string {
 
 // used for debug
 pub fn (em &EventMngr) list_receivers(evt_type string) {
-	print('receivers list for ${evt_type}: ')
+	print('receivers list for ${evt_type} (${em.receivers[evt_type].len}): ')
 	for i, ch in em.receivers[evt_type] {
 		id := ch.id()
 		print('(${i})[${id}: ${ch.z_index}] ')

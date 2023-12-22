@@ -2,10 +2,8 @@ import ui
 import ui.component as uic
 import os
 
-const (
-	win_width  = 500
-	win_height = 500
-)
+const win_width = 500
+const win_height = 500
 
 fn main() {
 	window := ui.window(

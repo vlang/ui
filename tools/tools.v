@@ -5,12 +5,10 @@ import ui.component as uic
 import os
 import gx
 
-const (
-	block_format_delim = {
-		'start': '[<'
-		'stop':  '>]'
-	}
-)
+const block_format_delim = {
+	'start': '[<'
+	'stop':  '>]'
+}
 
 fn block_format(block_name string) string {
 	return tools.block_format_delim['start'] + block_name + tools.block_format_delim['stop']

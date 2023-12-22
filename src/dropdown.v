@@ -72,7 +72,7 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 		on_selection_changed: c.on_selection_changed
 		style_params: c.DropdownStyleParams
 		def_text: c.def_text
-		ui: 0
+		ui: unsafe { nil }
 	}
 	dd.style_params.style = c.theme
 	if c.texts.len > 0 {

@@ -66,7 +66,7 @@ pub fn picture(c PictureParams) &Picture {
 		on_click: c.on_click
 		image: c.image
 		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		ui: 0
+		ui: unsafe { nil }
 	}
 	return pic
 }

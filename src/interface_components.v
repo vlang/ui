@@ -10,9 +10,7 @@ module ui
 // Remark: To become possibly a member of a parent component, a component has to have this field `component` to be connected to
 //---
 
-const (
-	component_sep = '/' // ':::'
-)
+const component_sep = '/' // ':::'
 
 pub interface ComponentChild {
 mut:

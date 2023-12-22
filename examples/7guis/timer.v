@@ -3,12 +3,11 @@ import time
 import math
 import gx
 
-const (
-	win_width  = 287
-	win_height = 155
-	duration   = 1 // ms
-	left       = 60.0
-)
+const win_width = 287
+const win_height = 155
+const duration = 1 // ms
+
+const left = 60.0
 
 @[heap]
 struct App {
@@ -31,7 +30,7 @@ fn main() {
 			color: gx.green
 			border_color: gx.dark_green
 		)
-		window: 0
+		window: unsafe { nil }
 	}
 	app.slider = ui.slider(
 		width: 180

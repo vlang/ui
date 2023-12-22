@@ -51,7 +51,7 @@ pub fn progressbar(c ProgressBarParams) &ProgressBar {
 		max: c.max
 		val: c.val
 		style_params: c.ProgressBarStyleParams
-		ui: 0
+		ui: unsafe { nil }
 	}
 	pb.style_params.style = c.theme
 	return pb

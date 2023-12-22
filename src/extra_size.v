@@ -2,13 +2,12 @@ module ui
 
 import math
 
-pub const (
-	stretch        = -10000.0
-	compact        = 0.0 // from parent
-	fit            = 0.0
-	z_index_hidden = -10000
-	z_index_focus  = 10
-)
+pub const stretch = -10000.0
+pub const compact = 0.0 // from parent
+
+pub const fit = 0.0
+pub const z_index_hidden = -10000
+pub const z_index_focus = 10
 
 @[flag]
 pub enum WindowSizeType {

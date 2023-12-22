@@ -46,8 +46,8 @@ pub fn transition(c TransitionParams) &Transition {
 		duration: c.duration
 		animating: false
 		easing: c.easing
-		ui: 0
-		animated_value: 0
+		ui: unsafe { nil }
+		animated_value: unsafe { nil }
 		z_index: c.z_index
 	}
 	return transition

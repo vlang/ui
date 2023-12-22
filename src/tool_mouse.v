@@ -7,22 +7,21 @@ import gg
 import time
 import sokol.sapp
 
-const (
-	click_interval      = 200 // ms
-	system_mouse_cursor = {
-		'default':       sapp.MouseCursor.default
-		'arrow':         sapp.MouseCursor.arrow
-		'ibeam':         sapp.MouseCursor.ibeam
-		'crosshair':     sapp.MouseCursor.crosshair
-		'pointing_hand': sapp.MouseCursor.pointing_hand
-		'resize_ew':     sapp.MouseCursor.resize_ew
-		'resize_ns':     sapp.MouseCursor.resize_ns
-		'resize_nwse':   sapp.MouseCursor.resize_nwse
-		'resize_nesw':   sapp.MouseCursor.resize_nesw
-		'resize_all':    sapp.MouseCursor.resize_all
-		'not_allowed':   sapp.MouseCursor.not_allowed
-	}
-)
+const click_interval = 200 // ms
+
+const system_mouse_cursor = {
+	'default':       sapp.MouseCursor.default
+	'arrow':         sapp.MouseCursor.arrow
+	'ibeam':         sapp.MouseCursor.ibeam
+	'crosshair':     sapp.MouseCursor.crosshair
+	'pointing_hand': sapp.MouseCursor.pointing_hand
+	'resize_ew':     sapp.MouseCursor.resize_ew
+	'resize_ns':     sapp.MouseCursor.resize_ns
+	'resize_nwse':   sapp.MouseCursor.resize_nwse
+	'resize_nesw':   sapp.MouseCursor.resize_nesw
+	'resize_all':    sapp.MouseCursor.resize_all
+	'not_allowed':   sapp.MouseCursor.not_allowed
+}
 
 pub enum MouseAction {
 	up
@@ -101,10 +100,8 @@ mut:
 	adj    [2]f32
 }
 
-pub const (
-	mouse_system = '_system_'
-	mouse_hidden = '_hidden_mouse_'
-)
+pub const mouse_system = '_system_'
+pub const mouse_hidden = '_hidden_mouse_'
 
 pub fn (mut m Mouse) init(w &Window) {
 	m.window = w

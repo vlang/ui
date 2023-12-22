@@ -1,10 +1,8 @@
 import ui
 import gx
 
-const (
-	win_width  = 250
-	win_height = 250
-)
+const win_width = 250
+const win_height = 250
 
 fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)

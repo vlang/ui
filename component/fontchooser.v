@@ -3,10 +3,8 @@ module component
 import ui
 import os
 
-const (
-	fontchooser_row_id = '_row_sw_font'
-	fontchooser_lb_id  = '_lb_sw_font'
-)
+const fontchooser_row_id = '_row_sw_font'
+const fontchooser_lb_id = '_lb_sw_font'
 
 @[heap]
 pub struct FontChooserComponent {

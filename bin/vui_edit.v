@@ -3,10 +3,8 @@ import ui.component as uic
 import gx
 import os
 
-const (
-	win_width  = 800
-	win_height = 600
-)
+const win_width = 800
+const win_height = 600
 
 struct App {
 mut:
@@ -16,7 +14,7 @@ mut:
 
 fn main() {
 	mut app := &App{
-		window: 0
+		window: unsafe { nil }
 	}
 	// TODO: use a proper parser loop, or even better - the `flag` module
 	mut args := os.args#[1..].clone()

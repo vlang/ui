@@ -6,10 +6,8 @@ module ui
 import gx
 import math
 
-const (
-	check_mark_size = 14
-	cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
-)
+const check_mark_size = 14
+const cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
 
 // type CheckChangedFn = fn (voidptr, bool)
 
@@ -74,7 +72,7 @@ pub fn checkbox(c CheckBoxParams) &CheckBox {
 		id: c.id
 		height: ui.check_mark_size + 5 // TODO
 		z_index: c.z_index
-		ui: 0
+		ui: unsafe { nil }
 		text: c.text
 		on_click: c.on_click
 		on_check_changed: c.on_check_changed

@@ -1,11 +1,9 @@
 import ui
 import os
 
-const (
-	win_width                = 500
-	win_height               = 500
-	picture_width_and_height = 100
-)
+const win_width = 500
+const win_height = 500
+const picture_width_and_height = 100
 
 @[heap]
 struct App {

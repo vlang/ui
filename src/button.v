@@ -8,13 +8,11 @@ import gg
 import os
 import math
 
-const (
-	button_bg_color           = gx.rgb(28, 28, 28)
-	button_border_color       = gx.rgb(200, 200, 200)
-	button_focus_border_color = gx.rgb(50, 50, 50)
-	button_horizontal_padding = 26
-	button_vertical_padding   = 8
-)
+const button_bg_color = gx.rgb(28, 28, 28)
+const button_border_color = gx.rgb(200, 200, 200)
+const button_focus_border_color = gx.rgb(50, 50, 50)
+const button_horizontal_padding = 26
+const button_vertical_padding = 8
 
 enum ButtonState {
 	normal   = 1 // synchronized with .button_normal
@@ -136,7 +134,7 @@ pub fn button(c ButtonParams) &Button {
 		// text_size: c.text_size
 		// radius: f32(c.radius)
 		padding: f32(c.padding)
-		ui: 0
+		ui: unsafe { nil }
 	}
 	b.style_params.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {

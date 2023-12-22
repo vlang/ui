@@ -2,9 +2,7 @@ module ui
 
 import gx
 
-const (
-	numeric_set = '0123456789.'.runes()
-)
+const numeric_set = '0123456789.'.runes()
 
 struct Chunk {
 	x     int

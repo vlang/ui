@@ -1,12 +1,10 @@
 import math
 import ui
 
-const (
-	buttons_per_row = 4
-	bwidth          = 30
-	bheight         = 30
-	bpadding        = 5
-)
+const buttons_per_row = 4
+const bwidth = 30
+const bheight = 30
+const bpadding = 5
 
 @[heap]
 struct App {
@@ -30,7 +28,7 @@ fn main() {
 		['0', '.', '±', '='],
 	]
 	mut app := &App{
-		window: 0
+		window: unsafe { nil }
 	}
 	mut children := []ui.Widget{}
 	children = [

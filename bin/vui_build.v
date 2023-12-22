@@ -6,11 +6,9 @@ import time
 import os
 import x.json2
 
-const (
-	time_sleep = 500
-	help_text  = $embed_file('help/vui_demo.help').to_string()
-	demos_json = $embed_file('assets/demos.json').to_string()
-)
+const time_sleep = 500
+const help_text = $embed_file('help/vui_demo.help').to_string()
+const demos_json = $embed_file('assets/demos.json').to_string()
 
 // vfmt off
 @[heap]

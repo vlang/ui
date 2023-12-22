@@ -63,7 +63,7 @@ pub fn group(c GroupParams) &Group {
 		spacing: c.spacing
 		clipping: c.clipping
 		children: c.children
-		ui: 0
+		ui: unsafe { nil }
 	}
 	return g
 }

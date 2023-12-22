@@ -2,12 +2,10 @@ module ui
 
 import gx
 
-const (
-	slider_thumb_color             = gx.rgb(87, 153, 245)
-	slider_bg_color                = gx.rgb(219, 219, 219)
-	slider_bg_border_color         = gx.rgb(191, 191, 191)
-	slider_focused_bg_border_color = gx.rgb(255, 0, 0)
-)
+const slider_thumb_color = gx.rgb(87, 153, 245)
+const slider_bg_color = gx.rgb(219, 219, 219)
+const slider_bg_border_color = gx.rgb(191, 191, 191)
+const slider_focused_bg_border_color = gx.rgb(255, 0, 0)
 
 type SliderFn = fn (&Slider)
 
@@ -91,7 +89,7 @@ pub fn slider(c SliderParams) &Slider {
 		rev_min_max_pos: c.rev_min_max_pos
 		thumb_in_track: c.thumb_in_track
 		track_line_displayed: c.track_line_displayed
-		ui: 0
+		ui: unsafe { nil }
 		z_index: c.z_index
 		entering: c.entering
 		style_params: c.SliderStyleParams

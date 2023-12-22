@@ -3,11 +3,9 @@ import ui.component as uic
 import gx
 import os
 
-const (
-	win_width  = 800
-	win_height = 600
-	help_text  = $embed_file('help/vui_png.help').to_string()
-)
+const win_width = 800
+const win_height = 600
+const help_text = $embed_file('help/vui_png.help').to_string()
 
 fn main() {
 	// TODO: use a proper parser loop, or even better - the `flag` module

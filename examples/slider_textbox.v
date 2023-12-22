@@ -1,15 +1,13 @@
 import ui
 
-const (
-	win_width       = 450
-	win_height      = 450
-	vert_slider_min = -100
-	vert_slider_max = -20
-	vert_slider_val = (vert_slider_max + vert_slider_min) / 2
-	hor_slider_min  = -20
-	hor_slider_max  = 100
-	hor_slider_val  = (hor_slider_max + hor_slider_min) / 2
-)
+const win_width = 450
+const win_height = 450
+const vert_slider_min = -100
+const vert_slider_max = -20
+const vert_slider_val = (vert_slider_max + vert_slider_min) / 2
+const hor_slider_min = -20
+const hor_slider_max = 100
+const hor_slider_val = (hor_slider_max + hor_slider_min) / 2
 
 @[heap]
 struct App {

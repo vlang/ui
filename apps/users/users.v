@@ -3,12 +3,10 @@ module users
 import ui
 import gx
 
-const (
-	nr_cols     = 4
-	cell_height = 25
-	cell_width  = 100
-	table_width = cell_width * nr_cols
-)
+const nr_cols = 4
+const cell_height = 25
+const cell_width = 100
+const table_width = cell_width * nr_cols
 
 struct User {
 	first_name string

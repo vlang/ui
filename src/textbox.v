@@ -13,16 +13,14 @@ enum SelectionDirection {
 	right_to_left
 }
 
-const (
-	text_border_color             = gx.rgb(177, 177, 177)
-	text_inner_border_color       = gx.rgb(240, 240, 240)
-	text_border_accentuated_color = gx.rgb(255, 0, 0)
-	textbox_padding_x             = 5
-	textbox_padding_y             = 2
-	// selection_color = gx.rgb(226, 233, 241)
-	selection_color               = gx.rgb(186, 214, 251)
-	textbox_line_height_factor    = 0.5 // line_height * ( 1.0 + textview_line_height_factor)
-)
+const text_border_color = gx.rgb(177, 177, 177)
+const text_inner_border_color = gx.rgb(240, 240, 240)
+const text_border_accentuated_color = gx.rgb(255, 0, 0)
+const textbox_padding_x = 5
+const textbox_padding_y = 2
+// selection_color = gx.rgb(226, 233, 241)
+const selection_color = gx.rgb(186, 214, 251)
+const textbox_line_height_factor = 0.5 // line_height * ( 1.0 + textview_line_height_factor)
 
 type TextBoxU32Fn = fn (&TextBox, u32)
 
@@ -182,7 +180,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		// bg_color: c.bg_color
 		// text_size: c.text_size
 		style_params: c.TextBoxStyleParams
-		ui: 0
+		ui: unsafe { nil }
 		text: c.text
 		text_value: c.text_value
 		is_focused: c.is_focused

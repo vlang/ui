@@ -1,10 +1,8 @@
 import ui
 import gx
 
-const (
-	win_width  = 400
-	win_height = 300
-)
+const win_width = 400
+const win_height = 300
 
 fn main() {
 	ui.run(ui.window(

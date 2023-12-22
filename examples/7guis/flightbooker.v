@@ -2,9 +2,7 @@ import ui
 import gx
 import time
 
-const (
-	no_time = time.Time{}
-)
+const no_time = time.Time{}
 
 @[heap]
 struct App {

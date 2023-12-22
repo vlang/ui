@@ -4,10 +4,8 @@ import ui
 import gx
 import os
 
-const (
-	tree_sep = ':'
-	root_sep = '_|||_'
-)
+const tree_sep = ':'
+const root_sep = '_|||_'
 
 type TreeItem = Tree | string
 
@@ -176,7 +174,6 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 		widths: ui.compact
 		heights: ui.compact
 		bg_color: c.bg_color
-		clipping: true
 	)
 	mut tv := &TreeViewComponent{
 		id: c.id
