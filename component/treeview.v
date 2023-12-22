@@ -174,7 +174,6 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 		widths: ui.compact
 		heights: ui.compact
 		bg_color: c.bg_color
-		clipping: true
 	)
 	mut tv := &TreeViewComponent{
 		id: c.id
