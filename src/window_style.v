@@ -57,3 +57,14 @@ fn (mut w Window) update_style(p WindowStyleParams) {
 		w.bg_color = p.bg_color
 	}
 }
+
+pub fn (mut w Window) apply_style() {
+	w.load_style()
+	for _, mut widget in w.widgets {
+		if mut widget is WidgetThemeStyle {
+			mut wdgt := widget // work-around v compiler smart-casting bug
+			wdgt.update_theme_style(w.theme_style)
+			wdgt.load_style()
+		}
+	}
+}
