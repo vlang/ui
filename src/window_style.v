@@ -62,7 +62,7 @@ pub fn (mut w Window) apply_style() {
 	for _, mut widget in w.widgets {
 		if mut widget is WidgetThemeStyle {
 			mut wdgt := widget // work-around v compiler smart-casting bug
-			// wdgt.update_theme_style(w.theme_style)
+			wdgt.update_theme_style(w.theme_style)
 			wdgt.load_style()
 		}
 	}
