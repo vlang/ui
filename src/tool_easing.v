@@ -1,5 +1,5 @@
 // Copyright (c) 2020-2022 Leah Lundqvist. All rights reserved.
-// Use of this source code is governed by a GPL license
+// Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 module ui
 
