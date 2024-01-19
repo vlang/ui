@@ -30,10 +30,6 @@ pub mut:
 	bg_color  gx.Color = no_color
 }
 
-pub fn textbox_style(p TextBoxStyleParams) TextBoxStyleParams {
-	return p
-}
-
 pub fn (ts TextBoxStyle) to_toml() string {
 	mut toml_ := map[string]toml.Any{}
 	toml_['bg_radius'] = ts.bg_radius
@@ -44,6 +40,11 @@ pub fn (ts TextBoxStyle) to_toml() string {
 pub fn (mut ts TextBoxStyle) from_toml(a toml.Any) {
 	ts.bg_radius = a.value('bg_radius').f32()
 	ts.bg_color = HexColor(a.value('bg_color').string()).color()
+	ts.text_color = HexColor(a.value('text_color').string()).color()
+	if font_name := a.value_opt('text_font_name') { ts.text_font_name = font_name.string() }
+	if size := a.value_opt('text_size') { ts.text_size = size.int() }
+	if align := a.value_opt('text_align') { ts.text_align = unsafe { TextHorizontalAlign(align.int()) } }
+	if vertical_align := a.value_opt('text_vertical_align') { ts.text_vertical_align = unsafe { TextVerticalAlign(vertical_align.int()) } }
 }
 
 fn (mut t TextBox) load_style() {
@@ -52,17 +53,21 @@ fn (mut t TextBox) load_style() {
 	if t.style_params.style != no_style {
 		style = t.style_params.style
 	}
-	t.update_theme_style(style)
+	t.apply_theme_style(style)
 	// forced overload default style
 	t.update_style(t.style_params)
 }
 
-pub fn (mut t TextBox) update_theme_style(theme string) {
+pub fn (mut t TextBox) update_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
+	t.theme_style = style
+	t.apply_theme_style(style)
+}
+
+fn (mut t TextBox) apply_theme_style(style string) {
+	// println("update_style <$p.style>")
 	if style != no_style && style in t.ui.styles {
 		ts := t.ui.styles[style].tb
-		t.theme_style = theme
 		t.update_shape_theme_style(ts)
 		mut dtw := DrawTextWidget(t)
 		dtw.update_theme_style(ts)

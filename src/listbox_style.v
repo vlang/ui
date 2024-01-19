@@ -74,17 +74,20 @@ pub fn (mut lb ListBox) load_style() {
 	if lb.style_params.style != no_style {
 		style = lb.style_params.style
 	}
-	lb.update_theme_style(style)
+	lb.apply_theme_style(style)
 	// forced overload default style
 	lb.update_style(lb.style_params)
 }
 
-pub fn (mut lb ListBox) update_theme_style(theme string) {
+pub fn (mut lb ListBox) update_theme_style(style string) {
+	lb.theme_style = style
+	lb.apply_theme_style(style)
+}
+
+fn (mut lb ListBox) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in lb.ui.styles {
 		lbs := lb.ui.styles[style].lb
-		lb.theme_style = theme
 		lb.update_shape_theme_style(lbs)
 		mut dtw := DrawTextWidget(lb)
 		dtw.update_theme_style(lbs)

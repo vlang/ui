@@ -42,17 +42,20 @@ pub fn (mut l Label) load_style() {
 	if l.style_params.style != no_style {
 		style = l.style_params.style
 	}
-	l.update_theme_style(style)
+	l.apply_theme_style(style)
 	// forced overload default style
 	l.update_style(l.style_params)
 }
 
-pub fn (mut l Label) update_theme_style(theme string) {
+pub fn (mut l Label) update_theme_style(style string) {
+	l.theme_style = style
+	l.apply_theme_style(style)
+}
+
+fn (mut l Label) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in l.ui.styles {
 		ls := l.ui.styles[style].label
-		l.theme_style = theme
 		mut dtw := DrawTextWidget(l)
 		dtw.update_theme_style(ls)
 	}

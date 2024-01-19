@@ -57,12 +57,11 @@ fn (mut l CanvasLayout) load_style() {
 	l.update_style(l.style_params)
 }
 
-pub fn (mut l CanvasLayout) update_theme_style(theme string) {
+pub fn (mut l CanvasLayout) update_theme_style(style string) {
 	// println("$l.id update_theme_style <$theme>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in l.ui.styles {
 		ls := l.ui.styles[style].cl
-		l.theme_style = theme
+		l.theme_style = style
 		l.update_shape_theme_style(ls)
 		mut dtw := DrawTextWidget(l)
 		dtw.update_theme_style(ls)
@@ -155,18 +154,21 @@ fn (mut l Stack) load_style() {
 	if l.style_params.style != no_style {
 		style = l.style_params.style
 	}
-	l.update_theme_style(style)
+	l.apply_theme_style(style)
 	// forced overload default style
 	l.update_style(l.style_params)
 	// println("s ls $l.theme_style $l.style $l.style_params")
 }
 
-pub fn (mut l Stack) update_theme_style(theme string) {
+pub fn (mut l Stack) update_theme_style(style string) {
+	l.theme_style = style
+	l.apply_theme_style(style)
+}
+
+fn (mut l Stack) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in l.ui.styles {
 		ls := l.ui.styles[style].stack
-		l.theme_style = theme
 		l.update_shape_theme_style(ls)
 		mut dtw := DrawTextWidget(l)
 		dtw.update_theme_style(ls)

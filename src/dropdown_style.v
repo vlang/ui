@@ -60,17 +60,20 @@ fn (mut dd Dropdown) load_style() {
 	if dd.style_params.style != no_style {
 		style = dd.style_params.style
 	}
-	dd.update_theme_style(style)
+	dd.apply_theme_style(style)
 	// forced overload default style
 	dd.update_style(dd.style_params)
 }
 
-pub fn (mut dd Dropdown) update_theme_style(theme string) {
+pub fn (mut dd Dropdown) update_theme_style(style string) {
+	dd.theme_style = style
+	dd.apply_theme_style(style)
+}
+
+fn (mut dd Dropdown) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in dd.ui.styles {
 		dds := dd.ui.styles[style].dd
-		dd.theme_style = theme
 		dd.update_shape_theme_style(dds)
 		mut dtw := DrawTextWidget(dd)
 		dtw.update_theme_style(dds)

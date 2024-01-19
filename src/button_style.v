@@ -74,17 +74,20 @@ pub fn (mut b Button) load_style() {
 	if b.style_params.style != no_style {
 		style = b.style_params.style
 	}
-	b.update_theme_style(style)
+	b.apply_theme_style(style)
 	// forced overload default style
 	b.update_style(b.style_params)
 }
 
-pub fn (mut b Button) update_theme_style(theme string) {
+pub fn (mut b Button) update_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
+	b.theme_style = style
+	b.apply_theme_style(style)
+}
+
+fn (mut b Button) apply_theme_style(style string) {
 	if style != no_style && style in b.ui.styles {
 		bs := b.ui.styles[style].btn
-		b.theme_style = theme
 		b.update_shape_theme_style(bs)
 		mut dtw := DrawTextWidget(b)
 		dtw.update_theme_style(bs)

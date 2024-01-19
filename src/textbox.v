@@ -459,7 +459,7 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 			}
 			// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
 			d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
-				gx.black) // , gx.Black)
+				tb.text_styles.current.color)
 		}
 	}
 	$if bb ? {
