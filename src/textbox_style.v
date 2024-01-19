@@ -41,10 +41,18 @@ pub fn (mut ts TextBoxStyle) from_toml(a toml.Any) {
 	ts.bg_radius = a.value('bg_radius').f32()
 	ts.bg_color = HexColor(a.value('bg_color').string()).color()
 	ts.text_color = HexColor(a.value('text_color').string()).color()
-	if font_name := a.value_opt('text_font_name') { ts.text_font_name = font_name.string() }
-	if size := a.value_opt('text_size') { ts.text_size = size.int() }
-	if align := a.value_opt('text_align') { ts.text_align = unsafe { TextHorizontalAlign(align.int()) } }
-	if vertical_align := a.value_opt('text_vertical_align') { ts.text_vertical_align = unsafe { TextVerticalAlign(vertical_align.int()) } }
+	if font_name := a.value_opt('text_font_name') {
+		ts.text_font_name = font_name.string()
+	}
+	if size := a.value_opt('text_size') {
+		ts.text_size = size.int()
+	}
+	if align := a.value_opt('text_align') {
+		ts.text_align = unsafe { TextHorizontalAlign(align.int()) }
+	}
+	if vertical_align := a.value_opt('text_vertical_align') {
+		ts.text_vertical_align = unsafe { TextVerticalAlign(vertical_align.int()) }
+	}
 }
 
 fn (mut t TextBox) load_style() {
