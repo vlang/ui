@@ -1265,6 +1265,13 @@ pub fn (w &Window) get_subscriber() &eventbus.Subscriber[string] {
 pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
 	if mut window.ui.dd is DrawDeviceContext {
+		// Update ui.gg.ft.scale if the dpi has changed (dragging to another monitor)
+		window.dpi_scale = gg.dpi_scale()
+		window.ui.gg.scale = window.dpi_scale
+		if window.resizable {
+			mut ft_scale := &window.ui.gg.ft.scale
+			unsafe {*ft_scale = window.ui.gg.scale}
+		}
 		window.ui.dd.resize(w, h)
 	}
 	for mut child in window.children {
