@@ -29,9 +29,13 @@ pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
 pub fn (mut s Shortcutable) add_shortcut_context(shortcut string, context voidptr) {
 	_, code, key := parse_shortcut(shortcut)
 	if code == 0 {
-		s.shortcuts.chars[key].context = context
+		unsafe {
+			s.shortcuts.chars[key].context = context
+		}
 	} else {
-		s.shortcuts.keys[code].context = context
+		unsafe {
+			s.shortcuts.keys[code].context = context
+		}
 	}
 }
 
@@ -69,8 +73,7 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 			s = rune(96 + e.codepoint).str()
 		}
 	}
-	if s in shortcuts.chars {
-		sc := shortcuts.chars[s]
+	if sc := shortcuts.chars[s] {
 		if has_key_mods(e.mods, sc.mods) {
 			if sc.context != unsafe { nil } {
 				sc.key_fn(sc.context)
@@ -84,8 +87,8 @@ pub fn char_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 // TODO: documentation
 pub fn key_shortcut(e KeyEvent, shortcuts Shortcuts, context voidptr) {
 	// println("key_shortcut ${int(e.key)}")
-	if int(e.key) in shortcuts.keys {
-		sc := shortcuts.keys[int(e.key)]
+	ikey := int(e.key)
+	if sc := shortcuts.keys[ikey] {
 		if has_key_mods(e.mods, sc.mods) {
 			if sc.context != unsafe { nil } {
 				sc.key_fn(sc.context)

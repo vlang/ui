@@ -145,15 +145,18 @@ fn (mut gui UI) load_imgs() {
 // complete the drawing system
 pub fn (mut gui UI) load_img(id string, b []u8, path string) {
 	if mut gui.dd is DrawDeviceContext {
-		if img := gui.dd.create_image_from_byte_array(b) {
+		if mut img := gui.dd.create_image_from_byte_array(b) {
+			img.path = path
 			gui.imgs[id] = img
-			gui.imgs[id].path = path
 		}
 	}
 }
 
 pub fn (gui &UI) img(id string) gg.Image {
-	return gui.imgs[id]
+	if img := gui.imgs[id] {
+		return img
+	}
+	panic('img with id: `${id}` not found')
 }
 
 pub fn (gui &UI) has_img(id string) bool {
