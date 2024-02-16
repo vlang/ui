@@ -93,7 +93,7 @@ fn (mut pic Picture) init(parent Layout) {
 			eprintln('V UI: picture file "${pic.path}" not found')
 		}
 		if !pic.use_cache && pic.path in u.resource_cache {
-			pic.image = u.resource_cache[pic.path]
+			pic.image = unsafe { u.resource_cache[pic.path] }
 		} else if mut pic.ui.dd is DrawDeviceContext {
 			mut dd := pic.ui.dd
 			if img := dd.create_image(pic.path) {
