@@ -9,7 +9,7 @@ mut:
 
 // TODO: documentation
 pub fn (mut w WidgetThemeStyle) update_theme_style(theme_style string) {
-	w.theme_style = theme_style
+	// w.theme_style = theme_style
 }
 
 // TODO: documentation

@@ -49,17 +49,20 @@ fn (mut s Slider) load_style() {
 	if s.style_params.style != no_style {
 		style = s.style_params.style
 	}
-	s.update_theme_style(style)
+	s.apply_theme_style(style)
 	// forced overload default style
 	s.update_style(s.style_params)
 }
 
-pub fn (mut s Slider) update_theme_style(theme string) {
+pub fn (mut s Slider) update_theme_style(style string) {
+	s.theme_style = style
+	s.apply_theme_style(style)
+}
+
+fn (mut s Slider) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in s.ui.styles {
 		ss := s.ui.styles[style].slider
-		s.theme_style = theme
 		s.style.thumb_color = ss.thumb_color
 		s.style.bg_color = ss.bg_color
 		s.style.bg_border_color = ss.bg_border_color

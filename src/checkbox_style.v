@@ -66,18 +66,21 @@ pub fn (mut cb CheckBox) load_style() {
 	if cb.style_params.style != no_style {
 		style = cb.style_params.style
 	}
-	cb.update_theme_style(style)
+	cb.apply_theme_style(style)
 	// forced overload default style
 	cb.update_style(cb.style_params)
 	cb.ui.cb_image = cb.ui.img(cb.style.check_mode)
 }
 
-pub fn (mut cb CheckBox) update_theme_style(theme string) {
+pub fn (mut cb CheckBox) update_theme_style(style string) {
+	cb.theme_style = style
+	cb.apply_theme_style(style)
+}
+
+fn (mut cb CheckBox) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in cb.ui.styles {
 		cbs := cb.ui.styles[style].cb
-		cb.theme_style = theme
 		cb.update_shape_theme_style(cbs)
 		mut dtw := DrawTextWidget(cb)
 		dtw.update_theme_style(cbs)

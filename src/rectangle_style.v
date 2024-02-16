@@ -62,17 +62,20 @@ pub fn (mut rect Rectangle) load_style() {
 	if rect.style_params.style != no_style {
 		style = rect.style_params.style
 	}
-	rect.update_theme_style(style)
+	rect.apply_theme_style(style)
 	// forced overload default style
 	rect.update_style(rect.style_params)
 }
 
-pub fn (mut rect Rectangle) update_theme_style(theme string) {
+pub fn (mut rect Rectangle) update_theme_style(style string) {
+	rect.theme_style = style
+	rect.apply_theme_style(style)
+}
+
+fn (mut rect Rectangle) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in rect.ui.styles {
 		rects := rect.ui.styles[style].rect
-		rect.theme_style = theme
 		rect.update_shape_theme_style(rects)
 		mut dtw := DrawTextWidget(rect)
 		dtw.update_theme_style(rects)

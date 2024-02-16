@@ -70,17 +70,20 @@ pub fn (mut m Menu) load_style() {
 	if m.style_params.style != no_style {
 		style = m.style_params.style
 	}
-	m.update_theme_style(style)
+	m.apply_theme_style(style)
 	// forced overload default style
 	m.update_style(m.style_params)
 }
 
-pub fn (mut m Menu) update_theme_style(theme string) {
+pub fn (mut m Menu) update_theme_style(style string) {
+	m.theme_style = style
+	m.apply_theme_style(style)
+}
+
+fn (mut m Menu) apply_theme_style(style string) {
 	// println("update_style $m.id")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in m.ui.styles {
 		ms := m.ui.styles[style].menu
-		m.theme_style = theme
 		m.update_shape_theme_style(ms)
 		mut dtw := DrawTextWidget(m)
 		dtw.update_theme_style(ms)

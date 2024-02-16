@@ -66,18 +66,21 @@ pub fn (mut r Radio) load_style() {
 	if r.style_params.style != no_style {
 		style = r.style_params.style
 	}
-	r.update_theme_style(style)
+	r.apply_theme_style(style)
 	// forced overload default style
 	r.update_style(r.style_params)
 	r.ui.radio_selected_image = r.ui.img(r.style.radio_mode + '_selected')
 }
 
-pub fn (mut r Radio) update_theme_style(theme string) {
+pub fn (mut r Radio) update_theme_style(style string) {
+	r.theme_style = style
+	r.apply_theme_style(style)
+}
+
+fn (mut r Radio) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in r.ui.styles {
 		rs := r.ui.styles[style].radio
-		r.theme_style = theme
 		r.update_shape_theme_style(rs)
 		mut dtw := DrawTextWidget(r)
 		dtw.update_theme_style(rs)

@@ -49,17 +49,20 @@ fn (mut pb ProgressBar) load_style() {
 	if pb.style_params.style != no_style {
 		style = pb.style_params.style
 	}
-	pb.update_theme_style(style)
+	pb.apply_theme_style(style)
 	// forced overload default style
 	pb.update_style(pb.style_params)
 }
 
-pub fn (mut pb ProgressBar) update_theme_style(theme string) {
+pub fn (mut pb ProgressBar) update_theme_style(style string) {
+	pb.theme_style = style
+	pb.apply_theme_style(style)
+}
+
+fn (mut pb ProgressBar) apply_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in pb.ui.styles {
 		pbs := pb.ui.styles[style].pgbar
-		pb.theme_style = theme
 		pb.style.color = pbs.color
 		pb.style.border_color = pbs.border_color
 		pb.style.bg_color = pbs.bg_color

@@ -42,12 +42,11 @@ pub fn (mut w Window) load_style() {
 	// l.update_theme_style(style)
 }
 
-pub fn (mut w Window) update_theme_style(theme string) {
+pub fn (mut w Window) update_theme_style(style string) {
 	// println("update_style <$p.style>")
-	style := if theme == '' { 'default' } else { theme }
 	if style != no_style && style in w.ui.styles {
 		ws := w.ui.styles[style].win
-		w.theme_style = theme
+		w.theme_style = style
 		w.bg_color = ws.bg_color
 	}
 }
@@ -55,5 +54,16 @@ pub fn (mut w Window) update_theme_style(theme string) {
 fn (mut w Window) update_style(p WindowStyleParams) {
 	if p.bg_color != no_color {
 		w.bg_color = p.bg_color
+	}
+}
+
+pub fn (mut w Window) apply_style() {
+	w.load_style()
+	for _, mut widget in w.widgets {
+		if mut widget is WidgetThemeStyle {
+			mut wdgt := widget // work-around v compiler smart-casting bug
+			// wdgt.update_theme_style(w.theme_style)
+			wdgt.load_style()
+		}
 	}
 }
