@@ -1270,7 +1270,9 @@ pub fn (mut window Window) resize(w int, h int) {
 		window.ui.gg.scale = window.dpi_scale
 		if window.resizable {
 			mut ft_scale := &window.ui.gg.ft.scale
-			unsafe {*ft_scale = window.ui.gg.scale}
+			unsafe {
+				*ft_scale = window.ui.gg.scale
+			}
 		}
 		window.ui.dd.resize(w, h)
 	}
