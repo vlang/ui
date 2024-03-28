@@ -337,6 +337,10 @@ pub fn (mut tb TextBox) draw() {
 }
 
 pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
+	mut is_native_rendering := false
+	$if macos {
+		is_native_rendering = tb.ui.gg.native_rendering
+	}
 	offset_start(mut tb)
 	defer {
 		offset_end(mut tb)
@@ -392,13 +396,13 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		// Placeholder
 		if text == '' && placeholder != '' {
 			dtw.draw_device_styled_text(d, tb.x + ui.textbox_padding_x, text_y, placeholder,
-				color: gx.gray
+				color: gx.gray // tb.text_color
 			)
 			// Native text rendering
 			$if macos {
 				if tb.ui.gg.native_rendering {
 					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, placeholder,
-						color: gx.gray
+						color: gx.gray // tb.text_color
 					)
 				}
 			}
@@ -408,31 +412,33 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 			// Selection box
 			tb.draw_selection()
 			// Native text rendering
-			$if macos {
-				if tb.ui.gg.native_rendering {
-					tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text)
-				}
-			}
-			// The text doesn't fit, find the largest substring we can draw
-			if tb.large_text { // width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
-				if !tb.is_focused || tb.read_only {
-					skip_idx := tb.skip_index_from_start(ustr, dtw)
-					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(skip_idx +
-						1)].string())
-				} else {
-					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[tb.draw_start..tb.draw_end].string())
-				}
+			if is_native_rendering {
+				tb.ui.gg.draw_text(tb.x + ui.textbox_padding_x, text_y, text,
+					color: tb.style_params.text_color
+				)
 			} else {
-				if tb.is_password {
-					dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
-				} else {
-					if tb.justify != top_left {
-						mut aw := AdjustableWidget(tb)
-						dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
-						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x + dx, text_y + dy,
-							text)
+				// The text doesn't fit, find the largest substring we can draw
+				if tb.large_text { // width > tb.width - 2 * ui.textbox_padding_x && !tb.is_password {
+					if !tb.is_focused || tb.read_only {
+						skip_idx := tb.skip_index_from_start(ustr, dtw)
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[..(
+							skip_idx + 1)].string())
 					} else {
-						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, text)
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, ustr[tb.draw_start..tb.draw_end].string())
+					}
+				} else {
+					if tb.is_password {
+						dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y, '*'.repeat(text_len))
+					} else {
+						if tb.justify != top_left {
+							mut aw := AdjustableWidget(tb)
+							dx, dy := aw.get_align_offset(tb.justify[0], tb.justify[1])
+							dtw.draw_device_text(d, tb.x + ui.textbox_padding_x + dx,
+								text_y + dy, text)
+						} else {
+							dtw.draw_device_text(d, tb.x + ui.textbox_padding_x, text_y,
+								text)
+						}
 					}
 				}
 			}
@@ -457,9 +463,14 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 					cursor_x += dtw.text_width(left)
 				}
 			}
-			// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
-			d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
-				tb.text_styles.current.color)
+			if is_native_rendering {
+				tb.ui.gg.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+					tb.style_params.cursor_color)
+			} else {
+				// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
+				d.draw_rect_filled(cursor_x, tb.y + ui.textbox_padding_y, 1, tb.line_height,
+					tb.style_params.cursor_color)
+			}
 		}
 	}
 	$if bb ? {

@@ -28,6 +28,7 @@ pub:
 	scrollview bool
 	clipping   bool
 	children   []Widget
+	hidden     bool
 }
 
 pub fn row(c RowParams) &Stack {
@@ -50,5 +51,6 @@ pub fn row(c RowParams) &Stack {
 		scrollview: c.scrollview
 		clipping: c.clipping
 		children: c.children
+		// hidden: c.hidden
 	)
 }

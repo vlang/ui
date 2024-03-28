@@ -8,9 +8,10 @@ type NavFinishedFn = fn (url string)
 pub struct WebView {
 	// widget ui.Widget
 	url string
-	obj voidptr
 mut:
 	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
+pub:
+	obj voidptr
 }
 
 pub struct Config {
@@ -49,6 +50,13 @@ pub fn exec(scriptSource string) {
 pub fn get_global_js_val() string {
 	$if macos {
 		return C.darwin_get_webview_js_val()
+	}
+	return ''
+}
+
+pub fn get_global_cookie_val() string {
+	$if macos {
+		return C.darwin_get_webview_cookie_val()
 	}
 	return ''
 }

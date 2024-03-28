@@ -22,6 +22,7 @@ pub mut:
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
+	cursor_color        gx.Color = no_color
 }
 
 // Style with Text

@@ -30,6 +30,7 @@ pub mut:
 	keymods      KeyMod
 	styles       map[string]Style
 	style_colors []gx.Color
+	// run_fn       fn () = unsafe { nil }
 mut:
 	cb_image gg.Image
 	// used only in checkbox.v
@@ -206,6 +207,13 @@ pub fn run(window &Window) {
 		// waiting 2x this time should be enough to ensure the gui.loop
 		// thread will exit before us, without using a waitgroup here too
 		time.sleep(20 * time.millisecond)
+
+		/*
+		if gui.run_fn != unsafe { nil } {
+			gui.run_fn()
+			gui.run_fn = unsafe { nil }
+		}
+		*/
 	}
 }
 
