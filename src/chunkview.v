@@ -279,7 +279,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 						ind = -2
 					} else {
 						// index of last whitespace except when at the end
-						ind = left.trim_right(' ').index_last(' ') or { -2 }
+						ind = left.trim_right(' ').last_index(' ') or { -2 }
 						if ind >= 0 {
 							if right.len == 0 {
 								right = left[(ind + 1)..]

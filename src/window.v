@@ -155,6 +155,8 @@ pub:
 	enable_dragndrop             bool = true
 	max_dropped_files            int  = 5
 	max_dropped_file_path_length int  = 2048
+	min_width                    int  = 100
+	min_height                   int  = 100
 }
 
 pub fn window(cfg WindowParams) &Window {
@@ -249,7 +251,8 @@ pub fn window(cfg WindowParams) &Window {
 		Context: gg.new_context(
 			width: width
 			height: height
-			use_ortho: true // This is needed for 2D drawing
+			min_width: cfg.min_width
+			min_height: cfg.min_height
 			create_window: true // TODO: Unused ?
 			window_title: cfg.title
 			resizable: resizable
@@ -495,6 +498,10 @@ fn frame_native(mut w Window) {
 		}
 	}
 	*/
+
+	if w.on_draw != WindowFn(0) {
+		w.on_draw(w)
+	}
 
 	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
 	// if w.child_window == 0 {

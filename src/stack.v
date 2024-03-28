@@ -127,6 +127,7 @@ struct StackParams {
 	scrollview            bool
 	clipping              bool
 	children              []Widget
+	hidden                bool
 }
 
 fn stack(c StackParams) &Stack {
@@ -150,6 +151,7 @@ fn stack(c StackParams) &Stack {
 		alignments: c.align
 		style_params: c.StackStyleParams
 		title: c.title
+		hidden: c.hidden
 		ui: unsafe { nil }
 	}
 	s.style_params.style = c.theme
