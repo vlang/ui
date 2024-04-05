@@ -18,12 +18,14 @@ pub enum HorizontalAlignment {
 }
 
 pub struct HorizontalAlignments {
+pub:
 	left   []int
 	center []int
 	right  []int
 }
 
 pub struct VerticalAlignments {
+pub:
 	top    []int
 	center []int
 	bottom []int
@@ -31,6 +33,7 @@ pub struct VerticalAlignments {
 
 // Anticipating replacement of VerticalAlignments
 pub struct Alignments {
+pub:
 	center       []int
 	left_top     []int
 	top          []int

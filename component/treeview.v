@@ -152,6 +152,7 @@ pub mut:
 
 @[params]
 pub struct TreeViewParams {
+pub:
 	id           string
 	trees        []Tree
 	icons        map[string]string
@@ -205,6 +206,7 @@ pub fn treeview_stack(c TreeViewParams) &ui.Stack {
 
 @[params]
 pub struct TreeViewDirParams {
+pub:
 	id           string = 'tvd'
 	trees        []string
 	icons        map[string]string

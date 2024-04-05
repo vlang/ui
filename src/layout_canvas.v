@@ -94,6 +94,7 @@ mut:
 @[params]
 pub struct CanvasLayoutParams {
 	CanvasLayoutStyleParams
+pub:
 	id                string
 	width             int
 	height            int

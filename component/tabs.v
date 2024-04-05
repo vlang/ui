@@ -29,6 +29,7 @@ pub mut:
 
 @[params]
 pub struct TabsParams {
+pub:
 	id          string
 	mode        TabsMode = .vertical
 	active      int

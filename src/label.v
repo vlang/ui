@@ -39,6 +39,7 @@ pub mut:
 @[params]
 pub struct LabelParams {
 	LabelStyleParams
+pub:
 	id       string
 	width    int
 	height   int

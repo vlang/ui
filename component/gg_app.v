@@ -14,6 +14,7 @@ pub mut:
 
 @[params]
 pub struct GGComponentParams {
+pub:
 	id      string = 'gg_app'
 	app     ui.GGApplication
 	z_index int

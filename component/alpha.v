@@ -17,6 +17,7 @@ pub mut:
 
 @[params]
 pub struct AlphaParams {
+pub:
 	id         string
 	alpha      int
 	direction  ui.Direction = .column

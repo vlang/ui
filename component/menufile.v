@@ -22,6 +22,7 @@ pub mut:
 
 @[params]
 pub struct MenuFileParams {
+pub:
 	id              string
 	hidden_files    bool
 	dirs            []string

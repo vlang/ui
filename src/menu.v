@@ -54,6 +54,7 @@ mut:
 @[params]
 pub struct MenuParams {
 	MenuStyleParams
+pub:
 	id          string
 	width       int = ui.menu_width
 	height      int = ui.menu_height
@@ -499,6 +500,7 @@ mut:
 
 @[params]
 pub struct MenuItemParams {
+pub:
 	id      string
 	text    string
 	submenu &Menu      = unsafe { nil }

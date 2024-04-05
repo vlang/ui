@@ -24,7 +24,7 @@ pub mut:
 @[params]
 pub struct RectangleStyleParams {
 	WidgetTextStyleParams
-mut:
+pub mut:
 	style        string   = no_style
 	border_color gx.Color = no_color
 	color        gx.Color = no_color

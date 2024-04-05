@@ -51,6 +51,7 @@ pub mut:
 
 @[params]
 pub struct RasterViewParams {
+pub:
 	id       string
 	width    int = 16
 	height   int = 16

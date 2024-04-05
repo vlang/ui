@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct DoubleListBoxParams {
+pub:
 	id    string
 	title string
 	items []string

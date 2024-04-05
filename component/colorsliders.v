@@ -29,6 +29,7 @@ pub mut:
 
 @[params]
 pub struct ColorSlidersParams {
+pub:
 	id          string
 	color       gx.Color       = gx.white
 	orientation ui.Orientation = .vertical

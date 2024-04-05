@@ -9,6 +9,7 @@ const newfilebrowser_subwindow_id = '_sw_newfilebrowser'
 @[params]
 pub struct FileBrowserSubWindowParams {
 	FileBrowserParams
+pub:
 	x int
 	y int
 }

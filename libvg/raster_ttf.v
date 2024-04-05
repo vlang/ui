@@ -44,6 +44,7 @@ pub fn (r &Raster) get_info_string() {
 
 @[params]
 pub struct SetFontSizeParams {
+pub:
 	font_size  int
 	device_dpi int = 72
 }

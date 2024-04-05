@@ -15,6 +15,7 @@ pub:
 }
 
 pub struct Config {
+pub:
 	url   string
 	title string
 	// parent          &ui.Window
