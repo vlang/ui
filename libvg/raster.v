@@ -32,6 +32,7 @@ pub mut:
 
 @[params]
 pub struct RasterParams {
+pub:
 	width    int = 16
 	height   int = 16
 	channels int = 4

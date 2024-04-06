@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct SvgParams {
+pub:
 	height int
 	width  int
 }
@@ -60,6 +61,7 @@ pub fn (mut s Svg) save(filepath string) ! {
 
 @[params]
 pub struct Params {
+pub:
 	stroke      string = 'none'
 	strokewidth int
 	fill        string = 'none'

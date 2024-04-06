@@ -43,6 +43,7 @@ pub mut:
 
 @[params]
 pub struct SubWindowParams {
+pub:
 	id         string
 	x          int
 	y          int

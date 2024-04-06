@@ -16,7 +16,7 @@ const para_style_delim = '|'
 
 @[params]
 pub struct Offset {
-mut:
+pub mut:
 	x int
 	y int
 }
@@ -60,6 +60,7 @@ mut:
 
 @[params]
 pub struct TextChunkParams {
+pub:
 	x     int
 	y     int
 	text  string
@@ -167,6 +168,7 @@ mut:
 
 @[params]
 pub struct ParaChunkParams {
+pub:
 	x         int
 	y         int
 	margin    int
@@ -374,6 +376,7 @@ pub mut:
 
 @[params]
 pub struct AlignChunkParams {
+pub:
 	x         int
 	y         int
 	spacing   int = 10
@@ -384,6 +387,7 @@ pub struct AlignChunkParams {
 @[params]
 pub struct VerticalAlignChunkParams {
 	AlignChunkParams
+pub:
 	align f32 // in [0,1]
 }
 
@@ -624,6 +628,7 @@ pub mut:
 
 @[params]
 pub struct RowChunkParams {
+pub:
 	x         int
 	y         int
 	chunks    []ChunkContent
@@ -776,6 +781,7 @@ pub mut:
 
 @[params]
 pub struct ChunkViewParams {
+pub:
 	id               string
 	chunks           []ChunkContent
 	clipping         bool     = true

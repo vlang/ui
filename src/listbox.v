@@ -70,7 +70,7 @@ pub mut:
 @[params]
 pub struct ListBoxParams {
 	ListBoxStyleParams
-mut:
+pub mut:
 	x             int
 	y             int
 	width         int

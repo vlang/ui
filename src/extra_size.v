@@ -113,6 +113,7 @@ pub mut:
 
 // for Config
 pub struct Margin {
+pub:
 	top    f64
 	right  f64
 	bottom f64

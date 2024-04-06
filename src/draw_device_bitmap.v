@@ -13,6 +13,7 @@ pub mut:
 
 @[params]
 pub struct DrawDeviceBitmapParams {
+pub:
 	id string = 'dd_bitmap'
 }
 

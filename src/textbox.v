@@ -119,6 +119,7 @@ pub enum TextBoxMode {
 @[params]
 pub struct TextBoxParams {
 	TextBoxStyleParams
+pub:
 	id                 string
 	width              int
 	height             int = 22

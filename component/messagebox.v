@@ -16,6 +16,7 @@ pub struct MessageBoxComponent {
 
 @[params]
 pub struct MessageBoxParams {
+pub:
 	id       string
 	text     string
 	on_click MessageBoxFn = MessageBoxFn(0)

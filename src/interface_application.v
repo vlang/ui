@@ -26,6 +26,7 @@ pub fn (mut app Application) add_window(p WindowParams) {
 
 @[params]
 pub struct WindowCallbackParams {
+pub:
 	on_click         WindowMouseFn     = unsafe { nil }
 	on_mouse_down    WindowMouseFn     = unsafe { nil }
 	on_mouse_up      WindowMouseFn     = unsafe { nil }

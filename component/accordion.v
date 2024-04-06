@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct AccordionParams {
+pub:
 	id         string
 	titles     []string
 	children   []ui.Widget

@@ -54,6 +54,7 @@ pub mut:
 @[params]
 pub struct CheckBoxParams {
 	CheckBoxStyleParams
+pub:
 	id               string
 	x                int
 	y                int

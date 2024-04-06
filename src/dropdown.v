@@ -41,6 +41,7 @@ pub mut:
 @[params]
 pub struct DropdownParams {
 	DropdownStyleParams
+pub:
 	id             string
 	def_text       string
 	x              int

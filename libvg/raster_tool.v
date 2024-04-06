@@ -599,6 +599,7 @@ fn color_multiply_alpha(c gx.Color, a f64) gx.Color {
 
 @[params]
 pub struct TextBlockParams {
+pub:
 	x         int  // x postion of the left high corner
 	y         int  // y postion of the left high corner
 	w         int  // width of the text block

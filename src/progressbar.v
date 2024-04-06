@@ -31,6 +31,7 @@ pub mut:
 @[params]
 pub struct ProgressBarParams {
 	ProgressBarStyleParams
+pub:
 	id      string
 	width   int
 	height  int = 16

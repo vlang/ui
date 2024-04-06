@@ -30,6 +30,7 @@ mut:
 
 @[params]
 pub struct CanvasParams {
+pub:
 	id       string
 	width    int
 	height   int

@@ -37,6 +37,7 @@ mut:
 
 @[params]
 pub struct PictureParams {
+pub:
 	id           string
 	path         string
 	width        int

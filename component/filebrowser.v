@@ -16,6 +16,7 @@ pub mut:
 
 @[params]
 pub struct FileBrowserParams {
+pub:
 	id              string
 	dirs            []string = [os.expand_tilde_to_home('~'), '/']
 	text_ok         string   = 'Ok'

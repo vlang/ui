@@ -25,7 +25,7 @@ pub mut:
 @[params]
 pub struct CheckBoxStyleParams {
 	WidgetTextStyleParams
-mut:
+pub mut:
 	style        string   = no_style
 	border_color gx.Color = no_color
 	bg_color     gx.Color = no_color

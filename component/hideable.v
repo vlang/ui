@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct HideableParams {
+pub:
 	id       string
 	bg_color gx.Color
 	layout   &ui.Stack = unsafe { nil }

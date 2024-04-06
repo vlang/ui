@@ -78,6 +78,7 @@ pub mut:
 
 @[params]
 pub struct GridParams {
+pub:
 	vars         map[string]GridData
 	formulas     map[string]string
 	width        int  = 100

@@ -4,6 +4,7 @@ import ui
 
 @[params]
 pub struct MessageBoxSubWindowParams {
+pub:
 	id       string
 	text     string
 	shortcut string = 'ctrl + h'

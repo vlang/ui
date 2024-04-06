@@ -14,6 +14,7 @@ pub mut:
 @[params]
 pub struct DataGridParams {
 	GridParams // for settings prepended by settings_
+pub:
 	settings_bg_color gx.Color = gx.light_blue
 	settings_z_index  int      = 100
 }

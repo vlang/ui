@@ -62,6 +62,7 @@ pub mut:
 
 @[params]
 pub struct ColorBoxParams {
+pub:
 	id    string
 	light bool
 	hsl   bool

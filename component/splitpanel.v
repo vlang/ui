@@ -20,6 +20,7 @@ pub mut:
 
 @[params]
 pub struct SplitPanelParams {
+pub:
 	id        string
 	child1    &ui.Widget   = unsafe { nil }
 	child2    &ui.Widget   = unsafe { nil }

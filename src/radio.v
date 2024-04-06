@@ -62,6 +62,7 @@ pub mut:
 @[params]
 pub struct RadioParams {
 	RadioStyleParams
+pub:
 	id       string
 	on_click RadioFn = unsafe { nil }
 	values   []string

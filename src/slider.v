@@ -55,6 +55,7 @@ pub mut:
 @[params]
 pub struct SliderParams {
 	SliderStyleParams
+pub:
 	id                   string
 	width                int
 	height               int

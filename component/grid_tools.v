@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct GridSettingsParams {
+pub:
 	id       string
 	bg_color gx.Color       = gx.light_blue
 	grid     &GridComponent = unsafe { nil }

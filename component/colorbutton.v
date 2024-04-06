@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct ColorButtonParams {
+pub:
 	id           string
 	text         string
 	height       int
