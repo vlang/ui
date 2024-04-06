@@ -7,6 +7,7 @@ import gx
 
 @[params]
 pub struct ColumnParams {
+pub:
 	id        string
 	width     int // To remove soon
 	height    int // To remove soon

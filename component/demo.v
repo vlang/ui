@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct DemoParams {
+pub:
 	id string = 'demo'
 }
 

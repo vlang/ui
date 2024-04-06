@@ -10,6 +10,7 @@ struct DrawDevicePrint {
 
 @[params]
 pub struct DrawDevicePrintParams {
+pub:
 	id       string = 'dd_print'
 	filename string
 }

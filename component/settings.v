@@ -19,6 +19,7 @@ mut:
 
 @[params]
 pub struct SettingFontParams {
+pub:
 	id    string
 	param string
 	text  string

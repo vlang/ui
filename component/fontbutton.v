@@ -12,6 +12,7 @@ pub mut:
 
 @[params]
 pub struct FontButtonParams {
+pub:
 	id           string
 	dtw          ui.DrawTextWidget = ui.canvas_plus()
 	text         string

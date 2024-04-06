@@ -37,6 +37,7 @@ mut:
 @[params]
 pub struct RectangleParams {
 	RectangleStyleParams
+pub:
 	id      string
 	text    string
 	height  int

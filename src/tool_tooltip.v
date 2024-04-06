@@ -38,6 +38,7 @@ mut:
 }
 
 pub struct TooltipMessage {
+pub:
 	text string
 	side Side = .right
 }

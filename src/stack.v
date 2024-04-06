@@ -1423,7 +1423,7 @@ fn (s &Stack) get_horizontal_alignment(i int) HorizontalAlignment {
 //**** ChildrenParams *****
 @[params]
 pub struct ChildrenParams {
-mut:
+pub mut:
 	// add or remove or migrate
 	at      int  = -1
 	widths  Size = Size(-1.0)

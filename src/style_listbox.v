@@ -27,7 +27,7 @@ pub mut:
 @[params]
 pub struct ListBoxStyleParams {
 	WidgetTextStyleParams
-mut:
+pub mut:
 	style            string = no_style
 	radius           f32
 	border_color     gx.Color = no_color

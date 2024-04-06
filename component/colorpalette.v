@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct ColorPaletteParams {
+pub:
 	id        string
 	title     string
 	items     []string

@@ -24,6 +24,7 @@ pub mut:
 
 @[params]
 pub struct GridParams {
+pub:
 	header      []string
 	body        [][]string
 	height      int = 200

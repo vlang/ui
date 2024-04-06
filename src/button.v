@@ -31,6 +31,7 @@ type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
 @[heap]
 pub struct Button {
 	// init size read-only
+pub:
 	width_  int
 	height_ int
 pub mut:
@@ -89,6 +90,7 @@ pub mut:
 @[params]
 pub struct ButtonParams {
 	ButtonStyleParams
+pub:
 	id             string
 	text           string
 	icon_path      string
