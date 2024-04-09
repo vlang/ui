@@ -14,6 +14,7 @@ pub mut:
 
 @[params]
 struct DrawDeviceSVGParams {
+pub:
 	id string = 'dd_svg'
 }
 
