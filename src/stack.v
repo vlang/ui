@@ -106,6 +106,7 @@ pub mut:
 @[params]
 struct StackParams {
 	StackStyleParams
+pub:
 	id                   string
 	width                int // useful for root_layout to init size
 	height               int

@@ -22,6 +22,7 @@ pub mut: // inside an unique sokol Window
 @[params]
 pub struct WindowManagerParams {
 	WindowParams
+pub:
 	scrollview bool
 	kind       WMMode
 	apps       map[string]Application

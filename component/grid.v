@@ -6,7 +6,7 @@ import gx
 import math
 
 pub struct Factor {
-mut:
+pub mut:
 	levels []string
 	values []int
 }
@@ -86,7 +86,7 @@ pub:
 	scrollview   bool = true
 	is_focused   bool
 	fixed_height bool = true
-mut:
+pub mut:
 	id string
 }
 

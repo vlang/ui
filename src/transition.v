@@ -32,6 +32,7 @@ pub mut:
 
 @[params]
 pub struct TransitionParams {
+pub:
 	z_index        int
 	duration       int
 	animated_value &int = unsafe { nil }

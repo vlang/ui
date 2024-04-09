@@ -10,7 +10,7 @@ const root_sep = '_|||_'
 type TreeItem = Tree | string
 
 pub struct Tree {
-mut:
+pub mut:
 	title string
 	items []TreeItem
 }

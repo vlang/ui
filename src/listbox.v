@@ -913,6 +913,7 @@ pub mut:
 
 @[params]
 struct ListItemParams {
+pub:
 	id       string
 	list     &ListBox = unsafe { nil }
 	x        int

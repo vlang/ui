@@ -41,6 +41,7 @@ pub mut:
 
 @[params]
 pub struct SwitchParams {
+pub:
 	id          string
 	z_index     int
 	on_click    SwitchFn    = unsafe { nil }

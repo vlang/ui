@@ -17,6 +17,7 @@ type ActiveCells = AlphaCell | AlphaCellBlock
 
 // Matrix-like (zero indexed)
 pub struct GridCell {
+pub:
 	i int
 	j int
 }
