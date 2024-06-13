@@ -114,6 +114,7 @@ fn (mut gui UI) idle_loop() {
 
 fn (mut gui UI) load_imgs() {
 	// images
+	gui.load_img('arrow', $embed_file('assets/img/arrow.png').to_bytes(), 'assets/img/arrow.png')
 	gui.load_img('arrow_black', $embed_file('assets/img/arrow_black.png').to_bytes(),
 		'assets/img/arrow_black.png')
 	gui.load_img('arrow_white', $embed_file('assets/img/arrow_white.png').to_bytes(),
@@ -156,6 +157,10 @@ pub fn (mut gui UI) load_img(id string, b []u8, path string) {
 pub fn (gui &UI) img(id string) gg.Image {
 	if img := gui.imgs[id] {
 		return img
+	}
+	eprintln('> present gui.imgs.keys(): ')
+	for k in gui.imgs.keys() {
+		eprintln('   k: ${k}')
 	}
 	panic('img with id: `${id}` not found')
 }
