@@ -29,6 +29,8 @@ struct HSVColor {
 pub struct ColorBoxComponent {
 mut:
 	simg       C.sg_image
+	sampler    C.sg_sampler
+	buf        &u8 = unsafe { 0 }
 	h          f64 = 0.0
 	s          f64 = 0.75
 	v          f64 = 0.75
@@ -185,6 +187,8 @@ fn colorbox_init(layout &ui.Stack) {
 	}
 	cb.update_theme()
 	cb.simg = ui.create_dynamic_texture(256, 256)
+	cb.sampler = ui.create_image_sampler()
+	cb.buf = unsafe { malloc(4 * 256 * 256) }
 	cb.update_buffer()
 }
 
@@ -249,7 +253,7 @@ fn cv_sv_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 	mut cb := colorbox_component(c)
 
 	// TODO: check extra_draw c.draw_device_texture
-	c.draw_texture(cb.simg)
+	c.draw_texture(cb.simg, cb.sampler)
 
 	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 10, int((1.0 - cb.v) * 256.0) - 10,
 		20, 20, 10, cb.hsv_to_rgb(cb.h, 1 - cb.s, 1.0 - cb.v))
@@ -336,9 +340,7 @@ pub fn (mut cb ColorBoxComponent) update_sel_color() {
 
 // TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_buffer() {
-	unsafe { ui.destroy_texture(cb.simg) }
-	sz := 256 * 256 * 4
-	buf := unsafe { malloc(sz) }
+	buf := unsafe { cb.buf }
 	mut col := gx.Color{}
 	mut i := 0
 	for y in 0 .. 256 {
@@ -353,11 +355,7 @@ pub fn (mut cb ColorBoxComponent) update_buffer() {
 			}
 		}
 	}
-	unsafe {
-		cb.simg = ui.create_texture(256, 256, buf)
-		// update_text_texture(cb.simg, 256, 256, buf)
-		free(buf)
-	}
+	ui.update_text_texture(cb.simg, 256, 256, cb.buf)
 }
 
 fn tb_char(tb &ui.TextBox, cp u32) {
