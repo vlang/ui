@@ -55,9 +55,9 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 				ui.row(
 					id: tab_id(c.id, i) + '_row'
 					children: [
-						ui.label(id: tab_id(c.id, i) + '_label', text: tab)
+						ui.label(id: tab_id(c.id, i) + '_label', text: tab),
 					]
-				)
+				),
 			]
 		)
 	}
@@ -270,4 +270,3 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		c.set_child_relative_pos(row_id, dx, dy)
 	}
 }
-
