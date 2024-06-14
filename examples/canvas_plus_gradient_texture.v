@@ -39,15 +39,13 @@ fn (mut app App) init_texture(w &ui.Window) {
 }
 
 fn (app &App) draw_gradient(mut d ui.DrawDevice, c &ui.CanvasLayout) {
-	target_rgb := gx.rgb(255, 0, 0)
-	mut target_h, _, _ := ui.rgb_to_hsv(target_rgb)
+	target_hue, _, _ := ui.rgb_to_hsv(gx.rgb(255, 0, 0))
 	mut i := 0
 	for y in 0 .. 256 {
 		for x in 0 .. 256 {
-			hue := target_h
 			saturation := f32(y) / 255.0
 			value := f32(255 - x) / 255.0
-			rgb_color := ui.hsv_to_rgb(hue, saturation, value)
+			rgb_color := ui.hsv_to_rgb(target_hue, saturation, value)
 			unsafe {
 				app.buf[i] = rgb_color.r
 				app.buf[i + 1] = rgb_color.g
