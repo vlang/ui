@@ -3,6 +3,7 @@ module ui
 import gx
 import math
 import sokol.sgl
+import sokol.gfx
 
 // const (
 // 	empty_text_cfg = gx.TextCfg{}
@@ -330,16 +331,12 @@ pub fn create_dynamic_texture(w int, h int) C.sg_image {
 	mut img_desc := C.sg_image_desc{
 		width: w
 		height: h
-		num_mipmaps: 0
-		// min_filter: .linear
-		// mag_filter: .linear
+		pixel_format: .rgba8
+		num_mipmaps: 1
+		num_slices: 1
 		usage: .dynamic
-		// wrap_u: .clamp_to_edge
-		// wrap_v: .clamp_to_edge
-		label: &u8(0)
-		d3d11_texture: 0
+		label: c'a dynamic texture'
 	}
-
 	sg_img := C.sg_make_image(&img_desc)
 	return sg_img
 }
@@ -355,9 +352,30 @@ pub fn update_text_texture(sg_img C.sg_image, w int, h int, buf &u8) {
 	C.sg_update_image(sg_img, &tmp_sbc)
 }
 
+@[params]
+pub struct StreamingImageConfig {
+pub:
+	wrap_u      gfx.Wrap   = .clamp_to_edge
+	wrap_v      gfx.Wrap   = .clamp_to_edge
+	min_filter  gfx.Filter = .linear
+	mag_filter  gfx.Filter = .linear
+	num_mipmaps int        = 1
+	num_slices  int        = 1
+}
+
+pub fn create_image_sampler(sicfg StreamingImageConfig) gfx.Sampler {
+	mut smp_desc := gfx.SamplerDesc{
+		wrap_u: sicfg.wrap_u
+		wrap_v: sicfg.wrap_v
+		min_filter: sicfg.min_filter
+		mag_filter: sicfg.mag_filter
+	}
+	return gfx.make_sampler(&smp_desc)
+}
+
 // REMOVED: this function uses internals of gg.Context which we probably do not
 // want to reproduce in the DrawDevice interface
-pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
+pub fn (c &CanvasLayout) draw_texture(simg gfx.Image, sampler gfx.Sampler) {
 	ctx := c.ui.dd
 	if ctx is DrawDeviceContext {
 		cx, cy := c.x + c.offset_x, c.y + c.offset_y
@@ -371,7 +389,7 @@ pub fn (c &CanvasLayout) draw_texture(simg C.sg_image) {
 		y1 := f32((cy + c.height) * ctx.scale)
 		sgl.load_pipeline(ctx.pipeline.alpha)
 		sgl.enable_texture()
-		// sgl.texture(simg)
+		sgl.texture(simg, sampler)
 		sgl.begin_quads()
 		sgl.c4b(255, 255, 255, 255)
 		sgl.v2f_t2f(x0, y0, u0, v0)
