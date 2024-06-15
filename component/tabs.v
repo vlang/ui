@@ -52,7 +52,12 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 			// bg_color: gx.white
 			on_key_down: tab_key_down
 			children: [
-				ui.label(id: tab_id(c.id, i) + '_label', text: tab),
+				ui.row(
+					id: tab_id(c.id, i) + '_row'
+					children: [
+						ui.label(id: tab_id(c.id, i) + '_label', text: tab),
+					]
+				),
 			]
 		)
 	}
@@ -260,7 +265,8 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		// println("$dx, $dy $lab.x $lab.y")
 		lab.set_pos(dx, dy)
 		// println("$dx, $dy $lab.x $lab.y")
+		row_id := tab_id(tabs.id, i) + '_row'
 		mut c := win.get_or_panic[ui.CanvasLayout](tab_id(tabs.id, i))
-		c.set_child_relative_pos(lab_id, dx, dy)
+		c.set_child_relative_pos(row_id, dx, dy)
 	}
 }
