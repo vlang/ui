@@ -1,12 +1,14 @@
 module ui
 
 import gx
+import math { max }
 
 // ScrollView exists only when attached to Widget
 // Is it not a widget but attached to a widget.
 // A ScrollableWidget would have a field scrollview
 
 pub const scrollbar_size = 10
+pub const scrollbar_thumb_size = 16
 pub const scroolbar_thumb_color = gx.rgb(87, 153, 245)
 pub const scrollbar_background_color = gx.rgb(219, 219, 219)
 pub const scrollbar_button_color = gx.rgb(150, 150, 150)
@@ -564,7 +566,7 @@ fn (mut sv ScrollView) update() {
 	if sv.active_x {
 		sv.sb_w = sv.width - ui.scrollbar_size
 		sv.btn_w = if sv.width < sv.adj_width {
-			int(f32(sv.width) / f32(sv.adj_width) * f32(sv.sb_w))
+			max(int(f32(sv.width) / f32(sv.adj_width) * f32(sv.sb_w)), ui.scrollbar_thumb_size)
 		} else {
 			sv.sb_w
 		}
@@ -573,7 +575,7 @@ fn (mut sv ScrollView) update() {
 		sv.sb_h = sv.height - ui.scrollbar_size
 		sv.btn_h = if sv.height < sv.adj_height {
 			// println("update: sv.sb_h=$sv.sb_h sv.btn_h = int(${f32(sv.height)} / ${f32(sv.adj_height)} * ${f32(sv.sb_h)} = $sv.btn_h")
-			int(f64(sv.height) / f64(sv.adj_height) * f64(sv.sb_h))
+			max(int(f64(sv.height) / f64(sv.adj_height) * f64(sv.sb_h)), ui.scrollbar_thumb_size)
 		} else {
 			sv.sb_h
 		}
