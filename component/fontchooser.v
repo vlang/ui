@@ -18,7 +18,7 @@ pub struct FontChooserParams {
 pub:
 	id         string = component.fontchooser_lb_id
 	draw_lines bool   = true
-	dtw        ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
+	dtw        &ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
 }
 
 // TODO: documentation
