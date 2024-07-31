@@ -156,12 +156,12 @@ pub fn (d &DrawDeviceBitmap) get_clipping() Rect {
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, color gx.Color, params gg.DrawPixelConfig) {
 	// println("$d.id draw_pixel($x, $y, $color)")
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_pixels(points []f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_pixels(points []f32, color gx.Color, params gg.DrawPixelConfig) {
 	// println("$d.id draw_pixels($points, $color)")
 }
 

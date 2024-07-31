@@ -87,12 +87,12 @@ pub fn (d &DrawDevicePrint) get_clipping() Rect {
 }
 
 // TODO: documentation
-pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_pixel(x f32, y f32, color gx.Color, params gg.DrawPixelConfig) {
 	println('${d.id} draw_pixel(${x}, ${y}, ${color})')
 }
 
 // TODO: documentation
-pub fn (d &DrawDevicePrint) draw_pixels(points []f32, color gx.Color) {
+pub fn (d &DrawDevicePrint) draw_pixels(points []f32, color gx.Color, params gg.DrawPixelConfig) {
 	println('${d.id} draw_pixels(${points}, ${color})')
 }
 
