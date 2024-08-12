@@ -340,6 +340,9 @@ fn (mut tv TextView) insert(s string) {
 
 fn (mut tv TextView) delete_cur_char() {
 	mut ustr := tv.text.runes()
+	if tv.cursor_pos >= ustr.len {
+		return
+	}
 	ustr.delete(tv.cursor_pos)
 	unsafe {
 		*tv.text = ustr.string()
