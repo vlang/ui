@@ -710,10 +710,47 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			}
 			tv.cursor_allways_visible()
 		}
-		.left, .right, .up, .down {
+		.left, .right {
+			ustr := tv.text.runes()
+			word_start, word_end := if shift_key(e.mods) || ctrl_key(e.mods) {
+				tv.get_word_bounds()
+			} else {
+				// If shift and ctrl are not pressed, calculating the word bounds is not necessary
+				0, 0
+			}
+
+			move_amount := if e.key == .left {
+				if ctrl_key(e.mods) && word_start < tv.cursor_pos {
+					-(tv.cursor_pos - word_start)
+				} else {
+					-1
+				}
+			} else {
+				if ctrl_key(e.mods) && word_end > tv.cursor_pos {
+					word_end - tv.cursor_pos
+				} else {
+					1
+				}
+			}
+			move_target := math.min(math.max(tv.cursor_pos + move_amount, 0), ustr.len)
+
+			if shift_key(e.mods) {
+				if !tv.is_sel_active() {
+					tv.tb.sel_active = true
+					tv.sel_start = tv.cursor_pos
+					tv.tb.ui.show_cursor = false
+				}
+				tv.cursor_pos = move_target
+				tv.sel_end = tv.cursor_pos
+				tv.sync_text_lines()
+			} else {
+				tv.cancel_selection()
+				tv.tb.ui.show_cursor = true
+				tv.cursor_pos = move_target
+			}
+		}
+		.up, .down {
 			dir := match e.key {
-				.left { Side.left }
-				.right { Side.right }
 				.up { Side.top }
 				else { Side.bottom }
 			}
