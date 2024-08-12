@@ -402,34 +402,6 @@ fn (mut tv TextView) delete_prev(count int) {
 	tv.update_lines()
 }
 
-fn (mut tv TextView) delete_prev_word() {
-	if tv.cursor_pos <= 0 {
-		tv.cursor_pos = 0
-		return
-	}
-	mut ustr := tv.text.runes()
-	// Delete until previous whitespace
-	// TODO!!!!
-	// mut i := tv.cursor_pos
-	// for {
-	// 	if i > 0 {
-	// 		i--
-	// 	}
-	// 	if text[i].is_space() || i == 0 {
-	// 		// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos_i]}
-	// 		break
-	// 	}
-	// }
-	// tb.cursor_pos_i = i
-	tv.cursor_pos--
-	ustr.delete(tv.cursor_pos)
-	unsafe {
-		*tv.text = ustr.string()
-	}
-	tv.refresh_visible_lines()
-	tv.update_lines()
-}
-
 fn (mut tv TextView) delete_selection() {
 	// tv.info()
 	if tv.sel_start > tv.sel_end {
