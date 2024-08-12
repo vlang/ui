@@ -1,11 +1,13 @@
 module ui
 
 import gx
+import math
 // import time
 // import encoding.utf8
 
 const textview_margin = 10
 const wordwrap_border = 20
+const word_separator = ' \n\t\v\f\r'
 
 // position (cursor_pos, sel_start, sel_end) set in the runes world
 pub struct TextView {
@@ -338,12 +340,46 @@ fn (mut tv TextView) insert(s string) {
 	tv.update_lines()
 }
 
-fn (mut tv TextView) delete_cur_char() {
+// get the index of the word at the cursor position
+// The start index is the index of the first character of the word
+// The end index is after the last character of the word and may be out of array bounds
+fn (mut tv TextView) get_word_bounds() (int, int) {
 	mut ustr := tv.text.runes()
-	if tv.cursor_pos >= ustr.len {
+	if ustr.len == 0 {
+		return 0, 0
+	}
+	mut start := tv.cursor_pos
+	mut end := tv.cursor_pos
+
+	// find the start of the word
+	start_search: for start > 0 {
+		for sc in word_separator {
+			if ustr[start - 1] == sc {
+				break start_search
+			}
+		}
+		start--
+	}
+
+	// find the end of the word
+	end_search: for end < ustr.len {
+		for sc in word_separator {
+			if ustr[end] == sc {
+				break end_search
+			}
+		}
+		end++
+	}
+	return start, end
+}
+
+fn (mut tv TextView) delete_cur(count int) {
+	mut ustr := tv.text.runes()
+	total := math.min(count, ustr.len - tv.cursor_pos)
+	if total == 0 {
 		return
 	}
-	ustr.delete(tv.cursor_pos)
+	ustr.delete_many(tv.cursor_pos, total)
 	unsafe {
 		*tv.text = ustr.string()
 	}
@@ -351,14 +387,14 @@ fn (mut tv TextView) delete_cur_char() {
 	tv.update_lines()
 }
 
-fn (mut tv TextView) delete_prev_char() {
-	if tv.cursor_pos <= 0 {
-		tv.cursor_pos = 0
+fn (mut tv TextView) delete_prev(count int) {
+	mut ustr := tv.text.runes()
+	total := math.min(count, tv.cursor_pos)
+	if total == 0 {
 		return
 	}
-	mut ustr := tv.text.runes()
-	tv.cursor_pos--
-	ustr.delete(tv.cursor_pos)
+	tv.cursor_pos -= total
+	ustr.delete_many(tv.cursor_pos, total)
 	unsafe {
 		*tv.text = ustr.string()
 	}
@@ -656,27 +692,50 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 			if tv.is_sel_active() {
 				tv.delete_selection()
 			} else if e.mods in [.super, .ctrl] {
-				// Delete until previous whitespace
-				// mut i := tv.tlv.cursor_pos_i
-				// for {
-				// 	if i > 0 {
-				// 		i--
-				// 	}
-				// 	if text[i].is_space() || i == 0 {
-				// 		// unsafe { *tb.text = u[..i) + u.right(tb.cursor_pos_i]}
-				// 		break
-				// 	}
-				// }
-				// tb.cursor_pos_i = i
+				// Delete until previous separator
+				word_start, _ := if ctrl_key(e.mods) {
+					tv.get_word_bounds()
+				} else {
+					0, 0
+				}
+				if word_start == tv.cursor_pos {
+					// Delete just one character (probably a separator)
+					tv.delete_prev(1)
+				} else {
+					tv.delete_prev(tv.cursor_pos - word_start)
+				}
 			} else {
 				// Delete just one character
-				tv.delete_prev_char()
+				tv.delete_prev(1)
 			}
 			tv.cursor_allways_visible()
 		}
 		.delete {
 			tv.tb.ui.show_cursor = true
-			tv.delete_cur_char()
+			// println('backspace cursor_pos=($tv.tlv.cursor_pos_i, $tv.tlv.cursor_pos_j) len=${(*tv.text).len} \n <${*tv.text}>')
+			if *tv.text == '' {
+				return
+			}
+			// Delete the entire selection
+			if tv.is_sel_active() {
+				tv.delete_selection()
+			} else if e.mods in [.super, .ctrl] {
+				// Delete until previous separator
+				_, word_end := if ctrl_key(e.mods) {
+					tv.get_word_bounds()
+				} else {
+					0, 0
+				}
+				if word_end == tv.cursor_pos {
+					// Delete just one character (probably a separator)
+					tv.delete_cur(1)
+				} else {
+					tv.delete_cur(word_end - tv.cursor_pos)
+				}
+			} else {
+				// Delete just one character
+				tv.delete_cur(1)
+			}
 			tv.cursor_allways_visible()
 		}
 		.left, .right, .up, .down {
@@ -727,8 +786,7 @@ pub fn (mut tv TextView) do_indent(shift bool) {
 			if shift {
 				if tv.tlv.lines[j][..2] == '  ' {
 					tv.sel_end -= 2
-					tv.delete_cur_char()
-					tv.delete_cur_char()
+					tv.delete_cur(2)
 				}
 			} else {
 				tv.sel_end += 2
