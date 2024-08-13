@@ -353,7 +353,7 @@ fn (mut tv TextView) get_word_bounds() (int, int) {
 
 	// find the start of the word
 	start_search: for start > 0 {
-		for sc in word_separator {
+		for sc in ui.word_separator {
 			if ustr[start - 1] == sc {
 				break start_search
 			}
@@ -363,7 +363,7 @@ fn (mut tv TextView) get_word_bounds() (int, int) {
 
 	// find the end of the word
 	end_search: for end < ustr.len {
-		for sc in word_separator {
+		for sc in ui.word_separator {
 			if ustr[end] == sc {
 				break end_search
 			}
