@@ -4,6 +4,8 @@ fn println_one_of_many(msg string, entry_idx int, entries_len int) {
 	eprintln('${entry_idx + 1:2}/${entries_len:-2} ${msg}')
 }
 
+print('v version: ${execute("v version").output}')
+
 examples_dir := join_path(@VMODROOT, 'examples')
 mut all_entries := walk_ext(examples_dir, '.v')
 all_entries.sort()
