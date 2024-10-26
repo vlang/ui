@@ -416,7 +416,7 @@ pub fn (mut r Raster) draw_text(in_string string) (int, int) {
 		// manage unicode chars like latin greek etc
 		c_len := ((0xe5000000 >> ((chr >> 3) & 0x1e)) & 3) + 1
 		if c_len > 1 {
-			tmp_char := utf8.get_uchar(in_string, i)
+			tmp_char := utf8.get_rune(in_string, i)
 			// dprintln("tmp_char: ${tmp_char.hex()}")
 			chr = u16(tmp_char)
 		}
