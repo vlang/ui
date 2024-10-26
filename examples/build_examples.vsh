@@ -29,7 +29,7 @@ mut err := 0
 mut failures := []string{}
 chdir(examples_dir)!
 for entry_idx, entry in entries {
-	cmd := 'v -no-parallel ${entry}'
+	cmd := 'v ${entry}'
 	println_one_of_many('compile with: ${cmd}', entry_idx, entries.len)
 	ret := execute(cmd)
 	if ret.exit_code != 0 {

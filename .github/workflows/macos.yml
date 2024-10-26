@@ -45,6 +45,6 @@ jobs:
         with:
           check-latest: true
       - name: Build UI examples
-        run: v run ${{ env.MOD_PATH }}/examples/build_examples.vsh
+        run: VJOBS=20 v run ${{ env.MOD_PATH }}/examples/build_examples.vsh
       - name: Build users.v with -prod
-        run: v -prod ${{ env.MOD_PATH }}/examples/users.v
+        run: VJOBS=20 v -prod ${{ env.MOD_PATH }}/examples/users.v
