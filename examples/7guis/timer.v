@@ -23,46 +23,46 @@ mut:
 fn main() {
 	mut app := &App{
 		lbl_elapsed_value: ui.label(text: '00.0s', text_size: 1.0 / 10)
-		progress_bar: ui.progressbar(
-			height: 20
-			val: 0
-			max: 100
-			color: gx.green
+		progress_bar:      ui.progressbar(
+			height:       20
+			val:          0
+			max:          100
+			color:        gx.green
 			border_color: gx.dark_green
 		)
-		window: unsafe { nil }
+		window:            unsafe { nil }
 	}
 	app.slider = ui.slider(
-		width: 180
-		height: 20
-		orientation: .horizontal
-		max: 30
-		min: 0
-		val: 15.0
+		width:            180
+		height:           20
+		orientation:      .horizontal
+		max:              30
+		min:              0
+		val:              15.0
 		on_value_changed: app.on_value_changed
 	)
 	window := ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'Timer'
-		mode: .resizable
+		title:  'Timer'
+		mode:   .resizable
 		layout: ui.column(
-			margin_: .05
-			spacing: .05
+			margin_:  .05
+			spacing:  .05
 			children: [
 				ui.row(
-					spacing: .1
-					widths: [left, ui.stretch]
+					spacing:  .1
+					widths:   [left, ui.stretch]
 					children: [ui.label(text: 'Elapsed Time:', text_size: 1.0 / 10), app.progress_bar]
 				),
 				ui.row(
-					spacing: .1
-					widths: [left, ui.stretch]
+					spacing:  .1
+					widths:   [left, ui.stretch]
 					children: [ui.spacing(), app.lbl_elapsed_value]
 				),
 				ui.row(
-					spacing: .1
-					widths: [left, ui.stretch]
+					spacing:  .1
+					widths:   [left, ui.stretch]
 					children: [ui.label(text: 'Duration:', text_size: 1.0 / 10), app.slider]
 				),
 				ui.button(text: 'Reset', on_click: app.on_reset),

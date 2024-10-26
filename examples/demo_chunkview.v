@@ -7,26 +7,26 @@ fn main() {
 		sc_cv = true
 	}
 	mut cv := ui.chunkview(
-		id: 'cv'
+		id:         'cv'
 		scrollview: sc_cv
-		bg_color: gx.white
-		chunks: [
+		bg_color:   gx.white
+		chunks:     [
 			ui.rowchunk(
-				y: 20
+				y:       20
 				spacing: 20
-				margin: 20
-				chunks: [
+				margin:  20
+				chunks:  [
 					ui.rowchunk(
 						spacing: 5
-						chunks: [
+						chunks:  [
 							ui.parachunk(
-								margin: 5
+								margin:  5
 								content: ['|h2|TextChunk']
 							),
 							ui.textchunk(text: 'toto titi', style: 'red'),
 							ui.textchunk(text: 'toto titi', style: 'blue'),
 							ui.textchunk(
-								text: '😻🥰 😬🧿 🫥😴  ✔️💾'
+								text:  '😻🥰 😬🧿 🫥😴  ✔️💾'
 								style: 'emoji'
 							),
 						]
@@ -44,22 +44,22 @@ fn main() {
 					ui.rowchunk(
 						// x: 0 // 30
 						// y: 100
-						margin: 10
+						margin:  10
 						spacing: 20
-						chunks: [
+						chunks:  [
 							ui.parachunk(
-								margin: 5
+								margin:  5
 								content: ['|h2|RowChunk with ParaChunk']
 							),
 							ui.rowchunk(
-								spacing: 10
-								margin: 20
-								bg_color: gx.yellow
+								spacing:   10
+								margin:    20
+								bg_color:  gx.yellow
 								bg_radius: 10
-								chunks: [
+								chunks:    [
 									ui.valignchunk(
 										// indent: 20
-										align: 0.5
+										align:   0.5
 										content: [
 											'|red|toto titi tata toto titi tata ',
 											'||tutu tete ',
@@ -81,13 +81,13 @@ fn main() {
 								]
 							),
 							ui.rowchunk(
-								spacing: 10
-								margin: 20
-								bg_color: gx.dark_gray
+								spacing:   10
+								margin:    20
+								bg_color:  gx.dark_gray
 								bg_radius: 10
-								chunks: [
+								chunks:    [
 									ui.parachunk(
-										indent: 20
+										indent:  20
 										content: [
 											'|red|toto titi tata toto titi tata ',
 											'||tutu tete ',
@@ -111,23 +111,23 @@ fn main() {
 		]
 	)
 	mut window := ui.window(
-		width: 1200
+		width:  1200
 		height: 800
-		title: 'V UI: ChunkView'
+		title:  'V UI: ChunkView'
 		layout: ui.column(
-			heights: [ui.compact, ui.compact, ui.stretch]
+			heights:  [ui.compact, ui.compact, ui.stretch]
 			children: [
 				ui.row(
-					margin_: 5
+					margin_:  5
 					bg_color: gx.white
 					children: [
 						ui.slider(
-							width: 200
-							height: 20
-							orientation: .horizontal
-							min: 0
-							max: 100
-							val: 50
+							width:            200
+							height:           20
+							orientation:      .horizontal
+							min:              0
+							max:              100
+							val:              50
 							on_value_changed: fn (slider &ui.Slider) {
 								mut cv := ui.Widget(slider).get[ui.ChunkView]('cv')
 								mut res := cv.chunk(0, 1, 1, 0)
@@ -145,7 +145,7 @@ fn main() {
 				),
 				ui.rectangle(
 					height: 30
-					color: gx.rgb(255, 100, 100)
+					color:  gx.rgb(255, 100, 100)
 				),
 				ui.row(
 					children: [
@@ -162,7 +162,7 @@ fn main() {
 				),
 				ui.rectangle(
 					height: 30
-					color: gx.rgb(255, 100, 100)
+					color:  gx.rgb(255, 100, 100)
 				),
 			]
 		)
@@ -170,30 +170,30 @@ fn main() {
 	// add DrawTextWidget specific style
 	mut dtw := ui.DrawTextWidget(cv)
 	dtw.add_style(
-		id: 'red'
-		size: 20
+		id:        'red'
+		size:      20
 		font_name: 'fixed_bold'
-		color: gx.red
+		color:     gx.red
 	)
 	// Add global style
 	window.add_style(
-		id: 'blue'
-		size: 30
+		id:        'blue'
+		size:      30
 		font_name: 'system'
-		color: gx.blue
+		color:     gx.blue
 	)
 	// Add global style
 	window.add_style(
-		id: 'h2'
-		size: 40
+		id:        'h2'
+		size:      40
 		font_name: 'fixed_bold_italic'
 	)
 	// emoji
 	window.add_style(
-		id: 'emoji'
-		size: 20
+		id:        'emoji'
+		size:      20
 		font_name: 'noto_emoji'
-		mono: false
+		mono:      false
 	)
 	ui.run(window)
 }

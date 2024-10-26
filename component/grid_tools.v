@@ -19,50 +19,50 @@ pub:
 	id       string
 	bg_color gx.Color       = gx.light_blue
 	grid     &GridComponent = unsafe { nil }
-	z_index  int = 100
+	z_index  int            = 100
 }
 
 // TODO: documentation
 pub fn gridsettings_stack(p GridSettingsParams) &ui.Stack {
 	lbl := ui.listbox(
-		id: ui.component_id(p.id, 'lb_left')
-		ordered: true
+		id:         ui.component_id(p.id, 'lb_left')
+		ordered:    true
 		selectable: false
-		z_index: p.z_index
+		z_index:    p.z_index
 	)
 	lbr := ui.listbox(
-		id: ui.component_id(p.id, 'lb_right')
-		multi: true
+		id:      ui.component_id(p.id, 'lb_right')
+		multi:   true
 		ordered: true
 		z_index: p.z_index
 	)
 	btn := ui.button(
-		id: ui.component_id(p.id, 'btn_sort')
-		text: 'sort'
+		id:       ui.component_id(p.id, 'btn_sort')
+		text:     'sort'
 		on_click: gs_sort_click
-		radius: .3
-		z_index: p.z_index + 10
+		radius:   .3
+		z_index:  p.z_index + 10
 	)
 	mut layout := ui.column(
-		id: ui.component_id(p.id, 'layout')
+		id:       ui.component_id(p.id, 'layout')
 		bg_color: p.bg_color
-		margin_: 10
-		spacing: 10
-		heights: [20.0, ui.stretch]
+		margin_:  10
+		spacing:  10
+		heights:  [20.0, ui.stretch]
 		children: [
 			btn,
 			ui.row(
-				id: ui.component_id(p.id, 'row')
+				id:       ui.component_id(p.id, 'row')
 				children: [lbl, lbr]
 			),
 		]
 	)
 	gs := &GridSettingsComponent{
-		id: p.id
-		layout: layout
-		lb_left: lbl
+		id:       p.id
+		layout:   layout
+		lb_left:  lbl
 		lb_right: lbr
-		grid: p.grid
+		grid:     p.grid
 	}
 	// println('gridsettings <$gs.id> grid: <$gs.grid.id> <$layout.id>')
 	ui.component_connect(gs, layout, lbl, lbr, btn)

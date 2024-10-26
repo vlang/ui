@@ -5,7 +5,7 @@ import gg
 import ui.libvg
 
 struct DrawDeviceBitmap {
-	id string = 'dd_bitmap'
+	id string                 = 'dd_bitmap'
 	ts &libvg.BitmapTextStyle = unsafe { nil }
 pub mut:
 	r &libvg.Raster = unsafe { nil }

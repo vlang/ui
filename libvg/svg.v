@@ -24,7 +24,7 @@ pub:
 pub fn svg(p SvgParams) &Svg {
 	mut s := &Svg{
 		height: p.height
-		width: p.width
+		width:  p.width
 	}
 	s.content = &s.buffer
 	return s

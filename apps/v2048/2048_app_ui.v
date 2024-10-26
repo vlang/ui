@@ -37,7 +37,7 @@ pub fn app(p AppUIParams) &ui.Application {
 pub fn (mut app AppUI) make_layout() {
 	app.app = new_ui_app()
 	app.layout = uic.gg_canvaslayout(
-		id: ui.id(app.id, 'ui_app')
+		id:  ui.id(app.id, 'ui_app')
 		app: app.app
 	)
 	app.on_init = fn (w &ui.Window) {

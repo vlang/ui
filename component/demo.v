@@ -24,39 +24,39 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 	mut dc := &DemoComponent{}
 	menu_items := [
 		ui.menuitem(
-			text: 'Delete'
+			text:    'Delete'
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
-						text: 'all developers'
+						text:   'all developers'
 						action: menu_click
 					),
 					ui.menuitem(
-						text: 'users'
+						text:    'users'
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all1'
+									text:   'all1'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel1'
+									text:    'devel1'
 									submenu: ui.menu(
 										items: [
 											ui.menuitem(
-												text: 'all2'
+												text:   'all2'
 												action: menu_click
 											),
 											ui.menuitem(
-												text: 'devel2'
+												text:    'devel2'
 												submenu: ui.menu(
 													items: [
 														ui.menuitem(
-															text: 'all3'
+															text:   'all3'
 															action: menu_click
 														),
 														ui.menuitem(
-															text: 'devel3'
+															text:   'devel3'
 															action: menu_click
 														),
 													]
@@ -72,28 +72,28 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 			)
 		),
 		ui.menuitem(
-			text: 'Export users'
+			text:   'Export users'
 			action: menu_click
 		),
 		ui.menuitem(text: 'Exit', action: menu_click),
 		ui.menuitem(
-			text: 'Devel'
+			text:    'Devel'
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
-						text: 'all4'
+						text:   'all4'
 						action: menu_click
 					),
 					ui.menuitem(
-						text: 'devel4'
+						text:    'devel4'
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all5'
+									text:   'all5'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel5'
+									text:   'devel5'
 									action: menu_click
 								),
 							]
@@ -104,41 +104,41 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 		),
 	]
 	layout := ui.column(
-		id: ui.component_id(p.id, 'layout')
-		margin_: 10
-		spacing: 10
-		widths: ui.stretch
+		id:       ui.component_id(p.id, 'layout')
+		margin_:  10
+		spacing:  10
+		widths:   ui.stretch
 		children: [
 			ui.menubar(
-				id: 'mb'
+				id:    'mb'
 				items: menu_items
 			),
 			ui.row(
-				widths: ui.stretch
-				spacing: 10
+				widths:   ui.stretch
+				spacing:  10
 				children: [
 					ui.column(
-						margin_: 10
-						spacing: 10
+						margin_:  10
+						spacing:  10
 						children: [
 							ui.button(id: 'btn', text: 'Ok', hoverable: true),
 							ui.label(id: 'lbl', text: 'Label'),
 							ui.checkbox(id: 'cb_true', checked: true, text: 'checkbox checked'),
 							ui.checkbox(id: 'cb', text: 'checkbox unchecked'),
 							ui.radio(
-								width: 200
+								width:  200
 								values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-								title: 'Country'
+								title:  'Country'
 							),
 							ui.progressbar(
-								id: 'pb'
+								id:  'pb'
 								max: 10
 								val: 2
 							),
 							ui.slider(id: 'sl', orientation: .horizontal, min: 0, max: 10, val: 2),
 							ui.dropdown(
-								id: 'dd'
-								width: 140
+								id:       'dd'
+								width:    140
 								def_text: 'Select an option'
 								// on_selection_changed: dd_change
 								items: [ui.DropdownItem{
@@ -152,30 +152,30 @@ pub fn demo_stack(p DemoParams) &ui.Stack {
 						]
 					),
 					ui.column(
-						margin_: 10
-						spacing: 10
+						margin_:  10
+						spacing:  10
 						children: [
 							ui.textbox(id: 'tb', text: &dc.tb_text, width: 100),
 							ui.textbox(
-								mode: .multiline
-								id: 'tbm'
-								text: &dc.tbm_text
-								height: 200
-								width: 400
+								mode:      .multiline
+								id:        'tbm'
+								text:      &dc.tbm_text
+								height:    200
+								width:     400
 								text_size: 18
 							),
 							ui.listbox(
-								id: 'lb'
-								width: 100
-								height: 100
+								id:      'lb'
+								width:   100
+								height:  100
 								z_index: 10
 								// on_change: lb_change_multi
 								scrollview: false
 								// selectable: false
-								ordered: true
-								multi: true
+								ordered:    true
+								multi:      true
 								draw_lines: true
-								items: {
+								items:      {
 									'classic': 'Classic'
 									'blue':    'Blue'
 									'red':     'Red'

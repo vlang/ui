@@ -77,17 +77,17 @@ pub:
 
 pub fn radio(c RadioParams) &Radio {
 	mut r := &Radio{
-		id: c.id
-		height: 20
-		z_index: c.z_index
-		values: c.values
-		title: c.title
-		width: c.width
+		id:           c.id
+		height:       20
+		z_index:      c.z_index
+		values:       c.values
+		title:        c.title
+		width:        c.width
 		style_params: c.RadioStyleParams
-		horizontal: c.horizontal
-		compact: c.compact
-		ui: unsafe { nil }
-		on_click: c.on_click
+		horizontal:   c.horizontal
+		compact:      c.compact
+		ui:           unsafe { nil }
+		on_click:     c.on_click
 	}
 	r.style_params.style = c.theme
 	r.update_size()
@@ -307,7 +307,7 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 	if r.title != '' {
 		// Border
 		d.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
-			ui.radio_focus_color
+			radio_focus_color
 		} else {
 			gx.gray
 		})

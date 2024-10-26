@@ -10,7 +10,7 @@ mut:
 
 fn main() {
 	mut app := &State{
-		tb1: 'hggyjgyguguglul'
+		tb1:  'hggyjgyguguglul'
 		tb2m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(1000)
 		tb3m: 'toto bbub jhuui jkhuhui hubhuib\ntiti tutu toto\ntata tata'.repeat(3)
 	}
@@ -21,18 +21,18 @@ fn main() {
 	}
 	app.tb2m = s
 	c := ui.column(
-		widths: ui.stretch
-		heights: [ui.compact, ui.compact, ui.stretch, ui.stretch, ui.stretch]
-		margin_: 5
-		spacing: 10
+		widths:   ui.stretch
+		heights:  [ui.compact, ui.compact, ui.stretch, ui.stretch, ui.stretch]
+		margin_:  5
+		spacing:  10
 		children: [
 			ui.textbox(
-				id: 'tb1'
-				text: &app.tb1
+				id:            'tb1'
+				text:          &app.tb1
 				fitted_height: true
 			),
 			ui.row(
-				spacing: 5
+				spacing:  5
 				children: [
 					ui.label(text: 'Word wrap'),
 					ui.switcher(open: false, id: 'sw2', on_click: on_switch_click),
@@ -41,35 +41,35 @@ fn main() {
 				]
 			),
 			ui.textbox(
-				mode: .multiline
-				id: 'tb2m'
-				text: &app.tb2m
-				height: 200
+				mode:      .multiline
+				id:        'tb2m'
+				text:      &app.tb2m
+				height:    200
 				text_size: 24
-				bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+				bg_color:  gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
 			),
 			ui.textbox(
-				mode: .read_only | .multiline
-				id: 'tb2m-bis'
-				text: &app.tb2m
-				height: 200
-				text_size: 24
+				mode:             .read_only | .multiline
+				id:               'tb2m-bis'
+				text:             &app.tb2m
+				height:           200
+				text_size:        24
 				on_scroll_change: on_scroll_change
 			),
 			ui.textbox(
-				mode: .read_only | .multiline
+				mode:       .read_only | .multiline
 				scrollview: false
-				id: 'tb3m'
-				text: &app.tb3m
-				height: 200
-				text_size: 24
+				id:         'tb3m'
+				text:       &app.tb3m
+				height:     200
+				text_size:  24
 			),
 		]
 	)
 	w := ui.window(
-		width: 500
+		width:  500
 		height: 300
-		mode: .resizable
+		mode:   .resizable
 		layout: c
 	)
 	ui.run(w)

@@ -56,7 +56,7 @@ pub mut:
 	height               int
 	z_index              int
 	deactivated          bool
-	parent               Layout = ui.empty_stack
+	parent               Layout = empty_stack
 	ui                   &UI    = unsafe { nil }
 	vertical_alignment   VerticalAlignment
 	horizontal_alignment HorizontalAlignment
@@ -96,7 +96,7 @@ pub mut:
 	on_init   InitFn  = unsafe { nil }
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = unsafe { nil }
+	scrollview       &ScrollView         = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	// debug stuff to be removed
 	debug_ids          []string
@@ -134,26 +134,26 @@ pub:
 fn stack(c StackParams) &Stack {
 	// w, h := sizes_f32_to_int(c.width, c.height)
 	mut s := &Stack{
-		id: c.id
-		height: c.height // become real_height
-		width: c.width // become real_width
-		vertical_alignment: c.vertical_alignment
-		horizontal_alignment: c.horizontal_alignment
-		spacings: c.spacings
-		stretch: c.stretch
-		direction: c.direction
-		margins: c.margins
-		children: c.children
-		widths: c.widths
-		heights: c.heights
-		clipping: c.clipping
-		vertical_alignments: c.vertical_alignments
+		id:                    c.id
+		height:                c.height // become real_height
+		width:                 c.width  // become real_width
+		vertical_alignment:    c.vertical_alignment
+		horizontal_alignment:  c.horizontal_alignment
+		spacings:              c.spacings
+		stretch:               c.stretch
+		direction:             c.direction
+		margins:               c.margins
+		children:              c.children
+		widths:                c.widths
+		heights:               c.heights
+		clipping:              c.clipping
+		vertical_alignments:   c.vertical_alignments
 		horizontal_alignments: c.horizontal_alignments
-		alignments: c.align
-		style_params: c.StackStyleParams
-		title: c.title
-		hidden: c.hidden
-		ui: unsafe { nil }
+		alignments:            c.align
+		style_params:          c.StackStyleParams
+		title:                 c.title
+		hidden:                c.hidden
+		ui:                    unsafe { nil }
 	}
 	s.style_params.style = c.theme
 	if c.width > 0 {
@@ -1432,7 +1432,7 @@ pub mut:
 	// add or move or migrate
 	spacing  f64    = -1.0
 	spacings []f64  = []f64{}
-	child    Widget = ui.empty_stack
+	child    Widget = empty_stack
 	children []Widget
 	// move or migrate
 	from int = -1

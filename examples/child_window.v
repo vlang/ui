@@ -14,12 +14,12 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		width: win_width
-		height: win_height
-		title: 'Child window'
+		width:    win_width
+		height:   win_height
+		title:    'Child window'
 		children: [
 			ui.column(
-				margin_: 10
+				margin_:  10
 				children: [
 					ui.button(text: 'Create a window', on_click: app.btn_click, width: 150),
 					ui.textbox(placeholder: 'Test textbox'),
@@ -34,8 +34,8 @@ fn (mut app App) btn_click(btn &ui.Button) {
 	app.window.child_window(
 		children: [
 			ui.column(
-				margin_: 10
-				spacing: 5
+				margin_:  10
+				spacing:  5
 				children: [
 					ui.textbox(placeholder: 'Name', text: &app.name),
 					ui.checkbox(id: 'cb_genre', text: 'Check me if woman'),

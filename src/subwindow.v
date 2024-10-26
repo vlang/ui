@@ -15,7 +15,7 @@ pub mut:
 	id                    string
 	x                     int
 	y                     int
-	z_index               int = ui.sw_z_index
+	z_index               int = sw_z_index
 	z_index_children_orig []int
 	offset_x              int
 	offset_y              int
@@ -55,12 +55,12 @@ pub:
 
 pub fn subwindow(c SubWindowParams) &SubWindow {
 	mut s := &SubWindow{
-		id: c.id
-		x: c.x
-		y: c.y
-		layout: c.layout
-		hidden: c.hidden
-		drag: c.drag
+		id:         c.id
+		x:          c.x
+		y:          c.y
+		layout:     c.layout
+		hidden:     c.hidden
+		drag:       c.drag
 		decoration: c.decoration
 	}
 	return s
@@ -84,7 +84,7 @@ fn (mut s SubWindow) init(parent Layout) {
 	}
 
 	// z_index of all children
-	s.set_children_depth(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + sw_z_index_child)
 
 	s.set_pos(s.x, s.y)
 	s.update_layout()
@@ -115,9 +115,9 @@ fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 	if s.decoration {
 		w, _ := s.size()
 		$if sw_draw ? {
-			println('${s.x}, ${s.y}, ${w}, ${ui.sw_decoration}')
+			println('${s.x}, ${s.y}, ${w}, ${sw_decoration}')
 		}
-		d.draw_rounded_rect_filled(s.x, s.y, w, ui.sw_decoration, 5, gx.black)
+		d.draw_rounded_rect_filled(s.x, s.y, w, sw_decoration, 5, gx.black)
 	}
 	s.layout.draw()
 
@@ -201,9 +201,9 @@ fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
 				new_x, new_y := s.drag_ltrb[0] + int(e.x) - s.drag_xy_down[0], s.drag_ltrb[1] +
 					int(e.y) - s.drag_xy_down[1]
 				// println("($new_x, $new_y)")
-				if new_x + w - ui.sw_decoration >= 0 && new_y + ui.sw_decoration / 2 >= 0
-					&& new_x + ui.sw_decoration <= s.ui.window.width
-					&& new_y + ui.sw_decoration / 2 <= s.ui.window.height {
+				if new_x + w - sw_decoration >= 0 && new_y + sw_decoration / 2 >= 0
+					&& new_x + sw_decoration <= s.ui.window.width
+					&& new_y + sw_decoration / 2 <= s.ui.window.height {
 					s.set_pos(new_x, new_y)
 					// println("sw $s.id dragging $s.x, $s.y")
 					s.update_layout()
@@ -253,7 +253,7 @@ fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {
 	// add possible decoration
 	if s.decoration {
 		w, _ := s.size()
-		return x > s.x && x < s.x + w && y > s.y && y < s.y + ui.sw_decoration
+		return x > s.x && x < s.x + w && y > s.y && y < s.y + sw_decoration
 	} else {
 		return false
 	}
@@ -261,20 +261,20 @@ fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {
 
 fn (mut s SubWindow) point_inside_border(x f64, y f64) bool {
 	w, h := s.size()
-	s.border_dir[0] = if x > s.x && x < s.x + ui.sw_resize_border {
+	s.border_dir[0] = if x > s.x && x < s.x + sw_resize_border {
 		-1
-	} else if x > s.x + ui.sw_resize_border && x < s.x + w - ui.sw_resize_border {
+	} else if x > s.x + sw_resize_border && x < s.x + w - sw_resize_border {
 		0
-	} else if x > s.x + w - ui.sw_resize_border && x < s.x + w {
+	} else if x > s.x + w - sw_resize_border && x < s.x + w {
 		1
 	} else {
 		10
 	}
-	s.border_dir[1] = if y > s.y && y < s.y + ui.sw_resize_border {
+	s.border_dir[1] = if y > s.y && y < s.y + sw_resize_border {
 		-1
-	} else if y > s.y + ui.sw_resize_border && y < s.y + h - ui.sw_resize_border {
+	} else if y > s.y + sw_resize_border && y < s.y + h - sw_resize_border {
 		0
-	} else if y > s.y + h - ui.sw_resize_border && y < s.y + h {
+	} else if y > s.y + h - sw_resize_border && y < s.y + h {
 		1
 	} else {
 		10
@@ -287,7 +287,7 @@ fn (mut s SubWindow) point_inside(x f64, y f64) bool {
 	if s.decoration {
 		w, h := s.size()
 		// println('point_inside $s.id $w, $h')
-		return x > s.x && x < s.x + w && y > s.y && y < s.y + h + ui.sw_decoration
+		return x > s.x && x < s.x + w && y > s.y && y < s.y + h + sw_decoration
 	} else {
 		if s.layout is Widget {
 			mut w := s.layout as Widget
@@ -305,7 +305,7 @@ pub fn (mut s SubWindow) set_pos(x int, y int) {
 	if s.layout is Widget {
 		mut w := s.layout as Widget
 		// println("sw set_pos: $s.x, $s.y $s.decoration")
-		w.set_pos(x, y + if s.decoration { ui.sw_decoration } else { 0 })
+		w.set_pos(x, y + if s.decoration { sw_decoration } else { 0 })
 	}
 }
 
@@ -331,7 +331,7 @@ pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
 		mut ws := s.layout as Widget
 		w, mut h := ws.propose_size(width, height)
 		if s.decoration {
-			h += ui.sw_decoration
+			h += sw_decoration
 		}
 		return w, h
 	} else {
@@ -342,7 +342,7 @@ pub fn (mut s SubWindow) propose_size(width int, height int) (int, int) {
 pub fn (s SubWindow) size() (int, int) {
 	w, mut h := s.layout.size()
 	if s.decoration {
-		h += ui.sw_decoration
+		h += sw_decoration
 	}
 	// println("subw $s.id (layout: $s.layout.id) $w, $h")
 	return w, h
@@ -423,14 +423,14 @@ fn (mut s SubWindow) as_top_subwindow() {
 
 fn (mut s SubWindow) update_depth(top bool) {
 	// reset first the children
-	s.set_children_depth(-s.z_index - ui.sw_z_index_child)
+	s.set_children_depth(-s.z_index - sw_z_index_child)
 	// inc z_index
-	s.z_index = ui.sw_z_index
+	s.z_index = sw_z_index
 	if top {
-		s.z_index += ui.sw_z_index_top
+		s.z_index += sw_z_index_top
 	}
 	// propagate to children
 	// println("z_index: ${s.z_index + sw_z_index_child}")
-	s.set_children_depth(s.z_index + ui.sw_z_index_child)
+	s.set_children_depth(s.z_index + sw_z_index_child)
 	s.update_layout()
 }

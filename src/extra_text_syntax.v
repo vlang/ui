@@ -259,14 +259,14 @@ fn (mut sh SyntaxHighLighter) parse_chunk_between_one_rune(typ string, sep rune)
 
 fn (mut sh SyntaxHighLighter) parse_chunk_numeric() {
 	if !sh.is_alpha_underscore_before(sh.start)
-		&& (sh.ustr[sh.i] in ui.numeric_set || sh.ustr[sh.i] == `-`) {
+		&& (sh.ustr[sh.i] in numeric_set || sh.ustr[sh.i] == `-`) {
 		sh.i++
 		for {
 			if sh.i == sh.ustr.len {
 				sh.i--
 				break
 			}
-			if sh.ustr[sh.i] in ui.numeric_set {
+			if sh.ustr[sh.i] in numeric_set {
 				sh.i++
 			} else {
 				sh.i--
@@ -323,9 +323,9 @@ fn (mut sh SyntaxHighLighter) add_chunk(typ string, y int, start int, end int) {
 	// x := sh.tv.tb.x + sh.tv.left_margin + int(sh.tv.text_width(sh.ustr[0..start].string()))
 	text := sh.ustr[start..end].string()
 	chunk := Chunk{
-		x: x
-		y: y
-		text: text
+		x:     x
+		y:     y
+		text:  text
 		width: int(sh.tv.text_width_additive(text))
 		// width: int(sh.tv.text_width(text))
 	}
@@ -363,7 +363,7 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 				d.draw_rect_filled(chunk.x, chunk.y, chunk.width, tv.line_height, tv.tb.style.bg_color)
 			}
 			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
-				color: color
+				color:     color
 				font_name: font
 			)
 			tv.load_style()

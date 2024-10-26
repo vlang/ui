@@ -44,15 +44,15 @@ pub:
 
 pub fn progressbar(c ProgressBarParams) &ProgressBar {
 	mut pb := &ProgressBar{
-		id: c.id
-		height: c.height
-		width: c.width
-		z_index: c.z_index
-		min: c.min
-		max: c.max
-		val: c.val
+		id:           c.id
+		height:       c.height
+		width:        c.width
+		z_index:      c.z_index
+		min:          c.min
+		max:          c.max
+		val:          c.val
 		style_params: c.ProgressBarStyleParams
-		ui: unsafe { nil }
+		ui:           unsafe { nil }
 	}
 	pb.style_params.style = c.theme
 	return pb

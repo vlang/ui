@@ -83,7 +83,7 @@ pub fn (tv &TextView) size() (int, int) {
 				w = lw
 			}
 		}
-		w += tv.left_margin + ui.textview_margin
+		w += tv.left_margin + textview_margin
 	}
 	// println("tv size: $tv.tb.id $w, $h")
 	return w, h
@@ -226,9 +226,9 @@ pub fn (mut tv TextView) update_lines() {
 }
 
 fn (mut tv TextView) update_left_margin() {
-	tv.left_margin = ui.textview_margin
+	tv.left_margin = textview_margin
 	if tv.tb.is_line_number {
-		tv.left_margin += ui.textview_margin + tv.text_width(tv.tlv.lines.len.str())
+		tv.left_margin += textview_margin + tv.text_width(tv.tlv.lines.len.str())
 	}
 }
 
@@ -323,7 +323,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 }
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
-	tv.draw_device_styled_text(d, tv.tb.x + ui.textview_margin, y, (tv.tlv.from_j + i + 1).str(),
+	tv.draw_device_styled_text(d, tv.tb.x + textview_margin, y, (tv.tlv.from_j + i + 1).str(),
 		color: gx.gray
 	)
 }
@@ -901,7 +901,7 @@ fn (tv &TextView) word_wrap_line(s string) []string {
 			line_width = tv.text_width_additive(word)
 		} else {
 			word_width := tv.text_width_additive(' ' + word)
-			if line_width + word_width < max_line_width - ui.wordwrap_border {
+			if line_width + word_width < max_line_width - wordwrap_border {
 				line += ' ' + word
 				line_width += word_width
 			} else {

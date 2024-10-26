@@ -70,17 +70,17 @@ pub:
 
 pub fn checkbox(c CheckBoxParams) &CheckBox {
 	mut cb := &CheckBox{
-		id: c.id
-		height: ui.check_mark_size + 5 // TODO
-		z_index: c.z_index
-		ui: unsafe { nil }
-		text: c.text
-		on_click: c.on_click
+		id:               c.id
+		height:           check_mark_size + 5 // TODO
+		z_index:          c.z_index
+		ui:               unsafe { nil }
+		text:             c.text
+		on_click:         c.on_click
 		on_check_changed: c.on_check_changed
-		checked: c.checked
-		disabled: c.disabled
-		style_params: c.CheckBoxStyleParams
-		justify: c.justify
+		checked:          c.checked
+		disabled:         c.disabled
+		style_params:     c.CheckBoxStyleParams
+		justify:          c.justify
 	}
 	cb.style_params.style = c.theme
 	return cb
@@ -91,7 +91,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.ui = parent.get_ui()
 	mut dtw := DrawTextWidget(cb)
 	dtw.load_style()
-	cb.width = dtw.text_width(cb.text) + 5 + ui.check_mark_size
+	cb.width = dtw.text_width(cb.text) + 5 + check_mark_size
 	cb.load_style()
 	// cb.init_style()
 	mut subscriber := parent.get_subscriber()
@@ -176,7 +176,7 @@ pub fn (mut cb CheckBox) adj_size() (int, int) {
 		dtw.load_style()
 		mut w, mut h := 0, 0
 		w, h = dtw.text_size(cb.text)
-		cb.adj_width, cb.adj_height = w + ui.check_mark_size, math.max(h, ui.check_mark_size)
+		cb.adj_width, cb.adj_height = w + check_mark_size, math.max(h, check_mark_size)
 	}
 	return cb.adj_width, cb.adj_height
 }
@@ -210,12 +210,11 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2, adj_pos_y - (cb.height - cb.adj_height) / 2,
 		cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
 	// }
-	d.draw_rect_filled(adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size, cb.style.bg_color) // progress_bar_color)
-	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size,
+	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.bg_color) // progress_bar_color)
+	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
 		false)
 	if cb.is_focused {
-		d.draw_rect_empty(adj_pos_x, adj_pos_y, ui.check_mark_size, ui.check_mark_size,
-			cb.style.border_color)
+		d.draw_rect_empty(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
@@ -235,7 +234,7 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	// Text
 	mut dtw := DrawTextWidget(cb)
 	dtw.draw_device_load_style(d)
-	dtw.draw_device_text(d, adj_pos_x + ui.check_mark_size + 5, adj_pos_y, cb.text)
+	dtw.draw_device_text(d, adj_pos_x + check_mark_size + 5, adj_pos_y, cb.text)
 	$if bb ? {
 		debug_draw_bb_widget(mut cb, cb.ui)
 	}

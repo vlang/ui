@@ -18,13 +18,13 @@ mut:
 fn main() {
 	mut app := App{}
 	app.window = ui.window(
-		width: 600
-		height: 400
-		title: 'gradient'
-		on_init: app.init_texture
+		width:    600
+		height:   400
+		title:    'gradient'
+		on_init:  app.init_texture
 		children: [
 			ui.canvas_plus(
-				id: 'canvas_gradient'
+				id:      'canvas_gradient'
 				on_draw: app.draw_gradient
 			),
 		]

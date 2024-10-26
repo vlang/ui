@@ -27,49 +27,49 @@ pub:
 // TODO: documentation
 pub fn alpha_stack(p AlphaParams) &ui.Stack {
 	tb := ui.textbox(
-		id: ui.component_id(p.id, 'textbox')
+		id:         ui.component_id(p.id, 'textbox')
 		is_numeric: true
-		max_len: 3
-		on_char: alpha_on_char
+		max_len:    3
+		on_char:    alpha_on_char
 	)
 	sl := ui.slider(
-		id: ui.component_id(p.id, 'slider')
-		orientation: if p.direction == .row {
+		id:               ui.component_id(p.id, 'slider')
+		orientation:      if p.direction == .row {
 			ui.Orientation.horizontal
 		} else {
 			ui.Orientation.vertical
 		}
-		min: 0
-		max: 255
-		val: p.alpha
+		min:              0
+		max:              255
+		val:              p.alpha
 		on_value_changed: alpha_on_value_changed
 	)
 	mut layout := match p.direction {
 		.row {
 			ui.row(
-				id: ui.component_id(p.id, 'layout')
-				widths: [20.0, 40]
-				margin_: 5
-				spacing: 10
+				id:       ui.component_id(p.id, 'layout')
+				widths:   [20.0, 40]
+				margin_:  5
+				spacing:  10
 				children: [tb, sl]
 			)
 		}
 		.column {
 			ui.column(
-				id: ui.component_id(p.id, 'layout')
-				heights: [20.0, 40]
-				margin_: 5
-				spacing: 10
+				id:       ui.component_id(p.id, 'layout')
+				heights:  [20.0, 40]
+				margin_:  5
+				spacing:  10
 				children: [tb, sl]
 			)
 		}
 	}
 	mut ac := &AlphaComponent{
-		id: p.id
-		layout: layout
-		alpha: p.alpha
-		textbox: tb
-		slider: sl
+		id:         p.id
+		layout:     layout
+		alpha:      p.alpha
+		textbox:    tb
+		slider:     sl
 		on_changed: p.on_changed
 	}
 	ac.set_alpha(p.alpha)

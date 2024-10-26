@@ -7,19 +7,19 @@ const win_height = 600
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: TreeView'
+		width:          win_width
+		height:         win_height
+		title:          'V UI: TreeView'
 		native_message: false
-		mode: .resizable
-		layout: ui.column(
+		mode:           .resizable
+		layout:         ui.column(
 			scrollview: true
-			heights: ui.compact
-			children: [
+			heights:    ui.compact
+			children:   [
 				uic.treeview_stack(
-					id: 'demo'
-					incr_mode: true
-					trees: [
+					id:         'demo'
+					incr_mode:  true
+					trees:      [
 						uic.Tree{
 							title: 'toto1'
 							items: [
@@ -49,12 +49,12 @@ fn main() {
 							]
 						},
 					]
-					icons: {
+					icons:      {
 						'folder': 'tata'
 						'file':   'toto'
 					}
 					text_color: gx.blue
-					on_click: treeview_on_click
+					on_click:   treeview_on_click
 				),
 			]
 		)

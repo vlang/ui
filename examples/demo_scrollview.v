@@ -17,32 +17,32 @@ fn main() {
 	}
 	app.text = s
 	app.window = ui.window(
-		width: 800
-		height: 600
-		title: 'V UI: Scrollview'
-		mode: .resizable
+		width:   800
+		height:  600
+		title:   'V UI: Scrollview'
+		mode:    .resizable
 		on_init: fn (win &ui.Window) {
 			$if test_textwidth ? {
 				mut tb := win.get_or_panic[ui.TextBox]('info')
 				tb.tv.test_textwidth('abcdefghijklmnrputwxyz &éèdzefzefzef')
 			}
 		}
-		layout: ui.row(
-			widths: ui.stretch
-			heights: ui.stretch
+		layout:  ui.row(
+			widths:   ui.stretch
+			heights:  ui.stretch
 			children: [
 				ui.textbox(
-					id: 'info'
-					mode: .multiline | .read_only
-					text: &app.info
+					id:        'info'
+					mode:      .multiline | .read_only
+					text:      &app.info
 					text_size: 24
 				),
 				ui.textbox(
-					id: 'text'
-					mode: .multiline | .read_only
-					bg_color: gx.hex(0xfcf4e4ff)
-					text: &app.text
-					text_size: 24
+					id:               'text'
+					mode:             .multiline | .read_only
+					bg_color:         gx.hex(0xfcf4e4ff)
+					text:             &app.text
+					text_size:        24
 					on_scroll_change: on_scroll_change
 				),
 			]

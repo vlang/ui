@@ -22,17 +22,17 @@ pub:
 
 pub fn gg_canvaslayout(p GGComponentParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_plus(
-		id: ui.component_id(p.id, 'layout')
-		delegate_evt_mngr: true
-		on_draw: gg_draw
-		on_delegate: gg_on_delegate
+		id:                 ui.component_id(p.id, 'layout')
+		delegate_evt_mngr:  true
+		on_draw:            gg_draw
+		on_delegate:        gg_on_delegate
 		on_bounding_change: gg_on_bounding_change
-		z_index: p.z_index
+		z_index:            p.z_index
 	)
 	mut ggc := &GGComponent{
-		id: p.id
+		id:     p.id
 		layout: layout
-		app: p.app
+		app:    p.app
 	}
 	ui.component_connect(ggc, layout)
 	layout.on_init = gg_init

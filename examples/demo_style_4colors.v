@@ -4,30 +4,30 @@ import gx
 
 fn main() {
 	mut win := ui.window(
-		title: 'Four colors'
-		mode: .resizable
+		title:   'Four colors'
+		mode:    .resizable
 		on_init: win_init
-		height: 600
-		layout: ui.column(
-			heights: [100.0, ui.stretch]
+		height:  600
+		layout:  ui.column(
+			heights:  [100.0, ui.stretch]
 			children: [
 				ui.row(
-					widths: ui.stretch
+					widths:   ui.stretch
 					children: [
 						uic.colorbutton(
-							id: 'color0'
+							id:         'color0'
 							on_changed: on_changed
 						),
 						uic.colorbutton(
-							id: 'color1'
+							id:         'color1'
 							on_changed: on_changed
 						),
 						uic.colorbutton(
-							id: 'color2'
+							id:         'color2'
 							on_changed: on_changed
 						),
 						uic.colorbutton(
-							id: 'color3'
+							id:         'color3'
 							on_changed: on_changed
 						),
 					]

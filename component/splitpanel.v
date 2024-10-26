@@ -25,28 +25,28 @@ pub:
 	child1    &ui.Widget   = unsafe { nil }
 	child2    &ui.Widget   = unsafe { nil }
 	direction ui.Direction = .row
-	weight    f64 = 50.0
-	btn_size  int = component.splitpanel_btn_size
+	weight    f64          = 50.0
+	btn_size  int          = splitpanel_btn_size
 }
 
 // TODO: documentation
 pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	splitbtn := ui.button(
-		id: ui.component_id(p.id, 'splitbtn')
+		id:            ui.component_id(p.id, 'splitbtn')
 		on_mouse_down: splitpanel_btn_mouse_down
-		on_mouse_up: splitpanel_btn_mouse_up
+		on_mouse_up:   splitpanel_btn_mouse_up
 		on_mouse_move: splitpanel_btn_mouse_move
-		hoverable: true
+		hoverable:     true
 		// TODO: to adapt to chosen style
-		bg_color_hover: gx.gray
-		bg_color: gx.light_gray
+		bg_color_hover:   gx.gray
+		bg_color:         gx.light_gray
 		bg_color_pressed: gx.black
-		on_mouse_enter: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
+		on_mouse_enter:   fn (mut b ui.Button, e &ui.MouseMoveEvent) {
 			sp := splitpanel_component(b)
 			b.ui.window.mouse.start('_system_:resize_' +
 				(if sp.direction == .row { 'ew' } else { 'ns' }))
 		}
-		on_mouse_leave: fn (mut b ui.Button, e &ui.MouseMoveEvent) {
+		on_mouse_leave:   fn (mut b ui.Button, e &ui.MouseMoveEvent) {
 			sp := splitpanel_component(b)
 			b.ui.window.mouse.stop_last('_system_:resize_' +
 				(if sp.direction == .row { 'ew' } else { 'ns' }))
@@ -54,28 +54,28 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 	)
 	mut layout := if p.direction == .row {
 		ui.row(
-			widths: [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
-			heights: ui.stretch
-			id: ui.component_id(p.id, 'layout')
+			widths:   [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
+			heights:  ui.stretch
+			id:       ui.component_id(p.id, 'layout')
 			children: [p.child1, splitbtn, p.child2]
 		)
 	} else {
 		ui.column(
-			widths: ui.stretch
-			heights: [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
-			id: ui.component_id(p.id, 'layout')
+			widths:   ui.stretch
+			heights:  [p.weight * ui.stretch, p.btn_size, (100.0 - p.weight) * ui.stretch]
+			id:       ui.component_id(p.id, 'layout')
 			children: [p.child1, splitbtn, p.child2]
 		)
 	}
 
 	mut sp := &SplitPanelComponent{
-		id: p.id
-		layout: layout
-		child1: p.child1
-		child2: p.child2
+		id:        p.id
+		layout:    layout
+		child1:    p.child1
+		child2:    p.child2
 		direction: p.direction
-		weight: f32(p.weight)
-		btn_size: p.btn_size
+		weight:    f32(p.weight)
+		btn_size:  p.btn_size
 	}
 	ui.component_connect(sp, layout, splitbtn)
 	return layout

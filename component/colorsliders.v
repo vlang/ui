@@ -39,52 +39,52 @@ pub:
 // TODO: documentation
 pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	r_textbox := ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: on_r_char
+		on_char:    on_r_char
 	)
 	g_textbox := ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: on_g_char
+		on_char:    on_g_char
 	)
 	b_textbox := ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: on_b_char
+		on_char:    on_b_char
 	)
 	r_slider := ui.slider(
-		orientation: p.orientation
-		min: component.slider_min
-		max: component.slider_max
-		val: p.color.r
+		orientation:         p.orientation
+		min:                 slider_min
+		max:                 slider_max
+		val:                 p.color.r
 		focus_on_thumb_only: true
-		rev_min_max_pos: p.orientation == .vertical
-		on_value_changed: on_r_value_changed
-		thumb_color: gx.light_red
+		rev_min_max_pos:     p.orientation == .vertical
+		on_value_changed:    on_r_value_changed
+		thumb_color:         gx.light_red
 	)
 	g_slider := ui.slider(
-		orientation: p.orientation
-		min: component.slider_min
-		max: component.slider_max
-		val: p.color.g
+		orientation:         p.orientation
+		min:                 slider_min
+		max:                 slider_max
+		val:                 p.color.g
 		focus_on_thumb_only: true
-		rev_min_max_pos: p.orientation == .vertical
-		on_value_changed: on_g_value_changed
-		thumb_color: gx.light_green
+		rev_min_max_pos:     p.orientation == .vertical
+		on_value_changed:    on_g_value_changed
+		thumb_color:         gx.light_green
 	)
 	b_slider := ui.slider(
-		orientation: p.orientation
-		min: component.slider_min
-		max: component.slider_max
-		val: p.color.b
+		orientation:         p.orientation
+		min:                 slider_min
+		max:                 slider_max
+		val:                 p.color.b
 		focus_on_thumb_only: true
-		rev_min_max_pos: p.orientation == .vertical
-		on_value_changed: on_b_value_changed
-		thumb_color: gx.light_blue
+		rev_min_max_pos:     p.orientation == .vertical
+		on_value_changed:    on_b_value_changed
+		thumb_color:         gx.light_blue
 	)
 	valign := ui.TextVerticalAlign.top // if p.orientation == .vertical {ui.TextVerticalAlign.middle} else {ui.TextVerticalAlign.top}
 	r_label := ui.label(text: 'R', justify: ui.top_center, text_vertical_align: valign)
@@ -93,29 +93,29 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	mut layout := if p.orientation == .vertical {
 		w := [ui.stretch, 40.0, 2 * ui.stretch, 40, 2 * ui.stretch, 40, ui.stretch]
 		ui.column(
-			id: ui.component_id(p.id, 'layout')
+			id:      ui.component_id(p.id, 'layout')
 			margin_: 10
 			spacing: 5
 			// alignments: ui.HorizontalAlignments{
 			// 	center: [0, 1, 2, 3]
 			// }
-			heights: [ui.stretch, 5 * ui.stretch, ui.stretch]
+			heights:  [ui.stretch, 5 * ui.stretch, ui.stretch]
 			children: [
 				ui.row(
-					id: ui.component_id(p.id, 'r_row')
-					widths: w
+					id:       ui.component_id(p.id, 'r_row')
+					widths:   w
 					children: [ui.spacing(), r_textbox, ui.spacing(), g_textbox, ui.spacing(),
 						b_textbox, ui.spacing()]
 				),
 				ui.row(
-					id: ui.component_id(p.id, 'g_row')
-					widths: w
+					id:       ui.component_id(p.id, 'g_row')
+					widths:   w
 					children: [ui.spacing(), r_slider, ui.spacing(), g_slider, ui.spacing(),
 						b_slider, ui.spacing()]
 				),
 				ui.row(
-					id: ui.component_id(p.id, 'b_row')
-					widths: w
+					id:       ui.component_id(p.id, 'b_row')
+					widths:   w
 					children: [ui.spacing(), r_label, ui.spacing(), g_label, ui.spacing(),
 						b_label, ui.spacing()]
 				),
@@ -124,29 +124,29 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	} else {
 		h := [ui.stretch, ui.compact, 2 * ui.stretch, ui.compact, 2 * ui.stretch, ui.compact, ui.stretch]
 		ui.row(
-			id: ui.component_id(p.id, 'layout')
+			id:      ui.component_id(p.id, 'layout')
 			margin_: 10
 			spacing: 5
 			// alignments: ui.HorizontalAlignments{
 			// 	center: [0, 1, 2, 3]
 			// }
-			widths: [40.0, ui.stretch, 40.0]
+			widths:   [40.0, ui.stretch, 40.0]
 			children: [
 				ui.column(
-					id: ui.component_id(p.id, 'b_row')
-					heights: h
+					id:       ui.component_id(p.id, 'b_row')
+					heights:  h
 					children: [ui.spacing(), r_label, ui.spacing(), g_label, ui.spacing(),
 						b_label, ui.spacing()]
 				),
 				ui.column(
-					id: ui.component_id(p.id, 'g_row')
-					heights: h
+					id:       ui.component_id(p.id, 'g_row')
+					heights:  h
 					children: [ui.spacing(), r_slider, ui.spacing(), g_slider, ui.spacing(),
 						b_slider, ui.spacing()]
 				),
 				ui.column(
-					id: ui.component_id(p.id, 'r_row')
-					heights: h
+					id:       ui.component_id(p.id, 'r_row')
+					heights:  h
 					children: [ui.spacing(), r_textbox, ui.spacing(), g_textbox, ui.spacing(),
 						b_textbox, ui.spacing()]
 				),
@@ -155,19 +155,19 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	}
 
 	mut cs := &ColorSlidersComponent{
-		id: p.id
-		layout: layout
-		r_slider: r_slider
-		g_slider: g_slider
-		b_slider: b_slider
-		r_textbox: r_textbox
-		g_textbox: g_textbox
-		b_textbox: b_textbox
+		id:             p.id
+		layout:         layout
+		r_slider:       r_slider
+		g_slider:       g_slider
+		b_slider:       b_slider
+		r_textbox:      r_textbox
+		g_textbox:      g_textbox
+		b_textbox:      b_textbox
 		r_textbox_text: p.color.r.str()
 		g_textbox_text: p.color.g.str()
 		b_textbox_text: p.color.b.str()
-		orientation: p.orientation
-		on_changed: p.on_changed
+		orientation:    p.orientation
+		on_changed:     p.on_changed
 	}
 
 	cs.r_textbox.text = &cs.r_textbox_text

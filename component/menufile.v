@@ -35,92 +35,92 @@ pub:
 // TODO: documentation
 pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 	btn_newfile := ui.button(
-		id: ui.component_id(p.id, 'btn_newfile')
-		tooltip: 'New File'
+		id:           ui.component_id(p.id, 'btn_newfile')
+		tooltip:      'New File'
 		tooltip_side: .right
-		text: 'New'
-		on_click: btn_new_click
-		radius: .3
-		z_index: 10
+		text:         'New'
+		on_click:     btn_new_click
+		radius:       .3
+		z_index:      10
 	)
 	btn_openfolder := ui.button(
-		id: ui.component_id(p.id, 'btn_openfolder')
-		tooltip: 'Open Folder'
+		id:           ui.component_id(p.id, 'btn_openfolder')
+		tooltip:      'Open Folder'
 		tooltip_side: .right
-		text: 'Open'
-		on_click: btn_open_click
-		radius: .3
-		z_index: 10
+		text:         'Open'
+		on_click:     btn_open_click
+		radius:       .3
+		z_index:      10
 	)
 	btn_savefile := ui.button(
-		id: ui.component_id(p.id, 'btn_savefile')
-		tooltip: 'Save File'
+		id:           ui.component_id(p.id, 'btn_savefile')
+		tooltip:      'Save File'
 		tooltip_side: .right
-		text: 'Save'
-		on_click: btn_save_click
-		radius: .3
-		z_index: 10
+		text:         'Save'
+		on_click:     btn_save_click
+		radius:       .3
+		z_index:      10
 	)
 
 	mut layout := ui.column(
-		id: ui.component_id(p.id, 'layout')
-		heights: [40.0, 30.0, ui.stretch]
-		spacing: 5
-		margin_: 3
+		id:       ui.component_id(p.id, 'layout')
+		heights:  [40.0, 30.0, ui.stretch]
+		spacing:  5
+		margin_:  3
 		bg_color: gx.black
 		children: [
 			ui.row(
-				widths: ui.stretch
-				heights: 30.0
-				margin: ui.Margin{5, 10, 5, 10}
-				spacing: 10
+				widths:   ui.stretch
+				heights:  30.0
+				margin:   ui.Margin{5, 10, 5, 10}
+				spacing:  10
 				bg_color: gx.black
 				children: [btn_newfile, btn_openfolder, btn_savefile]
 			),
 			hideable_stack(
-				id: ui.component_id(p.id, 'htb')
+				id:     ui.component_id(p.id, 'htb')
 				layout: ui.row(
-					id: ui.component_id(p.id, 'htbl')
-					margin_: 3
-					heights: 24.0
-					spacing: 3
-					widths: [ui.stretch, 24]
+					id:       ui.component_id(p.id, 'htbl')
+					margin_:  3
+					heights:  24.0
+					spacing:  3
+					widths:   [ui.stretch, 24]
 					children: [
 						ui.textbox(
-							id: ui.component_id(p.id, 'tb')
+							id:      ui.component_id(p.id, 'tb')
 							z_index: 10
 						),
 						ui.button(
-							id: ui.component_id(p.id, 'tb_new_ok')
-							text: 'Ok'
-							z_index: 10
-							radius: 5
+							id:       ui.component_id(p.id, 'tb_new_ok')
+							text:     'Ok'
+							z_index:  10
+							radius:   5
 							on_click: btn_new_ok
 						),
 					]
 				)
 			),
 			ui.column(
-				id: ui.component_id(p.id, 'tvcol')
+				id:         ui.component_id(p.id, 'tvcol')
 				scrollview: true
-				heights: ui.compact
-				bg_color: p.bg_color
-				children: [
+				heights:    ui.compact
+				bg_color:   p.bg_color
+				children:   [
 					dirtreeview_stack(
-						id: ui.component_id(p.id, 'dtv')
-						trees: p.dirs
+						id:           ui.component_id(p.id, 'dtv')
+						trees:        p.dirs
 						hidden_files: p.hidden_files
-						on_click: treeview_onclick
+						on_click:     treeview_onclick
 					),
 				]
 			),
 		]
 	)
 	mf := &MenuFileComponent{
-		id: p.id
-		layout: layout
-		on_save: p.on_save
-		on_new: p.on_new
+		id:              p.id
+		layout:          layout
+		on_save:         p.on_save
+		on_new:          p.on_new
 		on_file_changed: p.on_file_changed
 	}
 	ui.component_connect(mf, layout, btn_savefile)
@@ -150,14 +150,14 @@ pub fn menufile_init(layout &ui.Stack) {
 	mut window := layout.ui.window
 	// println('fb.id: ${ui.component_id(ui.component_parent_id(layout.id), 'fb')}')
 	filebrowser_subwindow_add(mut window,
-		id: ui.component_id_from(layout.id, 'fb')
-		folder_only: true
-		width: 400
-		height: 300
-		x: 50
-		y: 50
-		bg_color: ui.color_solaris_transparent
-		on_click_ok: btn_open_ok
+		id:              ui.component_id_from(layout.id, 'fb')
+		folder_only:     true
+		width:           400
+		height:          300
+		x:               50
+		y:               50
+		bg_color:        ui.color_solaris_transparent
+		on_click_ok:     btn_open_ok
 		on_click_cancel: btn_open_cancel
 	)
 }

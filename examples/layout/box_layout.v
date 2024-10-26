@@ -6,12 +6,12 @@ const win_height = 300
 
 fn main() {
 	ui.run(ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'V UI: Rectangles inside BoxLayout'
-		mode: .resizable
+		title:  'V UI: Rectangles inside BoxLayout'
+		mode:   .resizable
 		layout: ui.box_layout(
-			id: 'bl'
+			id:       'bl'
 			children: {
 				'id1: (0,0) ++ (30,30)':                  ui.rectangle(
 					color: gx.rgb(255, 100, 100)

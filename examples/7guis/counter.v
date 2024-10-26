@@ -13,29 +13,29 @@ mut:
 fn main() {
 	mut app := &App{}
 	window := ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'Counter'
-		mode: .resizable
+		title:  'Counter'
+		mode:   .resizable
 		layout: ui.row(
-			spacing: 5
-			margin_: 10
-			widths: ui.stretch
-			heights: ui.stretch
+			spacing:  5
+			margin_:  10
+			widths:   ui.stretch
+			heights:  ui.stretch
 			children: [
 				ui.textbox(
 					max_len: 20
 					// height: 30
-					read_only: true
+					read_only:  true
 					is_numeric: true
-					text: &app.counter
+					text:       &app.counter
 				),
 				ui.button(
-					text: 'Count'
-					bg_color: gx.light_gray
-					radius: 5
+					text:         'Count'
+					bg_color:     gx.light_gray
+					radius:       5
 					border_color: gx.gray
-					on_click: app.btn_click
+					on_click:     app.btn_click
 				),
 			]
 		)

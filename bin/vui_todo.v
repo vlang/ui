@@ -25,36 +25,36 @@ fn main() {
 		tasks: {
 			0: Task{
 				title: 'test'
-				done: false
+				done:  false
 			}
 			1: Task{
 				title: 'test 2'
-				done: false
+				done:  false
 			}
 		}
 	}
 
 	window := ui.window(
-		width: w_width
+		width:  w_width
 		height: w_height
 		// state: app
 		title: w_title
-		mode: .resizable
+		mode:  .resizable
 		// on_scroll: on_scroll
 		layout: ui.column(
-			margin_: 8
-			heights: [ui.stretch, ui.compact]
+			margin_:  8
+			heights:  [ui.stretch, ui.compact]
 			children: [
 				ui.column(
-					id: 'entries_column'
-					heights: ui.compact
-					spacing: 4
+					id:         'entries_column'
+					heights:    ui.compact
+					spacing:    4
 					scrollview: true
-					children: tasks(mut app)
+					children:   tasks(mut app)
 				),
 				ui.row(
-					widths: [ui.stretch, ui.compact]
-					spacing: 4
+					widths:   [ui.stretch, ui.compact]
+					spacing:  4
 					children: [ui.textbox(text: &app.input, on_enter: app.on_enter),
 						ui.button(text: '+', on_click: app.btn_add_task)]
 				),
@@ -83,15 +83,15 @@ fn entry(task_id int, mut app State) &ui.Stack {
 	// mut tb := ui.textbox(id: "task_tb_$task_id", text: &(app.tasks[task_id].title), on_char: txb_enter_edit)
 	// So the introduction of app.inputs
 	mut tb := ui.textbox(
-		id: 'task_tb_${task_id}'
-		text: &(app.inputs[app.inputs.len - 1])
+		id:      'task_tb_${task_id}'
+		text:    &(app.inputs[app.inputs.len - 1])
 		on_char: app.txb_enter_edit
 	)
 	tb.z_index = ui.z_index_hidden
 	row := ui.row(
-		id: 'task_row_${task_id}'
-		widths: [ui.compact, ui.stretch, ui.stretch, ui.compact]
-		spacing: 4
+		id:       'task_row_${task_id}'
+		widths:   [ui.compact, ui.stretch, ui.stretch, ui.compact]
+		spacing:  4
 		children: [
 			ui.checkbox(id: 'task_cb_${task_id}', checked: task.done, on_click: app.cb_task),
 			ui.label(id: 'task_lab_${task_id}', text: task.title.clone()),
@@ -170,7 +170,7 @@ fn (mut app State) add_task() {
 	app.last_task += 1
 	new_task := Task{
 		title: app.input.clone()
-		done: false
+		done:  false
 	}
 	app.tasks[app.last_task] = new_task
 	app.input = ''

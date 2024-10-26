@@ -6,23 +6,23 @@ const win_height = 400
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: Composable Widget'
-		mode: .resizable
+		width:          win_width
+		height:         win_height
+		title:          'V UI: Composable Widget'
+		mode:           .resizable
 		native_message: false
-		layout: ui.column(
-			margin_: .05
-			spacing: .05
-			heights: [8 * ui.stretch, ui.stretch, ui.stretch]
+		layout:         ui.column(
+			margin_:  .05
+			spacing:  .05
+			heights:  [8 * ui.stretch, ui.stretch, ui.stretch]
 			children: [
 				ui.row(
-					spacing: .1
-					margin_: 5
-					widths: ui.stretch
+					spacing:  .1
+					margin_:  5
+					widths:   ui.stretch
 					children: [
 						uic.doublelistbox_stack(
-							id: 'dlb1'
+							id:    'dlb1'
 							title: 'dlb1'
 							items: [
 								'totto',
@@ -30,7 +30,7 @@ fn main() {
 							]
 						),
 						uic.doublelistbox_stack(
-							id: 'dlb2'
+							id:    'dlb2'
 							title: 'dlb2'
 							items: [
 								'tottoooo',

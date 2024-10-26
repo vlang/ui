@@ -12,66 +12,66 @@ fn main() {
 	}
 	mut text := 'gcghchc\n fvfyfy' + 'titi\n'.repeat(10)
 	mut window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI Demo'
-		mode: .resizable
+		width:   win_width
+		height:  win_height
+		title:   'V UI Demo'
+		mode:    .resizable
 		on_init: win_init
-		layout: ui.row(
+		layout:  ui.row(
 			margin_: 10
 			spacing: 10
-			widths: [ui.compact, ui.stretch] // 350.0]
+			widths:  [ui.compact, ui.stretch] // 350.0]
 			heights: [ui.compact, ui.stretch] // 300.0]
 			// scrollview: true
 			children: [
 				ui.picture(
-					width: 20
-					height: 20
-					movable: true
-					z_index: 20
-					path: logo
-					tooltip: 'press Shift to drag'
+					width:        20
+					height:       20
+					movable:      true
+					z_index:      20
+					path:         logo
+					tooltip:      'press Shift to drag'
 					tooltip_side: .right
 				),
 				ui.canvas_layout(
-					id: 'demo_cl'
-					on_draw: draw
+					id:              'demo_cl'
+					on_draw:         draw
 					active_evt_mngr: false
-					on_mouse_move: mouse_move
-					full_width: win_width - 20
-					full_height: win_height
-					scrollview: true
-					children: [
+					on_mouse_move:   mouse_move
+					full_width:      win_width - 20
+					full_height:     win_height
+					scrollview:      true
+					children:        [
 						ui.at(10, 40, ui.row(
-							spacing: 10
-							heights: ui.compact
+							spacing:  10
+							heights:  ui.compact
 							children: [
 								ui.button(z_index: 10, text: 'X'),
 								ui.button(z_index: 10, text: 'Add'),
 							]
 						)),
 						ui.at(10, 10, ui.button(
-							id: 'b_thm'
-							text: 'Theme'
-							width: 100
-							theme: 'red'
-							z_index: 10
-							movable: true
+							id:        'b_thm'
+							text:      'Theme'
+							width:     100
+							theme:     'red'
+							z_index:   10
+							movable:   true
 							hoverable: true
-							on_click: fn (b &ui.Button) {
+							on_click:  fn (b &ui.Button) {
 								ui.message_box('Built with V UI')
 							}
 						)),
 						ui.at(20, 340, ui.label(
-							id: 'l_mm'
+							id:   'l_mm'
 							text: '(0, 0)     '
 						)),
 						ui.at(120, 10, ui.dropdown(
-							width: 140
-							height: 20
-							def_text: 'Select a theme'
+							width:                140
+							height:               20
+							def_text:             'Select a theme'
 							on_selection_changed: dd_change
-							items: [
+							items:                [
 								ui.DropdownItem{
 									text: 'default'
 								},
@@ -84,14 +84,14 @@ fn main() {
 							]
 						)),
 						ui.at(10, 70, ui.listbox(
-							width: 100
-							height: 140
-							z_index: 10
+							width:     100
+							height:    140
+							z_index:   10
 							on_change: lb_change
-							ordered: true
+							ordered:   true
 							// scrollview: false
 							draw_lines: true
-							items: {
+							items:      {
 								'default':  'Classic'
 								'blue':     'Blue'
 								'red':      'Red'
@@ -104,70 +104,70 @@ fn main() {
 							}
 						)),
 						ui.at(50, 220, ui.listbox(
-							width: 100
-							height: 100
-							z_index: 10
-							on_change: lb_change_multi
+							width:      100
+							height:     100
+							z_index:    10
+							on_change:  lb_change_multi
 							scrollview: false
 							// selectable: false
-							ordered: true
-							multi: true
+							ordered:    true
+							multi:      true
 							draw_lines: true
-							items: {
+							items:      {
 								'classic': 'Classic'
 								'blue':    'Blue'
 								'red':     'Red'
 							}
 						)),
 						ui.at(200, 220, ui.listbox(
-							width: 100
-							height: 100
-							z_index: 10
-							on_change: lb_change_multi
+							width:      100
+							height:     100
+							z_index:    10
+							on_change:  lb_change_multi
 							scrollview: false
 							// selectable: false
-							ordered: true
-							multi: true
+							ordered:    true
+							multi:      true
 							draw_lines: true
-							bg_color: gx.red
-							items: {
+							bg_color:   gx.red
+							items:      {
 								'classic': 'Classic'
 							}
 						)),
 						ui.at(150, 100, ui.menu(
-							id: 'menu'
-							text: 'Menu'
+							id:    'menu'
+							text:  'Menu'
 							width: 200
 							items: [
 								ui.menuitem(
-									text: 'Delete all users'
+									text:   'Delete all users'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'Export users'
+									text:   'Export users'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'Exit'
+									text:   'Exit'
 									action: menu_click
 								),
 							]
 						)),
 						ui.at(150, 80, ui.button(
-							text: 'hide/show menu'
-							z_index: 10
+							text:     'hide/show menu'
+							z_index:  10
 							on_click: fn (b &ui.Button) {
 								mut menu := b.ui.window.get_or_panic[ui.Menu]('menu')
 								menu.hidden = !menu.hidden
 							}
 						)),
 						ui.at(300, 30, ui.textbox(
-							id: 'tb'
-							width: 150
-							height: 100
-							mode: .multiline
+							id:       'tb'
+							width:    150
+							height:   100
+							mode:     .multiline
 							bg_color: gx.yellow
-							text: &text
+							text:     &text
 						)),
 					]
 				),

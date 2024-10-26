@@ -16,29 +16,29 @@ pub mut:
 @[params]
 pub struct FontChooserParams {
 pub:
-	id         string = component.fontchooser_lb_id
-	draw_lines bool   = true
+	id         string             = fontchooser_lb_id
+	draw_lines bool               = true
 	dtw        &ui.DrawTextWidget = ui.canvas_plus() // since it requires an intialisation
 }
 
 // TODO: documentation
 pub fn fontchooser_stack(c FontChooserParams) &ui.Stack {
 	mut lb := ui.listbox(
-		id: c.id
+		id:         c.id
 		scrollview: true
 		draw_lines: c.draw_lines
-		on_change: fontchooser_lb_change
+		on_change:  fontchooser_lb_change
 	)
 	fontchooser_add_fonts_items(mut lb)
 	mut layout := ui.row(
-		id: component.fontchooser_row_id
-		widths: ui.stretch
-		heights: 200.0
+		id:       fontchooser_row_id
+		widths:   ui.stretch
+		heights:  200.0
 		children: [lb]
 	)
 	mut fc := &FontChooserComponent{
 		layout: layout
-		dtw: c.dtw
+		dtw:    c.dtw
 	}
 	ui.component_connect(fc, layout, lb)
 	layout.on_init = fontchooser_init
@@ -57,7 +57,7 @@ pub fn fontchooser_component_from_id(w ui.Window, id string) &FontChooserCompone
 
 // TODO: documentation
 pub fn fontchooser_listbox(w &ui.Window) &ui.ListBox {
-	return w.get_or_panic[ui.ListBox](component.fontchooser_lb_id)
+	return w.get_or_panic[ui.ListBox](fontchooser_lb_id)
 }
 
 fn fontchooser_init(mut layout ui.Stack) {
@@ -75,7 +75,7 @@ fn fontchooser_add_fonts_items(mut lb ui.ListBox) {
 
 // TODO: documentation
 pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
-	fc_layout := w.get_or_panic[ui.Stack](component.fontchooser_row_id)
+	fc_layout := w.get_or_panic[ui.Stack](fontchooser_row_id)
 	mut fc := fontchooser_component(fc_layout)
 	fc.dtw = dtw
 }

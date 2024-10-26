@@ -4,27 +4,27 @@ import gx
 
 fn main() {
 	win := ui.window(
-		title: 'Accent color'
-		mode: .resizable
+		title:   'Accent color'
+		mode:    .resizable
 		on_init: win_init
-		height: 600
-		layout: ui.column(
-			heights: [100.0, ui.stretch]
+		height:  600
+		layout:  ui.column(
+			heights:  [100.0, ui.stretch]
 			children: [
 				ui.row(
-					widths: [6 * ui.stretch, 4 * ui.stretch]
+					widths:   [6 * ui.stretch, 4 * ui.stretch]
 					children: [
 						uic.colorsliders_stack(
-							id: 'cs'
+							id:          'cs'
 							orientation: .horizontal
-							color: gx.white
-							on_changed: on_accent_color_changed
+							color:       gx.white
+							on_changed:  on_accent_color_changed
 						),
 						ui.row(
-							margin_: 10
-							spacing: 5
+							margin_:  10
+							spacing:  5
 							bg_color: gx.white
-							widths: ui.stretch
+							widths:   ui.stretch
 							children: [
 								ui.rectangle(id: 'rect0', text: '0', border: true),
 								ui.rectangle(id: 'rect1', text: '1', border: true),

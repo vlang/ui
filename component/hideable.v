@@ -30,18 +30,18 @@ pub:
 // TODO: documentation
 pub fn hideable_stack(p HideableParams) &ui.Stack {
 	mut layout := ui.row(
-		widths: ui.stretch
-		heights: ui.stretch
-		id: ui.component_id(p.id, 'layout')
+		widths:   ui.stretch
+		heights:  ui.stretch
+		id:       ui.component_id(p.id, 'layout')
 		children: [p.layout]
 	)
 
 	mut h := &HideableComponent{
-		id: p.id
-		layout: layout
+		id:              p.id
+		layout:          layout
 		child_layout_id: p.layout.id
-		shortcut: p.shortcut
-		open: p.open
+		shortcut:        p.shortcut
+		open:            p.open
 	}
 
 	h.save_children_depth(layout.children)

@@ -23,24 +23,24 @@ fn main() {
 	}
 	dirs = dirs.map(os.real_path(it))
 	mut window := ui.window(
-		width: win_width
-		height: win_height
-		bg_color: gx.yellow
-		title: 'V UI Png Edit: ${dirs[0]}'
+		width:          win_width
+		height:         win_height
+		bg_color:       gx.yellow
+		title:          'V UI Png Edit: ${dirs[0]}'
 		native_message: false
-		mode: .resizable
-		on_init: init
+		mode:           .resizable
+		on_init:        init
 		// on_char: on_char
 		layout: ui.row(
-			id: 'main'
-			widths: [ui.stretch, ui.stretch * 2, 60]
-			heights: ui.stretch
+			id:       'main'
+			widths:   [ui.stretch, ui.stretch * 2, 60]
+			heights:  ui.stretch
 			children: [
 				uic.hideable_stack(
-					id: 'hmenu'
+					id:     'hmenu'
 					layout: uic.menufile_stack(
-						id: 'menu'
-						dirs: dirs
+						id:              'menu'
+						dirs:            dirs
 						on_file_changed: fn (mut mf uic.MenuFileComponent) {
 							// println("hello $mf.file")
 							if os.file_ext(mf.file) == '.png' {
@@ -60,7 +60,7 @@ fn main() {
 								}
 							}
 						}
-						on_new: fn (mf &uic.MenuFileComponent) {
+						on_new:          fn (mf &uic.MenuFileComponent) {
 							// println('new $mf.file!!!')
 							if os.file_ext(mf.file) == '.png' {
 								// create image
@@ -72,7 +72,7 @@ fn main() {
 								rv.sel_i, rv.sel_j = -1, -1
 							}
 						}
-						on_save: fn (mf &uic.MenuFileComponent) {
+						on_save:         fn (mf &uic.MenuFileComponent) {
 							// println("save $mf.file")
 							if os.file_ext(mf.file) == '.png' {
 								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
@@ -84,7 +84,7 @@ fn main() {
 					)
 				),
 				uic.rasterview_canvaslayout(
-					id: 'rv'
+					id:       'rv'
 					on_click: fn (rv &uic.RasterViewComponent) {
 						if rv.layout.ui.btn_down[1] {
 							mut cp := uic.colorpalette_component_from_id(rv.layout.ui.window,
@@ -94,7 +94,7 @@ fn main() {
 					}
 				),
 				uic.hideable_stack(
-					id: 'hpalette'
+					id:     'hpalette'
 					layout: uic.colorpalette_stack(id: 'palette')
 				),
 			]

@@ -42,22 +42,22 @@ pub mut:
 	users []User = [
 		User{
 			first_name: 'Sam'
-			last_name: 'Johnson'
-			age: 29
-			country: 'United States'
+			last_name:  'Johnson'
+			age:        29
+			country:    'United States'
 		},
 		User{
 			first_name: 'Kate'
-			last_name: 'Williams'
-			age: 26
-			country: 'Canada'
+			last_name:  'Williams'
+			age:        26
+			country:    'Canada'
 		},
 	]
 }
 
 pub fn new(p AppUIParams) &AppUI {
 	mut app := &AppUI{
-		id: p.id
+		id:    p.id
 		users: p.users
 	}
 	app.make_layout()
@@ -75,96 +75,96 @@ pub fn (mut app AppUI) make_layout() {
 		logo = 'img/logo.png'
 	}
 	app.country = ui.radio(
-		width: 200
+		width:  200
 		values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-		title: 'Country'
+		title:  'Country'
 	)
 	app.pbar = ui.progressbar(
 		width: 170
-		max: 10
-		val: 2
+		max:   10
+		val:   2
 		// theme: "red"
 	)
 	app.label = ui.label(id: 'counter', text: '2/10', text_font_name: 'fixed_bold_italic')
 	app.layout = ui.row(
-		id: ui.id(app.id, 'layout')
+		id:       ui.id(app.id, 'layout')
 		bg_color: gx.white
-		margin_: .02
-		spacing: .02
-		widths: [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
+		margin_:  .02
+		spacing:  .02
+		widths:   [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
 		children: [
 			ui.column(
-				spacing: 10
-				widths: ui.compact
-				heights: ui.compact
+				spacing:    10
+				widths:     ui.compact
+				heights:    ui.compact
 				scrollview: true
-				children: [
+				children:   [
 					ui.textbox(
-						max_len: 20
-						width: 200
+						max_len:     20
+						width:       200
 						placeholder: 'First name'
-						text: &app.first_name
+						text:        &app.first_name
 						// is_focused: &app.started
-						is_error: &app.is_error
+						is_error:   &app.is_error
 						is_focused: true
 					),
 					ui.textbox(
-						max_len: 50
-						width: 200
+						max_len:     50
+						width:       200
 						placeholder: 'Last name'
-						text: &app.last_name
-						is_error: &app.is_error
+						text:        &app.last_name
+						is_error:    &app.is_error
 					),
 					ui.textbox(
-						max_len: 3
-						width: 200
+						max_len:     3
+						width:       200
 						placeholder: 'Age'
-						is_numeric: true
-						text: &app.age
-						is_error: &app.is_error
+						is_numeric:  true
+						text:        &app.age
+						is_error:    &app.is_error
 					),
 					ui.textbox(
-						width: 200
+						width:       200
 						placeholder: 'Password'
 						is_password: true
-						max_len: 20
-						text: &app.password
+						max_len:     20
+						text:        &app.password
 					),
 					ui.checkbox(
 						checked: true
-						text: 'Online registration'
+						text:    'Online registration'
 					),
 					ui.checkbox(text: 'Subscribe to the newsletter'),
 					app.country,
 					ui.row(
-						id: 'btn_row'
-						widths: ui.compact
-						heights: 20.0
-						spacing: 80
+						id:       'btn_row'
+						widths:   ui.compact
+						heights:  20.0
+						spacing:  80
 						children: [
 							ui.button(
-								width: 60
-								text: 'Add user'
-								tooltip: 'Required fields:\n  * First name\n  * Last name\n  * Age'
+								width:    60
+								text:     'Add user'
+								tooltip:  'Required fields:\n  * First name\n  * Last name\n  * Age'
 								on_click: app.btn_add_click
-								radius: .0
+								radius:   .0
 							),
 							ui.button(
-								width: 40
-								tooltip: 'about'
-								text: '?'
+								width:    40
+								tooltip:  'about'
+								text:     '?'
 								on_click: btn_help_click
-								radius: .3
+								radius:   .3
 							),
 						]
 					),
 					ui.row(
-						spacing: 10
-						widths: [
+						spacing:  10
+						widths:   [
 							150.0,
 							40,
 						]
-						heights: ui.compact
+						heights:  ui.compact
 						children: [
 							app.pbar,
 							app.label,
@@ -178,32 +178,32 @@ pub fn (mut app AppUI) make_layout() {
 					center: [
 						0,
 					]
-					right: [
+					right:  [
 						1,
 					]
 				}
-				widths: [
+				widths:     [
 					ui.stretch,
 					ui.compact,
 				]
-				heights: [
+				heights:    [
 					ui.stretch,
 					ui.compact,
 				]
-				children: [
+				children:   [
 					ui.canvas_plus(
-						width: 400
-						height: 275
-						on_draw: app.draw
-						bg_color: gx.Color{255, 220, 220, 150}
+						width:     400
+						height:    275
+						on_draw:   app.draw
+						bg_color:  gx.Color{255, 220, 220, 150}
 						bg_radius: 10
 						// text_size: 20
 					),
 					ui.picture(
-						id: 'logo'
-						width: 50
+						id:     'logo'
+						width:  50
 						height: 50
-						path: logo
+						path:   logo
 					),
 				]
 			),
@@ -234,9 +234,9 @@ fn (mut app AppUI) btn_add_click(b &ui.Button) {
 	}
 	new_user := User{
 		first_name: app.first_name // first_name.text
-		last_name: app.last_name // .text
-		age: app.age.int()
-		country: app.country.selected_value()
+		last_name:  app.last_name  // .text
+		age:        app.age.int()
+		country:    app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++
@@ -252,21 +252,17 @@ fn (mut app AppUI) btn_add_click(b &ui.Button) {
 fn (app &AppUI) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	marginx, marginy := 20, 20
 	for i, user in app.users {
-		y := marginy + i * users.cell_height
+		y := marginy + i * cell_height
 		// Outer border
-		c.draw_device_rect_empty(d, marginx, y, users.table_width, users.cell_height,
-			gx.gray)
+		c.draw_device_rect_empty(d, marginx, y, table_width, cell_height, gx.gray)
 		// Vertical separators
-		c.draw_device_line(d, users.cell_width, y, users.cell_width, y + users.cell_height,
-			gx.gray)
-		c.draw_device_line(d, users.cell_width * 2, y, users.cell_width * 2, y + users.cell_height,
-			gx.gray)
-		c.draw_device_line(d, users.cell_width * 3, y, users.cell_width * 3, y + users.cell_height,
-			gx.gray)
+		c.draw_device_line(d, cell_width, y, cell_width, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
 		// Text values
 		c.draw_device_text(d, marginx + 5, y + 5, user.first_name)
-		c.draw_device_text(d, marginx + 5 + users.cell_width, y + 5, user.last_name)
-		c.draw_device_text(d, marginx + 5 + users.cell_width * 2, y + 5, user.age.str())
-		c.draw_device_text(d, marginx + 5 + users.cell_width * 3, y + 5, user.country)
+		c.draw_device_text(d, marginx + 5 + cell_width, y + 5, user.last_name)
+		c.draw_device_text(d, marginx + 5 + cell_width * 2, y + 5, user.age.str())
+		c.draw_device_text(d, marginx + 5 + cell_width * 3, y + 5, user.country)
 	}
 }

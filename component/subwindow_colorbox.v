@@ -9,10 +9,10 @@ const colorbox_subwindow_layout_id = ui.component_id('_sw_cbox', 'layout')
 // Append colorbox to window
 pub fn colorbox_subwindow_add(mut w ui.Window) {
 	// only once
-	if !ui.Layout(w).has_child_id(component.colorbox_subwindow_id) {
+	if !ui.Layout(w).has_child_id(colorbox_subwindow_id) {
 		w.subwindows << ui.subwindow(
-			id: component.colorbox_subwindow_id
-			layout: colorbox_stack(id: component.colorbox_subwindow_id, light: false, hsl: false)
+			id:     colorbox_subwindow_id
+			layout: colorbox_stack(id: colorbox_subwindow_id, light: false, hsl: false)
 		)
 	}
 }
@@ -25,8 +25,8 @@ pub enum ShowMode {
 
 // to connect the colorbox to gx.Color reference
 pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, show ShowMode) {
-	mut s := w.get_or_panic[ui.SubWindow](component.colorbox_subwindow_id)
-	cb_layout := w.get_or_panic[ui.Stack](component.colorbox_subwindow_layout_id)
+	mut s := w.get_or_panic[ui.SubWindow](colorbox_subwindow_id)
+	cb_layout := w.get_or_panic[ui.Stack](colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)
 	if unsafe { col != 0 } {
 		cb.connect(col)

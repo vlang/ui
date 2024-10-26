@@ -19,7 +19,7 @@ mut:
 	duration         i64
 	animating        bool
 	easing           EasingFunction = unsafe { nil }
-	parent           Layout = empty_stack
+	parent           Layout         = empty_stack
 	start_value      int
 	last_draw_target int
 	ui               &UI = unsafe { nil }
@@ -35,7 +35,7 @@ pub struct TransitionParams {
 pub:
 	z_index        int
 	duration       int
-	animated_value &int = unsafe { nil }
+	animated_value &int           = unsafe { nil }
 	easing         EasingFunction = unsafe { nil }
 	ref            &Transition    = unsafe { nil }
 }
@@ -43,13 +43,13 @@ pub:
 pub fn transition(c TransitionParams) &Transition {
 	mut transition := &Transition{
 		last_draw_time: time.ticks()
-		started_time: 0
-		duration: c.duration
-		animating: false
-		easing: c.easing
-		ui: unsafe { nil }
+		started_time:   0
+		duration:       c.duration
+		animating:      false
+		easing:         c.easing
+		ui:             unsafe { nil }
 		animated_value: unsafe { nil }
-		z_index: c.z_index
+		z_index:        c.z_index
 	}
 	return transition
 }

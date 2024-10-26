@@ -80,8 +80,8 @@ pub fn (mut t Tooltip) start(mut w Widget, id string, msg TooltipMessage) {
 		t.lines = word_wrap_text_to_lines(msg.text, 70)
 		t.width, t.height = text_lines_size(t.lines, t.ui)
 
-		t.width += 2 * ui.tooltip_margin
-		t.height += 2 * ui.tooltip_margin
+		t.width += 2 * tooltip_margin
+		t.height += 2 * tooltip_margin
 
 		set_text_cfg_color(mut t, t.color)
 		set_text_cfg_style(mut t, true, true, false)
@@ -92,10 +92,10 @@ pub fn (mut t Tooltip) start(mut w Widget, id string, msg TooltipMessage) {
 			// TODO: the other sides
 			.top {
 				t.x = w.x + w.offset_x + width / 2 - t.width / 2
-				t.y = w.y + w.offset_y - t.height - ui.tooltip_margin
+				t.y = w.y + w.offset_y - t.height - tooltip_margin
 			}
 			.right {
-				t.x = w.x + w.offset_x + width + ui.tooltip_margin
+				t.x = w.x + w.offset_x + width + tooltip_margin
 				t.y = w.y + w.offset_y + height / 2 - t.height / 2
 			}
 			else {}
@@ -120,7 +120,7 @@ fn (t &Tooltip) draw_device(mut d DrawDevice) {
 		// win.ui.dd.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
 		// gx.yellow)
 		d.draw_rounded_rect_filled(t.x, t.y, t.width, t.height, .3, t.bg_color)
-		draw_text_lines(t, t.x + ui.tooltip_margin, t.y, t.lines)
+		draw_text_lines(t, t.x + tooltip_margin, t.y, t.lines)
 	}
 }
 

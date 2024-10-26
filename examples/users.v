@@ -40,99 +40,99 @@ fn main() {
 		logo = 'img/logo.png'
 	}
 	mut app := &State{
-		users: [
+		users:   [
 			User{
 				first_name: 'Sam'
-				last_name: 'Johnson'
-				age: 29
-				country: 'United States'
+				last_name:  'Johnson'
+				age:        29
+				country:    'United States'
 			},
 			User{
 				first_name: 'Kate'
-				last_name: 'Williams'
-				age: 26
-				country: 'Canada'
+				last_name:  'Williams'
+				age:        26
+				country:    'Canada'
 			},
 		]
 		country: ui.radio(
-			width: 200
+			width:  200
 			values: ['United States', 'Canada', 'United Kingdom', 'Australia']
-			title: 'Country'
+			title:  'Country'
 		)
-		pbar: ui.progressbar(
+		pbar:    ui.progressbar(
 			width: 170
-			max: 10
-			val: 2
+			max:   10
+			val:   2
 		)
-		label: ui.label(text: '2/10')
+		label:   ui.label(text: '2/10')
 	}
 	window := ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'V UI Demo'
+		title:  'V UI Demo'
 		// bg_color: gx.light_blue
 		children: [
 			ui.row(
-				margin: ui.Margin{10, 10, 10, 10}
-				widths: [200.0, ui.stretch]
-				spacing: 30
+				margin:   ui.Margin{10, 10, 10, 10}
+				widths:   [200.0, ui.stretch]
+				spacing:  30
 				children: [
 					ui.column(
-						spacing: 13
+						spacing:  13
 						children: [
 							ui.textbox(
-								max_len: 20
-								width: 200
+								max_len:     20
+								width:       200
 								placeholder: 'First name'
-								text: &app.first_name
+								text:        &app.first_name
 								// is_focused: &app.started
-								is_error: &app.is_error
+								is_error:   &app.is_error
 								is_focused: true
 							),
 							ui.textbox(
-								max_len: 50
-								width: 200
+								max_len:     50
+								width:       200
 								placeholder: 'Last name'
-								text: &app.last_name
-								is_error: &app.is_error
+								text:        &app.last_name
+								is_error:    &app.is_error
 							),
 							ui.textbox(
-								max_len: 3
-								width: 200
+								max_len:     3
+								width:       200
 								placeholder: 'Age'
-								is_numeric: true
-								text: &app.age
-								is_error: &app.is_error
+								is_numeric:  true
+								text:        &app.age
+								is_error:    &app.is_error
 							),
 							ui.textbox(
-								width: 200
+								width:       200
 								placeholder: 'Password'
 								is_password: true
-								max_len: 20
-								text: &app.password
+								max_len:     20
+								text:        &app.password
 							),
 							ui.checkbox(
 								checked: true
-								text: 'Online registration'
+								text:    'Online registration'
 							),
 							ui.checkbox(text: 'Subscribe to the newsletter'),
 							app.country,
 							ui.row(
-								spacing: 65
-								widths: ui.compact
+								spacing:  65
+								widths:   ui.compact
 								children: [
 									ui.button(
-										text: 'Add user'
+										text:     'Add user'
 										on_click: app.btn_add_click
 									),
 									ui.button(
-										text: '?'
+										text:     '?'
 										on_click: btn_help_click
 									),
 								]
 							),
 							ui.row(
-								spacing: 5
+								spacing:  5
 								children: [
 									app.pbar,
 									app.label,
@@ -145,28 +145,28 @@ fn main() {
 							center: [
 								0,
 							]
-							right: [
+							right:  [
 								1,
 							]
 						}
-						widths: [
+						widths:     [
 							ui.stretch,
 							ui.compact,
 						]
-						heights: [
+						heights:    [
 							ui.stretch,
 							100.0,
 						]
-						children: [
+						children:   [
 							ui.canvas(
-								width: 400
-								height: 275
+								width:   400
+								height:  275
 								draw_fn: app.canvas_draw
 							),
 							ui.picture(
-								width: 100
+								width:  100
 								height: 100
-								path: logo
+								path:   logo
 							),
 						]
 					),
@@ -202,9 +202,9 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 	}
 	new_user := User{
 		first_name: app.first_name // first_name.text
-		last_name: app.last_name // .text
-		age: app.age.int()
-		country: app.country.selected_value()
+		last_name:  app.last_name  // .text
+		age:        app.age.int()
+		country:    app.country.selected_value()
 	}
 	app.users << new_user
 	app.pbar.val++

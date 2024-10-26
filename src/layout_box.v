@@ -51,10 +51,10 @@ union Box {
 }
 
 enum BoxMode {
-	left_top_width_height // width>0, height>0
-	right_top_width_height // width<0, height>0
+	left_top_width_height     // width>0, height>0
+	right_top_width_height    // width<0, height>0
 	right_bottom_width_height // width<0, height<0
-	left_bottom_width_height // width>0, height<0
+	left_bottom_width_height  // width>0, height<0
 	left_top_right_bottom
 }
 
@@ -79,8 +79,8 @@ pub mut:
 	// children
 	child_box        []Box
 	child_box_expr   map[string]string // for box_expression mode, i.e. specifically when some @id are used inside bounding expression
-	child_id         []string // relative id
-	cid              []string // real child id defined inside its own constructor
+	child_id         []string          // relative id
+	cid              []string          // real child id defined inside its own constructor
 	child_mode       []BoxMode
 	children         []Widget
 	drawing_children []Widget
@@ -89,7 +89,7 @@ pub mut:
 	is_root_layout   bool = true
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = unsafe { nil }
+	scrollview       &ScrollView         = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	// component state for composable widget
 	component voidptr
@@ -114,13 +114,13 @@ pub mut:
 // TODO: documentation
 pub fn box_layout(c BoxLayoutParams) &BoxLayout {
 	mut b := &BoxLayout{
-		id: c.id
-		x: c.x
-		y: c.y
-		width: c.width
-		height: c.height
+		id:       c.id
+		x:        c.x
+		y:        c.y
+		width:    c.width
+		height:   c.height
 		clipping: c.clipping
-		ui: unsafe { nil }
+		ui:       unsafe { nil }
 	}
 	for key, child in c.children {
 		mut child_mut := child

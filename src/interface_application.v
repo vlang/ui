@@ -37,13 +37,13 @@ pub:
 	on_char          WindowKeyFn       = unsafe { nil }
 	on_scroll        WindowScrollFn    = unsafe { nil }
 	on_resize        WindowResizeFn    = unsafe { nil }
-	on_iconify       WindowFn = unsafe { nil }
-	on_restore       WindowFn = unsafe { nil }
-	on_quit_request  WindowFn = unsafe { nil }
-	on_suspend       WindowFn = unsafe { nil }
-	on_resume        WindowFn = unsafe { nil }
-	on_focus         WindowFn = unsafe { nil }
-	on_unfocus       WindowFn = unsafe { nil }
+	on_iconify       WindowFn          = unsafe { nil }
+	on_restore       WindowFn          = unsafe { nil }
+	on_quit_request  WindowFn          = unsafe { nil }
+	on_suspend       WindowFn          = unsafe { nil }
+	on_resume        WindowFn          = unsafe { nil }
+	on_focus         WindowFn          = unsafe { nil }
+	on_unfocus       WindowFn          = unsafe { nil }
 }
 
 // add ability to complete app.window callbacks without add_window which is called only in app

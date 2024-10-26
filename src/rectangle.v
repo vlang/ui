@@ -59,19 +59,19 @@ pub:
 
 pub fn rectangle(c RectangleParams) &Rectangle {
 	mut rect := &Rectangle{
-		id: c.id
-		text: c.text
-		height: c.height
-		width: c.width
-		z_index: c.z_index
-		radius: c.radius
+		id:           c.id
+		text:         c.text
+		height:       c.height
+		width:        c.width
+		z_index:      c.z_index
+		radius:       c.radius
 		style_params: c.RectangleStyleParams
 		// color: c.color
 		border: c.border
 		// border_color: c.border_color
 		ui: unsafe { nil }
-		x: c.x
-		y: c.y
+		x:  c.x
+		y:  c.y
 		// text_size: c.text_size
 	}
 	rect.style_params.style = c.theme

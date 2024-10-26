@@ -13,27 +13,27 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		width: win_width
-		height: win_height
-		title: 'Name'
+		width:    win_width
+		height:   win_height
+		title:    'Name'
 		children: [
 			ui.column(
 				spacing: 20
-				margin: ui.Margin{30, 30, 30, 30}
+				margin:  ui.Margin{30, 30, 30, 30}
 				// uncomment if you don't set the width of the button
 				// widths: [ui.stretch,150]
 				children: [
 					ui.row(
-						spacing: 10
+						spacing:   10
 						alignment: .center
-						children: [
+						children:  [
 							ui.label(text: 'Title name: '),
 							ui.textbox(
-								max_len: 20
-								width: 300
+								max_len:     20
+								width:       300
 								placeholder: 'Please enter new title name'
-								text: &app.title_box_text
-								is_focused: true
+								text:        &app.title_box_text
+								is_focused:  true
 							),
 						]
 					),

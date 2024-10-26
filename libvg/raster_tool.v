@@ -600,10 +600,10 @@ fn color_multiply_alpha(c gx.Color, a f64) gx.Color {
 @[params]
 pub struct TextBlockParams {
 pub:
-	x         int  // x postion of the left high corner
-	y         int  // y postion of the left high corner
-	w         int  // width of the text block
-	h         int  // heigth of the text block
+	x         int // x postion of the left high corner
+	y         int // y postion of the left high corner
+	w         int // width of the text block
+	h         int // heigth of the text block
 	cut_lines bool = true // force to cut the line if the length is over the text block width
 }
 

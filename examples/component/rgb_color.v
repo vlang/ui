@@ -12,31 +12,31 @@ fn main() {
 	}
 	color := gx.rgb(128, 128, 128)
 	rect := ui.rectangle(
-		id: 'rgb_rect'
+		id:     'rgb_rect'
 		border: true
-		color: color
+		color:  color
 	)
 	window := ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'RGB color displayed in rectangle'
-		mode: .resizable
+		title:  'RGB color displayed in rectangle'
+		mode:   .resizable
 		layout: ui.column(
-			margin_: 10
-			spacing: 5
-			heights: [ui.stretch, 2 * ui.stretch, 7 * ui.stretch]
+			margin_:  10
+			spacing:  5
+			heights:  [ui.stretch, 2 * ui.stretch, 7 * ui.stretch]
 			children: [
 				ui.button(
-					id: 'rgb_btn'
-					text: 'Show rgb color'
+					id:       'rgb_btn'
+					text:     'Show rgb color'
 					on_click: btn_click
 				),
 				rect,
 				uic.colorsliders_stack(
-					id: 'colorsliders'
-					color: color
+					id:          'colorsliders'
+					color:       color
 					orientation: orientation
-					on_changed: on_rgb_changed
+					on_changed:  on_rgb_changed
 				),
 			]
 		)

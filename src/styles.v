@@ -140,17 +140,17 @@ pub fn default_style() Style {
 		}
 		// button
 		btn: ButtonStyle{
-			radius: .1
-			border_color: button_border_color
-			bg_color: gx.white
+			radius:           .1
+			border_color:     button_border_color
+			bg_color:         gx.white
 			bg_color_pressed: gx.rgb(119, 119, 119)
-			bg_color_hover: gx.rgb(219, 219, 219)
+			bg_color_hover:   gx.rgb(219, 219, 219)
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color: gx.rgb(87, 153, 245)
-			border_color: gx.rgb(76, 133, 213)
-			bg_color: gx.rgb(219, 219, 219)
+			color:           gx.rgb(87, 153, 245)
+			border_color:    gx.rgb(76, 133, 213)
+			bg_color:        gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
 	}
@@ -168,26 +168,26 @@ pub fn blue_style() Style {
 		}
 		// button
 		btn: ButtonStyle{
-			radius: .3
-			border_color: button_border_color
-			bg_color: gx.light_blue
+			radius:           .3
+			border_color:     button_border_color
+			bg_color:         gx.light_blue
 			bg_color_pressed: gx.rgb(0, 0, 119)
-			bg_color_hover: gx.rgb(0, 0, 219)
+			bg_color_hover:   gx.rgb(0, 0, 219)
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color: gx.rgb(87, 153, 245)
-			border_color: gx.rgb(76, 133, 213)
-			bg_color: gx.rgb(219, 219, 219)
+			color:           gx.rgb(87, 153, 245)
+			border_color:    gx.rgb(76, 133, 213)
+			bg_color:        gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+			bg_color: transparent // gx.rgb(220, 220, 255)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: ui.transparent // gx.rgb(220, 220, 255)
+			bg_color: transparent // gx.rgb(220, 220, 255)
 		}
 	}
 }
@@ -204,18 +204,18 @@ pub fn red_style() Style {
 		}
 		// button
 		btn: ButtonStyle{
-			radius: .3
-			border_color: button_border_color
-			bg_color: gx.light_red
+			radius:           .3
+			border_color:     button_border_color
+			bg_color:         gx.light_red
 			bg_color_pressed: gx.rgb(119, 0, 0)
-			bg_color_hover: gx.rgb(219, 0, 0)
-			text_color: gx.red
+			bg_color_hover:   gx.rgb(219, 0, 0)
+			text_color:       gx.red
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color: gx.rgb(245, 153, 87)
-			border_color: gx.rgb(213, 133, 76)
-			bg_color: gx.rgb(219, 219, 219)
+			color:           gx.rgb(245, 153, 87)
+			border_color:    gx.rgb(213, 133, 76)
+			bg_color:        gx.rgb(219, 219, 219)
 			bg_border_color: gx.rgb(191, 191, 191)
 		}
 		// slider
@@ -224,11 +224,11 @@ pub fn red_style() Style {
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: ui.transparent // gx.rgb(255, 220, 220)
+			bg_color: transparent // gx.rgb(255, 220, 220)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: ui.transparent // gx.rgb(255, 220, 220)
+			bg_color: transparent // gx.rgb(255, 220, 220)
 		}
 	}
 }
@@ -240,15 +240,15 @@ pub fn create_red_style_file() {
 // parent style
 
 pub fn (l Layout) bg_color() gx.Color {
-	mut col := ui.no_color
+	mut col := no_color
 	if l is Stack {
 		col = l.style.bg_color
-		if col in [ui.no_color, ui.transparent] {
+		if col in [no_color, transparent] {
 			return l.parent.bg_color()
 		}
 	} else if l is CanvasLayout {
 		col = l.style.bg_color
-		if col in [ui.no_color, ui.transparent] {
+		if col in [no_color, transparent] {
 			return l.parent.bg_color()
 		}
 	} else if l is Window {

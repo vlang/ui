@@ -11,12 +11,12 @@ fn main() {
 	mut dtw := ui.DrawTextWidget(rect)
 	dtw.update_style(color: gx.blue, size: 30)
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: Toolbar'
+		width:          win_width
+		height:         win_height
+		title:          'V UI: Toolbar'
 		native_message: false
-		layout: ui.column(
-			heights: [ui.compact, ui.compact]
+		layout:         ui.column(
+			heights:  [ui.compact, ui.compact]
 			children: [cb_layout, rect]
 		)
 	)

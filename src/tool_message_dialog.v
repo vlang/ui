@@ -7,22 +7,22 @@ import gx
 
 fn (mut win Window) add_message_dialog() {
 	mut dlg := column(
-		id: '_msg_dlg_col'
+		id:        '_msg_dlg_col'
 		alignment: .center
-		widths: compact
-		heights: compact
-		spacing: 10
-		margin: Margin{5, 5, 5, 5}
-		bg_color: gx.Color{140, 210, 240, 100}
+		widths:    compact
+		heights:   compact
+		spacing:   10
+		margin:    Margin{5, 5, 5, 5}
+		bg_color:  gx.Color{140, 210, 240, 100}
 		bg_radius: .3
-		children: [
+		children:  [
 			label(id: '_msg_dlg_lab', text: ' Hello World'),
 			button(
-				id: '_msg_dlg_btn'
-				text: 'OK'
-				width: 100
-				radius: .3
-				z_index: 1000
+				id:       '_msg_dlg_btn'
+				text:     'OK'
+				width:    100
+				radius:   .3
+				z_index:  1000
 				on_click: message_dialog_click
 			),
 		]

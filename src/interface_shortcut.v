@@ -14,12 +14,12 @@ pub fn (mut s Shortcutable) add_shortcut(shortcut string, key_fn ShortcutFn) {
 	mods, code, key := parse_shortcut(shortcut)
 	if code == 0 {
 		s.shortcuts.chars[key] = Shortcut{
-			mods: mods
+			mods:   mods
 			key_fn: key_fn
 		}
 	} else {
 		s.shortcuts.keys[code] = Shortcut{
-			mods: mods
+			mods:   mods
 			key_fn: key_fn
 		}
 	}

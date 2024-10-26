@@ -6,8 +6,8 @@ import gx
 @[heap]
 pub struct DataGridComponent {
 pub mut:
-	layout   &ui.Stack      = unsafe { nil }
-	grid     &GridComponent = unsafe { nil }
+	layout   &ui.Stack              = unsafe { nil }
+	grid     &GridComponent         = unsafe { nil }
 	settings &GridSettingsComponent = unsafe { nil }
 }
 
@@ -34,26 +34,26 @@ pub fn datagrid_stack(p DataGridParams) &ui.Stack {
 		h.toggle()
 	})
 	gsl := gridsettings_stack(
-		id: ui.component_id(p.id, 'gridsettings')
-		grid: g
+		id:       ui.component_id(p.id, 'gridsettings')
+		grid:     g
 		bg_color: p.settings_bg_color
-		z_index: p.settings_z_index
+		z_index:  p.settings_z_index
 	)
 	mut gs := gridsettings_component(gsl)
 	mut layout := ui.row(
-		id: ui.component_id(p.id, 'layout')
-		widths: [ui.stretch, ui.stretch * 3]
+		id:       ui.component_id(p.id, 'layout')
+		widths:   [ui.stretch, ui.stretch * 3]
 		children: [
 			hideable_stack(
-				id: ui.component_id(p.id, 'hideable')
+				id:     ui.component_id(p.id, 'hideable')
 				layout: gsl
 			),
 			gl,
 		]
 	)
 	mut dg := &DataGridComponent{
-		layout: layout
-		grid: g
+		layout:   layout
+		grid:     g
 		settings: gs
 	}
 	// println("dg comp: <$dg.layout.id> <$dg.grid.id>")
@@ -98,14 +98,14 @@ pub fn datagrid_boxlayout(p DataGridBoxLayoutParams) &ui.BoxLayout {
 	// )
 	// mut gs := gridsettings_component(gsl)
 	mut layout := ui.box_layout(
-		id: ui.component_id(p.id, 'layout')
+		id:       ui.component_id(p.id, 'layout')
 		children: {
 			'${ui.component_id(p.id, 'gl')}: (0,0) -> (1,1)': gl
 		}
 	)
 	mut dg := &DataGridBoxLayoutComponent{
 		layout: layout
-		grid: g
+		grid:   g
 		// settings: gs
 	}
 	// println("dg comp: <$dg.layout.id> <$dg.grid.id>")

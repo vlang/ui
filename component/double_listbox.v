@@ -29,40 +29,40 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 	}
 	mut lb_left := ui.listbox(id: c.id + '_left', width: 50, items: items, ordered: true)
 	mut lb_right := ui.listbox(
-		id: c.id + '_right'
-		width: 50
+		id:      c.id + '_right'
+		width:   50
 		ordered: true
-		items: map[string]string{}
+		items:   map[string]string{}
 	)
 	mut btn_right := ui.button(
-		id: c.id + '_btn_right'
-		text: '>>'
+		id:       c.id + '_btn_right'
+		text:     '>>'
 		on_click: doublelistbox_move_right
 	)
 	mut btn_left := ui.button(id: c.id + '_btn_left', text: '<<', on_click: doublelistbox_move_left)
 	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', on_click: doublelistbox_clear)
 	mut layout := ui.row(
-		title: c.title
-		id: ui.component_id(c.id, 'layout')
-		widths: [4 * ui.stretch, 2 * ui.stretch, 4 * ui.stretch]
-		heights: ui.stretch
-		spacing: .05
+		title:    c.title
+		id:       ui.component_id(c.id, 'layout')
+		widths:   [4 * ui.stretch, 2 * ui.stretch, 4 * ui.stretch]
+		heights:  ui.stretch
+		spacing:  .05
 		children: [
 			lb_left,
 			ui.column(
-				widths: ui.stretch
-				heights: ui.compact
-				spacing: 10
+				widths:   ui.stretch
+				heights:  ui.compact
+				spacing:  10
 				children: [btn_right, btn_left, btn_clear]
 			),
 			lb_right,
 		]
 	)
 	dbl_lb := &DoubleListBoxComponent{
-		layout: layout
-		lb_left: lb_left
-		lb_right: lb_right
-		btn_left: btn_left
+		layout:    layout
+		lb_left:   lb_left
+		lb_right:  lb_right
+		btn_left:  btn_left
 		btn_right: btn_right
 		btn_clear: btn_clear
 	}

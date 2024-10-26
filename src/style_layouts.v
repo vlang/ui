@@ -16,7 +16,7 @@ pub struct CanvasLayoutStyle {
 pub mut:
 	text_font_name      string = 'system'
 	text_color          gx.Color
-	text_size           int = 16
+	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
 }
@@ -114,7 +114,7 @@ pub struct StackStyle {
 pub mut:
 	text_font_name      string = 'system'
 	text_color          gx.Color
-	text_size           int = 16
+	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
 }

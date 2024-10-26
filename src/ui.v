@@ -73,7 +73,7 @@ fn (mut gui UI) idle_loop() {
 	// the cursor will blink at a rate of 1Hz, even if
 	// there are no other user events.
 	for {
-		if time.ticks() - gui.last_type_time < ui.cursor_show_delay {
+		if time.ticks() - gui.last_type_time < cursor_show_delay {
 			// Always show the cursor if the user is typing right now
 			gui.show_cursor = true
 		} else {

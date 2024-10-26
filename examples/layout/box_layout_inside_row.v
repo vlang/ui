@@ -15,13 +15,13 @@ mut:
 fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
 	app.texts['toto'] = 'blah3 blah blah\n'.repeat(10)
 	tb := ui.textbox(
-		mode: .multiline
+		mode:     .multiline
 		bg_color: gx.yellow
-		text: &(app.texts['toto'])
+		text:     &(app.texts['toto'])
 	)
 	return if has_row {
 		ui.Widget(ui.row(
-			widths: ui.stretch
+			widths:   ui.stretch
 			children: [
 				tb,
 			]
@@ -38,17 +38,17 @@ fn main() {
 
 	mut text := ['blah2 blah blah\n'.repeat(10)]
 	app.window = ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'V UI: Rectangles inside BoxLayout'
-		mode: .resizable
+		title:  'V UI: Rectangles inside BoxLayout'
+		mode:   .resizable
 		layout: ui.row(
-			margin_: 20
-			widths: ui.stretch
-			heights: ui.stretch
+			margin_:  20
+			widths:   ui.stretch
+			heights:  ui.stretch
 			children: [
 				ui.box_layout(
-					id: 'bl'
+					id:       'bl'
 					children: {
 						'id1: (0,0) ++ (30%,30%)':     ui.rectangle(
 							color: gx.rgb(255, 100, 100)
@@ -58,7 +58,7 @@ fn main() {
 						)
 						'id3: (70%,70%) ++ (30%,30%)': make_tb(mut app, mut text, false)
 						'btn: (70%,10%) ++ (50,20)':   ui.button(
-							text: 'switch'
+							text:     'switch'
 							on_click: app.btn_click
 						)
 					}

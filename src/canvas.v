@@ -42,11 +42,11 @@ pub:
 
 pub fn canvas(c CanvasParams) &Canvas {
 	mut canvas := &Canvas{
-		id: c.id
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		draw_fn: c.draw_fn
+		id:       c.id
+		width:    c.width
+		height:   c.height
+		z_index:  c.z_index
+		draw_fn:  c.draw_fn
 		clipping: c.clipping
 	}
 	return canvas

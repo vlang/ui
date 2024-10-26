@@ -41,25 +41,25 @@ pub mut:
 	width             int
 	height            int
 	no_fullscreen     bool
-	click_fn          WindowMouseFn     = unsafe { nil }
-	mouse_down_fn     WindowMouseFn     = unsafe { nil }
-	mouse_up_fn       WindowMouseFn     = unsafe { nil }
-	files_dropped_fn  WindowMouseFn     = unsafe { nil }
-	swipe_fn          WindowMouseFn     = unsafe { nil }
-	mouse_move_fn     WindowMouseMoveFn = unsafe { nil }
-	scroll_fn         WindowScrollFn    = unsafe { nil }
-	key_down_fn       WindowKeyFn       = unsafe { nil }
-	char_fn           WindowKeyFn       = unsafe { nil }
-	resize_fn         WindowResizeFn    = unsafe { nil }
-	iconified_fn      WindowFn = unsafe { nil }
-	restored_fn       WindowFn = unsafe { nil }
-	quit_requested_fn WindowFn = unsafe { nil }
-	suspended_fn      WindowFn = unsafe { nil }
-	resumed_fn        WindowFn = unsafe { nil }
-	focused_fn        WindowFn = unsafe { nil }
-	unfocused_fn      WindowFn = unsafe { nil }
-	on_init           WindowFn = unsafe { nil }
-	on_draw           WindowFn = unsafe { nil }
+	click_fn          WindowMouseFn              = unsafe { nil }
+	mouse_down_fn     WindowMouseFn              = unsafe { nil }
+	mouse_up_fn       WindowMouseFn              = unsafe { nil }
+	files_dropped_fn  WindowMouseFn              = unsafe { nil }
+	swipe_fn          WindowMouseFn              = unsafe { nil }
+	mouse_move_fn     WindowMouseMoveFn          = unsafe { nil }
+	scroll_fn         WindowScrollFn             = unsafe { nil }
+	key_down_fn       WindowKeyFn                = unsafe { nil }
+	char_fn           WindowKeyFn                = unsafe { nil }
+	resize_fn         WindowResizeFn             = unsafe { nil }
+	iconified_fn      WindowFn                   = unsafe { nil }
+	restored_fn       WindowFn                   = unsafe { nil }
+	quit_requested_fn WindowFn                   = unsafe { nil }
+	suspended_fn      WindowFn                   = unsafe { nil }
+	resumed_fn        WindowFn                   = unsafe { nil }
+	focused_fn        WindowFn                   = unsafe { nil }
+	unfocused_fn      WindowFn                   = unsafe { nil }
+	on_init           WindowFn                   = unsafe { nil }
+	on_draw           WindowFn                   = unsafe { nil }
 	eventbus          &eventbus.EventBus[string] = eventbus.new[string]()
 	resizable         bool // resizable has limitation https://github.com/vlang/ui/issues/231
 	mode              WindowSizeType
@@ -137,8 +137,8 @@ pub:
 	on_focus              WindowFn          = unsafe { nil }
 	on_unfocus            WindowFn          = unsafe { nil }
 	on_mouse_move         WindowMouseMoveFn = unsafe { nil }
-	on_init               WindowFn = unsafe { nil }
-	on_draw               WindowFn = unsafe { nil }
+	on_init               WindowFn          = unsafe { nil }
+	on_draw               WindowFn          = unsafe { nil }
 	children              []Widget
 	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string
@@ -211,53 +211,53 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		title: cfg.title
-		width: width
-		height: height
+		title:         cfg.title
+		width:         width
+		height:        height
 		no_fullscreen: no_fullscreen
-		theme_style: cfg.theme
+		theme_style:   cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
-		children: children
-		on_init: cfg.on_init
-		on_draw: cfg.on_draw
-		click_fn: cfg.on_click
-		key_down_fn: cfg.on_key_down
-		char_fn: cfg.on_char
-		scroll_fn: cfg.on_scroll
-		mouse_move_fn: cfg.on_mouse_move
-		mouse_down_fn: cfg.on_mouse_down
-		mouse_up_fn: cfg.on_mouse_up
-		files_dropped_fn: cfg.on_files_dropped
-		swipe_fn: cfg.on_swipe
-		resizable: resizable
-		mode: cfg.mode
-		resize_fn: cfg.on_resize
-		text_cfg: text_cfg
-		native_message: cfg.native_message
-		immediate: cfg.immediate
-		sample_count: cfg.sample_count
-		iconified_fn: cfg.on_iconify
-		restored_fn: cfg.on_restore
+		children:          children
+		on_init:           cfg.on_init
+		on_draw:           cfg.on_draw
+		click_fn:          cfg.on_click
+		key_down_fn:       cfg.on_key_down
+		char_fn:           cfg.on_char
+		scroll_fn:         cfg.on_scroll
+		mouse_move_fn:     cfg.on_mouse_move
+		mouse_down_fn:     cfg.on_mouse_down
+		mouse_up_fn:       cfg.on_mouse_up
+		files_dropped_fn:  cfg.on_files_dropped
+		swipe_fn:          cfg.on_swipe
+		resizable:         resizable
+		mode:              cfg.mode
+		resize_fn:         cfg.on_resize
+		text_cfg:          text_cfg
+		native_message:    cfg.native_message
+		immediate:         cfg.immediate
+		sample_count:      cfg.sample_count
+		iconified_fn:      cfg.on_iconify
+		restored_fn:       cfg.on_restore
 		quit_requested_fn: cfg.on_quit_request
-		suspended_fn: cfg.on_suspend
-		resumed_fn: cfg.on_resume
-		focused_fn: cfg.on_focus
-		unfocused_fn: cfg.on_unfocus
+		suspended_fn:      cfg.on_suspend
+		resumed_fn:        cfg.on_resume
+		focused_fn:        cfg.on_focus
+		unfocused_fn:      cfg.on_unfocus
 	}
 	window.style_params.bg_color = cfg.bg_color
 	window.top_layer = canvas_layer()
 	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
-			width: width
-			height: height
-			min_width: cfg.min_width
-			min_height: cfg.min_height
+			width:         width
+			height:        height
+			min_width:     cfg.min_width
+			min_height:    cfg.min_height
 			create_window: true // TODO: Unused ?
-			window_title: cfg.title
-			resizable: resizable
-			fullscreen: fullscreen
-			frame_fn: if cfg.immediate {
+			window_title:  cfg.title
+			resizable:     resizable
+			fullscreen:    fullscreen
+			frame_fn:      if cfg.immediate {
 				frame_immediate
 			} else if cfg.native_rendering {
 				frame_native
@@ -265,30 +265,30 @@ pub fn window(cfg WindowParams) &Window {
 				frame
 			}
 			// native_frame_fn: frame_native
-			event_fn: on_event
-			user_data: window
-			font_path: if fp == '' { font.default() } else { fp }
+			event_fn:              on_event
+			user_data:             window
+			font_path:             if fp == '' { font.default() } else { fp }
 			custom_bold_font_path: cfg.custom_bold_font_path
-			init_fn: gg_init
-			cleanup_fn: gg_cleanup
+			init_fn:               gg_init
+			cleanup_fn:            gg_cleanup
 			// keydown_fn: window_key_down
 			// char_fn: window_char
 			bg_color: window.bg_color // gx.rgb(230,230,230)
 			// window_state: ui
 			native_rendering: cfg.native_rendering
-			ui_mode: !cfg.immediate
+			ui_mode:          !cfg.immediate
 			// drag & drop
-			enable_dragndrop: cfg.enable_dragndrop
-			max_dropped_files: cfg.max_dropped_files
+			enable_dragndrop:             cfg.enable_dragndrop
+			max_dropped_files:            cfg.max_dropped_files
 			max_dropped_file_path_length: cfg.max_dropped_file_path_length
 		)
 	}
 	mut ui_ctx := &UI{
-		dd: dd
-		gg: &dd.Context
-		window: window
-		svg: draw_device_svg()
-		bmp: draw_device_bitmap()
+		dd:        dd
+		gg:        &dd.Context
+		window:    window
+		svg:       draw_device_svg()
+		bmp:       draw_device_bitmap()
 		clipboard: clipboard.new()
 	}
 	ui_ctx.load_imgs()
@@ -316,11 +316,11 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 		ui: parent_window.ui
 		// glfw_obj: parent_window.ui.gg.window
 		// draw_fn: cfg.draw_fn
-		on_draw: cfg.on_draw
-		title: cfg.title
+		on_draw:  cfg.on_draw
+		title:    cfg.title
 		bg_color: cfg.bg_color
-		width: cfg.width
-		height: cfg.height
+		width:    cfg.width
+		height:   cfg.height
 		children: cfg.children
 		click_fn: cfg.on_click
 	}
@@ -600,7 +600,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			// touch like
 			prev_time := window.touch.start.time
 			window.touch.start = Touch{
-				pos: Pos{
+				pos:  Pos{
 					x: int(e.mouse_x / window.dpi_scale)
 					y: int(e.mouse_y / window.dpi_scale)
 				}
@@ -619,7 +619,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			// NOT THERE since already done
 			// touch-like
 			window.touch.end = Touch{
-				pos: Pos{
+				pos:  Pos{
 					x: int(e.mouse_x / window.dpi_scale)
 					y: int(e.mouse_y / window.dpi_scale)
 				}
@@ -687,7 +687,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			if e.num_touches > 0 {
 				t := e.touches[0]
 				window.touch.start = Touch{
-					pos: Pos{
+					pos:  Pos{
 						x: int(t.pos_x / window.dpi_scale)
 						y: int(t.pos_y / window.dpi_scale)
 					}
@@ -702,7 +702,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			if e.num_touches > 0 {
 				t := e.touches[0]
 				window.touch.end = Touch{
-					pos: Pos{
+					pos:  Pos{
 						x: int(t.pos_x / window.dpi_scale)
 						y: int(t.pos_y / window.dpi_scale)
 					}
@@ -718,7 +718,7 @@ fn on_event(e &gg.Event, mut window Window) {
 			if e.num_touches > 0 {
 				t := e.touches[0]
 				window.touch.move = Touch{
-					pos: Pos{
+					pos:  Pos{
 						x: int(t.pos_x / window.dpi_scale)
 						y: int(t.pos_y / window.dpi_scale)
 					}
@@ -766,10 +766,10 @@ fn window_key_down(event gg.Event, u &UI) {
 	// C.printf(c'g child=%p\n', child)
 	// println('window_keydown $event')
 	e := KeyEvent{
-		key: Key(event.key_code)
-		mods: unsafe { KeyMod(event.modifiers) }
+		key:       Key(event.key_code)
+		mods:      unsafe { KeyMod(event.modifiers) }
 		codepoint: event.char_code
-		code: int(event.key_code)
+		code:      int(event.key_code)
 		// action: action
 		// mods: mod
 	}
@@ -835,7 +835,7 @@ fn window_char(event gg.Event, u &UI) {
 	window := u.window
 	e := KeyEvent{
 		codepoint: event.char_code
-		mods: unsafe { KeyMod(event.modifiers) }
+		mods:      unsafe { KeyMod(event.modifiers) }
 	}
 	if window.char_fn != WindowKeyFn(0) {
 		window.char_fn(window, e)
@@ -850,10 +850,10 @@ fn window_mouse_down(event gg.Event, mut u UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / window.dpi_scale)
-		y: int(event.mouse_y / window.dpi_scale)
+		x:      int(event.mouse_x / window.dpi_scale)
+		y:      int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
-		mods: unsafe { KeyMod(event.modifiers) }
+		mods:   unsafe { KeyMod(event.modifiers) }
 	}
 	u.keymods = unsafe { KeyMod(event.modifiers) }
 	if int(event.mouse_button) < 3 {
@@ -884,8 +884,8 @@ fn window_mouse_move(event gg.Event, u &UI) {
 	// println("typ mouse move $event.typ")
 	mut window := u.window
 	e := MouseMoveEvent{
-		x: event.mouse_x / window.dpi_scale
-		y: event.mouse_y / window.dpi_scale
+		x:            event.mouse_x / window.dpi_scale
+		y:            event.mouse_y / window.dpi_scale
 		mouse_button: int(event.mouse_button)
 	}
 
@@ -911,10 +911,10 @@ fn window_mouse_up(event gg.Event, mut u UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .up
-		x: int(event.mouse_x / window.dpi_scale)
-		y: int(event.mouse_y / window.dpi_scale)
+		x:      int(event.mouse_x / window.dpi_scale)
+		y:      int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
-		mods: unsafe { KeyMod(event.modifiers) }
+		mods:   unsafe { KeyMod(event.modifiers) }
 	}
 
 	if unsafe { window.child_window == 0 } && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
@@ -982,8 +982,8 @@ fn window_scroll(event gg.Event, u &UI) {
 	e := ScrollEvent{
 		mouse_x: event.mouse_x / window.dpi_scale
 		mouse_y: event.mouse_y / window.dpi_scale
-		x: event.scroll_x / window.dpi_scale
-		y: event.scroll_y / window.dpi_scale
+		x:       event.scroll_x / window.dpi_scale
+		y:       event.scroll_y / window.dpi_scale
 	}
 	if window.scroll_fn != WindowScrollFn(0) {
 		window.scroll_fn(window, e)
@@ -996,8 +996,8 @@ fn window_touch_down(event gg.Event, u &UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .down
-		x: window.touch.start.pos.x
-		y: window.touch.start.pos.y
+		x:      window.touch.start.pos.x
+		y:      window.touch.start.pos.y
 	}
 	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
 	if window.mouse_down_fn != WindowMouseFn(0) {
@@ -1009,8 +1009,8 @@ fn window_touch_down(event gg.Event, u &UI) {
 fn window_touch_move(event gg.Event, u &UI) {
 	window := u.window
 	e := MouseMoveEvent{
-		x: f64(window.touch.move.pos.x)
-		y: f64(window.touch.move.pos.y)
+		x:            f64(window.touch.move.pos.x)
+		y:            f64(window.touch.move.pos.y)
 		mouse_button: window.touch.button
 	}
 	if window.mouse_move_fn != WindowMouseMoveFn(0) {
@@ -1023,8 +1023,8 @@ fn window_touch_up(event gg.Event, u &UI) {
 	window := u.window
 	e := MouseEvent{
 		action: .up
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
+		x:      window.touch.end.pos.x
+		y:      window.touch.end.pos.y
 	}
 	if window.mouse_up_fn != WindowMouseFn(0) {
 		window.mouse_up_fn(window, e)
@@ -1037,8 +1037,8 @@ fn window_click_or_touch_tap(event gg.Event, u &UI) {
 	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
+		x:      window.touch.end.pos.x
+		y:      window.touch.end.pos.y
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
@@ -1066,8 +1066,8 @@ fn window_touch_scroll(event gg.Event, u &UI) {
 	e := ScrollEvent{
 		mouse_x: f64(m.pos.x)
 		mouse_y: f64(m.pos.y)
-		x: f64(adx) / 30.0
-		y: f64(ady) / 30.0
+		x:       f64(adx) / 30.0
+		y:       f64(ady) / 30.0
 	}
 	window.touch.start = window.touch.move
 	if window.scroll_fn != WindowScrollFn(0) {
@@ -1080,8 +1080,8 @@ fn window_touch_swipe(event gg.Event, u &UI) {
 	window := u.window
 	e := MouseEvent{
 		action: MouseAction.up // if event.typ == .mouse_up { MouseAction.up } else { MouseAction.down }
-		x: window.touch.end.pos.x
-		y: window.touch.end.pos.y
+		x:      window.touch.end.pos.x
+		y:      window.touch.end.pos.y
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
@@ -1115,10 +1115,10 @@ fn window_files_dropped(event gg.Event, mut u UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .down
-		x: int(event.mouse_x / window.dpi_scale)
-		y: int(event.mouse_y / window.dpi_scale)
+		x:      int(event.mouse_x / window.dpi_scale)
+		y:      int(event.mouse_y / window.dpi_scale)
 		button: MouseButton(event.mouse_button)
-		mods: unsafe { KeyMod(event.modifiers) }
+		mods:   unsafe { KeyMod(event.modifiers) }
 	}
 	if window.files_dropped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
 		window.files_dropped_fn(window, e)

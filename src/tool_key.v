@@ -96,8 +96,8 @@ pub fn parse_key(key_str string) int {
 @[flag]
 pub enum KeyMod {
 	shift //= 1 // (1<<0)
-	ctrl //= 2 // (1<<1)
-	alt //= 4 // (1<<2)
+	ctrl  //= 2 // (1<<1)
+	alt   //= 4 // (1<<2)
 	super //= 8 // (1<<3)
 }
 
@@ -164,10 +164,10 @@ pub enum Key {
 	x             = 88
 	y             = 89
 	z             = 90
-	left_bracket  = 91 // [
-	backslash     = 92 // \
-	right_bracket = 93 // ]
-	grave_accent  = 96 // `
+	left_bracket  = 91  // [
+	backslash     = 92  // \
+	right_bracket = 93  // ]
+	grave_accent  = 96  // `
 	world_1       = 161 // non-us #1
 	world_2       = 162 // non-us #2
 	escape        = 256

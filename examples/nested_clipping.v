@@ -14,11 +14,11 @@ type ContentFn = fn (int) ui.Widget
 
 fn make_box(id string) ui.Widget {
 	return ui.canvas_layout(
-		id: id
-		bg_color: gx.black
-		on_draw: box_draw
+		id:          id
+		bg_color:    gx.black
+		on_draw:     box_draw
 		on_mouse_up: box_click
-		clipping: true
+		clipping:    true
 	)
 }
 
@@ -83,21 +83,21 @@ fn box_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 
 fn make_quad(id string, content_fn ContentFn) ui.Widget {
 	return ui.column(
-		heights: ui.stretch
-		spacing: 10
-		margin_: 10
-		id: id
+		heights:  ui.stretch
+		spacing:  10
+		margin_:  10
+		id:       id
 		children: [
 			ui.row(
-				spacing: 10
-				widths: ui.stretch
-				heights: ui.stretch
+				spacing:  10
+				widths:   ui.stretch
+				heights:  ui.stretch
 				children: [content_fn(1), content_fn(2)]
 			),
 			ui.row(
-				spacing: 10
-				widths: ui.stretch
-				heights: ui.stretch
+				spacing:  10
+				widths:   ui.stretch
+				heights:  ui.stretch
 				children: [content_fn(3), content_fn(4)]
 			),
 		]
@@ -146,15 +146,15 @@ fn update_status(w &ui.Window) {
 
 fn main() {
 	mut win := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V nested clipping'
-		mode: .resizable
+		width:       win_width
+		height:      win_height
+		title:       'V nested clipping'
+		mode:        .resizable
 		on_key_down: win_key
-		on_init: win_init
-		layout: ui.column(
-			heights: [ui.stretch, 15.0, 15.0]
-			widths: ui.stretch
+		on_init:     win_init
+		layout:      ui.column(
+			heights:  [ui.stretch, 15.0, 15.0]
+			widths:   ui.stretch
 			children: [
 				make_quad('', fn (q int) ui.Widget {
 					return make_quad('q${q}', fn [q] (b int) ui.Widget {
@@ -165,7 +165,7 @@ fn main() {
 					text: &instructions
 				),
 				ui.label(
-					id: 'status'
+					id:   'status'
 					text: &instructions2
 				),
 			]

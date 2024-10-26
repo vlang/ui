@@ -33,28 +33,28 @@ fn main() {
 	mut children := []ui.Widget{}
 	children = [
 		ui.textbox(
-			text: &app.text
+			text:        &app.text
 			placeholder: '0'
-			width: 135
-			read_only: true
+			width:       135
+			read_only:   true
 		),
 	]
 	for op in ops {
 		children << ui.row(
-			spacing: 5
-			height: 30
-			widths: ui.stretch
+			spacing:  5
+			height:   30
+			widths:   ui.stretch
 			children: get_row(app, op)
 		)
 	}
 	app.window = ui.window(
-		width: 145
-		height: 210
-		title: 'V Calc'
+		width:    145
+		height:   210
+		title:    'V Calc'
 		children: [
 			ui.column(
-				margin: ui.Margin{5, 5, 5, 5}
-				spacing: 5
+				margin:   ui.Margin{5, 5, 5, 5}
+				spacing:  5
 				children: children
 			),
 		]
@@ -198,10 +198,10 @@ fn get_row(app &App, ops []string) []ui.Widget {
 			continue
 		}
 		children << ui.button(
-			text: op
+			text:     op
 			on_click: app.btn_click
-			width: bwidth
-			height: bheight
+			width:    bwidth
+			height:   bheight
 		)
 	}
 	return children

@@ -8,7 +8,7 @@ pub struct WidgetTextStyle {
 pub mut:
 	text_font_name      string = 'system'
 	text_color          gx.Color
-	text_size           int = 16
+	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .center
 	text_vertical_align TextVerticalAlign   = .middle
 }
@@ -22,7 +22,7 @@ pub mut:
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
-	cursor_color        gx.Color = no_color
+	cursor_color        gx.Color            = no_color
 }
 
 // Style with Text
@@ -46,10 +46,10 @@ interface DrawTextWidgetStyleParams {
 
 pub fn (mut dtw DrawTextWidget) update_theme_style(ds DrawTextWidgetStyle) {
 	dtw.update_style(
-		font_name: ds.text_font_name
-		color: ds.text_color
-		size: ds.text_size
-		align: ds.text_align
+		font_name:      ds.text_font_name
+		color:          ds.text_color
+		size:           ds.text_size
+		align:          ds.text_align
 		vertical_align: ds.text_vertical_align
 	)
 }

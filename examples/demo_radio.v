@@ -2,28 +2,28 @@ import ui
 
 fn main() {
 	c := ui.column(
-		widths: ui.stretch
-		margin_: 5
-		spacing: 10
+		widths:   ui.stretch
+		margin_:  5
+		spacing:  10
 		children: [
 			ui.row(
-				spacing: 5
+				spacing:  5
 				children: [
 					ui.label(text: 'Compact'),
 					ui.switcher(open: true, on_click: on_switch_click),
 				]
 			),
 			ui.radio(
-				id: 'rh1'
+				id:         'rh1'
 				horizontal: true
-				compact: true
-				values: [
+				compact:    true
+				values:     [
 					'United States',
 					'Canada',
 					'United Kingdom',
 					'Australia',
 				]
-				title: 'Country'
+				title:      'Country'
 			),
 			ui.radio(
 				values: [
@@ -32,29 +32,29 @@ fn main() {
 					'United Kingdom',
 					'Australia',
 				]
-				title: 'Country'
+				title:  'Country'
 			),
 			ui.row(
-				widths: [
+				widths:   [
 					ui.compact,
 					ui.stretch,
 				]
 				children: [
 					ui.label(text: 'Country:'),
 					ui.radio(
-						id: 'rh2'
+						id:         'rh2'
 						horizontal: true
-						compact: true
-						values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+						compact:    true
+						values:     ['United States', 'Canada', 'United Kingdom', 'Australia']
 					),
 				]
 			),
 		]
 	)
 	w := ui.window(
-		width: 500
+		width:  500
 		height: 300
-		mode: .resizable
+		mode:   .resizable
 		layout: c
 	)
 	ui.run(w)

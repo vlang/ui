@@ -14,17 +14,17 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		mode: .resizable
+		mode:   .resizable
 		height: 220
 		layout: ui.column(
-			widths: ui.stretch
+			widths:   ui.stretch
 			children: [
 				ui.textbox(
-					id: 'tb'
+					id:           'tb'
 					is_multiline: true
-					text: &app.log
-					height: 200
-					is_sync: true
+					text:         &app.log
+					height:       200
+					is_sync:      true
 					// is_wordwrap: true
 					// scrollview: true
 					read_only: true

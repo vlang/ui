@@ -64,16 +64,16 @@ pub:
 
 pub fn dropdown(c DropdownParams) &Dropdown {
 	mut dd := &Dropdown{
-		id: c.id
-		width: c.width
-		dropdown_height: c.height
-		z_index: c.z_index
-		items: c.items
-		selected_index: c.selected_index
+		id:                   c.id
+		width:                c.width
+		dropdown_height:      c.height
+		z_index:              c.z_index
+		items:                c.items
+		selected_index:       c.selected_index
 		on_selection_changed: c.on_selection_changed
-		style_params: c.DropdownStyleParams
-		def_text: c.def_text
-		ui: unsafe { nil }
+		style_params:         c.DropdownStyleParams
+		def_text:             c.def_text
+		ui:                   unsafe { nil }
 	}
 	dd.style_params.style = c.theme
 	if c.texts.len > 0 {

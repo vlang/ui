@@ -57,17 +57,17 @@ pub fn picture(c PictureParams) &Picture {
 	// eprintln('V UI: Picture.width/height is 0, it will not be displayed')
 	// }
 	mut pic := &Picture{
-		id: c.id
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		movable: c.movable
-		path: c.path
+		id:        c.id
+		width:     c.width
+		height:    c.height
+		z_index:   c.z_index
+		movable:   c.movable
+		path:      c.path
 		use_cache: c.use_cache
-		on_click: c.on_click
-		image: c.image
-		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		ui: unsafe { nil }
+		on_click:  c.on_click
+		image:     c.image
+		tooltip:   TooltipMessage{c.tooltip, c.tooltip_side}
+		ui:        unsafe { nil }
 	}
 	return pic
 }

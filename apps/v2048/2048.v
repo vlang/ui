@@ -12,7 +12,7 @@ mut:
 	gg          &gg.Context = unsafe { nil }
 	touch       TouchInfo
 	ui          Ui
-	theme       &Theme = v2048.themes[0]
+	theme       &Theme = themes[0]
 	theme_idx   int
 	board       Board
 	undo        []Undo
@@ -23,7 +23,7 @@ mut:
 	perf        &Perf = unsafe { nil }
 	is_ai_mode  bool
 	// VUI specific
-	bounds  gg.Rect = gg.Rect{0, 0, v2048.default_window_width, v2048.default_window_height}
+	bounds  gg.Rect = gg.Rect{0, 0, default_window_width, default_window_height}
 	ui_mode bool
 }
 
@@ -50,12 +50,12 @@ struct Theme {
 
 const themes = [
 	&Theme{
-		bg_color: gx.rgb(250, 248, 239)
-		padding_color: gx.rgb(143, 130, 119)
-		victory_color: gx.rgb(100, 160, 100)
+		bg_color:        gx.rgb(250, 248, 239)
+		padding_color:   gx.rgb(143, 130, 119)
+		victory_color:   gx.rgb(100, 160, 100)
 		game_over_color: gx.rgb(190, 50, 50)
-		text_color: gx.black
-		tile_colors: [
+		text_color:      gx.black
+		tile_colors:     [
 			gx.rgb(205, 193, 180), // Empty / 0 tile
 			gx.rgb(238, 228, 218), // 2
 			gx.rgb(237, 224, 200), // 4
@@ -71,12 +71,12 @@ const themes = [
 		]
 	},
 	&Theme{
-		bg_color: gx.rgb(55, 55, 55)
-		padding_color: gx.rgb(68, 60, 59)
-		victory_color: gx.rgb(100, 160, 100)
+		bg_color:        gx.rgb(55, 55, 55)
+		padding_color:   gx.rgb(68, 60, 59)
+		victory_color:   gx.rgb(100, 160, 100)
 		game_over_color: gx.rgb(190, 50, 50)
-		text_color: gx.white
-		tile_colors: [
+		text_color:      gx.white
+		tile_colors:     [
 			gx.rgb(123, 115, 108),
 			gx.rgb(142, 136, 130),
 			gx.rgb(142, 134, 120),
@@ -92,12 +92,12 @@ const themes = [
 		]
 	},
 	&Theme{
-		bg_color: gx.rgb(38, 38, 66)
-		padding_color: gx.rgb(58, 50, 74)
-		victory_color: gx.rgb(100, 160, 100)
+		bg_color:        gx.rgb(38, 38, 66)
+		padding_color:   gx.rgb(58, 50, 74)
+		victory_color:   gx.rgb(100, 160, 100)
 		game_over_color: gx.rgb(190, 50, 50)
-		text_color: gx.white
-		tile_colors: [
+		text_color:      gx.white
+		tile_colors:     [
 			gx.rgb(92, 86, 140),
 			gx.rgb(106, 99, 169),
 			gx.rgb(106, 97, 156),
@@ -414,7 +414,7 @@ fn (mut app App) new_random_tile() {
 	}
 	empty_pos, random_value := app.board.place_random_tile()
 	if random_value > 0 {
-		app.atickers[empty_pos.y][empty_pos.x] = v2048.animation_length
+		app.atickers[empty_pos.y][empty_pos.x] = animation_length
 	}
 	if app.state != .freeplay {
 		app.check_for_victory()
@@ -453,12 +453,12 @@ fn (mut app App) ai_move() {
 	mut predictions := [4]Prediction{}
 	mut is_valid := false
 	think_watch := time.new_stopwatch()
-	for move in v2048.possible_moves {
+	for move in possible_moves {
 		move_idx := int(move)
 		predictions[move_idx].move = move
 		mut mpoints := 0
 		mut mcmoves := 0
-		for _ in 0 .. v2048.predictions_per_move {
+		for _ in 0 .. predictions_per_move {
 			mut cboard := app.board
 			cboard, is_valid = cboard.move(move)
 			if !is_valid || cboard.is_game_over() {
@@ -468,28 +468,28 @@ fn (mut app App) ai_move() {
 			cboard.place_random_tile()
 			mut cmoves := 0
 			for !cboard.is_game_over() {
-				nmove := v2048.possible_moves[rand.intn(v2048.possible_moves.len) or { 0 }]
+				nmove := possible_moves[rand.intn(possible_moves.len) or { 0 }]
 				cboard, is_valid = cboard.move(nmove)
 				if !is_valid {
 					continue
 				}
 				cboard.place_random_tile()
 				cmoves++
-				if cmoves > v2048.prediction_depth {
+				if cmoves > prediction_depth {
 					break
 				}
 			}
 			mpoints += cboard.points
 			mcmoves += cmoves
 		}
-		predictions[move_idx].mpoints = f64(mpoints) / v2048.predictions_per_move
-		predictions[move_idx].mcmoves = f64(mcmoves) / v2048.predictions_per_move
+		predictions[move_idx].mpoints = f64(mpoints) / predictions_per_move
+		predictions[move_idx].mcmoves = f64(mcmoves) / predictions_per_move
 	}
 	think_time := think_watch.elapsed().milliseconds()
 	mut bestprediction := Prediction{
 		mpoints: -1
 	}
-	for move_idx in 0 .. v2048.possible_moves.len {
+	for move_idx in 0 .. possible_moves.len {
 		if bestprediction.mpoints < predictions[move_idx].mpoints {
 			bestprediction = predictions[move_idx]
 		}
@@ -504,46 +504,46 @@ fn (app &App) label_format(kind LabelKind) gx.TextCfg {
 			return gx.TextCfg{
 				color: if app.state in [.over, .victory] { gx.white } else { app.theme.text_color }
 				align: .left
-				size: app.ui.font_size / 2
+				size:  app.ui.font_size / 2
 			}
 		}
 		.moves {
 			return gx.TextCfg{
 				color: if app.state in [.over, .victory] { gx.white } else { app.theme.text_color }
 				align: .right
-				size: app.ui.font_size / 2
+				size:  app.ui.font_size / 2
 			}
 		}
 		.tile {
 			return gx.TextCfg{
-				color: app.theme.text_color
-				align: .center
+				color:          app.theme.text_color
+				align:          .center
 				vertical_align: .middle
-				size: app.ui.font_size
+				size:           app.ui.font_size
 			}
 		}
 		.victory {
 			return gx.TextCfg{
-				color: app.theme.victory_color
-				align: .center
+				color:          app.theme.victory_color
+				align:          .center
 				vertical_align: .middle
-				size: app.ui.font_size * 2
+				size:           app.ui.font_size * 2
 			}
 		}
 		.game_over {
 			return gx.TextCfg{
-				color: app.theme.game_over_color
-				align: .center
+				color:          app.theme.game_over_color
+				align:          .center
 				vertical_align: .middle
-				size: app.ui.font_size * 2
+				size:           app.ui.font_size * 2
 			}
 		}
 		.score_end {
 			return gx.TextCfg{
-				color: gx.white
-				align: .center
+				color:          gx.white
+				align:          .center
 				vertical_align: .middle
-				size: app.ui.font_size * 3 / 4
+				size:           app.ui.font_size * 3 / 4
 			}
 		}
 	}
@@ -551,7 +551,7 @@ fn (app &App) label_format(kind LabelKind) gx.TextCfg {
 
 @[inline]
 fn (mut app App) set_theme(idx int) {
-	theme := v2048.themes[idx]
+	theme := themes[idx]
 	app.theme_idx = idx
 	app.theme = theme
 	app.gg.set_bg_color(theme.bg_color)
@@ -607,7 +607,7 @@ fn (app &App) draw() {
 		app.gg.draw_text(ww / 2, (m * 6 / 10) + ypad, msg, gx.TextCfg{
 			...f
 			color: gx.white
-			size: f.size * 3 / 4
+			size:  f.size * 3 / 4
 		})
 	}
 	if app.state == .victory {
@@ -644,8 +644,8 @@ fn (app &App) draw_tiles() {
 				// If there isn't a specific color for this tile, reuse the last color available
 				app.theme.tile_colors.last()
 			}
-			anim_size := v2048.animation_length - app.atickers[y][x]
-			tw := int(f64(app.ui.tile_size) / v2048.animation_length * anim_size)
+			anim_size := animation_length - app.atickers[y][x]
+			tw := int(f64(app.ui.tile_size) / animation_length * anim_size)
 			th := tw // square tiles, w == h
 			xoffset := xstart + app.ui.padding_size + x * toffset + (app.ui.tile_size - tw) / 2
 			yoffset := ystart + app.ui.padding_size + y * toffset + (app.ui.tile_size - th) / 2
@@ -656,7 +656,7 @@ fn (app &App) draw_tiles() {
 				mut fmt := app.label_format(.tile)
 				fmt = gx.TextCfg{
 					...fmt
-					size: int(f32(fmt.size - 1) / v2048.animation_length * anim_size)
+					size: int(f32(fmt.size - 1) / animation_length * anim_size)
 				}
 				match app.tile_format {
 					.normal {
@@ -671,7 +671,7 @@ fn (app &App) draw_tiles() {
 						app.gg.draw_text(xpos + app.ui.tile_size / 10, ypos - app.ui.tile_size / 8,
 							'${tidx}', gx.TextCfg{
 							...fmt
-							size: fs2
+							size:  fs2
 							align: gx.HorizontalAlign.left
 						})
 					}
@@ -772,7 +772,7 @@ fn (mut app App) handle_swipe() {
 
 @[inline]
 fn (mut app App) next_theme() {
-	app.set_theme(if app.theme_idx == v2048.themes.len - 1 { 0 } else { app.theme_idx + 1 })
+	app.set_theme(if app.theme_idx == themes.len - 1 { 0 } else { app.theme_idx + 1 })
 }
 
 @[inline]
@@ -835,7 +835,7 @@ fn on_event(e &gg.Event, mut app App) {
 			if e.num_touches > 0 {
 				t := e.touches[0]
 				app.touch.start = Touch{
-					pos: Pos{
+					pos:  Pos{
 						x: int(t.pos_x / app.ui.dpi_scale)
 						y: int(t.pos_y / app.ui.dpi_scale)
 					}
@@ -847,7 +847,7 @@ fn on_event(e &gg.Event, mut app App) {
 			if e.num_touches > 0 {
 				t := e.touches[0]
 				app.touch.end = Touch{
-					pos: Pos{
+					pos:  Pos{
 						x: int(t.pos_x / app.ui.dpi_scale)
 						y: int(t.pos_y / app.ui.dpi_scale)
 					}
@@ -858,7 +858,7 @@ fn on_event(e &gg.Event, mut app App) {
 		}
 		.mouse_down {
 			app.touch.start = Touch{
-				pos: Pos{
+				pos:  Pos{
 					x: int(e.mouse_x / app.ui.dpi_scale)
 					y: int(e.mouse_y / app.ui.dpi_scale)
 				}
@@ -867,7 +867,7 @@ fn on_event(e &gg.Event, mut app App) {
 		}
 		.mouse_up {
 			app.touch.end = Touch{
-				pos: Pos{
+				pos:  Pos{
 					x: int(e.mouse_x / app.ui.dpi_scale)
 					y: int(e.mouse_y / app.ui.dpi_scale)
 				}
@@ -930,17 +930,17 @@ pub fn new_gg_app() &App {
 	}
 	app.perf = &Perf{}
 	app.gg = gg.new_context(
-		bg_color: app.theme.bg_color
-		width: v2048.default_window_width
-		height: v2048.default_window_height
-		sample_count: 4 // higher quality curves
+		bg_color:      app.theme.bg_color
+		width:         default_window_width
+		height:        default_window_height
+		sample_count:  4 // higher quality curves
 		create_window: true
-		window_title: window_title_
-		frame_fn: frame
-		event_fn: on_event
-		init_fn: init
-		user_data: app
-		font_path: font_path
+		window_title:  window_title_
+		frame_fn:      frame
+		event_fn:      on_event
+		init_fn:       init
+		user_data:     app
+		font_path:     font_path
 	)
 	return app
 }
@@ -961,8 +961,7 @@ fn (mut app App) on_draw() {
 	app.update_tickers()
 	app.draw()
 	app.perf.frame++
-	if app.is_ai_mode && app.state in [.play, .freeplay]
-		&& app.perf.frame % v2048.frames_per_ai_move == 0 {
+	if app.is_ai_mode && app.state in [.play, .freeplay] && app.perf.frame % frames_per_ai_move == 0 {
 		app.ai_move()
 	}
 	$if showfps ? {

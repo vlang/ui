@@ -7,12 +7,12 @@ const win_height = 500
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'Grid'
-		mode: .resizable
+		width:   win_width
+		height:  win_height
+		title:   'Grid'
+		mode:    .resizable
 		on_init: win_init
-		layout: ui.row(
+		layout:  ui.row(
 			children: [
 				uic.rasterview_canvaslayout(
 					id: 'rv'

@@ -82,7 +82,7 @@ pub mut:
 	bounding_change_fn  CanvasLayoutBoundingFn   = CanvasLayoutBoundingFn(0)
 	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
 	on_delegate         CanvasLayoutDelegateFn   = unsafe { nil }
-	parent              Layout = empty_stack
+	parent              Layout                   = empty_stack
 mut:
 	// To keep track of original position
 	pos_ map[int]XYPos
@@ -144,35 +144,35 @@ pub fn canvas_layout(c CanvasLayoutParams) &CanvasLayout {
 // it can be viewed as a extended canvas
 pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 	mut canvas := &CanvasLayout{
-		id: c.id
-		width: c.width
-		height: c.height
-		full_width: c.full_width
+		id:          c.id
+		width:       c.width
+		height:      c.height
+		full_width:  c.full_width
 		full_height: c.full_height
-		z_index: c.z_index
+		z_index:     c.z_index
 		// bg_radius: f32(c.bg_radius)
 		// bg_color: c.bg_color
-		is_focused: c.is_focused
-		clipping: c.clipping
-		justify: c.justify
-		style_params: c.CanvasLayoutStyleParams
-		active_evt_mngr: c.active_evt_mngr && !c.delegate_evt_mngr
-		delegate_evt_mngr: c.delegate_evt_mngr
-		draw_device_fn: c.on_draw
+		is_focused:          c.is_focused
+		clipping:            c.clipping
+		justify:             c.justify
+		style_params:        c.CanvasLayoutStyleParams
+		active_evt_mngr:     c.active_evt_mngr && !c.delegate_evt_mngr
+		delegate_evt_mngr:   c.delegate_evt_mngr
+		draw_device_fn:      c.on_draw
 		post_draw_device_fn: c.on_post_draw
-		click_fn: c.on_click
-		mouse_move_fn: c.on_mouse_move
-		mouse_enter_fn: c.on_mouse_enter
-		mouse_leave_fn: c.on_mouse_leave
-		mouse_down_fn: c.on_mouse_down
-		mouse_up_fn: c.on_mouse_up
-		key_down_fn: c.on_key_down
-		scroll_fn: c.on_scroll
-		full_size_fn: c.full_size_fn
-		bounding_change_fn: c.on_bounding_change
-		char_fn: c.on_char
-		on_scroll_change: c.on_scroll_change
-		on_delegate: c.on_delegate
+		click_fn:            c.on_click
+		mouse_move_fn:       c.on_mouse_move
+		mouse_enter_fn:      c.on_mouse_enter
+		mouse_leave_fn:      c.on_mouse_leave
+		mouse_down_fn:       c.on_mouse_down
+		mouse_up_fn:         c.on_mouse_up
+		key_down_fn:         c.on_key_down
+		scroll_fn:           c.on_scroll
+		full_size_fn:        c.full_size_fn
+		bounding_change_fn:  c.on_bounding_change
+		char_fn:             c.on_char
+		on_scroll_change:    c.on_scroll_change
+		on_delegate:         c.on_delegate
 	}
 	canvas.style_params.style = c.theme
 	if c.scrollview {
@@ -342,11 +342,11 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	if c.is_focused && c.click_fn != unsafe { nil } {
 		// c.is_focused
 		e2 := MouseEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:      e.x - c.x - c.offset_x
+			y:      e.y - c.y - c.offset_y
 			button: e.button
 			action: e.action
-			mods: e.mods
+			mods:   e.mods
 		}
 		// println('$c.id $e2.x $e2.y')
 		c.click_fn(c, e2)
@@ -362,11 +362,11 @@ fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 	if c.point_inside(e.x, e.y) && c.mouse_down_fn != unsafe { nil } {
 		e2 := MouseEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:      e.x - c.x - c.offset_x
+			y:      e.y - c.y - c.offset_y
 			button: e.button
 			action: e.action
-			mods: e.mods
+			mods:   e.mods
 		}
 		c.mouse_down_fn(c, e2)
 	}
@@ -378,11 +378,11 @@ fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 	if c.point_inside(e.x, e.y) && c.mouse_up_fn != unsafe { nil } {
 		e2 := MouseEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:      e.x - c.x - c.offset_x
+			y:      e.y - c.y - c.offset_y
 			button: e.button
 			action: e.action
-			mods: e.mods
+			mods:   e.mods
 		}
 		c.mouse_up_fn(c, e2)
 	}
@@ -394,8 +394,8 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 	}
 	if c.point_inside(e.x, e.y) && c.mouse_move_fn != unsafe { nil } {
 		e2 := MouseMoveEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:            e.x - c.x - c.offset_x
+			y:            e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
 		c.mouse_move_fn(c, e2)
@@ -407,8 +407,8 @@ pub fn (mut c CanvasLayout) mouse_enter(e &MouseMoveEvent) {
 	// println("enter $c.id")
 	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:            e.x - c.x - c.offset_x
+			y:            e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
 		c.mouse_enter_fn(c, e2)
@@ -420,8 +420,8 @@ pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 	// println("leave $c.id")
 	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
 		e2 := MouseMoveEvent{
-			x: e.x - c.x - c.offset_x
-			y: e.y - c.y - c.offset_y
+			x:            e.x - c.x - c.offset_x
+			y:            e.y - c.y - c.offset_y
 			mouse_button: e.mouse_button
 		}
 		c.mouse_leave_fn(c, e2)
@@ -433,8 +433,8 @@ fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 		e2 := ScrollEvent{
 			mouse_x: e.mouse_x - c.x - c.offset_x
 			mouse_y: e.mouse_y - c.y - c.offset_y
-			x: e.x
-			y: e.y
+			x:       e.x
+			y:       e.y
 		}
 		c.scroll_fn(c, e2)
 	}

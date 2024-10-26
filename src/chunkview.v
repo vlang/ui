@@ -69,9 +69,9 @@ pub:
 
 pub fn textchunk(p TextChunkParams) TextChunk {
 	return TextChunk{
-		x: p.x
-		y: p.y
-		text: p.text
+		x:     p.x
+		y:     p.y
+		text:  p.text
 		style: p.style
 	}
 }
@@ -110,7 +110,7 @@ pub struct ImageChunkParams {
 
 pub fn imgchunk(p ImageChunkParams) ImageChunk {
 	return ImageChunk{
-		bb: Rect{p.x, p.y, p.width, p.height}
+		bb:  Rect{p.x, p.y, p.width, p.height}
 		img: p.img
 	}
 }
@@ -135,7 +135,7 @@ mut:
 pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
 	return DrawChunk{
 		drawfn: drawfn
-		state: state
+		state:  state
 	}
 }
 
@@ -180,12 +180,12 @@ pub:
 
 pub fn parachunk(p ParaChunkParams) ParaChunk {
 	return ParaChunk{
-		x: p.x
-		y: p.y
-		margin: p.margin
-		spacing: p.spacing
-		indent: p.indent
-		content: p.content
+		x:         p.x
+		y:         p.y
+		margin:    p.margin
+		spacing:   p.spacing
+		indent:    p.indent
+		content:   p.content
 		container: p.container
 	}
 }
@@ -215,8 +215,8 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
-		if content.index_after(ui.para_style_delim, 0) == 0 {
-			content_start := content.index_after(ui.para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) == 0 {
+			content_start := content.index_after(para_style_delim, 1)
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -247,8 +247,8 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut add_chunk := cv.has_scrollview // false
 
 	for content in c.content {
-		if content.index_after(ui.para_style_delim, 0) == 0 {
-			content_start := content.index_after(ui.para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) == 0 {
+			content_start := content.index_after(para_style_delim, 1)
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -263,7 +263,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 					// println('left2: <${left}>, right: <${right}>, ind: ${ind}')
 					// println(line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap)
 					if add_chunk
-						|| line_width + lw < max_line_width - c.margin * 2 - ui.text_chunk_wrap {
+						|| line_width + lw < max_line_width - c.margin * 2 - text_chunk_wrap {
 						// println('left3: <${left}>, right: <${right}>, ind: ${ind}')
 						line = line + left
 						line_width += lw
@@ -393,9 +393,9 @@ pub:
 
 pub fn valignchunk(p VerticalAlignChunkParams) VerticalAlignChunk {
 	return VerticalAlignChunk{
-		x: p.x
-		y: p.y
-		align: p.align
+		x:       p.x
+		y:       p.y
+		align:   p.align
 		spacing: p.spacing
 		content: p.content
 	}
@@ -403,9 +403,9 @@ pub fn valignchunk(p VerticalAlignChunkParams) VerticalAlignChunk {
 
 pub fn leftchunk(p AlignChunkParams) VerticalAlignChunk {
 	return VerticalAlignChunk{
-		x: p.x
-		y: p.y
-		align: 0.0
+		x:       p.x
+		y:       p.y
+		align:   0.0
 		spacing: p.spacing
 		content: p.content
 	}
@@ -413,9 +413,9 @@ pub fn leftchunk(p AlignChunkParams) VerticalAlignChunk {
 
 pub fn rightchunk(p AlignChunkParams) VerticalAlignChunk {
 	return VerticalAlignChunk{
-		x: p.x
-		y: p.y
-		align: 1.0
+		x:       p.x
+		y:       p.y
+		align:   1.0
 		spacing: p.spacing
 		content: p.content
 	}
@@ -423,9 +423,9 @@ pub fn rightchunk(p AlignChunkParams) VerticalAlignChunk {
 
 pub fn centerchunk(p AlignChunkParams) VerticalAlignChunk {
 	return VerticalAlignChunk{
-		x: p.x
-		y: p.y
-		align: 0.5
+		x:       p.x
+		y:       p.y
+		align:   0.5
 		spacing: p.spacing
 		content: p.content
 	}
@@ -495,8 +495,8 @@ fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
-		if content.index_after(ui.para_style_delim, 0) == 0 {
-			content_start := content.index_after(ui.para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) == 0 {
+			content_start := content.index_after(para_style_delim, 1)
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -517,7 +517,7 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 	mut contents := [][]string{}
 	mut lines := []string{}
 	for content in c.content {
-		if content.index_after(ui.para_style_delim, 0) == 0 {
+		if content.index_after(para_style_delim, 0) == 0 {
 			if lines.len > 0 && lines[0] == 'br' {
 				contents << lines
 				lines = []string{}
@@ -553,8 +553,8 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 			c.line_chunks << chunks
 			for content in line_content {
 				// TextChunk
-				if content.index_after(ui.para_style_delim, 0) == 0 {
-					content_start := content.index_after(ui.para_style_delim, 1)
+				if content.index_after(para_style_delim, 0) == 0 {
+					content_start := content.index_after(para_style_delim, 1)
 					if content_start > 1 { // empty style means same style
 						style = content[1..content_start]
 					}
@@ -590,9 +590,9 @@ fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
 			if bsup >= winf && wsup >= binf {
 				if chunk is TextChunk {
 					mut new_chunk := textchunk(
-						x: int(binf - winf)
-						y: chunk.bb.y
-						text: chunk.text
+						x:     int(binf - winf)
+						y:     chunk.bb.y
+						text:  chunk.text
 						style: chunk.style
 					)
 					new_chunk.bb.x = int(binf - winf)
@@ -644,15 +644,15 @@ pub:
 
 pub fn rowchunk(p RowChunkParams) RowChunk {
 	return RowChunk{
-		x: p.x
-		y: p.y
-		chunks: p.chunks
-		spacing: p.spacing
-		margin: p.margin
-		container: p.container
-		full_width: p.full_width
-		bg_radius: p.bg_radius
-		bg_color: p.bg_color
+		x:            p.x
+		y:            p.y
+		chunks:       p.chunks
+		spacing:      p.spacing
+		margin:       p.margin
+		container:    p.container
+		full_width:   p.full_width
+		bg_radius:    p.bg_radius
+		bg_color:     p.bg_color
 		border_color: p.border_color
 	}
 }
@@ -771,7 +771,7 @@ pub mut:
 	cache map[string]gg.Image
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = unsafe { nil }
+	scrollview       &ScrollView         = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 	bg_color         gx.Color
 	width            int
@@ -784,18 +784,18 @@ pub struct ChunkViewParams {
 pub:
 	id               string
 	chunks           []ChunkContent
-	clipping         bool     = true
-	bg_color         gx.Color = gx.white
-	scrollview       bool     = true
+	clipping         bool                = true
+	bg_color         gx.Color            = gx.white
+	scrollview       bool                = true
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
 pub fn chunkview(p ChunkViewParams) &ChunkView {
 	mut cv := &ChunkView{
-		id: p.id
-		chunks: p.chunks
-		clipping: p.clipping
-		bg_color: p.bg_color
+		id:               p.id
+		chunks:           p.chunks
+		clipping:         p.clipping
+		bg_color:         p.bg_color
 		on_scroll_change: p.on_scroll_change
 	}
 	if p.scrollview {

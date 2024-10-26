@@ -56,8 +56,8 @@ pub struct MenuParams {
 	MenuStyleParams
 pub:
 	id          string
-	width       int = ui.menu_width
-	height      int = ui.menu_height
+	width       int = menu_width
+	height      int = menu_height
 	fixed_width bool
 	z_index     int = 1000
 	// text_size f64
@@ -69,18 +69,18 @@ pub:
 
 pub fn menu(c MenuParams) &Menu {
 	mut m := &Menu{
-		id: c.id
-		text: c.text
-		items: c.items
-		width: c.width
-		height: c.height
-		item_width: c.width
-		item_height: c.height
-		fixed_width: c.fixed_width
-		ui: unsafe { nil }
-		z_index: c.z_index
+		id:           c.id
+		text:         c.text
+		items:        c.items
+		width:        c.width
+		height:       c.height
+		item_width:   c.width
+		item_height:  c.height
+		fixed_width:  c.fixed_width
+		ui:           unsafe { nil }
+		z_index:      c.z_index
 		style_params: c.MenuStyleParams
-		hidden: c.hidden
+		hidden:       c.hidden
 	}
 	m.root_menu = m
 	m.style_params.style = c.theme
@@ -277,7 +277,7 @@ fn (mut m Menu) update_size() {
 			mut dtw := DrawTextWidget(m)
 			dtw.load_style()
 			for mut item in m.items {
-				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
+				item.width = dtw.text_width(item.text) + menu_padding * 2
 				if item.width > mw {
 					mw = item.width
 				}
@@ -296,7 +296,7 @@ fn (mut m Menu) update_size() {
 			mut dtw := DrawTextWidget(m)
 			dtw.load_style()
 			for mut item in m.items {
-				item.width = dtw.text_width(item.text) + ui.menu_padding * 2
+				item.width = dtw.text_width(item.text) + menu_padding * 2
 				w = w + item.width
 			}
 			m.width = w
@@ -351,8 +351,8 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 					m.root_menu.style.bg_color_hover)
 			}
 
-			dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + ui.menu_padding, m.y +
-				i * m.dy * m.item_height + ui.menu_padding, item.text)
+			dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + menu_padding, m.y +
+				i * m.dy * m.item_height + menu_padding, item.text)
 		}
 	} else { // compact menu
 		if m.orientation == .vertical {
@@ -375,8 +375,8 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 					// println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
 				}
 
-				dtw.draw_device_text(d, m.x + ui.menu_padding, m.y + i * m.dy * m.item_height +
-					ui.menu_padding, item.text)
+				dtw.draw_device_text(d, m.x + menu_padding, m.y + i * m.dy * m.item_height +
+					menu_padding, item.text)
 			}
 		} else { // horizontal
 			mut mw := 0 // find submenu max width
@@ -403,8 +403,8 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 					// println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 				}
 
-				dtw.draw_device_text(d, m.x + i * m.dx + w + ui.menu_padding, m.y +
-					i * m.dy * m.item_height + ui.menu_padding, item.text)
+				dtw.draw_device_text(d, m.x + i * m.dx + w + menu_padding, m.y +
+					i * m.dy * m.item_height + menu_padding, item.text)
 
 				w = w + item.width
 			}
@@ -509,11 +509,11 @@ pub:
 
 pub fn menuitem(p MenuItemParams) &MenuItem {
 	mi := &MenuItem{
-		text: p.text
-		id: p.id
-		action: p.action
+		text:    p.text
+		id:      p.id
+		action:  p.action
 		submenu: p.submenu
-		width: 0
+		width:   0
 	}
 	return mi
 }

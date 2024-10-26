@@ -16,23 +16,23 @@ mut:
 fn main() {
 	app := &App{}
 	window := ui.window(
-		width: 200
-		height: 110
-		title: 'Flight booker'
-		mode: .resizable
+		width:   200
+		height:  110
+		title:   'Flight booker'
+		mode:    .resizable
 		on_init: app.win_init
-		layout: ui.column(
+		layout:  ui.column(
 			spacing: 5
 			margin_: 5
 			// widths: ui.stretch
 			// heights: ui.stretch
 			children: [
 				ui.dropdown(
-					id: 'dd_flight'
-					z_index: 10
-					selected_index: 0
+					id:                   'dd_flight'
+					z_index:              10
+					selected_index:       0
 					on_selection_changed: app.dd_change
-					items: [
+					items:                [
 						ui.DropdownItem{
 							text: 'one-way flight'
 						},
@@ -44,9 +44,9 @@ fn main() {
 				ui.textbox(id: 'tb_oneway', on_change: app.tb_change),
 				ui.textbox(id: 'tb_return', read_only: true, on_change: app.tb_change),
 				ui.button(
-					id: 'btn_book'
-					text: 'Book'
-					radius: 5
+					id:       'btn_book'
+					text:     'Book'
+					radius:   5
 					bg_color: gx.light_gray
 					on_click: app.btn_book_click
 				),

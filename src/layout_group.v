@@ -54,16 +54,16 @@ pub mut:
 
 pub fn group(c GroupParams) &Group {
 	mut g := &Group{
-		id: c.id
-		title: c.title
-		x: c.x
-		y: c.y
-		width: c.width
-		height: c.height
-		spacing: c.spacing
+		id:       c.id
+		title:    c.title
+		x:        c.x
+		y:        c.y
+		width:    c.width
+		height:   c.height
+		spacing:  c.spacing
 		clipping: c.clipping
 		children: c.children
-		ui: unsafe { nil }
+		ui:       unsafe { nil }
 	}
 	return g
 }

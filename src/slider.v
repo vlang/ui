@@ -77,24 +77,24 @@ pub:
 
 pub fn slider(c SliderParams) &Slider {
 	mut s := &Slider{
-		id: c.id
-		height: c.height
-		width: c.width
-		slider_size: c.slider_size
-		min: c.min
-		max: c.max
-		val: c.val
-		orientation: c.orientation
-		on_value_changed: c.on_value_changed
-		focus_on_thumb_only: c.focus_on_thumb_only
-		rev_min_max_pos: c.rev_min_max_pos
-		thumb_in_track: c.thumb_in_track
+		id:                   c.id
+		height:               c.height
+		width:                c.width
+		slider_size:          c.slider_size
+		min:                  c.min
+		max:                  c.max
+		val:                  c.val
+		orientation:          c.orientation
+		on_value_changed:     c.on_value_changed
+		focus_on_thumb_only:  c.focus_on_thumb_only
+		rev_min_max_pos:      c.rev_min_max_pos
+		thumb_in_track:       c.thumb_in_track
 		track_line_displayed: c.track_line_displayed
-		ui: unsafe { nil }
-		z_index: c.z_index
-		entering: c.entering
-		style_params: c.SliderStyleParams
-		radius: c.radius
+		ui:                   unsafe { nil }
+		z_index:              c.z_index
+		entering:             c.entering
+		style_params:         c.SliderStyleParams
+		radius:               c.radius
 	}
 	s.style_params.style = c.theme
 	s.set_thumb_size()

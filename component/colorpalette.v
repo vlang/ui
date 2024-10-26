@@ -23,14 +23,14 @@ pub:
 	title     string
 	items     []string
 	direction ui.Direction = .column
-	ncolors   int = 6
+	ncolors   int          = 6
 }
 
 // TODO: documentation
 pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	mut colbtn := colorbutton(
-		id: ui.component_id(p.id, 'colbtn')
-		on_click: colorpalette_click
+		id:        ui.component_id(p.id, 'colbtn')
+		on_click:  colorpalette_click
 		left_side: true
 	)
 	colbtn.alpha_mode = true
@@ -38,15 +38,15 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	children << [ui.label(text: 'colors', justify: ui.top_center), colbtn, ui.spacing()]
 	for i in 0 .. p.ncolors {
 		mut cb := colorbutton(
-			id: ui.component_id(p.id, 'palette${i}')
-			on_click: colorpalette_click
+			id:        ui.component_id(p.id, 'palette${i}')
+			on_click:  colorpalette_click
 			left_side: true
 		)
 		cb.alpha_mode = true
 		children << cb
 	}
 	alpha := alpha_stack(
-		id: ui.component_id(p.id, 'alpha')
+		id:         ui.component_id(p.id, 'alpha')
 		on_changed: fn (ac &AlphaComponent) {
 			parent_id := ui.component_parent_id(ac.id)
 			cpc := colorpalette_component_from_id(ac.layout.ui.window, parent_id)
@@ -62,31 +62,31 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 	mut layout := match p.direction {
 		.row {
 			ui.row(
-				id: ui.component_id(p.id, 'layout')
+				id:       ui.component_id(p.id, 'layout')
 				bg_color: ui.no_color
-				widths: sizes
-				margin_: 5
-				spacing: 5
+				widths:   sizes
+				margin_:  5
+				spacing:  5
 				children: children
 			)
 		}
 		.column {
 			ui.column(
-				id: ui.component_id(p.id, 'layout')
+				id:       ui.component_id(p.id, 'layout')
 				bg_color: gx.hex(0xfcf4e4ff)
-				heights: sizes
-				margin_: 5
-				spacing: 5
+				heights:  sizes
+				margin_:  5
+				spacing:  5
 				children: children
 			)
 		}
 	}
 	mut cp := &ColorPaletteComponent{
-		id: p.id
-		layout: layout
-		colbtn: colbtn
+		id:      p.id
+		layout:  layout
+		colbtn:  colbtn
 		ncolors: p.ncolors
-		alpha: alpha_component(alpha)
+		alpha:   alpha_component(alpha)
 	}
 	// init selection
 	cp.selected = ui.component_id(p.id, 'colbtn')

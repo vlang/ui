@@ -12,17 +12,17 @@ mut:
 fn main() {
 	mut app := &App{}
 	mut tb := ui.textbox(
-		id: 'tb'
-		text: &app.text
-		mode: .multiline
+		id:       'tb'
+		text:     &app.text
+		mode:     .multiline
 		bg_color: gx.yellow
 	)
 	mut dtw := ui.DrawTextWidget(tb)
 	dtw.update_style(size: 30, color: gx.red)
 	mut window := ui.window(
-		mode: .resizable
-		width: 800
-		height: 600
+		mode:    .resizable
+		width:   800
+		height:  600
 		on_init: fn (win &ui.Window) {
 			mut btn := win.get_or_panic[ui.Button]('txt_color')
 			tb := win.get_or_panic[ui.TextBox]('tb')
@@ -30,18 +30,18 @@ fn main() {
 				(*btn.bg_color) = tb.text_styles.current.color
 			}
 		}
-		layout: ui.column(
-			margin_: 10
-			heights: [20.0, ui.stretch]
-			spacing: 10
+		layout:  ui.column(
+			margin_:  10
+			heights:  [20.0, ui.stretch]
+			spacing:  10
 			children: [
 				ui.row(
-					widths: ui.compact
-					spacing: 10
+					widths:   ui.compact
+					spacing:  10
 					children: [
 						uic.fontbutton(
 							text: 'font'
-							dtw: tb
+							dtw:  tb
 						),
 						uic.colorbutton(
 							id: 'txt_color'
@@ -53,7 +53,7 @@ fn main() {
 							}
 						),
 						uic.colorbutton(
-							id: 'bg_color'
+							id:       'bg_color'
 							bg_color: &tb.style.bg_color
 						),
 					]

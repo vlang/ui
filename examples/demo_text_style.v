@@ -14,14 +14,14 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.window = ui.window(
-		mode: .resizable
-		height: 240
+		mode:    .resizable
+		height:  240
 		on_init: window_init
-		layout: ui.row(
-			widths: ui.stretch
+		layout:  ui.row(
+			widths:   ui.stretch
 			children: [
 				ui.listbox(
-					id: 'lb'
+					id:         'lb'
 					draw_lines: true
 					// scrollview: false
 					on_change: app.lb_change
@@ -29,12 +29,12 @@ fn main() {
 				ui.column(
 					children: [
 						ui.textbox(
-							id: 'font'
+							id:   'font'
 							text: &app.text
 						),
 						ui.canvas_plus(
-							id: 'c'
-							height: 200
+							id:      'c'
+							height:  200
 							on_draw: app.on_draw
 						),
 					]

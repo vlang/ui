@@ -51,14 +51,14 @@ pub:
 
 pub fn switcher(c SwitchParams) &Switch {
 	mut s := &Switch{
-		id: c.id
-		height: ui.sw_height
-		width: ui.sw_width
-		z_index: c.z_index
-		open: c.open
-		on_click: c.on_click
+		id:          c.id
+		height:      sw_height
+		width:       sw_width
+		z_index:     c.z_index
+		open:        c.open
+		on_click:    c.on_click
 		on_key_down: c.on_key_down
-		ui: unsafe { nil }
+		ui:          unsafe { nil }
 	}
 	return s
 }
@@ -118,18 +118,17 @@ fn (mut s Switch) draw_device(mut d DrawDevice) {
 			println('Switch(${s.id}): (${s.x}, ${s.y}, ${s.width}, ${s.height})')
 		}
 	}
-	padding := (s.height - ui.sw_dot_size) / 2
+	padding := (s.height - sw_dot_size) / 2
 	if s.open {
-		d.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_open_bg_color)
-		d.draw_rect_filled(s.x - padding + s.width - ui.sw_dot_size, s.y + padding, ui.sw_dot_size,
-			ui.sw_dot_size, gx.white)
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_open_bg_color)
+		d.draw_rect_filled(s.x - padding + s.width - sw_dot_size, s.y + padding, sw_dot_size,
+			sw_dot_size, gx.white)
 	} else {
-		d.draw_rect_filled(s.x, s.y, s.width, s.height, ui.sw_close_bg_color)
-		d.draw_rect_filled(s.x + padding, s.y + padding, ui.sw_dot_size, ui.sw_dot_size,
-			gx.white)
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_close_bg_color)
+		d.draw_rect_filled(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
 	}
 	if s.is_focused {
-		d.draw_rect_empty(s.x, s.y, s.width, s.height, ui.sw_focus_bg_color)
+		d.draw_rect_empty(s.x, s.y, s.width, s.height, sw_focus_bg_color)
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut s, s.ui)

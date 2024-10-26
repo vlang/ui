@@ -6,7 +6,7 @@ import ui.libvg
 
 struct DrawDeviceSVG {
 mut:
-	id string = 'dd_svg'
+	id string              = 'dd_svg'
 	ts &libvg.SvgTextStyle = unsafe { nil }
 pub mut:
 	s &libvg.Svg = unsafe { nil }
@@ -164,7 +164,7 @@ pub fn (d &DrawDeviceSVG) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f
 	// println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
 	mut s := d.s
 	s.polyline('${x},${y} ${x2},${y2} ${x3},${y3} ${x},${y}',
-		stroke: hex_color(color)
+		stroke:      hex_color(color)
 		strokewidth: 1
 	)
 }
@@ -195,8 +195,8 @@ pub fn (d &DrawDeviceSVG) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, r
 	// println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gx.Color)')
 	mut s := d.s
 	s.rectangle(int(x), int(y), int(w), int(h),
-		rx: int(radius)
-		ry: int(radius)
+		rx:   int(radius)
+		ry:   int(radius)
 		fill: hex_color(color)
 	)
 }
@@ -206,9 +206,9 @@ pub fn (d &DrawDeviceSVG) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, ra
 	// println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gx.Color)')
 	mut s := d.s
 	s.rectangle(int(x), int(y), int(w), int(h),
-		rx: int(radius)
-		ry: int(radius)
-		stroke: hex_color(color)
+		rx:          int(radius)
+		ry:          int(radius)
+		stroke:      hex_color(color)
 		strokewidth: 1
 	)
 }

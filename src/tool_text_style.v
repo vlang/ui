@@ -25,11 +25,11 @@ pub enum TextVerticalAlign {
 pub struct TextStyle {
 pub mut:
 	// text style identifier
-	id string = ui.no_string
+	id string = no_string
 	// fields
-	font_name      string   = 'system'
-	color          gx.Color = gx.black
-	size           int      = 16
+	font_name      string              = 'system'
+	color          gx.Color            = gx.black
+	size           int                 = 16
 	align          TextHorizontalAlign = .left
 	vertical_align TextVerticalAlign   = .baseline
 	mono           bool
@@ -39,11 +39,11 @@ pub mut:
 pub struct TextStyleParams {
 pub mut:
 	// text style identifier
-	id string = ui.no_string
+	id string = no_string
 	// fields
-	font_name      string   = ui.no_string
-	color          gx.Color = no_color
-	size           int      = -1
+	font_name      string              = no_string
+	color          gx.Color            = no_color
+	size           int                 = -1
 	align          TextHorizontalAlign = .@none
 	vertical_align TextVerticalAlign   = .@none
 }
@@ -115,13 +115,13 @@ pub fn (mut u UI) add_style(ts TextStyle) {
 		id = ts.font_name
 	}
 	u.text_styles[id] = TextStyle{
-		id: id
-		font_name: ts.font_name
-		color: ts.color
-		size: ts.size
-		align: ts.align
+		id:             id
+		font_name:      ts.font_name
+		color:          ts.color
+		size:           ts.size
+		align:          ts.align
 		vertical_align: ts.vertical_align
-		mono: ts.mono
+		mono:           ts.mono
 	}
 }
 
@@ -135,9 +135,9 @@ pub fn (mut u UI) update_style(ts TextStyleParams) {
 		unsafe {
 			*ts_ = TextStyle{
 				...(*ts_)
-				size: if ts.size < 0 { ts_.size } else { ts.size }
-				font_name: if ts.font_name == ui.no_string { ts_.font_name } else { ts.font_name }
-				color: if ts.color == no_color { ts_.color } else { ts.color }
+				size:      if ts.size < 0 { ts_.size } else { ts.size }
+				font_name: if ts.font_name == no_string { ts_.font_name } else { ts.font_name }
+				color:     if ts.color == no_color { ts_.color } else { ts.color }
 			}
 		}
 	}
@@ -170,7 +170,7 @@ pub fn new_font_searcher() FontSearcher {
 	paths := font_path_list()
 	lpaths := paths.map(it.to_lower())
 	return FontSearcher{
-		paths: paths
+		paths:  paths
 		lpaths: lpaths
 	}
 }

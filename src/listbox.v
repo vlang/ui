@@ -26,19 +26,19 @@ pub mut:
 	parent        Layout      = empty_stack
 	ui            &UI         = unsafe { nil }
 	items         []&ListItem = []&ListItem{}
-	selection     int = -1
+	selection     int         = -1
 	selectable    bool
 	multi         bool
 	hovering      int = -1
 	draw_count    int
 	on_change     ListBoxFn = ListBoxFn(0)
 	is_focused    bool
-	item_height   int = ui.listbox_item_height
-	text_offset_y int = ui.listbox_text_offset_y
+	item_height   int = listbox_item_height
+	text_offset_y int = listbox_text_offset_y
 	id            string
 	// TODO
 	draw_lines     bool
-	color_disabled gx.Color = ui.listbox_color_disabled
+	color_disabled gx.Color = listbox_color_disabled
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
@@ -63,7 +63,7 @@ pub mut:
 	component voidptr
 	// scrollview
 	has_scrollview   bool
-	scrollview       &ScrollView = unsafe { nil }
+	scrollview       &ScrollView         = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
 }
 
@@ -77,8 +77,8 @@ pub mut:
 	height        int
 	z_index       int
 	on_change     ListBoxFn = ListBoxFn(0)
-	item_height   int       = ui.listbox_item_height
-	text_offset_y int       = ui.listbox_text_offset_y
+	item_height   int       = listbox_item_height
+	text_offset_y int       = listbox_text_offset_y
 	id            string // To use one callback for multiple ListBoxes
 	// TODO
 	draw_lines bool // Draw a rectangle around every item?
@@ -99,27 +99,27 @@ pub mut:
 // Keys of the items map are IDs of the elements, values are text
 pub fn listbox(c ListBoxParams) &ListBox {
 	mut list := &ListBox{
-		x: c.x // if c.draw_lines { c.x } else { c.x - 1 }
-		y: c.y // if c.draw_lines { c.y } else { c.y - 1 }
-		width: c.width
-		height: c.height
-		z_index: c.z_index
-		selection: c.selection
+		x:          c.x // if c.draw_lines { c.x } else { c.x - 1 }
+		y:          c.y // if c.draw_lines { c.y } else { c.y - 1 }
+		width:      c.width
+		height:     c.height
+		z_index:    c.z_index
+		selection:  c.selection
 		selectable: c.selectable
-		multi: c.multi
-		on_change: c.on_change
+		multi:      c.multi
+		on_change:  c.on_change
 		draw_lines: c.draw_lines
 		// bg_color: c.bg_color
 		// color_pressed: c.color_pressed
 		// border_color: c.border_color
-		item_height: c.item_height
+		item_height:   c.item_height
 		text_offset_y: c.text_offset_y
-		text_size: c.text_size
-		style_params: c.ListBoxStyleParams
+		text_size:     c.text_size
+		style_params:  c.ListBoxStyleParams
 		files_dropped: c.files_dropped
-		ordered: c.ordered
-		id: c.id
-		ui: unsafe { nil }
+		ordered:       c.ordered
+		id:            c.id
+		ui:            unsafe { nil }
 	}
 	list.style_params.style = c.theme
 	for id, text in c.items {
@@ -252,11 +252,11 @@ pub fn (mut lb ListBox) add_item(id string, text string) {
 
 pub fn (mut lb ListBox) append_item(id string, text string, draw_to int) {
 	lb.items << listitem(
-		x: 0
-		y: lb.item_height * lb.items.len
-		id: id
-		text: text
-		list: lb
+		x:       0
+		y:       lb.item_height * lb.items.len
+		id:      id
+		text:    text
+		list:    lb
 		draw_to: draw_to
 	)
 }
@@ -536,7 +536,7 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
 		dtw = DrawTextWidget(lb)
-		dtw.draw_device_styled_text(d, lb.x + ui.listbox_text_offset_x, lb.y + lb.text_offset_y,
+		dtw.draw_device_styled_text(d, lb.x + listbox_text_offset_x, lb.y + lb.text_offset_y,
 			if lb.files_dropped {
 			'Empty listbox. Drop files here ...'
 		} else {
@@ -567,7 +567,7 @@ fn (mut lb ListBox) get_draw_to(text string) int {
 	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	width := dtw.text_width(text)
-	real_w := lb.width + ui.listbox_text_offset_x * 2
+	real_w := lb.width + listbox_text_offset_x * 2
 	mut draw_to := text.len
 	if width >= real_w {
 		draw_to = int(f32(text.len) * (f32(real_w) / f32(width)))
@@ -808,7 +808,7 @@ fn (mut lb ListBox) adj_size() (int, int) {
 		mut dtw := DrawTextWidget(lb)
 		dtw.load_style()
 		for item in lb.items {
-			width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
+			width = dtw.text_width(item.text) + listbox_text_offset_x * 2
 			// println('$item.text -> $width')
 			if width > lb.adj_width {
 				lb.adj_width = width
@@ -828,7 +828,7 @@ fn (mut lb ListBox) update_adj_size() {
 	mut dtw := DrawTextWidget(lb)
 	dtw.load_style()
 	for item in lb.items {
-		width = dtw.text_width(item.text) + ui.listbox_text_offset_x * 2
+		width = dtw.text_width(item.text) + listbox_text_offset_x * 2
 		// println('$item.text -> $width')
 		if width > lb.adj_width {
 			lb.adj_width = width
@@ -929,15 +929,15 @@ pub:
 
 pub fn listitem(p ListItemParams) &ListItem {
 	return &ListItem{
-		x: p.x
-		y: p.y
-		id: p.id
-		text: p.text
-		list: unsafe { p.list }
-		draw_to: p.draw_to // p.text[0..p.draw_to]
+		x:        p.x
+		y:        p.y
+		id:       p.id
+		text:     p.text
+		list:     unsafe { p.list }
+		draw_to:  p.draw_to // p.text[0..p.draw_to]
 		offset_x: p.offset_x
 		offset_y: p.offset_y
-		z_index: p.z_index
+		z_index:  p.z_index
 		disabled: p.disabled
 		selected: p.selected
 	}
@@ -1038,14 +1038,13 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	}
 	width := if lb.has_scrollview && lb.adj_width > lb.width { lb.adj_width } else { lb.width }
 	$if li_draw ? {
-		println('draw item  ${lb.id} ${li.id} ${li.text()} ${li.x} + ${lb.x} + ${li.offset_x} + ${ui.listbox_text_offset_x}, ${li.y} + ${li.offset_y} + ${lb.y} + ${lb.text_offset_y}, ${lb.width}, ${lb.item_height}')
+		println('draw item  ${lb.id} ${li.id} ${li.text()} ${li.x} + ${lb.x} + ${li.offset_x} + ${listbox_text_offset_x}, ${li.y} + ${li.offset_y} + ${lb.y} + ${lb.text_offset_y}, ${lb.width}, ${lb.item_height}')
 	}
-	d.draw_rect_filled(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
-		lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
-		col)
+	d.draw_rect_filled(li.x + li.offset_x + lb.x + listbox_text_offset_x, li.y + li.offset_y +
+		lb.y + lb.text_offset_y, width - 2 * listbox_text_offset_x, lb.item_height, col)
 
 	mut dtw := DrawTextWidget(lb)
-	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + ui.listbox_text_offset_x,
+	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + listbox_text_offset_x,
 		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text
 	} else {
@@ -1055,8 +1054,8 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	)
 	if lb.draw_lines {
 		// println("line item $li.x + $lb.x, $li.y + $lb.x, $lb.width, $lb.item_height")
-		d.draw_rect_empty(li.x + li.offset_x + lb.x + ui.listbox_text_offset_x, li.y + li.offset_y +
-			lb.y + lb.text_offset_y, width - 2 * ui.listbox_text_offset_x, lb.item_height,
+		d.draw_rect_empty(li.x + li.offset_x + lb.x + listbox_text_offset_x, li.y + li.offset_y +
+			lb.y + lb.text_offset_y, width - 2 * listbox_text_offset_x, lb.item_height,
 			lb.style.border_color)
 	}
 }

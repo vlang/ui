@@ -15,7 +15,7 @@ const button_horizontal_padding = 26
 const button_vertical_padding = 8
 
 enum ButtonState {
-	normal   = 1 // synchronized with .button_normal
+	normal = 1 // synchronized with .button_normal
 	pressed
 	hovering
 }
@@ -115,28 +115,28 @@ pub:
 
 pub fn button(c ButtonParams) &Button {
 	mut b := &Button{
-		id: c.id
-		width_: c.width
-		height_: c.height
-		z_index: c.z_index
-		movable: c.movable
-		hoverable: c.hoverable
-		text: c.text
-		icon_path: c.icon_path
-		use_icon: c.icon_path != ''
-		tooltip: TooltipMessage{c.tooltip, c.tooltip_side}
-		style_params: c.ButtonStyleParams
-		on_click: c.on_click
-		on_key_down: c.on_key_down
-		on_mouse_down: c.on_mouse_down
-		on_mouse_up: c.on_mouse_up
-		on_mouse_move: c.on_mouse_move
+		id:             c.id
+		width_:         c.width
+		height_:        c.height
+		z_index:        c.z_index
+		movable:        c.movable
+		hoverable:      c.hoverable
+		text:           c.text
+		icon_path:      c.icon_path
+		use_icon:       c.icon_path != ''
+		tooltip:        TooltipMessage{c.tooltip, c.tooltip_side}
+		style_params:   c.ButtonStyleParams
+		on_click:       c.on_click
+		on_key_down:    c.on_key_down
+		on_mouse_down:  c.on_mouse_down
+		on_mouse_up:    c.on_mouse_up
+		on_mouse_move:  c.on_mouse_move
 		on_mouse_enter: c.on_mouse_enter
 		on_mouse_leave: c.on_mouse_leave
 		// text_size: c.text_size
 		// radius: f32(c.radius)
 		padding: f32(c.padding)
-		ui: unsafe { nil }
+		ui:      unsafe { nil }
 	}
 	b.style_params.style = c.theme
 	if b.use_icon && !os.exists(c.icon_path) {
@@ -411,7 +411,7 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 		// println("draw $b.id ${bg_color}")
 		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
 		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
-			ui.button_focus_border_color
+			button_focus_border_color
 		} else {
 			b.style.border_color
 		})
@@ -430,7 +430,7 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 		}
 		d.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
 		d.draw_rect_empty(x, y, width, height, if b.is_focused {
-			ui.button_focus_border_color
+			button_focus_border_color
 		} else {
 			b.style.border_color
 		})
@@ -474,11 +474,11 @@ pub fn (mut b Button) set_text_size() {
 
 		// b.text_width = int(f32(b.text_width))
 		// b.text_height = int(f32(b.text_height))
-		b.width = b.text_width + ui.button_horizontal_padding
+		b.width = b.text_width + button_horizontal_padding
 		if b.width_ > b.width {
 			b.width = b.width_
 		}
-		b.height = b.text_height + ui.button_vertical_padding
+		b.height = b.text_height + button_vertical_padding
 		if b.height_ > b.height {
 			b.height = b.height_
 		}

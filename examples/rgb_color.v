@@ -33,64 +33,64 @@ fn main() {
 	}
 	mut app := &App{}
 	app.rgb_rectangle = ui.rectangle(
-		id: 'rgb_rect'
+		id:     'rgb_rect'
 		border: true
-		color: gx.Color{
+		color:  gx.Color{
 			r: slider_val
 			g: slider_val
 			b: slider_val
 		}
 	)
 	app.r_textbox = ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: app.on_r_char
+		on_char:    app.on_r_char
 	)
 	app.g_textbox = ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: app.on_g_char
+		on_char:    app.on_g_char
 	)
 	app.b_textbox = ui.textbox(
-		max_len: 3
-		read_only: false
+		max_len:    3
+		read_only:  false
 		is_numeric: true
-		on_char: app.on_b_char
+		on_char:    app.on_b_char
 	)
 	app.r_slider = ui.slider(
-		orientation: .vertical
-		min: slider_min
-		max: slider_max
-		val: slider_val
+		orientation:         .vertical
+		min:                 slider_min
+		max:                 slider_max
+		val:                 slider_val
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
-		on_value_changed: app.on_r_value_changed
-		entering: entering
-		thumb_color: gx.light_red
+		rev_min_max_pos:     true
+		on_value_changed:    app.on_r_value_changed
+		entering:            entering
+		thumb_color:         gx.light_red
 	)
 	app.g_slider = ui.slider(
-		orientation: .vertical
-		min: slider_min
-		max: slider_max
-		val: slider_val
+		orientation:         .vertical
+		min:                 slider_min
+		max:                 slider_max
+		val:                 slider_val
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
-		on_value_changed: app.on_g_value_changed
-		entering: entering
-		thumb_color: gx.light_green
+		rev_min_max_pos:     true
+		on_value_changed:    app.on_g_value_changed
+		entering:            entering
+		thumb_color:         gx.light_green
 	)
 	app.b_slider = ui.slider(
-		orientation: .vertical
-		min: slider_min
-		max: slider_max
-		val: slider_val
+		orientation:         .vertical
+		min:                 slider_min
+		max:                 slider_max
+		val:                 slider_val
 		focus_on_thumb_only: true
-		rev_min_max_pos: true
-		on_value_changed: app.on_b_value_changed
-		entering: entering
-		thumb_color: gx.light_blue
+		rev_min_max_pos:     true
+		on_value_changed:    app.on_b_value_changed
+		entering:            entering
+		thumb_color:         gx.light_blue
 	)
 	app.r_label = ui.label(text: 'R', justify: ui.top_center, width: 40)
 	app.g_label = ui.label(text: 'G', justify: ui.top_center, width: 40)
@@ -100,38 +100,38 @@ fn main() {
 	app.b_textbox.text = &app.b_textbox_text
 	w := [ui.stretch, 40.0, 2 * ui.stretch, 40, 2 * ui.stretch, 40, ui.stretch]
 	app.window = ui.window(
-		width: win_width
-		height: win_height
-		title: 'RGB color displayed in rectangle'
-		mode: .resizable
+		width:    win_width
+		height:   win_height
+		title:    'RGB color displayed in rectangle'
+		mode:     .resizable
 		children: [
 			ui.column(
-				margin_: 10
-				spacing: 5
+				margin_:    10
+				spacing:    5
 				alignments: ui.HorizontalAlignments{
 					center: [0, 1, 2, 3]
 				}
-				heights: [ui.stretch, 2 * ui.stretch, ui.stretch, 5 * ui.stretch, ui.stretch]
-				children: [
+				heights:    [ui.stretch, 2 * ui.stretch, ui.stretch, 5 * ui.stretch, ui.stretch]
+				children:   [
 					ui.button(
-						id: 'rgb_btn'
-						text: 'Show rgb color'
+						id:       'rgb_btn'
+						text:     'Show rgb color'
 						on_click: app.btn_click
 					),
 					app.rgb_rectangle,
 					ui.row(
-						id: 'row_tb'
-						widths: w
+						id:       'row_tb'
+						widths:   w
 						children: [ui.spacing(), app.r_textbox, ui.spacing(), app.g_textbox,
 							ui.spacing(), app.b_textbox, ui.spacing()]
 					),
 					ui.row(
-						widths: w
+						widths:   w
 						children: [ui.spacing(), app.r_slider, ui.spacing(), app.g_slider,
 							ui.spacing(), app.b_slider, ui.spacing()]
 					),
 					ui.row(
-						widths: w
+						widths:   w
 						children: [ui.spacing(), app.r_label, ui.spacing(), app.g_label,
 							ui.spacing(), app.b_label, ui.spacing()]
 					),

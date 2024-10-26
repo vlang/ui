@@ -36,8 +36,8 @@ pub fn new_window(cfg Config) &WebView {
 		obj = C.new_windows_web_view(cfg.url.to_wide(), cfg.title.to_wide())
 	}
 	return &WebView{
-		url: cfg.url
-		obj: obj
+		url:             cfg.url
+		obj:             obj
 		nav_finished_fn: cfg.nav_finished_fn
 	}
 }

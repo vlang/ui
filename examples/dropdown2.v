@@ -10,22 +10,22 @@ fn dd_change(dd &ui.Dropdown) {
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'Dropdown'
+		width:    win_width
+		height:   win_height
+		title:    'Dropdown'
 		children: [
 			ui.column(
-				margin_: 5
-				widths: ui.compact
+				margin_:  5
+				widths:   ui.compact
 				children: [
 					ui.dropdown(
-						width: 140
-						def_text: 'Select an option'
-						text_color: gx.blue
-						text_size: 20
-						bg_color: gx.light_blue
+						width:                140
+						def_text:             'Select an option'
+						text_color:           gx.blue
+						text_size:            20
+						bg_color:             gx.light_blue
 						on_selection_changed: dd_change
-						items: [
+						items:                [
 							ui.DropdownItem{
 								text: 'Delete all users'
 							},
@@ -39,8 +39,8 @@ fn main() {
 					),
 					ui.rectangle(
 						height: 100
-						width: 250
-						color: gx.rgb(100, 255, 100)
+						width:  250
+						color:  gx.rgb(100, 255, 100)
 					),
 				]
 			),

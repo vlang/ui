@@ -7,39 +7,39 @@ const win_height = 600
 fn main() {
 	menu_items := [
 		ui.menuitem(
-			text: 'Delete'
+			text:    'Delete'
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
-						text: 'all developers'
+						text:   'all developers'
 						action: menu_click
 					),
 					ui.menuitem(
-						text: 'users'
+						text:    'users'
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all1'
+									text:   'all1'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel1'
+									text:    'devel1'
 									submenu: ui.menu(
 										items: [
 											ui.menuitem(
-												text: 'all2'
+												text:   'all2'
 												action: menu_click
 											),
 											ui.menuitem(
-												text: 'devel2'
+												text:    'devel2'
 												submenu: ui.menu(
 													items: [
 														ui.menuitem(
-															text: 'all3'
+															text:   'all3'
 															action: menu_click
 														),
 														ui.menuitem(
-															text: 'devel3'
+															text:   'devel3'
 															action: menu_click
 														),
 													]
@@ -55,28 +55,28 @@ fn main() {
 			)
 		),
 		ui.menuitem(
-			text: 'Export users'
+			text:   'Export users'
 			action: menu_click
 		),
 		ui.menuitem(text: 'Exit', action: menu_click),
 		ui.menuitem(
-			text: 'devel'
+			text:    'devel'
 			submenu: ui.menu(
 				items: [
 					ui.menuitem(
-						text: 'all4'
+						text:   'all4'
 						action: menu_click
 					),
 					ui.menuitem(
-						text: 'devel4'
+						text:    'devel4'
 						submenu: ui.menu(
 							items: [
 								ui.menuitem(
-									text: 'all5'
+									text:   'all5'
 									action: menu_click
 								),
 								ui.menuitem(
-									text: 'devel5'
+									text:   'devel5'
 									action: menu_click
 								),
 							]
@@ -87,26 +87,26 @@ fn main() {
 		),
 	]
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'Resizable Window'
+		width:     win_width
+		height:    win_height
+		title:     'Resizable Window'
 		resizable: true
-		children: [
+		children:  [
 			ui.column(
-				margin_: 0
-				widths: [ui.stretch, ui.stretch, .4]
-				heights: [ui.compact, ui.compact, .4]
+				margin_:  0
+				widths:   [ui.stretch, ui.stretch, .4]
+				heights:  [ui.compact, ui.compact, .4]
 				bg_color: gx.rgba(255, 0, 0, 20)
 				children: [
 					ui.row(
-						spacing: 5
+						spacing:  5
 						children: [
 							ui.label(text: 'Compact'),
 							ui.switcher(open: true, on_click: on_switch_click),
 						]
 					),
 					ui.menubar(
-						id: 'menubar'
+						id:    'menubar'
 						items: menu_items
 					),
 					ui.button(text: 'Add user'),

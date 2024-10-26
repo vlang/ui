@@ -93,7 +93,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 
 pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 	// TODO first sort scroll_receivers by order, z_index and hidden
-	evt_type := ui.events.on_scroll
+	evt_type := events.on_scroll
 	em.point_inside[evt_type].clear()
 	em.sorted_receivers(evt_type)
 	$if em_scroll ? {
@@ -126,7 +126,7 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 
 pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 	// TODO first sort scroll_receivers by order, z_index and hidden
-	evt_type := ui.events.on_mouse_move
+	evt_type := events.on_mouse_move
 	point_inside_ids := em.point_inside[evt_type].map(it.id)
 	em.point_inside[evt_type].clear()
 	em.sorted_receivers(evt_type)
@@ -211,8 +211,8 @@ pub fn (em &EventMngr) list_receivers(evt_type string) {
 // delegation (useful for iui interconnection)
 
 fn (em &EventMngr) has_delegation(e &gg.Event, gui &UI) bool {
-	if em.receivers[ui.events.on_delegate].len > 0 {
-		for mut w in em.receivers[ui.events.on_delegate] {
+	if em.receivers[events.on_delegate].len > 0 {
+		for mut w in em.receivers[events.on_delegate] {
 			x, y := e.mouse_x / gui.window.dpi_scale, e.mouse_y / gui.window.dpi_scale
 			if w.point_inside(x, y) {
 				return true

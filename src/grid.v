@@ -35,13 +35,13 @@ pub:
 
 pub fn grid(c GridParams) &Grid {
 	gv := &Grid{
-		width: c.width
-		height: c.height
-		z_index: c.z_index
+		width:       c.width
+		height:      c.height
+		z_index:     c.z_index
 		cell_height: c.cell_height
-		header: c.header
-		body: c.body
-		ui: unsafe { nil }
+		header:      c.header
+		body:        c.body
+		ui:          unsafe { nil }
 	}
 	return gv
 }

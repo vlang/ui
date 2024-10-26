@@ -23,7 +23,7 @@ mut:
 // TODO: documentation
 pub fn (mut s Actionable) add_action(action string, context voidptr, action_fn ActionFn) {
 	s.actions[action] = Action{
-		context: context
+		context:   context
 		action_fn: action_fn
 	}
 }

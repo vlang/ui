@@ -56,12 +56,12 @@ fn (mut app App) make_children() {
 			'edit: (0.3,20) -> (1,0.5)', 'active: (0.3, 0.5) -> (1,1)'],
 	]
 	app.run_btn = ui.button(
-		text: 'Run'
+		text:     'Run'
 		bg_color: gx.light_blue
 		// on_click: app.run
 	)
 	app.help_btn = ui.button(
-		text: ' ? '
+		text:     ' ? '
 		bg_color: gx.light_green
 		on_click: fn [mut app] (_ &ui.Button) {
 			mut sw := app.window.get_or_panic[ui.SubWindow]('help')
@@ -69,7 +69,7 @@ fn (mut app App) make_children() {
 		}
 	)
 	app.reset_btn = ui.button(
-		text: ' Reset '
+		text:     ' Reset '
 		bg_color: gx.orange
 		on_click: fn [mut app] (_ &ui.Button) {
 			app.reset()
@@ -77,37 +77,37 @@ fn (mut app App) make_children() {
 	)
 	app.status = ui.textbox(mode: .read_only)
 	app.toolbar = ui.row(
-		id: 'toolbar'
-		margin_: 2
-		spacing: 2
+		id:       'toolbar'
+		margin_:  2
+		spacing:  2
 		bg_color: gx.black
-		widths: [ui.compact, ui.compact, ui.compact, ui.stretch]
+		widths:   [ui.compact, ui.compact, ui.compact, ui.stretch]
 		children: [app.run_btn, app.help_btn, app.reset_btn, app.status]
 	)
 	app.edit = ui.textbox(
-		mode: .multiline
-		scrollview: true
-		z_index: 20
-		height: 200
+		mode:               .multiline
+		scrollview:         true
+		z_index:            20
+		height:             200
 		line_height_factor: 1.0 // double the line_height
-		text_size: 24
-		text_font_name: 'fixed'
-		bg_color: gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
-		text_value: app.cache_code[app.cache_code.keys()[0]]
+		text_size:          24
+		text_font_name:     'fixed'
+		bg_color:           gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+		text_value:         app.cache_code[app.cache_code.keys()[0]]
 	)
 	app.active = ui.textbox(
-		mode: .read_only | .multiline
-		scrollview: true
-		z_index: 20
-		height: 200
+		mode:               .read_only | .multiline
+		scrollview:         true
+		z_index:            20
+		height:             200
 		line_height_factor: 1.0 // double the line_height
-		text_size: 24
-		text_font_name: 'fixed'
-		bg_color: gx.white
+		text_size:          24
+		text_font_name:     'fixed'
+		bg_color:           gx.white
 	)
 	app.treedemo = uic.treeview_stack(
-		id: 'treedemo'
-		trees: [
+		id:       'treedemo'
+		trees:    [
 			tools.treedir('widgets', os.join_path(os.dir(@FILE), 'demo', 'widgets')),
 			tools.treedir('layouts', os.join_path(os.dir(@FILE), 'demo', 'layouts')),
 			tools.treedir('components', os.join_path(os.dir(@FILE), 'demo', 'components')),
@@ -120,7 +120,7 @@ fn (mut app App) make_children() {
 		}
 	)
 	app.layout = ui.box_layout(
-		id: 'bl_root'
+		id:       'bl_root'
 		children: {
 			'toolbar: (0,0) ++ (1,20)':  app.toolbar
 			'treedemo: hidden':          ui.column(children: [app.treedemo])
@@ -158,12 +158,12 @@ fn main() {
 	app.make_cache_code()
 	app.make_children()
 	app.window = ui.window(
-		width: 1000
-		height: 800
-		title: 'V UI: Build App'
-		mode: .resizable
+		width:   1000
+		height:  800
+		title:   'V UI: Build App'
+		mode:    .resizable
 		on_init: app.win_init
-		layout: app.layout
+		layout:  app.layout
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
 	mut sc := ui.Shortcutable(app.window)

@@ -269,13 +269,13 @@ fn main() {
 	// PRE CODE HERE
 	app.make_precode()
 	app.window = ui.window(
-		width: 1000
-		height: 800
-		title: 'V UI: Demo'
-		mode: .resizable
-		on_init: app.win_init
+		width:     1000
+		height:    800
+		title:     'V UI: Demo'
+		mode:      .resizable
+		on_init:   app.win_init
 		on_resize: app.resize
-		layout: app.layout
+		layout:    app.layout
 	)
 	uic.messagebox_subwindow_add(mut app.window, id: 'help', text: help_text)
 	mut sc := ui.Shortcutable(app.window)

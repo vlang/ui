@@ -30,8 +30,8 @@ fn main() {
 	mut children := []ui.Widget{}
 	children = [
 		ui.textbox(
-			text: &app.text
-			placeholder: '0'
+			text:          &app.text
+			placeholder:   '0'
 			fitted_height: true
 			// width: 135
 			text_size: 1.0 / 10
@@ -43,33 +43,33 @@ fn main() {
 		mut row_children := []ui.Widget{}
 		for op in row_ops {
 			row_children << ui.button(
-				text: op
-				on_click: app.btn_click
+				text:      op
+				on_click:  app.btn_click
 				text_size: 1.0 / 20
-				radius: .25
+				radius:    .25
 				// theme: 'blue'
 				hoverable: true
 			)
 		}
 		children << ui.row(
-			spacing: .02
-			widths: ui.stretch
+			spacing:  .02
+			widths:   ui.stretch
 			children: row_children
 		)
 	}
 
 	app.window = ui.window(
-		width: 300
-		height: 400
-		title: 'V Calc'
-		mode: .resizable // .max_size //
+		width:     300
+		height:    400
+		title:     'V Calc'
+		mode:      .resizable // .max_size //
 		font_path: os.resource_abs_path(os.join_path('../assets/fonts/', 'RobotoMono-Regular.ttf'))
-		theme: 'red'
-		children: [
+		theme:     'red'
+		children:  [
 			ui.column(
-				margin_: 10
-				spacing: .02
-				heights: ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30.0, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
+				margin_:  10
+				spacing:  .02
+				heights:  ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30.0, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
 				bg_color: gx.rgb(240, 180, 130)
 				children: children
 			),

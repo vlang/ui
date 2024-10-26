@@ -11,7 +11,8 @@ pub enum WMMode {
 
 @[heap]
 pub struct WindowManager {
-pub mut: // inside an unique sokol Window
+pub mut:
+	// inside an unique sokol Window
 	window  &Window = unsafe { nil }
 	apps    []Application
 	layout  &BoxLayout = unsafe { nil }

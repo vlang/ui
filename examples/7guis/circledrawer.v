@@ -110,62 +110,62 @@ mut:
 fn main() {
 	app := &App{}
 	sw_radius := ui.subwindow(
-		id: 'sw_radius'
+		id:     'sw_radius'
 		layout: ui.column(
-			width: 200
-			height: 60
-			margin_: 10
-			spacing: 10
+			width:    200
+			height:   60
+			margin_:  10
+			spacing:  10
 			bg_color: ui.alpha_colored(gx.light_gray, 100)
-			widths: ui.stretch
-			heights: ui.compact
+			widths:   ui.stretch
+			heights:  ui.compact
 			children: [
 				ui.label(text: 'Adjust radius', justify: ui.center_center),
 				ui.slider(
-					id: 'sl_radius'
-					orientation: .horizontal
-					max: 50
-					val: 20
+					id:               'sl_radius'
+					orientation:      .horizontal
+					max:              50
+					val:              20
 					on_value_changed: app.slider_changed
 				),
 			]
 		)
 	)
 	mut window := ui.window(
-		width: 500
+		width:  500
 		height: 400
-		title: 'Circle drawer'
-		mode: .resizable
+		title:  'Circle drawer'
+		mode:   .resizable
 		layout: ui.column(
-			spacing: 10
-			margin_: 20
-			widths: ui.stretch
-			heights: [ui.compact, ui.stretch]
+			spacing:  10
+			margin_:  20
+			widths:   ui.stretch
+			heights:  [ui.compact, ui.stretch]
 			children: [
 				ui.row(
-					spacing: 20
-					widths: [ui.stretch, 40, 40, ui.stretch]
+					spacing:  20
+					widths:   [ui.stretch, 40, 40, ui.stretch]
 					children: [ui.spacing(),
 						ui.button(
-							id: 'btn_undo'
-							text: 'Undo'
-							radius: 5
+							id:       'btn_undo'
+							text:     'Undo'
+							radius:   5
 							on_click: app.click_undo
 						),
 						ui.button(
-							id: 'btn_redo'
-							text: 'Redo'
-							radius: 5
+							id:       'btn_redo'
+							text:     'Redo'
+							radius:   5
 							on_click: app.click_redo
 						),
 						ui.spacing()]
 				),
 				ui.canvas_plus(
-					bg_color: gx.white
-					bg_radius: .025
-					clipping: true
-					on_draw: app.draw_circles
-					on_click: app.click_circles
+					bg_color:      gx.white
+					bg_radius:     .025
+					clipping:      true
+					on_draw:       app.draw_circles
+					on_click:      app.click_circles
 					on_mouse_move: app.mouse_move_circles
 				),
 			]
@@ -192,8 +192,8 @@ fn (mut app App) click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 			sl := c.ui.window.get_or_panic[ui.Slider]('sl_radius')
 			action := ActionSetCircleRadius{
 				circle_index: app.sel
-				new_radius: f32(sl.val)
-				old_radius: app.sel_radius
+				new_radius:   f32(sl.val)
+				old_radius:   app.sel_radius
 			}
 			app.state.add_action(action)
 			action.do(mut app.state)

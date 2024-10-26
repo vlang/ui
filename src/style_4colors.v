@@ -35,69 +35,69 @@ pub fn (mut gui UI) update_style_from_4colors() {
 		}
 		// button
 		btn: ButtonStyle{
-			radius: .1
-			border_color: button_border_color
-			bg_color: colors[2]
+			radius:           .1
+			border_color:     button_border_color
+			bg_color:         colors[2]
 			bg_color_pressed: colors[0]
-			bg_color_hover: colors[1]
-			text_color: colors[3]
+			bg_color_hover:   colors[1]
+			text_color:       colors[3]
 		}
 		// textbox
 		tb: TextBoxStyle{
-			bg_color: colors[2]
+			bg_color:   colors[2]
 			text_color: colors[3]
 		}
 		// checkbox
 		cb: CheckBoxStyle{
 			border_color: colors[1]
-			bg_color: colors[2]
-			check_mode: 'check' + mode
-			text_color: colors[3]
+			bg_color:     colors[2]
+			check_mode:   'check' + mode
+			text_color:   colors[3]
 		}
 		// radio
 		radio: RadioStyle{
 			border_color: colors[1]
-			bg_color: colors[2]
-			radio_mode: 'radio' + mode
-			text_color: colors[3]
+			bg_color:     colors[2]
+			radio_mode:   'radio' + mode
+			text_color:   colors[3]
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color: colors[2]
-			border_color: colors[3]
-			bg_color: colors[1]
+			color:           colors[2]
+			border_color:    colors[3]
+			bg_color:        colors[1]
 			bg_border_color: colors[0]
 		}
 		// slider
 		slider: SliderStyle{
-			thumb_color: colors[3]
-			bg_color: colors[1]
-			bg_border_color: colors[0]
+			thumb_color:             colors[3]
+			bg_color:                colors[1]
+			bg_border_color:         colors[0]
 			focused_bg_border_color: colors[2]
 		}
 		// menu
 		menu: MenuStyle{
-			border_color: colors[0]
-			bar_color: colors[2]
-			bg_color: colors[1]
+			border_color:   colors[0]
+			bar_color:      colors[2]
+			bg_color:       colors[1]
 			bg_color_hover: colors[0]
-			text_color: colors[3]
+			text_color:     colors[3]
 		}
 		// listbox
 		lb: ListBoxStyle{
-			border_color: colors[0]
-			bg_color: colors[1]
+			border_color:     colors[0]
+			bg_color:         colors[1]
 			bg_color_pressed: colors[0]
-			bg_color_hover: colors[2]
-			text_color: colors[3]
+			bg_color_hover:   colors[2]
+			text_color:       colors[3]
 		}
 		// dropdown
 		dd: DropdownStyle{
-			bg_color: colors[1]
+			bg_color:     colors[1]
 			border_color: colors[0]
-			focus_color: colors[2]
+			focus_color:  colors[2]
 			drawer_color: colors[2]
-			text_color: colors[3]
+			text_color:   colors[3]
 		}
 	}
 	gui.cb_image = gui.img('check' + mode)

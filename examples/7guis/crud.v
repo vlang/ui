@@ -28,22 +28,22 @@ fn main() {
 		]
 	}
 	window := ui.window(
-		width: 400
-		height: 300
-		title: 'CRUD'
-		mode: .resizable
+		width:   400
+		height:  300
+		title:   'CRUD'
+		mode:    .resizable
 		on_init: app.win_init
-		layout: ui.column(
-			spacing: 5
-			margin_: 10
-			widths: ui.stretch
-			heights: [ui.compact, ui.stretch, ui.compact]
+		layout:  ui.column(
+			spacing:  5
+			margin_:  10
+			widths:   ui.stretch
+			heights:  [ui.compact, ui.stretch, ui.compact]
 			children: [
 				ui.row(
-					widths: ui.stretch
+					widths:   ui.stretch
 					children: [
 						ui.row(
-							widths: [70.0, ui.stretch]
+							widths:   [70.0, ui.stretch]
 							children: [ui.label(text: 'Filter prefix:', justify: ui.center_left),
 								ui.textbox(id: 'tb_filter', on_change: app.on_change_filter)]
 						),
@@ -51,26 +51,26 @@ fn main() {
 					]
 				),
 				ui.row(
-					widths: ui.stretch
+					widths:   ui.stretch
 					children: [
 						ui.listbox(
 							id: 'lb_people'
 						),
 						ui.column(
-							margin_: 5
-							spacing: 5
-							heights: ui.compact
+							margin_:  5
+							spacing:  5
+							heights:  ui.compact
 							children: [
 								ui.row(
-									widths: [60.0, ui.stretch]
+									widths:   [60.0, ui.stretch]
 									children: [ui.label(text: 'Name:', justify: ui.center_left),
 										ui.textbox(id: 'tb_name')]
 								),
 								ui.row(
-									widths: [60.0, ui.stretch]
+									widths:   [60.0, ui.stretch]
 									children: [
 										ui.label(
-											text: 'Surname:'
+											text:    'Surname:'
 											justify: ui.center_left
 										),
 										ui.textbox(id: 'tb_surname'),
@@ -81,27 +81,27 @@ fn main() {
 					]
 				),
 				ui.row(
-					margin_: 5
-					spacing: 10
-					widths: ui.compact
-					heights: 30.0
+					margin_:  5
+					spacing:  10
+					widths:   ui.compact
+					heights:  30.0
 					children: [
 						ui.button(
-							id: 'btn_create'
-							text: 'Create'
-							radius: 5
+							id:       'btn_create'
+							text:     'Create'
+							radius:   5
 							on_click: app.btn_create_click
 						),
 						ui.button(
-							id: 'btn_update'
-							text: 'Update'
-							radius: 5
+							id:       'btn_update'
+							text:     'Update'
+							radius:   5
 							on_click: app.btn_update_click
 						),
 						ui.button(
-							id: 'btn_delete'
-							text: 'Delete'
-							radius: 5
+							id:       'btn_delete'
+							text:     'Delete'
+							radius:   5
 							on_click: app.btn_delete_click
 						),
 					]

@@ -53,15 +53,15 @@ pub:
 
 pub fn label(c LabelParams) &Label {
 	mut lbl := &Label{
-		id: c.id
-		text: c.text
-		width: c.width
-		height: c.height
-		ui: unsafe { nil }
-		z_index: c.z_index
+		id:       c.id
+		text:     c.text
+		width:    c.width
+		height:   c.height
+		ui:       unsafe { nil }
+		z_index:  c.z_index
 		clipping: c.clipping
 		// text_size: c.text_size
-		justify: c.justify
+		justify:      c.justify
 		style_params: c.LabelStyleParams
 	}
 	lbl.style_params.style = c.theme

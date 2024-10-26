@@ -47,13 +47,13 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	for i, tab in c.tabs {
 		println(tab_id(c.id, i) + '_label')
 		children << ui.canvas_layout(
-			id: tab_id(c.id, i)
+			id:       tab_id(c.id, i)
 			on_click: tab_click
 			// bg_color: gx.white
 			on_key_down: tab_key_down
-			children: [
+			children:    [
 				ui.row(
-					id: tab_id(c.id, i) + '_row'
+					id:       tab_id(c.id, i) + '_row'
 					children: [
 						ui.label(id: tab_id(c.id, i) + '_label', text: tab),
 					]
@@ -63,10 +63,10 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	}
 	// Layout
 	mut tab_bar := ui.row(
-		id: '${c.id}_tabbar'
-		widths: c.tab_width
-		heights: c.tab_height
-		spacing: c.tab_spacing
+		id:       '${c.id}_tabbar'
+		widths:   c.tab_width
+		heights:  c.tab_height
+		spacing:  c.tab_spacing
 		children: children
 	)
 
@@ -79,9 +79,9 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	// println('active: $tab_active')
 
 	mut layout := ui.column(
-		id: ui.component_id(c.id, 'layout')
-		widths: [ui.compact, ui.stretch]
-		heights: [ui.compact, ui.stretch]
+		id:       ui.component_id(c.id, 'layout')
+		widths:   [ui.compact, ui.stretch]
+		heights:  [ui.compact, ui.stretch]
 		children: [
 			tab_bar,
 			m_pages[tab_active],
@@ -89,14 +89,14 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 	)
 
 	mut tabs := &TabsComponent{
-		id: c.id
-		layout: layout
-		active: tab_active
-		tab_bar: tab_bar
-		pages: m_pages
-		mode: c.mode
-		tab_width: c.tab_width
-		tab_height: c.tab_height
+		id:          c.id
+		layout:      layout
+		active:      tab_active
+		tab_bar:     tab_bar
+		pages:       m_pages
+		mode:        c.mode
+		tab_width:   c.tab_width
+		tab_height:  c.tab_height
 		tab_spacing: c.tab_spacing
 	}
 

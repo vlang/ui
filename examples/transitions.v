@@ -24,24 +24,24 @@ fn main() {
 	mut app := &App{
 		x_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_cubic))
 		y_transition: ui.transition(duration: 750, easing: ui.easing(.ease_in_out_quart))
-		picture: ui.picture(
-			width: picture_width_and_height
-			height: picture_width_and_height
-			path: logo
-			movable: true
+		picture:      ui.picture(
+			width:    picture_width_and_height
+			height:   picture_width_and_height
+			path:     logo
+			movable:  true
 			on_click: example_pic_click
 		)
 	}
 	app.button = ui.button(text: 'Slide', on_click: app.btn_toggle_click, movable: true)
 	app.window = ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI Demo'
-		mode: .resizable
+		width:    win_width
+		height:   win_height
+		title:    'V UI Demo'
+		mode:     .resizable
 		children: [
 			ui.column(
-				widths: ui.compact // or ui.compact
-				margin: ui.Margin{25, 25, 25, 25}
+				widths:   ui.compact // or ui.compact
+				margin:   ui.Margin{25, 25, 25, 25}
 				children: [app.button, app.picture]
 			),
 			app.x_transition,

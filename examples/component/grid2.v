@@ -8,24 +8,24 @@ const win_height = 600
 fn main() {
 	n := 300
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: Grid 2'
+		width:          win_width
+		height:         win_height
+		title:          'V UI: Grid 2'
 		native_message: false
-		mode: .resizable
-		bg_color: gx.white
-		on_init: win_init
-		layout: ui.row(
-			widths: [ui.stretch, 15 * ui.stretch]
+		mode:           .resizable
+		bg_color:       gx.white
+		on_init:        win_init
+		layout:         ui.row(
+			widths:   [ui.stretch, 15 * ui.stretch]
 			children: [ui.rectangle(color: gx.red),
 				ui.column(
 					// scrollview: true
-					widths: ui.stretch
-					heights: [ui.stretch, 15 * ui.stretch]
+					widths:   ui.stretch
+					heights:  [ui.stretch, 15 * ui.stretch]
 					children: [ui.rectangle(color: gx.red),
 						uic.datagrid_stack(
-							id: 'grid2'
-							is_focused: true
+							id:                'grid2'
+							is_focused:        true
 							settings_bg_color: gx.hex(0xfcf4e4ff)
 							// fixed_height: false
 							vars: {

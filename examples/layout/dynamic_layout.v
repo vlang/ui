@@ -13,20 +13,20 @@ fn main() {
 	mut app := &App{}
 
 	window := ui.window(
-		width: win_width
+		width:  win_width
 		height: win_height
-		title: 'Dynamic layout'
-		mode: .resizable
+		title:  'Dynamic layout'
+		mode:   .resizable
 		layout: ui.row(
-			id: 'row'
-			spacing: 10
-			widths: [.4, .6]
-			heights: ui.stretch
+			id:       'row'
+			spacing:  10
+			widths:   [.4, .6]
+			heights:  ui.stretch
 			children: [
 				ui.column(
-					id: 'col1'
-					spacing: 10
-					margin_: 10
+					id:       'col1'
+					spacing:  10
+					margin_:  10
 					children: [
 						ui.button(text: 'add last', on_click: app.btn_add_click),
 						ui.button(text: 'add two', on_click: app.btn_add_two_click),
@@ -43,9 +43,9 @@ fn main() {
 					]
 				),
 				ui.column(
-					id: 'col2'
-					spacing: 10
-					margin_: 10
+					id:       'col2'
+					spacing:  10
+					margin_:  10
 					children: [
 						ui.button(text: 'Button'),
 					]
@@ -74,9 +74,9 @@ fn btn_migrate_click(btn &ui.Button) {
 	if mut s is ui.Stack {
 		if mut t is ui.Stack {
 			s.move(
-				from: 0
+				from:   0
 				target: t
-				to: -1
+				to:     -1
 			)
 		}
 	}
@@ -87,8 +87,8 @@ fn (mut app App) btn_add_click(btn &ui.Button) {
 	mut s := window.get_or_panic[ui.Stack]('col2')
 	app.cpt++
 	s.add(
-		child: ui.button(text: 'Button ${app.cpt}')
-		widths: ui.stretch
+		child:   ui.button(text: 'Button ${app.cpt}')
+		widths:  ui.stretch
 		heights: ui.compact
 		spacing: 10
 	)
@@ -100,9 +100,9 @@ fn (mut app App) btn_add_two_click(btn &ui.Button) {
 	app.cpt++
 	s.add(
 		children: [ui.button(text: 'Button ${app.cpt++}'), ui.button(text: 'Button ${app.cpt}')]
-		widths: ui.stretch
-		heights: ui.compact
-		spacing: 10
+		widths:   ui.stretch
+		heights:  ui.compact
+		spacing:  10
 	)
 }
 
@@ -150,7 +150,7 @@ fn btn_move_click(btn &ui.Button) {
 	mut s := window.get_or_panic[ui.Stack]('col2')
 	s.move(
 		from: 0
-		to: -1
+		to:   -1
 	)
 }
 

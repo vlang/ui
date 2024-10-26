@@ -27,29 +27,29 @@ pub:
 // TODO: documentation
 pub fn messagebox_stack(p MessageBoxParams) &ui.Stack {
 	mut tb := ui.textbox(
-		id: ui.component_id(p.id, 'textbox')
-		mode: .multiline | .read_only
+		id:        ui.component_id(p.id, 'textbox')
+		mode:      .multiline | .read_only
 		text_size: 24
-		bg_color: ui.color_solaris_transparent
+		bg_color:  ui.color_solaris_transparent
 	)
 	ok_btn := ui.button(
-		id: ui.component_id(p.id, 'ok_btn')
-		text: 'Ok'
+		id:       ui.component_id(p.id, 'ok_btn')
+		text:     'Ok'
 		on_click: messagebox_ok_click
 	)
 	layout := ui.column(
-		id: ui.component_id(p.id, 'layout')
-		width: p.width
-		height: p.height
-		heights: [ui.stretch, 30]
+		id:       ui.component_id(p.id, 'layout')
+		width:    p.width
+		height:   p.height
+		heights:  [ui.stretch, 30]
 		children: [tb, ok_btn]
 	)
 	hc := &MessageBoxComponent{
-		id: p.id
-		layout: layout
-		text: p.text
-		tb: tb
-		btn: ok_btn
+		id:       p.id
+		layout:   layout
+		text:     p.text
+		tb:       tb
+		btn:      ok_btn
 		on_click: p.on_click
 	}
 	unsafe {

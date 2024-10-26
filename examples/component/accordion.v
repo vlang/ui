@@ -21,45 +21,45 @@ mut:
 fn main() {
 	mut app := &App{}
 	app.hor_slider = ui.slider(
-		width: 200
-		height: 20
-		orientation: .horizontal
-		max: 100
-		val: 0
+		width:            200
+		height:           20
+		orientation:      .horizontal
+		max:              100
+		val:              0
 		on_value_changed: app.on_hor_value_changed
 	)
 	app.vert_slider = ui.slider(
-		width: 20
-		height: 200
-		orientation: .vertical
-		max: 100
-		val: 0
+		width:            20
+		height:           200
+		orientation:      .vertical
+		max:              100
+		val:              0
 		on_value_changed: app.on_vert_value_changed
 	)
 	cr := ui.column(
-		id: 'col_radio'
-		widths: ui.stretch
-		margin_: 5
-		spacing: 10
+		id:       'col_radio'
+		widths:   ui.stretch
+		margin_:  5
+		spacing:  10
 		children: [
 			ui.row(
-				spacing: 5
+				spacing:  5
 				children: [
 					ui.label(text: 'Compact'),
 					ui.switcher(open: true, on_click: on_switch_click),
 				]
 			),
 			ui.radio(
-				id: 'rh1'
+				id:         'rh1'
 				horizontal: true
-				compact: true
-				values: [
+				compact:    true
+				values:     [
 					'United States',
 					'Canada',
 					'United Kingdom',
 					'Australia',
 				]
-				title: 'Country'
+				title:      'Country'
 			),
 			ui.radio(
 				values: [
@@ -68,35 +68,35 @@ fn main() {
 					'United Kingdom',
 					'Australia',
 				]
-				title: 'Country'
+				title:  'Country'
 			),
 			ui.row(
-				widths: [
+				widths:   [
 					ui.compact,
 					ui.stretch,
 				]
 				children: [
 					ui.label(text: 'Country:'),
 					ui.radio(
-						id: 'rh2'
+						id:         'rh2'
 						horizontal: true
-						compact: true
-						values: ['United States', 'Canada', 'United Kingdom', 'Australia']
+						compact:    true
+						values:     ['United States', 'Canada', 'United Kingdom', 'Australia']
 					),
 				]
 			),
 		]
 	)
 	cdd := ui.column(
-		id: 'col_dd'
-		margin_: 5
-		widths: ui.compact
+		id:       'col_dd'
+		margin_:  5
+		widths:   ui.compact
 		children: [
 			ui.dropdown(
-				width: 140
-				def_text: 'Select an option'
+				width:                140
+				def_text:             'Select an option'
 				on_selection_changed: dd_change
-				items: [
+				items:                [
 					ui.DropdownItem{
 						text: 'Delete all users'
 					},
@@ -110,34 +110,34 @@ fn main() {
 			),
 			ui.rectangle(
 				height: 100
-				width: 250
-				color: gx.rgb(100, 255, 100)
+				width:  250
+				color:  gx.rgb(100, 255, 100)
 			),
 		]
 	)
 	rg := ui.row(
-		id: 'row_group'
-		margin_: 10
-		height: 200
-		spacing: 20
+		id:       'row_group'
+		margin_:  10
+		height:   200
+		spacing:  20
 		children: [
 			ui.group(
-				title: 'First group'
+				title:    'First group'
 				children: [
 					ui.textbox(
-						max_len: 20
-						width: 200
+						max_len:     20
+						width:       200
 						placeholder: 'Lorem ipsum'
-						text: &app.first_ipsum
+						text:        &app.first_ipsum
 					),
 					ui.textbox(
-						max_len: 20
-						width: 200
+						max_len:     20
+						width:       200
 						placeholder: 'dolor sit amet'
-						text: &app.second_ipsum
+						text:        &app.second_ipsum
 					),
 					ui.button(
-						text: 'More ipsum!'
+						text:     'More ipsum!'
 						on_click: fn (b &ui.Button) {
 							ui.open_url('https://lipsum.com/feed/html')
 						}
@@ -145,13 +145,13 @@ fn main() {
 				]
 			),
 			ui.group(
-				title: 'Second group'
+				title:    'Second group'
 				children: [
 					ui.textbox(
-						max_len: 20
-						width: 200
+						max_len:     20
+						width:       200
 						placeholder: 'Full name'
-						text: &app.full_name
+						text:        &app.full_name
 					),
 					ui.checkbox(checked: true, text: 'Do you like V?'),
 					ui.button(text: 'Submit'),
@@ -160,35 +160,35 @@ fn main() {
 		]
 	)
 	rs := ui.row(
-		id: 'row_slider'
-		height: 200
+		id:        'row_slider'
+		height:    200
 		alignment: .center
-		widths: [.1, .9]
-		heights: [.9, .1]
-		margin: ui.Margin{25, 25, 25, 25}
-		spacing: 10
-		children: [app.vert_slider, app.hor_slider]
+		widths:    [.1, .9]
+		heights:   [.9, .1]
+		margin:    ui.Margin{25, 25, 25, 25}
+		spacing:   10
+		children:  [app.vert_slider, app.hor_slider]
 	)
 	rect := ui.rectangle(
-		text: 'Here a simple ui rectangle'
-		color: gx.red
+		text:   'Here a simple ui rectangle'
+		color:  gx.red
 		height: 100
 		// text_color: gx.blue
 		// text_align: gx.align_left
 		// text_size: 30
 	)
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: Accordion'
+		width:          win_width
+		height:         win_height
+		title:          'V UI: Accordion'
 		native_message: false
-		mode: .resizable
-		layout: uic.accordion_stack(
-			id: 'demo'
+		mode:           .resizable
+		layout:         uic.accordion_stack(
+			id:         'demo'
 			text_color: gx.blue
-			titles: ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
-			children: [rect, cr, rs, rg, cdd]
-			heights: [30.0, ui.compact]
+			titles:     ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
+			children:   [rect, cr, rs, rg, cdd]
+			heights:    [30.0, ui.compact]
 			scrollview: true
 		)
 	)

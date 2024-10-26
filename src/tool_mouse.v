@@ -120,20 +120,19 @@ pub fn (mut m Mouse) update() {
 		// println("update current mouse: $m.id")
 	}
 	ids := m.id.split(':')
-	if m.id == ui.mouse_system {
+	if m.id == mouse_system {
 		m.states.clear()
 	}
-	sapp.set_mouse_cursor(ui.system_mouse_cursor[if ids.len > 1 { ids[1] } else { 'default' }])
-	sapp.show_mouse(ids[0] == ui.mouse_system || !m.active)
+	sapp.set_mouse_cursor(system_mouse_cursor[if ids.len > 1 { ids[1] } else { 'default' }])
+	sapp.show_mouse(ids[0] == mouse_system || !m.active)
 }
 
 pub fn (mut m Mouse) start(id string) {
 	if m.states.len == 0 || id != m.states.last() {
-		m.states << if m.window.ui.has_img(id) || id == ui.mouse_hidden
-			|| id.starts_with('_system_:') {
+		m.states << if m.window.ui.has_img(id) || id == mouse_hidden || id.starts_with('_system_:') {
 			id
 		} else {
-			ui.mouse_system
+			mouse_system
 		}
 		m.update()
 	}

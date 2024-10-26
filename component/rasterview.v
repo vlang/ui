@@ -40,7 +40,7 @@ pub mut:
 	from_j int
 	to_j   int
 	// current color
-	color   gx.Color = gx.black
+	color   gx.Color               = gx.black
 	palette &ColorPaletteComponent = unsafe { nil }
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
@@ -53,40 +53,40 @@ pub mut:
 pub struct RasterViewParams {
 pub:
 	id       string
-	width    int = 16
-	height   int = 16
-	channels int = 4
+	width    int          = 16
+	height   int          = 16
+	channels int          = 4
 	on_click RasterViewFn = RasterViewFn(0)
 }
 
 // TODO: documentation
 pub fn rasterview_canvaslayout(p RasterViewParams) &ui.CanvasLayout {
 	mut layout := ui.canvas_layout(
-		id: ui.component_id(p.id, 'layout')
-		scrollview: true
-		justify: [0.5, 0.5]
-		on_draw: rv_draw
-		on_click: rv_click
-		on_mouse_down: rv_mouse_down
-		on_mouse_up: rv_mouse_up
-		on_scroll: rv_scroll
-		on_mouse_move: rv_mouse_move
-		on_mouse_enter: rv_mouse_enter
-		on_mouse_leave: rv_mouse_leave
-		on_key_down: rv_key_down
-		full_size_fn: rv_full_size
+		id:               ui.component_id(p.id, 'layout')
+		scrollview:       true
+		justify:          [0.5, 0.5]
+		on_draw:          rv_draw
+		on_click:         rv_click
+		on_mouse_down:    rv_mouse_down
+		on_mouse_up:      rv_mouse_up
+		on_scroll:        rv_scroll
+		on_mouse_move:    rv_mouse_move
+		on_mouse_enter:   rv_mouse_enter
+		on_mouse_leave:   rv_mouse_leave
+		on_key_down:      rv_key_down
+		full_size_fn:     rv_full_size
 		on_scroll_change: rv_scroll_change
 	)
 	rv := &RasterViewComponent{
-		id: p.id
+		id:     p.id
 		layout: layout
 		// width: p.width
 		// height: p.height
 		// channels: p.channels
 		// data: []u8{len: p.width * p.height * p.channels}
-		r: libvg.raster(
-			width: p.width
-			height: p.height
+		r:        libvg.raster(
+			width:    p.width
+			height:   p.height
 			channels: p.channels
 		)
 		on_click: p.on_click

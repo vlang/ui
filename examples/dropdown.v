@@ -9,18 +9,18 @@ fn dd_change(dd &ui.Dropdown) {
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'Dropdown'
+		width:    win_width
+		height:   win_height
+		title:    'Dropdown'
 		children: [
 			ui.column(
-				margin: ui.Margin{5, 5, 5, 5}
+				margin:   ui.Margin{5, 5, 5, 5}
 				children: [
 					ui.dropdown(
-						width: 140
-						def_text: 'Select an option'
+						width:                140
+						def_text:             'Select an option'
 						on_selection_changed: dd_change
-						items: [
+						items:                [
 							ui.DropdownItem{
 								text: 'Delete all users'
 							},

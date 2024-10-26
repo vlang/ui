@@ -7,16 +7,16 @@ const win_height = 600
 
 fn main() {
 	window := ui.window(
-		width: win_width
-		height: win_height
-		title: 'V UI: File Browser'
+		width:          win_width
+		height:         win_height
+		title:          'V UI: File Browser'
 		native_message: false
-		mode: .resizable
-		layout: uic.filebrowser_stack(
-			id: 'fb'
-			on_click_ok: on_click_ok
+		mode:           .resizable
+		layout:         uic.filebrowser_stack(
+			id:              'fb'
+			on_click_ok:     on_click_ok
 			on_click_cancel: on_click_cancel
-			folder_only: true
+			folder_only:     true
 		)
 	)
 	ui.run(window)

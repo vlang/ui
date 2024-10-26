@@ -21,7 +21,7 @@ pub mut:
 
 pub fn new(p AppEventsParams) &AppEvents {
 	mut app := &AppEvents{
-		id: p.id
+		id:    p.id
 		users: p.users
 	}
 	app.make_layout()

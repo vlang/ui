@@ -41,10 +41,10 @@ pub:
 // TODO: documentation
 pub fn raster(p RasterParams) &Raster {
 	r := &Raster{
-		width: p.width
-		height: p.height
+		width:    p.width
+		height:   p.height
 		channels: p.channels
-		data: []u8{len: p.width * p.height * p.channels}
+		data:     []u8{len: p.width * p.height * p.channels}
 	}
 	return r
 }

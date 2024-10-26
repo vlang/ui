@@ -30,12 +30,12 @@ pub fn component_connect(comp voidptr, children ...ComponentChild) {
 pub fn component_id(id string, parts ...string) string {
 	mut part_id := [id]
 	part_id << parts.clone()
-	return part_id.join(ui.component_sep)
+	return part_id.join(component_sep)
 }
 
 // TODO: documentation
 pub fn component_parent_id(part_id string) string {
-	return part_id.split(ui.component_sep)#[..-1].join(ui.component_sep)
+	return part_id.split(component_sep)#[..-1].join(component_sep)
 }
 
 // TODO: documentation
@@ -45,7 +45,7 @@ pub fn component_id_from(from_id string, id string) string {
 
 // TODO: documentation
 pub fn component_parent_id_by(part_id string, level int) string {
-	return part_id.split(ui.component_sep)#[..-level].join(ui.component_sep)
+	return part_id.split(component_sep)#[..-level].join(component_sep)
 }
 
 // TODO: documentation
