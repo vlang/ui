@@ -19,12 +19,12 @@ jobs:
       VUI_FONT: /usr/share/fonts/truetype/inconsolata/Inconsolata.otf
     steps:
       - name: Checkout V
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: vlang/v
 
       - name: Checkout V UI
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: vlib/ui
 
