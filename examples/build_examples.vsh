@@ -1,10 +1,15 @@
 #!/usr/bin/env -S v
 
+import os
+
+const vexe = os.quoted_path(@VEXE)
+
 fn println_one_of_many(msg string, entry_idx int, entries_len int) {
 	eprintln('${entry_idx + 1:2}/${entries_len:-2} ${msg}')
 }
 
-print('v version: ${execute('v version').output}')
+println('v executable: ${vexe}')
+print('v version: ${execute('${vexe} version').output}')
 
 examples_dir := join_path(@VMODROOT, 'examples')
 mut all_entries := walk_ext(examples_dir, '.v')
@@ -31,13 +36,17 @@ mut err := 0
 mut failures := []string{}
 chdir(examples_dir)!
 for entry_idx, entry in entries {
-	cmd := 'v -N -W ${entry}'
+	cmd := '${vexe} -N -W ${entry}'
 	println_one_of_many('compile with: ${cmd}', entry_idx, entries.len)
 	ret := execute(cmd)
 	if ret.exit_code != 0 {
 		err++
-		eprintln('>>> FAILURE')
 		failures << cmd
+		eprintln('>>> FAILURE')
+		eprintln('>>>    err:')
+		eprintln('----------------------------------------------------------------------------------')
+		eprintln(ret.output)
+		eprintln('----------------------------------------------------------------------------------')
 	}
 }
 
