@@ -19,7 +19,7 @@ pub:
 	url   string
 	title string
 	// parent          &ui.Window
-mut:
+pub mut:
 	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
 	js_on_init      string
 }
