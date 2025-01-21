@@ -8,12 +8,12 @@ import regex
 const no_cell = GridCell{-1, -1}
 
 // Spreadsheet-like (ex: A1, B4, ...)
-type AlphaCell = string
+pub type AlphaCell = string
 
 // Spreadsheet-like (ex: A1:B4, Z12:AB13, ...)
-type AlphaCellBlock = string
+pub type AlphaCellBlock = string
 
-type ActiveCells = AlphaCell | AlphaCellBlock
+pub type ActiveCells = AlphaCell | AlphaCellBlock
 
 // Matrix-like (zero indexed)
 pub struct GridCell {
