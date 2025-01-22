@@ -21,7 +21,7 @@ pub mut:
 	y int
 }
 
-interface ChunkContent {
+pub interface ChunkContent {
 mut:
 	bb Rect
 	init(cv &ChunkView)

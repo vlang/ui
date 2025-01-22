@@ -20,13 +20,13 @@ enum ButtonState {
 	hovering
 }
 
-type ButtonFn = fn (&Button)
+pub type ButtonFn = fn (&Button)
 
-type ButtonU32Fn = fn (&Button, u32)
+pub type ButtonU32Fn = fn (&Button, u32)
 
-type ButtonMouseFn = fn (&Button, &MouseEvent)
+pub type ButtonMouseFn = fn (&Button, &MouseEvent)
 
-type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
+pub type ButtonMouseMoveFn = fn (&Button, &MouseMoveEvent)
 
 @[heap]
 pub struct Button {

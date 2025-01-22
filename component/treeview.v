@@ -7,7 +7,7 @@ import os
 const tree_sep = ':'
 const root_sep = '_|||_'
 
-type TreeItem = Tree | string
+pub type TreeItem = Tree | string
 
 pub struct Tree {
 pub mut:
