@@ -19,7 +19,7 @@ enum GridType {
 	dd_factor
 }
 
-type GridData = Factor | []bool | []f64 | []int | []string
+pub type GridData = Factor | []bool | []f64 | []int | []string
 
 @[heap]
 pub struct GridComponent {
