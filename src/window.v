@@ -65,7 +65,7 @@ pub mut:
 	mode              WindowSizeType
 	root_layout       Layout = empty_stack
 	top_layer         CanvasLayout // For absolute coordinates widgets located on top
-	dpi_scale         f32
+	dpi_scale         f32 = 1.0
 	// saved origin sizes
 	orig_width   int
 	orig_height  int
@@ -347,7 +347,6 @@ fn gg_init(mut window Window) {
 	window.init_text_styles()
 	window.load_style()
 	$if !screenshot ? {
-		window.dpi_scale = gg.dpi_scale()
 		window_size := gg.window_size()
 		window.width, window.height = window_size.width, window_size.height
 		window.orig_width, window.orig_height = window.width, window.height
@@ -1273,8 +1272,6 @@ pub fn (mut window Window) resize(w int, h int) {
 	window.width, window.height = w, h
 	if mut window.ui.dd is DrawDeviceContext {
 		// Update ui.gg.ft.scale if the dpi has changed (dragging to another monitor)
-		window.dpi_scale = gg.dpi_scale()
-		window.ui.gg.scale = window.dpi_scale
 		if window.resizable {
 			mut ft_scale := &window.ui.gg.ft.scale
 			unsafe {
