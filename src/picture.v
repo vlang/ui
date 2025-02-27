@@ -215,3 +215,7 @@ fn (pic &Picture) drag_type() string {
 fn (pic &Picture) drag_bounds() gg.Rect {
 	return gg.Rect{pic.x + pic.offset_x, pic.y + pic.offset_y, pic.width, pic.height}
 }
+
+pub fn (mut pic Picture) remove_from_cache(path string) {
+	pic.ui.resource_cache.delete(path)
+}
