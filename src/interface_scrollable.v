@@ -117,31 +117,21 @@ pub fn scrollview_add[T](mut w T) {
 // TODO: documentation
 pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 	if w is Stack {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 		for child in w.children {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is CanvasLayout {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 		for child in w.children {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is ListBox {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 	} else if w is ChunkView {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 	} else if w is TextBox {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 	} else if w is Group {
 		// if has_scrollview(w) {
 		// 	scrollview_set_orig_xy(w)
@@ -150,9 +140,7 @@ pub fn scrollview_widget_set_orig_xy(w Widget, reset_offset bool) {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
 	} else if w is BoxLayout {
-		if has_scrollview(w) {
-			scrollview_set_orig_xy(w, reset_offset)
-		}
+		scrollview_set_orig_xy(w, reset_offset)
 		for child in w.children {
 			scrollview_widget_set_orig_xy(child, reset_offset)
 		}
@@ -207,7 +195,7 @@ fn has_parent_scrolling(w Widget) bool {
 }
 
 // TODO: documentation
-pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
+pub fn scrollview_set_orig_xy(w &ScrollableWidget, reset_offset bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// rest values
@@ -234,32 +222,24 @@ pub fn scrollview_set_orig_xy[T](w &T, reset_offset bool) {
 // TODO: documentation
 pub fn scrollview_widget_save_offset(w Widget) {
 	if w is Stack {
-		if has_scrollview(w) {
-			scrollview_save_offset(w)
-		}
+		scrollview_save_offset(w)
 		for child in w.children {
 			scrollview_widget_save_offset(child)
 		}
 	} else if w is CanvasLayout {
-		if has_scrollview(w) {
-			scrollview_save_offset(w)
-		}
+		scrollview_save_offset(w)
 		for child in w.children {
 			scrollview_widget_save_offset(child)
 		}
 	} else if w is ListBox {
-		if has_scrollview(w) {
-			scrollview_save_offset(w)
-		}
+		scrollview_save_offset(w)
 	} else if w is TextBox {
-		if has_scrollview(w) {
-			scrollview_save_offset(w)
-		}
+		scrollview_save_offset(w)
 	}
 }
 
 // TODO: documentation
-pub fn scrollview_save_offset[T](w &T) {
+pub fn scrollview_save_offset(w &ScrollableWidget) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		// Save prev values
@@ -271,32 +251,24 @@ pub fn scrollview_save_offset[T](w &T) {
 // TODO: documentation
 pub fn scrollview_widget_restore_offset(w Widget, orig bool) {
 	if w is Stack {
-		if has_scrollview(w) {
-			scrollview_restore_offset(w, orig)
-		}
+		scrollview_restore_offset(w, orig)
 		for child in w.children {
 			scrollview_widget_restore_offset(child, orig)
 		}
 	} else if w is CanvasLayout {
-		if has_scrollview(w) {
-			scrollview_restore_offset(w, orig)
-		}
+		scrollview_restore_offset(w, orig)
 		for child in w.children {
 			scrollview_widget_restore_offset(child, orig)
 		}
 	} else if w is ListBox {
-		if has_scrollview(w) {
-			scrollview_restore_offset(w, orig)
-		}
+		scrollview_restore_offset(w, orig)
 	} else if w is TextBox {
-		if has_scrollview(w) {
-			scrollview_restore_offset(w, orig)
-		}
+		scrollview_restore_offset(w, orig)
 	}
 }
 
 // TODO: documentation
-pub fn scrollview_restore_offset[T](w &T, orig bool) {
+pub fn scrollview_restore_offset(w &ScrollableWidget, orig bool) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.update_active()
@@ -320,17 +292,17 @@ pub fn scrollview_restore_offset[T](w &T, orig bool) {
 }
 
 // TODO: documentation
-pub fn scrollview_delegate_parent_scrollview[T](mut w T) {
+pub fn scrollview_delegate_parent_scrollview(mut w Widget) {
 	parent := w.parent
-	if parent is Stack {
+	if parent is Stack && mut w is ScrollableWidget {
 		w.scrollview = parent.scrollview
-	} else if parent is CanvasLayout {
+	} else if parent is CanvasLayout && mut w is ScrollableWidget {
 		w.scrollview = parent.scrollview
 	}
 }
 
 // TODO: documentation
-pub fn scrollview_update[T](w &T) {
+pub fn scrollview_update(w &ScrollableWidget) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.update()
@@ -340,9 +312,7 @@ pub fn scrollview_update[T](w &T) {
 // TODO: documentation
 pub fn scrollview_widget_update(w Widget) {
 	if w is Stack {
-		if has_scrollview(w) {
-			scrollview_update(w)
-		}
+		scrollview_update(w)
 		for child in w.children {
 			scrollview_widget_update(child)
 		}
@@ -350,7 +320,7 @@ pub fn scrollview_widget_update(w Widget) {
 }
 
 // TODO: documentation
-pub fn scrollview_update_active[T](w &T) {
+pub fn scrollview_update_active(w &ScrollableWidget) {
 	if has_scrollview(w) {
 		mut sv := w.scrollview
 		sv.update_active()
@@ -360,9 +330,7 @@ pub fn scrollview_update_active[T](w &T) {
 // TODO: documentation
 pub fn scrollview_widget_update_active(w Widget) {
 	if w is Stack {
-		if has_scrollview(w) {
-			scrollview_update_active(w)
-		}
+		scrollview_update_active(w)
 		for child in w.children {
 			scrollview_widget_update_active(child)
 		}
@@ -391,7 +359,7 @@ pub fn scrollview_draw_begin[T](mut w T, d DrawDevice) {
 }
 
 // TODO: documentation
-pub fn scrollview_draw_end[T](w &T, d DrawDevice) {
+pub fn scrollview_draw_end(w &ScrollableWidget, d DrawDevice) {
 	if has_scrollview(w) {
 		sv := w.scrollview
 		sv.draw_device(d)
