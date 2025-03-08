@@ -9,7 +9,7 @@ pub struct WebView {
 	// widget ui.Widget
 	url string
 mut:
-	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
+	nav_finished_fn NavFinishedFn = unsafe { NavFinishedFn(nil) }
 pub:
 	obj voidptr
 }
@@ -20,7 +20,7 @@ pub:
 	title string
 	// parent          &ui.Window
 pub mut:
-	nav_finished_fn NavFinishedFn = NavFinishedFn(0)
+	nav_finished_fn NavFinishedFn = unsafe { NavFinishedFn(nil) }
 	js_on_init      string
 }
 
@@ -67,7 +67,7 @@ pub fn (mut wv WebView) on_navigate_fn(nav_callback fn (url string)) {
 }
 
 pub fn (mut wv WebView) on_navigate(url string) {
-	if wv.nav_finished_fn != NavFinishedFn(0) {
+	if wv.nav_finished_fn != unsafe { NavFinishedFn(nil) } {
 		wv.nav_finished_fn(url)
 	}
 }
