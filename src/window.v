@@ -375,7 +375,7 @@ fn gg_init(mut window Window) {
 	window.init_top_layer()
 
 	// last window init
-	if window.on_init != WindowFn(0) {
+	if window.on_init != unsafe { WindowFn(0) } {
 		window.on_init(window)
 	}
 	// update theme style recursively
@@ -423,7 +423,7 @@ fn frame(mut w Window) {
 	// draw tooltip if active
 	w.tooltip.draw()
 
-	if w.on_draw != WindowFn(0) {
+	if w.on_draw != unsafe { WindowFn(0) } {
 		w.on_draw(w)
 	}
 
@@ -469,7 +469,7 @@ fn frame_immediate(mut w Window) {
 	}
 	w.tooltip.draw()
 
-	if w.on_draw != WindowFn(0) {
+	if w.on_draw != unsafe { WindowFn(0) } {
 		w.on_draw(w)
 	}
 
@@ -498,7 +498,7 @@ fn frame_native(mut w Window) {
 	}
 	*/
 
-	if w.on_draw != WindowFn(0) {
+	if w.on_draw != unsafe { WindowFn(0) } {
 		w.on_draw(w)
 	}
 
@@ -648,37 +648,37 @@ fn on_event(e &gg.Event, mut window Window) {
 			window_resize(e, window.ui)
 		}
 		.iconified {
-			if window.iconified_fn != WindowFn(0) {
+			if window.iconified_fn != unsafe { WindowFn(0) } {
 				window.iconified_fn(window)
 			}
 		}
 		.restored {
-			if window.restored_fn != WindowFn(0) {
+			if window.restored_fn != unsafe { WindowFn(0) } {
 				window.restored_fn(window)
 			}
 		}
 		.focused {
-			if window.focused_fn != WindowFn(0) {
+			if window.focused_fn != unsafe { WindowFn(0) } {
 				window.focused_fn(window)
 			}
 		}
 		.unfocused {
-			if window.unfocused_fn != WindowFn(0) {
+			if window.unfocused_fn != unsafe { WindowFn(0) } {
 				window.unfocused_fn(window)
 			}
 		}
 		.quit_requested {
-			if window.quit_requested_fn != WindowFn(0) {
+			if window.quit_requested_fn != unsafe { WindowFn(0) } {
 				window.quit_requested_fn(window)
 			}
 		}
 		.suspended {
-			if window.suspended_fn != WindowFn(0) {
+			if window.suspended_fn != unsafe { WindowFn(0) } {
 				window.suspended_fn(window)
 			}
 		}
 		.resumed {
-			if window.resumed_fn != WindowFn(0) {
+			if window.resumed_fn != unsafe { WindowFn(0) } {
 				window.resumed_fn(window)
 			}
 		}
@@ -754,7 +754,7 @@ fn window_resize(event gg.Event, u &UI) {
 	window.resize(window_width, window_height)
 	window.eventbus.publish(events.on_resize, window, unsafe { nil })
 
-	if window.resize_fn != WindowResizeFn(0) {
+	if window.resize_fn != unsafe { WindowResizeFn(0) } {
 		window.resize_fn(window, window_width, window_height)
 	}
 }
@@ -808,7 +808,7 @@ fn window_key_down(event gg.Event, u &UI) {
 		key_shortcut(e, window.shortcuts, window)
 	}
 
-	if window.key_down_fn != WindowKeyFn(0) {
+	if window.key_down_fn != unsafe { WindowKeyFn(0) } {
 		window.key_down_fn(window, e)
 	}
 	// TODO
@@ -836,7 +836,7 @@ fn window_char(event gg.Event, u &UI) {
 		codepoint: event.char_code
 		mods:      unsafe { KeyMod(event.modifiers) }
 	}
-	if window.char_fn != WindowKeyFn(0) {
+	if window.char_fn != unsafe { WindowKeyFn(0) } {
 		window.char_fn(window, e)
 	}
 	char_shortcut(e, window.shortcuts, window)
@@ -858,7 +858,7 @@ fn window_mouse_down(event gg.Event, mut u UI) {
 	if int(event.mouse_button) < 3 {
 		u.btn_down[int(event.mouse_button)] = true
 	}
-	if window.mouse_down_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+	if window.mouse_down_fn != unsafe { WindowMouseFn(0) } { // && action == voidptr(0) {
 		window.mouse_down_fn(window, e)
 	}
 	/*
@@ -896,7 +896,7 @@ fn window_mouse_move(event gg.Event, u &UI) {
 	}
 
 	window.evt_mngr.point_inside_receivers_mouse_move(e)
-	if window.mouse_move_fn != WindowMouseMoveFn(0) {
+	if window.mouse_move_fn != unsafe { WindowMouseMoveFn(0) } {
 		window.mouse_move_fn(window, e)
 	}
 
@@ -916,7 +916,7 @@ fn window_mouse_up(event gg.Event, mut u UI) {
 		mods:   unsafe { KeyMod(event.modifiers) }
 	}
 
-	if unsafe { window.child_window == 0 } && window.mouse_up_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+	if unsafe { window.child_window == 0 } && window.mouse_up_fn != unsafe { WindowMouseFn(0) } { // && action == voidptr(0) {
 		window.mouse_up_fn(window, e)
 	}
 	/*
@@ -984,7 +984,7 @@ fn window_scroll(event gg.Event, u &UI) {
 		x:       event.scroll_x / window.dpi_scale
 		y:       event.scroll_y / window.dpi_scale
 	}
-	if window.scroll_fn != WindowScrollFn(0) {
+	if window.scroll_fn != unsafe { WindowScrollFn(0) } {
 		window.scroll_fn(window, e)
 	}
 	window.evt_mngr.point_inside_receivers_scroll_event(e)
@@ -999,7 +999,7 @@ fn window_touch_down(event gg.Event, u &UI) {
 		y:      window.touch.start.pos.y
 	}
 	window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_mouse_down)
-	if window.mouse_down_fn != WindowMouseFn(0) {
+	if window.mouse_down_fn != unsafe { WindowMouseFn(0) } {
 		window.mouse_down_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_down, window, e)
@@ -1012,7 +1012,7 @@ fn window_touch_move(event gg.Event, u &UI) {
 		y:            f64(window.touch.move.pos.y)
 		mouse_button: window.touch.button
 	}
-	if window.mouse_move_fn != WindowMouseMoveFn(0) {
+	if window.mouse_move_fn != unsafe { WindowMouseMoveFn(0) } {
 		window.mouse_move_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_move, window, e)
@@ -1025,7 +1025,7 @@ fn window_touch_up(event gg.Event, u &UI) {
 		x:      window.touch.end.pos.x
 		y:      window.touch.end.pos.y
 	}
-	if window.mouse_up_fn != WindowMouseFn(0) {
+	if window.mouse_up_fn != unsafe { WindowMouseFn(0) } {
 		window.mouse_up_fn(window, e)
 	}
 	window.eventbus.publish(events.on_touch_up, window, e)
@@ -1041,7 +1041,7 @@ fn window_click_or_touch_tap(event gg.Event, u &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.click_fn != WindowMouseFn(0) && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
+	if window.click_fn != unsafe { WindowMouseFn(0) } && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
 		window.click_fn(window, e)
 	}
 	if unsafe { window.child_window != 0 } {
@@ -1069,7 +1069,7 @@ fn window_touch_scroll(event gg.Event, u &UI) {
 		y:       f64(ady) / 30.0
 	}
 	window.touch.start = window.touch.move
-	if window.scroll_fn != WindowScrollFn(0) {
+	if window.scroll_fn != unsafe { WindowScrollFn(0) } {
 		window.scroll_fn(window, e)
 	}
 	window.eventbus.publish(events.on_scroll, window, e)
@@ -1084,7 +1084,7 @@ fn window_touch_swipe(event gg.Event, u &UI) {
 		// button: MouseButton(event.mouse_button)
 		// mods: KeyMod(event.modifiers)
 	}
-	if window.swipe_fn != WindowMouseFn(0) && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
+	if window.swipe_fn != unsafe { WindowMouseFn(0) } && unsafe { window.child_window == 0 } { // && action == voidptr(0) {
 		window.swipe_fn(window, e)
 	}
 	if unsafe { window.child_window != 0 } {
@@ -1119,7 +1119,7 @@ fn window_files_dropped(event gg.Event, mut u UI) {
 		button: MouseButton(event.mouse_button)
 		mods:   unsafe { KeyMod(event.modifiers) }
 	}
-	if window.files_dropped_fn != WindowMouseFn(0) { // && action == voidptr(0) {
+	if window.files_dropped_fn != unsafe { WindowMouseFn(0) } { // && action == voidptr(0) {
 		window.files_dropped_fn(window, e)
 	}
 	// window.evt_mngr.point_inside_receivers_mouse_event(e, events.on_files_dropped)

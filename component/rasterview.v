@@ -46,7 +46,7 @@ pub mut:
 	key_shortcuts  ui.KeyShortcuts
 	char_shortcuts ui.CharShortcuts
 	// callback
-	on_click RasterViewFn = RasterViewFn(0)
+	on_click RasterViewFn = unsafe { RasterViewFn(0) }
 }
 
 @[params]
@@ -56,7 +56,7 @@ pub:
 	width    int          = 16
 	height   int          = 16
 	channels int          = 4
-	on_click RasterViewFn = RasterViewFn(0)
+	on_click RasterViewFn = unsafe { RasterViewFn(0) }
 }
 
 // TODO: documentation
@@ -212,7 +212,7 @@ fn rv_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 fn rv_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	mut rv := rasterview_component(c)
 	rv.sel_i, rv.sel_j = rv.get_index_pos(e.x, e.y)
-	if rv.on_click != RasterViewFn(0) {
+	if rv.on_click != unsafe { RasterViewFn(0) } {
 		rv.on_click(rv)
 	}
 }

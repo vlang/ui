@@ -12,7 +12,7 @@ pub mut:
 	layout     &ui.Stack   = unsafe { nil }
 	slider     &ui.Slider  = unsafe { nil }
 	textbox    &ui.TextBox = unsafe { nil }
-	on_changed AlphaFn     = AlphaFn(0)
+	on_changed AlphaFn     = unsafe { AlphaFn(0) }
 }
 
 @[params]
@@ -21,7 +21,7 @@ pub:
 	id         string
 	alpha      int
 	direction  ui.Direction = .column
-	on_changed AlphaFn      = AlphaFn(0)
+	on_changed AlphaFn      = unsafe { AlphaFn(0) }
 }
 
 // TODO: documentation
@@ -101,7 +101,7 @@ fn alpha_on_value_changed(slider &ui.Slider) {
 	ac.alpha = int(slider.val)
 	ac.textbox.set_text(ac.alpha.str())
 	ac.textbox.border_accentuated = false
-	if ac.on_changed != AlphaFn(0) {
+	if ac.on_changed != unsafe { AlphaFn(0) } {
 		ac.on_changed(ac)
 	}
 }
@@ -112,7 +112,7 @@ fn alpha_on_char(textbox &ui.TextBox, keycode u32) {
 		ac.alpha = textbox.text.int()
 		ac.slider.val = textbox.text.f32()
 		ac.textbox.border_accentuated = false
-		if ac.on_changed != AlphaFn(0) {
+		if ac.on_changed != unsafe { AlphaFn(0) } {
 			ac.on_changed(ac)
 		}
 	} else {

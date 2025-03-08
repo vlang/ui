@@ -50,7 +50,7 @@ pub fn wm(cfg WindowManagerParams) &WindowManager {
 			subw.as_top_subwindow()
 		}
 		for mut app in wm.apps {
-			if app.on_init != WindowFn(0) {
+			if app.on_init != unsafe { WindowFn(0) } {
 				app.on_init(win)
 			}
 		}

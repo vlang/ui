@@ -17,7 +17,7 @@ pub fn (mut app Application) add_window(p WindowParams) {
 	app.window.children = [app.layout()]
 	app.window.on_init = fn [mut app] (mut win Window) {
 		// delegate init to window init
-		if app.on_init != WindowFn(0) {
+		if app.on_init != unsafe { WindowFn(0) } {
 			app.on_init(win)
 		}
 		app.window.update_layout()

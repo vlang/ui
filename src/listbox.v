@@ -31,7 +31,7 @@ pub mut:
 	multi         bool
 	hovering      int = -1
 	draw_count    int
-	on_change     ListBoxFn = ListBoxFn(0)
+	on_change     ListBoxFn = unsafe { ListBoxFn(0) }
 	is_focused    bool
 	item_height   int = listbox_item_height
 	text_offset_y int = listbox_text_offset_y
@@ -64,7 +64,7 @@ pub mut:
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 }
 
 @[params]
@@ -76,7 +76,7 @@ pub mut:
 	width         int
 	height        int
 	z_index       int
-	on_change     ListBoxFn = ListBoxFn(0)
+	on_change     ListBoxFn = unsafe { ListBoxFn(0) }
 	item_height   int       = listbox_item_height
 	text_offset_y int       = listbox_text_offset_y
 	id            string // To use one callback for multiple ListBoxes
@@ -631,7 +631,7 @@ fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
 }
 
 pub fn (lb &ListBox) call_on_change() {
-	if lb.on_change != ListBoxFn(0) {
+	if lb.on_change != unsafe { ListBoxFn(0) } {
 		lb.on_change(lb)
 	}
 }
@@ -773,7 +773,7 @@ fn lb_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
 			return
 		}
 	}
-	if lb.on_change != ListBoxFn(0) {
+	if lb.on_change != unsafe { ListBoxFn(0) } {
 		lb.on_change(lb)
 	}
 }

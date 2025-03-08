@@ -659,7 +659,7 @@ fn (mut sv ScrollView) change_value(mode ScrollViewPart) {
 		}
 	}
 	// User defined treatment for scrollable widget
-	if sw.on_scroll_change != ScrollViewChangedFn(0) {
+	if sw.on_scroll_change != unsafe { ScrollViewChangedFn(0) } {
 		sw.on_scroll_change(sw)
 	}
 }

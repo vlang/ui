@@ -11,7 +11,7 @@ pub struct MessageBoxComponent {
 	tb       &ui.TextBox = unsafe { nil }
 	btn      &ui.Button  = unsafe { nil }
 	text     string
-	on_click MessageBoxFn = MessageBoxFn(0)
+	on_click MessageBoxFn = unsafe { MessageBoxFn(0) }
 }
 
 @[params]
@@ -19,7 +19,7 @@ pub struct MessageBoxParams {
 pub:
 	id       string
 	text     string
-	on_click MessageBoxFn = MessageBoxFn(0)
+	on_click MessageBoxFn = unsafe { MessageBoxFn(0) }
 	width    int
 	height   int
 }
@@ -71,7 +71,7 @@ pub fn messagebox_component_from_id(w ui.Window, id string) &MessageBoxComponent
 
 fn messagebox_ok_click(b &ui.Button) {
 	hc := messagebox_component(b)
-	if hc.on_click != MessageBoxFn(0) {
+	if hc.on_click != unsafe { MessageBoxFn(0) } {
 		hc.on_click(hc)
 	}
 }

@@ -149,7 +149,7 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 	if pic.point_inside(e.x, e.y) {
 		if int(e.action) == 0 {
-			if pic.on_click != PictureFn(0) {
+			if pic.on_click != unsafe { PictureFn(0) } {
 				pic.on_click(pic)
 			}
 		}

@@ -76,16 +76,16 @@ pub mut:
 	is_password   bool
 	read_only     bool
 	fitted_height bool // if true fit height in propose_size
-	on_key_down   TextBoxU32Fn = TextBoxU32Fn(0)
-	on_char       TextBoxU32Fn = TextBoxU32Fn(0)
+	on_key_down   TextBoxU32Fn = unsafe { TextBoxU32Fn(0) }
+	on_char       TextBoxU32Fn = unsafe { TextBoxU32Fn(0) }
 	// on_key_up          KeyUpFn   = KeyUpFn(0)
 	is_selectable bool // for read_only textbox
 	sel_active    bool // to deal with show cursor when selection active
 	dragging      bool
 	sel_direction SelectionDirection
 	is_error      &bool     = unsafe { nil }
-	on_enter      TextBoxFn = TextBoxFn(0)
-	on_change     TextBoxFn = TextBoxFn(0)
+	on_enter      TextBoxFn = unsafe { TextBoxFn(0) }
+	on_change     TextBoxFn = unsafe { TextBoxFn(0) }
 	// text styles
 	text_styles TextStyles
 	// text_size   f64
@@ -105,7 +105,7 @@ pub mut:
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 }
 
 @[flag]
@@ -155,10 +155,10 @@ pub:
 	on_key_down   TextBoxU32Fn = unsafe { nil }
 	on_char       TextBoxU32Fn = unsafe { nil }
 	// on_key_up          KeyUpFn
-	on_enter         TextBoxFn           = TextBoxFn(0)
-	on_change        TextBoxFn           = TextBoxFn(0)
+	on_enter         TextBoxFn           = unsafe { TextBoxFn(0) }
+	on_change        TextBoxFn           = unsafe { TextBoxFn(0) }
 	scrollview       bool                = true
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 }
 
 pub fn textbox(c TextBoxParams) &TextBox {
@@ -540,7 +540,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println('textbox.key_down on an unfocused textbox, this should never happen')
 		return
 	}
-	if tb.on_key_down != TextBoxU32Fn(0) {
+	if tb.on_key_down != unsafe { TextBoxU32Fn(0) } {
 		tb.on_key_down(tb, e.codepoint)
 	}
 	// println("tb key_down $e.key ${int(e.codepoint)}")
@@ -550,7 +550,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 		mut text := *tb.text
 		match e.key {
 			.enter {
-				if tb.on_enter != TextBoxFn(0) {
+				if tb.on_enter != unsafe { TextBoxFn(0) } {
 					// println('tb_enter: <${*tb.text}>')
 					tb.on_enter(tb)
 				}
@@ -593,7 +593,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				}
 				// RO REMOVE?
 				// tb.update_text()
-				if tb.on_change != TextBoxFn(0) {
+				if tb.on_change != unsafe { TextBoxFn(0) } {
 					tb.on_change(tb)
 				}
 			}
@@ -609,7 +609,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 				tb.check_cursor_pos()
 				// tb.text = tb.text[..tb.cursor_pos] + tb.text[tb.cursor_pos + 1..]
 				// u.free() // TODO remove
-				if tb.on_change != TextBoxFn(0) {
+				if tb.on_change != unsafe { TextBoxFn(0) } {
 					tb.on_change(tb)
 				}
 			}
@@ -727,7 +727,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println("tab $tb.id  $e.mods return")
 		return
 	}
-	if tb.on_char != TextBoxU32Fn(0) {
+	if tb.on_char != unsafe { TextBoxU32Fn(0) } {
 		tb.on_char(tb, e.codepoint)
 	}
 	tb.ui.last_type_time = time.ticks() // TODO perf?
@@ -756,7 +756,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 			// println('inserting codepoint=$e.codepoint mods=$e.mods ..')
 			tb.insert(s)
 			// TODO: Future replacement of the previous one
-			if tb.on_change != TextBoxFn(0) {
+			if tb.on_change != unsafe { TextBoxFn(0) } {
 				tb.on_change(tb)
 			}
 			return
@@ -841,7 +841,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		// println(e.key)
 		// println('mods=$e.mods')
 		defer {
-			if tb.on_change != TextBoxFn(0) {
+			if tb.on_change != unsafe { TextBoxFn(0) } {
 				if e.key == .backspace {
 					tb.on_change(tb)
 				}

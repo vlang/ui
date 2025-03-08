@@ -90,7 +90,7 @@ pub mut:
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 	// component state for composable widget
 	component voidptr
 	// debug stuff to be removed

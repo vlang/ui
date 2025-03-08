@@ -250,7 +250,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 		}
 		.enter {
 			dd.selected_index = dd.hover_index
-			if dd.on_selection_changed != DropDownFn(0) {
+			if dd.on_selection_changed != unsafe { DropDownFn(0) } {
 				dd.on_selection_changed(dd)
 			}
 			dd.unfocus()
@@ -278,7 +278,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 		index := int((e.y - dd.y - dd.offset_y) / dd.dropdown_height) - 1
 		// println("$index : ($e.y - $dd.y) / dd.dropdown_height - 1")
 		dd.selected_index = index
-		if dd.on_selection_changed != DropDownFn(0) {
+		if dd.on_selection_changed != unsafe { DropDownFn(0) } {
 			dd.on_selection_changed(dd)
 		}
 		dd.unfocus()

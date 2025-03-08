@@ -15,9 +15,9 @@ pub mut:
 	file            string
 	folder_to_open  string
 	item_selected   string
-	on_save         MenuFileFn = MenuFileFn(0)
-	on_new          MenuFileFn = MenuFileFn(0)
-	on_file_changed MenuFileFn = MenuFileFn(0)
+	on_save         MenuFileFn = unsafe { MenuFileFn(0) }
+	on_new          MenuFileFn = unsafe { MenuFileFn(0) }
+	on_file_changed MenuFileFn = unsafe { MenuFileFn(0) }
 }
 
 @[params]
@@ -26,9 +26,9 @@ pub:
 	id              string
 	hidden_files    bool
 	dirs            []string
-	on_save         MenuFileFn = MenuFileFn(0)
-	on_new          MenuFileFn = MenuFileFn(0)
-	on_file_changed MenuFileFn = MenuFileFn(0)
+	on_save         MenuFileFn = unsafe { MenuFileFn(0) }
+	on_new          MenuFileFn = unsafe { MenuFileFn(0) }
+	on_file_changed MenuFileFn = unsafe { MenuFileFn(0) }
 	bg_color        gx.Color   = ui.color_solaris
 }
 
@@ -168,7 +168,7 @@ fn treeview_onclick(c &ui.CanvasLayout, mut tv TreeViewComponent) {
 	mut mf := menufile_component_from_id(win, ui.component_parent_id(tv.id))
 	mf.item_selected = c.id
 	mf.file = tv.full_title(mf.item_selected)
-	if mf.on_file_changed != MenuFileFn(0) {
+	if mf.on_file_changed != unsafe { MenuFileFn(0) } {
 		mf.on_file_changed(mf)
 	}
 }
@@ -192,7 +192,7 @@ fn btn_new_ok(b &ui.Button) {
 		sel_path := dtv.selected_full_title()
 		mf.folder_to_open = if dtv.types[dtv.sel_id] == 'root' { sel_path } else { os.dir(sel_path) }
 		mf.file = os.join_path(mf.folder_to_open, *tb.text)
-		if mf.on_new != MenuFileFn(0) {
+		if mf.on_new != unsafe { MenuFileFn(0) } {
 			mf.on_new(mf)
 		}
 		dtv.open_dir(mf.folder_to_open)
@@ -229,7 +229,7 @@ fn btn_open_cancel(b &ui.Button) {
 // Save file
 fn btn_save_click(b &ui.Button) {
 	mf := menufile_component_from_id(b.ui.window, ui.component_parent_id(b.id))
-	if mf.on_save != MenuFileFn(0) {
+	if mf.on_save != unsafe { MenuFileFn(0) } {
 		mf.on_save(mf)
 	}
 	b.ui.window.root_layout.unfocus_all()

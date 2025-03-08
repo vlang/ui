@@ -29,8 +29,8 @@ pub:
 	with_fpath      bool
 	hidden          bool
 	bg_color        gx.Color    = gx.red // gx.hex(0xfcf4e4ff)
-	on_click_ok     ui.ButtonFn = ui.ButtonFn(0)
-	on_click_cancel ui.ButtonFn = ui.ButtonFn(0)
+	on_click_ok     ui.ButtonFn = unsafe { ui.ButtonFn(0) }
+	on_click_cancel ui.ButtonFn = unsafe { ui.ButtonFn(0) }
 }
 
 // TODO: documentation

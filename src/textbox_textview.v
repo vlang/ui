@@ -593,7 +593,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 	// println(e.key)
 	// println('mods=$e.mods')
 	defer {
-		if tv.tb.on_change != TextBoxFn(0) {
+		if tv.tb.on_change != unsafe { TextBoxFn(0) } {
 			if e.key == .backspace {
 				tv.tb.on_change(tv.tb)
 			}
@@ -610,7 +610,7 @@ fn (mut tv TextView) key_down(e &KeyEvent) {
 	// println('tv key down $e')
 	// println('key_down: $e.key mods=$e.mods')
 	defer {
-		if tv.tb.on_change != TextBoxFn(0) {
+		if tv.tb.on_change != unsafe { TextBoxFn(0) } {
 			if e.key == .backspace {
 				tv.tb.on_change(tv.tb)
 			}

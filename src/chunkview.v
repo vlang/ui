@@ -772,7 +772,7 @@ pub mut:
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 	bg_color         gx.Color
 	width            int
 	height           int
@@ -787,7 +787,7 @@ pub:
 	clipping         bool                = true
 	bg_color         gx.Color            = gx.white
 	scrollview       bool                = true
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 }
 
 pub fn chunkview(p ChunkViewParams) &ChunkView {

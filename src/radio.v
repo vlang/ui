@@ -208,7 +208,7 @@ fn radio_click(mut r Radio, e &MouseEvent, window &Window) {
 			r.selected_index = r.values.len - 1
 		}
 	}
-	if r.on_click != RadioFn(0) {
+	if r.on_click != unsafe { RadioFn(0) } {
 		r.on_click(r)
 	}
 	// println(r.selected_index)

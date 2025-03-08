@@ -21,7 +21,7 @@ pub mut:
 	id      string
 	window  &ui.Window  = unsafe { nil }
 	layout  &ui.Layout  = ui.empty_stack
-	on_init ui.WindowFn = ui.WindowFn(0)
+	on_init ui.WindowFn = unsafe { ui.WindowFn(0) }
 	//
 	users   []User
 	pbar    &ui.ProgressBar = unsafe { nil }
