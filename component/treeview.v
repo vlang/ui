@@ -145,7 +145,7 @@ pub mut:
 	// mode
 	mode string
 	// event
-	on_click TreeViewClickFn = TreeViewClickFn(0)
+	on_click TreeViewClickFn = unsafe { TreeViewClickFn(0) }
 }
 
 // constructors
@@ -161,7 +161,7 @@ pub:
 	incr_mode    bool
 	bg_color     gx.Color        = gx.white
 	bg_sel_color gx.Color        = gx.light_gray
-	on_click     TreeViewClickFn = TreeViewClickFn(0)
+	on_click     TreeViewClickFn = unsafe { TreeViewClickFn(0) }
 	indent       int             = 10
 	filter_types []string
 	hidden_files bool
@@ -218,7 +218,7 @@ pub:
 	filter_types []string
 	hidden_files bool
 	bg_color     gx.Color        = gx.hex(0xfcf4e4ff)
-	on_click     TreeViewClickFn = TreeViewClickFn(0)
+	on_click     TreeViewClickFn = unsafe { TreeViewClickFn(0) }
 }
 
 // TODO: documentation
@@ -319,7 +319,7 @@ fn treeview_click(mut c ui.CanvasLayout, e ui.MouseEvent) {
 			old_sel_c.style.bg_color = tv.bg_color
 		}
 	}
-	if tv.on_click != TreeViewClickFn(0) {
+	if tv.on_click != unsafe { TreeViewClickFn(0) } {
 		tv.on_click(c, mut tv)
 	}
 

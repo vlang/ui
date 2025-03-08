@@ -11,8 +11,8 @@ pub mut:
 	widget     &ui.Button = unsafe { nil }
 	bg_color   gx.Color   = gx.white
 	alpha      int
-	on_click   ColorButtonFn = ColorButtonFn(0)
-	on_changed ColorButtonFn = ColorButtonFn(0)
+	on_click   ColorButtonFn = unsafe { ColorButtonFn(0) }
+	on_changed ColorButtonFn = unsafe { ColorButtonFn(0) }
 	left_side  bool
 }
 
@@ -30,8 +30,8 @@ pub:
 	padding      f64
 	left_side    bool
 	bg_color     &gx.Color     = unsafe { nil }
-	on_click     ColorButtonFn = ColorButtonFn(0)
-	on_changed   ColorButtonFn = ColorButtonFn(0)
+	on_click     ColorButtonFn = unsafe { ColorButtonFn(0) }
+	on_changed   ColorButtonFn = unsafe { ColorButtonFn(0) }
 }
 
 // TODO: documentation
@@ -96,7 +96,7 @@ fn colorbutton_click(mut b ui.Button) {
 		}
 	}
 	// on_click initialization if necessary
-	if cbc.on_click != ColorButtonFn(0) {
+	if cbc.on_click != unsafe { ColorButtonFn(0) } {
 		cbc.on_click(cbc)
 	}
 }

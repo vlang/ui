@@ -294,7 +294,7 @@ fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
 		}
 		else {}
 	}
-	if s.on_value_changed != SliderFn(0) {
+	if s.on_value_changed != unsafe { SliderFn(0) } {
 		s.on_value_changed(s)
 	}
 }
@@ -427,7 +427,7 @@ fn (mut s Slider) change_value(x int, y int) {
 	} else if int(s.val) > s.max {
 		s.val = f32(s.max)
 	}
-	if s.on_value_changed != SliderFn(0) {
+	if s.on_value_changed != unsafe { SliderFn(0) } {
 		s.on_value_changed(s)
 	}
 }

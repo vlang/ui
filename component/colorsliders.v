@@ -24,7 +24,7 @@ pub mut:
 	r_textbox_text string
 	g_textbox_text string
 	b_textbox_text string
-	on_changed     ColorSlidersFn = ColorSlidersFn(0)
+	on_changed     ColorSlidersFn = unsafe { ColorSlidersFn(0) }
 }
 
 @[params]
@@ -33,7 +33,7 @@ pub:
 	id          string
 	color       gx.Color       = gx.white
 	orientation ui.Orientation = .vertical
-	on_changed  ColorSlidersFn = ColorSlidersFn(0)
+	on_changed  ColorSlidersFn = unsafe { ColorSlidersFn(0) }
 }
 
 // TODO: documentation
@@ -208,7 +208,7 @@ fn on_r_value_changed(slider &ui.Slider) {
 	mut cs := colorsliders_component(slider)
 	cs.r_textbox_text = int(cs.r_slider.val).str()
 	cs.r_textbox.border_accentuated = false
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }
@@ -217,7 +217,7 @@ fn on_g_value_changed(slider &ui.Slider) {
 	mut cs := colorsliders_component(slider)
 	cs.g_textbox_text = int(cs.g_slider.val).str()
 	cs.g_textbox.border_accentuated = false
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }
@@ -226,7 +226,7 @@ fn on_b_value_changed(slider &ui.Slider) {
 	mut cs := colorsliders_component(slider)
 	cs.b_textbox_text = int(cs.b_slider.val).str()
 	cs.b_textbox.border_accentuated = false
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }
@@ -239,7 +239,7 @@ fn on_r_char(textbox &ui.TextBox, keycode u32) {
 	} else {
 		cs.r_textbox.border_accentuated = true
 	}
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }
@@ -252,7 +252,7 @@ fn on_g_char(textbox &ui.TextBox, keycode u32) {
 	} else {
 		cs.g_textbox.border_accentuated = true
 	}
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }
@@ -265,7 +265,7 @@ fn on_b_char(textbox &ui.TextBox, keycode u32) {
 	} else {
 		cs.b_textbox.border_accentuated = true
 	}
-	if cs.on_changed != ColorSlidersFn(0) {
+	if cs.on_changed != unsafe { ColorSlidersFn(0) } {
 		cs.on_changed(cs)
 	}
 }

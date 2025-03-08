@@ -67,20 +67,20 @@ pub mut:
 	has_scrollview bool
 	scrollview     &ScrollView = unsafe { nil }
 	// callbacks
-	draw_device_fn      CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)
-	post_draw_device_fn CanvasLayoutDrawDeviceFn = CanvasLayoutDrawDeviceFn(0)
-	click_fn            CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
-	mouse_down_fn       CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
-	mouse_up_fn         CanvasLayoutMouseFn      = CanvasLayoutMouseFn(0)
-	scroll_fn           CanvasLayoutScrollFn     = CanvasLayoutScrollFn(0)
-	mouse_move_fn       CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
-	mouse_enter_fn      CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
-	mouse_leave_fn      CanvasLayoutMouseMoveFn  = CanvasLayoutMouseMoveFn(0)
-	key_down_fn         CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
-	char_fn             CanvasLayoutKeyFn        = CanvasLayoutKeyFn(0)
-	full_size_fn        CanvasLayoutSizeFn       = CanvasLayoutSizeFn(0)
-	bounding_change_fn  CanvasLayoutBoundingFn   = CanvasLayoutBoundingFn(0)
-	on_scroll_change    ScrollViewChangedFn      = ScrollViewChangedFn(0)
+	draw_device_fn      CanvasLayoutDrawDeviceFn = unsafe { CanvasLayoutDrawDeviceFn(0) }
+	post_draw_device_fn CanvasLayoutDrawDeviceFn = unsafe { CanvasLayoutDrawDeviceFn(0) }
+	click_fn            CanvasLayoutMouseFn      = unsafe { CanvasLayoutMouseFn(0) }
+	mouse_down_fn       CanvasLayoutMouseFn      = unsafe { CanvasLayoutMouseFn(0) }
+	mouse_up_fn         CanvasLayoutMouseFn      = unsafe { CanvasLayoutMouseFn(0) }
+	scroll_fn           CanvasLayoutScrollFn     = unsafe { CanvasLayoutScrollFn(0) }
+	mouse_move_fn       CanvasLayoutMouseMoveFn  = unsafe { CanvasLayoutMouseMoveFn(0) }
+	mouse_enter_fn      CanvasLayoutMouseMoveFn  = unsafe { CanvasLayoutMouseMoveFn(0) }
+	mouse_leave_fn      CanvasLayoutMouseMoveFn  = unsafe { CanvasLayoutMouseMoveFn(0) }
+	key_down_fn         CanvasLayoutKeyFn        = unsafe { CanvasLayoutKeyFn(0) }
+	char_fn             CanvasLayoutKeyFn        = unsafe { CanvasLayoutKeyFn(0) }
+	full_size_fn        CanvasLayoutSizeFn       = unsafe { CanvasLayoutSizeFn(0) }
+	bounding_change_fn  CanvasLayoutBoundingFn   = unsafe { CanvasLayoutBoundingFn(0) }
+	on_scroll_change    ScrollViewChangedFn      = unsafe { ScrollViewChangedFn(0) }
 	on_delegate         CanvasLayoutDelegateFn   = unsafe { nil }
 	parent              Layout                   = empty_stack
 mut:
@@ -123,7 +123,7 @@ pub:
 	on_char            CanvasLayoutKeyFn      = unsafe { nil }
 	full_size_fn       CanvasLayoutSizeFn     = unsafe { nil }
 	on_bounding_change CanvasLayoutBoundingFn = unsafe { nil }
-	on_scroll_change   ScrollViewChangedFn    = ScrollViewChangedFn(0)
+	on_scroll_change   ScrollViewChangedFn    = unsafe { ScrollViewChangedFn(0) }
 	on_delegate        CanvasLayoutDelegateFn = unsafe { nil }
 	children           []Widget
 }
@@ -183,7 +183,7 @@ pub fn canvas_plus(c CanvasLayoutParams) &CanvasLayout {
 
 fn (mut c CanvasLayout) build(win &Window) {
 	// init for component
-	if c.on_build != BuildFn(0) {
+	if c.on_build != unsafe { BuildFn(0) } {
 		c.on_build(c, win)
 	}
 }
@@ -218,7 +218,7 @@ fn (mut c CanvasLayout) init(parent Layout) {
 		child.init(c)
 	}
 	// init for component
-	if c.on_init != InitFn(0) {
+	if c.on_init != unsafe { InitFn(0) } {
 		c.on_init(c)
 	}
 	c.load_style()
@@ -319,7 +319,7 @@ fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
 	if !c.point_inside(e.mouse_x / c.ui.window.dpi_scale, e.mouse_y / c.ui.window.dpi_scale) {
 		return
 	}
-	if c.on_delegate != CanvasLayoutDelegateFn(0) {
+	if c.on_delegate != unsafe { CanvasLayoutDelegateFn(0) } {
 		c.on_delegate(c, e)
 	}
 }
@@ -405,7 +405,7 @@ fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Windo
 // TODO: documentation
 pub fn (mut c CanvasLayout) mouse_enter(e &MouseMoveEvent) {
 	// println("enter $c.id")
-	if c.mouse_enter_fn != CanvasLayoutMouseMoveFn(0) {
+	if c.mouse_enter_fn != unsafe { CanvasLayoutMouseMoveFn(0) } {
 		e2 := MouseMoveEvent{
 			x:            e.x - c.x - c.offset_x
 			y:            e.y - c.y - c.offset_y
@@ -418,7 +418,7 @@ pub fn (mut c CanvasLayout) mouse_enter(e &MouseMoveEvent) {
 // TODO: documentation
 pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 	// println("leave $c.id")
-	if c.mouse_leave_fn != CanvasLayoutMouseMoveFn(0) {
+	if c.mouse_leave_fn != unsafe { CanvasLayoutMouseMoveFn(0) } {
 		e2 := MouseMoveEvent{
 			x:            e.x - c.x - c.offset_x
 			y:            e.y - c.y - c.offset_y
@@ -429,7 +429,7 @@ pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 }
 
 fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
-	if c.scroll_fn != CanvasLayoutScrollFn(0) {
+	if c.scroll_fn != unsafe { CanvasLayoutScrollFn(0) } {
 		e2 := ScrollEvent{
 			mouse_x: e.mouse_x - c.x - c.offset_x
 			mouse_y: e.mouse_y - c.y - c.offset_y
@@ -448,7 +448,7 @@ fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	if !c.is_focused {
 		return
 	}
-	if c.key_down_fn != CanvasLayoutKeyFn(0) {
+	if c.key_down_fn != unsafe { CanvasLayoutKeyFn(0) } {
 		c.key_down_fn(c, *e)
 	}
 }
@@ -461,7 +461,7 @@ fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	if !c.is_focused {
 		return
 	}
-	if c.char_fn != CanvasLayoutKeyFn(0) {
+	if c.char_fn != unsafe { CanvasLayoutKeyFn(0) } {
 		c.char_fn(c, *e)
 	}
 }
@@ -723,7 +723,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 		}
 	}
 
-	if c.draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
+	if c.draw_device_fn != unsafe { CanvasLayoutDrawDeviceFn(0) } {
 		c.draw_device_fn(mut d, c)
 	}
 	//$if cdraw_scroll ? {
@@ -777,7 +777,7 @@ fn (mut c CanvasLayout) draw_device(mut d DrawDevice) {
 	//	}
 	//}
 
-	if c.post_draw_device_fn != CanvasLayoutDrawDeviceFn(0) {
+	if c.post_draw_device_fn != unsafe { CanvasLayoutDrawDeviceFn(0) } {
 		c.post_draw_device_fn(mut *d, c)
 	}
 }

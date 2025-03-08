@@ -140,10 +140,10 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	if e.key in [.enter, .space] {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
-		if cb.on_check_changed != CheckBoxFn(0) {
+		if cb.on_check_changed != unsafe { CheckBoxFn(0) } {
 			cb.on_check_changed(cb)
 		}
-		if cb.on_click != CheckBoxFn(0) {
+		if cb.on_click != unsafe { CheckBoxFn(0) } {
 			cb.on_click(cb)
 		}
 	}
@@ -156,10 +156,10 @@ fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
 		cb.checked = !cb.checked
 		// println("checked: $cb.checked")
-		if cb.on_check_changed != CheckBoxFn(0) {
+		if cb.on_check_changed != unsafe { CheckBoxFn(0) } {
 			cb.on_check_changed(cb)
 		}
-		if cb.on_click != CheckBoxFn(0) {
+		if cb.on_click != unsafe { CheckBoxFn(0) } {
 			cb.on_click(cb)
 		}
 	}

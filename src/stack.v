@@ -97,7 +97,7 @@ pub mut:
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
-	on_scroll_change ScrollViewChangedFn = ScrollViewChangedFn(0)
+	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 	// debug stuff to be removed
 	debug_ids          []string
 	debug_children_ids []string
@@ -171,7 +171,7 @@ fn stack(c StackParams) &Stack {
 
 fn (mut s Stack) build(win &Window) {
 	// init for component
-	if s.on_build != BuildFn(0) {
+	if s.on_build != unsafe { BuildFn(0) } {
 		s.on_build(s, win)
 	}
 }
@@ -187,7 +187,7 @@ pub fn (mut s Stack) init(parent Layout) {
 		child.init(s)
 	}
 	// init for component attached to s when it is the layout of a component
-	if s.on_init != InitFn(0) {
+	if s.on_init != unsafe { InitFn(0) } {
 		s.on_init(s)
 	}
 	s.set_root_layout()

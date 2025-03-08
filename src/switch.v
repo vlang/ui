@@ -152,14 +152,14 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 	if !s.is_focused {
 		return
 	}
-	if s.on_key_down != SwitchU32Fn(0) {
+	if s.on_key_down != unsafe { SwitchU32Fn(0) } {
 		s.on_key_down(s, e.codepoint)
 	} else {
 		// default behavior like click for space and enter
 		if e.key in [.enter, .space] {
 			// println("sw key as a click")
 			s.open = !s.open
-			if s.on_click != SwitchFn(0) {
+			if s.on_click != unsafe { SwitchFn(0) } {
 				s.on_click(s)
 			}
 		}
@@ -176,7 +176,7 @@ fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
 	// <===== mouse position test added
 	if int(e.action) == 0 {
 		s.open = !s.open
-		if s.on_click != SwitchFn(0) {
+		if s.on_click != unsafe { SwitchFn(0) } {
 			s.on_click(s)
 		}
 	}

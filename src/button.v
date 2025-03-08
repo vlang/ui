@@ -221,13 +221,13 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	if !b.is_focused {
 		return
 	}
-	if b.on_key_down != ButtonU32Fn(0) {
+	if b.on_key_down != unsafe { ButtonU32Fn(0) } {
 		b.on_key_down(b, e.codepoint)
 	} else {
 		// default behavior like click for space and enter
 		if e.key in [.enter, .space] {
 			// println("btn key as a click")
-			if b.on_click != ButtonFn(0) {
+			if b.on_click != unsafe { ButtonFn(0) } {
 				b.on_click(b)
 			}
 		}
@@ -261,7 +261,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 			b.state = .pressed
 		} else if e.action == .up {
 			b.state = .normal
-			if b.on_click != ButtonFn(0) && b.is_focused {
+			if b.on_click != unsafe { ButtonFn(0) } && b.is_focused {
 				$if btn_onclick ? {
 					println('onclick ${b.id}')
 				}
@@ -290,7 +290,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 		if !b.just_dragged {
 			b.state = .pressed
 		}
-		if b.on_mouse_down != ButtonMouseFn(0) {
+		if b.on_mouse_down != unsafe { ButtonMouseFn(0) } {
 			b.on_mouse_down(b, e)
 		}
 	}
@@ -304,7 +304,7 @@ fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
 		return
 	}
 	b.state = .normal
-	if b.on_mouse_up != ButtonMouseFn(0) {
+	if b.on_mouse_up != unsafe { ButtonMouseFn(0) } {
 		b.on_mouse_up(b, e)
 	}
 }
@@ -326,20 +326,20 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
 		}
 	} else {
 		// to use button as a splitter (no test point_inside)
-		if b.on_mouse_move != ButtonMouseMoveFn(0) {
+		if b.on_mouse_move != unsafe { ButtonMouseMoveFn(0) } {
 			b.on_mouse_move(b, e)
 		}
 	}
 }
 
 pub fn (mut b Button) mouse_enter(e &MouseMoveEvent) {
-	if b.on_mouse_enter != ButtonMouseMoveFn(0) {
+	if b.on_mouse_enter != unsafe { ButtonMouseMoveFn(0) } {
 		b.on_mouse_enter(b, e)
 	}
 }
 
 pub fn (mut b Button) mouse_leave(e &MouseMoveEvent) {
-	if b.on_mouse_leave != ButtonMouseMoveFn(0) {
+	if b.on_mouse_leave != unsafe { ButtonMouseMoveFn(0) } {
 		b.on_mouse_leave(b, e)
 	}
 }

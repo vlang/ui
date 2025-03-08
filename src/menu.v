@@ -202,7 +202,7 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 		if selected >= 0 && selected != m.selected {
 			m.close()
 		}
-		if item.action != MenuItemFn(0) {
+		if item.action != unsafe { MenuItemFn(0) } {
 			item.action(item)
 		}
 		if item.has_menu() {
@@ -504,7 +504,7 @@ pub:
 	id      string
 	text    string
 	submenu &Menu      = unsafe { nil }
-	action  MenuItemFn = MenuItemFn(0)
+	action  MenuItemFn = unsafe { MenuItemFn(0) }
 }
 
 pub fn menuitem(p MenuItemParams) &MenuItem {
