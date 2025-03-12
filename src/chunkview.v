@@ -215,8 +215,8 @@ fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
-		if content.index_after(para_style_delim, 0) == 0 {
-			content_start := content.index_after(para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) or { -1 } == 0 {
+			content_start := content.index_after(para_style_delim, 1) or { -1 }
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -247,8 +247,8 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	mut add_chunk := cv.has_scrollview // false
 
 	for content in c.content {
-		if content.index_after(para_style_delim, 0) == 0 {
-			content_start := content.index_after(para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) or { -1 } == 0 {
+			content_start := content.index_after(para_style_delim, 1) or { -1 }
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -495,8 +495,8 @@ fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
-		if content.index_after(para_style_delim, 0) == 0 {
-			content_start := content.index_after(para_style_delim, 1)
+		if content.index_after(para_style_delim, 0) or { -1 } == 0 {
+			content_start := content.index_after(para_style_delim, 1) or { -1 }
 			if content_start > 1 { // empty style means same style
 				style = content[1..content_start]
 			}
@@ -517,7 +517,7 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 	mut contents := [][]string{}
 	mut lines := []string{}
 	for content in c.content {
-		if content.index_after(para_style_delim, 0) == 0 {
+		if content.index_after(para_style_delim, 0) or { -1 } == 0 {
 			if lines.len > 0 && lines[0] == 'br' {
 				contents << lines
 				lines = []string{}
@@ -553,8 +553,8 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 			c.line_chunks << chunks
 			for content in line_content {
 				// TextChunk
-				if content.index_after(para_style_delim, 0) == 0 {
-					content_start := content.index_after(para_style_delim, 1)
+				if content.index_after(para_style_delim, 0) or { -1 } == 0 {
+					content_start := content.index_after(para_style_delim, 1) or { -1 }
 					if content_start > 1 { // empty style means same style
 						style = content[1..content_start]
 					}
