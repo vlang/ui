@@ -133,7 +133,12 @@ fn (mut g Group) calculate_child_positions() {
 	mut start_y := g.y + g.margin_top + title_off
 	for mut widget in widgets {
 		_, wid_h := widget.size()
-		widget.set_pos(start_x, start_y)
+		if mut widget is AdjustableWidget {
+			mut w := widget as AdjustableWidget
+			w.set_adjusted_pos(start_x, start_y)
+		} else {
+			widget.set_pos(start_x, start_y)
+		}
 		start_y = start_y + wid_h + g.spacing
 	}
 	$if gccp ? {
