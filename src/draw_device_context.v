@@ -41,7 +41,7 @@ pub fn (d DrawDeviceContext) get_clipping() Rect {
 // TODO: documentation
 pub fn (d DrawDeviceContext) text_width_additive(text string) f64 {
 	ctx := d.Context
-	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(unsafe { nil }))
 	return adv / ctx.scale
 }
 

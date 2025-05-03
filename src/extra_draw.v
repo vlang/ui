@@ -307,7 +307,7 @@ pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 		// mag_filter: .linear
 		// wrap_u: .clamp_to_edge
 		// wrap_v: .clamp_to_edge
-		label:         &u8(0)
+		label:         &u8(unsafe { nil })
 		d3d11_texture: 0
 	}
 	sz := w * h * 4
