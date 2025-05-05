@@ -1,15 +1,13 @@
 import ui
 // <<BEGIN_IMPORT>>// <<END_IMPORT>>
 
-const (
-	// <<BEGIN_CONST>>// <<END_CONST>>
-)
+// <<BEGIN_CONST>>// <<END_CONST>>
 
 @[heap]
 struct App {
 mut:
 	window &ui.Window    = unsafe { nil }
-	layout = &ui.Layout
+	layout &ui.Layout
 	// <<BEGIN_APP>>// <<END_APP>>
 }
 

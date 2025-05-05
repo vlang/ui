@@ -1,7 +1,6 @@
 module explorer
 
 import ui
-import gx
 
 @[heap]
 pub struct AppEvents {
@@ -10,7 +9,6 @@ pub mut:
 	window  &ui.Window = unsafe { nil }
 	layout  &ui.Layout = ui.empty_stack
 	on_init ui.WindowFn
-	//
 }
 
 @[params]

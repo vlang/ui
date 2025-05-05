@@ -1,17 +1,20 @@
-btn_click := fn (_ &ui.Button) { 
-		ui.message_box('coucou toto!')
+import ui
+
+btn_click := fn (_ &ui.Button) {
+	ui.message_box('coucou toto!')
 }
+
 layout = ui.box_layout(
-  children: {
-    'btn: (0.2, 0.4) -> (0.5,0.5)': ui.button(
-      text: 'show'
-      on_click: fn (btn &ui.Button) {
-        ui.message_box('Hi everybody !')
-      }
-    )
-	'btn2: (0.7, 0.2) ++ (40,20)': ui.button(
-      text: 'show2'
-      on_click: btn_click
-	)
-  }
+	children: {
+    	'btn: (0.2, 0.4) -> (0.5,0.5)': ui.button(
+			text: 'show'
+			on_click: fn (btn &ui.Button) {
+				ui.message_box('Hi everybody !')
+			}
+		)
+		'btn2: (0.7, 0.2) ++ (40,20)': ui.button(
+			text: 'show2'
+			on_click: btn_click
+		)
+	}
 )
