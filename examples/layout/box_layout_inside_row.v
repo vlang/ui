@@ -14,10 +14,11 @@ mut:
 
 fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
 	app.texts['toto'] = 'blah3 blah blah\n'.repeat(10)
+	app_name := app.texts['todo']
 	tb := ui.textbox(
 		mode:     .multiline
 		bg_color: gx.yellow
-		text:     &(app.texts['toto'])
+		text:     &app_name
 	)
 	return if has_row {
 		ui.Widget(ui.row(

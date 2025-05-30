@@ -131,14 +131,12 @@ pub fn (mut w Window) add_style(ts TextStyle) {
 
 pub fn (mut u UI) update_style(ts TextStyleParams) {
 	if ts.id in u.text_styles {
-		mut ts_ := &(u.text_styles[ts.id])
-		unsafe {
-			*ts_ = TextStyle{
-				...(*ts_)
-				size:      if ts.size < 0 { ts_.size } else { ts.size }
-				font_name: if ts.font_name == no_string { ts_.font_name } else { ts.font_name }
-				color:     if ts.color == no_color { ts_.color } else { ts.color }
-			}
+		mut ts_ := u.text_styles[ts.id]
+		ts_ = TextStyle{
+			...ts_
+			size:      if ts.size < 0 { ts_.size } else { ts.size }
+			font_name: if ts.font_name == no_string { ts_.font_name } else { ts.font_name }
+			color:     if ts.color == no_color { ts_.color } else { ts.color }
 		}
 	}
 }
