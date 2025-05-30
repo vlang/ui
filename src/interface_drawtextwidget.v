@@ -86,9 +86,9 @@ pub fn (mut w DrawTextWidget) add_style(ts TextStyle) {
 // TODO: documentation
 pub fn (mut w DrawTextWidget) update_style(ts TextStyleParams) {
 	mut ts_ := if ts.id in w.text_styles.hash {
-		(w.text_styles.hash[ts.id])
+		w.text_styles.hash[ts.id]
 	} else {
-		(w.text_styles.current)
+		w.text_styles.current
 	}
 	ts_ = TextStyle{
 		...ts_
