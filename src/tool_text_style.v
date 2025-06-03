@@ -131,7 +131,7 @@ pub fn (mut w Window) add_style(ts TextStyle) {
 
 pub fn (mut u UI) update_style(ts TextStyleParams) {
 	if ts.id in u.text_styles {
-		mut ts_ := &(u.text_styles[ts.id])
+		mut ts_ := unsafe { &(u.text_styles[ts.id]) }
 		unsafe {
 			*ts_ = TextStyle{
 				...(*ts_)
