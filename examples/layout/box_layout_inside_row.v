@@ -17,7 +17,7 @@ fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
 	tb := ui.textbox(
 		mode:     .multiline
 		bg_color: gx.yellow
-		text:     &(app.texts['toto'])
+		text:     unsafe { &(app.texts['toto']) }
 	)
 	return if has_row {
 		ui.Widget(ui.row(
