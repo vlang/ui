@@ -219,6 +219,11 @@ pub fn (mut r Radio) set_pos(x int, y int) {
 	r.y = y
 }
 
+pub fn (mut r Radio) set_values(values []string) {
+	r.values = values
+	r.update_size()
+}
+
 pub fn (r &Radio) size() (int, int) {
 	if r.horizontal {
 		if r.compact {
