@@ -12,7 +12,7 @@ import rand
 // depending on when the closing event is handled, in the secondary thread.
 //
 // Due to this, for now just implement a fallback to the wide spread program
-// gxmessage, followed by xmessage, even though its messages do look a little ugly.
+// ggmessage, followed by xmessage, even though its messages do look a little ugly.
 //
 // TODO: implement a simple X11 message box, directly with C calls,
 // instead of relying on external programs.
@@ -20,7 +20,7 @@ import rand
 // message_box shows a simple message box, containing a single text message, and an OK button
 pub fn message_box(s string) {
 	// try several programs, in order from more modern to most likely installed but ugly:
-	for cmd in ['gxmessage', 'xmessage'] {
+	for cmd in ['ggmessage', 'xmessage'] {
 		message_box_system(cmd, s) or {
 			eprintln('message_box error: ${err}')
 			continue
@@ -28,7 +28,7 @@ pub fn message_box(s string) {
 		return
 	}
 	eprintln('-'.repeat(80))
-	eprintln('| neither xmessage or gxmessage were found; please install the `x11-utils` and `gxmessage` packages |')
+	eprintln('| neither xmessage or ggmessage were found; please install the `x11-utils` and `ggmessage` packages |')
 	eprintln('-'.repeat(80))
 	eprintln(s)
 	eprintln('-'.repeat(80))
@@ -44,7 +44,7 @@ fn message_box_system(cmdname string, s string) ! {
 		os.rm(sfilepath) or {}
 	}
 	mut other_options := ['-nearmouse']
-	if cmdname == 'gxmessage' {
+	if cmdname == 'ggmessage' {
 		other_options << '-title "Message:"'
 	}
 	cmd := '${os.quoted_path(msgcmd)} ${other_options.join(' ')} -print -file ${os.quoted_path(sfilepath)}'

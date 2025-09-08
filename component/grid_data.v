@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 @[heap]
 pub struct DataGridComponent {
@@ -15,7 +15,7 @@ pub mut:
 pub struct DataGridParams {
 	GridParams // for settings prepended by settings_
 pub:
-	settings_bg_color gx.Color = gx.light_blue
+	settings_bg_color gg.Color = gg.light_blue
 	settings_z_index  int      = 100
 }
 
@@ -72,7 +72,7 @@ pub mut:
 @[params]
 pub struct DataGridBoxLayoutParams {
 	GridParams // for settings prepended by settings_
-	// settings_bg_color gx.Color = gx.light_blue
+	// settings_bg_color gg.Color = gg.light_blue
 	// settings_z_index  int      = 100
 }
 

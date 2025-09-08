@@ -1,6 +1,6 @@
 import ui
 import regex
-import gx
+import gg
 import math
 
 const win_width = 400
@@ -44,9 +44,9 @@ fn on_change_celsius(mut tb_celsius ui.TextBox) {
 		celsius := (*(tb_celsius.text)).f64()
 		fahren := celsius * (9.0 / 5.0) + 32.0
 		tb_fahren.set_text((math.ceil(fahren * 100) / 100.0).str())
-		tb_celsius.update_style(bg_color: gx.white)
+		tb_celsius.update_style(bg_color: gg.white)
 	} else {
-		tb_celsius.update_style(bg_color: gx.orange)
+		tb_celsius.update_style(bg_color: gg.orange)
 	}
 }
 
@@ -60,9 +60,9 @@ fn on_change_fahren(mut tb_fahren ui.TextBox) {
 		fah := (*tb_fahren.text).f64()
 		cel := (fah - 32.0) * (5.0 / 9.0)
 		tb_celsius.set_text((math.ceil(cel * 100) / 100.0).str())
-		tb_fahren.update_style(bg_color: gx.white)
+		tb_fahren.update_style(bg_color: gg.white)
 	} else {
-		tb_fahren.update_style(bg_color: gx.orange)
+		tb_fahren.update_style(bg_color: gg.orange)
 	}
 }
 

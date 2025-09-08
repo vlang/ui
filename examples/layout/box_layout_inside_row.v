@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 400
 const win_height = 300
@@ -16,7 +16,7 @@ fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
 	app.texts['toto'] = 'blah3 blah blah\n'.repeat(10)
 	tb := ui.textbox(
 		mode:     .multiline
-		bg_color: gx.yellow
+		bg_color: gg.yellow
 		text:     unsafe { &(app.texts['toto']) }
 	)
 	return if has_row {
@@ -51,10 +51,10 @@ fn main() {
 					id:       'bl'
 					children: {
 						'id1: (0,0) ++ (30%,30%)':     ui.rectangle(
-							color: gx.rgb(255, 100, 100)
+							color: gg.rgb(255, 100, 100)
 						)
 						'id2: (0.3,0.3) ++ (40%,40%)': ui.rectangle(
-							color: gx.rgb(100, 255, 100)
+							color: gg.rgb(100, 255, 100)
 						)
 						'id3: (70%,70%) ++ (30%,30%)': make_tb(mut app, mut text, false)
 						'btn: (70%,10%) ++ (50,20)':   ui.button(

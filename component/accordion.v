@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 @[heap]
 pub struct AccordionComponent {
@@ -11,9 +11,9 @@ pub mut:
 	selected   map[string]bool
 	views      map[string]int
 	z_index    map[string]int
-	text_color gx.Color
+	text_color gg.Color
 	text_size  int
-	bg_color   gx.Color
+	bg_color   gg.Color
 }
 
 @[params]
@@ -22,9 +22,9 @@ pub:
 	id         string
 	titles     []string
 	children   []ui.Widget
-	text_color gx.Color = gx.black
+	text_color gg.Color = gg.black
 	text_size  int      = 24
-	bg_color   gx.Color = gx.white
+	bg_color   gg.Color = gg.white
 	heights    []f64    = [30.0, ui.compact]
 	scrollview bool
 }
@@ -89,9 +89,9 @@ pub fn accordion_component_from_id(w ui.Window, id string) &AccordionComponent {
 fn accordion_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	acc := accordion_component(c)
 	if acc.selected[c.id] {
-		c.draw_device_triangle_filled(d, 5, 8, 12, 8, 8, 14, gx.black)
+		c.draw_device_triangle_filled(d, 5, 8, 12, 8, 8, 14, gg.black)
 	} else {
-		c.draw_device_triangle_filled(d, 7, 6, 12, 11, 7, 16, gx.black)
+		c.draw_device_triangle_filled(d, 7, 6, 12, 11, 7, 16, gg.black)
 	}
 
 	c.draw_device_styled_text(d, 16, 4, acc.titles[c.id], color: acc.text_color, size: acc.text_size)

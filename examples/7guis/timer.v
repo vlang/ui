@@ -1,7 +1,7 @@
 import ui
 import time
 import math
-import gx
+import gg
 
 const win_width = 287
 const win_height = 155
@@ -27,8 +27,8 @@ fn main() {
 			height:       20
 			val:          0
 			max:          100
-			color:        gx.green
-			border_color: gx.dark_green
+			color:        gg.green
+			border_color: gg.dark_green
 		)
 		window:            unsafe { nil }
 	}

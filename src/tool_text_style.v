@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import os
 import os.font
 
@@ -28,7 +28,7 @@ pub mut:
 	id string = no_string
 	// fields
 	font_name      string              = 'system'
-	color          gx.Color            = gx.black
+	color          gg.Color            = gg.black
 	size           int                 = 16
 	align          TextHorizontalAlign = .left
 	vertical_align TextVerticalAlign   = .baseline
@@ -42,7 +42,7 @@ pub mut:
 	id string = no_string
 	// fields
 	font_name      string              = no_string
-	color          gx.Color            = no_color
+	color          gg.Color            = no_color
 	size           int                 = -1
 	align          TextHorizontalAlign = .@none
 	vertical_align TextVerticalAlign   = .@none

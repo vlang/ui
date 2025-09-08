@@ -1,6 +1,6 @@
 import ui.component as uic
 import ui
-import gx
+import gg
 import ui.apps.v2048
 
 fn main() {
@@ -21,7 +21,7 @@ fn main() {
 					line_height_factor: 1.0 // double the line_height
 					text_size:          24
 					text_font_name:     'fixed'
-					bg_color:           gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+					bg_color:           gg.hex(0xfcf4e4ff) // gg.rgb(252, 244, 228)
 				)
 				'gg: (0.41, 0.41) -> (0.9,0.9)': uic.gg_canvaslayout(
 					id:  'gg2048'

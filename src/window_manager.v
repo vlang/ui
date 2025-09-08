@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import os
 
 pub enum WMMode {
@@ -38,9 +38,9 @@ pub fn wm(cfg WindowManagerParams) &WindowManager {
 	wm.layout = box_layout(id: 'wm_layout', scrollview: cfg.scrollview)
 	wm.window = window(cfg.WindowParams)
 	wm.window.resizable = true
-	wm.window.bg_color = gx.orange
+	wm.window.bg_color = gg.orange
 	wm.window.title = 'VWM'
-	mut bg := rectangle(color: gx.orange)
+	mut bg := rectangle(color: gg.orange)
 	wm.layout.set_child_bounding('bg: stretch', mut bg)
 	wm.window.children = [wm.layout]
 	wm.window.on_init = fn [mut wm] (mut win Window) {

@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 pub const cb_sp = 3
 
@@ -15,9 +15,9 @@ pub const cb_cv_hsv_w = (cb_hsv_col + cb_sp) * cb_nc + cb_sp
 
 pub const cb_cv_hsv_h = (cb_hsv_col + cb_sp) * cb_nr + cb_sp
 
-type RgbToHsv = fn (col gx.Color) (f64, f64, f64)
+type RgbToHsv = fn (col gg.Color) (f64, f64, f64)
 
-type HsvToRgb = fn (f64, f64, f64) gx.Color
+type HsvToRgb = fn (f64, f64, f64) gg.Color
 
 struct HSVColor {
 	h f64
@@ -34,8 +34,8 @@ mut:
 	h          f64 = 0.0
 	s          f64 = 0.75
 	v          f64 = 0.75
-	rgb        gx.Color
-	linked     &gx.Color             = &gx.Color(unsafe { nil })
+	rgb        gg.Color
+	linked     &gg.Color             = &gg.Color(unsafe { nil })
 	colbtn     &ColorButtonComponent = unsafe { nil }
 	ind_sel    int
 	hsv_sel    []HSVColor = []HSVColor{len: cb_nc * cb_nr}
@@ -95,7 +95,7 @@ pub fn colorbox_stack(c ColorBoxParams) &ui.Stack {
 	mut cv_hsv_sel := ui.canvas_plus(
 		id:          ui.component_id(c.id, 'hsv_sel')
 		bg_radius:   5
-		bg_color:    gx.rgb(220, 220, 220)
+		bg_color:    gg.rgb(220, 220, 220)
 		on_draw:     cv_sel_draw
 		on_click:    cv_sel_click
 		on_key_down: cv_sel_key_down
@@ -192,7 +192,7 @@ fn colorbox_init(layout &ui.Stack) {
 }
 
 // TODO: documentation
-pub fn (mut cb ColorBoxComponent) connect(col &gx.Color) {
+pub fn (mut cb ColorBoxComponent) connect(col &gg.Color) {
 	cb.linked = unsafe { col }
 }
 
@@ -225,9 +225,9 @@ fn cv_h_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	c.draw_device_rect_filled(d, 3, int(cb.h * 256) - 1, 24, 2, cb.hsv_to_rgb(cb.h, .75,
 		.75))
 	c.draw_device_rounded_rect_empty(d, -3, int(cb.h * 256) - 3, 36, 6, 2, if cb.light {
-		gx.black
+		gg.black
 	} else {
-		gx.white
+		gg.white
 	})
 }
 
@@ -295,7 +295,7 @@ fn cv_sel_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 	mut h, mut s, mut v := 0.0, 0.0, 0.0
 	ii, jj := cb.ind_sel % cb_nc, cb.ind_sel / cb_nc
 	c.draw_device_rounded_rect_filled(d, cb_sp + ii * (cb_hsv_col + cb_sp) - 1, cb_sp +
-		jj * (cb_hsv_col + cb_sp) - 1, cb_hsv_col + 2, cb_hsv_col + 2, .25, gx.black)
+		jj * (cb_hsv_col + cb_sp) - 1, cb_hsv_col + 2, cb_hsv_col + 2, .25, gg.black)
 	for j in 0 .. cb_nr {
 		for i in 0 .. cb_nc {
 			hsv = cb.hsv_sel[i + j * cb_nc]
@@ -340,7 +340,7 @@ pub fn (mut cb ColorBoxComponent) update_sel_color() {
 // TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_buffer() {
 	buf := unsafe { cb.buf }
-	mut col := gx.Color{}
+	mut col := gg.Color{}
 	mut i := 0
 	for y in 0 .. 256 {
 		for x in 0 .. 256 {
@@ -368,7 +368,7 @@ pub fn (mut cb ColorBoxComponent) update_from_rgb(r int, g int, b int) {
 	if 0 <= r && r < 256 {
 		if 0 <= g && g < 256 {
 			if 0 <= b && b < 256 {
-				col := gx.rgb(u8(r), u8(g), u8(b))
+				col := gg.rgb(u8(r), u8(g), u8(b))
 				// println("ggggg $r, $g, $b ${col}")
 				h, s, v := cb.rgb_to_hsv(col)
 				// println("hsv: $r, $g, $b ->  $h, $s, $v")
@@ -385,7 +385,7 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 	r := cb.txt_r.int()
 	g := cb.txt_g.int()
 	b := cb.txt_b.int()
-	cb.h, cb.s, cb.v = cb.rgb_to_hsv(gx.rgb(u8(r), u8(g), u8(b)))
+	cb.h, cb.s, cb.v = cb.rgb_to_hsv(gg.rgb(u8(r), u8(g), u8(b)))
 }
 
 // options
@@ -393,11 +393,11 @@ fn (mut cb ColorBoxComponent) update_from_tb() {
 // TODO: documentation
 pub fn (mut cb ColorBoxComponent) update_theme() {
 	cb.layout.style.bg_color = if cb.light {
-		gx.rgba(255, 255, 255, 50)
+		gg.rgba(255, 255, 255, 50)
 	} else {
-		gx.rgba(0, 0, 0, 50)
+		gg.rgba(0, 0, 0, 50)
 	}
-	color := if cb.light { gx.black } else { gx.white }
+	color := if cb.light { gg.black } else { gg.white }
 	mut dtw := ui.DrawTextWidget(cb.lb_r)
 	dtw.update_style(color: color)
 	dtw = ui.DrawTextWidget(cb.lb_g)

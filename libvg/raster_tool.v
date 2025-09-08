@@ -1,7 +1,7 @@
 module libvg
 
 import math
-import gx
+import gg
 import x.ttf
 import encoding.utf8
 
@@ -35,7 +35,7 @@ pub fn (mut r Raster) clear_filler() {
 }
 
 // TODO: documentation
-pub fn (mut r Raster) exec_filler(color gx.Color) {
+pub fn (mut r Raster) exec_filler(color gg.Color) {
 	// println("exec filler inside $r.height")
 	for y in 0 .. r.height {
 		// println("${r.filler[y].len} > 0")
@@ -64,7 +64,7 @@ pub fn (mut r Raster) exec_filler(color gx.Color) {
 }
 
 // TODO: documentation
-pub fn (mut r Raster) fline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
+pub fn (mut r Raster) fline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gg.Color) {
 	mut x0 := f32(in_x0)
 	mut x1 := f32(in_x1)
 	mut y0 := f32(in_y0)
@@ -123,7 +123,7 @@ pub fn (mut r Raster) fline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Col
 
 // aline draw an aliased line on the bitmap
 @[inline]
-pub fn (mut r Raster) aline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
+pub fn (mut r Raster) aline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gg.Color) {
 	mut x0 := f32(in_x0)
 	mut x1 := f32(in_x1)
 	mut y0 := f32(in_y0)
@@ -217,7 +217,7 @@ pub fn (mut r Raster) aline(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Col
 *
 ******************************************************************************/
 // TODO: documentation
-pub fn (mut r Raster) line(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
+pub fn (mut r Raster) line(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gg.Color) {
 	// outline with aliased borders
 	if r.style == .outline_aliased {
 		r.aline(in_x0, in_y0, in_x1, in_y1, c)
@@ -298,7 +298,7 @@ pub fn (mut r Raster) line(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Colo
 }
 
 // TODO: documentation
-pub fn (mut r Raster) box(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color) {
+pub fn (mut r Raster) box(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gg.Color) {
 	r.line(in_x0, in_y0, in_x1, in_y0, c)
 	r.line(in_x1, in_y0, in_x1, in_y1, c)
 	r.line(in_x0, in_y1, in_x1, in_y1, c)
@@ -306,7 +306,7 @@ pub fn (mut r Raster) box(in_x0 int, in_y0 int, in_x1 int, in_y1 int, c gx.Color
 }
 
 // TODO: documentation
-pub fn (mut r Raster) quadratic(in_x0 int, in_y0 int, in_x1 int, in_y1 int, in_cx int, in_cy int, c gx.Color) {
+pub fn (mut r Raster) quadratic(in_x0 int, in_y0 int, in_x1 int, in_y1 int, in_cx int, in_cy int, c gg.Color) {
 	/*
 	x0 := int(in_x0 * r.scale)
 	x1 := int(in_x1 * r.scale)
@@ -593,8 +593,8 @@ pub fn (mut r Raster) draw_glyph(index u16) (int, int) {
 	// return glyph.x_min, glyph.x_max
 }
 
-fn color_multiply_alpha(c gx.Color, a f64) gx.Color {
-	return gx.Color{c.r, c.g, c.b, u8(c.a * a)}
+fn color_multiply_alpha(c gg.Color, a f64) gg.Color {
+	return gg.Color{c.r, c.g, c.b, u8(c.a * a)}
 }
 
 @[params]

@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 800
 const win_height = 600
@@ -53,7 +53,7 @@ fn main() {
 						'folder': 'tata'
 						'file':   'toto'
 					}
-					text_color: gx.blue
+					text_color: gg.blue
 					on_click:   treeview_on_click
 				),
 			]

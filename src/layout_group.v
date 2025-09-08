@@ -4,7 +4,7 @@
 module ui
 
 import math
-import gx
+import gg
 import eventbus
 
 @[heap]
@@ -169,7 +169,7 @@ fn (mut g Group) draw_device(mut d DrawDevice) {
 		}
 	}
 	title_off := if g.title.len > 0 { g.margin_top / 2 } else { 0 }
-	d.draw_rect_empty(g.x, g.y + title_off, g.width, g.height - title_off, gx.gray)
+	d.draw_rect_empty(g.x, g.y + title_off, g.width, g.height - title_off, gg.gray)
 	mut title := g.title
 	mut text_width := g.ui.dd.text_width(title)
 	if text_width > (g.width - check_mark_size - 3) {

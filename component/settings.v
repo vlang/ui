@@ -1,7 +1,7 @@
 module component
 
 import ui
-// import gx
+// import gg
 
 // TODO: documentation
 pub fn setting_color(param string) {

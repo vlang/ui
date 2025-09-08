@@ -1,7 +1,7 @@
 module users
 
 import ui
-import gx
+import gg
 
 const nr_cols = 4
 const cell_height = 25
@@ -88,7 +88,7 @@ pub fn (mut app AppUI) make_layout() {
 	app.label = ui.label(id: 'counter', text: '2/10', text_font_name: 'fixed_bold_italic')
 	app.layout = ui.row(
 		id:       ui.id(app.id, 'layout')
-		bg_color: gx.white
+		bg_color: gg.white
 		margin_:  .02
 		spacing:  .02
 		widths:   [ui.compact, ui.stretch] // 1.0 == .64 + .3 + .02 + 2 * .02
@@ -195,7 +195,7 @@ pub fn (mut app AppUI) make_layout() {
 						width:     400
 						height:    275
 						on_draw:   app.draw
-						bg_color:  gx.Color{255, 220, 220, 150}
+						bg_color:  gg.Color{255, 220, 220, 150}
 						bg_radius: 10
 						// text_size: 20
 					),
@@ -254,11 +254,11 @@ fn (app &AppUI) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	for i, user in app.users {
 		y := marginy + i * cell_height
 		// Outer border
-		c.draw_device_rect_empty(d, marginx, y, table_width, cell_height, gx.gray)
+		c.draw_device_rect_empty(d, marginx, y, table_width, cell_height, gg.gray)
 		// Vertical separators
-		c.draw_device_line(d, cell_width, y, cell_width, y + cell_height, gx.gray)
-		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gx.gray)
-		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gx.gray)
+		c.draw_device_line(d, cell_width, y, cell_width, y + cell_height, gg.gray)
+		c.draw_device_line(d, cell_width * 2, y, cell_width * 2, y + cell_height, gg.gray)
+		c.draw_device_line(d, cell_width * 3, y, cell_width * 3, y + cell_height, gg.gray)
 		// Text values
 		c.draw_device_text(d, marginx + 5, y + 5, user.first_name)
 		c.draw_device_text(d, marginx + 5 + cell_width, y + 5, user.last_name)

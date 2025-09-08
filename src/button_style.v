@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // Button
@@ -8,17 +8,17 @@ import toml
 pub struct ButtonShapeStyle {
 pub mut:
 	radius           f32
-	border_color     gx.Color
-	bg_color         gx.Color
-	bg_color_pressed gx.Color
-	bg_color_hover   gx.Color
+	border_color     gg.Color
+	bg_color         gg.Color
+	bg_color_pressed gg.Color
+	bg_color_hover   gg.Color
 }
 
 pub struct ButtonStyle {
 	ButtonShapeStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .center
 	text_vertical_align TextVerticalAlign   = .middle
@@ -30,10 +30,10 @@ pub struct ButtonStyleParams {
 pub mut:
 	style            string   = no_style
 	radius           f32      = -1
-	border_color     gx.Color = no_color
-	bg_color         gx.Color = no_color
-	bg_color_pressed gx.Color = no_color
-	bg_color_hover   gx.Color = no_color
+	border_color     gg.Color = no_color
+	bg_color         gg.Color = no_color
+	bg_color_pressed gg.Color = no_color
+	bg_color_hover   gg.Color = no_color
 }
 
 pub fn button_style(p ButtonStyleParams) ButtonStyleParams {

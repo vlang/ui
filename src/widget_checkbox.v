@@ -3,11 +3,11 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 import math
 
 const check_mark_size = 14
-const cb_border_color = gx.rgb(50, 50, 50) // gx.rgb(76, 145, 244)
+const cb_border_color = gg.rgb(50, 50, 50) // gg.rgb(76, 145, 244)
 
 // type CheckChangedFn = fn (voidptr, bool)
 
@@ -46,7 +46,7 @@ pub mut:
 	text_styles TextStyles
 	// text_size   f64
 	hidden bool
-	// bg_color    gx.Color = no_color
+	// bg_color    gg.Color = no_color
 	// component state for composable widget
 	component voidptr
 }
@@ -218,16 +218,16 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {
-		// cb.ui.dd.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gx.black)
+		// cb.ui.dd.draw_rect_filled(cb.x + 3, cb.y + 3, 2, 2, gg.black)
 		/*
 		x0 := cb.x +2
 		y0 := cb.y +2
-		cb.ui.dd.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gx.black)
-		cb.ui.dd.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gx.black)
+		cb.ui.dd.draw_line_c(x0, y0, x0+check_mark_size -4, y0 + check_mark_size-4, gg.black)
+		cb.ui.dd.draw_line_c(0.5+x0, y0, -3.5 +x0+check_mark_size , y0 + check_mark_size-4, gg.black)
 		//
 		y1 := cb.y + check_mark_size - 2
-		cb.ui.dd.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gx.black)
-		cb.ui.dd.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gx.black)
+		cb.ui.dd.draw_line_c(x0, y1, x0+check_mark_size -4, y0, gg.black)
+		cb.ui.dd.draw_line_c(0.5+x0, y1, -3.5+x0+check_mark_size, y0, gg.black)
 		*/
 		d.draw_image(adj_pos_x + 3, adj_pos_y + 3, 8, 8, cb.ui.cb_image)
 	}

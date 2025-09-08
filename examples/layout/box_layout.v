@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 400
 const win_height = 300
@@ -14,19 +14,19 @@ fn main() {
 			id:       'bl'
 			children: {
 				'id1: (0,0) ++ (30,30)':                  ui.rectangle(
-					color: gx.rgb(255, 100, 100)
+					color: gg.rgb(255, 100, 100)
 				)
 				'id2: (30,30) -> (-30.5,-30.5)':          ui.rectangle(
-					color: gx.rgb(100, 255, 100)
+					color: gg.rgb(100, 255, 100)
 				)
 				'id3: (50%,50%) ->  (100%,100%)':         ui.rectangle(
-					color: gx.rgb(100, 100, 255)
+					color: gg.rgb(100, 100, 255)
 				)
 				'id4: (-30.5, -30.5) ++ (30,30)':         ui.rectangle(
-					color: gx.white
+					color: gg.white
 				)
 				'id5: (@id4.x + 5, @id4.y+5) ++ (20,20)': ui.rectangle(
-					color: gx.black
+					color: gg.black
 				)
 			}
 		)

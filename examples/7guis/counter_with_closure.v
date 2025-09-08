@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 200
 const win_height = 40
@@ -32,9 +32,9 @@ fn main() {
 				),
 				ui.button(
 					text:         'Count'
-					bg_color:     gx.light_gray
+					bg_color:     gg.light_gray
 					radius:       5
-					border_color: gx.gray
+					border_color: gg.gray
 					on_click:     fn [mut app] (btn &ui.Button) {
 						cpt := app.counter.int() + 1
 						app.counter = cpt.str()

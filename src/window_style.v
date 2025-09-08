@@ -1,20 +1,20 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // Window
 
 pub struct WindowStyle {
 pub mut:
-	bg_color gx.Color
+	bg_color gg.Color
 }
 
 @[params]
 pub struct WindowStyleParams {
 mut:
 	style    string   = no_style
-	bg_color gx.Color = no_color
+	bg_color gg.Color = no_color
 }
 
 pub fn (w WindowStyle) to_toml() string {

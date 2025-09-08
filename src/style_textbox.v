@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // TextBox
@@ -8,14 +8,14 @@ import toml
 pub struct TextBoxShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color = gx.white
+	bg_color  gg.Color = gg.white
 }
 
 pub struct TextBoxStyle {
 	TextBoxShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -27,7 +27,7 @@ pub struct TextBoxStyleParams {
 pub mut:
 	style     string = no_style
 	bg_radius f32
-	bg_color  gx.Color = no_color
+	bg_color  gg.Color = no_color
 }
 
 pub fn textbox_style(p TextBoxStyleParams) TextBoxStyleParams {

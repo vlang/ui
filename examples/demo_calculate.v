@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 fn main() {
 	win := ui.window(
@@ -12,7 +12,7 @@ fn main() {
 		layout:  ui.box_layout(
 			children: {
 				'rect: (0, 25) -> (1,1)':  ui.rectangle(
-					color: gx.orange
+					color: gg.orange
 				)
 				'tb: (0,0) -> (100%, 25)': ui.textbox(
 					id:         'tb'

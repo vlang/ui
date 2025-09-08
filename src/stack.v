@@ -4,7 +4,7 @@
 module ui
 
 import eventbus
-import gx
+import gg
 
 pub type BuildFn = fn (layout voidptr, win &Window)
 
@@ -1196,8 +1196,8 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	// if Layout(s).has_scrollview_or_parent_scrollview() && scrollview_is_active(s) {
 	//	// if s.scrollview != 0 {
 	//	for mut child in s.drawing_children {
-	//		// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gx.red)
-	//		// Widget(s).debug_gg_rect(child.bounds(), gx.green)
+	//		// Widget(s).debug_gg_rect(s.scrollview.scissor_rect, gg.red)
+	//		// Widget(s).debug_gg_rect(child.bounds(), gg.green)
 	//		if mut child is Layout
 	//			|| !is_empty_intersection(s.scrollview.scissor_rect, child.bounds()) {
 	//			child.draw_device(mut d)
@@ -1219,12 +1219,12 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		text_width, text_height := s.ui.dd.text_size(s.title)
 		// draw rectangle around stack
 		d.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height,
-			s.real_height + int(f32(text_height) * .75), gx.black)
+			s.real_height + int(f32(text_height) * .75), gg.black)
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3
 		ty := s.y - int(f32(text_height) * 1.25)
 		d.draw_rect_filled(tx, ty, text_width + 5, text_height, s.style.bg_color)
-		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gx.black)
+		d.draw_rect_empty(tx, ty, text_width + 5, text_height, gg.black)
 		mut dtw := DrawTextWidget(s)
 		dtw.draw_device_load_style(d)
 		dtw.draw_device_text(d, tx, ty - 2, s.title)

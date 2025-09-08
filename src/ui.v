@@ -5,7 +5,6 @@ module ui
 
 import time
 import gg
-import gx
 import os
 import clipboard
 
@@ -29,7 +28,7 @@ pub mut:
 	nb_click     int
 	keymods      KeyMod
 	styles       map[string]Style
-	style_colors []gx.Color
+	style_colors []gg.Color
 	// run_fn       fn () = unsafe { nil }
 mut:
 	cb_image gg.Image

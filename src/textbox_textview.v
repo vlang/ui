@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import math
 // import time
 // import encoding.utf8
@@ -269,7 +269,7 @@ fn (mut tv TextView) draw_device_textlines(d DrawDevice) {
 	// draw cursor
 	// println("$tv.tb.is_focused && ${!tv.tb.read_only} && $tv.tb.ui.show_cursor && ${!tv.is_sel_active()}")
 	if tv.tb.is_focused && !tv.tb.read_only && tv.tb.ui.show_cursor && !tv.is_sel_active() {
-		d.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height, gx.black) // , gx.Black)
+		d.draw_rect_filled(tv.cursor_x(), tv.cursor_y(), 1, tv.line_height, gg.black) // , gg.Black)
 	}
 }
 
@@ -326,7 +326,7 @@ fn (mut tv TextView) draw_device_selection(d DrawDevice) {
 
 fn (tv &TextView) draw_device_line_number(d DrawDevice, i int, y int) {
 	tv.draw_device_styled_text(d, tv.tb.x + textview_margin, y, (tv.tlv.from_j + i + 1).str(),
-		color: gx.gray
+		color: gg.gray
 	)
 }
 

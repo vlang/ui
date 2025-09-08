@@ -1,7 +1,6 @@
 module ui
 
 import gg
-import gx
 import math
 
 /*
@@ -30,7 +29,7 @@ mut:
 }
 
 fn (cc ChunkContent) draw_bb(cv &ChunkView) {
-	col := gx.red
+	col := gg.red
 	println('bb: ${cc.type_name()} (${cc.bb.x}, ${cc.bb.y} ,${cc.bb.w}, ${cc.bb.h})')
 	cv.ui.dd.draw_rect_empty(cc.bb.x, cc.bb.y, cc.bb.w, cc.bb.h, col)
 }
@@ -622,8 +621,8 @@ mut:
 pub mut:
 	chunks       []ChunkContent
 	bg_radius    int
-	bg_color     gx.Color
-	border_color gx.Color
+	bg_color     gg.Color
+	border_color gg.Color
 }
 
 @[params]
@@ -638,8 +637,8 @@ pub:
 	// style
 	full_width   bool = true
 	bg_radius    int
-	bg_color     gx.Color = no_color
-	border_color gx.Color
+	bg_color     gg.Color = no_color
+	border_color gg.Color
 }
 
 pub fn rowchunk(p RowChunkParams) RowChunk {
@@ -773,7 +772,7 @@ pub mut:
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
 	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
-	bg_color         gx.Color
+	bg_color         gg.Color
 	width            int
 	height           int
 	chunks           []ChunkContent // sorted with respect of ChunkList bounding box
@@ -785,7 +784,7 @@ pub:
 	id               string
 	chunks           []ChunkContent
 	clipping         bool                = true
-	bg_color         gx.Color            = gx.white
+	bg_color         gg.Color            = gg.white
 	scrollview       bool                = true
 	on_scroll_change ScrollViewChangedFn = unsafe { ScrollViewChangedFn(0) }
 }

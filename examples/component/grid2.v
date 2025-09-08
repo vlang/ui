@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 800
 const win_height = 600
@@ -13,20 +13,20 @@ fn main() {
 		title:          'V UI: Grid 2'
 		native_message: false
 		mode:           .resizable
-		bg_color:       gx.white
+		bg_color:       gg.white
 		on_init:        win_init
 		layout:         ui.row(
 			widths:   [ui.stretch, 15 * ui.stretch]
-			children: [ui.rectangle(color: gx.red),
+			children: [ui.rectangle(color: gg.red),
 				ui.column(
 					// scrollview: true
 					widths:   ui.stretch
 					heights:  [ui.stretch, 15 * ui.stretch]
-					children: [ui.rectangle(color: gx.red),
+					children: [ui.rectangle(color: gg.red),
 						uic.datagrid_stack(
 							id:                'grid2'
 							is_focused:        true
-							settings_bg_color: gx.hex(0xfcf4e4ff)
+							settings_bg_color: gg.hex(0xfcf4e4ff)
 							// fixed_height: false
 							vars: {
 								'v1':     ['toto', 'titi', 'tata'].repeat(n)

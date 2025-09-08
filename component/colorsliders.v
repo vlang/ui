@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 const slider_min = 0
 const slider_max = 255
@@ -31,7 +31,7 @@ pub mut:
 pub struct ColorSlidersParams {
 pub:
 	id          string
-	color       gx.Color       = gx.white
+	color       gg.Color       = gg.white
 	orientation ui.Orientation = .vertical
 	on_changed  ColorSlidersFn = unsafe { ColorSlidersFn(0) }
 }
@@ -64,7 +64,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		focus_on_thumb_only: true
 		rev_min_max_pos:     p.orientation == .vertical
 		on_value_changed:    on_r_value_changed
-		thumb_color:         gx.light_red
+		thumb_color:         gg.light_red
 	)
 	g_slider := ui.slider(
 		orientation:         p.orientation
@@ -74,7 +74,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		focus_on_thumb_only: true
 		rev_min_max_pos:     p.orientation == .vertical
 		on_value_changed:    on_g_value_changed
-		thumb_color:         gx.light_green
+		thumb_color:         gg.light_green
 	)
 	b_slider := ui.slider(
 		orientation:         p.orientation
@@ -84,7 +84,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 		focus_on_thumb_only: true
 		rev_min_max_pos:     p.orientation == .vertical
 		on_value_changed:    on_b_value_changed
-		thumb_color:         gx.light_blue
+		thumb_color:         gg.light_blue
 	)
 	valign := ui.TextVerticalAlign.top // if p.orientation == .vertical {ui.TextVerticalAlign.middle} else {ui.TextVerticalAlign.top}
 	r_label := ui.label(text: 'R', justify: ui.top_center, text_vertical_align: valign)
@@ -190,12 +190,12 @@ pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersCompo
 }
 
 // TODO: documentation
-pub fn (cs &ColorSlidersComponent) color() gx.Color {
-	return gx.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()), u8(cs.b_textbox.text.int()))
+pub fn (cs &ColorSlidersComponent) color() gg.Color {
+	return gg.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()), u8(cs.b_textbox.text.int()))
 }
 
 // TODO: documentation
-pub fn (mut cs ColorSlidersComponent) set_color(color gx.Color) {
+pub fn (mut cs ColorSlidersComponent) set_color(color gg.Color) {
 	cs.r_textbox_text = color.r.str()
 	cs.g_textbox_text = color.g.str()
 	cs.b_textbox_text = color.b.str()

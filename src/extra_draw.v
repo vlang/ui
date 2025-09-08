@@ -1,15 +1,15 @@
 module ui
 
-import gx
+import gg
 import math
 import sokol.sgl
 import sokol.gfx
 
 // const (
-// 	empty_text_cfg = gx.TextCfg{}
+// 	empty_text_cfg = gg.TextCfg{}
 // )
 
-// pub fn is_empty_text_cfg(t gx.TextCfg) bool {
+// pub fn is_empty_text_cfg(t gg.TextCfg) bool {
 // 	return t.str() == ui.empty_text_cfg.str()
 // }
 
@@ -36,7 +36,7 @@ import sokol.gfx
 // 	window := w.ui.window
 // 	if w.text_size > 0 {
 // 		_, win_height := window.size()
-// 		tc := gx.TextCfg{
+// 		tc := gg.TextCfg{
 // 			...w.text_cfg
 // 			size: text_size_as_int(w.text_size, win_height)
 // 		}
@@ -47,17 +47,17 @@ import sokol.gfx
 // 	}
 // }
 
-// fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gx.Color) {
+// fn draw_text_with_color<T>(w &T, x int, y int, text_ string, color gg.Color) {
 // 	if w.text_size > 0 {
 // 		_, win_height := w.ui.window.size()
-// 		tc := gx.TextCfg{
+// 		tc := gg.TextCfg{
 // 			...w.text_cfg
 // 			size: text_size_as_int(w.text_size, win_height)
 // 			color: color
 // 		}
 // 		w.ui.dd.draw_text(x, y, text_, tc)
 // 	} else {
-// 		tc := gx.TextCfg{
+// 		tc := gg.TextCfg{
 // 			...w.text_cfg
 // 			color: color
 // 		}
@@ -71,7 +71,7 @@ import sokol.gfx
 interface DrawText {
 	ui &UI
 mut:
-	text_cfg  gx.TextCfg
+	text_cfg  gg.TextCfg
 	text_size f64
 }
 
@@ -81,7 +81,7 @@ mut:
 // 	}
 // 	if w.text_size > 0 {
 // 		_, win_height := w.ui.window.size()
-// 		w.text_cfg = gx.TextCfg{
+// 		w.text_cfg = gg.TextCfg{
 // 			...w.text_cfg
 // 			size: text_size_as_int(w.text_size, win_height)
 // 		}
@@ -95,22 +95,22 @@ fn get_text_size(w DrawText, text_ string) (int, int) {
 	return dd.text_size(text_)
 }
 
-fn set_text_cfg_color(mut w DrawText, color gx.Color) {
-	w.text_cfg = gx.TextCfg{
+fn set_text_cfg_color(mut w DrawText, color gg.Color) {
+	w.text_cfg = gg.TextCfg{
 		...w.text_cfg
 		color: color
 	}
 }
 
 fn set_text_cfg_size(mut w DrawText, size int) {
-	w.text_cfg = gx.TextCfg{
+	w.text_cfg = gg.TextCfg{
 		...w.text_cfg
 		size: size
 	}
 }
 
 fn set_text_cfg_style(mut w DrawText, bold bool, italic bool, mono bool) {
-	w.text_cfg = gx.TextCfg{
+	w.text_cfg = gg.TextCfg{
 		...w.text_cfg
 		bold:   bold
 		italic: italic
@@ -118,15 +118,15 @@ fn set_text_cfg_style(mut w DrawText, bold bool, italic bool, mono bool) {
 	}
 }
 
-fn set_text_cfg_align(mut w DrawText, align gx.HorizontalAlign) {
-	w.text_cfg = gx.TextCfg{
+fn set_text_cfg_align(mut w DrawText, align gg.HorizontalAlign) {
+	w.text_cfg = gg.TextCfg{
 		...w.text_cfg
 		align: align
 	}
 }
 
-fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
-	w.text_cfg = gx.TextCfg{
+fn set_text_cfg_vertical_align(mut w DrawText, align gg.VerticalAlign) {
+	w.text_cfg = gg.TextCfg{
 		...w.text_cfg
 		vertical_align: align
 	}
@@ -136,8 +136,8 @@ fn set_text_cfg_vertical_align(mut w DrawText, align gx.VerticalAlign) {
 // 	w.ui.dd.draw_text(x, y, text_, w.text_cfg)
 // }
 
-// pub fn draw_text_line_with_color(w DrawText, x int, y int, text_ string, color gx.Color) {
-// 	tc := gx.TextCfg{
+// pub fn draw_text_line_with_color(w DrawText, x int, y int, text_ string, color gg.Color) {
+// 	tc := gg.TextCfg{
 // 		...w.text_cfg
 // 		color: color
 // 	}
@@ -158,7 +158,7 @@ pub fn draw_text_lines(w DrawText, x int, y int, lines []string) {
 fn update_text_size(mut w DrawText) {
 	if w.text_size > 0 {
 		_, win_height := w.ui.window.size()
-		w.text_cfg = gx.TextCfg{
+		w.text_cfg = gg.TextCfg{
 			...w.text_cfg
 			size: text_size_as_int(w.text_size, win_height)
 		}
@@ -189,7 +189,7 @@ fn point_inside[T](w &T, x f64, y f64) bool {
 }
 
 // h, s, l in [0,1]
-pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
+pub fn hsv_to_rgb(h f64, s f64, v f64) gg.Color {
 	c := v * s
 	x := c * (1.0 - math.abs(math.fmod(h * 6.0, 2.0) - 1.0))
 	m := v - c
@@ -208,11 +208,11 @@ pub fn hsv_to_rgb(h f64, s f64, v f64) gx.Color {
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
+	return gg.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
 }
 
 // h, s, l in [0,1]
-pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
+pub fn hsl_to_rgb(h f64, s f64, l f64) gg.Color {
 	c := (1.0 - math.abs(2.0 * l - 1.0)) * s
 	x := c * (1.0 - math.abs(math.fmod(h * 6.0, 2.0) - 1.0))
 	m := l - c / 2.0
@@ -231,11 +231,11 @@ pub fn hsl_to_rgb(h f64, s f64, l f64) gx.Color {
 	} else {
 		r, b = c, x
 	}
-	return gx.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
+	return gg.rgb(u8((r + m) * 255.0), u8((g + m) * 255.0), u8((b + m) * 255.0))
 }
 
 // TODO: documentation
-pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
+pub fn rgb_to_hsv(col gg.Color) (f64, f64, f64) {
 	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
 	d := v - m
@@ -267,7 +267,7 @@ pub fn rgb_to_hsv(col gx.Color) (f64, f64, f64) {
 }
 
 // TODO: documentation
-pub fn rgb_to_hsl(col gx.Color) (f64, f64, f64) {
+pub fn rgb_to_hsl(col gg.Color) (f64, f64, f64) {
 	r, g, b := f64(col.r) / 255.0, f64(col.g) / 255.0, f64(col.b) / 255.0
 	v, m := f64_max(f64_max(r, g), b), -f64_max(f64_max(-r, -g), -b)
 	d := v - m

@@ -3,14 +3,13 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
 import gg
 import os
 import math
 
-const button_bg_color = gx.rgb(28, 28, 28)
-const button_border_color = gx.rgb(200, 200, 200)
-const button_focus_border_color = gx.rgb(50, 50, 50)
+const button_bg_color = gg.rgb(28, 28, 28)
+const button_border_color = gg.rgb(200, 200, 200)
+const button_focus_border_color = gg.rgb(50, 50, 50)
 const button_horizontal_padding = 26
 const button_vertical_padding = 8
 
@@ -72,7 +71,7 @@ pub mut:
 	tooltip        TooltipMessage
 	// style
 	// radius   f32
-	bg_color &gx.Color = unsafe { nil }
+	bg_color &gg.Color = unsafe { nil }
 	// Style
 	theme_style  string
 	style        ButtonShapeStyle
@@ -82,7 +81,7 @@ pub mut:
 	// text_size   f64
 	// // theme
 	// theme_cfg ColorThemeCfg
-	// theme     map[int]gx.Color = map[int]gx.Color{}
+	// theme     map[int]gg.Color = map[int]gg.Color{}
 	// component state for composable widget
 	component voidptr
 }
@@ -409,7 +408,7 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 	if b.style.radius > 0 {
 		radius := relative_size(b.style.radius, int(width), int(height))
 		// println("draw $b.id ${bg_color}")
-		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gx.white)
+		d.draw_rounded_rect_filled(x, y, width, height, radius, bg_color) // gg.white)
 		d.draw_rounded_rect_empty(x, y, width, height, radius, if b.is_focused {
 			button_focus_border_color
 		} else {
@@ -423,12 +422,12 @@ fn (mut b Button) draw_device(mut d DrawDevice) {
 				for k2 in 0 .. n {
 					if math.mod(k1 + k2, 2) < 0.1 {
 						d.draw_rect_filled(x + k1 * dx, y + k2 * dy, width / n, height / n,
-							gx.light_gray)
+							gg.light_gray)
 					}
 				}
 			}
 		}
-		d.draw_rect_filled(x, y, width, height, bg_color) // gx.white)
+		d.draw_rect_filled(x, y, width, height, bg_color) // gg.white)
 		d.draw_rect_empty(x, y, width, height, if b.is_focused {
 			button_focus_border_color
 		} else {

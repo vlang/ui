@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 800
 const win_height = 600
@@ -111,7 +111,7 @@ fn main() {
 			ui.rectangle(
 				height: 100
 				width:  250
-				color:  gx.rgb(100, 255, 100)
+				color:  gg.rgb(100, 255, 100)
 			),
 		]
 	)
@@ -171,10 +171,10 @@ fn main() {
 	)
 	rect := ui.rectangle(
 		text:   'Here a simple ui rectangle'
-		color:  gx.red
+		color:  gg.red
 		height: 100
-		// text_color: gx.blue
-		// text_align: gx.align_left
+		// text_color: gg.blue
+		// text_align: gg.align_left
 		// text_size: 30
 	)
 	window := ui.window(
@@ -185,7 +185,7 @@ fn main() {
 		mode:           .resizable
 		layout:         uic.accordion_stack(
 			id:         'demo'
-			text_color: gx.blue
+			text_color: gg.blue
 			titles:     ['Rectangle', 'Radio', 'Slider', 'Group', 'Dropdown']
 			children:   [rect, cr, rs, rg, cdd]
 			heights:    [30.0, ui.compact]

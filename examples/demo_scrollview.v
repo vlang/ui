@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 struct App {
 mut:
@@ -40,7 +40,7 @@ fn main() {
 				ui.textbox(
 					id:               'text'
 					mode:             .multiline | .read_only
-					bg_color:         gx.hex(0xfcf4e4ff)
+					bg_color:         gg.hex(0xfcf4e4ff)
 					text:             &app.text
 					text_size:        24
 					on_scroll_change: on_scroll_change

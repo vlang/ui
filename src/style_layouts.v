@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // CanvasLayout
@@ -8,14 +8,14 @@ import toml
 pub struct CanvasLayoutShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color = no_color
+	bg_color  gg.Color = no_color
 }
 
 pub struct CanvasLayoutStyle {
 	CanvasLayoutShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -27,7 +27,7 @@ pub struct CanvasLayoutStyleParams {
 pub mut:
 	style     string = no_style
 	bg_radius f32
-	bg_color  gx.Color = no_color
+	bg_color  gg.Color = no_color
 }
 
 pub fn canvaslayout_style(p CanvasLayoutStyleParams) CanvasLayoutStyleParams {
@@ -106,14 +106,14 @@ pub fn (mut l CanvasLayout) update_style_params(p CanvasLayoutStyleParams) {
 pub struct StackShapeStyle {
 pub mut:
 	bg_radius f32
-	bg_color  gx.Color = no_color
+	bg_color  gg.Color = no_color
 }
 
 pub struct StackStyle {
 	StackShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -124,10 +124,10 @@ pub struct StackStyleParams {
 pub mut:
 	style     string = no_style
 	bg_radius f32
-	bg_color  gx.Color = no_color
+	bg_color  gg.Color = no_color
 	// text_style TextStyle
 	text_font_name      string
-	text_color          gx.Color = no_color
+	text_color          gg.Color = no_color
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none

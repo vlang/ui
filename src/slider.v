@@ -1,11 +1,11 @@
 module ui
 
-import gx
+import gg
 
-const slider_thumb_color = gx.rgb(87, 153, 245)
-const slider_bg_color = gx.rgb(219, 219, 219)
-const slider_bg_border_color = gx.rgb(191, 191, 191)
-const slider_focused_bg_border_color = gx.rgb(255, 0, 0)
+const slider_thumb_color = gg.rgb(87, 153, 245)
+const slider_bg_color = gg.rgb(219, 219, 219)
+const slider_bg_border_color = gg.rgb(191, 191, 191)
+const slider_focused_bg_border_color = gg.rgb(255, 0, 0)
 
 type SliderFn = fn (&Slider)
 
@@ -215,9 +215,9 @@ fn (mut s Slider) draw_device(mut d DrawDevice) {
 	d.draw_rounded_rect_filled(x, y, w, h, s.radius, s.style.bg_color)
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
-			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gx.rgb(0, 0, 0))
+			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gg.rgb(0, 0, 0))
 		} else {
-			d.draw_line(x + w / 2, y + 2, x + w / 2, y + h - 4, gx.rgb(0, 0, 0))
+			d.draw_line(x + w / 2, y + 2, x + w / 2, y + h - 4, gg.rgb(0, 0, 0))
 		}
 	}
 

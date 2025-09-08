@@ -1,26 +1,26 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // ProgressBar
 
 pub struct ProgressBarStyle {
 pub mut:
-	color           gx.Color
-	border_color    gx.Color
-	bg_color        gx.Color
-	bg_border_color gx.Color
+	color           gg.Color
+	border_color    gg.Color
+	bg_color        gg.Color
+	bg_border_color gg.Color
 }
 
 @[params]
 pub struct ProgressBarStyleParams {
 pub mut:
 	style           string   = no_style
-	color           gx.Color = no_color
-	border_color    gx.Color = no_color
-	bg_color        gx.Color = no_color
-	bg_border_color gx.Color = no_color
+	color           gg.Color = no_color
+	border_color    gg.Color = no_color
+	bg_color        gg.Color = no_color
+	bg_border_color gg.Color = no_color
 }
 
 pub fn progressbar_style(p ProgressBarStyleParams) ProgressBarStyleParams {

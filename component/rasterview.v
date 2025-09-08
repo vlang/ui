@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 import math
 import regex
 import ui.libvg
@@ -40,7 +40,7 @@ pub mut:
 	from_j int
 	to_j   int
 	// current color
-	color   gx.Color               = gx.black
+	color   gg.Color               = gg.black
 	palette &ColorPaletteComponent = unsafe { nil }
 	// shortcuts
 	key_shortcuts  ui.KeyShortcuts
@@ -135,9 +135,9 @@ fn rv_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// Calculate the color of each pixel
 	mut rv := rasterview_component(c)
 	// N.B.: rv.size = rv.pixel_size + rv.inter
-	c.draw_device_rect_empty(d, 0, 0, rv.width() * rv.size, rv.height() * rv.size, gx.gray)
+	c.draw_device_rect_empty(d, 0, 0, rv.width() * rv.size, rv.height() * rv.size, gg.gray)
 	mut pos_x, mut pos_y := rv.from_x, rv.from_y
-	mut col := gx.white
+	mut col := gg.white
 	for i in rv.from_i .. rv.to_i {
 		for j in rv.from_j .. rv.to_j {
 			col = rv.get_pixel(i, j)
@@ -297,9 +297,9 @@ struct Int2 {
 }
 
 // TODO: documentation
-pub fn (rv &RasterViewComponent) top_colors() []gx.Color {
+pub fn (rv &RasterViewComponent) top_colors() []gg.Color {
 	mut table := map[int]int{}
-	mut colors := []gx.Color{}
+	mut colors := []gg.Color{}
 	mut color, mut ind_color := ui.no_color, 0
 	for i in 0 .. rv.height() {
 		for j in 0 .. rv.width() {
@@ -327,7 +327,7 @@ pub fn (rv &RasterViewComponent) top_colors() []gx.Color {
 			return 0
 		}
 	})
-	mut table_color := []gx.Color{}
+	mut table_color := []gg.Color{}
 	for a in table_sorted {
 		table_color << colors[a.i]
 	}
@@ -344,7 +344,7 @@ fn (rv &RasterViewComponent) draw_device_current(d ui.DrawDevice) {
 		return
 	}
 	pos_x, pos_y := rv.get_pos(rv.cur_i, rv.cur_j)
-	cur_color := gx.cyan
+	cur_color := gg.cyan
 	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
 		2, cur_color)
 }
@@ -354,7 +354,7 @@ fn (rv &RasterViewComponent) draw_device_selection(d ui.DrawDevice) {
 		return
 	}
 	pos_x, pos_y := rv.get_pos(rv.sel_i, rv.sel_j)
-	sel_color := gx.red
+	sel_color := gg.red
 	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
 		3, sel_color)
 }
@@ -567,11 +567,11 @@ pub fn (mut rv RasterViewComponent) set_raster_size(w int, h int) {
 }
 
 // TODO: documentation
-pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gx.Color {
+pub fn (rv &RasterViewComponent) get_pixel(i int, j int) gg.Color {
 	return rv.r.get_pixel(i, j)
 }
 
 // TODO: documentation
-pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, col gx.Color) {
+pub fn (mut rv RasterViewComponent) set_pixel(i int, j int, col gg.Color) {
 	rv.r.set_pixel(i, j, col)
 }

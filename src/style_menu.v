@@ -1,23 +1,23 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // Menu
 
 pub struct MenuShapeStyle {
 pub mut:
-	border_color   gx.Color = menu_border_color
-	bar_color      gx.Color = menu_bar_color
-	bg_color       gx.Color = menu_bg_color
-	bg_color_hover gx.Color = menu_bg_color_hover
+	border_color   gg.Color = menu_border_color
+	bar_color      gg.Color = menu_bar_color
+	bg_color       gg.Color = menu_bg_color
+	bg_color_hover gg.Color = menu_bg_color_hover
 }
 
 pub struct MenuStyle {
 	MenuShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -28,10 +28,10 @@ pub struct MenuStyleParams {
 	WidgetTextStyleParams
 mut:
 	style          string   = no_style
-	border_color   gx.Color = no_color
-	bar_color      gx.Color = no_color
-	bg_color       gx.Color = no_color
-	bg_color_hover gx.Color = no_color
+	border_color   gg.Color = no_color
+	bar_color      gg.Color = no_color
+	bg_color       gg.Color = no_color
+	bg_color_hover gg.Color = no_color
 }
 
 pub fn menu_style(p MenuStyleParams) MenuStyleParams {

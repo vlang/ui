@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 @[heap]
 pub struct GridSettingsComponent {
@@ -17,7 +17,7 @@ pub mut:
 pub struct GridSettingsParams {
 pub:
 	id       string
-	bg_color gx.Color       = gx.light_blue
+	bg_color gg.Color       = gg.light_blue
 	grid     &GridComponent = unsafe { nil }
 	z_index  int            = 100
 }

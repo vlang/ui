@@ -1,7 +1,6 @@
 module ui
 
 import gg
-import gx
 import math
 
 pub fn intersection_rect(r1 gg.Rect, r2 gg.Rect) gg.Rect {
@@ -45,7 +44,7 @@ pub fn hex_rgba(r u8, g u8, b u8, a u8) string {
 	return '#${r.hex()}${g.hex()}${b.hex()}${a.hex()}'
 }
 
-pub fn hex_color(c gx.Color) string {
+pub fn hex_color(c gg.Color) string {
 	return '#${c.r.hex()}${c.g.hex()}${c.b.hex()}${c.a.hex()}'
 }
 
@@ -54,11 +53,11 @@ pub fn (hs HexColor) rgba() (u8, u8, u8, u8) {
 	return u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u)
 }
 
-pub fn (hs HexColor) color() gx.Color {
+pub fn (hs HexColor) color() gg.Color {
 	u := ('0x' + hs[1..]).u32()
-	return gx.rgba(u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u))
+	return gg.rgba(u8(u >> 24), u8(u >> 16), u8(u >> 8), u8(u))
 }
 
-pub fn alpha_colored(c gx.Color, a u8) gx.Color {
-	return gx.rgba(c.r, c.g, c.b, a)
+pub fn alpha_colored(c gg.Color, a u8) gg.Color {
+	return gg.rgba(c.r, c.g, c.b, a)
 }

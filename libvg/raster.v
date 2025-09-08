@@ -1,7 +1,6 @@
 module libvg
 
 import gg
-import gx
 import os
 import stbi
 import x.ttf
@@ -24,7 +23,7 @@ pub mut:
 	ttf_font  &ttf.TTF_File = unsafe { nil }
 	ttf_fonts map[string]ttf.TTF_File
 	bmp       &ttf.BitMap = unsafe { nil }
-	color     gx.Color
+	color     gg.Color
 	// to remove
 	filler [][]int
 	style  ttf.Style
@@ -85,18 +84,18 @@ pub fn (r &Raster) save_image_as(path string) {
 }
 
 // TODO: documentation
-pub fn (r &Raster) get_pixel(i int, j int) gx.Color {
+pub fn (r &Raster) get_pixel(i int, j int) gg.Color {
 	k := (i * r.width + j) * r.channels
 	if r.channels == 4 {
-		return gx.rgba(r.data[k], r.data[k + 1], r.data[k + 2], r.data[k + 3])
+		return gg.rgba(r.data[k], r.data[k + 1], r.data[k + 2], r.data[k + 3])
 	} else if r.channels == 3 {
-		return gx.rgb(r.data[k], r.data[k + 1], r.data[k + 2])
+		return gg.rgb(r.data[k], r.data[k + 1], r.data[k + 2])
 	}
-	return gx.rgba(0, 0, 0, 0)
+	return gg.rgba(0, 0, 0, 0)
 }
 
 // TODO: documentation
-pub fn (mut r Raster) set_pixel(i int, j int, color gx.Color) {
+pub fn (mut r Raster) set_pixel(i int, j int, color gg.Color) {
 	if j < 0 || j >= r.width || i < 0 || i >= r.height {
 		return
 	}
@@ -110,7 +109,7 @@ pub fn (mut r Raster) set_pixel(i int, j int, color gx.Color) {
 }
 
 // TODO: documentation
-pub fn (mut r Raster) rectangle_filled(x int, y int, w int, h int, color gx.Color) {
+pub fn (mut r Raster) rectangle_filled(x int, y int, w int, h int, color gg.Color) {
 	for i in y .. (y + h) {
 		for j in x .. (x + w) {
 			r.set_pixel(i, j, color)
@@ -121,7 +120,7 @@ pub fn (mut r Raster) rectangle_filled(x int, y int, w int, h int, color gx.Colo
 // TODO: documentation
 pub fn (mut r Raster) copy(r2 &Raster, x int, y int, w int, h int) {
 	w2, h2 := f32(r2.width), f32(r2.height)
-	mut color := gx.white
+	mut color := gg.white
 	for i in y .. (y + h) {
 		for j in x .. (x + w) {
 			color = r2.get_pixel(int(f32(i - y) / f32(h) * h2), int(f32(j - x) / f32(w) * w2))

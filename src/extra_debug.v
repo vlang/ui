@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import os
 
 // TODO: documentation
@@ -10,9 +10,9 @@ pub fn env(var string) string {
 
 // Draw bounding box for Stack
 fn debug_draw_bb_stack(s &Stack) {
-	mut col := gx.red
+	mut col := gg.red
 	if s.direction == .row {
-		col = gx.green
+		col = gg.green
 	}
 	w, h := s.size()
 	println('debug_draw_bb_stack [${s.direction}] w, h = s.size()')
@@ -24,14 +24,14 @@ fn debug_draw_bb_stack(s &Stack) {
 }
 
 fn debug_draw_bb_widget(mut wi Widget, u &UI) {
-	col := gx.black
+	col := gg.black
 	w, h := wi.size()
 	println('bb: ${wi.type_name()} (${wi.x}, ${wi.y} ,${w}, ${h})')
 	u.dd.draw_rect_empty(wi.x, wi.y, w, h, col)
 }
 
 fn debug_draw_bb_text(x int, y int, w int, h int, u &UI) {
-	col := gx.gray
+	col := gg.gray
 	u.dd.draw_rect_empty(x, y, w, h, col)
 }
 

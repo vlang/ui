@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 type ColorButtonFn = fn (b &ColorButtonComponent)
 
@@ -9,7 +9,7 @@ type ColorButtonFn = fn (b &ColorButtonComponent)
 pub struct ColorButtonComponent {
 pub mut:
 	widget     &ui.Button = unsafe { nil }
-	bg_color   gx.Color   = gx.white
+	bg_color   gg.Color   = gg.white
 	alpha      int
 	on_click   ColorButtonFn = unsafe { ColorButtonFn(0) }
 	on_changed ColorButtonFn = unsafe { ColorButtonFn(0) }
@@ -29,7 +29,7 @@ pub:
 	radius       f64 // = 5.0
 	padding      f64
 	left_side    bool
-	bg_color     &gx.Color     = unsafe { nil }
+	bg_color     &gg.Color     = unsafe { nil }
 	on_click     ColorButtonFn = unsafe { ColorButtonFn(0) }
 	on_changed   ColorButtonFn = unsafe { ColorButtonFn(0) }
 }

@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 
 const numeric_set = '0123456789.'.runes()
 
@@ -12,7 +12,7 @@ struct Chunk {
 }
 
 struct SyntaxChunk {
-	color gx.Color
+	color gg.Color
 	font  string
 }
 
@@ -96,15 +96,15 @@ fn (sh &SyntaxHighLighter) is_lang_loaded() bool {
 // TODO: load with json or toml file
 fn (mut sh SyntaxHighLighter) load_default_style() {
 	sh.styles['default'] = {
-		'comment': SyntaxChunk{gx.gray, 'fixed'}
-		'keyword': SyntaxChunk{gx.orange, 'fixed_bold'}
-		'control': SyntaxChunk{gx.orange, 'fixed_bold'}
-		'decl':    SyntaxChunk{gx.black, 'fixed_bold'}
-		'types':   SyntaxChunk{gx.purple, 'fixed_bold'}
-		'string':  SyntaxChunk{gx.dark_green, 'fixed_bold_italic'}
-		'symbols': SyntaxChunk{gx.red, 'fixed_bold'}
-		'numeric': SyntaxChunk{gx.blue, 'fixed_bold'}
-		'func':    SyntaxChunk{gx.blue, 'fixed'}
+		'comment': SyntaxChunk{gg.gray, 'fixed'}
+		'keyword': SyntaxChunk{gg.orange, 'fixed_bold'}
+		'control': SyntaxChunk{gg.orange, 'fixed_bold'}
+		'decl':    SyntaxChunk{gg.black, 'fixed_bold'}
+		'types':   SyntaxChunk{gg.purple, 'fixed_bold'}
+		'string':  SyntaxChunk{gg.dark_green, 'fixed_bold_italic'}
+		'symbols': SyntaxChunk{gg.red, 'fixed_bold'}
+		'numeric': SyntaxChunk{gg.blue, 'fixed_bold'}
+		'func':    SyntaxChunk{gg.blue, 'fixed'}
 	}
 }
 

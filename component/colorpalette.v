@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 import math
 
 @[heap]
@@ -12,7 +12,7 @@ pub mut:
 	colbtn   &ui.Button = unsafe { nil } // current
 	ncolors  int
 	alpha    &AlphaComponent = unsafe { nil }
-	color    &gx.Color       = unsafe { nil }
+	color    &gg.Color       = unsafe { nil }
 	selected string
 }
 
@@ -73,7 +73,7 @@ pub fn colorpalette_stack(p ColorPaletteParams) &ui.Stack {
 		.column {
 			ui.column(
 				id:       ui.component_id(p.id, 'layout')
-				bg_color: gx.hex(0xfcf4e4ff)
+				bg_color: gg.hex(0xfcf4e4ff)
 				heights:  sizes
 				margin_:  5
 				spacing:  5
@@ -106,7 +106,7 @@ pub fn colorpalette_component_from_id(w ui.Window, id string) &ColorPaletteCompo
 }
 
 // TODO: documentation
-pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
+pub fn (mut cp ColorPaletteComponent) update_colors(colors []gg.Color) {
 	// println("palette update_colors: $colors")
 	for i in 0 .. math.min(cp.ncolors, colors.len) {
 		child := cp.layout.children[i + 3] // 3 = label + colorbtn + spacing
@@ -119,14 +119,14 @@ pub fn (mut cp ColorPaletteComponent) update_colors(colors []gx.Color) {
 }
 
 // TODO: documentation
-pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gx.Color) {
+pub fn (mut cp ColorPaletteComponent) update_colorbutton(color gg.Color) {
 	unsafe {
 		*(cp.colbtn.bg_color) = color
 	}
 }
 
 // TODO: documentation
-pub fn (mut cp ColorPaletteComponent) connect_color(color &gx.Color) {
+pub fn (mut cp ColorPaletteComponent) connect_color(color &gg.Color) {
 	unsafe {
 		cp.color = color
 	}

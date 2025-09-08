@@ -7,7 +7,7 @@ module ui
 pub struct Rectangle {
 pub mut:
 	id string
-	// color    gx.Color
+	// color    gg.Color
 	text     string
 	offset_x int
 	offset_y int
@@ -30,7 +30,7 @@ mut:
 	z_index int
 	radius  int
 	border  bool
-	// border_color gx.Color
+	// border_color gg.Color
 	hidden bool
 }
 
@@ -43,10 +43,10 @@ pub:
 	height  int
 	width   int
 	z_index int
-	// color        gx.Color = gx.Color{0, 0, 0, 0}
+	// color        gg.Color = gg.Color{0, 0, 0, 0}
 	radius int
 	border bool
-	// border_color gx.Color = gx.Color{
+	// border_color gg.Color = gg.Color{
 	// 	r: 180
 	// 	g: 180
 	// 	b: 190

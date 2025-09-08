@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import math { max }
 
 // ScrollView exists only when attached to Widget
@@ -9,10 +9,10 @@ import math { max }
 
 pub const scrollbar_size = 10
 pub const scrollbar_thumb_size = 16
-pub const scroolbar_thumb_color = gx.rgb(87, 153, 245)
-pub const scrollbar_background_color = gx.rgb(219, 219, 219)
-pub const scrollbar_button_color = gx.rgb(150, 150, 150)
-pub const scrollbar_focused_button_color = gx.rgb(100, 100, 100)
+pub const scroolbar_thumb_color = gg.rgb(87, 153, 245)
+pub const scrollbar_background_color = gg.rgb(219, 219, 219)
+pub const scrollbar_button_color = gg.rgb(150, 150, 150)
+pub const scrollbar_focused_button_color = gg.rgb(100, 100, 100)
 pub const scrollview_delta_key = 5
 // scrollview_delta_mouse         = 10
 pub const null_scrollview = &ScrollView(unsafe { nil })
@@ -398,8 +398,8 @@ pub struct ScrollView {
 pub mut:
 	widget &Widget = unsafe { nil }
 	// color
-	btn_color_x gx.Color = scrollbar_button_color
-	btn_color_y gx.Color = scrollbar_button_color
+	btn_color_x gg.Color = scrollbar_button_color
+	btn_color_y gg.Color = scrollbar_button_color
 	// horizontal scrollbar
 	sb_w  int
 	btn_x int

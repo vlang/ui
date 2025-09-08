@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 1200
 const win_height = 500
@@ -159,7 +159,7 @@ fn main() {
 					}
 					spacing:  .01
 					widths:   ui.stretch
-					bg_color: gx.Color{255, 255, 255, 128}
+					bg_color: gg.Color{255, 255, 255, 128}
 					children: [
 						ui.label(
 							id:     'l_btns_sizes'
@@ -185,7 +185,7 @@ fn main() {
 					]
 					margin_:  .1
 					spacing:  .1
-					bg_color: gx.Color{50, 100, 0, 50}
+					bg_color: gg.Color{50, 100, 0, 50}
 					children: [
 						ui.button(
 							id:     'btn1'

@@ -2,7 +2,7 @@ module editor
 
 import ui
 import ui.component as uic
-import gx
+import gg
 import os
 
 @[heap]
@@ -85,7 +85,7 @@ pub fn (mut app AppUI) make_layout() {
 				line_height_factor: 1.0 // double the line_height
 				text_size:          24
 				text_font_name:     'fixed'
-				bg_color:           gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+				bg_color:           gg.hex(0xfcf4e4ff) // gg.rgb(252, 244, 228)
 			),
 		]
 	)

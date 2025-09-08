@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 import time
 
 const no_time = time.Time{}
@@ -47,7 +47,7 @@ fn main() {
 					id:       'btn_book'
 					text:     'Book'
 					radius:   5
-					bg_color: gx.light_gray
+					bg_color: gg.light_gray
 					on_click: app.btn_book_click
 				),
 			]
@@ -83,7 +83,7 @@ fn (mut app App) tb_change(mut tb ui.TextBox) {
 	valid := valid_date(tb.text)
 	app.btn_book.disabled = !valid
 	tb.update_style(
-		bg_color: if valid { gx.white } else { gx.orange }
+		bg_color: if valid { gg.white } else { gg.orange }
 	)
 }
 

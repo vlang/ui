@@ -1,21 +1,21 @@
 module ui
 
-import gx
+import gg
 import math
 
-pub fn (mut w Window) load_4colors_style(colors []gx.Color) {
+pub fn (mut w Window) load_4colors_style(colors []gg.Color) {
 	w.ui.update_4colors_style(colors)
 	mut l := Layout(w)
 	l.update_theme_style('4colors')
 }
 
-pub fn (mut l Layout) load_4colors_style(colors []gx.Color) {
+pub fn (mut l Layout) load_4colors_style(colors []gg.Color) {
 	mut gui := l.get_ui()
 	gui.update_4colors_style(colors)
 	l.update_theme_style('4colors')
 }
 
-pub fn (mut gui UI) update_4colors_style(colors []gx.Color) {
+pub fn (mut gui UI) update_4colors_style(colors []gg.Color) {
 	gui.style_colors = colors
 	gui.update_style_from_4colors()
 }
@@ -23,7 +23,7 @@ pub fn (mut gui UI) update_4colors_style(colors []gx.Color) {
 pub fn (mut gui UI) update_style_from_4colors() {
 	colors := gui.style_colors
 	println(gui.style_colors)
-	mode := if colors[3] == gx.black { '' } else { '_white' }
+	mode := if colors[3] == gg.black { '' } else { '_white' }
 	gui.styles['4colors'] = Style{
 		// window
 		win: WindowStyle{
@@ -125,7 +125,7 @@ pub fn (mut gui UI) update_accent_color_style(accent_color []int) {
 	gui.update_style_from_4colors()
 }
 
-pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
+pub fn color_scheme_from_accent_color(accent_color []int) []gg.Color {
 	mut font_color := [0, 0, 0]
 	if accent_color[0] + accent_color[1] + accent_color[2] / 3 < 255 * 3 / 2 {
 		font_color = [255, 255, 255]
@@ -138,13 +138,13 @@ pub fn color_scheme_from_accent_color(accent_color []int) []gx.Color {
 		font_color,
 	]
 
-	mut gx_colors := []gx.Color{}
+	mut colors := []gg.Color{}
 	for color in color_scheme {
-		gx_colors << gx.Color{
+		colors << gg.Color{
 			r: u8(math.max(math.min(color[0], 255), 0))
 			g: u8(math.max(math.min(color[1], 255), 0))
 			b: u8(math.max(math.min(color[2], 255), 0))
 		}
 	}
-	return gx_colors
+	return colors
 }

@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 800
 const win_height = 600
@@ -96,7 +96,7 @@ fn main() {
 				margin_:  0
 				widths:   [ui.stretch, ui.stretch, .4]
 				heights:  [ui.compact, ui.compact, .4]
-				bg_color: gx.rgba(255, 0, 0, 20)
+				bg_color: gg.rgba(255, 0, 0, 20)
 				children: [
 					ui.row(
 						spacing:  5

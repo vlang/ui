@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // ListBox
@@ -8,17 +8,17 @@ import toml
 pub struct ListBoxShapeStyle {
 pub mut:
 	radius           f32
-	border_color     gx.Color = gx.gray
-	bg_color         gx.Color = gx.white
-	bg_color_pressed gx.Color = gx.light_blue
-	bg_color_hover   gx.Color = gx.light_gray
+	border_color     gg.Color = gg.gray
+	bg_color         gg.Color = gg.white
+	bg_color_pressed gg.Color = gg.light_blue
+	bg_color_hover   gg.Color = gg.light_gray
 }
 
 pub struct ListBoxStyle {
 	ListBoxShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -30,10 +30,10 @@ pub struct ListBoxStyleParams {
 pub mut:
 	style            string = no_style
 	radius           f32
-	border_color     gx.Color = no_color
-	bg_color         gx.Color = no_color
-	bg_color_pressed gx.Color = no_color
-	bg_color_hover   gx.Color = no_color
+	border_color     gg.Color = no_color
+	bg_color         gg.Color = no_color
+	bg_color_pressed gg.Color = no_color
+	bg_color_hover   gg.Color = no_color
 }
 
 pub fn listbox_style(p ListBoxStyleParams) ListBoxStyleParams {

@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 
 //=== Tooltip ===//
 
@@ -20,7 +20,7 @@ mut:
 	y         int
 	width     int
 	height    int
-	text_cfg  gx.TextCfg
+	text_cfg  gg.TextCfg
 	text_size f64
 }
 
@@ -29,8 +29,8 @@ struct Tooltip {
 mut:
 	id       string
 	active   bool
-	color    gx.Color = gx.black
-	bg_color gx.Color = gx.Color{255, 220, 127, 220}
+	color    gg.Color = gg.black
+	bg_color gg.Color = gg.Color{255, 220, 127, 220}
 	side     Side     = .right
 	ui       &UI      = unsafe { nil }
 	widgets  []Widget
@@ -118,7 +118,7 @@ fn (t &Tooltip) draw_device(mut d DrawDevice) {
 	if t.active {
 		// TODO:  add triangle to connect the rectangle
 		// win.ui.dd.draw_rect(win.tooltip.x, win.tooltip.y, win.tooltip.width, win.tooltip.height,
-		// gx.yellow)
+		// gg.yellow)
 		d.draw_rounded_rect_filled(t.x, t.y, t.width, t.height, .3, t.bg_color)
 		draw_text_lines(t, t.x + tooltip_margin, t.y, t.lines)
 	}

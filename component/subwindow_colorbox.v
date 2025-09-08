@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 const colorbox_subwindow_id = '_sw_cbox'
 const colorbox_subwindow_layout_id = ui.component_id('_sw_cbox', 'layout')
@@ -23,8 +23,8 @@ pub enum ShowMode {
 	toggle
 }
 
-// to connect the colorbox to gx.Color reference
-pub fn colorbox_subwindow_connect(w &ui.Window, col &gx.Color, colbtn &ColorButtonComponent, show ShowMode) {
+// to connect the colorbox to gg.Color reference
+pub fn colorbox_subwindow_connect(w &ui.Window, col &gg.Color, colbtn &ColorButtonComponent, show ShowMode) {
 	mut s := w.get_or_panic[ui.SubWindow](colorbox_subwindow_id)
 	cb_layout := w.get_or_panic[ui.Stack](colorbox_subwindow_layout_id)
 	mut cb := colorbox_component(cb_layout)

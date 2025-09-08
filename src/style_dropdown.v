@@ -1,23 +1,23 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // Dropdown
 
 pub struct DropdownShapeStyle {
 pub mut:
-	bg_color     gx.Color = gx.rgb(240, 240, 240)
-	border_color gx.Color = gx.rgb(223, 223, 223)
-	focus_color  gx.Color = gx.rgb(50, 50, 50)
-	drawer_color gx.Color = gx.rgb(255, 255, 255)
+	bg_color     gg.Color = gg.rgb(240, 240, 240)
+	border_color gg.Color = gg.rgb(223, 223, 223)
+	focus_color  gg.Color = gg.rgb(50, 50, 50)
+	drawer_color gg.Color = gg.rgb(255, 255, 255)
 }
 
 struct DropdownStyle {
 	DropdownShapeStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -28,10 +28,10 @@ pub struct DropdownStyleParams {
 	WidgetTextStyleParams
 pub mut:
 	style        string   = no_style
-	bg_color     gx.Color = no_color
-	border_color gx.Color = no_color
-	focus_color  gx.Color = no_color
-	drawer_color gx.Color = no_color
+	bg_color     gg.Color = no_color
+	border_color gg.Color = no_color
+	focus_color  gg.Color = no_color
+	drawer_color gg.Color = no_color
 }
 
 pub fn dropdown_style(p DropdownStyleParams) DropdownStyleParams {

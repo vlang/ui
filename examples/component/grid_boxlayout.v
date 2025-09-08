@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 600
 const win_height = 600
@@ -13,7 +13,7 @@ fn main() {
 		title:          'V UI: Grid'
 		native_message: false
 		mode:           .resizable
-		bg_color:       gx.white
+		bg_color:       gg.white
 		on_init:        win_init
 		layout:         uic.datagrid_boxlayout(
 			id:         'grid'

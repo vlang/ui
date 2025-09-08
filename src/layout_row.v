@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 
 @[params]
 pub struct RowParams {
@@ -22,7 +22,7 @@ pub:
 	heights    Size //[]f64
 	align      Alignments
 	alignments VerticalAlignments
-	bg_color   gx.Color = no_color
+	bg_color   gg.Color = no_color
 	bg_radius  f64
 	title      string
 	scrollview bool

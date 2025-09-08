@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 200
 const win_height = 400
@@ -35,7 +35,7 @@ fn main() {
 	app.rgb_rectangle = ui.rectangle(
 		id:     'rgb_rect'
 		border: true
-		color:  gx.Color{
+		color:  gg.Color{
 			r: slider_val
 			g: slider_val
 			b: slider_val
@@ -68,7 +68,7 @@ fn main() {
 		rev_min_max_pos:     true
 		on_value_changed:    app.on_r_value_changed
 		entering:            entering
-		thumb_color:         gx.light_red
+		thumb_color:         gg.light_red
 	)
 	app.g_slider = ui.slider(
 		orientation:         .vertical
@@ -79,7 +79,7 @@ fn main() {
 		rev_min_max_pos:     true
 		on_value_changed:    app.on_g_value_changed
 		entering:            entering
-		thumb_color:         gx.light_green
+		thumb_color:         gg.light_green
 	)
 	app.b_slider = ui.slider(
 		orientation:         .vertical
@@ -90,7 +90,7 @@ fn main() {
 		rev_min_max_pos:     true
 		on_value_changed:    app.on_b_value_changed
 		entering:            entering
-		thumb_color:         gx.light_blue
+		thumb_color:         gg.light_blue
 	)
 	app.r_label = ui.label(text: 'R', justify: ui.top_center, width: 40)
 	app.g_label = ui.label(text: 'G', justify: ui.top_center, width: 40)
@@ -143,7 +143,7 @@ fn main() {
 }
 
 fn (app &App) btn_click(b &ui.Button) {
-	txt := 'gx.rgb(${app.r_textbox_text},${app.g_textbox_text},${app.b_textbox_text})'
+	txt := 'gg.rgb(${app.r_textbox_text},${app.g_textbox_text},${app.b_textbox_text})'
 	ui.message_box(txt)
 }
 
@@ -201,10 +201,10 @@ fn textbox_color_update(mut app App) {
 	g := u8(app.g_textbox.text.int())
 	b := u8(app.b_textbox.text.int())
 	if !ui.is_rgb_valid(r) || !ui.is_rgb_valid(g) || !ui.is_rgb_valid(b) {
-		app.rgb_rectangle.style.color = gx.rgb(255, 255, 255)
+		app.rgb_rectangle.style.color = gg.rgb(255, 255, 255)
 		app.rgb_rectangle.text = 'RGB component(s) ERROR'
 	} else {
-		app.rgb_rectangle.style.color = gx.rgb(r, g, b)
+		app.rgb_rectangle.style.color = gg.rgb(r, g, b)
 		app.rgb_rectangle.text = ''
 	}
 }

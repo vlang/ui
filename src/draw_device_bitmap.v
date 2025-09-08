@@ -1,6 +1,5 @@
 module ui
 
-import gx
 import gg
 import ui.libvg
 
@@ -38,7 +37,7 @@ pub fn (mut d DrawDeviceBitmap) png_screenshot_window(filename string, mut w Win
 
 // methods
 
-// pub fn (d &DrawDeviceBitmap) begin(win_bg_color gx.Color) {
+// pub fn (d &DrawDeviceBitmap) begin(win_bg_color gg.Color) {
 // 	mut r := d.s
 // 	s.begin()
 // 	// window.bg_color
@@ -59,7 +58,7 @@ pub fn (mut d DrawDeviceBitmap) png_screenshot_window(filename string, mut w Win
 // interface DrawDevice
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) set_bg_color(color gx.Color) {}
+pub fn (d &DrawDeviceBitmap) set_bg_color(color gg.Color) {}
 
 // TODO: documentation
 pub fn (d &DrawDeviceBitmap) has_text_style() bool {
@@ -67,7 +66,7 @@ pub fn (d &DrawDeviceBitmap) has_text_style() bool {
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) set_text_style(font_name string, font_path string, size int, color gx.Color, align int, vertical_align int) {
+pub fn (d &DrawDeviceBitmap) set_text_style(font_name string, font_path string, size int, color gg.Color, align int, vertical_align int) {
 	mut ts := d.ts
 	ts.font_name = if font_name == 'system' { 'Systemfont' } else { font_name }
 	ts.font_path = font_path
@@ -82,7 +81,7 @@ pub fn (d &DrawDeviceBitmap) set_text_style(font_name string, font_path string, 
 	}
 }
 
-fn (d &DrawDeviceBitmap) apply_text_config(mut ts libvg.BitmapTextStyle, cfg gx.TextCfg) {
+fn (d &DrawDeviceBitmap) apply_text_config(mut ts libvg.BitmapTextStyle, cfg gg.TextCfg) {
 	ts.font_name = if cfg.family == 'system' { 'Systemfont' } else { cfg.family }
 	ts.font_path = d.ts.font_path
 	ts.size = cfg.size
@@ -92,7 +91,7 @@ fn (d &DrawDeviceBitmap) apply_text_config(mut ts libvg.BitmapTextStyle, cfg gx.
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_text(x int, y int, text string, cfg gx.TextCfg) {
+pub fn (d &DrawDeviceBitmap) draw_text(x int, y int, text string, cfg gg.TextCfg) {
 	// println('$d.id draw_text_default($x, $y, $text) $d.ts')
 	mut ts := libvg.BitmapTextStyle{}
 	d.apply_text_config(mut &ts, cfg)
@@ -119,7 +118,7 @@ pub fn (d &DrawDeviceBitmap) draw_text_default(x int, y int, text string) {
 pub fn (d &DrawDeviceBitmap) draw_text_def(x int, y int, text string) {}
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) set_text_cfg(cfg gx.TextCfg) {
+pub fn (d &DrawDeviceBitmap) set_text_cfg(cfg gg.TextCfg) {
 	mut ts := d.ts
 	d.apply_text_config(mut ts, cfg)
 }
@@ -156,12 +155,12 @@ pub fn (d &DrawDeviceBitmap) get_clipping() Rect {
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, color gx.Color, params gg.DrawPixelConfig) {
+pub fn (d &DrawDeviceBitmap) draw_pixel(x f32, y f32, color gg.Color, params gg.DrawPixelConfig) {
 	// println("$d.id draw_pixel($x, $y, $color)")
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_pixels(points []f32, color gx.Color, params gg.DrawPixelConfig) {
+pub fn (d &DrawDeviceBitmap) draw_pixels(points []f32, color gg.Color, params gg.DrawPixelConfig) {
 	// println("$d.id draw_pixels($points, $color)")
 }
 
@@ -175,94 +174,94 @@ pub fn (d &DrawDeviceBitmap) draw_image(x f32, y f32, width f32, height f32, img
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	// println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
+pub fn (d &DrawDeviceBitmap) draw_triangle_empty(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gg.Color) {
+	// println('$d.id draw_triangle_empty($x, $y, $x2, $y2, $x3, $y3, color gg.Color)')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gx.Color) {
-	// println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, color gx.Color)')
+pub fn (d &DrawDeviceBitmap) draw_triangle_filled(x f32, y f32, x2 f32, y2 f32, x3 f32, y3 f32, color gg.Color) {
+	// println('$d.id draw_triangle_filled($x, $y, $x2, $y2, $x3, $y3, color gg.Color)')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_rect_empty(x f32, y f32, w f32, h f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_rect_empty(x f32, y f32, w f32, h f32, color gg.Color) {
 	// println('$d.id draw_rect_empty($x, $y, $w, $h, $color)')
 	mut r := d.r
 	r.box(int(x), int(y), int(x + w), int(y + h), color)
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_rect_filled(x f32, y f32, w f32, h f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_rect_filled(x f32, y f32, w f32, h f32, color gg.Color) {
 	// println('$d.id draw_rect_filled($x, $y, $w, $h, $color)')
 	mut r := d.r
 	r.rectangle_filled(int(x), int(y), int(w), int(h), color)
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	// println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gx.Color)')
+pub fn (d &DrawDeviceBitmap) draw_rounded_rect_filled(x f32, y f32, w f32, h f32, radius f32, color gg.Color) {
+	// println('$d.id draw_rounded_rect_filled($x, $y, $w, $h, $radius, color gg.Color)')
 	d.draw_rect_filled(x, y, w, h, color)
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, color gx.Color) {
-	// println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gx.Color)')
+pub fn (d &DrawDeviceBitmap) draw_rounded_rect_empty(x f32, y f32, w f32, h f32, radius f32, color gg.Color) {
+	// println('$d.id draw_rounded_rect_empty($x, $y, $w, $h, $radius, color gg.Color)')
 	d.draw_rect_empty(x, y, w, h, color)
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_circle_line(x f32, y f32, r int, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_circle_line(x f32, y f32, r int, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_circle_empty(x f32, y f32, r f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_circle_empty(x f32, y f32, r f32, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_circle_filled(x f32, y f32, r f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_circle_filled(x f32, y f32, r f32, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_slice_empty(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_slice_empty(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_slice_filled(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_slice_filled(x f32, y f32, r f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_arc_empty(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_arc_filled(x f32, y f32, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_arc_line(x f32, y f32, radius f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_line(x f32, y f32, x2 f32, y2 f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_line(x f32, y f32, x2 f32, y2 f32, color gg.Color) {
 	// println('$d.id ')
 	mut r := d.r
 	r.line(int(x), int(y), int(x2), int(y2), color)
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_convex_poly(points []f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_convex_poly(points []f32, color gg.Color) {
 	// println('$d.id ')
 }
 
 // TODO: documentation
-pub fn (d &DrawDeviceBitmap) draw_poly_empty(points []f32, color gx.Color) {
+pub fn (d &DrawDeviceBitmap) draw_poly_empty(points []f32, color gg.Color) {
 	// println('$d.id ')
 }

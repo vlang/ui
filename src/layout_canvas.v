@@ -4,7 +4,6 @@
 module ui
 
 import gg
-import gx
 import eventbus
 
 pub type CanvasLayoutDrawDeviceFn = fn (mut d DrawDevice, c &CanvasLayout)
@@ -895,14 +894,14 @@ pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, tex
 // ---- triangle
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_triangle_empty(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_triangle_empty(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gg.Color) {
 	d.draw_triangle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
 		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
 		c.offset_y), color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64, x2 f64, y2 f64, x3 f64, y3 f64, color gg.Color) {
 	d.draw_triangle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x +
 		c.offset_x), f32(y2 + c.y + c.offset_y), f32(x3 + c.x + c.offset_x), f32(y3 + c.y +
 		c.offset_y), color)
@@ -911,13 +910,13 @@ pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64,
 // ---- square
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_square_empty(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_square_empty(d DrawDevice, x f64, y f64, s f32, color gg.Color) {
 	c.draw_device_rect_empty(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
 		s, s, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s f32, color gg.Color) {
 	c.draw_device_rect_filled(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
 		s, s, color)
 }
@@ -925,24 +924,24 @@ pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s
 // ---- rectangle
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, color gg.Color) {
 	d.draw_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, color gg.Color) {
 	d.draw_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_rounded_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rounded_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, color gg.Color) {
 	rad := relative_size(radius, int(w), int(h))
 	d.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
 		h, rad, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, border_color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, border_color gg.Color) {
 	rad := relative_size(radius, int(w), int(h))
 	d.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
 		h, rad, border_color)
@@ -951,31 +950,31 @@ pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f
 // ---- circle
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_circle_line(d DrawDevice, x f64, y f64, r int, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_circle_line(d DrawDevice, x f64, y f64, r int, segments int, color gg.Color) {
 	d.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, segments,
 		color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_circle_empty(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_circle_empty(d DrawDevice, x f64, y f64, r f32, color gg.Color) {
 	d.draw_circle_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_circle_filled(d DrawDevice, x f64, y f64, r f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_circle_filled(d DrawDevice, x f64, y f64, r f32, color gg.Color) {
 	d.draw_circle_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, color)
 }
 
 // ---- slice
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_slice_empty(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_slice_empty(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	d.draw_slice_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
 		end_angle, segments, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	d.draw_slice_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, start_angle,
 		end_angle, segments, color)
 }
@@ -983,19 +982,19 @@ pub fn (c &CanvasLayout) draw_device_slice_filled(d DrawDevice, x f64, y f64, r 
 // ---- arc
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_arc_empty(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	d.draw_arc_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
 		start_angle, end_angle, segments, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_arc_filled(d DrawDevice, x f64, y f64, radius f32, thickness f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	d.draw_arc_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, thickness,
 		start_angle, end_angle, segments, color)
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius f32, start_angle f32, end_angle f32, segments int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius f32, start_angle f32, end_angle f32, segments int, color gg.Color) {
 	d.draw_arc_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), radius, start_angle,
 		end_angle, segments, color)
 }
@@ -1003,7 +1002,7 @@ pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius
 // ---- line
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2 f64, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2 f64, color gg.Color) {
 	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
 	// $y2 + $c.y + $c.offset_y")
 	d.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x + c.offset_x),
@@ -1013,16 +1012,16 @@ pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2
 // ---- polygon
 // TODO: What to do about canvas offset?
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_convex_poly(d DrawDevice, points []f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_convex_poly(d DrawDevice, points []f32, color gg.Color) {
 }
 
 // TODO: documentation
-pub fn (c &CanvasLayout) draw_device_empty_poly(d DrawDevice, points []f32, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_empty_poly(d DrawDevice, points []f32, color gg.Color) {
 }
 
 // special stuff for surrounding rectangle
 
-pub fn (c &CanvasLayout) draw_device_rect_surrounded(d DrawDevice, x f32, y f32, w f32, h f32, size int, color gx.Color) {
+pub fn (c &CanvasLayout) draw_device_rect_surrounded(d DrawDevice, x f32, y f32, w f32, h f32, size int, color gg.Color) {
 	c.draw_device_rect_filled(d, x - size, y - size, w + 2 * size, size, color)
 	c.draw_device_rect_filled(d, x - size, y + h, w + 2 * size, size, color)
 	c.draw_device_rect_filled(d, x - size, y - size, size, h + 2 * size, color)

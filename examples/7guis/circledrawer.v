@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 import math
 
 const default_radius = 20
@@ -116,7 +116,7 @@ fn main() {
 			height:   60
 			margin_:  10
 			spacing:  10
-			bg_color: ui.alpha_colored(gx.light_gray, 100)
+			bg_color: ui.alpha_colored(gg.light_gray, 100)
 			widths:   ui.stretch
 			heights:  ui.compact
 			children: [
@@ -161,7 +161,7 @@ fn main() {
 						ui.spacing()]
 				),
 				ui.canvas_plus(
-					bg_color:      gx.white
+					bg_color:      gg.white
 					bg_radius:     .025
 					clipping:      true
 					on_draw:       app.draw_circles
@@ -178,9 +178,9 @@ fn main() {
 fn (app &App) draw_circles(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	for i, circle in app.state.circles {
 		if i == app.hover {
-			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gx.light_gray)
+			c.draw_device_circle_filled(d, circle.x, circle.y, circle.radius, gg.light_gray)
 		}
-		c.draw_device_circle_empty(d, circle.x, circle.y, circle.radius, gx.black)
+		c.draw_device_circle_empty(d, circle.x, circle.y, circle.radius, gg.black)
 	}
 }
 

@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 import os
 
 const tree_sep = ':'
@@ -116,13 +116,13 @@ pub mut:
 	layout     &ui.Stack = unsafe { nil } // required
 	trees      []Tree
 	icon_paths map[string]string
-	text_color gx.Color
+	text_color gg.Color
 	text_size  int
-	bg_color   gx.Color
+	bg_color   gg.Color
 	// selection
 	sel_id       string
 	old_sel_id   string
-	bg_sel_color gx.Color
+	bg_sel_color gg.Color
 	// related to items
 	titles   map[string]string
 	parents  map[string]string
@@ -156,11 +156,11 @@ pub:
 	id           string
 	trees        []Tree
 	icons        map[string]string
-	text_color   gx.Color = gx.black
+	text_color   gg.Color = gg.black
 	text_size    int      = 24
 	incr_mode    bool
-	bg_color     gx.Color        = gx.white
-	bg_sel_color gx.Color        = gx.light_gray
+	bg_color     gg.Color        = gg.white
+	bg_sel_color gg.Color        = gg.light_gray
 	on_click     TreeViewClickFn = unsafe { TreeViewClickFn(0) }
 	indent       int             = 10
 	filter_types []string
@@ -210,14 +210,14 @@ pub:
 	id           string = 'tvd'
 	trees        []string
 	icons        map[string]string
-	text_color   gx.Color = gx.black
+	text_color   gg.Color = gg.black
 	text_size    int      = 24
 	incr_mode    bool     = true
 	indent       int      = 10
 	folder_only  bool
 	filter_types []string
 	hidden_files bool
-	bg_color     gx.Color        = gx.hex(0xfcf4e4ff)
+	bg_color     gg.Color        = gg.hex(0xfcf4e4ff)
 	on_click     TreeViewClickFn = unsafe { TreeViewClickFn(0) }
 }
 
@@ -264,9 +264,9 @@ fn treeview_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	dx := tv.indent * tv.levels[c.id]
 	if tv.types[c.id] == 'root' {
 		if tv.selected[c.id] {
-			c.draw_device_triangle_filled(d, 5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gx.black)
+			c.draw_device_triangle_filled(d, 5 + dx, 8, 12 + dx, 8, 8 + dx, 14, gg.black)
 		} else {
-			c.draw_device_triangle_filled(d, 7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gx.black)
+			c.draw_device_triangle_filled(d, 7 + dx, 6, 12 + dx, 11, 7 + dx, 16, gg.black)
 		}
 	}
 

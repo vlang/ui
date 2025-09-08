@@ -1,6 +1,5 @@
 import ui
 import gg
-import gx
 import os
 
 const win_width = 780
@@ -70,7 +69,7 @@ fn main() {
 		width:  win_width
 		height: win_height
 		title:  'V UI Demo'
-		// bg_color: gx.light_blue
+		// bg_color: gg.light_blue
 		children: [
 			ui.row(
 				margin:   ui.Margin{10, 10, 10, 10}
@@ -221,15 +220,15 @@ fn (app &State) canvas_draw(gg_ &gg.Context, c &ui.Canvas) { // x_offset int, y_
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset
-	gg_.draw_rect_filled(x - 20, 0, w + 120, h + 120, gx.white)
+	gg_.draw_rect_filled(x - 20, 0, w + 120, h + 120, gg.white)
 	for i, user in app.users {
 		y := y_offset + 20 + i * cell_height
 		// Outer border
-		gg_.draw_rect_empty(x, y, table_width, cell_height, gx.gray)
+		gg_.draw_rect_empty(x, y, table_width, cell_height, gg.gray)
 		// Vertical separators
-		gg_.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gx.gray)
-		gg_.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gx.gray)
-		gg_.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gx.gray)
+		gg_.draw_line(x + cell_width, y, x + cell_width, y + cell_height, gg.gray)
+		gg_.draw_line(x + cell_width * 2, y, x + cell_width * 2, y + cell_height, gg.gray)
+		gg_.draw_line(x + cell_width * 3, y, x + cell_width * 3, y + cell_height, gg.gray)
 		// Text values
 		gg_.draw_text_def(x + 5, y + 5, user.first_name)
 		gg_.draw_text_def(x + 5 + cell_width, y + 5, user.last_name)

@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 fn main() {
 	mut win := ui.window(
@@ -51,7 +51,7 @@ fn on_changed(mut cbc uic.ColorButtonComponent) {
 
 fn win_init(w &ui.Window) {
 	mut gui := w.ui
-	gui.window.load_4colors_style([gx.white, gx.light_gray, gx.light_blue, gx.black])
+	gui.window.load_4colors_style([gg.white, gg.light_gray, gg.light_blue, gg.black])
 	for i in 0 .. 4 {
 		mut cbc := uic.colorbutton_component_from_id(w, 'color${i}')
 		cbc.bg_color = gui.style_colors[i]

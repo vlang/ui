@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-// import gx
+// import gg
 
 const win_width = 800
 const win_height = 600

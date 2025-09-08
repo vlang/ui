@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 400
 const win_height = 300
@@ -13,7 +13,7 @@ mut:
 fn make_tb(mut app App, has_row bool) ui.Widget {
 	tb := ui.textbox(
 		mode:     .multiline
-		bg_color: gx.yellow
+		bg_color: gg.yellow
 		text:     &app.text
 	)
 	return if has_row {
@@ -55,14 +55,14 @@ fn main() {
 			id:       'bl'
 			children: {
 				'id1: (0,0) ++ (30,30)':          ui.rectangle(
-					color: gx.rgb(255, 100, 100)
+					color: gg.rgb(255, 100, 100)
 				)
 				'id2: (30,30) -> (-30.5,-30.5)':  ui.rectangle(
-					color: gx.rgb(100, 255, 100)
+					color: gg.rgb(100, 255, 100)
 				)
 				'id3: (50%,50%) ->  (100%,100%)': make_tb(mut app, with_row)
 				'id4: (-30.5, -30.5) ++ (30,30)': ui.rectangle(
-					color: gx.white
+					color: gg.white
 				)
 				'id5: (70%,20%) ++ (50,20)':      app.make_btn()
 			}

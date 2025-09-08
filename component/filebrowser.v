@@ -1,6 +1,6 @@
 module component
 
-import gx
+import gg
 import ui
 import os
 
@@ -28,7 +28,7 @@ pub:
 	filter_types    []string
 	with_fpath      bool
 	hidden          bool
-	bg_color        gx.Color    = gx.red // gx.hex(0xfcf4e4ff)
+	bg_color        gg.Color    = gg.red // gg.hex(0xfcf4e4ff)
 	on_click_ok     ui.ButtonFn = unsafe { ui.ButtonFn(0) }
 	on_click_cancel ui.ButtonFn = unsafe { ui.ButtonFn(0) }
 }
@@ -69,7 +69,7 @@ pub fn filebrowser_stack(p FileBrowserParams) &ui.Stack {
 			widths:   [ui.stretch, 50, ui.stretch, 50, ui.stretch]
 			heights:  30.0
 			margin_:  5
-			bg_color: gx.black
+			bg_color: gg.black
 			children: [ui.spacing(), btn_cancel, ui.spacing(), btn_ok, ui.spacing()]
 		)),
 	]

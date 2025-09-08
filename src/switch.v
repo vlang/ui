@@ -3,14 +3,14 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 
 const sw_height = 20
 const sw_width = 40
 const sw_dot_size = 16
-const sw_open_bg_color = gx.rgb(19, 206, 102)
-const sw_close_bg_color = gx.rgb(220, 223, 230)
-const sw_focus_bg_color = gx.rgb(50, 50, 50)
+const sw_open_bg_color = gg.rgb(19, 206, 102)
+const sw_close_bg_color = gg.rgb(220, 223, 230)
+const sw_focus_bg_color = gg.rgb(50, 50, 50)
 
 type SwitchFn = fn (&Switch)
 
@@ -122,10 +122,10 @@ fn (mut s Switch) draw_device(mut d DrawDevice) {
 	if s.open {
 		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_open_bg_color)
 		d.draw_rect_filled(s.x - padding + s.width - sw_dot_size, s.y + padding, sw_dot_size,
-			sw_dot_size, gx.white)
+			sw_dot_size, gg.white)
 	} else {
 		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_close_bg_color)
-		d.draw_rect_filled(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gx.white)
+		d.draw_rect_filled(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gg.white)
 	}
 	if s.is_focused {
 		d.draw_rect_empty(s.x, s.y, s.width, s.height, sw_focus_bg_color)

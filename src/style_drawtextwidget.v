@@ -1,13 +1,13 @@
 module ui
 
-import gx
+import gg
 
 // Embedded in most Widget Styles
 
 pub struct WidgetTextStyle {
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .center
 	text_vertical_align TextVerticalAlign   = .middle
@@ -18,11 +18,11 @@ pub struct WidgetTextStyleParams {
 pub mut:
 	// text_style TextStyle
 	text_font_name      string
-	text_color          gx.Color = no_color
+	text_color          gg.Color = no_color
 	text_size           f64
 	text_align          TextHorizontalAlign = .@none
 	text_vertical_align TextVerticalAlign   = .@none
-	cursor_color        gx.Color            = no_color
+	cursor_color        gg.Color            = no_color
 }
 
 // Style with Text
@@ -30,7 +30,7 @@ pub mut:
 interface DrawTextWidgetStyle {
 mut:
 	text_font_name      string
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int
 	text_align          TextHorizontalAlign
 	text_vertical_align TextVerticalAlign
@@ -38,7 +38,7 @@ mut:
 
 interface DrawTextWidgetStyleParams {
 	text_font_name      string
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           f64
 	text_align          TextHorizontalAlign
 	text_vertical_align TextVerticalAlign

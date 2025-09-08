@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 import math
 
 const win_width = 500
@@ -15,7 +15,7 @@ type ContentFn = fn (int) ui.Widget
 fn make_box(id string) ui.Widget {
 	return ui.canvas_layout(
 		id:          id
-		bg_color:    gx.black
+		bg_color:    gg.black
 		on_draw:     box_draw
 		on_mouse_up: box_click
 		clipping:    true
@@ -39,22 +39,22 @@ fn ordinal(i int) string {
 
 fn box_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	cols := [
-		gx.Color{
+		gg.Color{
 			r: 128
 			g: 16
 			b: 0
 		},
-		gx.Color{
+		gg.Color{
 			r: 80
 			g: 128
 			b: 0
 		},
-		gx.Color{
+		gg.Color{
 			r: 0
 			g: 110
 			b: 64
 		},
-		gx.Color{
+		gg.Color{
 			r: 0
 			g: 64
 			b: 100
@@ -68,7 +68,7 @@ fn box_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.width - 2 * margin, c.height - 2 * margin
 	c.draw_device_rect_filled(d, -spill, margin, w + 2 * spill, h, col)
 	c.draw_device_rect_filled(d, margin, -spill, w, h + 2 * spill, col)
-	c.draw_device_rect_filled(d, margin, margin, w, h, gx.white)
+	c.draw_device_rect_filled(d, margin, margin, w, h, gg.white)
 	order := c.id[1..2].int() * 4 - 4 + c.id[2..3].int() // 'b${q}${b}'
 	c.draw_device_text(d, margin + 2, margin + 2, 'drawn: ${ordinal(order)}')
 	clip := if c.clipping { 'yes' } else { 'no' }

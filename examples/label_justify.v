@@ -1,17 +1,17 @@
 import ui
-import gx
+import gg
 
 fn main() {
 	layout := ui.box_layout(
 		children: {
 			'rect: (0.2, 0.4) -> (0.5,0.5)':  ui.rectangle(
-				color: ui.alpha_colored(gx.yellow, 30)
+				color: ui.alpha_colored(gg.yellow, 30)
 			)
 			'rect2: (0.5, 0.5) -> (1,1)':     ui.rectangle(
-				color: ui.alpha_colored(gx.blue, 30)
+				color: ui.alpha_colored(gg.blue, 30)
 			)
 			'rect3: (0.1, 0.1) -> (0.3,0.2)': ui.rectangle(
-				color: ui.alpha_colored(gx.orange, 30)
+				color: ui.alpha_colored(gg.orange, 30)
 			)
 			'lab: (0.2, 0.4) -> (0.5,0.5)':   ui.label(
 				text:    'Centered text'

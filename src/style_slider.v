@@ -1,26 +1,26 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // Slider
 
 pub struct SliderStyle {
 pub mut:
-	thumb_color             gx.Color = gx.rgb(87, 153, 245)
-	bg_color                gx.Color = gx.rgb(219, 219, 219)
-	bg_border_color         gx.Color = gx.rgb(191, 191, 191)
-	focused_bg_border_color gx.Color = gx.rgb(255, 0, 0)
+	thumb_color             gg.Color = gg.rgb(87, 153, 245)
+	bg_color                gg.Color = gg.rgb(219, 219, 219)
+	bg_border_color         gg.Color = gg.rgb(191, 191, 191)
+	focused_bg_border_color gg.Color = gg.rgb(255, 0, 0)
 }
 
 @[params]
 pub struct SliderStyleParams {
 pub mut:
 	style                   string   = no_style
-	thumb_color             gx.Color = no_color
-	bg_color                gx.Color = no_color
-	bg_border_color         gx.Color = no_color
-	focused_bg_border_color gx.Color = no_color
+	thumb_color             gg.Color = no_color
+	bg_color                gg.Color = no_color
+	bg_border_color         gg.Color = no_color
+	focused_bg_border_color gg.Color = no_color
 }
 
 pub fn slider_style(p SliderStyleParams) SliderStyleParams {

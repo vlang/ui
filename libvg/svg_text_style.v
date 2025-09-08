@@ -1,13 +1,13 @@
 module libvg
 
-import gx
+import gg
 
 pub struct SvgTextStyle {
 pub mut:
 	font_name      string
 	font_path      string
 	size           int
-	color          gx.Color
+	color          gg.Color
 	align          string
 	vertical_align string
 }
@@ -41,6 +41,6 @@ pub fn (mut ts SvgTextStyle) set_vertical_align(align int) {
 }
 
 // Color (because of cycle modules copy here)
-pub fn hex_color(c gx.Color) string {
+pub fn hex_color(c gg.Color) string {
 	return '#${c.r.hex()}${c.g.hex()}${c.b.hex()}${c.a.hex()}'
 }

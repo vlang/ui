@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 enum TabsMode {
 	vertical
@@ -22,8 +22,8 @@ pub mut:
 	tab_width          f64
 	tab_height         f64
 	tab_spacing        f64
-	bg_color           gx.Color = gx.white
-	bg_color_selection gx.Color = gx.rgb(200, 200, 100)
+	bg_color           gg.Color = gg.white
+	bg_color_selection gg.Color = gg.rgb(200, 200, 100)
 	justify            []f64    = ui.center_center
 }
 
@@ -49,7 +49,7 @@ pub fn tabs_stack(c TabsParams) &ui.Stack {
 		children << ui.canvas_layout(
 			id:       tab_id(c.id, i)
 			on_click: tab_click
-			// bg_color: gx.white
+			// bg_color: gg.white
 			on_key_down: tab_key_down
 			children:    [
 				ui.row(

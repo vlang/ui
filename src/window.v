@@ -2,7 +2,6 @@
 // Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 module ui
 
-import gx
 import gg
 import clipboard
 import eventbus
@@ -11,7 +10,7 @@ import math
 import os.font
 import os
 
-const default_window_color = gx.rgb(236, 236, 236)
+const default_window_color = gg.rgb(236, 236, 236)
 const default_font_size = 13
 
 pub type WindowFn = fn (window &Window)
@@ -71,10 +70,10 @@ pub mut:
 	orig_height  int
 	touch        TouchInfo
 	mouse        Mouse
-	bg_color     gx.Color
+	bg_color     gg.Color
 	sample_count int
 	// Text Config
-	text_cfg gx.TextCfg
+	text_cfg gg.TextCfg
 	// themes
 	theme_style  string
 	style_params WindowStyleParams
@@ -117,7 +116,7 @@ pub:
 	title         string = 'V UI window'
 	no_fullscreen bool
 
-	bg_color gx.Color = no_color
+	bg_color gg.Color = no_color
 	theme    string   = 'default'
 
 	on_click              WindowMouseFn     = unsafe { nil }
@@ -193,10 +192,10 @@ pub fn window(cfg WindowParams) &Window {
 	// default text_cfg
 	// m := f32(math.min(width, height))
 
-	mut text_cfg := gx.TextCfg{
-		color: gx.rgb(38, 38, 38)
-		align: gx.align_left
-		// vertical_align: gx.VerticalAlign.middle
+	mut text_cfg := gg.TextCfg{
+		color: gg.rgb(38, 38, 38)
+		align: gg.align_left
+		// vertical_align: gg.VerticalAlign.middle
 		// size: int(m / cfg.lines)
 	}
 
@@ -273,7 +272,7 @@ pub fn window(cfg WindowParams) &Window {
 			cleanup_fn:            gg_cleanup
 			// keydown_fn: window_key_down
 			// char_fn: window_char
-			bg_color: window.bg_color // gx.rgb(230,230,230)
+			bg_color: window.bg_color // gg.rgb(230,230,230)
 			// window_state: ui
 			native_rendering: cfg.native_rendering
 			ui_mode:          !cfg.immediate

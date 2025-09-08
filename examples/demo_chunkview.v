@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 fn main() {
 	mut sc_cv := false
@@ -9,7 +9,7 @@ fn main() {
 	mut cv := ui.chunkview(
 		id:         'cv'
 		scrollview: sc_cv
-		bg_color:   gx.white
+		bg_color:   gg.white
 		chunks:     [
 			ui.rowchunk(
 				y:       20
@@ -54,7 +54,7 @@ fn main() {
 							ui.rowchunk(
 								spacing:   10
 								margin:    20
-								bg_color:  gx.yellow
+								bg_color:  gg.yellow
 								bg_radius: 10
 								chunks:    [
 									ui.valignchunk(
@@ -83,7 +83,7 @@ fn main() {
 							ui.rowchunk(
 								spacing:   10
 								margin:    20
-								bg_color:  gx.dark_gray
+								bg_color:  gg.dark_gray
 								bg_radius: 10
 								chunks:    [
 									ui.parachunk(
@@ -119,7 +119,7 @@ fn main() {
 			children: [
 				ui.row(
 					margin_:  5
-					bg_color: gx.white
+					bg_color: gg.white
 					children: [
 						ui.slider(
 							width:            200
@@ -145,24 +145,24 @@ fn main() {
 				),
 				ui.rectangle(
 					height: 30
-					color:  gx.rgb(255, 100, 100)
+					color:  gg.rgb(255, 100, 100)
 				),
 				ui.row(
 					children: [
 						ui.rectangle(
 							width: 30
-							color: gx.rgb(255, 100, 100)
+							color: gg.rgb(255, 100, 100)
 						),
 						cv,
 						ui.rectangle(
 							width: 30
-							color: gx.rgb(255, 100, 100)
+							color: gg.rgb(255, 100, 100)
 						),
 					]
 				),
 				ui.rectangle(
 					height: 30
-					color:  gx.rgb(255, 100, 100)
+					color:  gg.rgb(255, 100, 100)
 				),
 			]
 		)
@@ -173,14 +173,14 @@ fn main() {
 		id:        'red'
 		size:      20
 		font_name: 'fixed_bold'
-		color:     gx.red
+		color:     gg.red
 	)
 	// Add global style
 	window.add_style(
 		id:        'blue'
 		size:      30
 		font_name: 'system'
-		color:     gx.blue
+		color:     gg.blue
 	)
 	// Add global style
 	window.add_style(
@@ -204,8 +204,8 @@ fn on_switch(switcher &ui.Switch) {
 		else { 2 }
 	}
 	color := match switcher.id {
-		'sw2' { gx.dark_gray }
-		else { gx.yellow }
+		'sw2' { gg.dark_gray }
+		else { gg.yellow }
 	}
 	mut cv := ui.Widget(switcher).get[ui.ChunkView]('cv')
 	mut res := cv.chunk(0, 1, i)

@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 const splitpanel_btn_size = 6
 
@@ -38,9 +38,9 @@ pub fn splitpanel_stack(p SplitPanelParams) &ui.Stack {
 		on_mouse_move: splitpanel_btn_mouse_move
 		hoverable:     true
 		// TODO: to adapt to chosen style
-		bg_color_hover:   gx.gray
-		bg_color:         gx.light_gray
-		bg_color_pressed: gx.black
+		bg_color_hover:   gg.gray
+		bg_color:         gg.light_gray
+		bg_color_pressed: gg.black
 		on_mouse_enter:   fn (mut b ui.Button, e &ui.MouseMoveEvent) {
 			sp := splitpanel_component(b)
 			b.ui.window.mouse.start('_system_:resize_' +

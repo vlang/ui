@@ -1,7 +1,7 @@
 module ui
 
 import eventbus
-import gx
+import gg
 
 pub const sw_decoration = 20
 pub const sw_resize_border = 4
@@ -117,7 +117,7 @@ fn (mut s SubWindow) draw_device(mut d DrawDevice) {
 		$if sw_draw ? {
 			println('${s.x}, ${s.y}, ${w}, ${sw_decoration}')
 		}
-		d.draw_rounded_rect_filled(s.x, s.y, w, sw_decoration, 5, gx.black)
+		d.draw_rounded_rect_filled(s.x, s.y, w, sw_decoration, 5, gg.black)
 	}
 	s.layout.draw()
 

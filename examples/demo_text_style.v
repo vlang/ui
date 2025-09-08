@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 import os
 
 @[heap]
@@ -80,14 +80,14 @@ fn window_init(mut w ui.Window) {
 	// 	id: 'arial'
 	// 	font_name: 'arial'
 	// 	size: 30
-	// 	color: gx.blue
+	// 	color: gg.blue
 	// )
 	// dd.add_item('arial')
 	// w.ui.add_style(
 	// 	id: 'arial-bold'
 	// 	font_name: 'arial-bold'
 	// 	size: 30
-	// 	color: gx.red
+	// 	color: gg.red
 	// )
 	// dd.add_item('arial-bold')
 	// dtw.set_style('arial')
@@ -98,7 +98,7 @@ fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)
 	w, h := dtw.text_size(app.text)
-	c.draw_device_rect_empty(d, 10, 11, w + 2, h + 2, gx.black)
+	c.draw_device_rect_empty(d, 10, 11, w + 2, h + 2, gg.black)
 	c.draw_device_styled_text(d, 10 + w + 10, 10, 'size: (${w}, ${h})')
 }
 

@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 fn main() {
 	win := ui.window(
@@ -17,13 +17,13 @@ fn main() {
 						uic.colorsliders_stack(
 							id:          'cs'
 							orientation: .horizontal
-							color:       gx.white
+							color:       gg.white
 							on_changed:  on_accent_color_changed
 						),
 						ui.row(
 							margin_:  10
 							spacing:  5
-							bg_color: gx.white
+							bg_color: gg.white
 							widths:   ui.stretch
 							children: [
 								ui.rectangle(id: 'rect0', text: '0', border: true),
@@ -58,6 +58,6 @@ fn on_accent_color_changed(mut cs uic.ColorSlidersComponent) {
 fn win_init(w &ui.Window) {
 	mut cs := uic.colorsliders_component_from_id(w, 'cs')
 	ac := [100, 40, 150]
-	cs.set_color(gx.rgb(u8(ac[0]), u8(ac[1]), u8(ac[2])))
+	cs.set_color(gg.rgb(u8(ac[0]), u8(ac[1]), u8(ac[2])))
 	on_accent_color_changed(mut cs)
 }

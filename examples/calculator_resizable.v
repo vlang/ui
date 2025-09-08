@@ -1,6 +1,6 @@
 import math
 import os
-import gx
+import gg
 import ui
 
 @[heap]
@@ -70,7 +70,7 @@ fn main() {
 				margin_:  10
 				spacing:  .02
 				heights:  ui.stretch // [ui.compact, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch] // or [30.0, ui.stretch, ui.stretch, ui.stretch, ui.stretch, ui.stretch]
-				bg_color: gx.rgb(240, 180, 130)
+				bg_color: gg.rgb(240, 180, 130)
 				children: children
 			),
 		]

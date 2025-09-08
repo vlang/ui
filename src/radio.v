@@ -3,9 +3,9 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 
-const radio_focus_color = gx.rgb(50, 50, 50)
+const radio_focus_color = gg.rgb(50, 50, 50)
 
 /*
 enum RadioState {
@@ -314,7 +314,7 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 		d.draw_rect_empty(r.x, r.y, r.real_width, r.real_height, if r.is_focused {
 			radio_focus_color
 		} else {
-			gx.gray
+			gg.gray
 		})
 		// Title
 		tw := r.ui.dd.text_width(r.title) + 5
@@ -340,7 +340,7 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 			r.ui.radio_image
 		})
 		// if i != r.selected_index {
-		// 	d.draw_rect_filled(x + 4, y + 3, 8, 8, gx.white) // hide the black circle
+		// 	d.draw_rect_filled(x + 4, y + 3, 8, 8, gg.white) // hide the black circle
 		// 	// r.ui.dd.draw_image(x, y-3, 16, 16, r.ui.circle_image)
 		// }
 		// Text

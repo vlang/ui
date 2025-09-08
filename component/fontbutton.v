@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 @[heap]
 pub struct FontButtonComponent {
@@ -23,7 +23,7 @@ pub:
 	tooltip_side ui.Side = .top
 	radius       f64     = .25
 	padding      f64
-	bg_color     &gx.Color = unsafe { nil }
+	bg_color     &gg.Color = unsafe { nil }
 }
 
 // TODO: documentation

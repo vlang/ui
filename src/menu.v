@@ -3,15 +3,15 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 
 const menu_height = 30
 const menu_width = 150
 const menu_padding = 10
-const menu_bar_color = gx.rgb(230, 230, 230)
-const menu_bg_color = gx.rgb(240, 240, 240)
-const menu_bg_color_hover = gx.rgb(220, 220, 220)
-const menu_border_color = gx.rgb(123, 123, 123)
+const menu_bar_color = gg.rgb(230, 230, 230)
+const menu_bg_color = gg.rgb(240, 240, 240)
+const menu_bg_color_hover = gg.rgb(220, 220, 220)
+const menu_border_color = gg.rgb(123, 123, 123)
 
 @[heap]
 pub struct Menu {

@@ -1,15 +1,15 @@
 module ui
 
-import gx
-import toml
+import gg
 import os
+import toml
 
 // define style outside Widget definition
 // all styles would be collected inside one map attached to ui
 
 pub const no_style = '_no_style_'
-pub const no_color = gx.Color{0, 0, 0, 0}
-pub const transparent = gx.Color{0, 0, 0, 1}
+pub const no_color = gg.Color{0, 0, 0, 0}
+pub const transparent = gg.Color{0, 0, 0, 1}
 
 pub struct Style {
 pub mut:
@@ -142,16 +142,16 @@ pub fn default_style() Style {
 		btn: ButtonStyle{
 			radius:           .1
 			border_color:     button_border_color
-			bg_color:         gx.white
-			bg_color_pressed: gx.rgb(119, 119, 119)
-			bg_color_hover:   gx.rgb(219, 219, 219)
+			bg_color:         gg.white
+			bg_color_pressed: gg.rgb(119, 119, 119)
+			bg_color_hover:   gg.rgb(219, 219, 219)
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color:           gx.rgb(87, 153, 245)
-			border_color:    gx.rgb(76, 133, 213)
-			bg_color:        gx.rgb(219, 219, 219)
-			bg_border_color: gx.rgb(191, 191, 191)
+			color:           gg.rgb(87, 153, 245)
+			border_color:    gg.rgb(76, 133, 213)
+			bg_color:        gg.rgb(219, 219, 219)
+			bg_border_color: gg.rgb(191, 191, 191)
 		}
 	}
 }
@@ -164,30 +164,30 @@ pub fn blue_style() Style {
 	return Style{
 		// win
 		win: WindowStyle{
-			bg_color: gx.blue
+			bg_color: gg.blue
 		}
 		// button
 		btn: ButtonStyle{
 			radius:           .3
 			border_color:     button_border_color
-			bg_color:         gx.light_blue
-			bg_color_pressed: gx.rgb(0, 0, 119)
-			bg_color_hover:   gx.rgb(0, 0, 219)
+			bg_color:         gg.light_blue
+			bg_color_pressed: gg.rgb(0, 0, 119)
+			bg_color_hover:   gg.rgb(0, 0, 219)
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color:           gx.rgb(87, 153, 245)
-			border_color:    gx.rgb(76, 133, 213)
-			bg_color:        gx.rgb(219, 219, 219)
-			bg_border_color: gx.rgb(191, 191, 191)
+			color:           gg.rgb(87, 153, 245)
+			border_color:    gg.rgb(76, 133, 213)
+			bg_color:        gg.rgb(219, 219, 219)
+			bg_border_color: gg.rgb(191, 191, 191)
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: transparent // gx.rgb(220, 220, 255)
+			bg_color: transparent // gg.rgb(220, 220, 255)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: transparent // gx.rgb(220, 220, 255)
+			bg_color: transparent // gg.rgb(220, 220, 255)
 		}
 	}
 }
@@ -200,35 +200,35 @@ pub fn red_style() Style {
 	return Style{
 		// win
 		win: WindowStyle{
-			bg_color: gx.red
+			bg_color: gg.red
 		}
 		// button
 		btn: ButtonStyle{
 			radius:           .3
 			border_color:     button_border_color
-			bg_color:         gx.light_red
-			bg_color_pressed: gx.rgb(119, 0, 0)
-			bg_color_hover:   gx.rgb(219, 0, 0)
-			text_color:       gx.red
+			bg_color:         gg.light_red
+			bg_color_pressed: gg.rgb(119, 0, 0)
+			bg_color_hover:   gg.rgb(219, 0, 0)
+			text_color:       gg.red
 		}
 		// progressbar
 		pgbar: ProgressBarStyle{
-			color:           gx.rgb(245, 153, 87)
-			border_color:    gx.rgb(213, 133, 76)
-			bg_color:        gx.rgb(219, 219, 219)
-			bg_border_color: gx.rgb(191, 191, 191)
+			color:           gg.rgb(245, 153, 87)
+			border_color:    gg.rgb(213, 133, 76)
+			bg_color:        gg.rgb(219, 219, 219)
+			bg_border_color: gg.rgb(191, 191, 191)
 		}
 		// slider
 		slider: SliderStyle{
-			thumb_color: gx.rgb(245, 153, 87)
+			thumb_color: gg.rgb(245, 153, 87)
 		}
 		// canvas layout
 		cl: CanvasLayoutStyle{
-			bg_color: transparent // gx.rgb(255, 220, 220)
+			bg_color: transparent // gg.rgb(255, 220, 220)
 		}
 		// stack
 		stack: StackStyle{
-			bg_color: transparent // gx.rgb(255, 220, 220)
+			bg_color: transparent // gg.rgb(255, 220, 220)
 		}
 	}
 }
@@ -239,7 +239,7 @@ pub fn create_red_style_file() {
 
 // parent style
 
-pub fn (l Layout) bg_color() gx.Color {
+pub fn (l Layout) bg_color() gg.Color {
 	mut col := no_color
 	if l is Stack {
 		col = l.style.bg_color

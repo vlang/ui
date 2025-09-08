@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 64 * 4 + 25
 const win_height = 74
@@ -8,7 +8,7 @@ fn main() {
 	rect := ui.rectangle(
 		height: 64
 		width:  64
-		color:  gx.rgb(255, 100, 100)
+		color:  gg.rgb(255, 100, 100)
 	)
 	window := ui.window(
 		width:  win_width
@@ -25,24 +25,24 @@ fn main() {
 				children:  [
 					rect,
 					/*
-					{ rect | color: gx.rgb(100, 255, 100), border: true, border_color: gx.black }
-					{ rect | color: gx.rgb(100, 100, 255), radius: 24 }
-					{ rect | color: gx.rgb(255, 100, 255), radius: 24, border: true, border_color: gx.black }
+					{ rect | color: gg.rgb(100, 255, 100), border: true, border_color: gg.black }
+					{ rect | color: gg.rgb(100, 100, 255), radius: 24 }
+					{ rect | color: gg.rgb(255, 100, 255), radius: 24, border: true, border_color: gg.black }
 					*/
 					ui.rectangle(
 						height: 64
 						width:  64
-						color:  gx.rgb(100, 255, 100)
+						color:  gg.rgb(100, 255, 100)
 					),
 					ui.rectangle(
 						height: 64
 						width:  64
-						color:  gx.rgb(100, 100, 255)
+						color:  gg.rgb(100, 100, 255)
 					),
 					ui.rectangle(
 						height: 64
 						width:  64
-						color:  gx.rgb(255, 100, 255)
+						color:  gg.rgb(255, 100, 255)
 					),
 				]
 			),

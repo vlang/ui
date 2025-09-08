@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 550
 const win_height = 300
@@ -28,7 +28,7 @@ fn make_scroll_area(mut app App) ui.Widget {
 			kids[decl] = ui.textbox(
 				width:        box_width
 				height:       box_height
-				bg_color:     gx.white
+				bg_color:     gg.white
 				is_multiline: true
 				text:         &app.box_text[app.box_text.len - 1]
 			)
@@ -62,7 +62,7 @@ fn main() {
 			scrollview: true
 			widths:     ui.stretch
 			heights:    ui.stretch
-			bg_color:   gx.yellow
+			bg_color:   gg.yellow
 			children:   [
 				make_scroll_area(mut app),
 			]

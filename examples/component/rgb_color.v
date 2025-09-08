@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 200
 const win_height = 400
@@ -10,7 +10,7 @@ fn main() {
 	$if horiz ? {
 		orientation = .horizontal
 	}
-	color := gx.rgb(128, 128, 128)
+	color := gg.rgb(128, 128, 128)
 	rect := ui.rectangle(
 		id:     'rgb_rect'
 		border: true
@@ -46,7 +46,7 @@ fn main() {
 
 fn btn_click(b &ui.Button) {
 	cs := uic.colorsliders_component_from_id(b.ui.window, 'colorsliders')
-	txt := 'gx.rgb(${cs.r_textbox_text},${cs.g_textbox_text},${cs.b_textbox_text})'
+	txt := 'gg.rgb(${cs.r_textbox_text},${cs.g_textbox_text},${cs.b_textbox_text})'
 	ui.message_box(txt)
 }
 

@@ -2,7 +2,7 @@ module component
 
 import ui
 import arrays
-import gx
+import gg
 import math
 
 pub struct Factor {
@@ -207,7 +207,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// column bar textbox
 	g.tb_colbar = ui.textbox(
 		id:        ui.component_id(p.id, 'tb_colbar')
-		bg_color:  gx.light_blue
+		bg_color:  gg.light_blue
 		read_only: true
 	)
 	g.tb_colbar.set_visible(false)
@@ -215,7 +215,7 @@ pub fn grid_canvaslayout(p GridParams) &ui.CanvasLayout {
 	// row bar textbox
 	g.tb_rowbar = ui.textbox(
 		id:        ui.component_id(p.id, 'tb_rowbar')
-		bg_color:  gx.light_gray
+		bg_color:  gg.light_gray
 		read_only: true
 	)
 	g.tb_rowbar.set_visible(false)
@@ -554,7 +554,7 @@ fn (g &GridComponent) nrow() int {
 fn (mut g GridComponent) draw_device_current(mut d ui.DrawDevice) {
 	pos_x, pos_y := g.get_pos(g.cur_i, g.cur_j)
 	w, h := g.widths[g.cur_j], g.height(g.cur_i)
-	sel_color := gx.red
+	sel_color := gg.red
 	g.layout.draw_device_rect_surrounded(d, pos_x, pos_y, w, h, 3, sel_color)
 }
 
@@ -570,9 +570,9 @@ fn (mut g GridComponent) draw_device_colbar(mut d ui.DrawDevice) {
 
 	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
 	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width + g.header_size, g.colbar_height,
-		gx.white)
+		gg.white)
 	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width, g.colbar_height + g.header_size,
-		gx.white)
+		gg.white)
 	mut pos_x := g.layout.x + g.layout.offset_x + g.rowbar_width + g.header_size
 	for j, var in g.headers {
 		tb.set_pos(pos_x, g.pos_y)
@@ -669,7 +669,7 @@ fn (mut g GridComponent) show_selected() {
 					*(tb.text) = gtb.var[g.ind(g.sel_i)]
 				}
 			}
-			tb.style.bg_color = gx.orange
+			tb.style.bg_color = gg.orange
 		}
 		.dd_factor {
 			id := ui.component_id(g.id, 'dd_sel' + '_' + name)
@@ -685,7 +685,7 @@ fn (mut g GridComponent) show_selected() {
 			if gdd is GridDropdown {
 				dd.selected_index = gdd.var.values[g.ind(g.sel_i)]
 			}
-			dd.style.bg_color = gx.orange
+			dd.style.bg_color = gg.orange
 		}
 		.cb_bool {
 			id := ui.component_id(g.id, 'cb_sel')
@@ -704,7 +704,7 @@ fn (mut g GridComponent) show_selected() {
 			if gcb is GridCheckBox {
 				cb.checked = gcb.var[g.ind(g.sel_i)]
 			}
-			cb.style.bg_color = gx.orange
+			cb.style.bg_color = gg.orange
 		}
 		else {}
 	}

@@ -1,15 +1,14 @@
 module ui
 
-import gx
 import gg
 
 type ListBoxFn = fn (&ListBox)
 
 const listbox_item_height = 20
-const listbox_bg_color = gx.white
-const listbox_color_pressed = gx.light_blue
-const listbox_color_disabled = gx.light_gray
-const listbox_border_color = gx.gray
+const listbox_bg_color = gg.white
+const listbox_color_pressed = gg.light_blue
+const listbox_color_disabled = gg.light_gray
+const listbox_border_color = gg.gray
 const listbox_text_offset_y = 3
 const listbox_text_offset_x = 5
 
@@ -38,7 +37,7 @@ pub mut:
 	id            string
 	// TODO
 	draw_lines     bool
-	color_disabled gx.Color = listbox_color_disabled
+	color_disabled gg.Color = listbox_color_disabled
 	// Style
 	theme_style  string
 	style        ListBoxShapeStyle
@@ -211,7 +210,7 @@ fn (mut lb ListBox) init_style() {
 	// 	}
 	// 	if lb.text_size > 0 {
 	// 		_, win_height := lb.ui.window.size()
-	// 		lb.text_cfg = gx.TextCfg{
+	// 		lb.text_cfg = gg.TextCfg{
 	// 			...lb.text_cfg
 	// 			size: text_size_as_int(lb.text_size, win_height)
 	// 		}
@@ -541,7 +540,7 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 			'Empty listbox. Drop files here ...'
 		} else {
 			''
-		}, color: gx.gray)
+		}, color: gg.gray)
 	} else {
 		for inx, item in lb.items {
 			// println("$inx >= $lb.draw_count")

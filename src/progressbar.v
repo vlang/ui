@@ -120,8 +120,8 @@ fn (mut pb ProgressBar) draw_device(mut d DrawDevice) {
 	d.draw_rect_empty(pb.x, pb.y, pb.width, pb.height, pb.style.bg_border_color)
 	// Draw the value
 	width := int(f64(pb.width) * (f64(pb.val) / f64(pb.max)))
-	d.draw_rect_empty(pb.x, pb.y, width, pb.height, pb.style.border_color) // gx.Black)
-	d.draw_rect_filled(pb.x, pb.y, width, pb.height, pb.style.color) // gx.Black)
+	d.draw_rect_empty(pb.x, pb.y, width, pb.height, pb.style.border_color) // gg.Black)
+	d.draw_rect_filled(pb.x, pb.y, width, pb.height, pb.style.color) // gg.Black)
 	$if bb ? {
 		debug_draw_bb_widget(mut pb, pb.ui)
 	}

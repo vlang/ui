@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 import os
 
 const win_width = 550
@@ -114,7 +114,7 @@ fn main() {
 							ordered:    true
 							multi:      true
 							draw_lines: true
-							bg_color:   gx.red
+							bg_color:   gg.red
 							items:      {
 								'classic': 'Classic'
 							}
@@ -151,7 +151,7 @@ fn main() {
 							width:    150
 							height:   100
 							mode:     .multiline
-							bg_color: gx.yellow
+							bg_color: gg.yellow
 							text:     &text
 						)),
 					]
@@ -196,7 +196,7 @@ fn lb_change_multi(lb &ui.ListBox) {
 
 fn draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	w, h := c.full_width, c.full_height
-	c.draw_device_rect_filled(d, 0, 0, w, h, gx.white)
+	c.draw_device_rect_filled(d, 0, 0, w, h, gg.white)
 }
 
 fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {

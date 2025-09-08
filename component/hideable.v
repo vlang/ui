@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 
 @[heap]
 pub struct HideableComponent {
@@ -20,7 +20,7 @@ pub mut:
 pub struct HideableParams {
 pub:
 	id       string
-	bg_color gx.Color
+	bg_color gg.Color
 	layout   &ui.Stack = unsafe { nil }
 	hidden   bool      = true
 	shortcut string

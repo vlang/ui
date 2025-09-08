@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 30 + 256 + 4 * 10 + uic.cb_cv_hsv_w
 const win_height = 376
@@ -9,7 +9,7 @@ fn main() {
 	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)
 	rect := ui.rectangle(text: 'Here a simple ui rectangle')
 	mut dtw := ui.DrawTextWidget(rect)
-	dtw.update_style(color: gx.blue, size: 30)
+	dtw.update_style(color: gg.blue, size: 30)
 	window := ui.window(
 		width:          win_width
 		height:         win_height

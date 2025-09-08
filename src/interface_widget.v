@@ -4,7 +4,6 @@
 module ui
 
 import gg
-import gx
 
 pub interface Widget {
 mut:
@@ -135,7 +134,7 @@ pub fn (w Widget) has_focus() bool {
 }
 
 // TODO: documentation
-pub fn (w Widget) debug_gg_rect(r gg.Rect, color gx.Color) {
+pub fn (w Widget) debug_gg_rect(r gg.Rect, color gg.Color) {
 	dd := w.ui.dd
 	dd.draw_rect_empty(r.x, r.y, r.width, r.height, color)
 }

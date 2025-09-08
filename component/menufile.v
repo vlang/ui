@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 import os
 
 pub type MenuFileFn = fn (&MenuFileComponent)
@@ -29,7 +29,7 @@ pub:
 	on_save         MenuFileFn = unsafe { MenuFileFn(0) }
 	on_new          MenuFileFn = unsafe { MenuFileFn(0) }
 	on_file_changed MenuFileFn = unsafe { MenuFileFn(0) }
-	bg_color        gx.Color   = ui.color_solaris
+	bg_color        gg.Color   = ui.color_solaris
 }
 
 // TODO: documentation
@@ -67,14 +67,14 @@ pub fn menufile_stack(p MenuFileParams) &ui.Stack {
 		heights:  [40.0, 30.0, ui.stretch]
 		spacing:  5
 		margin_:  3
-		bg_color: gx.black
+		bg_color: gg.black
 		children: [
 			ui.row(
 				widths:   ui.stretch
 				heights:  30.0
 				margin:   ui.Margin{5, 10, 5, 10}
 				spacing:  10
-				bg_color: gx.black
+				bg_color: gg.black
 				children: [btn_newfile, btn_openfolder, btn_savefile]
 			),
 			hideable_stack(

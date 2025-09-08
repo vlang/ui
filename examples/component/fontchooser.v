@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 struct App {
 mut:
@@ -15,10 +15,10 @@ fn main() {
 		id:       'tb'
 		text:     &app.text
 		mode:     .multiline
-		bg_color: gx.yellow
+		bg_color: gg.yellow
 	)
 	mut dtw := ui.DrawTextWidget(tb)
-	dtw.update_style(size: 30, color: gx.red)
+	dtw.update_style(size: 30, color: gg.red)
 	mut window := ui.window(
 		mode:    .resizable
 		width:   800

@@ -26,7 +26,7 @@ pub mut:
 	is_focused           bool
 	on_selection_changed DropDownFn = unsafe { nil }
 	hidden               bool
-	// bg_color             gx.Color = ui.dropdown_color
+	// bg_color             gg.Color = ui.dropdown_color
 	// Style
 	theme_style  string
 	style        DropdownShapeStyle

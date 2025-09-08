@@ -1,6 +1,6 @@
 module ui
 
-// import gx
+// import gg
 import gg
 import eventbus
 import regex

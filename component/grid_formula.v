@@ -1,7 +1,7 @@
 module component
 
 import ui
-import gx
+import gg
 import math
 import regex
 
@@ -283,7 +283,7 @@ fn (mut g GridComponent) show_formula() {
 	unsafe {
 		*(tb.text) = g.formula_mngr.formulas[g.formula_mngr.sel_formula].formula
 	}
-	tb.style.bg_color = gx.yellow
+	tb.style.bg_color = gg.yellow
 	g.layout.update_layout()
 }
 

@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 250
 const win_height = 250
@@ -21,9 +21,9 @@ fn main() {
 					ui.dropdown(
 						width:                140
 						def_text:             'Select an option'
-						text_color:           gx.blue
+						text_color:           gg.blue
 						text_size:            20
-						bg_color:             gx.light_blue
+						bg_color:             gg.light_blue
 						on_selection_changed: dd_change
 						items:                [
 							ui.DropdownItem{
@@ -40,7 +40,7 @@ fn main() {
 					ui.rectangle(
 						height: 100
 						width:  250
-						color:  gx.rgb(100, 255, 100)
+						color:  gg.rgb(100, 255, 100)
 					),
 				]
 			),

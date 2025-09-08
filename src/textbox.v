@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 module ui
 
-import gx
+import gg
 import time
 // import sokol.sapp
 
@@ -13,13 +13,13 @@ enum SelectionDirection {
 	right_to_left
 }
 
-const text_border_color = gx.rgb(177, 177, 177)
-const text_inner_border_color = gx.rgb(240, 240, 240)
-const text_border_accentuated_color = gx.rgb(255, 0, 0)
+const text_border_color = gg.rgb(177, 177, 177)
+const text_inner_border_color = gg.rgb(240, 240, 240)
+const text_border_accentuated_color = gg.rgb(255, 0, 0)
 const textbox_padding_x = 5
 const textbox_padding_y = 2
-// selection_color = gx.rgb(226, 233, 241)
-const selection_color = gx.rgb(186, 214, 251)
+// selection_color = gg.rgb(226, 233, 241)
+const selection_color = gg.rgb(186, 214, 251)
 const textbox_line_height_factor = 0.5 // line_height * ( 1.0 + textview_line_height_factor)
 
 type TextBoxU32Fn = fn (&TextBox, u32)
@@ -95,7 +95,7 @@ pub mut:
 	style_params TextBoxStyleParams
 	// TODO: put in style
 	borderless bool
-	// bg_color           gx.Color
+	// bg_color           gg.Color
 	border_accentuated bool
 	// related to widget drawing
 	hidden   bool
@@ -146,7 +146,7 @@ pub:
 	is_error           &bool = unsafe { nil }
 	is_focused         bool
 	// is_error bool
-	// bg_color           gx.Color = gx.white
+	// bg_color           gg.Color = gg.white
 	borderless         bool
 	border_accentuated bool
 	// text_size          f64
@@ -397,13 +397,13 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 		// Placeholder
 		if text == '' && placeholder != '' {
 			dtw.draw_device_styled_text(d, tb.x + textbox_padding_x, text_y, placeholder,
-				color: gx.gray // tb.text_color
+				color: gg.gray // tb.text_color
 			)
 			// Native text rendering
 			$if macos {
 				if tb.ui.gg.native_rendering {
 					tb.ui.gg.draw_text(tb.x + textbox_padding_x, text_y, placeholder,
-						color: gx.gray // tb.text_color
+						color: gg.gray // tb.text_color
 					)
 				}
 			}
@@ -468,7 +468,7 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 				tb.ui.gg.draw_rect_filled(cursor_x, tb.y + textbox_padding_y, 1, tb.line_height,
 					tb.style_params.cursor_color)
 			} else {
-				// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gx.Black)
+				// tb.ui.dd.draw_line(cursor_x, tb.y+2, cursor_x, tb.y-2+tb.height-1)//, gg.Black)
 				d.draw_rect_filled(cursor_x, tb.y + textbox_padding_y, 1, tb.line_height,
 					tb.style_params.cursor_color)
 			}

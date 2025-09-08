@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 fn main() {
 	ui.run(ui.window(
@@ -8,7 +8,7 @@ fn main() {
 		title:  'Name'
 		layout: ui.box_layout(
 			children: {
-				'rect: stretch': ui.rectangle(color: gx.white)
+				'rect: stretch': ui.rectangle(color: gg.white)
 				'lab: stretch':  ui.label(
 					text:    'Centered text'
 					justify: ui.center

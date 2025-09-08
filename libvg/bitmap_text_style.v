@@ -1,6 +1,6 @@
 module libvg
 
-import gx
+import gg
 import x.ttf
 
 pub struct BitmapTextStyle {
@@ -8,7 +8,7 @@ pub mut:
 	font_name      string
 	font_path      string
 	size           int
-	color          gx.Color
+	color          gg.Color
 	align          ttf.Text_align
 	vertical_align f32
 }

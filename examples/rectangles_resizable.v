@@ -1,5 +1,5 @@
 import ui
-import gx
+import gg
 
 const win_width = 64 * 4 + 25
 const win_height = 74
@@ -8,7 +8,7 @@ fn main() {
 	rect := ui.rectangle(
 		height: 64
 		width:  64
-		color:  gx.rgb(255, 100, 100)
+		color:  gg.rgb(255, 100, 100)
 		radius: 10
 		text:   'Red'
 	)
@@ -28,9 +28,9 @@ fn main() {
 				widths:    ui.stretch
 				children:  [
 					rect,
-					ui.rectangle(color: gx.rgb(100, 255, 100), radius: 10, text: 'Green'),
-					ui.rectangle(color: gx.rgb(100, 100, 255), radius: 10, text: 'Blue'),
-					ui.rectangle(color: gx.rgb(255, 100, 255), radius: 10, text: 'Pink'),
+					ui.rectangle(color: gg.rgb(100, 255, 100), radius: 10, text: 'Green'),
+					ui.rectangle(color: gg.rgb(100, 100, 255), radius: 10, text: 'Blue'),
+					ui.rectangle(color: gg.rgb(255, 100, 255), radius: 10, text: 'Pink'),
 				]
 			),
 		]

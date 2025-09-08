@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 fn main() {
 	n := 100
@@ -15,12 +15,12 @@ fn main() {
 			weight:    33
 			direction: .column
 			child1:    ui.rectangle(
-				color: gx.rgb(100, 255, 100)
+				color: gg.rgb(100, 255, 100)
 			)
 			child2:    uic.splitpanel_stack(
 				weight: 25.0
 				child1: ui.rectangle(
-					color: gx.rgb(100, 255, 100)
+					color: gg.rgb(100, 255, 100)
 				)
 				child2: uic.splitpanel_stack(
 					id: 'row'
@@ -58,7 +58,7 @@ fn main() {
 						text:      &tbm
 						height:    200
 						text_size: 24
-						bg_color:  gx.hex(0xfcf4e4ff) // gx.rgb(252, 244, 228)
+						bg_color:  gg.hex(0xfcf4e4ff) // gg.rgb(252, 244, 228)
 					)
 				)
 			)

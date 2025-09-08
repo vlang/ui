@@ -1,6 +1,6 @@
 module ui
 
-import gx
+import gg
 import toml
 
 // CheckBox
@@ -8,15 +8,15 @@ import toml
 pub struct CheckBoxShapeStyle {
 pub mut:
 	check_mode   string   = 'check' // or "check_white" and maybe one day "square" and "square_white"
-	border_color gx.Color = cb_border_color
-	bg_color     gx.Color = gx.white
+	border_color gg.Color = cb_border_color
+	bg_color     gg.Color = gg.white
 }
 
 pub struct CheckBoxStyle {
 	CheckBoxShapeStyle // text_style TextStyle
 pub mut:
 	text_font_name      string = 'system'
-	text_color          gx.Color
+	text_color          gg.Color
 	text_size           int                 = 16
 	text_align          TextHorizontalAlign = .left
 	text_vertical_align TextVerticalAlign   = .top
@@ -27,8 +27,8 @@ pub struct CheckBoxStyleParams {
 	WidgetTextStyleParams
 pub mut:
 	style        string   = no_style
-	border_color gx.Color = no_color
-	bg_color     gx.Color = no_color
+	border_color gg.Color = no_color
+	bg_color     gg.Color = no_color
 	check_mode   string
 }
 

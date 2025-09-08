@@ -1,6 +1,6 @@
 import ui
 import ui.component as uic
-import gx
+import gg
 
 const win_width = 600
 const win_height = 400
@@ -9,8 +9,8 @@ fn main() {
 	cb_layout := uic.colorbox_stack(id: 'cbox', light: false, hsl: false)
 	rect := ui.rectangle(
 		text:  'Here a simple ui rectangle '
-		color: gx.blue
-		// align: gx.align_left
+		color: gg.blue
+		// align: gg.align_left
 		text_size: 30
 	)
 	window := ui.window(
@@ -30,7 +30,7 @@ fn main() {
 						ui.column(
 							heights:  ui.compact
 							widths:   ui.compact
-							bg_color: gx.rgb(200, 100, 200)
+							bg_color: gg.rgb(200, 100, 200)
 							children: [
 								ui.button(id: 'left1', text: 'toto', padding: .1, radius: .25),
 								ui.button(id: 'left2', text: 'toto2'),
@@ -47,7 +47,7 @@ fn main() {
 						ui.column(
 							heights:  200.0
 							widths:   300.0
-							bg_color: gx.rgb(100, 200, 200)
+							bg_color: gg.rgb(100, 200, 200)
 							children: [
 								uic.doublelistbox_stack(
 									id:    'dlb1'
