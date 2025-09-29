@@ -36,7 +36,7 @@ void vui_wait_events() {
 }
 
 string vui_bundle_path() {
-	return builtin__ctovstring([[[NSBundle mainBundle] bundlePath] UTF8String]);
+	return builtin__tos_clone([[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
 void vui_minimize_window(void* window) {
