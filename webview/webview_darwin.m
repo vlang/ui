@@ -37,8 +37,8 @@ string g_vui_webview_cookie_val;
 //    [_ObjcLog logWithFile:"[WKWebView]" function:[message.name UTF8String] line:0 color:[UIColor whiteColor] message:message.body];
 puts(".m received script message");
 NSLog(message.body);
-g_vui_webview_js_val = builtin_tos_clone([message.body UTF8String]);
-//                 *resultt = builtin_tos_clone([result UTF8String]);
+g_vui_webview_js_val = builtin__tos_clone([message.body UTF8String]);
+//                 *resultt = builtin__tos_clone([result UTF8String]);
 }
 @end
 
@@ -144,8 +144,8 @@ void darwin_webview_eval_js(void *web_view_, string js) { //, string *resultt) {
                NSLog(@"eval js result = %@", result);
                //       finished = YES;
                if (result != nil&& result != [NSNull null] ) {
-//                 *resultt = builtin_tos_clone([result UTF8String]);
-g_vui_webview_js_val = builtin_tos_clone([result UTF8String]);
+//                 *resultt = builtin__tos_clone([result UTF8String]);
+g_vui_webview_js_val = builtin__tos_clone([result UTF8String]);
                }
              }];
 
