@@ -1,9 +1,8 @@
 # V UI 0.0.4
 
-[![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/commits/master)
+[![Build Status](https://github.com/vlang/ui/workflows/CI/badge.svg)](https://github.com/vlang/ui/actions/workflows/ci.yml)
 [![Sponsor][SponsorBadge]][SponsorUrl]
 [![Patreon][PatreonBadge]][PatreonUrl]
-
 [![Twitter handle][]][twitter badge]
 
 <a href='https://github.com/vlang/ui/blob/master/examples/users.v'>
@@ -114,10 +113,9 @@ V UI is licensed under MIT.
 
 Simply open a GitHub pull request.
 
-[twitter handle]: https://img.shields.io/twitter/follow/v_language.svg?style=social&label=Follow
-[twitter badge]: https://twitter.com/v_language
+[twitter handle]: https://img.shields.io/twitter/follow/v_language
+[twitter badge]: https://x.com/v_language
 [PatreonBadge]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dvlang%26type%3Dpatrons&style=flat
-[SponsorBadge]: https://camo.githubusercontent.com/da8bc40db5ed31e4b12660245535b5db67aa03ce/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f6c6162656c3d53706f6e736f72266d6573736167653d254532253944254134266c6f676f3d476974487562
-
+[SponsorBadge]: https://img.shields.io/static/v1?label=Sponsor&message=❤️&logo=GitHub&color=ea4aaa
 [PatreonUrl]: https://patreon.com/vlang
 [SponsorUrl]: https://github.com/sponsors/medvednikov
