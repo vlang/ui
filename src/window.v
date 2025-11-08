@@ -811,11 +811,11 @@ fn window_key_down(event gg.Event, u &UI) {
 		window.key_down_fn(window, e)
 	}
 	// TODO
-	if true { // action == 2 || action == 1 {
-		window.eventbus.publish(events.on_key_down, window, e)
-	} else {
-		window.eventbus.publish(events.on_key_up, window, e)
-	}
+	// if true { // action == 2 || action == 1 {
+	window.eventbus.publish(events.on_key_down, window, e)
+	//} else {
+	//	window.eventbus.publish(events.on_key_up, window, e)
+	//}
 	/*
 	for child in window.children {
 		is_focused := child.is_focused()
