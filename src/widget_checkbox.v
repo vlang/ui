@@ -49,6 +49,8 @@ pub mut:
 	// bg_color    gg.Color = no_color
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]
@@ -94,6 +96,11 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	cb.width = dtw.text_width(cb.text) + 5 + check_mark_size
 	cb.load_style()
 	// cb.init_style()
+	// Create native widget if native_widgets is enabled
+	if cb.ui.window.native_widgets.is_enabled() {
+		cb.native_w = cb.ui.window.native_widgets.create_checkbox(cb.x, cb.y, cb.width,
+			cb.height, cb.text, cb.checked)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
 	subscriber.subscribe_method(events.on_click, cb_click, cb)
@@ -199,6 +206,12 @@ pub fn (mut cb CheckBox) draw() {
 }
 
 pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
+	// Native widget: update position/state and skip custom drawing
+	if cb.ui.window.native_widgets.is_enabled() && cb.native_w.handle != unsafe { nil } {
+		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width,
+			cb.height, cb.text, cb.checked)
+		return
+	}
 	offset_start(mut cb)
 	$if layout ? {
 		if cb.ui.layout_print {

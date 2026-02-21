@@ -84,6 +84,8 @@ pub mut:
 	// theme     map[int]gg.Color = map[int]gg.Color{}
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]
@@ -161,6 +163,11 @@ fn (mut b Button) init(parent Layout) {
 	if b.tooltip.text != '' {
 		mut win := u.window
 		win.tooltip.append(b, b.tooltip)
+	}
+	// Create native widget if native_widgets is enabled
+	if b.ui.window.native_widgets.is_enabled() {
+		b.native_w = b.ui.window.native_widgets.create_button(b.x, b.y, b.width, b.height,
+			b.text)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, btn_key_down, b)
@@ -373,6 +380,12 @@ fn (mut b Button) draw() {
 }
 
 fn (mut b Button) draw_device(mut d DrawDevice) {
+	// Native widget: update position/text and skip custom drawing
+	if b.ui.window.native_widgets.is_enabled() && b.native_w.handle != unsafe { nil } {
+		b.ui.window.native_widgets.update_button(&b.native_w, b.x, b.y, b.width,
+			b.height, b.text)
+		return
+	}
 	offset_start(mut b)
 	defer {
 		offset_end(mut b)
