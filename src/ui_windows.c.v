@@ -4,6 +4,7 @@
 module ui
 
 fn C.MessageBox(h voidptr, text &u16, caption &u16, kind u32) int
+fn C.sapp_win32_get_hwnd() voidptr
 
 pub fn message_box(s string) {
 	title := ''

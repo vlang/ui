@@ -361,6 +361,15 @@ fn gg_init(mut window Window) {
 		window.add_message_dialog()
 	}
 
+	// Initialize native widget parent handle before children create native controls
+	if window.native_widgets.is_enabled() {
+		$if macos {
+			window.native_widgets.init_parent(C.sapp_macos_get_window())
+		} $else $if windows {
+			window.native_widgets.init_parent(C.sapp_win32_get_hwnd())
+		}
+	}
+
 	for mut child in window.children {
 		// println('init <$child.id>')
 		window.register_child(*child)
