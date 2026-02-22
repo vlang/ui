@@ -56,5 +56,44 @@ pub fn (mut nw NativeWidgets) create_label(x int, y int, w int, h int, text stri
 pub fn (nw &NativeWidgets) update_label(nwidget &NativeWidget, x int, y int, w int, h int, text string) {
 }
 
+pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientation Orientation, min f64, max f64, val f64) NativeWidget {
+	return NativeWidget{}
+}
+
+pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w int, h int, val f64) {
+}
+
+pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	return NativeWidget{}
+}
+
+pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+}
+
+pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	return NativeWidget{}
+}
+
+pub fn (nw &NativeWidgets) update_listbox(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+}
+
+pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open bool) NativeWidget {
+	return NativeWidget{}
+}
+
+pub fn (nw &NativeWidgets) update_switch(nwidget &NativeWidget, x int, y int, w int, h int, open bool) {
+}
+
+pub fn (mut nw NativeWidgets) create_picture(x int, y int, w int, h int, path string) NativeWidget {
+	return NativeWidget{}
+}
+
+pub fn (nw &NativeWidgets) update_picture(nwidget &NativeWidget, x int, y int, w int, h int) {
+}
+
+pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []string) NativeWidget {
+	return NativeWidget{}
+}
+
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {
 }

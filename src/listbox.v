@@ -60,6 +60,8 @@ pub mut:
 	adj_height int
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
@@ -154,6 +156,15 @@ fn (mut lb ListBox) init(parent Layout) {
 		scrollview_update(lb)
 	}
 
+	// Create native widget if native_widgets is enabled
+	if lb.ui.window.native_widgets.is_enabled() {
+		mut texts := []string{len: lb.items.len}
+		for i, item in lb.items {
+			texts[i] = item.text
+		}
+		lb.native_w = lb.ui.window.native_widgets.create_listbox(lb.x, lb.y, lb.width,
+			lb.height, texts, lb.selection)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
 	subscriber.subscribe_method(events.on_mouse_down, lb_mouse_down, lb)
@@ -502,6 +513,12 @@ fn (mut lb ListBox) draw() {
 }
 
 fn (mut lb ListBox) draw_device(mut d DrawDevice) {
+	// Native widget: update position/selection and skip custom drawing
+	if lb.ui.window.native_widgets.is_enabled() && lb.native_w.handle != unsafe { nil } {
+		lb.ui.window.native_widgets.update_listbox(&lb.native_w, lb.x, lb.y, lb.width,
+			lb.height, lb.selection)
+		return
+	}
 	offset_start(mut lb)
 	defer {
 		offset_end(mut lb)

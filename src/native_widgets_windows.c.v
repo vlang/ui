@@ -171,6 +171,146 @@ pub fn (nw &NativeWidgets) update_label(nwidget &NativeWidget, x int, y int, w i
 	C.SetWindowTextW(nwidget.handle, text.to_wide())
 }
 
+// Win32 additional constants
+const tbs_horz = u32(0x0000)
+const tbs_vert = u32(0x0002)
+const tbm_setrangemin = u32(0x0407)
+const tbm_setrangemax = u32(0x0408)
+const tbm_setpos_tb = u32(0x0405)
+const cbs_dropdownlist = u32(0x0003)
+const cb_addstring = u32(0x0143)
+const cb_setcursel = u32(0x014E)
+const lbs_notify = u32(0x0001)
+const lbs_hasstrings = u32(0x0040)
+const lb_addstring = u32(0x0180)
+const lb_setcursel = u32(0x0186)
+const ws_vscroll = u32(0x00200000)
+const ss_bitmap = u32(0x000E)
+
+fn win32_trackbar_class() &u16 {
+	return 'msctls_trackbar32'.to_wide()
+}
+
+fn win32_combobox_class() &u16 {
+	return 'COMBOBOX'.to_wide()
+}
+
+fn win32_listbox_class() &u16 {
+	return 'LISTBOX'.to_wide()
+}
+
+pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientation Orientation, min f64, max f64, val f64) NativeWidget {
+	style := ws_child | ws_visible | ws_tabstop | if orientation == .horizontal {
+		tbs_horz
+	} else {
+		tbs_vert
+	}
+	handle := C.CreateWindowExW(0, win32_trackbar_class(), ''.to_wide(), style, x, y,
+		w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	C.SendMessageW(handle, tbm_setrangemin, usize(0), isize(int(min)))
+	C.SendMessageW(handle, tbm_setrangemax, usize(0), isize(int(max)))
+	C.SendMessageW(handle, tbm_setpos_tb, usize(1), isize(int(val)))
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w int, h int, val f64) {
+	C.MoveWindow(nwidget.handle, x, y, w, h, true)
+	C.SendMessageW(nwidget.handle, tbm_setpos_tb, usize(1), isize(int(val)))
+}
+
+pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	handle := C.CreateWindowExW(0, win32_combobox_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | cbs_dropdownlist,
+		x, y, w, h * 8, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	for item in items {
+		C.SendMessageW(handle, cb_addstring, usize(0), isize(item.to_wide()))
+	}
+	if selected >= 0 {
+		C.SendMessageW(handle, cb_setcursel, usize(selected), 0)
+	}
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+	C.MoveWindow(nwidget.handle, x, y, w, h * 8, true)
+	if selected >= 0 {
+		C.SendMessageW(nwidget.handle, cb_setcursel, usize(selected), 0)
+	}
+}
+
+pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	handle := C.CreateWindowExW(0, win32_listbox_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | ws_border | ws_vscroll | lbs_notify | lbs_hasstrings,
+		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	for item in items {
+		C.SendMessageW(handle, lb_addstring, usize(0), isize(item.to_wide()))
+	}
+	if selected >= 0 {
+		C.SendMessageW(handle, lb_setcursel, usize(selected), 0)
+	}
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_listbox(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+	C.MoveWindow(nwidget.handle, x, y, w, h, true)
+	if selected >= 0 {
+		C.SendMessageW(nwidget.handle, lb_setcursel, usize(selected), 0)
+	}
+}
+
+pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open bool) NativeWidget {
+	handle := C.CreateWindowExW(0, win32_button_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | bs_autocheckbox,
+		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	if open {
+		C.SendMessageW(handle, bm_setcheck, bst_checked, 0)
+	}
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_switch(nwidget &NativeWidget, x int, y int, w int, h int, open bool) {
+	C.MoveWindow(nwidget.handle, x, y, w, h, true)
+	C.SendMessageW(nwidget.handle, bm_setcheck, if open { bst_checked } else { bst_unchecked },
+		0)
+}
+
+pub fn (mut nw NativeWidgets) create_picture(x int, y int, w int, h int, path string) NativeWidget {
+	// Win32 STATIC with SS_BITMAP - simplified, just creates the control
+	handle := C.CreateWindowExW(0, win32_static_class(), ''.to_wide(), ws_child | ws_visible | ss_bitmap,
+		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_picture(nwidget &NativeWidget, x int, y int, w int, h int) {
+	C.MoveWindow(nwidget.handle, x, y, w, h, true)
+}
+
+pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []string) NativeWidget {
+	// Win32 menus are typically attached to the window frame via HMENU.
+	// For simplicity, we create button-based menu items.
+	mut first_handle := unsafe { voidptr(nil) }
+	count := items.len
+	item_w := if count > 0 { w / count } else { w }
+	for i, item in items {
+		handle := C.CreateWindowExW(0, win32_button_class(), item.to_wide(), ws_child | ws_visible | bs_pushbutton,
+			x + i * item_w, y, item_w, h, nw.parent_handle, unsafe { nil }, unsafe { nil },
+			unsafe { nil })
+		if i == 0 {
+			first_handle = handle
+		}
+	}
+	return NativeWidget{
+		handle: first_handle
+	}
+}
+
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {
 	C.DestroyWindow(nwidget.handle)
 }

@@ -125,6 +125,107 @@ pub fn (nw &NativeWidgets) update_label(nwidget &NativeWidget, x int, y int, w i
 	C.vui_native_update_label(nwidget.handle, x, y, w, h, &char(text.str))
 }
 
+// Slider (NSSlider)
+fn C.vui_native_create_slider(parent voidptr, x int, y int, w int, h int, horizontal bool, min f64, max f64, val f64) voidptr
+fn C.vui_native_update_slider(handle voidptr, x int, y int, w int, h int, val f64)
+
+// Dropdown (NSPopUpButton)
+fn C.vui_native_create_dropdown(parent voidptr, x int, y int, w int, h int, items &&char, count int, selected int) voidptr
+fn C.vui_native_update_dropdown(handle voidptr, x int, y int, w int, h int, selected int)
+
+// ListBox (NSScrollView + NSTableView simplified as NSPopUpButton list)
+fn C.vui_native_create_listbox(parent voidptr, x int, y int, w int, h int, items &&char, count int, selected int) voidptr
+fn C.vui_native_update_listbox(handle voidptr, x int, y int, w int, h int, selected int)
+
+// Switch (NSSwitch / NSButton toggle)
+fn C.vui_native_create_switch(parent voidptr, x int, y int, w int, h int, open bool) voidptr
+fn C.vui_native_update_switch(handle voidptr, x int, y int, w int, h int, open bool)
+
+// Picture (NSImageView)
+fn C.vui_native_create_picture(parent voidptr, x int, y int, w int, h int, path &char) voidptr
+fn C.vui_native_update_picture(handle voidptr, x int, y int, w int, h int)
+
+// Menu (NSView-based menu bar)
+fn C.vui_native_create_menu(parent voidptr, x int, y int, w int, h int, items &&char, count int) voidptr
+
+pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientation Orientation, min f64, max f64, val f64) NativeWidget {
+	horizontal := orientation == .horizontal
+	handle := C.vui_native_create_slider(nw.parent_handle, x, y, w, h, horizontal, min,
+		max, val)
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w int, h int, val f64) {
+	C.vui_native_update_slider(nwidget.handle, x, y, w, h, val)
+}
+
+pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	mut ptrs := []&char{len: items.len}
+	for i, v in items {
+		ptrs[i] = &char(v.str)
+	}
+	handle := C.vui_native_create_dropdown(nw.parent_handle, x, y, w, h, ptrs.data,
+		items.len, selected)
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+	C.vui_native_update_dropdown(nwidget.handle, x, y, w, h, selected)
+}
+
+pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
+	mut ptrs := []&char{len: items.len}
+	for i, v in items {
+		ptrs[i] = &char(v.str)
+	}
+	handle := C.vui_native_create_listbox(nw.parent_handle, x, y, w, h, ptrs.data,
+		items.len, selected)
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_listbox(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
+	C.vui_native_update_listbox(nwidget.handle, x, y, w, h, selected)
+}
+
+pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open bool) NativeWidget {
+	handle := C.vui_native_create_switch(nw.parent_handle, x, y, w, h, open)
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_switch(nwidget &NativeWidget, x int, y int, w int, h int, open bool) {
+	C.vui_native_update_switch(nwidget.handle, x, y, w, h, open)
+}
+
+pub fn (mut nw NativeWidgets) create_picture(x int, y int, w int, h int, path string) NativeWidget {
+	handle := C.vui_native_create_picture(nw.parent_handle, x, y, w, h, &char(path.str))
+	return NativeWidget{
+		handle: handle
+	}
+}
+
+pub fn (nw &NativeWidgets) update_picture(nwidget &NativeWidget, x int, y int, w int, h int) {
+	C.vui_native_update_picture(nwidget.handle, x, y, w, h)
+}
+
+pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []string) NativeWidget {
+	mut ptrs := []&char{len: items.len}
+	for i, v in items {
+		ptrs[i] = &char(v.str)
+	}
+	handle := C.vui_native_create_menu(nw.parent_handle, x, y, w, h, ptrs.data, items.len)
+	return NativeWidget{
+		handle: handle
+	}
+}
+
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {
 	C.vui_native_remove_view(nwidget.handle)
 }

@@ -250,3 +250,194 @@ void vui_native_update_label(void* handle, int x, int y, int w, int h, const cha
 	[lbl setStringValue:[NSString stringWithUTF8String:text ? text : ""]];
 	[lbl setNeedsDisplay:YES];
 }
+
+// ---- Slider (NSSlider) ----
+
+void* vui_native_create_slider(void* parent, int x, int y, int w, int h,
+                                bool horizontal, double min, double max, double val) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+	NSSlider* slider = [[NSSlider alloc] initWithFrame:frame];
+	[slider setMinValue:min];
+	[slider setMaxValue:max];
+	[slider setDoubleValue:val];
+	if (!horizontal) {
+		// NSSlider is horizontal by default; for vertical, swap w/h and set vertical flag
+		[slider setVertical:YES];
+	}
+	[slider setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+	[parentView addSubview:slider];
+	return (__bridge_retained void*)slider;
+}
+
+void vui_native_update_slider(void* handle, int x, int y, int w, int h, double val) {
+	NSSlider* slider = (__bridge NSSlider*)handle;
+	NSView* parentView = [slider superview];
+	if (parentView) {
+		slider.frame = vui_flipped_rect(parentView, x, y, w, h);
+	}
+	[slider setDoubleValue:val];
+	[slider setNeedsDisplay:YES];
+}
+
+// ---- Dropdown (NSPopUpButton) ----
+
+void* vui_native_create_dropdown(void* parent, int x, int y, int w, int h,
+                                  const char** items, int count, int selected) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+	NSPopUpButton* popup = [[NSPopUpButton alloc] initWithFrame:frame pullsDown:NO];
+	for (int i = 0; i < count; i++) {
+		[popup addItemWithTitle:[NSString stringWithUTF8String:items[i] ? items[i] : ""]];
+	}
+	if (selected >= 0 && selected < count) {
+		[popup selectItemAtIndex:selected];
+	}
+	[popup setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+	[parentView addSubview:popup];
+	return (__bridge_retained void*)popup;
+}
+
+void vui_native_update_dropdown(void* handle, int x, int y, int w, int h, int selected) {
+	NSPopUpButton* popup = (__bridge NSPopUpButton*)handle;
+	NSView* parentView = [popup superview];
+	if (parentView) {
+		popup.frame = vui_flipped_rect(parentView, x, y, w, h);
+	}
+	if (selected >= 0 && selected < (int)[popup numberOfItems]) {
+		[popup selectItemAtIndex:selected];
+	}
+	[popup setNeedsDisplay:YES];
+}
+
+// ---- ListBox (NSScrollView containing NSTableView) ----
+// Simplified: use an NSScrollView with stacked NSTextFields for list items
+
+void* vui_native_create_listbox(void* parent, int x, int y, int w, int h,
+                                 const char** items, int count, int selected) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+
+	NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:frame];
+	[scrollView setHasVerticalScroller:YES];
+	[scrollView setBorderType:NSBezelBorder];
+	[scrollView setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+
+	int item_height = 20;
+	NSView* docView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, w, count * item_height)];
+
+	for (int i = 0; i < count; i++) {
+		NSRect itemFrame = NSMakeRect(0, (count - 1 - i) * item_height, w - 15, item_height);
+		NSTextField* lbl = [[NSTextField alloc] initWithFrame:itemFrame];
+		[lbl setStringValue:[NSString stringWithUTF8String:items[i] ? items[i] : ""]];
+		[lbl setEditable:NO];
+		[lbl setSelectable:NO];
+		[lbl setBordered:NO];
+		if (i == selected) {
+			[lbl setBackgroundColor:[NSColor selectedTextBackgroundColor]];
+		} else {
+			[lbl setBackgroundColor:[NSColor clearColor]];
+		}
+		[lbl setTag:i];
+		[docView addSubview:lbl];
+	}
+
+	[scrollView setDocumentView:docView];
+	[parentView addSubview:scrollView];
+	return (__bridge_retained void*)scrollView;
+}
+
+void vui_native_update_listbox(void* handle, int x, int y, int w, int h, int selected) {
+	NSScrollView* scrollView = (__bridge NSScrollView*)handle;
+	NSView* parentView = [scrollView superview];
+	if (parentView) {
+		scrollView.frame = vui_flipped_rect(parentView, x, y, w, h);
+	}
+	NSView* docView = [scrollView documentView];
+	for (NSView* subview in [docView subviews]) {
+		if ([subview isKindOfClass:[NSTextField class]]) {
+			NSTextField* lbl = (NSTextField*)subview;
+			if ([lbl tag] == selected) {
+				[lbl setBackgroundColor:[NSColor selectedTextBackgroundColor]];
+			} else {
+				[lbl setBackgroundColor:[NSColor clearColor]];
+			}
+		}
+	}
+	[scrollView setNeedsDisplay:YES];
+}
+
+// ---- Switch (NSButton with toggle style) ----
+
+void* vui_native_create_switch(void* parent, int x, int y, int w, int h, bool open) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+	NSButton* sw = [[NSButton alloc] initWithFrame:frame];
+	[sw setButtonType:NSSwitchButton];
+	[sw setTitle:@""];
+	[sw setState:open ? NSControlStateValueOn : NSControlStateValueOff];
+	[sw setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+	[parentView addSubview:sw];
+	return (__bridge_retained void*)sw;
+}
+
+void vui_native_update_switch(void* handle, int x, int y, int w, int h, bool open) {
+	NSButton* sw = (__bridge NSButton*)handle;
+	NSView* parentView = [sw superview];
+	if (parentView) {
+		sw.frame = vui_flipped_rect(parentView, x, y, w, h);
+	}
+	[sw setState:open ? NSControlStateValueOn : NSControlStateValueOff];
+	[sw setNeedsDisplay:YES];
+}
+
+// ---- Picture (NSImageView) ----
+
+void* vui_native_create_picture(void* parent, int x, int y, int w, int h, const char* path) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+	NSImageView* iv = [[NSImageView alloc] initWithFrame:frame];
+	if (path) {
+		NSString* nsPath = [NSString stringWithUTF8String:path];
+		NSImage* img = [[NSImage alloc] initWithContentsOfFile:nsPath];
+		if (img) {
+			[iv setImage:img];
+		}
+	}
+	[iv setImageScaling:NSImageScaleProportionallyUpOrDown];
+	[iv setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+	[parentView addSubview:iv];
+	return (__bridge_retained void*)iv;
+}
+
+void vui_native_update_picture(void* handle, int x, int y, int w, int h) {
+	NSImageView* iv = (__bridge NSImageView*)handle;
+	NSView* parentView = [iv superview];
+	if (parentView) {
+		iv.frame = vui_flipped_rect(parentView, x, y, w, h);
+	}
+	[iv setNeedsDisplay:YES];
+}
+
+// ---- Menu (NSView-based simple menu bar) ----
+
+void* vui_native_create_menu(void* parent, int x, int y, int w, int h,
+                              const char** items, int count) {
+	NSView* parentView = (__bridge NSView*)parent;
+	NSRect frame = vui_flipped_rect(parentView, x, y, w, h);
+	NSView* container = [[NSView alloc] initWithFrame:frame];
+	[container setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
+
+	int item_width = (count > 0) ? (w / count) : w;
+	for (int i = 0; i < count; i++) {
+		NSRect btnFrame = NSMakeRect(i * item_width, 0, item_width, h);
+		NSButton* btn = [[NSButton alloc] initWithFrame:btnFrame];
+		[btn setTitle:[NSString stringWithUTF8String:items[i] ? items[i] : ""]];
+		[btn setBezelStyle:NSBezelStyleRounded];
+		[btn setTag:i];
+		[container addSubview:btn];
+	}
+
+	[parentView addSubview:container];
+	return (__bridge_retained void*)container;
+}

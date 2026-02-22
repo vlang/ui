@@ -23,6 +23,8 @@ pub mut:
 	clipping bool
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 mut:
 	parent  Layout = empty_stack
 	draw_fn DrawFn = unsafe { nil }
