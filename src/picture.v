@@ -19,8 +19,8 @@ pub mut:
 	component voidptr
 	// native widget handle (when native_widgets is enabled)
 	native_w NativeWidget
-	width     int
-	height    int
+	width    int
+	height   int
 mut:
 	text      string
 	parent    Layout = empty_stack

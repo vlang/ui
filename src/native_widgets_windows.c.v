@@ -71,6 +71,9 @@ pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title st
 	}
 }
 
+pub fn (nw &NativeWidgets) button_set_callback(nwidget &NativeWidget, callback fn (voidptr), v_button voidptr) {
+}
+
 pub fn (nw &NativeWidgets) update_button(nwidget &NativeWidget, x int, y int, w int, h int, title string) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
 	C.SetWindowTextW(nwidget.handle, title.to_wide())
@@ -122,8 +125,8 @@ pub fn (mut nw NativeWidgets) create_radio_group(x int, y int, w int, h int, val
 		} else {
 			u32(0)
 		}
-		handle := C.CreateWindowExW(0, win32_button_class(), val.to_wide(), style,
-			x, y + i * item_h, w, item_h, nw.parent_handle, unsafe { nil }, unsafe { nil },
+		handle := C.CreateWindowExW(0, win32_button_class(), val.to_wide(), style, x,
+			y + i * item_h, w, item_h, nw.parent_handle, unsafe { nil }, unsafe { nil },
 			unsafe { nil })
 		if i == selected {
 			C.SendMessageW(handle, bm_setcheck, bst_checked, 0)

@@ -3,6 +3,25 @@
 // that can be found in the LICENSE file.
 
 #import <Cocoa/Cocoa.h>
+#import <objc/runtime.h>
+
+// ---- Button Action Target Helper ----
+
+typedef void (*VUIButtonCallback)(void* v_button);
+
+@interface VUIButtonTarget : NSObject
+@property (assign) VUIButtonCallback callback;
+@property (assign) void* v_button;
+- (void)buttonClicked:(id)sender;
+@end
+
+@implementation VUIButtonTarget
+- (void)buttonClicked:(id)sender {
+	if (self.callback) {
+		self.callback(self.v_button);
+	}
+}
+@end
 
 // ---- Window / Container ----
 
@@ -40,6 +59,16 @@ void vui_native_update_button(void* handle, int x, int y, int w, int h, const ch
 	}
 	[btn setTitle:[NSString stringWithUTF8String:title ? title : ""]];
 	[btn setNeedsDisplay:YES];
+}
+
+void vui_native_button_set_callback(void* handle, VUIButtonCallback callback, void* v_button) {
+	NSButton* btn = (__bridge NSButton*)handle;
+	VUIButtonTarget* target = [[VUIButtonTarget alloc] init];
+	target.callback = callback;
+	target.v_button = v_button;
+	objc_setAssociatedObject(btn, "vui_target", target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	[btn setTarget:target];
+	[btn setAction:@selector(buttonClicked:)];
 }
 
 void vui_native_button_set_enabled(void* handle, bool enabled) {

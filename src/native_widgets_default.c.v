@@ -15,6 +15,9 @@ pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title st
 	return NativeWidget{}
 }
 
+pub fn (nw &NativeWidgets) button_set_callback(nwidget &NativeWidget, callback fn (voidptr), v_button voidptr) {
+}
+
 pub fn (nw &NativeWidgets) update_button(nwidget &NativeWidget, x int, y int, w int, h int, title string) {
 }
 

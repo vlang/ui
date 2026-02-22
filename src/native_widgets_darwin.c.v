@@ -14,6 +14,7 @@ fn C.vui_native_get_content_view(window voidptr) voidptr
 // Button
 fn C.vui_native_create_button(parent voidptr, x int, y int, w int, h int, title &char) voidptr
 fn C.vui_native_update_button(handle voidptr, x int, y int, w int, h int, title &char)
+fn C.vui_native_button_set_callback(handle voidptr, callback fn (voidptr), v_button voidptr)
 fn C.vui_native_button_set_enabled(handle voidptr, enabled bool)
 fn C.vui_native_remove_view(handle voidptr)
 
@@ -54,6 +55,10 @@ pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title st
 	}
 }
 
+pub fn (nw &NativeWidgets) button_set_callback(nwidget &NativeWidget, callback fn (voidptr), v_button voidptr) {
+	C.vui_native_button_set_callback(nwidget.handle, callback, v_button)
+}
+
 pub fn (nw &NativeWidgets) update_button(nwidget &NativeWidget, x int, y int, w int, h int, title string) {
 	C.vui_native_update_button(nwidget.handle, x, y, w, h, &char(title.str))
 }
@@ -66,8 +71,7 @@ pub fn (mut nw NativeWidgets) create_textfield(x int, y int, w int, h int, place
 }
 
 pub fn (nw &NativeWidgets) update_textfield(nwidget &NativeWidget, x int, y int, w int, h int, text string, placeholder string) {
-	C.vui_native_update_textfield(nwidget.handle, x, y, w, h, &char(text.str),
-		&char(placeholder.str))
+	C.vui_native_update_textfield(nwidget.handle, x, y, w, h, &char(text.str), &char(placeholder.str))
 }
 
 pub fn (nw &NativeWidgets) textfield_set_secure(nwidget &NativeWidget, secure bool) {
@@ -170,8 +174,8 @@ pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items 
 	for i, v in items {
 		ptrs[i] = &char(v.str)
 	}
-	handle := C.vui_native_create_dropdown(nw.parent_handle, x, y, w, h, ptrs.data,
-		items.len, selected)
+	handle := C.vui_native_create_dropdown(nw.parent_handle, x, y, w, h, ptrs.data, items.len,
+		selected)
 	return NativeWidget{
 		handle: handle
 	}
@@ -186,8 +190,8 @@ pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items [
 	for i, v in items {
 		ptrs[i] = &char(v.str)
 	}
-	handle := C.vui_native_create_listbox(nw.parent_handle, x, y, w, h, ptrs.data,
-		items.len, selected)
+	handle := C.vui_native_create_listbox(nw.parent_handle, x, y, w, h, ptrs.data, items.len,
+		selected)
 	return NativeWidget{
 		handle: handle
 	}
