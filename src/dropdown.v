@@ -36,6 +36,8 @@ pub mut:
 	// text_size   f64
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]
@@ -89,6 +91,15 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 	u := parent.get_ui()
 	dd.ui = u
 	dd.load_style()
+	// Create native widget if native_widgets is enabled
+	if dd.ui.window.native_widgets.is_enabled() {
+		mut texts := []string{len: dd.items.len}
+		for i, item in dd.items {
+			texts[i] = item.text
+		}
+		dd.native_w = dd.ui.window.native_widgets.create_dropdown(dd.x, dd.y, dd.width,
+			dd.dropdown_height, texts, dd.selected_index)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
 	subscriber.subscribe_method(events.on_key_down, dd_key_down, dd)
@@ -161,6 +172,13 @@ pub fn (mut dd Dropdown) draw() {
 }
 
 pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
+	// Native widget: sync state from native → V model, update geometry only
+	if dd.ui.window.native_widgets.is_enabled() && dd.native_w.handle != unsafe { nil } {
+		dd.selected_index = dd.ui.window.native_widgets.dropdown_get_selected(&dd.native_w)
+		dd.ui.window.native_widgets.update_dropdown(&dd.native_w, dd.x, dd.y, dd.width,
+			dd.dropdown_height, dd.selected_index)
+		return
+	}
 	offset_start(mut dd)
 	$if layout ? {
 		if dd.ui.layout_print {

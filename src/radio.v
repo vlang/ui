@@ -55,6 +55,8 @@ pub mut:
 	compact    bool
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 	// selected_value string
 	on_click RadioFn = unsafe { nil }
 }
@@ -111,6 +113,11 @@ fn (mut r Radio) init(parent Layout) {
 	}
 	r.load_style()
 	// r.init_style()
+	// Create native widget if native_widgets is enabled
+	if r.ui.window.native_widgets.is_enabled() {
+		r.native_w = r.ui.window.native_widgets.create_radio_group(r.x, r.y, r.width,
+			r.real_height, r.values, r.selected_index, r.title)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
 	subscriber.subscribe_method(events.on_click, radio_click, r)
@@ -301,6 +308,13 @@ fn (mut r Radio) draw() {
 }
 
 fn (mut r Radio) draw_device(mut d DrawDevice) {
+	// Native widget: sync state from native → V model, update geometry only
+	if r.ui.window.native_widgets.is_enabled() && r.native_w.handle != unsafe { nil } {
+		r.selected_index = r.ui.window.native_widgets.radio_get_selected(&r.native_w)
+		r.ui.window.native_widgets.update_radio_group(&r.native_w, r.x, r.y, r.width,
+			r.real_height, r.selected_index)
+		return
+	}
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {

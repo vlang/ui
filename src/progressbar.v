@@ -26,6 +26,8 @@ pub mut:
 	style_params ProgressBarStyleParams
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]
@@ -63,6 +65,11 @@ fn (mut pb ProgressBar) init(parent Layout) {
 	u := parent.get_ui()
 	pb.ui = u
 	pb.load_style()
+	// Create native widget if native_widgets is enabled
+	if pb.ui.window.native_widgets.is_enabled() {
+		pb.native_w = pb.ui.window.native_widgets.create_progressbar(pb.x, pb.y, pb.width,
+			pb.height, f64(pb.min), f64(pb.max), f64(pb.val))
+	}
 }
 
 @[manualfree]
@@ -109,6 +116,12 @@ fn (mut pb ProgressBar) draw() {
 }
 
 fn (mut pb ProgressBar) draw_device(mut d DrawDevice) {
+	// Native widget: update position/value and skip custom drawing
+	if pb.ui.window.native_widgets.is_enabled() && pb.native_w.handle != unsafe { nil } {
+		pb.ui.window.native_widgets.update_progressbar(&pb.native_w, pb.x, pb.y, pb.width,
+			pb.height, f64(pb.val))
+		return
+	}
 	offset_start(mut pb)
 	$if layout ? {
 		if pb.ui.layout_print {

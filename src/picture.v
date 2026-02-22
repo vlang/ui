@@ -17,6 +17,8 @@ pub mut:
 	hidden   bool
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 	width     int
 	height    int
 mut:
@@ -118,6 +120,11 @@ fn (mut pic Picture) init(parent Layout) {
 		mut win := u.window
 		win.tooltip.append(pic, pic.tooltip)
 	}
+	// Create native widget if native_widgets is enabled
+	if pic.ui.window.native_widgets.is_enabled() {
+		pic.native_w = pic.ui.window.native_widgets.create_picture(pic.x, pic.y, pic.width,
+			pic.height, pic.path)
+	}
 }
 
 @[manualfree]
@@ -187,6 +194,12 @@ fn (mut pic Picture) draw() {
 }
 
 fn (mut pic Picture) draw_device(mut d DrawDevice) {
+	// Native widget: update position and skip custom drawing
+	if pic.ui.window.native_widgets.is_enabled() && pic.native_w.handle != unsafe { nil } {
+		pic.ui.window.native_widgets.update_picture(&pic.native_w, pic.x + pic.offset_x,
+			pic.y + pic.offset_y, pic.width, pic.height)
+		return
+	}
 	$if layout ? {
 		if pic.ui.layout_print {
 			println('Picture(${pic.id}): (${pic.x}, ${pic.y}, ${pic.width}, ${pic.height})')

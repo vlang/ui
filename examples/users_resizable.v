@@ -66,6 +66,7 @@ fn main() {
 		label:   ui.label(id: 'counter', text: '2/10', text_font_name: 'fixed_bold_italic')
 	}
 	mut window := ui.window(
+	native_widgets:true
 		width:  win_width
 		height: win_height
 		title:  'V UI Demo'

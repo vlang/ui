@@ -50,6 +50,8 @@ pub mut:
 	style_params SliderStyleParams
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]
@@ -112,6 +114,11 @@ fn (mut s Slider) init(parent Layout) {
 	u := parent.get_ui()
 	s.ui = u
 	s.load_style()
+	// Create native widget if native_widgets is enabled
+	if s.ui.window.native_widgets.is_enabled() {
+		s.native_w = s.ui.window.native_widgets.create_slider(s.x, s.y, s.width, s.height,
+			s.orientation, f64(s.min), f64(s.max), f64(s.val))
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
 	subscriber.subscribe_method(events.on_key_down, slider_key_down, s)
@@ -199,6 +206,13 @@ fn (mut s Slider) draw() {
 }
 
 fn (mut s Slider) draw_device(mut d DrawDevice) {
+	// Native widget: sync state from native → V model, update geometry only
+	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
+		s.val = f32(s.ui.window.native_widgets.slider_get_value(&s.native_w))
+		s.ui.window.native_widgets.update_slider(&s.native_w, s.x, s.y, s.width, s.height,
+			f64(s.val))
+		return
+	}
 	offset_start(mut s)
 	$if layout ? {
 		if s.ui.layout_print {

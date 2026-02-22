@@ -86,6 +86,8 @@ pub mut:
 	tooltip Tooltip = Tooltip{}
 	// with message
 	native_message bool
+	// native widgets
+	native_widgets NativeWidgets
 	// focus stuff
 	do_focus     bool
 	locked_focus string
@@ -142,6 +144,7 @@ pub:
 	layout                Widget = empty_stack // simplest way to fulfill children
 	custom_bold_font_path string
 	native_rendering      bool
+	native_widgets        bool
 	resizable             bool
 	mode                  WindowSizeType = .resizable
 	immediate             bool
@@ -234,6 +237,9 @@ pub fn window(cfg WindowParams) &Window {
 		resize_fn:         cfg.on_resize
 		text_cfg:          text_cfg
 		native_message:    cfg.native_message
+		native_widgets:    NativeWidgets{
+			enabled: cfg.native_widgets
+		}
 		immediate:         cfg.immediate
 		sample_count:      cfg.sample_count
 		iconified_fn:      cfg.on_iconify
@@ -353,6 +359,15 @@ fn gg_init(mut window Window) {
 	// This add experimental ui message system
 	if !window.native_message {
 		window.add_message_dialog()
+	}
+
+	// Initialize native widget parent handle before children create native controls
+	if window.native_widgets.is_enabled() {
+		$if macos {
+			window.native_widgets.init_parent(C.sapp_macos_get_window())
+		} $else $if windows {
+			window.native_widgets.init_parent(C.sapp_win32_get_hwnd())
+		}
 	}
 
 	for mut child in window.children {

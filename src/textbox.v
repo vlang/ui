@@ -102,6 +102,8 @@ pub mut:
 	clipping bool
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 	// scrollview
 	has_scrollview   bool
 	scrollview       &ScrollView         = unsafe { nil }
@@ -231,6 +233,14 @@ pub fn (mut tb TextBox) init(parent Layout) {
 		tb.scrollview.init(parent)
 		scrollview_update(tb)
 	}
+	// Create native widget if native_widgets is enabled
+	if tb.ui.window.native_widgets.is_enabled() {
+		tb.native_w = tb.ui.window.native_widgets.create_textfield(tb.x, tb.y, tb.width,
+			tb.height, tb.placeholder)
+		if tb.is_password {
+			tb.ui.window.native_widgets.textfield_set_secure(&tb.native_w, true)
+		}
+	}
 	// return widget
 	mut subscriber := parent.get_subscriber()
 	// subscriber.subscribe_method(events.on_click, tb_click, tb)
@@ -338,6 +348,19 @@ pub fn (mut tb TextBox) draw() {
 }
 
 pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
+	// Native widget: sync state from native → V model, update geometry only
+	if tb.ui.window.native_widgets.is_enabled() && tb.native_w.handle != unsafe { nil } {
+		// Read current text from native widget back into V model
+		native_text := tb.ui.window.native_widgets.textfield_get_text(&tb.native_w)
+		if tb.text != 0 {
+			unsafe {
+				*tb.text = native_text
+			}
+		}
+		tb.ui.window.native_widgets.update_textfield(&tb.native_w, tb.x, tb.y, tb.width,
+			tb.height, '', tb.placeholder)
+		return
+	}
 	mut is_native_rendering := false
 	$if macos {
 		is_native_rendering = tb.ui.gg.native_rendering

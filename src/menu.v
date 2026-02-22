@@ -28,6 +28,8 @@ pub mut:
 	// text styles
 	text_styles TextStyles
 	component   voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w    NativeWidget
 	width       int
 	height      int
 	item_width  int
@@ -126,6 +128,15 @@ fn (mut m Menu) init(parent Layout) {
 		m.propagate_connection()
 	}
 	m.load_style()
+	// Create native widget if native_widgets is enabled
+	if m.ui.window.native_widgets.is_enabled() {
+		mut texts := []string{len: m.items.len}
+		for i, item in m.items {
+			texts[i] = item.text
+		}
+		m.native_w = m.ui.window.native_widgets.create_menu(m.x, m.y, m.width, m.height,
+			texts)
+	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
 	subscriber.subscribe_method(events.on_mouse_move, menu_mouse_move, m)
@@ -323,6 +334,10 @@ fn (mut m Menu) draw() {
 }
 
 fn (mut m Menu) draw_device(mut d DrawDevice) {
+	// Native widget: skip custom drawing when native menus are used
+	if m.ui.window.native_widgets.is_enabled() && m.native_w.handle != unsafe { nil } {
+		return
+	}
 	offset_start(mut m)
 	if m.hidden {
 		return

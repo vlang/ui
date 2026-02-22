@@ -20,6 +20,8 @@ pub mut:
 	parent      Layout = empty_stack
 	ui          &UI    = unsafe { nil }
 	hidden      bool
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 }
 
 @[params]

@@ -66,6 +66,7 @@ fn main() {
 		label:   ui.label(text: '2/10')
 	}
 	window := ui.window(
+	native_widgets: true
 		width:  win_width
 		height: win_height
 		title:  'V UI Demo'
@@ -217,6 +218,7 @@ fn (mut app State) btn_add_click(b &ui.Button) {
 }
 
 fn (app &State) canvas_draw(gg_ &gg.Context, c &ui.Canvas) { // x_offset int, y_offset int) {
+	/*
 	x_offset, y_offset := c.x, c.y
 	w, h := c.width, c.height
 	x := x_offset
@@ -235,4 +237,5 @@ fn (app &State) canvas_draw(gg_ &gg.Context, c &ui.Canvas) { // x_offset int, y_
 		gg_.draw_text_def(x + 5 + cell_width * 2, y + 5, user.age.str())
 		gg_.draw_text_def(x + 5 + cell_width * 3, y + 5, user.country)
 	}
+	*/
 }

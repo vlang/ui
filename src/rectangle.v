@@ -24,6 +24,8 @@ pub mut:
 	// text_size   f64
 	// component state for composable widget
 	component voidptr
+	// native widget handle (when native_widgets is enabled)
+	native_w NativeWidget
 mut:
 	x       int
 	y       int
@@ -141,6 +143,7 @@ fn (mut r Rectangle) draw() {
 }
 
 fn (mut r Rectangle) draw_device(mut d DrawDevice) {
+	// Rectangle is a decorative shape — no native OS counterpart, always custom-drawn.
 	offset_start(mut r)
 	$if layout ? {
 		if r.ui.layout_print {
