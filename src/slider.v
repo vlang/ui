@@ -206,8 +206,9 @@ fn (mut s Slider) draw() {
 }
 
 fn (mut s Slider) draw_device(mut d DrawDevice) {
-	// Native widget: update position/value and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
+		s.val = f32(s.ui.window.native_widgets.slider_get_value(&s.native_w))
 		s.ui.window.native_widgets.update_slider(&s.native_w, s.x, s.y, s.width, s.height,
 			f64(s.val))
 		return

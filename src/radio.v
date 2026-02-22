@@ -308,8 +308,9 @@ fn (mut r Radio) draw() {
 }
 
 fn (mut r Radio) draw_device(mut d DrawDevice) {
-	// Native widget: update position/selection and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if r.ui.window.native_widgets.is_enabled() && r.native_w.handle != unsafe { nil } {
+		r.selected_index = r.ui.window.native_widgets.radio_get_selected(&r.native_w)
 		r.ui.window.native_widgets.update_radio_group(&r.native_w, r.x, r.y, r.width,
 			r.real_height, r.selected_index)
 		return

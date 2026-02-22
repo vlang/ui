@@ -128,18 +128,22 @@ pub fn (nw &NativeWidgets) update_label(nwidget &NativeWidget, x int, y int, w i
 // Slider (NSSlider)
 fn C.vui_native_create_slider(parent voidptr, x int, y int, w int, h int, horizontal bool, min f64, max f64, val f64) voidptr
 fn C.vui_native_update_slider(handle voidptr, x int, y int, w int, h int, val f64)
+fn C.vui_native_slider_get_value(handle voidptr) f64
 
 // Dropdown (NSPopUpButton)
 fn C.vui_native_create_dropdown(parent voidptr, x int, y int, w int, h int, items &&char, count int, selected int) voidptr
 fn C.vui_native_update_dropdown(handle voidptr, x int, y int, w int, h int, selected int)
+fn C.vui_native_dropdown_get_selected(handle voidptr) int
 
 // ListBox (NSScrollView + NSTableView simplified as NSPopUpButton list)
 fn C.vui_native_create_listbox(parent voidptr, x int, y int, w int, h int, items &&char, count int, selected int) voidptr
 fn C.vui_native_update_listbox(handle voidptr, x int, y int, w int, h int, selected int)
+fn C.vui_native_listbox_get_selected(handle voidptr) int
 
 // Switch (NSSwitch / NSButton toggle)
 fn C.vui_native_create_switch(parent voidptr, x int, y int, w int, h int, open bool) voidptr
 fn C.vui_native_update_switch(handle voidptr, x int, y int, w int, h int, open bool)
+fn C.vui_native_switch_is_open(handle voidptr) bool
 
 // Picture (NSImageView)
 fn C.vui_native_create_picture(parent voidptr, x int, y int, w int, h int, path &char) voidptr
@@ -224,6 +228,40 @@ pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []st
 	return NativeWidget{
 		handle: handle
 	}
+}
+
+// -- Getters: read interactive state from native widgets --
+
+pub fn (nw &NativeWidgets) textfield_get_text(nwidget &NativeWidget) string {
+	cstr := C.vui_native_textfield_get_text(nwidget.handle)
+	if cstr == unsafe { nil } {
+		return ''
+	}
+	return unsafe { cstr.vstring() }
+}
+
+pub fn (nw &NativeWidgets) checkbox_is_checked(nwidget &NativeWidget) bool {
+	return C.vui_native_checkbox_is_checked(nwidget.handle)
+}
+
+pub fn (nw &NativeWidgets) radio_get_selected(nwidget &NativeWidget) int {
+	return C.vui_native_radio_get_selected(nwidget.handle)
+}
+
+pub fn (nw &NativeWidgets) slider_get_value(nwidget &NativeWidget) f64 {
+	return C.vui_native_slider_get_value(nwidget.handle)
+}
+
+pub fn (nw &NativeWidgets) dropdown_get_selected(nwidget &NativeWidget) int {
+	return C.vui_native_dropdown_get_selected(nwidget.handle)
+}
+
+pub fn (nw &NativeWidgets) listbox_get_selected(nwidget &NativeWidget) int {
+	return C.vui_native_listbox_get_selected(nwidget.handle)
+}
+
+pub fn (nw &NativeWidgets) switch_is_open(nwidget &NativeWidget) bool {
+	return C.vui_native_switch_is_open(nwidget.handle)
 }
 
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {

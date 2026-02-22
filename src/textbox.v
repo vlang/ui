@@ -348,14 +348,17 @@ pub fn (mut tb TextBox) draw() {
 }
 
 pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
-	// Native widget: update position/text and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if tb.ui.window.native_widgets.is_enabled() && tb.native_w.handle != unsafe { nil } {
-		mut text := ''
+		// Read current text from native widget back into V model
+		native_text := tb.ui.window.native_widgets.textfield_get_text(&tb.native_w)
 		if tb.text != 0 {
-			text = *(tb.text)
+			unsafe {
+				*tb.text = native_text
+			}
 		}
 		tb.ui.window.native_widgets.update_textfield(&tb.native_w, tb.x, tb.y, tb.width,
-			tb.height, text, tb.placeholder)
+			tb.height, '', tb.placeholder)
 		return
 	}
 	mut is_native_rendering := false

@@ -77,9 +77,7 @@ void vui_native_update_textfield(void* handle, int x, int y, int w, int h, const
 	if (parentView) {
 		tf.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
-	if (text) {
-		[tf setStringValue:[NSString stringWithUTF8String:text]];
-	}
+	// Only update placeholder (non-interactive). Text is owned by the native widget.
 	if (placeholder) {
 		[[tf cell] setPlaceholderString:[NSString stringWithUTF8String:placeholder]];
 	}
@@ -119,7 +117,7 @@ void vui_native_update_checkbox(void* handle, int x, int y, int w, int h, const 
 		cb.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
 	[cb setTitle:[NSString stringWithUTF8String:title ? title : ""]];
-	[cb setState:checked ? NSControlStateValueOn : NSControlStateValueOff];
+	// Do NOT set state — it is owned by the native widget.
 	[cb setNeedsDisplay:YES];
 }
 
@@ -176,12 +174,7 @@ void vui_native_update_radio_group(void* handle, int x, int y, int w, int h, int
 	if (parentView) {
 		container.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
-	for (NSView* subview in [container subviews]) {
-		if ([subview isKindOfClass:[NSButton class]]) {
-			NSButton* radio = (NSButton*)subview;
-			[radio setState:([radio tag] == selected) ? NSControlStateValueOn : NSControlStateValueOff];
-		}
-	}
+	// Do NOT set selection — it is owned by the native widget.
 	[container setNeedsDisplay:YES];
 }
 
@@ -276,8 +269,13 @@ void vui_native_update_slider(void* handle, int x, int y, int w, int h, double v
 	if (parentView) {
 		slider.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
-	[slider setDoubleValue:val];
+	// Do NOT set value — it is owned by the native widget.
 	[slider setNeedsDisplay:YES];
+}
+
+double vui_native_slider_get_value(void* handle) {
+	NSSlider* slider = (__bridge NSSlider*)handle;
+	return [slider doubleValue];
 }
 
 // ---- Dropdown (NSPopUpButton) ----
@@ -304,10 +302,13 @@ void vui_native_update_dropdown(void* handle, int x, int y, int w, int h, int se
 	if (parentView) {
 		popup.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
-	if (selected >= 0 && selected < (int)[popup numberOfItems]) {
-		[popup selectItemAtIndex:selected];
-	}
+	// Do NOT set selection — it is owned by the native widget.
 	[popup setNeedsDisplay:YES];
+}
+
+int vui_native_dropdown_get_selected(void* handle) {
+	NSPopUpButton* popup = (__bridge NSPopUpButton*)handle;
+	return (int)[popup indexOfSelectedItem];
 }
 
 // ---- ListBox (NSScrollView containing NSTableView) ----
@@ -353,18 +354,22 @@ void vui_native_update_listbox(void* handle, int x, int y, int w, int h, int sel
 	if (parentView) {
 		scrollView.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
+	// Do NOT set selection — it is owned by the native widget.
+	[scrollView setNeedsDisplay:YES];
+}
+
+int vui_native_listbox_get_selected(void* handle) {
+	NSScrollView* scrollView = (__bridge NSScrollView*)handle;
 	NSView* docView = [scrollView documentView];
 	for (NSView* subview in [docView subviews]) {
 		if ([subview isKindOfClass:[NSTextField class]]) {
 			NSTextField* lbl = (NSTextField*)subview;
-			if ([lbl tag] == selected) {
-				[lbl setBackgroundColor:[NSColor selectedTextBackgroundColor]];
-			} else {
-				[lbl setBackgroundColor:[NSColor clearColor]];
+			if (![[lbl backgroundColor] isEqual:[NSColor clearColor]]) {
+				return (int)[lbl tag];
 			}
 		}
 	}
-	[scrollView setNeedsDisplay:YES];
+	return -1;
 }
 
 // ---- Switch (NSButton with toggle style) ----
@@ -387,8 +392,13 @@ void vui_native_update_switch(void* handle, int x, int y, int w, int h, bool ope
 	if (parentView) {
 		sw.frame = vui_flipped_rect(parentView, x, y, w, h);
 	}
-	[sw setState:open ? NSControlStateValueOn : NSControlStateValueOff];
+	// Do NOT set state — it is owned by the native widget.
 	[sw setNeedsDisplay:YES];
+}
+
+bool vui_native_switch_is_open(void* handle) {
+	NSButton* sw = (__bridge NSButton*)handle;
+	return [sw state] == NSControlStateValueOn;
 }
 
 // ---- Picture (NSImageView) ----

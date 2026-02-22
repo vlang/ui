@@ -119,8 +119,9 @@ fn (mut s Switch) draw() {
 }
 
 fn (mut s Switch) draw_device(mut d DrawDevice) {
-	// Native widget: update position/state and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
+		s.open = s.ui.window.native_widgets.switch_is_open(&s.native_w)
 		s.ui.window.native_widgets.update_switch(&s.native_w, s.x, s.y, s.width, s.height,
 			s.open)
 		return

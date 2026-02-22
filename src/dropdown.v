@@ -172,8 +172,9 @@ pub fn (mut dd Dropdown) draw() {
 }
 
 pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
-	// Native widget: update position/selection and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if dd.ui.window.native_widgets.is_enabled() && dd.native_w.handle != unsafe { nil } {
+		dd.selected_index = dd.ui.window.native_widgets.dropdown_get_selected(&dd.native_w)
 		dd.ui.window.native_widgets.update_dropdown(&dd.native_w, dd.x, dd.y, dd.width,
 			dd.dropdown_height, dd.selected_index)
 		return

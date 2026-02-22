@@ -86,7 +86,7 @@ pub fn (mut nw NativeWidgets) create_textfield(x int, y int, w int, h int, place
 
 pub fn (nw &NativeWidgets) update_textfield(nwidget &NativeWidget, x int, y int, w int, h int, text string, placeholder string) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
-	C.SetWindowTextW(nwidget.handle, text.to_wide())
+	// Do NOT set text — it is owned by the native widget.
 }
 
 pub fn (nw &NativeWidgets) textfield_set_secure(nwidget &NativeWidget, secure bool) {
@@ -108,8 +108,7 @@ pub fn (mut nw NativeWidgets) create_checkbox(x int, y int, w int, h int, title 
 pub fn (nw &NativeWidgets) update_checkbox(nwidget &NativeWidget, x int, y int, w int, h int, title string, checked bool) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
 	C.SetWindowTextW(nwidget.handle, title.to_wide())
-	C.SendMessageW(nwidget.handle, bm_setcheck, if checked { bst_checked } else { bst_unchecked },
-		0)
+	// Do NOT set check state — it is owned by the native widget.
 }
 
 pub fn (mut nw NativeWidgets) create_radio_group(x int, y int, w int, h int, values []string, selected int, title string) NativeWidget {
@@ -186,6 +185,9 @@ const lb_addstring = u32(0x0180)
 const lb_setcursel = u32(0x0186)
 const ws_vscroll = u32(0x00200000)
 const ss_bitmap = u32(0x000E)
+const tbm_getpos = u32(0x0400)
+const cb_getcursel = u32(0x0147)
+const lb_getcursel = u32(0x0188)
 
 fn win32_trackbar_class() &u16 {
 	return 'msctls_trackbar32'.to_wide()
@@ -217,7 +219,7 @@ pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientat
 
 pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w int, h int, val f64) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
-	C.SendMessageW(nwidget.handle, tbm_setpos_tb, usize(1), isize(int(val)))
+	// Do NOT set position — it is owned by the native widget.
 }
 
 pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
@@ -236,9 +238,7 @@ pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items 
 
 pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
 	C.MoveWindow(nwidget.handle, x, y, w, h * 8, true)
-	if selected >= 0 {
-		C.SendMessageW(nwidget.handle, cb_setcursel, usize(selected), 0)
-	}
+	// Do NOT set selection — it is owned by the native widget.
 }
 
 pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
@@ -257,9 +257,7 @@ pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items [
 
 pub fn (nw &NativeWidgets) update_listbox(nwidget &NativeWidget, x int, y int, w int, h int, selected int) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
-	if selected >= 0 {
-		C.SendMessageW(nwidget.handle, lb_setcursel, usize(selected), 0)
-	}
+	// Do NOT set selection — it is owned by the native widget.
 }
 
 pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open bool) NativeWidget {
@@ -275,8 +273,7 @@ pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open boo
 
 pub fn (nw &NativeWidgets) update_switch(nwidget &NativeWidget, x int, y int, w int, h int, open bool) {
 	C.MoveWindow(nwidget.handle, x, y, w, h, true)
-	C.SendMessageW(nwidget.handle, bm_setcheck, if open { bst_checked } else { bst_unchecked },
-		0)
+	// Do NOT set check state — it is owned by the native widget.
 }
 
 pub fn (mut nw NativeWidgets) create_picture(x int, y int, w int, h int, path string) NativeWidget {
@@ -309,6 +306,46 @@ pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []st
 	return NativeWidget{
 		handle: first_handle
 	}
+}
+
+// -- Getters: read interactive state from native widgets --
+
+pub fn (nw &NativeWidgets) textfield_get_text(nwidget &NativeWidget) string {
+	len := C.GetWindowTextLengthW(nwidget.handle)
+	if len <= 0 {
+		return ''
+	}
+	mut buf := []u16{len: len + 1}
+	C.GetWindowTextW(nwidget.handle, buf.data, len + 1)
+	return unsafe { string_from_wide(buf.data) }
+}
+
+pub fn (nw &NativeWidgets) checkbox_is_checked(nwidget &NativeWidget) bool {
+	return C.SendMessageW(nwidget.handle, bm_getcheck, 0, 0) == isize(bst_checked)
+}
+
+pub fn (nw &NativeWidgets) radio_get_selected(nwidget &NativeWidget) int {
+	// Simplified: check the first radio button only. Full implementation would track all handles.
+	if C.SendMessageW(nwidget.handle, bm_getcheck, 0, 0) == isize(bst_checked) {
+		return 0
+	}
+	return -1
+}
+
+pub fn (nw &NativeWidgets) slider_get_value(nwidget &NativeWidget) f64 {
+	return f64(C.SendMessageW(nwidget.handle, tbm_getpos, 0, 0))
+}
+
+pub fn (nw &NativeWidgets) dropdown_get_selected(nwidget &NativeWidget) int {
+	return int(C.SendMessageW(nwidget.handle, cb_getcursel, 0, 0))
+}
+
+pub fn (nw &NativeWidgets) listbox_get_selected(nwidget &NativeWidget) int {
+	return int(C.SendMessageW(nwidget.handle, lb_getcursel, 0, 0))
+}
+
+pub fn (nw &NativeWidgets) switch_is_open(nwidget &NativeWidget) bool {
+	return C.SendMessageW(nwidget.handle, bm_getcheck, 0, 0) == isize(bst_checked)
 }
 
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {

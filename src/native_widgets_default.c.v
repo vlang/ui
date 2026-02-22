@@ -95,5 +95,35 @@ pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []st
 	return NativeWidget{}
 }
 
+// -- Getters (no-op stubs) --
+
+pub fn (nw &NativeWidgets) textfield_get_text(nwidget &NativeWidget) string {
+	return ''
+}
+
+pub fn (nw &NativeWidgets) checkbox_is_checked(nwidget &NativeWidget) bool {
+	return false
+}
+
+pub fn (nw &NativeWidgets) radio_get_selected(nwidget &NativeWidget) int {
+	return 0
+}
+
+pub fn (nw &NativeWidgets) slider_get_value(nwidget &NativeWidget) f64 {
+	return 0.0
+}
+
+pub fn (nw &NativeWidgets) dropdown_get_selected(nwidget &NativeWidget) int {
+	return 0
+}
+
+pub fn (nw &NativeWidgets) listbox_get_selected(nwidget &NativeWidget) int {
+	return -1
+}
+
+pub fn (nw &NativeWidgets) switch_is_open(nwidget &NativeWidget) bool {
+	return false
+}
+
 pub fn (nw &NativeWidgets) remove_widget(nwidget &NativeWidget) {
 }

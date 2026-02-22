@@ -513,8 +513,9 @@ fn (mut lb ListBox) draw() {
 }
 
 fn (mut lb ListBox) draw_device(mut d DrawDevice) {
-	// Native widget: update position/selection and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if lb.ui.window.native_widgets.is_enabled() && lb.native_w.handle != unsafe { nil } {
+		lb.selection = lb.ui.window.native_widgets.listbox_get_selected(&lb.native_w)
 		lb.ui.window.native_widgets.update_listbox(&lb.native_w, lb.x, lb.y, lb.width,
 			lb.height, lb.selection)
 		return

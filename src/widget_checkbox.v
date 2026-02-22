@@ -206,8 +206,9 @@ pub fn (mut cb CheckBox) draw() {
 }
 
 pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
-	// Native widget: update position/state and skip custom drawing
+	// Native widget: sync state from native → V model, update geometry only
 	if cb.ui.window.native_widgets.is_enabled() && cb.native_w.handle != unsafe { nil } {
+		cb.checked = cb.ui.window.native_widgets.checkbox_is_checked(&cb.native_w)
 		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width,
 			cb.height, cb.text, cb.checked)
 		return
