@@ -91,7 +91,7 @@ pub fn (nw &NativeWidgets) update_checkbox(nwidget &NativeWidget, x int, y int, 
 }
 
 pub fn (mut nw NativeWidgets) create_radio_group(x int, y int, w int, h int, values []string, selected int, title string) NativeWidget {
-	mut ptrs := []&char{len: values.len}
+	mut ptrs := unsafe { []&char{len: values.len} }
 	for i, v in values {
 		ptrs[i] = &char(v.str)
 	}
@@ -170,7 +170,7 @@ pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w 
 }
 
 pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
-	mut ptrs := []&char{len: items.len}
+	mut ptrs := unsafe { []&char{len: items.len} }
 	for i, v in items {
 		ptrs[i] = &char(v.str)
 	}
@@ -186,7 +186,7 @@ pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, 
 }
 
 pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
-	mut ptrs := []&char{len: items.len}
+	mut ptrs := unsafe { []&char{len: items.len} }
 	for i, v in items {
 		ptrs[i] = &char(v.str)
 	}
@@ -224,7 +224,7 @@ pub fn (nw &NativeWidgets) update_picture(nwidget &NativeWidget, x int, y int, w
 }
 
 pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []string) NativeWidget {
-	mut ptrs := []&char{len: items.len}
+	mut ptrs := unsafe { []&char{len: items.len} }
 	for i, v in items {
 		ptrs[i] = &char(v.str)
 	}
