@@ -564,7 +564,7 @@ fn (mut tv TextView) key_char(e &KeyEvent) {
 	// println('tv key_down $e <$e.key> ${int(e.codepoint)} <$s>')
 	// wui := tv.tb.ui
 	// println('${wui.dd.pressed_keys_edge[int(Key.left_control)]}')
-	if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] {
+	if e.codepoint >= 32 && e.codepoint != 127 && e.mods !in [.ctrl, .super] { // skip control chars, del, enter, escape, backspace etc.
 		if tv.tb.read_only {
 			return
 		}
