@@ -57,7 +57,7 @@ fn gg_init(layout &ui.CanvasLayout) {
 	app.on_init()
 }
 
-fn gg_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
+fn gg_draw(mut _d ui.DrawDevice, c &ui.CanvasLayout) {
 	mut ggc := gg_component(c)
 	mut app := ggc.app
 	app.on_draw()

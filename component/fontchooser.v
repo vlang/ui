@@ -82,7 +82,7 @@ pub fn fontchooser_connect(w &ui.Window, dtw ui.DrawTextWidget) {
 
 fn fontchooser_lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
-	fc := fontchooser_component(lb)
+	mut fc := fontchooser_component(lb)
 	// println('fc_lb_change: $lb.id')
 	mut dtw := ui.DrawTextWidget(fc.dtw)
 	fp, id := lb.selected() or { 'classic', '' }

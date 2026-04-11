@@ -217,11 +217,11 @@ fn rv_click(c &ui.CanvasLayout, e ui.MouseEvent) {
 	}
 }
 
-fn rv_mouse_down(mut c ui.CanvasLayout, e ui.MouseEvent) {
+fn rv_mouse_down(mut c ui.CanvasLayout, _ ui.MouseEvent) {
 	c.focus()
 }
 
-fn rv_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
+fn rv_mouse_up(_ &ui.CanvasLayout, _ ui.MouseEvent) {
 }
 
 fn rv_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
@@ -248,14 +248,14 @@ fn rv_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
 	}
 }
 
-fn rv_mouse_enter(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
+fn rv_mouse_enter(mut c ui.CanvasLayout, _ ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 && rv.cur_j != -1 {
 	c.ui.window.mouse.start(ui.mouse_hidden)
 	// }
 }
 
-fn rv_mouse_leave(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
+fn rv_mouse_leave(mut c ui.CanvasLayout, _ ui.MouseMoveEvent) {
 	// mut rv := rasterview_component(c)
 	// if rv.cur_i != -1 || rv.cur_j != -1 {
 	c.ui.window.mouse.stop_last(ui.mouse_hidden)

@@ -231,7 +231,7 @@ fn on_b_value_changed(slider &ui.Slider) {
 	}
 }
 
-fn on_r_char(textbox &ui.TextBox, keycode u32) {
+fn on_r_char(textbox &ui.TextBox, _ u32) {
 	mut cs := colorsliders_component(textbox)
 	if ui.is_rgb_valid(cs.r_textbox.text.int()) {
 		cs.r_slider.val = cs.r_textbox_text.f32()
@@ -244,7 +244,7 @@ fn on_r_char(textbox &ui.TextBox, keycode u32) {
 	}
 }
 
-fn on_g_char(textbox &ui.TextBox, keycode u32) {
+fn on_g_char(textbox &ui.TextBox, _ u32) {
 	mut cs := colorsliders_component(textbox)
 	if ui.is_rgb_valid(cs.g_textbox.text.int()) {
 		cs.g_slider.val = cs.g_textbox_text.f32()
@@ -257,7 +257,7 @@ fn on_g_char(textbox &ui.TextBox, keycode u32) {
 	}
 }
 
-fn on_b_char(textbox &ui.TextBox, keycode u32) {
+fn on_b_char(textbox &ui.TextBox, _ u32) {
 	mut cs := colorsliders_component(textbox)
 	if ui.is_rgb_valid(cs.b_textbox.text.int()) {
 		cs.b_slider.val = cs.b_textbox_text.f32()
