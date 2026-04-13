@@ -873,21 +873,21 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
-	mut dtw := DrawTextWidget(c)
+	dtw := unsafe { DrawTextWidget(c) }
 	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
 	dtw.draw_device_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	mut dtw := DrawTextWidget(c)
+	mut dtw := unsafe { DrawTextWidget(c) }
 	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
 		ts)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
-	mut dtw := DrawTextWidget(c)
+	mut dtw := unsafe { DrawTextWidget(c) }
 	dtw.draw_device_styled_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
 }
 

@@ -165,7 +165,7 @@ fn tab_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
 	}
 }
 
-fn tab_click(c &ui.CanvasLayout, e ui.MouseEvent) {
+fn tab_click(c &ui.CanvasLayout, _ ui.MouseEvent) {
 	mut tabs := tabs_component(c)
 	// println("selected $c.id")
 	tabs.layout.children[1] = tabs.pages[c.id]

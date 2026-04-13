@@ -73,7 +73,7 @@ fn hideable_init(layout &ui.Stack) {
 
 // TODO: documentation
 pub fn hideable_add_shortcut(w &ui.Window, shortcut string, shortcut_fn ui.ShortcutFn) {
-	mut sc := ui.Shortcutable(w)
+	mut sc := unsafe { ui.Shortcutable(w) }
 	sc.add_shortcut(shortcut, shortcut_fn)
 }
 

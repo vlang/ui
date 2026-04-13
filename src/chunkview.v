@@ -80,12 +80,12 @@ fn (mut c TextChunk) init(cv &ChunkView) {
 }
 
 fn (mut c TextChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	dtw.draw_device_styled_text(d, cv.x + offset.x + c.x, cv.y + offset.y + c.y, c.text, id: c.style)
 }
 
 fn (mut c TextChunk) update_bounding_box(cv &ChunkView, offset Offset) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	cv.load_style(c.style)
 	// c.bb.w, c.bb.h = dtw.text_size(c.text)
 	// println("style: ${c.style} bb: ${c.bb} text_bounds ${dtw.text_bounds(c.x, c.y, c.text)}")
@@ -210,7 +210,7 @@ fn (mut c ParaChunk) update_clipping() {
 }
 
 fn (mut c ParaChunk) update_line_height(cv &ChunkView) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
@@ -234,7 +234,7 @@ fn (mut c ParaChunk) update_chunks(cv &ChunkView) {
 	max_line_width := c.width - 10
 	// max_line_width, _ := c.container?.inner_size()
 	// println("max_line_width=${max_line_width}")
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	// convert content to chunks
 	mut chunks := []ChunkContent{}
 	mut style := ''
@@ -490,7 +490,7 @@ fn (mut c VerticalAlignChunk) inner_size() (int, int) {
 }
 
 fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	mut lh := 0
 	mut style, mut left := '', ''
 	for content in c.content {
@@ -511,7 +511,7 @@ fn (mut c VerticalAlignChunk) update_line_height(cv &ChunkView) {
 
 // only once in init
 fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	// split c.content into the lines 'br' being the separator
 	mut contents := [][]string{}
 	mut lines := []string{}
@@ -818,7 +818,7 @@ fn (mut cv ChunkView) init(parent Layout) {
 }
 
 fn (cv &ChunkView) load_style(style string) {
-	mut dtw := DrawTextWidget(cv)
+	mut dtw := unsafe { DrawTextWidget(cv) }
 	dtw.set_current_style(id: style) // to update style for text_width_additive
 	dtw.load_style()
 }

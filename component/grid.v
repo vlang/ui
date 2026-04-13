@@ -296,13 +296,13 @@ fn grid_mouse_down(c &ui.CanvasLayout, e ui.MouseEvent) {
 	}
 }
 
-fn grid_mouse_up(c &ui.CanvasLayout, e ui.MouseEvent) {
+fn grid_mouse_up(c &ui.CanvasLayout, _ ui.MouseEvent) {
 	mut g := grid_component(c)
 	g.edge_w_orig = -1
 	g.edge_x_orig = 0
 }
 
-fn grid_scroll(c &ui.CanvasLayout, e ui.ScrollEvent) {
+fn grid_scroll(_ &ui.CanvasLayout, _ ui.ScrollEvent) {
 }
 
 fn grid_mouse_move(mut c ui.CanvasLayout, e ui.MouseMoveEvent) {
