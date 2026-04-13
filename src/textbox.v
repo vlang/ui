@@ -764,7 +764,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 		}
 		s := utf32_to_str(e.codepoint)
 		// println("tb_char: $s $e.codepoint $e.mods")
-		if int(e.codepoint) !in [0, 9, 13, 27, 127] && e.mods !in [.ctrl, .super] { // skip enter and escape // && e.key !in [.enter, .escape] {
+		if e.codepoint >= 32 && e.codepoint != 127 && e.mods !in [.ctrl, .super] { // skip control chars, del, enter, escape, backspace etc.
 			if tb.read_only {
 				return
 			}
