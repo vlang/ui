@@ -12,7 +12,7 @@ mut:
 	window &ui.Window = unsafe { nil }
 }
 
-fn make_tb(mut app App, mut text []string, has_row bool) ui.Widget {
+fn make_tb(mut app App, mut _ []string, has_row bool) ui.Widget {
 	app.texts['toto'] = 'blah3 blah blah\n'.repeat(10)
 	tb := ui.textbox(
 		mode:     .multiline

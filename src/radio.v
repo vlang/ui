@@ -156,7 +156,7 @@ pub fn (r &Radio) free() {
 // 	dtw.update_text_size(r.text_size)
 // }
 
-fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
+fn radio_key_down(mut r Radio, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if radio_keydown ? {
@@ -180,7 +180,7 @@ fn radio_key_down(mut r Radio, e &KeyEvent, window &Window) {
 	}
 }
 
-fn radio_click(mut r Radio, e &MouseEvent, window &Window) {
+fn radio_click(mut r Radio, e &MouseEvent, _ &Window) {
 	if r.hidden {
 		return
 	}

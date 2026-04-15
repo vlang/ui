@@ -316,7 +316,7 @@ fn set_sizes_labels(win &ui.Window) {
 	row_btn2.title = 'Btn2: (${w}, ${h})'
 }
 
-fn win_resize(win &ui.Window, w int, h int) {
+fn win_resize(win &ui.Window, _ int, _ int) {
 	set_sizes_labels(win)
 }
 

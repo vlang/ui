@@ -221,7 +221,7 @@ fn (mut app AppUI) btn_add_click(b &Button) {
 
 }
 */
-fn (mut app AppUI) btn_add_click(b &ui.Button) {
+fn (mut app AppUI) btn_add_click(_ &ui.Button) {
 	// println('nr users=$app.users.len')
 	// ui.notify('user', 'done')
 	// app.window.set_cursor(.hand)

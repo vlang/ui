@@ -1,6 +1,6 @@
 import ui
 
-fn (mut a App) init(window &ui.Window) {
+fn (mut a App) init(_ &ui.Window) {
 	// Stub
 }
 

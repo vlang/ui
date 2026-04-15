@@ -226,7 +226,7 @@ fn native_button_clicked(v_button voidptr) {
 	}
 }
 
-fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
+fn btn_key_down(mut b Button, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if btn_keydown ? {
@@ -251,7 +251,7 @@ fn btn_key_down(mut b Button, e &KeyEvent, window &Window) {
 	}
 }
 
-fn btn_click(mut b Button, e &MouseEvent, window &Window) {
+fn btn_click(mut b Button, e &MouseEvent, _ &Window) {
 	$if btn_click ? {
 		println('btn_click ${b.id} movable ${b.movable} focused ${b.is_focused} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
@@ -288,7 +288,7 @@ fn btn_click(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
-fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
+fn btn_mouse_down(mut b Button, e &MouseEvent, _ &Window) {
 	$if btn_md ? {
 		println('btn_mouse_down ${b.id} movable ${b.movable} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
@@ -313,7 +313,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
-fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
+fn btn_mouse_up(mut b Button, e &MouseEvent, _ &Window) {
 	$if btn_mu ? {
 		println('btn_mu ${b.id}')
 	}
@@ -326,7 +326,7 @@ fn btn_mouse_up(mut b Button, e &MouseEvent, window &Window) {
 	}
 }
 
-fn btn_mouse_move(mut b Button, e &MouseMoveEvent, window &Window) {
+fn btn_mouse_move(mut b Button, e &MouseMoveEvent, _ &Window) {
 	// println('btn_click for window=$window.title')
 	if b.hidden {
 		return

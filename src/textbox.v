@@ -551,7 +551,7 @@ pub fn (mut tb TextBox) delete_selection() {
 	tb.cancel_selection()
 }
 
-fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
+fn tb_key_down(mut tb TextBox, e &KeyEvent, _ &Window) {
 	$if tb_keydown ? {
 		println('tb_keydown id:${tb.id}  -> hidden:${tb.hidden} focused:${tb.is_focused}')
 		println(e)
@@ -728,7 +728,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
+fn tb_char(mut tb TextBox, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_char ? {
@@ -873,7 +873,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
+fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, _ Key) {
 	if tb.sel_direction == .right_to_left {
 		tb.sel_start = sel_start_i
 		tb.sel_end = sel_end_i
@@ -951,7 +951,7 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 	}
 }
 
-fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+fn tb_mouse_down(mut tb TextBox, e &MouseEvent, _ voidptr) {
 	// println("mouse first $tb.id")
 	if tb.hidden {
 		return
@@ -1018,7 +1018,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
+fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, _ voidptr) {
 	if tb.hidden {
 		return
 	}
@@ -1051,7 +1051,7 @@ pub fn (mut tb TextBox) mouse_leave(e &MouseMoveEvent) {
 	}
 }
 
-fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+fn tb_mouse_up(mut tb TextBox, e &MouseEvent, _ voidptr) {
 	if tb.hidden {
 		return
 	}

@@ -220,7 +220,7 @@ fn (mut app App) click_circles(c &ui.CanvasLayout, e ui.MouseEvent) {
 	check_redo_disabled(app.state, mut btn_redo)
 }
 
-fn (mut app App) mouse_move_circles(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
+fn (mut app App) mouse_move_circles(_ &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	app.hover = app.state.point_inside(f32(e.x), f32(e.y))
 }
 

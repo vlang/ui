@@ -122,11 +122,11 @@ fn (mut app App) win_init(win &ui.Window) {
 	app.update_listbox()
 }
 
-fn (mut app App) on_change_filter(mut tb ui.TextBox) {
+fn (mut app App) on_change_filter(mut _ ui.TextBox) {
 	app.update_listbox()
 }
 
-fn (mut app App) btn_create_click(btn &ui.Button) {
+fn (mut app App) btn_create_click(_ &ui.Button) {
 	p := person(app.tb_name.text, app.tb_surname.text)
 	if p.id !in app.people.map(it.id) {
 		app.people << p
@@ -134,11 +134,11 @@ fn (mut app App) btn_create_click(btn &ui.Button) {
 	app.update_listbox()
 }
 
-fn (mut app App) btn_update_click(btn &ui.Button) {
+fn (mut app App) btn_update_click(_ &ui.Button) {
 	app.update_selected_person()
 }
 
-fn (mut app App) btn_delete_click(btn &ui.Button) {
+fn (mut app App) btn_delete_click(_ &ui.Button) {
 	app.delete_selected_person()
 }
 

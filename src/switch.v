@@ -154,7 +154,7 @@ fn (s &Switch) point_inside(x f64, y f64) bool {
 	return point_inside(s, x, y)
 }
 
-fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
+fn sw_key_down(mut s Switch, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if sw_keydown ? {
@@ -180,7 +180,7 @@ fn sw_key_down(mut s Switch, e &KeyEvent, window &Window) {
 	}
 }
 
-fn sw_click(mut s Switch, e &MouseEvent, w &Window) {
+fn sw_click(mut s Switch, e &MouseEvent, _ &Window) {
 	if s.hidden {
 		return
 	}

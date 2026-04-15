@@ -75,11 +75,11 @@ fn main() {
 	ui.run(window)
 }
 
-fn (mut app App) on_value_changed(slider &ui.Slider) {
+fn (mut app App) on_value_changed(_ &ui.Slider) {
 	app.duration = app.slider.val
 }
 
-fn (mut app App) on_reset(button &ui.Button) {
+fn (mut app App) on_reset(_ &ui.Button) {
 	app.elapsed_time = 0.0
 	spawn app.timer()
 }

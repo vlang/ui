@@ -276,7 +276,7 @@ fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	}
 }
 
-fn slider_key_down(mut s Slider, e &KeyEvent, zzz voidptr) {
+fn slider_key_down(mut s Slider, e &KeyEvent, _ voidptr) {
 	if s.hidden {
 		return
 	}
@@ -367,7 +367,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 	}
 }
 
-fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn slider_click(mut s Slider, e &MouseEvent, _ voidptr) {
 	if s.hidden {
 		return
 	}
@@ -381,7 +381,7 @@ fn slider_click(mut s Slider, e &MouseEvent, zzz voidptr) {
 	s.is_focused = true
 }
 
-fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn slider_mouse_down(mut s Slider, e &MouseEvent, _ voidptr) {
 	if s.hidden {
 		return
 	}
@@ -392,12 +392,12 @@ fn slider_mouse_down(mut s Slider, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn slider_mouse_up(mut s Slider, e &MouseEvent, zzz voidptr) {
+fn slider_mouse_up(mut s Slider, e &MouseEvent, _ voidptr) {
 	// println('slider touchup  NO MORE DRAGGING')
 	s.dragging = false
 }
 
-fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
 	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
 	if s.ui.btn_down[0] { // int(e.mouse_button) == 0 {
 		// left: 0, right: 1, middle: 2
@@ -413,7 +413,7 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
 	}
 }
 
-fn slider_touch_move(mut s Slider, e &MouseMoveEvent, zzz voidptr) {
+fn slider_touch_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
 	if s.hidden {
 		return
 	}

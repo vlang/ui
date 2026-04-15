@@ -455,7 +455,7 @@ pub fn (b &BoxLayout) set_child_size(i int, mut child Widget) {
 	child.propose_size(w, h)
 }
 
-fn (b BoxLayout) ids_repl(re regex.RE, in_txt string, start int, end int) string {
+fn (b BoxLayout) ids_repl(re regex.RE, in_txt string, _ int, _ int) string {
 	id := re.get_group_by_id(in_txt, 0)
 	field := re.get_group_by_id(in_txt, 1)
 	ind := b.child_id.index(id)
@@ -481,7 +481,7 @@ fn (b BoxLayout) ids_repl(re regex.RE, in_txt string, start int, end int) string
 	return in_txt
 }
 
-fn (mut b BoxLayout) preprocess_child_box_expression(i int, id string) {
+fn (mut b BoxLayout) preprocess_child_box_expression(_ int, id string) {
 	// TODO: extract first the @id, replace by unsafe value in the expression
 	// the new bounding string is then evaluated to generate b.child_box[i]
 	// temporary modify b.child_mode[i] to the evaluated mode

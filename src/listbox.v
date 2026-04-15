@@ -605,7 +605,7 @@ fn (lb &ListBox) point_inside(x f64, y f64) bool {
 	}
 }
 
-fn on_change(mut lb ListBox, e &MouseEvent, window &Window) {
+fn on_change(mut lb ListBox, e &MouseEvent, _ &Window) {
 	// println("onclick $e.action ${int(e.action)}")
 	if lb.hidden {
 		return
@@ -653,7 +653,7 @@ pub fn (lb &ListBox) call_on_change() {
 	}
 }
 
-fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
+fn lb_mouse_down(mut lb ListBox, e &MouseEvent, _ &Window) {
 	$if lb_md ? {
 		println('lb_mouse_down ${lb.id} top_widget ${lb.ui.window.is_top_widget(lb, events.on_mouse_down)}')
 	}
@@ -679,7 +679,7 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, window &Window) {
 	}
 }
 
-fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
+fn lb_mouse_up(mut lb ListBox, e &MouseEvent, _ &Window) {
 	// println('lb_mu')
 	if lb.hidden {
 		return
@@ -696,7 +696,7 @@ fn lb_mouse_up(mut lb ListBox, e &MouseEvent, window &Window) {
 	// b.state = .normal
 }
 
-fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
+fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, _ &Window) {
 	// println('lb move $lb.id')
 	if lb.hidden {
 		return
@@ -741,7 +741,7 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, window &Window) {
 	}
 }
 
-fn on_files_dropped(mut lb ListBox, e &MouseEvent, window &Window) {
+fn on_files_dropped(mut lb ListBox, e &MouseEvent, _ &Window) {
 	// println("on_files_dropped")
 	if lb.hidden {
 		return
@@ -763,7 +763,7 @@ fn on_files_dropped(mut lb ListBox, e &MouseEvent, window &Window) {
 }
 
 // Up and Down keys work on the list when it's is_focused
-fn lb_key_up(mut lb ListBox, e &KeyEvent, window &Window) {
+fn lb_key_up(mut lb ListBox, e &KeyEvent, _ &Window) {
 	if lb.hidden {
 		return
 	}

@@ -86,10 +86,10 @@ pub fn (mut t Transition) set_value(animated_value &int) {
 	t.last_draw_target = *animated_value
 }
 
-fn (t &Transition) set_pos(x int, y int) {
+fn (t &Transition) set_pos(_ int, _ int) {
 }
 
-fn (t &Transition) propose_size(w int, h int) (int, int) {
+fn (t &Transition) propose_size(_ int, _ int) (int, int) {
 	return 0, 0
 }
 
@@ -101,7 +101,7 @@ fn (mut t Transition) draw() {
 	t.draw_device(mut t.ui.dd)
 }
 
-fn (mut t Transition) draw_device(mut d DrawDevice) {
+fn (mut t Transition) draw_device(mut _ DrawDevice) {
 	if t.animated_value == 0 {
 		return
 	}
@@ -140,9 +140,9 @@ fn (mut t Transition) draw_device(mut d DrawDevice) {
 	}
 }
 
-fn (t &Transition) set_visible(state bool) {
+fn (t &Transition) set_visible(_ bool) {
 }
 
-fn (t &Transition) point_inside(x f64, y f64) bool {
+fn (t &Transition) point_inside(_ f64, _ f64) bool {
 	return false
 }

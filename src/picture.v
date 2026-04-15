@@ -150,7 +150,7 @@ pub fn (p &Picture) free() {
 	}
 }
 
-fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
+fn pic_click(mut pic Picture, e &MouseEvent, _ &Window) {
 	if pic.hidden {
 		return
 	}
@@ -163,7 +163,7 @@ fn pic_click(mut pic Picture, e &MouseEvent, window &Window) {
 	}
 }
 
-fn pic_mouse_down(mut pic Picture, e &MouseEvent, window &Window) {
+fn pic_mouse_down(mut pic Picture, e &MouseEvent, _ &Window) {
 	if pic.hidden {
 		return
 	}

@@ -58,7 +58,7 @@ fn main() {
 	ui.run(window)
 }
 
-fn win_init(w &ui.Window) {
+fn win_init(_ &ui.Window) {
 	// mut g := uic.grid_component_from_id(w, "grid")
 	// g.init_ranked_grid_data([2, 0], [1, 2])
 

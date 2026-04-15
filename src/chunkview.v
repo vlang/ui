@@ -114,12 +114,12 @@ pub fn imgchunk(p ImageChunkParams) ImageChunk {
 	}
 }
 
-fn (mut c ImageChunk) init(cv &ChunkView) {}
+fn (mut c ImageChunk) init(_ &ChunkView) {}
 
-fn (mut c ImageChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
+fn (mut c ImageChunk) draw_device(mut _ DrawDevice, _ &ChunkView, _ Offset) {
 }
 
-fn (mut c ImageChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+fn (mut c ImageChunk) update_bounding_box(_ &ChunkView, _ Offset) {
 }
 
 type DrawChunkFn = fn (&DrawChunk)
@@ -138,12 +138,12 @@ pub fn drawchunk(drawfn DrawChunkFn, state voidptr) DrawChunk {
 	}
 }
 
-fn (mut c DrawChunk) init(cv &ChunkView) {}
+fn (mut c DrawChunk) init(_ &ChunkView) {}
 
-fn (mut c DrawChunk) draw_device(mut d DrawDevice, cv &ChunkView, offset Offset) {
+fn (mut c DrawChunk) draw_device(mut _ DrawDevice, _ &ChunkView, _ Offset) {
 }
 
-fn (mut c DrawChunk) update_bounding_box(cv &ChunkView, offset Offset) {
+fn (mut c DrawChunk) update_bounding_box(_ &ChunkView, _ Offset) {
 }
 
 // Arrange chunk as a paragraph
@@ -573,7 +573,7 @@ fn (mut c VerticalAlignChunk) init_line_chunks(cv &ChunkView) {
 	// println("line_chunks = $c.line_chunks")
 }
 
-fn (mut c VerticalAlignChunk) update_chunks(cv &ChunkView) {
+fn (mut c VerticalAlignChunk) update_chunks(_ &ChunkView) {
 	c.update_clipping()
 	max_line_width := c.width - 10 // c.container?.inner_size()
 	winf, wsup := -c.align * max_line_width, (f32(1) - c.align) * max_line_width
