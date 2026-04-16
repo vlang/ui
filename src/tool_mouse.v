@@ -174,8 +174,8 @@ pub fn (mut m Mouse) draw() {
 
 pub fn (mut m Mouse) draw_device(mut d DrawDevice) {
 	if m.active {
-		m.window.ui.draw_device_img(d, m.id, m.pos.x - int(m.size * m.adj[0]), m.pos.y - int(m.size * m.adj[1]),
-			m.size, m.size)
+		m.window.ui.draw_device_img(d, m.id, m.pos.x - int(m.size * m.adj[0]),
+			m.pos.y - int(m.size * m.adj[1]), m.size, m.size)
 	}
 }
 

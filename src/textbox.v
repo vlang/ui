@@ -235,8 +235,8 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	}
 	// Create native widget if native_widgets is enabled
 	if tb.ui.window.native_widgets.is_enabled() {
-		tb.native_w = tb.ui.window.native_widgets.create_textfield(tb.x, tb.y, tb.width,
-			tb.height, tb.placeholder)
+		tb.native_w = tb.ui.window.native_widgets.create_textfield(tb.x, tb.y, tb.width, tb.height,
+			tb.placeholder)
 		if tb.is_password {
 			tb.ui.window.native_widgets.textfield_set_secure(&tb.native_w, true)
 		}
@@ -252,7 +252,8 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	subscriber.subscribe_method(events.on_mouse_move, tb_mouse_move, tb)
 	subscriber.subscribe_method(events.on_mouse_up, tb_mouse_up, tb)
 	subscriber.subscribe_method(events.on_touch_up, tb_mouse_up, tb)
-	tb.ui.window.evt_mngr.add_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
+	tb.ui.window.evt_mngr.add_receiver(tb,
+		[events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 }
 
 @[manualfree]
@@ -267,7 +268,8 @@ fn (mut tb TextBox) cleanup() {
 	subscriber.unsubscribe_method(events.on_mouse_move, tb)
 	subscriber.unsubscribe_method(events.on_mouse_up, tb)
 	subscriber.unsubscribe_method(events.on_touch_up, tb)
-	tb.ui.window.evt_mngr.rm_receiver(tb, [events.on_mouse_down, events.on_mouse_move, events.on_scroll])
+	tb.ui.window.evt_mngr.rm_receiver(tb,
+		[events.on_mouse_down, events.on_mouse_move, events.on_scroll])
 	unsafe { tb.free() }
 }
 
@@ -357,8 +359,8 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 				*tb.text = native_text
 			}
 		}
-		tb.ui.window.native_widgets.update_textfield(&tb.native_w, tb.x, tb.y, tb.width,
-			tb.height, '', tb.placeholder)
+		tb.ui.window.native_widgets.update_textfield(&tb.native_w, tb.x, tb.y, tb.width, tb.height,
+			'', tb.placeholder)
 		return
 	}
 	mut is_native_rendering := false
@@ -448,11 +450,13 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 						dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y, ustr[..(
 							skip_idx + 1)].string())
 					} else {
-						dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y, ustr[tb.draw_start..tb.draw_end].string())
+						dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y,
+							ustr[tb.draw_start..tb.draw_end].string())
 					}
 				} else {
 					if tb.is_password {
-						dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y, '*'.repeat(text_len))
+						dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y,
+							'*'.repeat(text_len))
 					} else {
 						if tb.justify != top_left {
 							mut aw := AdjustableWidget(tb)
@@ -460,8 +464,7 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 							dtw.draw_device_text(d, tb.x + textbox_padding_x + dx, text_y + dy,
 								text)
 						} else {
-							dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y,
-								text)
+							dtw.draw_device_text(d, tb.x + textbox_padding_x, text_y, text)
 						}
 					}
 				}

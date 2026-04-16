@@ -619,10 +619,10 @@ fn (app &App) draw() {
 		app.gg.draw_text(ww / 2, (m * 8 / 10) + ypad, msg2, app.label_format(.score_end))
 	}
 	// Draw at the end, so that it's on top of the victory / game over overlays
-	app.gg.draw_text(int(app.bounds.x) + labelx, int(app.bounds.y) + labely, 'Points: ${app.board.points}',
-		app.label_format(.points))
-	app.gg.draw_text(int(app.bounds.x) + ww - labelx, int(app.bounds.y) + labely, 'Moves: ${app.moves}',
-		app.label_format(.moves))
+	app.gg.draw_text(int(app.bounds.x) + labelx, int(app.bounds.y) + labely,
+		'Points: ${app.board.points}', app.label_format(.points))
+	app.gg.draw_text(int(app.bounds.x) + ww - labelx, int(app.bounds.y) + labely,
+		'Moves: ${app.moves}', app.label_format(.moves))
 }
 
 fn (app &App) draw_tiles() {
@@ -916,7 +916,8 @@ $if emscripten ? {
 pub fn new_gg_app() &App {
 	mut app := &App{}
 	app.new_game()
-	mut font_path := os.join_path(os.dir(@FILE), '..', '..', 'assets', 'fonts', 'RobotoMono-Regular.ttf')
+	mut font_path := os.join_path(os.dir(@FILE), '..', '..', 'assets', 'fonts',
+		'RobotoMono-Regular.ttf')
 	$if android {
 		font_path = 'fonts/RobotoMono-Regular.ttf'
 	}

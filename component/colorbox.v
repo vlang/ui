@@ -220,10 +220,9 @@ fn cv_h_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	for j in 0 .. 255 {
 		c.draw_device_rect_empty(d, 0, j, 30, 1, cb.hsv_to_rgb(f64(j) / 256.0, .75, .75))
 	}
-	c.draw_device_rounded_rect_filled(d, -3, int(cb.h * 256) - 3, 36, 6, 2, cb.hsv_to_rgb(cb.h,
-		.2, .7))
-	c.draw_device_rect_filled(d, 3, int(cb.h * 256) - 1, 24, 2, cb.hsv_to_rgb(cb.h, .75,
-		.75))
+	c.draw_device_rounded_rect_filled(d, -3, int(cb.h * 256) - 3, 36, 6, 2, cb.hsv_to_rgb(cb.h, .2,
+		.7))
+	c.draw_device_rect_filled(d, 3, int(cb.h * 256) - 1, 24, 2, cb.hsv_to_rgb(cb.h, .75, .75))
 	c.draw_device_rounded_rect_empty(d, -3, int(cb.h * 256) - 3, 36, 6, 2, if cb.light {
 		gg.black
 	} else {
@@ -256,8 +255,8 @@ fn cv_sv_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 
 	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 10, int((1.0 - cb.v) * 256.0) - 10,
 		20, 20, 10, cb.hsv_to_rgb(cb.h, 1 - cb.s, 1.0 - cb.v))
-	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 7, int((1.0 - cb.v) * 256.0) - 7,
-		14, 14, 7, cb.hsv_to_rgb(cb.h, cb.s, cb.v))
+	c.draw_device_rounded_rect_filled(d, int(cb.s * 256.0) - 7, int((1.0 - cb.v) * 256.0) - 7, 14,
+		14, 7, cb.hsv_to_rgb(cb.h, cb.s, cb.v))
 }
 
 fn cv_sel_key_down(c &ui.CanvasLayout, e ui.KeyEvent) {
@@ -301,8 +300,7 @@ fn cv_sel_draw(mut d ui.DrawDevice, mut c ui.CanvasLayout) {
 			hsv = cb.hsv_sel[i + j * cb_nc]
 			h, s, v = hsv.h, hsv.s, hsv.v
 			c.draw_device_rounded_rect_filled(d, cb_sp + i * (cb_hsv_col + cb_sp), cb_sp +
-				j * (cb_hsv_col + cb_sp), cb_hsv_col, cb_hsv_col, .25, cb.hsv_to_rgb(h,
-				s, v))
+				j * (cb_hsv_col + cb_sp), cb_hsv_col, cb_hsv_col, .25, cb.hsv_to_rgb(h, s, v))
 		}
 	}
 }

@@ -134,7 +134,8 @@ pub fn (mut cp ColorPaletteComponent) connect_color(color &gg.Color) {
 
 // TODO: documentation
 pub fn colorpalette_click(cb &ColorButtonComponent) {
-	mut cp := colorpalette_component_from_id(cb.widget.ui.window, ui.component_parent_id(cb.widget.id))
+	mut cp := colorpalette_component_from_id(cb.widget.ui.window,
+		ui.component_parent_id(cb.widget.id))
 	cp.selected = cb.widget.id
 	unsafe {
 		*(cp.color) = cb.bg_color

@@ -45,8 +45,8 @@ fn main() {
 							// println("hello $mf.file")
 							if os.file_ext(mf.file) == '.png' {
 								mf.layout.ui.window.set_title('V UI Png Edit: ${mf.file}')
-								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-									'rv')
+								mut rv :=
+									uic.rasterview_component_from_id(mf.layout.ui.window, 'rv')
 								rv.load_image(mf.file)
 								colors := rv.top_colors()
 								mut cp := uic.colorpalette_component_from_id(mf.layout.ui.window,
@@ -64,8 +64,8 @@ fn main() {
 							// println('new $mf.file!!!')
 							if os.file_ext(mf.file) == '.png' {
 								// create image
-								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-									'rv')
+								mut rv :=
+									uic.rasterview_component_from_id(mf.layout.ui.window, 'rv')
 								rv.extract_size(mf.file)
 								rv.new_image()
 								rv.save_image_as(mf.file)
@@ -75,8 +75,8 @@ fn main() {
 						on_save:         fn (mf &uic.MenuFileComponent) {
 							// println("save $mf.file")
 							if os.file_ext(mf.file) == '.png' {
-								mut rv := uic.rasterview_component_from_id(mf.layout.ui.window,
-									'rv')
+								mut rv :=
+									uic.rasterview_component_from_id(mf.layout.ui.window, 'rv')
 								rv.save_image_as(mf.file)
 								mf.layout.ui.window.root_layout.unfocus_all()
 							}

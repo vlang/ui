@@ -881,8 +881,7 @@ pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text strin
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
 	mut dtw := unsafe { DrawTextWidget(c) }
-	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
-		ts)
+	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
 }
 
 // TODO: documentation
@@ -911,14 +910,12 @@ pub fn (c &CanvasLayout) draw_device_triangle_filled(d DrawDevice, x f64, y f64,
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_square_empty(d DrawDevice, x f64, y f64, s f32, color gg.Color) {
-	c.draw_device_rect_empty(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		s, s, color)
+	c.draw_device_rect_empty(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_square_filled(d DrawDevice, x f64, y f64, s f32, color gg.Color) {
-	c.draw_device_rect_filled(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y),
-		s, s, color)
+	c.draw_device_rect_filled(d, f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), s, s, color)
 }
 
 // ---- rectangle
@@ -936,23 +933,22 @@ pub fn (c &CanvasLayout) draw_device_rect_filled(d DrawDevice, x f64, y f64, w f
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rounded_rect_filled(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, color gg.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	d.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
-		h, rad, color)
+	d.draw_rounded_rect_filled(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, rad,
+		color)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_rounded_rect_empty(d DrawDevice, x f64, y f64, w f32, h f32, radius f32, border_color gg.Color) {
 	rad := relative_size(radius, int(w), int(h))
-	d.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w,
-		h, rad, border_color)
+	d.draw_rounded_rect_empty(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), w, h, rad,
+		border_color)
 }
 
 // ---- circle
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_circle_line(d DrawDevice, x f64, y f64, r int, segments int, color gg.Color) {
-	d.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, segments,
-		color)
+	d.draw_circle_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), r, segments, color)
 }
 
 // TODO: documentation
@@ -1005,8 +1001,8 @@ pub fn (c &CanvasLayout) draw_device_arc_line(d DrawDevice, x f64, y f64, radius
 pub fn (c &CanvasLayout) draw_device_line(d DrawDevice, x f64, y f64, x2 f64, y2 f64, color gg.Color) {
 	// println("dl $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $x2 + $c.x + $c.offset_x,
 	// $y2 + $c.y + $c.offset_y")
-	d.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x + c.offset_x),
-		f32(y2 + c.y + c.offset_y), color)
+	d.draw_line(f32(x + c.x + c.offset_x), f32(y + c.y + c.offset_y), f32(x2 + c.x + c.offset_x), f32(
+		y2 + c.y + c.offset_y), color)
 }
 
 // ---- polygon

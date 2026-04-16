@@ -119,13 +119,15 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('arrow_white', $embed_file('assets/img/arrow_white.png').to_bytes(),
 		'assets/img/arrow_white.png')
 	gui.down_arrow = gui.img('arrow_black')
-	gui.load_img('check', $embed_file('assets/img/check_black.png').to_bytes(), 'assets/img/check_black.png')
+	gui.load_img('check', $embed_file('assets/img/check_black.png').to_bytes(),
+		'assets/img/check_black.png')
 	gui.load_img('check_white', $embed_file('assets/img/check_white.png').to_bytes(),
 		'assets/img/check_white.png')
 	gui.cb_image = gui.img('check')
 	gui.load_img('radio_selected', $embed_file('assets/img/radio_selected.png').to_bytes(),
 		'assets/img/radio_selected.png')
-	gui.load_img('radio_white_selected', $embed_file('assets/img/radio_white_selected.png').to_bytes(),
+	gui.load_img('radio_white_selected',
+		$embed_file('assets/img/radio_white_selected.png').to_bytes(),
 		'assets/img/radio_white_selected.png')
 	gui.load_img('radio', $embed_file('assets/img/radio.png').to_bytes(), 'assets/img/radio.png')
 	gui.radio_image = gui.img('radio')
@@ -135,12 +137,14 @@ fn (mut gui UI) load_imgs() {
 	gui.load_img('blue', $embed_file('assets/img/cursor.png').to_bytes(), 'assets/img/cursor.png')
 	gui.load_img('hand', $embed_file('assets/img/icons8-hand-cursor-50.png').to_bytes(),
 		'assets/img/icons8-hand-cursor-50.png')
-	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes(), 'assets/img/icons8-cursor-67.png')
+	gui.load_img('vmove', $embed_file('assets/img/icons8-cursor-67.png').to_bytes(),
+		'assets/img/icons8-cursor-67.png')
 	gui.load_img('text', $embed_file('assets/img/icons8-text-cursor-50.png').to_bytes(),
 		'assets/img/icons8-text-cursor-50.png')
 
 	// v-logo
-	gui.load_img('v-logo', $embed_file('assets/img/logo.png').to_bytes(), 'examples/assets/img/logo.png')
+	gui.load_img('v-logo', $embed_file('assets/img/logo.png').to_bytes(),
+		'examples/assets/img/logo.png')
 }
 
 // complete the drawing system

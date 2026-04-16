@@ -210,10 +210,10 @@ pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 	// draw the drawer
 	if dd.open {
-		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			dd.style.drawer_color)
-		d.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width, dd.items.len * dd.dropdown_height,
-			dd.style.border_color)
+		d.draw_rect_filled(dd.x, dd.y + dd.dropdown_height, dd.width,
+			dd.items.len * dd.dropdown_height, dd.style.drawer_color)
+		d.draw_rect_empty(dd.x, dd.y + dd.dropdown_height, dd.width,
+			dd.items.len * dd.dropdown_height, dd.style.border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
 			color := if i == dd.hover_index { dd.style.border_color } else { dd.style.drawer_color }

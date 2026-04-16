@@ -19,8 +19,8 @@ fn debug_draw_bb_stack(s &Stack) {
 	println('  in: (s.x(${s.x}) - s.margin(.left)(${s.margin(.left)}), s.y(${s.y}) - s.margin(.top)(${s.margin(.top)}), w(${w}), h(${h}))')
 	println(' out: (s.x(${s.x}), s.y(${s.y}), w(${w}) - s.margin(.left)(${s.margin(.left)}) - s.margin(.right)(${s.margin(.right)}), h(${h}) - s.margin(.top)(${s.margin(.top)}) - s.margin(.bottom)(${s.margin(.bottom)})')
 	s.ui.dd.draw_rect_empty(s.x - s.margin(.left), s.y - s.margin(.top), w, h, col)
-	s.ui.dd.draw_rect_empty(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom),
-		col)
+	s.ui.dd.draw_rect_empty(s.x, s.y, w - s.margin(.left) - s.margin(.right), h - s.margin(.top) -
+		s.margin(.bottom), col)
 }
 
 fn debug_draw_bb_widget(mut wi Widget, u &UI) {

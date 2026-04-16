@@ -17,7 +17,7 @@
 .vscode
 *.code-workspace
 .lite_workspace.lua
-ui.iml
+*.iml
 *~
 *#
 

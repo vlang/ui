@@ -71,7 +71,8 @@ pub fn (mut nw NativeWidgets) create_textfield(x int, y int, w int, h int, place
 }
 
 pub fn (nw &NativeWidgets) update_textfield(nwidget &NativeWidget, x int, y int, w int, h int, text string, placeholder string) {
-	C.vui_native_update_textfield(nwidget.handle, x, y, w, h, &char(text.str), &char(placeholder.str))
+	C.vui_native_update_textfield(nwidget.handle, x, y, w, h, &char(text.str),
+		&char(placeholder.str))
 }
 
 pub fn (nw &NativeWidgets) textfield_set_secure(nwidget &NativeWidget, secure bool) {
@@ -79,8 +80,7 @@ pub fn (nw &NativeWidgets) textfield_set_secure(nwidget &NativeWidget, secure bo
 }
 
 pub fn (mut nw NativeWidgets) create_checkbox(x int, y int, w int, h int, title string, checked bool) NativeWidget {
-	handle := C.vui_native_create_checkbox(nw.parent_handle, x, y, w, h, &char(title.str),
-		checked)
+	handle := C.vui_native_create_checkbox(nw.parent_handle, x, y, w, h, &char(title.str), checked)
 	return NativeWidget{
 		handle: handle
 	}
@@ -95,8 +95,8 @@ pub fn (mut nw NativeWidgets) create_radio_group(x int, y int, w int, h int, val
 	for i, v in values {
 		ptrs[i] = &char(v.str)
 	}
-	handle := C.vui_native_create_radio_group(nw.parent_handle, x, y, w, h, ptrs.data,
-		values.len, selected, &char(title.str))
+	handle := C.vui_native_create_radio_group(nw.parent_handle, x, y, w, h, ptrs.data, values.len,
+		selected, &char(title.str))
 	return NativeWidget{
 		handle: handle
 	}
@@ -107,8 +107,7 @@ pub fn (nw &NativeWidgets) update_radio_group(nwidget &NativeWidget, x int, y in
 }
 
 pub fn (mut nw NativeWidgets) create_progressbar(x int, y int, w int, h int, min f64, max f64, val f64) NativeWidget {
-	handle := C.vui_native_create_progressbar(nw.parent_handle, x, y, w, h, min, max,
-		val)
+	handle := C.vui_native_create_progressbar(nw.parent_handle, x, y, w, h, min, max, val)
 	return NativeWidget{
 		handle: handle
 	}
@@ -158,8 +157,7 @@ fn C.vui_native_create_menu(parent voidptr, x int, y int, w int, h int, items &&
 
 pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientation Orientation, min f64, max f64, val f64) NativeWidget {
 	horizontal := orientation == .horizontal
-	handle := C.vui_native_create_slider(nw.parent_handle, x, y, w, h, horizontal, min,
-		max, val)
+	handle := C.vui_native_create_slider(nw.parent_handle, x, y, w, h, horizontal, min, max, val)
 	return NativeWidget{
 		handle: handle
 	}

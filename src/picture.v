@@ -196,8 +196,8 @@ fn (mut pic Picture) draw() {
 fn (mut pic Picture) draw_device(mut d DrawDevice) {
 	// Native widget: update position and skip custom drawing
 	if pic.ui.window.native_widgets.is_enabled() && pic.native_w.handle != unsafe { nil } {
-		pic.ui.window.native_widgets.update_picture(&pic.native_w, pic.x + pic.offset_x,
-			pic.y + pic.offset_y, pic.width, pic.height)
+		pic.ui.window.native_widgets.update_picture(&pic.native_w, pic.x + pic.offset_x, pic.y +
+			pic.offset_y, pic.width, pic.height)
 		return
 	}
 	$if layout ? {

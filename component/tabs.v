@@ -260,8 +260,8 @@ fn (tabs &TabsComponent) update_pos(win &ui.Window) {
 		w, h := dtw.text_size(lab.text)
 		// println(tabs.justify)
 		// println("$lab.text ($w, $h) in (${int(tabs.tab_bar.widths[i])}, ${int(tabs.tab_bar.heights[i])})")
-		dx, dy := ui.get_align_offset_from_size(w, h, int(tabs.tab_bar.widths[i]), int(tabs.tab_bar.heights[i]),
-			tabs.justify[0], tabs.justify[1])
+		dx, dy := ui.get_align_offset_from_size(w, h, int(tabs.tab_bar.widths[i]),
+			int(tabs.tab_bar.heights[i]), tabs.justify[0], tabs.justify[1])
 		// println("$dx, $dy $lab.x $lab.y")
 		lab.set_pos(dx, dy)
 		// println("$dx, $dy $lab.x $lab.y")

@@ -162,8 +162,8 @@ fn (mut lb ListBox) init(parent Layout) {
 		for i, item in lb.items {
 			texts[i] = item.text
 		}
-		lb.native_w = lb.ui.window.native_widgets.create_listbox(lb.x, lb.y, lb.width,
-			lb.height, texts, lb.selection)
+		lb.native_w = lb.ui.window.native_widgets.create_listbox(lb.x, lb.y, lb.width, lb.height,
+			texts, lb.selection)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
@@ -516,8 +516,8 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if lb.ui.window.native_widgets.is_enabled() && lb.native_w.handle != unsafe { nil } {
 		lb.selection = lb.ui.window.native_widgets.listbox_get_selected(&lb.native_w)
-		lb.ui.window.native_widgets.update_listbox(&lb.native_w, lb.x, lb.y, lb.width,
-			lb.height, lb.selection)
+		lb.ui.window.native_widgets.update_listbox(&lb.native_w, lb.x, lb.y, lb.width, lb.height,
+			lb.selection)
 		return
 	}
 	offset_start(mut lb)
@@ -553,8 +553,7 @@ fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	from, to := lb.visible_items()
 	if lb.items.len == 0 {
 		dtw = DrawTextWidget(lb)
-		dtw.draw_device_styled_text(d, lb.x + listbox_text_offset_x, lb.y + lb.text_offset_y,
-			if lb.files_dropped {
+		dtw.draw_device_styled_text(d, lb.x + listbox_text_offset_x, lb.y + lb.text_offset_y, if lb.files_dropped {
 			'Empty listbox. Drop files here ...'
 		} else {
 			''
@@ -655,7 +654,8 @@ pub fn (lb &ListBox) call_on_change() {
 
 fn lb_mouse_down(mut lb ListBox, e &MouseEvent, _ &Window) {
 	$if lb_md ? {
-		println('lb_mouse_down ${lb.id} top_widget ${lb.ui.window.is_top_widget(lb, events.on_mouse_down)}')
+		println('lb_mouse_down ${lb.id} top_widget ${lb.ui.window.is_top_widget(lb,
+			events.on_mouse_down)}')
 	}
 	if lb.hidden {
 		return
@@ -1061,8 +1061,8 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 		lb.y + lb.text_offset_y, width - 2 * listbox_text_offset_x, lb.item_height, col)
 
 	mut dtw := unsafe { DrawTextWidget(lb) }
-	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + listbox_text_offset_x,
-		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
+	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + listbox_text_offset_x, li.y +
+		li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text
 	} else {
 		li.text()

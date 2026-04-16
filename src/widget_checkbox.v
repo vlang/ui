@@ -98,8 +98,8 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	// cb.init_style()
 	// Create native widget if native_widgets is enabled
 	if cb.ui.window.native_widgets.is_enabled() {
-		cb.native_w = cb.ui.window.native_widgets.create_checkbox(cb.x, cb.y, cb.width,
-			cb.height, cb.text, cb.checked)
+		cb.native_w = cb.ui.window.native_widgets.create_checkbox(cb.x, cb.y, cb.width, cb.height,
+			cb.text, cb.checked)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
@@ -209,8 +209,8 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if cb.ui.window.native_widgets.is_enabled() && cb.native_w.handle != unsafe { nil } {
 		cb.checked = cb.ui.window.native_widgets.checkbox_is_checked(&cb.native_w)
-		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width,
-			cb.height, cb.text, cb.checked)
+		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width, cb.height,
+			cb.text, cb.checked)
 		return
 	}
 	offset_start(mut cb)
@@ -221,14 +221,15 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	}
 	adj_pos_x, adj_pos_y := AdjustableWidget(cb).get_adjusted_pos()
 	// if cb.style.bg_color != no_color {
-	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2, adj_pos_y - (cb.height - cb.adj_height) / 2,
-		cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
+	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2,
+		adj_pos_y - (cb.height - cb.adj_height) / 2, cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
 	// }
 	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.bg_color) // progress_bar_color)
 	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
 		false)
 	if cb.is_focused {
-		d.draw_rect_empty(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.border_color)
+		d.draw_rect_empty(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
+			cb.style.border_color)
 	}
 	// Draw X (TODO draw a check mark instead)
 	if cb.checked {

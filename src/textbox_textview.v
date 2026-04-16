@@ -206,6 +206,7 @@ fn (mut tv TextView) update_all_visible_lines() {
 				0
 			})
 			tv.tlv.to_i << tv.text_pos_from_x(tv.tlv.lines[j],
+
 				if tv.tb.has_scrollview { tv.tb.scrollview.offset_x } else { 0 } + tv.tb.width)
 		}
 		// refresh_visible_lines done
@@ -282,8 +283,9 @@ pub fn (mut tv TextView) draw_device_visible_line(d DrawDevice, j int, y int, te
 	imin, imax := tv.tlv.from_i[j] or { 0 }, tv.tlv.to_i[j] or { tv.tlv.to_i.len - 1 }
 	ustr := text.runes()
 	// println("draw visible $imin, $imax $ustr")
-	tv.draw_device_styled_text(d, tv.tb.x + tv.left_margin + tv.text_width(ustr#[0..imin].string()),
-		y, ustr#[imin..imax].string())
+	tv.draw_device_styled_text(d,
+		tv.tb.x + tv.left_margin + tv.text_width(ustr#[0..imin].string()), y,
+		ustr#[imin..imax].string())
 }
 
 fn (mut tv TextView) draw_device_selection(d DrawDevice) {

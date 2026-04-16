@@ -71,8 +71,7 @@ fn (mut s Switch) init(parent Layout) {
 	s.ui = u
 	// Create native widget if native_widgets is enabled
 	if s.ui.window.native_widgets.is_enabled() {
-		s.native_w = s.ui.window.native_widgets.create_switch(s.x, s.y, s.width, s.height,
-			s.open)
+		s.native_w = s.ui.window.native_widgets.create_switch(s.x, s.y, s.width, s.height, s.open)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
@@ -122,8 +121,7 @@ fn (mut s Switch) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
 		s.open = s.ui.window.native_widgets.switch_is_open(&s.native_w)
-		s.ui.window.native_widgets.update_switch(&s.native_w, s.x, s.y, s.width, s.height,
-			s.open)
+		s.ui.window.native_widgets.update_switch(&s.native_w, s.x, s.y, s.width, s.height, s.open)
 		return
 	}
 	offset_start(mut s)

@@ -837,7 +837,8 @@ pub fn (mut s Stack) propose_size(w int, h int) (int, int) {
 		}
 	}
 	s.real_width, s.real_height = w, h
-	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) - s.margin(.bottom)
+	s.width, s.height = w - s.margin(.left) - s.margin(.right), h - s.margin(.top) -
+		s.margin(.bottom)
 
 	// println("${s.id} propose size ${w}, ${h} => ${s.width}, ${s.height} ")
 
@@ -850,7 +851,8 @@ pub fn (s &Stack) size() (int, int) {
 }
 
 fn (s &Stack) free_size() (int, int) {
-	mut w, mut h := s.real_width - s.margin(.left) - s.margin(.right), s.real_height - s.margin(.top) - s.margin(.bottom)
+	mut w, mut h := s.real_width - s.margin(.left) - s.margin(.right), s.real_height -
+		s.margin(.top) - s.margin(.bottom)
 	if s.direction == .row {
 		w -= s.total_spacing()
 	} else {
@@ -1146,8 +1148,8 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 	if s.style.bg_color != no_color {
 		if s.style.bg_radius > 0 {
 			radius := relative_size(s.style.bg_radius, s.real_width, s.real_height)
-			d.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height,
-				radius, s.style.bg_color)
+			d.draw_rounded_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, radius,
+				s.style.bg_color)
 		} else {
 			// println("$s.id ($s.real_x, $s.real_y, $s.real_width, $s.real_height), $s.bg_color")
 			d.draw_rect_filled(s.real_x, s.real_y, s.real_width, s.real_height, s.style.bg_color)
@@ -1219,6 +1221,7 @@ fn (mut s Stack) draw_device(mut d DrawDevice) {
 		text_width, text_height := s.ui.dd.text_size(s.title)
 		// draw rectangle around stack
 		d.draw_rect_empty(s.x - text_height / 2, s.y - text_height / 2, s.real_width + text_height,
+
 			s.real_height + int(f32(text_height) * .75), gg.black)
 		// draw mini frame
 		tx := s.x + s.real_width / 2 - text_width / 2 - 3

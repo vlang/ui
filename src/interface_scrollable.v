@@ -681,8 +681,8 @@ pub fn (sv &ScrollView) draw_device(d DrawDevice) {
 			println('sv_draw ${sv.widget.id} -> ${svx} + ${sv.width} - ${scrollbar_size}, ${svy}, ${scrollbar_size}, ${sv.sb_h}')
 		}
 		// vertical scrollbar
-		d.draw_rounded_rect_filled(svx + sv.width - scrollbar_size, svy, scrollbar_size,
-			sv.sb_h, scrollbar_size / 3, scrollbar_background_color)
+		d.draw_rounded_rect_filled(svx + sv.width - scrollbar_size, svy, scrollbar_size, sv.sb_h,
+			scrollbar_size / 3, scrollbar_background_color)
 		// vertical button
 		d.draw_rounded_rect_filled(svx + sv.width - scrollbar_size, svy + sv.btn_y, scrollbar_size,
 			sv.btn_h, scrollbar_size / 3, sv.btn_color_y)

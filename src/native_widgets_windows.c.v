@@ -64,8 +64,9 @@ pub fn (mut nw NativeWidgets) init_parent(window_handle voidptr) {
 }
 
 pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title string) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_button_class(), title.to_wide(), ws_child | ws_visible | ws_tabstop | bs_pushbutton,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_button_class(), title.to_wide(),
+		ws_child | ws_visible | ws_tabstop | bs_pushbutton, x, y, w, h, nw.parent_handle,
+		unsafe { nil }, unsafe { nil }, unsafe { nil })
 	return NativeWidget{
 		handle: handle
 	}
@@ -80,8 +81,9 @@ pub fn (nw &NativeWidgets) update_button(nwidget &NativeWidget, x int, y int, w 
 }
 
 pub fn (mut nw NativeWidgets) create_textfield(x int, y int, w int, h int, placeholder string) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_edit_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | ws_border | es_autohscroll,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_edit_class(), ''.to_wide(),
+		ws_child | ws_visible | ws_tabstop | ws_border | es_autohscroll, x, y, w, h,
+		nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
 	return NativeWidget{
 		handle: handle
 	}
@@ -98,8 +100,9 @@ pub fn (nw &NativeWidgets) textfield_set_secure(nwidget &NativeWidget, secure bo
 }
 
 pub fn (mut nw NativeWidgets) create_checkbox(x int, y int, w int, h int, title string, checked bool) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_button_class(), title.to_wide(), ws_child | ws_visible | ws_tabstop | bs_autocheckbox,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_button_class(), title.to_wide(),
+		ws_child | ws_visible | ws_tabstop | bs_autocheckbox, x, y, w, h, nw.parent_handle,
+		unsafe { nil }, unsafe { nil }, unsafe { nil })
 	if checked {
 		C.SendMessageW(handle, bm_setcheck, bst_checked, 0)
 	}
@@ -146,8 +149,8 @@ pub fn (nw &NativeWidgets) update_radio_group(nwidget &NativeWidget, x int, y in
 }
 
 pub fn (mut nw NativeWidgets) create_progressbar(x int, y int, w int, h int, min f64, max f64, val f64) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_progress_class(), ''.to_wide(), ws_child | ws_visible,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_progress_class(), ''.to_wide(), ws_child | ws_visible, x,
+		y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
 	C.SendMessageW(handle, pbm_setrange32, usize(int(min)), isize(int(max)))
 	C.SendMessageW(handle, pbm_setpos, usize(int(val)), 0)
 	return NativeWidget{
@@ -161,8 +164,9 @@ pub fn (nw &NativeWidgets) update_progressbar(nwidget &NativeWidget, x int, y in
 }
 
 pub fn (mut nw NativeWidgets) create_label(x int, y int, w int, h int, text string) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_static_class(), text.to_wide(), ws_child | ws_visible | ss_left,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_static_class(), text.to_wide(),
+		ws_child | ws_visible | ss_left, x, y, w, h, nw.parent_handle, unsafe { nil },
+		unsafe { nil }, unsafe { nil })
 	return NativeWidget{
 		handle: handle
 	}
@@ -210,8 +214,8 @@ pub fn (mut nw NativeWidgets) create_slider(x int, y int, w int, h int, orientat
 	} else {
 		tbs_vert
 	}
-	handle := C.CreateWindowExW(0, win32_trackbar_class(), ''.to_wide(), style, x, y,
-		w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_trackbar_class(), ''.to_wide(), style, x, y, w, h,
+		nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
 	C.SendMessageW(handle, tbm_setrangemin, usize(0), isize(int(min)))
 	C.SendMessageW(handle, tbm_setrangemax, usize(0), isize(int(max)))
 	C.SendMessageW(handle, tbm_setpos_tb, usize(1), isize(int(val)))
@@ -226,8 +230,9 @@ pub fn (nw &NativeWidgets) update_slider(nwidget &NativeWidget, x int, y int, w 
 }
 
 pub fn (mut nw NativeWidgets) create_dropdown(x int, y int, w int, h int, items []string, selected int) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_combobox_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | cbs_dropdownlist,
-		x, y, w, h * 8, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_combobox_class(), ''.to_wide(),
+		ws_child | ws_visible | ws_tabstop | cbs_dropdownlist, x, y, w, h * 8, nw.parent_handle,
+		unsafe { nil }, unsafe { nil }, unsafe { nil })
 	for item in items {
 		C.SendMessageW(handle, cb_addstring, usize(0), isize(item.to_wide()))
 	}
@@ -245,7 +250,8 @@ pub fn (nw &NativeWidgets) update_dropdown(nwidget &NativeWidget, x int, y int, 
 }
 
 pub fn (mut nw NativeWidgets) create_listbox(x int, y int, w int, h int, items []string, selected int) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_listbox_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | ws_border | ws_vscroll | lbs_notify | lbs_hasstrings,
+	handle := C.CreateWindowExW(0, win32_listbox_class(), ''.to_wide(),
+		ws_child | ws_visible | ws_tabstop | ws_border | ws_vscroll | lbs_notify | lbs_hasstrings,
 		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
 	for item in items {
 		C.SendMessageW(handle, lb_addstring, usize(0), isize(item.to_wide()))
@@ -264,8 +270,9 @@ pub fn (nw &NativeWidgets) update_listbox(nwidget &NativeWidget, x int, y int, w
 }
 
 pub fn (mut nw NativeWidgets) create_switch(x int, y int, w int, h int, open bool) NativeWidget {
-	handle := C.CreateWindowExW(0, win32_button_class(), ''.to_wide(), ws_child | ws_visible | ws_tabstop | bs_autocheckbox,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_button_class(), ''.to_wide(),
+		ws_child | ws_visible | ws_tabstop | bs_autocheckbox, x, y, w, h, nw.parent_handle,
+		unsafe { nil }, unsafe { nil }, unsafe { nil })
 	if open {
 		C.SendMessageW(handle, bm_setcheck, bst_checked, 0)
 	}
@@ -281,8 +288,9 @@ pub fn (nw &NativeWidgets) update_switch(nwidget &NativeWidget, x int, y int, w 
 
 pub fn (mut nw NativeWidgets) create_picture(x int, y int, w int, h int, path string) NativeWidget {
 	// Win32 STATIC with SS_BITMAP - simplified, just creates the control
-	handle := C.CreateWindowExW(0, win32_static_class(), ''.to_wide(), ws_child | ws_visible | ss_bitmap,
-		x, y, w, h, nw.parent_handle, unsafe { nil }, unsafe { nil }, unsafe { nil })
+	handle := C.CreateWindowExW(0, win32_static_class(), ''.to_wide(),
+		ws_child | ws_visible | ss_bitmap, x, y, w, h, nw.parent_handle, unsafe { nil },
+		unsafe { nil }, unsafe { nil })
 	return NativeWidget{
 		handle: handle
 	}
@@ -299,9 +307,9 @@ pub fn (mut nw NativeWidgets) create_menu(x int, y int, w int, h int, items []st
 	count := items.len
 	item_w := if count > 0 { w / count } else { w }
 	for i, item in items {
-		handle := C.CreateWindowExW(0, win32_button_class(), item.to_wide(), ws_child | ws_visible | bs_pushbutton,
-			x + i * item_w, y, item_w, h, nw.parent_handle, unsafe { nil }, unsafe { nil },
-			unsafe { nil })
+		handle := C.CreateWindowExW(0, win32_button_class(), item.to_wide(),
+			ws_child | ws_visible | bs_pushbutton, x + i * item_w, y, item_w, h, nw.parent_handle,
+			unsafe { nil }, unsafe { nil }, unsafe { nil })
 		if i == 0 {
 			first_handle = handle
 		}

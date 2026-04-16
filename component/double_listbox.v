@@ -40,7 +40,8 @@ pub fn doublelistbox_stack(c DoubleListBoxParams) &ui.Stack {
 		on_click: doublelistbox_move_right
 	)
 	mut btn_left := ui.button(id: c.id + '_btn_left', text: '<<', on_click: doublelistbox_move_left)
-	mut btn_clear := ui.button(id: c.id + '_btn_clear', text: 'clear', on_click: doublelistbox_clear)
+	mut btn_clear :=
+		ui.button(id: c.id + '_btn_clear', text: 'clear', on_click: doublelistbox_clear)
 	mut layout := ui.row(
 		title:    c.title
 		id:       ui.component_id(c.id, 'layout')

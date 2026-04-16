@@ -345,8 +345,8 @@ fn (rv &RasterViewComponent) draw_device_current(d ui.DrawDevice) {
 	}
 	pos_x, pos_y := rv.get_pos(rv.cur_i, rv.cur_j)
 	cur_color := gg.cyan
-	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
-		2, cur_color)
+	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size, 2,
+		cur_color)
 }
 
 fn (rv &RasterViewComponent) draw_device_selection(d ui.DrawDevice) {
@@ -355,8 +355,8 @@ fn (rv &RasterViewComponent) draw_device_selection(d ui.DrawDevice) {
 	}
 	pos_x, pos_y := rv.get_pos(rv.sel_i, rv.sel_j)
 	sel_color := gg.red
-	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size,
-		3, sel_color)
+	rv.layout.draw_device_rect_surrounded(d, pos_x, pos_y, rv.pixel_size, rv.pixel_size, 3,
+		sel_color)
 }
 
 fn (rv &RasterViewComponent) size() (int, int) {
@@ -374,8 +374,8 @@ fn (mut rv RasterViewComponent) visible_pixels() {
 		rv.from_y = rv.from_i * rv.size
 
 		rv.from_j = math.min(math.max(rv.layout.scrollview.offset_x / rv.size, 0), rv.width() - 1)
-		rv.to_j = math.min((rv.layout.scrollview.offset_x +
-			rv.layout.width) / rv.size, rv.width() - 1) + 1
+		rv.to_j = math.min((rv.layout.scrollview.offset_x + rv.layout.width) / rv.size, rv.width() -
+			1) + 1
 		rv.from_x = rv.from_j * rv.size
 	} else {
 		rv.from_i, rv.to_i, rv.from_y = 0, rv.height(), 0
@@ -478,7 +478,8 @@ pub fn (mut rv RasterViewComponent) update_bounds() {
 
 // TODO: documentation
 pub fn (rv &RasterViewComponent) get_margins() (int, int, int, int) { // top, bottom, left, right
-	return rv.bounds_i, rv.height() - rv.bounds_i - rv.bounds_h, rv.bounds_j, rv.width() - rv.bounds_j - rv.bounds_w
+	return rv.bounds_i, rv.height() - rv.bounds_i - rv.bounds_h, rv.bounds_j, rv.width() -
+		rv.bounds_j - rv.bounds_w
 }
 
 // TODO: documentation
@@ -488,8 +489,8 @@ pub fn (mut rv RasterViewComponent) move_pixels(di int, dj int) {
 		|| (dj < 0 && dj < -ml) || (dj > 0 && dj > mr) {
 		return
 	}
-	mut from_i, mut to_i, mut from_j, mut to_j, mut step_i, mut step_j := (rv.bounds_i + rv.bounds_h - 1), rv.bounds_i, (
-		rv.bounds_j + rv.bounds_w - 1), rv.bounds_j, 1, 1
+	mut from_i, mut to_i, mut from_j, mut to_j, mut step_i, mut step_j := (rv.bounds_i +
+		rv.bounds_h - 1), rv.bounds_i, (rv.bounds_j + rv.bounds_w - 1), rv.bounds_j, 1, 1
 
 	if di < 0 {
 		step_i = -1

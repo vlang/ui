@@ -79,8 +79,7 @@ fn (mut t Tree) add_root_children(mut tv TreeViewComponent, mut l ui.Stack, id_r
 				if tv.incr_mode {
 					l.children << item.create_root(mut tv, mut l, id_root + ':${i}', level + 1)
 				} else {
-					l.children << item.create_layout(mut tv, mut l, id_root + ':${i}',
-						level + 1)
+					l.children << item.create_layout(mut tv, mut l, id_root + ':${i}', level + 1)
 				}
 			} else {
 				// finalize the incr_mode tree

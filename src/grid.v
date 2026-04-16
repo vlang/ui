@@ -104,8 +104,8 @@ fn (mut gv Grid) draw_device(mut d DrawDevice) {
 		// Text values
 		text_width = gv.ui.dd.text_width(c)
 		text_height = gv.ui.dd.text_height(c)
-		gv.ui.dd.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
-			y + int(cell_height) / 2 - text_height / 2, c)
+		gv.ui.dd.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i, y +
+			int(cell_height) / 2 - text_height / 2, c)
 	}
 	y += int(cell_height) * if gv.header.len == 0 { 0 } else { 1 }
 	for ir, b_c in body {
@@ -121,6 +121,7 @@ fn (mut gv Grid) draw_device(mut d DrawDevice) {
 			text_width = gv.ui.dd.text_width(c)
 			text_height = gv.ui.dd.text_height(c)
 			gv.ui.dd.draw_text_def((int(cell_width) - text_width) / 2 + x + int(cell_width) * i,
+
 				y + int(cell_height) * ir + int(cell_height) / 2 - text_height / 2, c)
 		}
 	}

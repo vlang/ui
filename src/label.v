@@ -78,8 +78,7 @@ fn (mut l Label) init(parent Layout) {
 	l.init_size()
 	// Create native widget if native_widgets is enabled
 	if l.ui.window.native_widgets.is_enabled() {
-		l.native_w = l.ui.window.native_widgets.create_label(l.x, l.y, l.width, l.height,
-			l.text)
+		l.native_w = l.ui.window.native_widgets.create_label(l.x, l.y, l.width, l.height, l.text)
 	}
 }
 
@@ -167,8 +166,7 @@ fn (mut l Label) draw() {
 fn (mut l Label) draw_device(mut d DrawDevice) {
 	// Native widget: update position/text and skip custom drawing
 	if l.ui.window.native_widgets.is_enabled() && l.native_w.handle != unsafe { nil } {
-		l.ui.window.native_widgets.update_label(&l.native_w, l.x, l.y, l.width, l.height,
-			l.text)
+		l.ui.window.native_widgets.update_label(&l.native_w, l.x, l.y, l.width, l.height, l.text)
 		return
 	}
 	offset_start(mut l)

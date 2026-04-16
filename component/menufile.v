@@ -210,10 +210,8 @@ fn btn_open_ok(b &ui.Button) {
 	// println('ok')
 	filebrowser_subwindow_close(b.ui.window, ui.component_parent_id(b.id))
 	fb := filebrowser_component(b)
-	mut dtv := treeview_component_from_id(b.ui.window, ui.component_id_from_by(b.id, 2,
-		'dtv'))
-	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
-		2))
+	mut dtv := treeview_component_from_id(b.ui.window, ui.component_id_from_by(b.id, 2, 'dtv'))
+	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id, 2))
 	mf.folder_to_open = fb.selected_full_title()
 	dtv.open_dir(mf.folder_to_open)
 }
@@ -221,8 +219,7 @@ fn btn_open_ok(b &ui.Button) {
 fn btn_open_cancel(b &ui.Button) {
 	// println('cancel open')
 	filebrowser_subwindow_close(b.ui.window, ui.component_parent_id(b.id))
-	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id,
-		2))
+	mut mf := menufile_component_from_id(b.ui.window, ui.component_parent_id_by(b.id, 2))
 	mf.folder_to_open = ''
 }
 

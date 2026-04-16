@@ -360,7 +360,8 @@ fn (mut sh SyntaxHighLighter) draw_device_chunks(d DrawDevice) {
 			// println("$typ: $chunk.x, $chunk.y, $chunk.text")
 			// fix background (not needed with real fixed font)
 			$if !no_tb_clear_sh ? {
-				d.draw_rect_filled(chunk.x, chunk.y, chunk.width, tv.line_height, tv.tb.style.bg_color)
+				d.draw_rect_filled(chunk.x, chunk.y, chunk.width, tv.line_height,
+					tv.tb.style.bg_color)
 			}
 			tv.draw_device_styled_text(d, chunk.x, chunk.y, chunk.text,
 				color:     color

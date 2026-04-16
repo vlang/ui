@@ -24,13 +24,15 @@ fn main() {
 						mut total_twa, mut total_tw, mut total_ts := 0.0, 0.0, 0.0
 						mut out := "text_width_additive vs text_width vs text_size:'\n\n"
 						for i in 0 .. ustr.len {
-							twa := ui.DrawTextWidget(tb).text_width_additive(ustr[i..(i + 1)].string())
+							twa :=
+								ui.DrawTextWidget(tb).text_width_additive(ustr[i..(i + 1)].string())
 							total_twa += twa
 							tw := ui.DrawTextWidget(tb).text_width(ustr[i..(i + 1)].string())
 							total_tw += tw
 							ts, _ := ui.DrawTextWidget(tb).text_size(ustr[i..(i + 1)].string())
 							total_ts += ts
-							full_twa := ui.DrawTextWidget(tb).text_width_additive(ustr[..i + 1].string())
+							full_twa :=
+								ui.DrawTextWidget(tb).text_width_additive(ustr[..i + 1].string())
 							full_tw := ui.DrawTextWidget(tb).text_width(ustr[..i + 1].string())
 							full_ts, _ := ui.DrawTextWidget(tb).text_size(ustr[..i + 1].string())
 							out += '${i}) ${ustr[i..(i + 1)].string()}  (${twa} vs ${tw} vs ${ts})  (${total_twa} == ${full_twa} vs ${total_tw} == ${full_tw} vs ${total_ts} == ${full_ts}) \n'

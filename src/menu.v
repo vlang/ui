@@ -134,8 +134,7 @@ fn (mut m Menu) init(parent Layout) {
 		for i, item in m.items {
 			texts[i] = item.text
 		}
-		m.native_w = m.ui.window.native_widgets.create_menu(m.x, m.y, m.width, m.height,
-			texts)
+		m.native_w = m.ui.window.native_widgets.create_menu(m.x, m.y, m.width, m.height, texts)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
@@ -355,8 +354,10 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 		d.draw_rect_empty(m.x, m.y, m.real_width, m.height, m.root_menu.style.border_color)
 	}
 	if m.root_menu.fixed_width {
-		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
-		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
+		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height,
+			m.root_menu.style.bg_color)
+		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height,
+			m.root_menu.style.border_color)
 
 		for i, item in m.items {
 			//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
@@ -378,8 +379,10 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 				}
 			}
 
-			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
-			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height,
+				m.root_menu.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height,
+				m.root_menu.style.border_color)
 
 			for i, item in m.items {
 				//	println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
@@ -405,8 +408,10 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 				mw = m.width
 			}
 
-			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.bg_color)
-			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height, m.root_menu.style.border_color)
+			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height,
+				m.root_menu.style.bg_color)
+			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height,
+				m.root_menu.style.border_color)
 
 			mut w := 0
 			for i, item in m.items {
@@ -603,7 +608,8 @@ pub fn (mut mi MenuItem) set_menu_pos() {
 					dx = dx + item.width
 				}
 			}
-			mi.submenu.set_pos(mi.menu.x + dx + mi.pos * mi.menu.dx, mi.menu.y + mi.menu.item_height)
+			mi.submenu.set_pos(mi.menu.x + dx + mi.pos * mi.menu.dx,
+				mi.menu.y + mi.menu.item_height)
 		} else {
 			mut dx := 0
 			for item in mi.menu.items {

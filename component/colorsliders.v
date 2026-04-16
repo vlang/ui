@@ -173,8 +173,7 @@ pub fn colorsliders_stack(p ColorSlidersParams) &ui.Stack {
 	cs.r_textbox.text = &cs.r_textbox_text
 	cs.g_textbox.text = &cs.g_textbox_text
 	cs.b_textbox.text = &cs.b_textbox_text
-	ui.component_connect(cs, layout, r_slider, g_slider, b_slider, r_textbox, g_textbox,
-		b_textbox)
+	ui.component_connect(cs, layout, r_slider, g_slider, b_slider, r_textbox, g_textbox, b_textbox)
 	// layout.on_init = colorsliders_init
 	return layout
 }
@@ -191,7 +190,8 @@ pub fn colorsliders_component_from_id(w ui.Window, id string) &ColorSlidersCompo
 
 // TODO: documentation
 pub fn (cs &ColorSlidersComponent) color() gg.Color {
-	return gg.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()), u8(cs.b_textbox.text.int()))
+	return gg.rgb(u8(cs.r_textbox.text.int()), u8(cs.g_textbox.text.int()),
+		u8(cs.b_textbox.text.int()))
 }
 
 // TODO: documentation

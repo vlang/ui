@@ -569,10 +569,8 @@ fn (mut g GridComponent) draw_device_colbar(mut d ui.DrawDevice) {
 	g.pos_x, g.pos_y = g.layout.abs_pos(0, 0)
 
 	// draw empty rectangles to clear top left corner preventing current selection drawn when  is scrolled
-	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width + g.header_size, g.colbar_height,
-		gg.white)
-	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width, g.colbar_height + g.header_size,
-		gg.white)
+	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width + g.header_size, g.colbar_height, gg.white)
+	d.draw_rect_filled(g.pos_x, g.pos_y, g.rowbar_width, g.colbar_height + g.header_size, gg.white)
 	mut pos_x := g.layout.x + g.layout.offset_x + g.rowbar_width + g.header_size
 	for j, var in g.headers {
 		tb.set_pos(pos_x, g.pos_y)
@@ -843,10 +841,10 @@ fn (mut g GridComponent) visible_cells() {
 
 // TODO: documentation
 pub fn (mut g GridComponent) visible_fixed_cells() {
-	g.from_i = math.min(math.max((g.layout.scrollview.offset_y - g.colbar_height - g.header_size) / g.cell_height,
-		0), g.nrow() - 1)
-	g.to_i = math.min((g.layout.scrollview.offset_y +
-		g.layout.height - g.colbar_height - g.header_size) / g.cell_height, g.nrow() - 1) + 1
+	g.from_i = math.min(math.max((g.layout.scrollview.offset_y - g.colbar_height - g.header_size) / g.cell_height, 0),
+		g.nrow() - 1)
+	g.to_i = math.min((g.layout.scrollview.offset_y + g.layout.height - g.colbar_height -
+		g.header_size) / g.cell_height, g.nrow() - 1) + 1
 	g.from_y = g.from_i * g.cell_height + g.colbar_height + g.header_size
 	// println("vfc $g.from_i, $g.to_i")
 }
