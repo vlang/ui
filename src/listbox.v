@@ -679,7 +679,7 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, _ &Window) {
 	}
 }
 
-fn lb_mouse_up(mut lb ListBox, e &MouseEvent, _ &Window) {
+fn lb_mouse_up(mut lb ListBox, _ &MouseEvent, _ &Window) {
 	// println('lb_mu')
 	if lb.hidden {
 		return
@@ -1060,7 +1060,7 @@ fn (li &ListItem) draw_device(d DrawDevice) {
 	d.draw_rect_filled(li.x + li.offset_x + lb.x + listbox_text_offset_x, li.y + li.offset_y +
 		lb.y + lb.text_offset_y, width - 2 * listbox_text_offset_x, lb.item_height, col)
 
-	mut dtw := DrawTextWidget(lb)
+	mut dtw := unsafe { DrawTextWidget(lb) }
 	dtw.draw_device_styled_text(d, li.x + li.offset_x + lb.x + listbox_text_offset_x,
 		li.y + li.offset_y + lb.y + lb.text_offset_y, if lb.has_scrollview {
 		li.text

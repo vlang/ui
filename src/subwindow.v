@@ -160,7 +160,7 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, _ &Window) {
 	}
 }
 
-fn sw_mouse_up(mut s SubWindow, e &MouseEvent, _ &Window) {
+fn sw_mouse_up(mut s SubWindow, _ &MouseEvent, _ &Window) {
 	if s.hidden {
 		return
 	}

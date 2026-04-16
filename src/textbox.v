@@ -307,7 +307,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		mut dtw := DrawTextWidget(tb)
+		mut dtw := unsafe { DrawTextWidget(tb) }
 		dtw.load_style()
 		mut w, mut h := dtw.text_size(tb.text)
 		return w + 2 * textbox_padding_x, h + 2 * textbox_padding_y
@@ -1134,7 +1134,7 @@ fn (tb &TextBox) set_children_pos() {}
 // Utility functions
 
 pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	mut dtw := DrawTextWidget(tb)
+	mut dtw := unsafe { DrawTextWidget(tb) }
 	dtw.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
@@ -1157,7 +1157,7 @@ pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	mut dtw := DrawTextWidget(tb)
+	mut dtw := unsafe { DrawTextWidget(tb) }
 	dtw.load_style()
 	mut prev_width := 0
 	ustr := text.runes()

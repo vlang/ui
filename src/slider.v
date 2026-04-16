@@ -392,7 +392,7 @@ fn slider_mouse_down(mut s Slider, e &MouseEvent, _ voidptr) {
 	}
 }
 
-fn slider_mouse_up(mut s Slider, e &MouseEvent, _ voidptr) {
+fn slider_mouse_up(mut s Slider, _ &MouseEvent, _ voidptr) {
 	// println('slider touchup  NO MORE DRAGGING')
 	s.dragging = false
 }
