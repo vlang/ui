@@ -25,7 +25,7 @@ pub fn mini_calc() MiniCalc {
 	return mc
 }
 
-fn compute_repl(re regex.RE, in_txt string, start int, end int) string {
+fn compute_repl(re regex.RE, in_txt string, _ int, _ int) string {
 	left := re.get_group_by_id(in_txt, 0)
 	op := re.get_group_by_id(in_txt, 1)
 	right := re.get_group_by_id(in_txt, 2)

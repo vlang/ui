@@ -198,7 +198,7 @@ fn (g &Group) get_ui() &UI {
 	return g.ui
 }
 
-fn (g &Group) resize(width int, height int) {
+fn (g &Group) resize(_ int, _ int) {
 }
 
 fn (g &Group) get_subscriber() &eventbus.Subscriber[string] {
@@ -206,7 +206,7 @@ fn (g &Group) get_subscriber() &eventbus.Subscriber[string] {
 	return parent.get_subscriber()
 }
 
-fn (mut g Group) set_adjusted_size(i int, u &UI) {
+fn (mut g Group) set_adjusted_size(i int, _ &UI) {
 	mut h, mut w := 0, 0
 	for mut child in g.children {
 		mut child_width, mut child_height := child.size()

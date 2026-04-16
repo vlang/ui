@@ -94,7 +94,7 @@ fn window_init(mut w ui.Window) {
 }
 
 fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
-	mut dtw := ui.DrawTextWidget(c)
+	mut dtw := unsafe { ui.DrawTextWidget(c) }
 	dtw.load_style()
 	c.draw_device_text(d, 10, 10, app.text)
 	w, h := dtw.text_size(app.text)
@@ -105,7 +105,7 @@ fn (app &App) on_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 fn (mut app App) lb_change(lb &ui.ListBox) {
 	mut w := lb.ui.window
 	c := w.get_or_panic[ui.CanvasLayout]('c')
-	mut dtw := ui.DrawTextWidget(c)
+	mut dtw := unsafe { ui.DrawTextWidget(c) }
 	fp, id := lb.selected() or { 'classic', '' }
 	// println("$id, $fp")
 	$if windows {

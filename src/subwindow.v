@@ -138,7 +138,7 @@ pub fn (s &SubWindow) free() {
 	}
 }
 
-fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
+fn sw_mouse_down(mut s SubWindow, e &MouseEvent, _ &Window) {
 	// println("sw_md: $s.id -> ${window.point_inside_receivers(events.on_mouse_down)}")
 	if s.hidden {
 		return
@@ -160,7 +160,7 @@ fn sw_mouse_down(mut s SubWindow, e &MouseEvent, window &Window) {
 	}
 }
 
-fn sw_mouse_up(mut s SubWindow, e &MouseEvent, window &Window) {
+fn sw_mouse_up(mut s SubWindow, _ &MouseEvent, _ &Window) {
 	if s.hidden {
 		return
 	}
@@ -169,7 +169,7 @@ fn sw_mouse_up(mut s SubWindow, e &MouseEvent, window &Window) {
 	s.delegate_size()
 }
 
-fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, window &Window) {
+fn sw_mouse_move(mut s SubWindow, e &MouseMoveEvent, _ &Window) {
 	// println('btn_click for window=$window.title')
 	if s.hidden {
 		return
@@ -246,7 +246,7 @@ pub fn (mut s SubWindow) update_layout() {
 	s.layout.update_layout()
 }
 
-fn (mut s SubWindow) set_adjusted_size(u &UI) {
+fn (mut s SubWindow) set_adjusted_size(_ &UI) {
 }
 
 fn (mut s SubWindow) point_inside_bar(x f64, y f64) bool {

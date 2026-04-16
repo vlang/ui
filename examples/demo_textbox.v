@@ -85,6 +85,6 @@ fn on_switch_click(switcher &ui.Switch) {
 	tb.tv.switch_wordwrap()
 }
 
-fn on_scroll_change(sw ui.ScrollableWidget) {
+fn on_scroll_change(_ ui.ScrollableWidget) {
 	// println('sw cb example: $sw.id has scrollview? $sw.has_scrollview with x: $sw.x and y: $sw.y')
 }

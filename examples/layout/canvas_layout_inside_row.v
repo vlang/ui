@@ -210,6 +210,6 @@ fn mouse_move(c &ui.CanvasLayout, e ui.MouseMoveEvent) {
 	l.set_text('(${e.x},${e.y})')
 }
 
-fn win_init(mut w ui.Window) {
+fn win_init(mut _ ui.Window) {
 	// w.mouse.start(ui.mouse_hidden)
 }

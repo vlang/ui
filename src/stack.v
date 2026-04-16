@@ -1303,7 +1303,7 @@ pub fn (mut s Stack) set_visible(state bool) {
 	}
 }
 
-fn (mut s Stack) resize(width int, height int) {
+fn (mut s Stack) resize(_ int, _ int) {
 	s.init_size()
 	s.update_pos()
 	// scrollview_widget_set_orig_xy(s, false)

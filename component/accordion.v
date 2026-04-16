@@ -97,7 +97,7 @@ fn accordion_draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	c.draw_device_styled_text(d, 16, 4, acc.titles[c.id], color: acc.text_color, size: acc.text_size)
 }
 
-fn accordion_click(c &ui.CanvasLayout, e ui.MouseEvent) {
+fn accordion_click(c &ui.CanvasLayout, _ ui.MouseEvent) {
 	mut acc := accordion_component(c)
 	// println("accordion clicked $c.id")
 	acc.selected[c.id] = !acc.selected[c.id]

@@ -32,13 +32,13 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn (mut app App) init_texture(w &ui.Window) {
+fn (mut app App) init_texture(_ &ui.Window) {
 	app.texture = ui.create_dynamic_texture(256, 256)
 	app.sampler = ui.create_image_sampler()
 	app.buf = unsafe { malloc(256 * 256 * 4) }
 }
 
-fn (app &App) draw_gradient(mut d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (app &App) draw_gradient(mut _ ui.DrawDevice, c &ui.CanvasLayout) {
 	target_hue, _, _ := ui.rgb_to_hsv(gg.rgb(255, 0, 0))
 	mut i := 0
 	for y in 0 .. 256 {

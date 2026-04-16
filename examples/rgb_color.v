@@ -142,30 +142,30 @@ fn main() {
 	ui.run(app.window)
 }
 
-fn (app &App) btn_click(b &ui.Button) {
+fn (app &App) btn_click(_ &ui.Button) {
 	txt := 'gg.rgb(${app.r_textbox_text},${app.g_textbox_text},${app.b_textbox_text})'
 	ui.message_box(txt)
 }
 
-fn (mut app App) on_r_value_changed(slider &ui.Slider) {
+fn (mut app App) on_r_value_changed(_ &ui.Slider) {
 	app.r_textbox_text = int(app.r_slider.val).str()
 	app.r_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn (mut app App) on_g_value_changed(slider &ui.Slider) {
+fn (mut app App) on_g_value_changed(_ &ui.Slider) {
 	app.g_textbox_text = int(app.g_slider.val).str()
 	app.g_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn (mut app App) on_b_value_changed(slider &ui.Slider) {
+fn (mut app App) on_b_value_changed(_ &ui.Slider) {
 	app.b_textbox_text = int(app.b_slider.val).str()
 	app.b_textbox.border_accentuated = false
 	textbox_color_update(mut app)
 }
 
-fn (mut app App) on_r_char(textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_r_char(_ &ui.TextBox, _ u32) {
 	if ui.is_rgb_valid(app.r_textbox.text.int()) {
 		app.r_slider.val = app.r_textbox_text.f32()
 		app.r_textbox.border_accentuated = false
@@ -175,7 +175,7 @@ fn (mut app App) on_r_char(textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn (mut app App) on_g_char(textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_g_char(_ &ui.TextBox, _ u32) {
 	if ui.is_rgb_valid(app.g_textbox.text.int()) {
 		app.g_slider.val = app.g_textbox_text.f32()
 		app.g_textbox.border_accentuated = false
@@ -185,7 +185,7 @@ fn (mut app App) on_g_char(textbox &ui.TextBox, keycode u32) {
 	textbox_color_update(mut app)
 }
 
-fn (mut app App) on_b_char(textbox &ui.TextBox, keycode u32) {
+fn (mut app App) on_b_char(_ &ui.TextBox, _ u32) {
 	if ui.is_rgb_valid(app.b_textbox.text.int()) {
 		app.b_slider.val = app.b_textbox_text.f32()
 		app.b_textbox.border_accentuated = false

@@ -314,7 +314,7 @@ fn (mut c CanvasLayout) init_size() {
 	scrollview_update(c)
 }
 
-fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
+fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, _ &Window) {
 	if !c.point_inside(e.mouse_x / c.ui.window.dpi_scale, e.mouse_y / c.ui.window.dpi_scale) {
 		return
 	}
@@ -323,7 +323,7 @@ fn canvas_layout_delegate(mut c CanvasLayout, e &gg.Event, window &Window) {
 	}
 }
 
-fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
+fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, _ &Window) {
 	$if cl_click ? {
 		if c.point_inside(e.x, e.y) {
 			println('clc ${c.id} ${c.z_index} (${e.x}, ${e.y}) ${c.point_inside(e.x, e.y)} ${c.ui.window.is_top_widget(c,
@@ -352,7 +352,7 @@ fn canvas_layout_click(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 }
 
-fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
+fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, _ &Window) {
 	if c.hidden {
 		return
 	}
@@ -371,7 +371,7 @@ fn canvas_layout_mouse_down(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 }
 
-fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
+fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, _ &Window) {
 	if c.hidden {
 		return
 	}
@@ -387,7 +387,7 @@ fn canvas_layout_mouse_up(mut c CanvasLayout, e &MouseEvent, window &Window) {
 	}
 }
 
-fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, window &Window) {
+fn canvas_layout_mouse_move(mut c CanvasLayout, e &MouseMoveEvent, _ &Window) {
 	if c.hidden {
 		return
 	}
@@ -427,7 +427,7 @@ pub fn (mut c CanvasLayout) mouse_leave(e &MouseMoveEvent) {
 	}
 }
 
-fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
+fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, _ &Window) {
 	if c.scroll_fn != unsafe { CanvasLayoutScrollFn(0) } {
 		e2 := ScrollEvent{
 			mouse_x: e.mouse_x - c.x - c.offset_x
@@ -439,7 +439,7 @@ fn canvas_layout_scroll(mut c CanvasLayout, e &ScrollEvent, window &Window) {
 	}
 }
 
-fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, window &Window) {
+fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, _ &Window) {
 	// println('key down $c.id $c.hidden $e')
 	if c.hidden {
 		return
@@ -452,7 +452,7 @@ fn canvas_layout_key_down(mut c CanvasLayout, e &KeyEvent, window &Window) {
 	}
 }
 
-fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, window &Window) {
+fn canvas_layout_char(mut c CanvasLayout, e &KeyEvent, _ &Window) {
 	// println('key down $e')
 	if c.hidden {
 		return
@@ -873,21 +873,21 @@ pub fn (c &CanvasLayout) draw_text(x int, y int, text string) {
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_text(d DrawDevice, x int, y int, text string) {
-	mut dtw := DrawTextWidget(c)
+	dtw := unsafe { DrawTextWidget(c) }
 	// println("dt $x + $c.x + $c.offset_x, $y + $c.y + $c.offset_y, $text")
 	dtw.draw_device_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_styled_text(x int, y int, text string, ts TextStyleParams) {
-	mut dtw := DrawTextWidget(c)
+	mut dtw := unsafe { DrawTextWidget(c) }
 	dtw.draw_device_styled_text(c.ui.dd, x + c.x + c.offset_x, y + c.y + c.offset_y, text,
 		ts)
 }
 
 // TODO: documentation
 pub fn (c &CanvasLayout) draw_device_styled_text(d DrawDevice, x int, y int, text string, ts TextStyleParams) {
-	mut dtw := DrawTextWidget(c)
+	mut dtw := unsafe { DrawTextWidget(c) }
 	dtw.draw_device_styled_text(d, x + c.x + c.offset_x, y + c.y + c.offset_y, text, ts)
 }
 

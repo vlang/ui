@@ -91,12 +91,12 @@ pub fn splitpanel_component_from_id(w ui.Window, id string) &SplitPanelComponent
 	return splitpanel_component(w.get_or_panic[ui.Stack](ui.component_id(id, 'layout')))
 }
 
-fn splitpanel_btn_mouse_down(b &ui.Button, e &ui.MouseEvent) {
+fn splitpanel_btn_mouse_down(b &ui.Button, _ &ui.MouseEvent) {
 	mut sp := splitpanel_component(b)
 	sp.active = true
 }
 
-fn splitpanel_btn_mouse_up(b &ui.Button, e &ui.MouseEvent) {
+fn splitpanel_btn_mouse_up(b &ui.Button, _ &ui.MouseEvent) {
 	mut sp := splitpanel_component(b)
 	sp.active = false
 }

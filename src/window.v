@@ -754,7 +754,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	*/
 }
 
-fn window_resize(event gg.Event, u &UI) {
+fn window_resize(_ gg.Event, u &UI) {
 	mut window := u.window
 	if !window.resizable {
 		return
@@ -1005,7 +1005,7 @@ fn window_scroll(event gg.Event, u &UI) {
 	window.eventbus.publish(events.on_scroll, window, e)
 }
 
-fn window_touch_down(event gg.Event, u &UI) {
+fn window_touch_down(_ gg.Event, u &UI) {
 	mut window := u.window
 	e := MouseEvent{
 		action: .down
@@ -1019,7 +1019,7 @@ fn window_touch_down(event gg.Event, u &UI) {
 	window.eventbus.publish(events.on_touch_down, window, e)
 }
 
-fn window_touch_move(event gg.Event, u &UI) {
+fn window_touch_move(_ gg.Event, u &UI) {
 	window := u.window
 	e := MouseMoveEvent{
 		x:            f64(window.touch.move.pos.x)
@@ -1032,7 +1032,7 @@ fn window_touch_move(event gg.Event, u &UI) {
 	window.eventbus.publish(events.on_touch_move, window, e)
 }
 
-fn window_touch_up(event gg.Event, u &UI) {
+fn window_touch_up(_ gg.Event, u &UI) {
 	window := u.window
 	e := MouseEvent{
 		action: .up
@@ -1071,7 +1071,7 @@ fn window_click_or_touch_tap(event gg.Event, u &UI) {
 	}
 }
 
-fn window_touch_scroll(event gg.Event, u &UI) {
+fn window_touch_scroll(_ gg.Event, u &UI) {
 	mut window := u.window
 	// println('title =$window.title')
 	s, m := window.touch.start, window.touch.move

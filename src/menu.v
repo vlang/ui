@@ -190,7 +190,7 @@ fn (mut m Menu) propagate_connection() {
 	}
 }
 
-fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
+fn menu_click(mut m Menu, e &MouseEvent, _ &Window) {
 	if m.hidden {
 		return
 	}
@@ -227,7 +227,7 @@ fn menu_click(mut m Menu, e &MouseEvent, window &Window) {
 	}
 }
 
-fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, window &Window) {
+fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, _ &Window) {
 	if m.hidden {
 		return
 	}

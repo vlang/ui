@@ -131,7 +131,7 @@ pub fn (cb &CheckBox) free() {
 // 	dtw.update_text_size(cb.text_size)
 // }
 
-fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
+fn cb_key_down(mut cb CheckBox, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if cb_keydown ? {
@@ -156,7 +156,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn cb_click(mut cb CheckBox, e &MouseEvent, window &Window) {
+fn cb_click(mut cb CheckBox, e &MouseEvent, _ &Window) {
 	if cb.hidden {
 		return
 	}
@@ -259,7 +259,7 @@ fn (cb &CheckBox) point_inside(x f64, y f64) bool {
 	return point_inside(cb, x, y)
 }
 
-fn (mut cb CheckBox) mouse_move(e MouseEvent) {
+fn (mut cb CheckBox) mouse_move(_ MouseEvent) {
 }
 
 pub fn (mut cb CheckBox) set_visible(state bool) {

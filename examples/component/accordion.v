@@ -210,10 +210,10 @@ fn dd_change(dd &ui.Dropdown) {
 	println(dd.selected().text)
 }
 
-fn (mut app App) on_hor_value_changed(slider &ui.Slider) {
+fn (mut app App) on_hor_value_changed(_ &ui.Slider) {
 	app.hor_slider.val = app.hor_slider.val
 }
 
-fn (mut app App) on_vert_value_changed(slider &ui.Slider) {
+fn (mut app App) on_vert_value_changed(_ &ui.Slider) {
 	app.vert_slider.val = app.vert_slider.val
 }

@@ -240,7 +240,7 @@ fn (mut dd Dropdown) open_drawer() {
 	dd.focus()
 }
 
-fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
+fn dd_key_down(mut dd Dropdown, e &KeyEvent, _ voidptr) {
 	if dd.hidden || !dd.is_focused {
 		return
 	}
@@ -277,7 +277,7 @@ fn dd_key_down(mut dd Dropdown, e &KeyEvent, zzz voidptr) {
 	}
 }
 
-fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_click(mut dd Dropdown, e &MouseEvent, _ voidptr) {
 	$if dd_click ? {
 		println('${dd.id} click ${dd.hidden} ${dd.is_focused} ${dd.z_index}')
 	}
@@ -304,7 +304,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	offset_end(mut dd)
 }
 
-fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
+fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, _ voidptr) {
 	if dd.hidden {
 		return
 	}
@@ -316,7 +316,7 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, zzz voidptr) {
+fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, _ voidptr) {
 	if dd.hidden {
 		return
 	}

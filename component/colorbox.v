@@ -357,7 +357,7 @@ pub fn (mut cb ColorBoxComponent) update_buffer() {
 	ui.update_text_texture(cb.simg, 256, 256, cb.buf)
 }
 
-fn tb_char(tb &ui.TextBox, cp u32) {
+fn tb_char(tb &ui.TextBox, _ u32) {
 	mut cb := colorbox_component(tb)
 	r, g, b := cb.txt_r.int(), cb.txt_g.int(), cb.txt_b.int()
 	cb.update_from_rgb(r, g, b)

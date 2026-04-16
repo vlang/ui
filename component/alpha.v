@@ -106,7 +106,7 @@ fn alpha_on_value_changed(slider &ui.Slider) {
 	}
 }
 
-fn alpha_on_char(textbox &ui.TextBox, keycode u32) {
+fn alpha_on_char(textbox &ui.TextBox, _ u32) {
 	mut ac := alpha_component(textbox)
 	if ui.is_rgb_valid(textbox.text.int()) {
 		ac.alpha = textbox.text.int()

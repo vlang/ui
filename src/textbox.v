@@ -307,7 +307,7 @@ fn (tb &TextBox) adj_size() (int, int) {
 	if tb.is_multiline {
 		return tb.tv.size()
 	} else {
-		mut dtw := DrawTextWidget(tb)
+		mut dtw := unsafe { DrawTextWidget(tb) }
 		dtw.load_style()
 		mut w, mut h := dtw.text_size(tb.text)
 		return w + 2 * textbox_padding_x, h + 2 * textbox_padding_y
@@ -551,7 +551,7 @@ pub fn (mut tb TextBox) delete_selection() {
 	tb.cancel_selection()
 }
 
-fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
+fn tb_key_down(mut tb TextBox, e &KeyEvent, _ &Window) {
 	$if tb_keydown ? {
 		println('tb_keydown id:${tb.id}  -> hidden:${tb.hidden} focused:${tb.is_focused}')
 		println(e)
@@ -728,7 +728,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
+fn tb_char(mut tb TextBox, e &KeyEvent, _ &Window) {
 	// println('key down $e <$e.key> <$e.codepoint> <$e.mods>')
 	// println('key down key=<$e.key> code=<$e.codepoint> mods=<$e.mods>')
 	$if tb_char ? {
@@ -873,7 +873,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, window &Window) {
 	}
 }
 
-fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, key Key) {
+fn (mut tb TextBox) set_sel(sel_start_i int, sel_end_i int, _ Key) {
 	if tb.sel_direction == .right_to_left {
 		tb.sel_start = sel_start_i
 		tb.sel_end = sel_end_i
@@ -951,7 +951,7 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 	}
 }
 
-fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+fn tb_mouse_down(mut tb TextBox, e &MouseEvent, _ voidptr) {
 	// println("mouse first $tb.id")
 	if tb.hidden {
 		return
@@ -1018,7 +1018,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, zzz voidptr) {
 	}
 }
 
-fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, zzz voidptr) {
+fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, _ voidptr) {
 	if tb.hidden {
 		return
 	}
@@ -1051,7 +1051,7 @@ pub fn (mut tb TextBox) mouse_leave(e &MouseMoveEvent) {
 	}
 }
 
-fn tb_mouse_up(mut tb TextBox, e &MouseEvent, zzz voidptr) {
+fn tb_mouse_up(mut tb TextBox, e &MouseEvent, _ voidptr) {
 	if tb.hidden {
 		return
 	}
@@ -1134,7 +1134,7 @@ fn (tb &TextBox) set_children_pos() {}
 // Utility functions
 
 pub fn (tb &TextBox) text_xminmax_from_pos(text string, x1 int, x2 int) (int, int) {
-	mut dtw := DrawTextWidget(tb)
+	mut dtw := unsafe { DrawTextWidget(tb) }
 	dtw.load_style()
 	ustr := text.runes()
 	mut x_min, mut x_max := if x1 < x2 { x1, x2 } else { x2, x1 }
@@ -1157,7 +1157,7 @@ pub fn (tb &TextBox) text_pos_from_x(text string, x int) int {
 	if x <= 0 {
 		return 0
 	}
-	mut dtw := DrawTextWidget(tb)
+	mut dtw := unsafe { DrawTextWidget(tb) }
 	dtw.load_style()
 	mut prev_width := 0
 	ustr := text.runes()
