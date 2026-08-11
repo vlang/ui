@@ -291,7 +291,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, _ &Window) {
 		println('btn_mouse_down ${b.id} movable ${b.movable} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
