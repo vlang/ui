@@ -67,14 +67,14 @@ pub fn (child &Widget) id() string {
 // Find if there is recursively a parent deactivated (i.e. z_index <= ui.z_index_hidden)
 // used in accordion component
 pub fn (w &Widget) has_parent_deactivated() bool {
-	p := w.parent
-	if p is Stack {
+	mut p := w.parent
+	if mut p is Stack {
 		// println("hpd $w.id: $p.z_index")
 		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
-	} else if p is CanvasLayout {
+	} else if mut p is CanvasLayout {
 		// println("hpd $w.id: $p.z_index")
 		return p.deactivated || p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
-	} else if p is Group {
+	} else if mut p is Group {
 		// println("hpd $w.id: $p.z_index")
 		return p.z_index <= z_index_hidden || Widget(p).has_parent_deactivated()
 	}

@@ -155,7 +155,7 @@ pub fn (mut w DrawTextWidget) load_style_(d DrawDevice, ts TextStyle) {
 			gg_.ft.fons.set_align(int(ts.align) | int(ts.vertical_align))
 			color := sfons.rgba(ts.color.r, ts.color.g, ts.color.b, ts.color.a)
 			if ts.color.a != 255 {
-				sgl.load_pipeline(gg_.pipeline.alpha)
+				gg_.r.load_pipeline(gg_.pipeline.alpha)
 			}
 			gg_.ft.fons.set_color(color)
 			ascender := f32(0.0)

@@ -55,7 +55,7 @@ pub fn (mut gui UI) refresh() {
 		gui.dd.refresh_ui()
 		$if macos {
 			if gui.dd.native_rendering {
-				C.darwin_window_refresh()
+				gg.darwin_window_refresh()
 			}
 		}
 	}
@@ -85,7 +85,7 @@ fn (mut gui UI) idle_loop() {
 			gui.refresh()
 			$if macos {
 				if gui.gg.native_rendering {
-					C.darwin_window_refresh()
+					gg.darwin_window_refresh()
 				}
 			}
 		}

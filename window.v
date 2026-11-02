@@ -214,11 +214,11 @@ pub fn window(cfg WindowParams) &Window {
 
 	// C.printf(c'window() state =%p \n', cfg.state)
 	mut window := &Window{
-		title:         cfg.title
-		width:         width
-		height:        height
-		no_fullscreen: no_fullscreen
-		theme_style:   cfg.theme
+		title:             cfg.title
+		width:             width
+		height:            height
+		no_fullscreen:     no_fullscreen
+		theme_style:       cfg.theme
 		// orig_width: width // 800
 		// orig_height: height // 600
 		children:          children
@@ -255,15 +255,15 @@ pub fn window(cfg WindowParams) &Window {
 	window.top_layer = canvas_layer()
 	mut dd := &DrawDeviceContext{
 		Context: gg.new_context(
-			width:         width
-			height:        height
-			min_width:     cfg.min_width
-			min_height:    cfg.min_height
-			create_window: true // TODO: Unused ?
-			window_title:  cfg.title
-			resizable:     resizable
-			fullscreen:    fullscreen
-			frame_fn:      if cfg.immediate {
+			width:                        width
+			height:                       height
+			min_width:                    cfg.min_width
+			min_height:                   cfg.min_height
+			create_window:                true // TODO: Unused ?
+			window_title:                 cfg.title
+			resizable:                    resizable
+			fullscreen:                   fullscreen
+			frame_fn:                     if cfg.immediate {
 				frame_immediate
 			} else if cfg.native_rendering {
 				frame_native
@@ -271,18 +271,18 @@ pub fn window(cfg WindowParams) &Window {
 				frame
 			}
 			// native_frame_fn: frame_native
-			event_fn:              on_event
-			user_data:             window
-			font_path:             if fp == '' { font.default() } else { fp }
-			custom_bold_font_path: cfg.custom_bold_font_path
-			init_fn:               gg_init
-			cleanup_fn:            gg_cleanup
+			event_fn:                     on_event
+			user_data:                    window
+			font_path:                    if fp == '' { font.default() } else { fp }
+			custom_bold_font_path:        cfg.custom_bold_font_path
+			init_fn:                      gg_init
+			cleanup_fn:                   gg_cleanup
 			// keydown_fn: window_key_down
 			// char_fn: window_char
-			bg_color: window.bg_color // gg.rgb(230,230,230)
+			bg_color:                     window.bg_color // gg.rgb(230,230,230)
 			// window_state: ui
-			native_rendering: cfg.native_rendering
-			ui_mode:          !cfg.immediate
+			native_rendering:             cfg.native_rendering
+			ui_mode:                      !cfg.immediate
 			// drag & drop
 			enable_dragndrop:             cfg.enable_dragndrop
 			max_dropped_files:            cfg.max_dropped_files
@@ -319,16 +319,16 @@ pub fn (mut parent_window Window) child_window(cfg WindowParams) &Window {
 		parent_window: parent_window
 		// state: parent_window.state
 		// state: cfg.state
-		ui: parent_window.ui
+		ui:            parent_window.ui
 		// glfw_obj: parent_window.ui.gg.window
 		// draw_fn: cfg.draw_fn
-		on_draw:  cfg.on_draw
-		title:    cfg.title
-		bg_color: cfg.bg_color
-		width:    cfg.width
-		height:   cfg.height
-		children: cfg.children
-		click_fn: cfg.on_click
+		on_draw:       cfg.on_draw
+		title:         cfg.title
+		bg_color:      cfg.bg_color
+		width:         cfg.width
+		height:        cfg.height
+		children:      cfg.children
+		click_fn:      cfg.on_click
 	}
 	window.widgets = unsafe { &parent_window.widgets }
 	window.widgets_counts = unsafe { &parent_window.widgets_counts }
@@ -477,7 +477,11 @@ fn frame_immediate(mut w Window) {
 		}
 	}
 
-	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } {
+		w.children
+	} else {
+		w.child_window.children
+	}
 
 	for mut child in children {
 		child.draw()
@@ -517,7 +521,11 @@ fn frame_native(mut w Window) {
 		w.on_draw(w)
 	}
 
-	mut children := if unsafe { w.child_window == 0 } { w.children } else { w.child_window.children }
+	mut children := if unsafe { w.child_window == 0 } {
+		w.children
+	} else {
+		w.child_window.children
+	}
 	// if w.child_window == 0 {
 	// Render all widgets, including Canvas
 	for mut child in children {
@@ -597,7 +605,7 @@ fn on_event(e &gg.Event, mut window Window) {
 	$if macos {
 		if mut window.ui.dd is DrawDeviceContext {
 			if window.ui.dd.native_rendering {
-				C.darwin_window_refresh()
+				gg.darwin_window_refresh()
 			}
 		}
 	}
