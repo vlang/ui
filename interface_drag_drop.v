@@ -74,7 +74,7 @@ fn drag_register(d &Draggable, e &MouseEvent) bool {
 		$if drag ? {
 			println('drag ${typeof(w).name}')
 		}
-		mut window := d.get_window()
+		mut window := unsafe { &Window(d.get_window()) }
 		if window.dragger.activated {
 			if d.z_index > window.dragger.widget.z_index {
 				window.dragger.widget = unsafe { d }

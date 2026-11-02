@@ -300,9 +300,9 @@ pub fn rgb_to_hsl(col gg.Color) (f64, f64, f64) {
 // TODO: documentation
 pub fn create_texture(w int, h int, buf &u8) C.sg_image {
 	mut img_desc := C.sg_image_desc{
-		width:       w
-		height:      h
-		num_mipmaps: 0
+		width:         w
+		height:        h
+		num_mipmaps:   0
 		// min_filter: .linear
 		// mag_filter: .linear
 		// wrap_u: .clamp_to_edge
@@ -387,7 +387,7 @@ pub fn (c &CanvasLayout) draw_texture(simg gfx.Image, sampler gfx.Sampler) {
 		y0 := f32(cy * ctx.scale)
 		x1 := f32((cx + c.width) * ctx.scale)
 		y1 := f32((cy + c.height) * ctx.scale)
-		sgl.load_pipeline(ctx.pipeline.alpha)
+		ctx.r.load_pipeline(ctx.pipeline.alpha)
 		sgl.enable_texture()
 		sgl.texture(simg, sampler)
 		sgl.begin_quads()

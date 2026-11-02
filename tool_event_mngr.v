@@ -75,8 +75,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_event(e MouseEvent, evt_t
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse ? {
 			println('point_inside_receivers: ${w.id} [${w.is_visible() && w.is_parent_visible(true)
-				&& w.point_inside(e.x, e.y) && !w.has_parent_deactivated()}] (vis: ${w.is_visible()}) && (parentvis: ${w.is_parent_visible(true)}) && (inside: ${w.point_inside(e.x,
-				e.y)}) && (!parent deactivated : ${!w.has_parent_deactivated()})')
+				&& w.point_inside(e.x, e.y) && !w.has_parent_deactivated()}] (vis: ${w.is_visible()}) && (parentvis: ${w.is_parent_visible(true)}) && (inside: ${w.point_inside(e.x, e.y)}) && (!parent deactivated : ${!w.has_parent_deactivated()})')
 		}
 		if w.is_wm_mode() && !w.has_wm_parent_top_subwindow() {
 			continue
@@ -101,10 +100,10 @@ pub fn (mut em EventMngr) point_inside_receivers_scroll_event(e ScrollEvent) {
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_scroll ? {
-			println('point_inside_receivers: ${w.id} ${w.is_visible()} && (${e.mouse_x}, ${e.mouse_y}) ${w.point_inside(e.mouse_x,
-				e.mouse_y)} ${w.has_parent_deactivated()}')
+			println('point_inside_receivers: ${w.id} ${w.is_visible()} && (${e.mouse_x}, ${e.mouse_y}) ${w.point_inside(e.mouse_x, e.mouse_y)} ${w.has_parent_deactivated()}')
 		}
-		if w is ScrollableWidget {
+		is_scrollable := w is ScrollableWidget
+		if is_scrollable {
 			sw := w as ScrollableWidget
 			if w.is_visible() && has_scrollview(sw)
 				&& sw.scrollview.point_inside(e.mouse_x, e.mouse_y, .view)
@@ -135,8 +134,7 @@ pub fn (mut em EventMngr) point_inside_receivers_mouse_move(e MouseMoveEvent) {
 	}
 	for mut w in em.receivers[evt_type] {
 		$if em_mouse_move ? {
-			println('point_inside_receivers: ${w.id} ${w.is_visible()} && (${e.x}, ${e.y}) ${w.point_inside(int(e.x),
-				int(e.y))} ${w.has_parent_deactivated()}')
+			println('point_inside_receivers: ${w.id} ${w.is_visible()} && (${e.x}, ${e.y}) ${w.point_inside(int(e.x), int(e.y))} ${w.has_parent_deactivated()}')
 		}
 		if w.is_visible() && w.is_parent_visible(true) && w.point_inside(int(e.x), int(e.y))
 			&& !w.has_parent_deactivated() {

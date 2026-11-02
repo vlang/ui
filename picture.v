@@ -76,7 +76,7 @@ pub fn picture(c PictureParams) &Picture {
 
 fn (mut pic Picture) init(parent Layout) {
 	pic.parent = parent
-	mut u := parent.get_ui()
+	mut u := unsafe { &UI(parent.get_ui()) }
 	pic.ui = u
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, pic_click, pic)
