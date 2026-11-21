@@ -100,6 +100,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	if cb.ui.window.native_widgets.is_enabled() {
 		cb.native_w = cb.ui.window.native_widgets.create_checkbox(cb.x, cb.y, cb.width, cb.height,
 			cb.text, cb.checked)
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
@@ -208,6 +209,7 @@ pub fn (mut cb CheckBox) draw() {
 pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if cb.ui.window.native_widgets.is_enabled() && cb.native_w.handle != unsafe { nil } {
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
 		cb.checked = cb.ui.window.native_widgets.checkbox_is_checked(&cb.native_w)
 		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width, cb.height,
 			cb.text, cb.checked)
@@ -266,6 +268,9 @@ fn (mut cb CheckBox) mouse_move(_ MouseEvent) {
 
 pub fn (mut cb CheckBox) set_visible(state bool) {
 	cb.hidden = !state
+	if cb.ui != unsafe { nil } {
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
+	}
 }
 
 pub fn (mut cb CheckBox) focus() {

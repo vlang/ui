@@ -102,6 +102,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 		}
 		dd.native_w = dd.ui.window.native_widgets.create_dropdown(dd.x, dd.y, dd.width,
 			dd.dropdown_height, texts, dd.selected_index)
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
@@ -177,6 +178,7 @@ pub fn (mut dd Dropdown) draw() {
 pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if dd.ui.window.native_widgets.is_enabled() && dd.native_w.handle != unsafe { nil } {
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
 		dd.selected_index = dd.ui.window.native_widgets.dropdown_get_selected(&dd.native_w)
 		dd.ui.window.native_widgets.update_dropdown(&dd.native_w, dd.x, dd.y, dd.width,
 			dd.dropdown_height, dd.selected_index)
@@ -338,6 +340,9 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, _ voidptr) {
 
 pub fn (mut dd Dropdown) set_visible(state bool) {
 	dd.hidden = !state
+	if dd.ui != unsafe { nil } {
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
+	}
 }
 
 pub fn (mut dd Dropdown) focus() {

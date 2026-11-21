@@ -167,6 +167,7 @@ fn (mut b Button) init(parent Layout) {
 	// Create native widget if native_widgets is enabled
 	if b.ui.window.native_widgets.is_enabled() {
 		b.native_w = b.ui.window.native_widgets.create_button(b.x, b.y, b.width, b.height, b.text)
+		b.ui.window.native_widgets.sync_state(&b.native_w, b.disabled, b.hidden)
 		if b.on_click != unsafe { ButtonFn(0) } {
 			b.ui.window.native_widgets.button_set_callback(&b.native_w, native_button_clicked, b)
 		}
@@ -219,6 +220,9 @@ pub fn (b &Button) free() {
 
 fn native_button_clicked(v_button voidptr) {
 	mut b := unsafe { &Button(v_button) }
+	if b.hidden || b.disabled {
+		return
+	}
 	if b.on_click != unsafe { ButtonFn(0) } {
 		b.on_click(b)
 	}
@@ -391,6 +395,7 @@ fn (mut b Button) draw() {
 fn (mut b Button) draw_device(mut d DrawDevice) {
 	// Native widget: update position/text and skip custom drawing
 	if b.ui.window.native_widgets.is_enabled() && b.native_w.handle != unsafe { nil } {
+		b.ui.window.native_widgets.sync_state(&b.native_w, b.disabled, b.hidden)
 		b.ui.window.native_widgets.update_button(&b.native_w, b.x, b.y, b.width, b.height, b.text)
 		return
 	}
@@ -512,6 +517,9 @@ fn (b &Button) point_inside(x f64, y f64) bool {
 
 fn (mut b Button) set_visible(state bool) {
 	b.hidden = !state
+	if b.ui != unsafe { nil } {
+		b.ui.window.native_widgets.sync_state(&b.native_w, b.disabled, b.hidden)
+	}
 }
 
 fn (mut b Button) focus() {

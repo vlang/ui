@@ -240,6 +240,7 @@ pub fn (mut tb TextBox) init(parent Layout) {
 	if tb.ui.window.native_widgets.is_enabled() {
 		tb.native_w = tb.ui.window.native_widgets.create_textfield(tb.x, tb.y, tb.width, tb.height,
 			tb.placeholder)
+		tb.ui.window.native_widgets.sync_state(&tb.native_w, tb.disabled, tb.hidden)
 		if tb.is_password {
 			tb.ui.window.native_widgets.textfield_set_secure(&tb.native_w, true)
 		}
@@ -355,6 +356,7 @@ pub fn (mut tb TextBox) draw() {
 pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if tb.ui.window.native_widgets.is_enabled() && tb.native_w.handle != unsafe { nil } {
+		tb.ui.window.native_widgets.sync_state(&tb.native_w, tb.disabled, tb.hidden)
 		// Read current text from native widget back into V model
 		native_text := tb.ui.window.native_widgets.textfield_get_text(&tb.native_w)
 		if tb.text != 0 {
@@ -1075,6 +1077,9 @@ fn tb_mouse_up(mut tb TextBox, e &MouseEvent, _ voidptr) {
 
 pub fn (mut tb TextBox) set_visible(state bool) {
 	tb.hidden = !state
+	if tb.ui != unsafe { nil } {
+		tb.ui.window.native_widgets.sync_state(&tb.native_w, tb.disabled, tb.hidden)
+	}
 }
 
 pub fn (mut tb TextBox) focus() {

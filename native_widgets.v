@@ -25,3 +25,14 @@ pub mut:
 pub fn (nw &NativeWidgets) is_enabled() bool {
 	return nw.enabled
 }
+
+// sync_state applies a widget's disabled/hidden flags to its native control.
+// It is safe to call on every draw; platform implementations are cheap no-ops
+// when there is no native handle.
+pub fn (nw &NativeWidgets) sync_state(nwidget &NativeWidget, disabled bool, hidden bool) {
+	if !nw.enabled || nwidget.handle == unsafe { nil } {
+		return
+	}
+	nw.set_enabled(nwidget, !disabled)
+	nw.set_visible(nwidget, !hidden)
+}

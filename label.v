@@ -79,6 +79,7 @@ fn (mut l Label) init(parent Layout) {
 	// Create native widget if native_widgets is enabled
 	if l.ui.window.native_widgets.is_enabled() {
 		l.native_w = l.ui.window.native_widgets.create_label(l.x, l.y, l.width, l.height, l.text)
+		l.ui.window.native_widgets.sync_state(&l.native_w, false, l.hidden)
 	}
 }
 
@@ -166,6 +167,7 @@ fn (mut l Label) draw() {
 fn (mut l Label) draw_device(mut d DrawDevice) {
 	// Native widget: update position/text and skip custom drawing
 	if l.ui.window.native_widgets.is_enabled() && l.native_w.handle != unsafe { nil } {
+		l.ui.window.native_widgets.sync_state(&l.native_w, false, l.hidden)
 		l.ui.window.native_widgets.update_label(&l.native_w, l.x, l.y, l.width, l.height, l.text)
 		return
 	}
@@ -203,6 +205,9 @@ fn (mut l Label) draw_device(mut d DrawDevice) {
 
 fn (mut l Label) set_visible(state bool) {
 	l.hidden = !state
+	if l.ui != unsafe { nil } {
+		l.ui.window.native_widgets.sync_state(&l.native_w, false, l.hidden)
+	}
 }
 
 pub fn (l &Label) point_inside(x f64, y f64) bool {

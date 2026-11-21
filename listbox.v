@@ -164,6 +164,7 @@ fn (mut lb ListBox) init(parent Layout) {
 		}
 		lb.native_w = lb.ui.window.native_widgets.create_listbox(lb.x, lb.y, lb.width, lb.height,
 			texts, lb.selection)
+		lb.ui.window.native_widgets.sync_state(&lb.native_w, false, lb.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, on_change, lb)
@@ -521,6 +522,7 @@ fn (mut lb ListBox) draw() {
 fn (mut lb ListBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if lb.ui.window.native_widgets.is_enabled() && lb.native_w.handle != unsafe { nil } {
+		lb.ui.window.native_widgets.sync_state(&lb.native_w, false, lb.hidden)
 		lb.selection = lb.ui.window.native_widgets.listbox_get_selected(&lb.native_w)
 		lb.ui.window.native_widgets.update_listbox(&lb.native_w, lb.x, lb.y, lb.width, lb.height,
 			lb.selection)
@@ -828,6 +830,9 @@ pub fn (mut lb ListBox) set_pos(x int, y int) {
 
 fn (mut lb ListBox) set_visible(state bool) {
 	lb.hidden = !state
+	if lb.ui != unsafe { nil } {
+		lb.ui.window.native_widgets.sync_state(&lb.native_w, false, lb.hidden)
+	}
 }
 
 fn (mut lb ListBox) focus() {

@@ -120,6 +120,7 @@ fn (mut r Radio) init(parent Layout) {
 	if r.ui.window.native_widgets.is_enabled() {
 		r.native_w = r.ui.window.native_widgets.create_radio_group(r.x, r.y, r.width,
 			r.real_height, r.values, r.selected_index, r.title)
+		r.ui.window.native_widgets.sync_state(&r.native_w, r.disabled, r.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, radio_key_down, r)
@@ -313,6 +314,7 @@ fn (mut r Radio) draw() {
 fn (mut r Radio) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if r.ui.window.native_widgets.is_enabled() && r.native_w.handle != unsafe { nil } {
+		r.ui.window.native_widgets.sync_state(&r.native_w, r.disabled, r.hidden)
 		r.selected_index = r.ui.window.native_widgets.radio_get_selected(&r.native_w)
 		r.ui.window.native_widgets.update_radio_group(&r.native_w, r.x, r.y, r.width,
 			r.real_height, r.selected_index)
@@ -376,6 +378,9 @@ fn (r &Radio) point_inside(x f64, y f64) bool {
 
 fn (mut r Radio) set_visible(state bool) {
 	r.hidden = !state
+	if r.ui != unsafe { nil } {
+		r.ui.window.native_widgets.sync_state(&r.native_w, r.disabled, r.hidden)
+	}
 }
 
 fn (mut r Radio) focus() {

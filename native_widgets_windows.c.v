@@ -63,6 +63,22 @@ pub fn (mut nw NativeWidgets) init_parent(window_handle voidptr) {
 	nw.parent_handle = window_handle
 }
 
+// set_enabled mirrors the V model's disabled flag onto the Win32 control.
+pub fn (nw &NativeWidgets) set_enabled(nwidget &NativeWidget, enabled bool) {
+	if nwidget.handle == unsafe { nil } {
+		return
+	}
+	C.EnableWindow(nwidget.handle, enabled)
+}
+
+// set_visible mirrors the V model's hidden flag onto the Win32 control.
+pub fn (nw &NativeWidgets) set_visible(nwidget &NativeWidget, visible bool) {
+	if nwidget.handle == unsafe { nil } {
+		return
+	}
+	C.ShowWindow(nwidget.handle, if visible { sw_show } else { sw_hide })
+}
+
 pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title string) NativeWidget {
 	handle := C.CreateWindowExW(0, win32_button_class(), title.to_wide(),
 		ws_child | ws_visible | ws_tabstop | bs_pushbutton, x, y, w, h, nw.parent_handle,

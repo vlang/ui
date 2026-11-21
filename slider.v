@@ -121,6 +121,7 @@ fn (mut s Slider) init(parent Layout) {
 	if s.ui.window.native_widgets.is_enabled() {
 		s.native_w = s.ui.window.native_widgets.create_slider(s.x, s.y, s.width, s.height,
 			s.orientation, f64(s.min), f64(s.max), f64(s.val))
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, slider_click, s)
@@ -211,6 +212,7 @@ fn (mut s Slider) draw() {
 fn (mut s Slider) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
 		s.val = f32(s.ui.window.native_widgets.slider_get_value(&s.native_w))
 		s.ui.window.native_widgets.update_slider(&s.native_w, s.x, s.y, s.width, s.height,
 			f64(s.val))
@@ -462,6 +464,9 @@ fn (mut s Slider) change_value(x int, y int) {
 
 fn (mut s Slider) set_visible(state bool) {
 	s.hidden = !state
+	if s.ui != unsafe { nil } {
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
+	}
 }
 
 fn (mut s Slider) focus() {

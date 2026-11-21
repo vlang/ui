@@ -138,6 +138,7 @@ fn (mut m Menu) init(parent Layout) {
 			texts[i] = item.text
 		}
 		m.native_w = m.ui.window.native_widgets.create_menu(m.x, m.y, m.width, m.height, texts)
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
@@ -341,6 +342,7 @@ fn (mut m Menu) draw() {
 fn (mut m Menu) draw_device(mut d DrawDevice) {
 	// Native widget: skip custom drawing when native menus are used
 	if m.ui.window.native_widgets.is_enabled() && m.native_w.handle != unsafe { nil } {
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
 		return
 	}
 	offset_start(mut m)
@@ -453,6 +455,9 @@ pub fn (mut m Menu) get_items_count() int {
 
 pub fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
+	if m.ui != unsafe { nil } {
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
+	}
 }
 
 pub fn (mut m Menu) set_children_visible(state bool) {
