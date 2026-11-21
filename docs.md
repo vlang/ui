@@ -99,6 +99,7 @@ Allows users to input or display text.
 -   `is_numeric`: (bool) Restrict input to numbers.
 -   `is_password`: (bool) Mask input characters.
 -   `read_only`: (bool) Prevent user input.
+-   `disabled`: (bool) Disable interaction and dim the control; no input events are processed.
 -   `on_change`: (fn(&TextBox)) Callback when text changes.
 -   `on_enter`: (fn(&TextBox)) Callback when Enter key is pressed.
 -   `scrollview`: (bool) Enable scrolling for multiline textboxes.
@@ -186,6 +187,7 @@ Allows selecting one option from a group.
 -   `width`: (int) Width of the control (behavior depends on `horizontal` and `compact`).
 -   `horizontal`: (bool) Arrange options horizontally instead of vertically.
 -   `compact`: (bool) Try to fit options within the specified width (used with `horizontal`).
+-   `disabled`: (bool) Disable interaction and dim the control.
 -   `on_click`: (fn(&Radio)) Callback when an option is selected.
 
 **Methods:**
@@ -217,6 +219,7 @@ A slider control for selecting a value within a range.
 -   `on_value_changed`: (fn(&Slider)) Callback when the value changes.
 -   `width`, `height`: (int) Size of the slider track.
 -   `thumb_color`: (gx.Color) Color of the slider handle.
+-   `disabled`: (bool) Disable interaction and dim the control.
 
 **Example (`examples/slider.v`):**
 
@@ -290,6 +293,7 @@ Displays an image from a file.
 -   `path`: (string) Path to the image file.
 -   `width`, `height`: (int) Display size (image will be scaled).
 -   `movable`: (bool) Allow dragging the picture (usually with Shift key).
+-   `disabled`: (bool) Disable click and drag interaction.
 -   `tooltip`: (string) Tooltip text.
 
 **Example (`users.v`):**
@@ -352,6 +356,8 @@ Displays a list of selectable items.
 -   `scrollview`: (bool) Enable scrolling.
 -   `files_dropped`: (bool) Accept dropped files (adds them to the list).
 
+Individual `ListItem`s also have a `disabled` flag: disabled items are dimmed, cannot be selected by mouse or arrow keys, and cannot be dragged.
+
 **Methods:**
 
 -   `selected()`: Returns `!(id, text)` of the selected item.
@@ -388,6 +394,7 @@ A dropdown menu for selecting one option.
 -   `texts`: ([]string) Alternative way to specify items using just text.
 -   `def_text`: (string) Text displayed when no item is selected.
 -   `selected_index`: (int) Index of the initially selected item (-1 for none).
+-   `disabled`: (bool) Disable interaction and dim the control.
 -   `on_selection_changed`: (fn(&Dropdown)) Callback when selection changes.
 
 **Methods:**
@@ -419,10 +426,12 @@ Create context menus or menu bars.
     -   `text`: (string) Display text.
     -   `action`: (fn(&MenuItem)) Callback when clicked (for non-submenu items).
     *   `submenu`: (&Menu) A nested menu.
+    *   `disabled`: (bool) Disable this item (it is skipped on hover and click).
 -   `ui.menu`:
     -   `id`: (string) Identifier.
     *   `text`: (string) Text for the menu button itself (if not part of a menubar).
     *   `items`: ([]&MenuItem) List of menu items.
+    *   `disabled`: (bool) Disable the whole menu.
 -   `ui.menubar`:
     *   `id`: (string) Identifier.
     *   `items`: ([]&MenuItem) List of top-level menu items (often containing submenus).
@@ -523,6 +532,7 @@ A toggle switch control.
 
 -   `id`: (string) Unique identifier.
 -   `open`: (bool) Initial state (true for on/open).
+-   `disabled`: (bool) Disable interaction and dim the control.
 -   `on_click`: (fn(&Switch)) Callback when toggled.
 
 **Example (`examples/switch.v`):**

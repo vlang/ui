@@ -15,6 +15,7 @@ pub mut:
 	offset_x int
 	offset_y int
 	hidden   bool
+	disabled bool
 	// component state for composable widget
 	component voidptr
 	// native widget handle (when native_widgets is enabled)
@@ -52,6 +53,7 @@ pub:
 	image        gg.Image
 	tooltip      string
 	tooltip_side Side = .top
+	disabled     bool
 }
 
 pub fn picture(c PictureParams) &Picture {
@@ -68,6 +70,7 @@ pub fn picture(c PictureParams) &Picture {
 		use_cache: c.use_cache
 		on_click:  c.on_click
 		image:     c.image
+		disabled:  c.disabled
 		tooltip:   TooltipMessage{c.tooltip, c.tooltip_side}
 		ui:        unsafe { nil }
 	}
@@ -151,7 +154,7 @@ pub fn (p &Picture) free() {
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, _ &Window) {
-	if pic.hidden {
+	if pic.hidden || pic.disabled {
 		return
 	}
 	if pic.point_inside(e.x, e.y) {
@@ -164,7 +167,7 @@ fn pic_click(mut pic Picture, e &MouseEvent, _ &Window) {
 }
 
 fn pic_mouse_down(mut pic Picture, e &MouseEvent, _ &Window) {
-	if pic.hidden {
+	if pic.hidden || pic.disabled {
 		return
 	}
 	if pic.point_inside(e.x, e.y) {

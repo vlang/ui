@@ -99,6 +99,7 @@ pub mut:
 	border_accentuated bool
 	// related to widget drawing
 	hidden   bool
+	disabled bool
 	clipping bool
 	// component state for composable widget
 	component voidptr
@@ -151,6 +152,7 @@ pub:
 	// bg_color           gg.Color = gg.white
 	borderless         bool
 	border_accentuated bool
+	disabled           bool
 	// text_size          f64
 	theme         string = no_style
 	fitted_height bool
@@ -180,6 +182,7 @@ pub fn textbox(c TextBoxParams) &TextBox {
 		max_len:            c.max_len
 		borderless:         c.borderless
 		border_accentuated: c.border_accentuated
+		disabled:           c.disabled
 		// bg_color: c.bg_color
 		// text_size: c.text_size
 		style_params:   c.TextBoxStyleParams
@@ -390,9 +393,9 @@ pub fn (mut tb TextBox) draw_device(mut d DrawDevice) {
 	// draw background
 	if tb.has_scrollview {
 		d.draw_rect_filled(tb.x + tb.scrollview.offset_x, tb.y + tb.scrollview.offset_y,
-			tb.scrollview.width, tb.scrollview.height, tb.style.bg_color)
+			tb.scrollview.width, tb.scrollview.height, dim_color(tb.style.bg_color, tb.disabled))
 	} else {
-		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, tb.style.bg_color)
+		d.draw_rect_filled(tb.x, tb.y, tb.width, tb.height, dim_color(tb.style.bg_color, tb.disabled))
 		if !tb.borderless {
 			mut is_error := false
 			if tb.is_error != 0 {
@@ -559,7 +562,7 @@ fn tb_key_down(mut tb TextBox, e &KeyEvent, _ &Window) {
 		println('tb_keydown id:${tb.id}  -> hidden:${tb.hidden} focused:${tb.is_focused}')
 		println(e)
 	}
-	if tb.hidden {
+	if tb.hidden || tb.disabled {
 		return
 	}
 	if !tb.is_focused && !tb.read_only {
@@ -737,7 +740,7 @@ fn tb_char(mut tb TextBox, e &KeyEvent, _ &Window) {
 	$if tb_char ? {
 		println('tb_char: ${tb.id}  -> ${tb.hidden} ${tb.is_focused}')
 	}
-	if tb.hidden {
+	if tb.hidden || tb.disabled {
 		return
 	}
 	if !tb.is_focused && !tb.read_only {
@@ -956,7 +959,7 @@ fn (tb &TextBox) point_inside(x f64, y f64) bool {
 
 fn tb_mouse_down(mut tb TextBox, e &MouseEvent, _ voidptr) {
 	// println("mouse first $tb.id")
-	if tb.hidden {
+	if tb.hidden || tb.disabled {
 		return
 	}
 	$if top_widget_md ? {
@@ -1022,7 +1025,7 @@ fn tb_mouse_down(mut tb TextBox, e &MouseEvent, _ voidptr) {
 }
 
 fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, _ voidptr) {
-	if tb.hidden {
+	if tb.hidden || tb.disabled {
 		return
 	}
 	tb.is_selectable = tb.point_inside(e.x, e.y)
@@ -1043,19 +1046,25 @@ fn tb_mouse_move(mut tb TextBox, e &MouseMoveEvent, _ voidptr) {
 }
 
 pub fn (mut tb TextBox) mouse_enter(e &MouseMoveEvent) {
+	if tb.hidden || tb.disabled {
+		return
+	}
 	if !tb.read_only {
 		tb.ui.window.mouse.start('_system_:ibeam')
 	}
 }
 
 pub fn (mut tb TextBox) mouse_leave(e &MouseMoveEvent) {
+	if tb.hidden || tb.disabled {
+		return
+	}
 	if !tb.read_only {
 		tb.ui.window.mouse.stop_last('_system_:ibeam')
 	}
 }
 
 fn tb_mouse_up(mut tb TextBox, e &MouseEvent, _ voidptr) {
-	if tb.hidden {
+	if tb.hidden || tb.disabled {
 		return
 	}
 	if !tb.point_inside(e.x, e.y) {

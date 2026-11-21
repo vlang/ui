@@ -137,7 +137,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, _ &Window) {
 	$if cb_keydown ? {
 		println('cb_keydown: ${cb.id}  -> ${cb.hidden} ${cb.is_focused}')
 	}
-	if cb.hidden {
+	if cb.hidden || cb.disabled {
 		return
 	}
 	if !cb.is_focused {
@@ -157,7 +157,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, _ &Window) {
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, _ &Window) {
-	if cb.hidden {
+	if cb.hidden || cb.disabled {
 		return
 	}
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
@@ -224,7 +224,8 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2,
 		adj_pos_y - (cb.height - cb.adj_height) / 2, cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
 	// }
-	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.bg_color) // progress_bar_color)
+	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
+		dim_color(cb.style.bg_color, cb.disabled)) // progress_bar_color)
 	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
 		false)
 	if cb.is_focused {

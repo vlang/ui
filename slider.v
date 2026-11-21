@@ -43,6 +43,7 @@ pub mut:
 	track_line_displayed bool
 	entering             bool
 	hidden               bool
+	disabled             bool
 	radius               int
 	// Style
 	theme_style  string
@@ -75,6 +76,7 @@ pub:
 	thumb_in_track       bool
 	track_line_displayed bool = true
 	entering             bool
+	disabled             bool
 }
 
 pub fn slider(c SliderParams) &Slider {
@@ -95,6 +97,7 @@ pub fn slider(c SliderParams) &Slider {
 		ui:                   unsafe { nil }
 		z_index:              c.z_index
 		entering:             c.entering
+		disabled:             c.disabled
 		style_params:         c.SliderStyleParams
 		radius:               c.radius
 	}
@@ -226,7 +229,7 @@ fn (mut s Slider) draw_device(mut d DrawDevice) {
 		s.x + (s.width - s.slider_size) / 2, s.y, s.slider_size, s.height
 	}
 
-	d.draw_rounded_rect_filled(x, y, w, h, s.radius, s.style.bg_color)
+	d.draw_rounded_rect_filled(x, y, w, h, s.radius, dim_color(s.style.bg_color, s.disabled))
 	if s.track_line_displayed {
 		if s.orientation == .horizontal {
 			d.draw_line(x + 2, y + h / 2, x + w - 4, y + h / 2, gg.rgb(0, 0, 0))
@@ -269,15 +272,15 @@ fn (s &Slider) draw_device_thumb(d DrawDevice) {
 	middle := f32(rev_axis) - (f32(rev_thumb_dim - rev_dim) / 2)
 	if s.orientation == .horizontal {
 		d.draw_rounded_rect_filled(pos - f32(s.thumb_width) / 2, middle, s.thumb_width,
-			s.thumb_height, s.radius, s.style.thumb_color)
+			s.thumb_height, s.radius, dim_color(s.style.thumb_color, s.disabled))
 	} else {
 		d.draw_rounded_rect_filled(middle, pos - f32(s.thumb_height) / 2, s.thumb_width,
-			s.thumb_height, s.radius, s.style.thumb_color)
+			s.thumb_height, s.radius, dim_color(s.style.thumb_color, s.disabled))
 	}
 }
 
 fn slider_key_down(mut s Slider, e &KeyEvent, _ voidptr) {
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	if !s.is_focused {
@@ -368,7 +371,7 @@ fn (s &Slider) point_inside_thumb(x f64, y f64) bool {
 }
 
 fn slider_click(mut s Slider, e &MouseEvent, _ voidptr) {
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	if !s.point_inside_thumb(e.x, e.y) && (!s.point_inside(e.x, e.y) || s.focus_on_thumb_only) {
@@ -382,7 +385,7 @@ fn slider_click(mut s Slider, e &MouseEvent, _ voidptr) {
 }
 
 fn slider_mouse_down(mut s Slider, e &MouseEvent, _ voidptr) {
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	// println('slider touchup  NO MORE DRAGGING')
@@ -394,11 +397,19 @@ fn slider_mouse_down(mut s Slider, e &MouseEvent, _ voidptr) {
 
 fn slider_mouse_up(mut s Slider, _ &MouseEvent, _ voidptr) {
 	// println('slider touchup  NO MORE DRAGGING')
+	if s.disabled {
+		s.dragging = false
+		return
+	}
 	s.dragging = false
 }
 
 fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
 	// println("slider: $s.dragging ${e.mouse_button} ${int(e.mouse_button)}")
+	if s.disabled {
+		s.dragging = false
+		return
+	}
 	if s.ui.btn_down[0] { // int(e.mouse_button) == 0 {
 		// left: 0, right: 1, middle: 2
 		if s.entering && s.point_inside_thumb(e.x, e.y) {
@@ -414,7 +425,7 @@ fn slider_mouse_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
 }
 
 fn slider_touch_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	if s.entering && s.point_inside_thumb(e.x, e.y) {
@@ -427,6 +438,9 @@ fn slider_touch_move(mut s Slider, e &MouseMoveEvent, _ voidptr) {
 }
 
 fn (mut s Slider) change_value(x int, y int) {
+	if s.disabled {
+		return
+	}
 	dim := if s.orientation == .horizontal { s.width } else { s.height }
 	axis := if s.orientation == .horizontal { s.x } else { s.y }
 	// TODO parser bug ` - axis`
