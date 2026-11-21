@@ -43,6 +43,17 @@ pub fn (f Focusable) is_disabled() bool {
 	return false
 }
 
+// is_focus_visible applies the same visibility rules as mouse hit-testing:
+// a widget hidden by its own z-index, by an ancestor, or by a deactivated
+// parent layout must not be reachable through keyboard focus navigation.
+pub fn (f Focusable) is_focus_visible() bool {
+	if f is Widget {
+		w := f as Widget
+		return w.is_visible() && w.is_parent_visible(true) && !w.has_parent_deactivated()
+	}
+	return !f.hidden
+}
+
 // TODO: documentation
 pub fn (f Focusable) has_focusable() bool {
 	mut focusable := true
@@ -50,15 +61,15 @@ pub fn (f Focusable) has_focusable() bool {
 		focusable = !f.read_only
 	}
 	$if focus ? {
-		println('${f.id}.has_focusable(): ${focusable} && ${!f.hidden} && ${!f.is_disabled()} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
+		println('${f.id}.has_focusable(): ${focusable} && ${f.is_focus_visible()} && ${!f.is_disabled()} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
 	}
-	return focusable && !f.hidden && !f.is_disabled() && f.ui.window.unlocked_focus()
+	return focusable && f.is_focus_visible() && !f.is_disabled() && f.ui.window.unlocked_focus()
 }
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) set_focus() {
 	mut w := f.ui.window
-	if !w.unlocked_focus() || f.is_disabled() {
+	if !w.unlocked_focus() || f.is_disabled() || !f.is_focus_visible() {
 		return
 	}
 	if f.is_focused {
@@ -85,7 +96,7 @@ pub fn (mut f Focusable) set_focus() {
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) force_focus() {
 	mut w := f.ui.window
-	if f.is_disabled() {
+	if f.is_disabled() || !f.is_focus_visible() {
 		return
 	}
 	if f.is_focused {
