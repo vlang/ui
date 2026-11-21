@@ -230,7 +230,7 @@ fn btn_key_down(mut b Button, e &KeyEvent, _ &Window) {
 	$if btn_keydown ? {
 		println('btn_keydown: ${b.id}  -> ${b.hidden} ${b.is_focused}')
 	}
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	if !b.is_focused {
@@ -291,7 +291,7 @@ fn btn_mouse_down(mut b Button, e &MouseEvent, _ &Window) {
 		println('btn_mouse_down ${b.id} movable ${b.movable} top_widget ${b.ui.window.is_top_widget(b,
 			events.on_mouse_down)}')
 	}
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	if !b.ui.window.is_top_widget(b, events.on_mouse_down) {
@@ -315,7 +315,7 @@ fn btn_mouse_up(mut b Button, e &MouseEvent, _ &Window) {
 	$if btn_mu ? {
 		println('btn_mu ${b.id}')
 	}
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	b.state = .normal
@@ -326,7 +326,7 @@ fn btn_mouse_up(mut b Button, e &MouseEvent, _ &Window) {
 
 fn btn_mouse_move(mut b Button, e &MouseMoveEvent, _ &Window) {
 	// println('btn_click for window=$window.title')
-	if b.hidden {
+	if b.hidden || b.disabled {
 		return
 	}
 	if e.mouse_button == 256 {
