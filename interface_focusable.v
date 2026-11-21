@@ -16,6 +16,33 @@ mut:
 	unfocus()
 }
 
+// is_disabled reports whether the concrete widget behind this Focusable has
+// its interaction disabled. Widgets without a disabled state are always enabled.
+pub fn (f Focusable) is_disabled() bool {
+	if f is Button {
+		return f.disabled
+	}
+	if f is CheckBox {
+		return f.disabled
+	}
+	if f is Dropdown {
+		return f.disabled
+	}
+	if f is Slider {
+		return f.disabled
+	}
+	if f is Radio {
+		return f.disabled
+	}
+	if f is TextBox {
+		return f.disabled
+	}
+	if f is Switch {
+		return f.disabled
+	}
+	return false
+}
+
 // TODO: documentation
 pub fn (f Focusable) has_focusable() bool {
 	mut focusable := true
@@ -23,15 +50,15 @@ pub fn (f Focusable) has_focusable() bool {
 		focusable = !f.read_only
 	}
 	$if focus ? {
-		println('${f.id}.has_focusable(): ${focusable} && ${!f.hidden} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
+		println('${f.id}.has_focusable(): ${focusable} && ${!f.hidden} && ${!f.is_disabled()} && ${f.ui.window.unlocked_focus()} (locked_focus=<${f.ui.window.locked_focus}>)')
 	}
-	return focusable && !f.hidden && f.ui.window.unlocked_focus()
+	return focusable && !f.hidden && !f.is_disabled() && f.ui.window.unlocked_focus()
 }
 
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) set_focus() {
 	mut w := f.ui.window
-	if !w.unlocked_focus() {
+	if !w.unlocked_focus() || f.is_disabled() {
 		return
 	}
 	if f.is_focused {
@@ -58,6 +85,9 @@ pub fn (mut f Focusable) set_focus() {
 // Only one widget can have the focus inside a Window
 pub fn (mut f Focusable) force_focus() {
 	mut w := f.ui.window
+	if f.is_disabled() {
+		return
+	}
 	if f.is_focused {
 		if mut w.ui.dd is DrawDeviceContext {
 			$if focus ? {
