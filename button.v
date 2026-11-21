@@ -348,12 +348,18 @@ fn btn_mouse_move(mut b Button, e &MouseMoveEvent, _ &Window) {
 }
 
 pub fn (mut b Button) mouse_enter(e &MouseMoveEvent) {
+	if b.hidden || b.disabled {
+		return
+	}
 	if b.on_mouse_enter != unsafe { ButtonMouseMoveFn(0) } {
 		b.on_mouse_enter(b, e)
 	}
 }
 
 pub fn (mut b Button) mouse_leave(e &MouseMoveEvent) {
+	if b.hidden || b.disabled {
+		return
+	}
 	if b.on_mouse_leave != unsafe { ButtonMouseMoveFn(0) } {
 		b.on_mouse_leave(b, e)
 	}
