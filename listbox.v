@@ -345,10 +345,13 @@ pub fn (lb &ListBox) is_selected() bool {
 }
 
 pub fn (lb &ListBox) is_item_selected_at(inx int) bool {
+	if inx < 0 || inx >= lb.items.len {
+		return false
+	}
 	return lb.selectable && if lb.multi {
 		lb.items[inx].selected && !lb.items[inx].disabled
 	} else {
-		inx == lb.selection
+		inx == lb.selection && !lb.items[inx].disabled
 	}
 }
 
@@ -359,12 +362,15 @@ pub fn (lb &ListBox) is_item_selected(li &ListItem) bool {
 		if lb.selection < 0 || lb.selection >= lb.items.len {
 			false
 		} else {
-			li == lb.items[lb.selection]
+			!li.disabled && li == lb.items[lb.selection]
 		}
 	}
 }
 
 pub fn (mut lb ListBox) set_item_selected(inx int, enable_mode bool) bool {
+	if inx < 0 || inx >= lb.items.len {
+		return false
+	}
 	if lb.multi {
 		if enable_mode {
 			lb.items[inx].disabled = !lb.items[inx].disabled
@@ -377,7 +383,7 @@ pub fn (mut lb ListBox) set_item_selected(inx int, enable_mode bool) bool {
 			return false
 		}
 	} else {
-		if inx != lb.selection {
+		if !lb.items[inx].disabled && inx != lb.selection {
 			lb.selection = inx
 			return true
 		} else {
@@ -667,7 +673,7 @@ fn lb_mouse_down(mut lb ListBox, e &MouseEvent, _ &Window) {
 		lb.focus() // IMPORTANT to not propagate event at the same position of removed widget
 		if lb.ordered {
 			dragged_item := lb.get_selected_item(e.y)
-			if dragged_item >= 0 {
+			if dragged_item >= 0 && !lb.items[dragged_item].disabled {
 				mut di := lb.items[dragged_item]
 				lb.just_dragged = drag_register(di, e)
 				if lb.just_dragged {
@@ -734,7 +740,8 @@ fn lb_mouse_move(mut lb ListBox, e &MouseMoveEvent, _ &Window) {
 				}
 			}
 		} else {
-			lb.hovering = lb.get_selected_item(int(e.y))
+			idx := lb.get_selected_item(int(e.y))
+			lb.hovering = if idx >= 0 && lb.items[idx].disabled { -1 } else { idx }
 		}
 	} else {
 		lb.hovering = -1
@@ -762,6 +769,19 @@ fn on_files_dropped(mut lb ListBox, e &MouseEvent, _ &Window) {
 	lb.ui.window.update_layout()
 }
 
+// nearest_enabled_item returns the closest enabled item in `delta` direction,
+// or `from` itself when every remaining item is disabled.
+fn (lb &ListBox) nearest_enabled_item(from int, delta int) int {
+	mut i := from + delta
+	for i >= 0 && i < lb.items.len {
+		if !lb.items[i].disabled {
+			return i
+		}
+		i += delta
+	}
+	return from
+}
+
 // Up and Down keys work on the list when it's is_focused
 fn lb_key_up(mut lb ListBox, e &KeyEvent, _ &Window) {
 	if lb.hidden {
@@ -770,6 +790,7 @@ fn lb_key_up(mut lb ListBox, e &KeyEvent, _ &Window) {
 	if !lb.is_focused {
 		return
 	}
+	prev_selection := lb.selection
 	match e.key {
 		.down {
 			if lb.selection >= lb.draw_count - 1 {
@@ -778,19 +799,19 @@ fn lb_key_up(mut lb ListBox, e &KeyEvent, _ &Window) {
 			if lb.selection >= lb.items.len - 1 {
 				return
 			}
-			lb.selection++
+			lb.selection = lb.nearest_enabled_item(lb.selection, 1)
 		}
 		.up {
 			if lb.selection <= 0 {
 				return
 			}
-			lb.selection--
+			lb.selection = lb.nearest_enabled_item(lb.selection, -1)
 		}
 		else {
 			return
 		}
 	}
-	if lb.on_change != unsafe { ListBoxFn(0) } {
+	if lb.selection != prev_selection && lb.on_change != unsafe { ListBoxFn(0) } {
 		lb.on_change(lb)
 	}
 }

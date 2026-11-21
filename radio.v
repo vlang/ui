@@ -51,6 +51,7 @@ pub mut:
 	text_styles TextStyles
 	// text_size   f64
 	hidden     bool
+	disabled   bool
 	horizontal bool
 	compact    bool
 	// component state for composable widget
@@ -74,6 +75,7 @@ pub:
 	// ref       &Radio = voidptr(0)
 	horizontal bool
 	compact    bool
+	disabled   bool
 	theme      string = no_style
 }
 
@@ -88,6 +90,7 @@ pub fn radio(c RadioParams) &Radio {
 		style_params: c.RadioStyleParams
 		horizontal:   c.horizontal
 		compact:      c.compact
+		disabled:     c.disabled
 		ui:           unsafe { nil }
 		on_click:     c.on_click
 	}
@@ -162,7 +165,7 @@ fn radio_key_down(mut r Radio, e &KeyEvent, _ &Window) {
 	$if radio_keydown ? {
 		println('radio_keydown: ${r.id}  -> ${r.hidden} ${r.is_focused}')
 	}
-	if r.hidden {
+	if r.hidden || r.disabled {
 		return
 	}
 	if !r.is_focused {
@@ -181,7 +184,7 @@ fn radio_key_down(mut r Radio, e &KeyEvent, _ &Window) {
 }
 
 fn radio_click(mut r Radio, e &MouseEvent, _ &Window) {
-	if r.hidden {
+	if r.hidden || r.disabled {
 		return
 	}
 	if !r.point_inside(e.x, e.y) {
@@ -347,7 +350,7 @@ fn (mut r Radio) draw_device(mut d DrawDevice) {
 				y += r.height
 			}
 		}
-		d.draw_circle_filled(x + 8, y + 8, 7, r.style.bg_color)
+		d.draw_circle_filled(x + 8, y + 8, 7, dim_color(r.style.bg_color, r.disabled))
 		d.draw_image(x, y - 1, 16, 16, if i == r.selected_index {
 			r.ui.radio_selected_image
 		} else {
