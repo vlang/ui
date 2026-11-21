@@ -100,6 +100,7 @@ pub fn (mut cb CheckBox) init(parent Layout) {
 	if cb.ui.window.native_widgets.is_enabled() {
 		cb.native_w = cb.ui.window.native_widgets.create_checkbox(cb.x, cb.y, cb.width, cb.height,
 			cb.text, cb.checked)
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, cb_key_down, cb)
@@ -137,7 +138,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, _ &Window) {
 	$if cb_keydown ? {
 		println('cb_keydown: ${cb.id}  -> ${cb.hidden} ${cb.is_focused}')
 	}
-	if cb.hidden {
+	if cb.hidden || cb.disabled {
 		return
 	}
 	if !cb.is_focused {
@@ -157,7 +158,7 @@ fn cb_key_down(mut cb CheckBox, e &KeyEvent, _ &Window) {
 }
 
 fn cb_click(mut cb CheckBox, e &MouseEvent, _ &Window) {
-	if cb.hidden {
+	if cb.hidden || cb.disabled {
 		return
 	}
 	if cb.point_inside(e.x, e.y) { // && e.action == 0 {
@@ -208,6 +209,7 @@ pub fn (mut cb CheckBox) draw() {
 pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if cb.ui.window.native_widgets.is_enabled() && cb.native_w.handle != unsafe { nil } {
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
 		cb.checked = cb.ui.window.native_widgets.checkbox_is_checked(&cb.native_w)
 		cb.ui.window.native_widgets.update_checkbox(&cb.native_w, cb.x, cb.y, cb.width, cb.height,
 			cb.text, cb.checked)
@@ -224,7 +226,8 @@ pub fn (mut cb CheckBox) draw_device(mut d DrawDevice) {
 	d.draw_rect_filled(adj_pos_x - (cb.width - cb.adj_width) / 2,
 		adj_pos_y - (cb.height - cb.adj_height) / 2, cb.width, cb.height, cb.parent.bg_color()) // cb.ui.window.bg_color) // cb.style.bg_color)
 	// }
-	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size, cb.style.bg_color) // progress_bar_color)
+	d.draw_rect_filled(adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
+		dim_color(cb.style.bg_color, cb.disabled)) // progress_bar_color)
 	draw_device_inner_border(false, d, adj_pos_x, adj_pos_y, check_mark_size, check_mark_size,
 		false)
 	if cb.is_focused {
@@ -265,6 +268,9 @@ fn (mut cb CheckBox) mouse_move(_ MouseEvent) {
 
 pub fn (mut cb CheckBox) set_visible(state bool) {
 	cb.hidden = !state
+	if cb.ui != unsafe { nil } {
+		cb.ui.window.native_widgets.sync_state(&cb.native_w, cb.disabled, cb.hidden)
+	}
 }
 
 pub fn (mut cb CheckBox) focus() {

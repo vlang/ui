@@ -15,6 +15,7 @@ pub mut:
 	offset_x int
 	offset_y int
 	hidden   bool
+	disabled bool
 	// component state for composable widget
 	component voidptr
 	// native widget handle (when native_widgets is enabled)
@@ -52,6 +53,7 @@ pub:
 	image        gg.Image
 	tooltip      string
 	tooltip_side Side = .top
+	disabled     bool
 }
 
 pub fn picture(c PictureParams) &Picture {
@@ -68,6 +70,7 @@ pub fn picture(c PictureParams) &Picture {
 		use_cache: c.use_cache
 		on_click:  c.on_click
 		image:     c.image
+		disabled:  c.disabled
 		tooltip:   TooltipMessage{c.tooltip, c.tooltip_side}
 		ui:        unsafe { nil }
 	}
@@ -124,6 +127,7 @@ fn (mut pic Picture) init(parent Layout) {
 	if pic.ui.window.native_widgets.is_enabled() {
 		pic.native_w = pic.ui.window.native_widgets.create_picture(pic.x, pic.y, pic.width,
 			pic.height, pic.path)
+		pic.ui.window.native_widgets.sync_state(&pic.native_w, pic.disabled, pic.hidden)
 	}
 }
 
@@ -151,7 +155,7 @@ pub fn (p &Picture) free() {
 }
 
 fn pic_click(mut pic Picture, e &MouseEvent, _ &Window) {
-	if pic.hidden {
+	if pic.hidden || pic.disabled {
 		return
 	}
 	if pic.point_inside(e.x, e.y) {
@@ -164,7 +168,7 @@ fn pic_click(mut pic Picture, e &MouseEvent, _ &Window) {
 }
 
 fn pic_mouse_down(mut pic Picture, e &MouseEvent, _ &Window) {
-	if pic.hidden {
+	if pic.hidden || pic.disabled {
 		return
 	}
 	if pic.point_inside(e.x, e.y) {
@@ -196,6 +200,7 @@ fn (mut pic Picture) draw() {
 fn (mut pic Picture) draw_device(mut d DrawDevice) {
 	// Native widget: update position and skip custom drawing
 	if pic.ui.window.native_widgets.is_enabled() && pic.native_w.handle != unsafe { nil } {
+		pic.ui.window.native_widgets.sync_state(&pic.native_w, pic.disabled, pic.hidden)
 		pic.ui.window.native_widgets.update_picture(&pic.native_w, pic.x + pic.offset_x, pic.y +
 			pic.offset_y, pic.width, pic.height)
 		return
@@ -210,6 +215,9 @@ fn (mut pic Picture) draw_device(mut d DrawDevice) {
 
 fn (mut pic Picture) set_visible(state bool) {
 	pic.hidden = !state
+	if pic.ui != unsafe { nil } {
+		pic.ui.window.native_widgets.sync_state(&pic.native_w, pic.disabled, pic.hidden)
+	}
 }
 
 fn (pic &Picture) point_inside(x f64, y f64) bool {

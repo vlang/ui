@@ -26,6 +26,7 @@ pub mut:
 	is_focused           bool
 	on_selection_changed DropDownFn = unsafe { nil }
 	hidden               bool
+	disabled             bool
 	// bg_color             gg.Color = ui.dropdown_color
 	// Style
 	theme_style  string
@@ -52,6 +53,7 @@ pub:
 	height         int = 25
 	z_index        int = 10
 	selected_index int = -1
+	disabled       bool
 	// text_size            f64
 	theme                string     = no_style
 	on_selection_changed DropDownFn = unsafe { nil }
@@ -72,6 +74,7 @@ pub fn dropdown(c DropdownParams) &Dropdown {
 		z_index:              c.z_index
 		items:                c.items
 		selected_index:       c.selected_index
+		disabled:             c.disabled
 		on_selection_changed: c.on_selection_changed
 		style_params:         c.DropdownStyleParams
 		def_text:             c.def_text
@@ -99,6 +102,7 @@ pub fn (mut dd Dropdown) init(parent Layout) {
 		}
 		dd.native_w = dd.ui.window.native_widgets.create_dropdown(dd.x, dd.y, dd.width,
 			dd.dropdown_height, texts, dd.selected_index)
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, dd_click, dd)
@@ -174,6 +178,7 @@ pub fn (mut dd Dropdown) draw() {
 pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if dd.ui.window.native_widgets.is_enabled() && dd.native_w.handle != unsafe { nil } {
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
 		dd.selected_index = dd.ui.window.native_widgets.dropdown_get_selected(&dd.native_w)
 		dd.ui.window.native_widgets.update_dropdown(&dd.native_w, dd.x, dd.y, dd.width,
 			dd.dropdown_height, dd.selected_index)
@@ -188,7 +193,8 @@ pub fn (mut dd Dropdown) draw_device(mut d DrawDevice) {
 	mut dtw := DrawTextWidget(dd)
 	dtw.draw_device_load_style(d)
 	// draw the main dropdown
-	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height, dd.style.bg_color)
+	d.draw_rect_filled(dd.x, dd.y, dd.width, dd.dropdown_height,
+		dim_color(dd.style.bg_color, dd.disabled))
 	d.draw_rect_empty(dd.x, dd.y, dd.width, dd.dropdown_height, if dd.is_focused {
 		dd.style.focus_color
 	} else {
@@ -216,7 +222,11 @@ fn (dd &Dropdown) draw_device_open(d DrawDevice) {
 			dd.items.len * dd.dropdown_height, dd.style.border_color)
 		y := dd.y + dd.dropdown_height
 		for i, item in dd.items {
-			color := if i == dd.hover_index { dd.style.border_color } else { dd.style.drawer_color }
+			color := dim_color(if i == dd.hover_index {
+				dd.style.border_color
+			} else {
+				dd.style.drawer_color
+			}, dd.disabled)
 			d.draw_rect_filled(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
 				color)
 			d.draw_rect_empty(dd.x, y + i * dd.dropdown_height, dd.width, dd.dropdown_height,
@@ -241,7 +251,7 @@ fn (mut dd Dropdown) open_drawer() {
 }
 
 fn dd_key_down(mut dd Dropdown, e &KeyEvent, _ voidptr) {
-	if dd.hidden || !dd.is_focused {
+	if dd.hidden || dd.disabled || !dd.is_focused {
 		return
 	}
 	if dd.hover_index < 0 {
@@ -281,7 +291,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, _ voidptr) {
 	$if dd_click ? {
 		println('${dd.id} click ${dd.hidden} ${dd.is_focused} ${dd.z_index}')
 	}
-	if dd.hidden {
+	if dd.hidden || dd.disabled {
 		return
 	}
 	if !dd.is_focused {
@@ -305,7 +315,7 @@ fn dd_click(mut dd Dropdown, e &MouseEvent, _ voidptr) {
 }
 
 fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, _ voidptr) {
-	if dd.hidden {
+	if dd.hidden || dd.disabled {
 		return
 	}
 	// println('dd_mouse_down: ${dd.point_inside(e.x, e.y)}')
@@ -317,7 +327,7 @@ fn dd_mouse_down(mut dd Dropdown, e &MouseEvent, _ voidptr) {
 }
 
 fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, _ voidptr) {
-	if dd.hidden {
+	if dd.hidden || dd.disabled {
 		return
 	}
 	if dd.open {
@@ -330,6 +340,9 @@ fn dd_mouse_move(mut dd Dropdown, e &MouseMoveEvent, _ voidptr) {
 
 pub fn (mut dd Dropdown) set_visible(state bool) {
 	dd.hidden = !state
+	if dd.ui != unsafe { nil } {
+		dd.ui.window.native_widgets.sync_state(&dd.native_w, dd.disabled, dd.hidden)
+	}
 }
 
 pub fn (mut dd Dropdown) focus() {

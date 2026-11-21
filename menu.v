@@ -20,6 +20,7 @@ pub mut:
 	offset_x int
 	offset_y int
 	hidden   bool
+	disabled bool
 	ui       &UI = unsafe { nil }
 	// Style
 	theme_style  string
@@ -63,10 +64,11 @@ pub:
 	fixed_width bool
 	z_index     int = 1000
 	// text_size f64
-	text   string
-	items  []&MenuItem
-	hidden bool
-	theme  string = no_style
+	text     string
+	items    []&MenuItem
+	hidden   bool
+	disabled bool
+	theme    string = no_style
 }
 
 pub fn menu(c MenuParams) &Menu {
@@ -83,6 +85,7 @@ pub fn menu(c MenuParams) &Menu {
 		z_index:      c.z_index
 		style_params: c.MenuStyleParams
 		hidden:       c.hidden
+		disabled:     c.disabled
 	}
 	m.root_menu = m
 	m.style_params.style = c.theme
@@ -135,6 +138,7 @@ fn (mut m Menu) init(parent Layout) {
 			texts[i] = item.text
 		}
 		m.native_w = m.ui.window.native_widgets.create_menu(m.x, m.y, m.width, m.height, texts)
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_click, menu_click, m)
@@ -190,7 +194,7 @@ fn (mut m Menu) propagate_connection() {
 }
 
 fn menu_click(mut m Menu, e &MouseEvent, _ &Window) {
-	if m.hidden {
+	if m.hidden || m.disabled {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
@@ -203,6 +207,9 @@ fn menu_click(mut m Menu, e &MouseEvent, _ &Window) {
 			} else {
 				id_hovered(e.x, e.y, mut m)
 			}
+		}
+		if m.selected < 0 || m.selected >= m.items.len || m.items[m.selected].disabled {
+			return
 		}
 		mut item := m.items[m.selected]
 		mut submenu_to_open := false
@@ -227,7 +234,7 @@ fn menu_click(mut m Menu, e &MouseEvent, _ &Window) {
 }
 
 fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, _ &Window) {
-	if m.hidden {
+	if m.hidden || m.disabled {
 		return
 	}
 	if m.point_inside(e.x, e.y) {
@@ -240,7 +247,7 @@ fn menu_mouse_move(mut m Menu, e &MouseMoveEvent, _ &Window) {
 				id_hovered(e.x, e.y, mut m)
 			}
 		}
-		if m.hovered < 0 || m.hovered >= m.items.len {
+		if m.hovered < 0 || m.hovered >= m.items.len || m.items[m.hovered].disabled {
 			return
 		}
 		mut item := m.items[m.hovered]
@@ -335,6 +342,7 @@ fn (mut m Menu) draw() {
 fn (mut m Menu) draw_device(mut d DrawDevice) {
 	// Native widget: skip custom drawing when native menus are used
 	if m.ui.window.native_widgets.is_enabled() && m.native_w.handle != unsafe { nil } {
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
 		return
 	}
 	offset_start(mut m)
@@ -348,6 +356,8 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 	}
 	mut dtw := DrawTextWidget(m.root_menu)
 	dtw.draw_device_load_style(d)
+	dimmed_bg_col := dim_color(m.root_menu.style.bg_color, m.disabled)
+	dimmed_hover_col := dim_color(m.root_menu.style.bg_color_hover, m.disabled)
 
 	if m.dx == 1 && m.dy == 0 {
 		d.draw_rect_filled(m.x, m.y, m.real_width, m.height, m.root_menu.style.bar_color)
@@ -355,7 +365,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 	}
 	if m.root_menu.fixed_width {
 		d.draw_rect_filled(m.x, m.y, m.width + m.items.len * m.dx, m.height,
-			m.root_menu.style.bg_color)
+			dimmed_bg_col)
 		d.draw_rect_empty(m.x, m.y, m.width + m.items.len * m.dx, m.height,
 			m.root_menu.style.border_color)
 
@@ -364,7 +374,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 			if m.hovered >= 0 && i == m.hovered {
 				d.draw_rect_filled(m.x + i * m.dx * m.item_width + 1, m.y +
 					i * m.dy * m.item_height + 1, m.item_width - 1, m.item_height - 2,
-					m.root_menu.style.bg_color_hover)
+					dimmed_hover_col)
 			}
 
 			dtw.draw_device_text(d, m.x + i * m.dx * m.item_width + menu_padding, m.y +
@@ -380,7 +390,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 			}
 
 			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height,
-				m.root_menu.style.bg_color)
+				dimmed_bg_col)
 			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height,
 				m.root_menu.style.border_color)
 
@@ -388,7 +398,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 				//	println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
 				if m.hovered >= 0 && i == m.hovered {
 					d.draw_rect_filled(m.x + 1, m.y + i * m.dy * m.item_height + 1, mw - 2,
-						m.item_height - 2, m.root_menu.style.bg_color_hover)
+						m.item_height - 2, dimmed_hover_col)
 
 					// println("item $i <$m.id> $m.x, $m.y, $item.width, $m.dx")
 				}
@@ -409,7 +419,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 			}
 
 			d.draw_rect_filled(m.x, m.y, mw + m.items.len * m.dx, m.height,
-				m.root_menu.style.bg_color)
+				dimmed_bg_col)
 			d.draw_rect_empty(m.x, m.y, mw + m.items.len * m.dx, m.height,
 				m.root_menu.style.border_color)
 
@@ -418,7 +428,7 @@ fn (mut m Menu) draw_device(mut d DrawDevice) {
 				//	println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 				if m.hovered >= 0 && i == m.hovered {
 					d.draw_rect_filled(m.x + i * m.dx + w + 1, m.y + i * m.dy * m.item_height,
-						item.width, m.item_height - 1, m.root_menu.style.bg_color_hover)
+						item.width, m.item_height - 1, dimmed_hover_col)
 
 					// println("item $i <$m.id> $m.x, $m.y, $w, $item.width, $m.dx")
 				}
@@ -445,6 +455,9 @@ pub fn (mut m Menu) get_items_count() int {
 
 pub fn (mut m Menu) set_visible(state bool) {
 	m.hidden = !state
+	if m.ui != unsafe { nil } {
+		m.ui.window.native_widgets.sync_state(&m.native_w, m.disabled, m.hidden)
+	}
 }
 
 pub fn (mut m Menu) set_children_visible(state bool) {
@@ -514,6 +527,7 @@ pub mut:
 	menu        &Menu     = unsafe { nil }
 	parent_item &MenuItem = unsafe { nil }
 	width       int
+	disabled    bool
 mut:
 	action MenuItemFn = unsafe { nil }
 }
@@ -521,19 +535,21 @@ mut:
 @[params]
 pub struct MenuItemParams {
 pub:
-	id      string
-	text    string
-	submenu &Menu      = unsafe { nil }
-	action  MenuItemFn = unsafe { MenuItemFn(0) }
+	id       string
+	text     string
+	submenu  &Menu      = unsafe { nil }
+	action   MenuItemFn = unsafe { MenuItemFn(0) }
+	disabled bool
 }
 
 pub fn menuitem(p MenuItemParams) &MenuItem {
 	mi := &MenuItem{
-		text:    p.text
-		id:      p.id
-		action:  p.action
-		submenu: p.submenu
-		width:   0
+		text:     p.text
+		id:       p.id
+		action:   p.action
+		submenu:  p.submenu
+		width:    0
+		disabled: p.disabled
 	}
 	return mi
 }

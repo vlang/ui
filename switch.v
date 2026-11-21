@@ -35,6 +35,7 @@ pub mut:
 	on_click    SwitchFn    = unsafe { nil }
 	on_key_down SwitchU32Fn = unsafe { nil }
 	hidden      bool
+	disabled    bool
 	// component state for composable widget
 	component voidptr
 	// native widget handle (when native_widgets is enabled)
@@ -49,6 +50,7 @@ pub:
 	on_click    SwitchFn    = unsafe { nil }
 	on_key_down SwitchU32Fn = unsafe { nil }
 	open        bool
+	disabled    bool
 }
 
 pub fn switcher(c SwitchParams) &Switch {
@@ -58,6 +60,7 @@ pub fn switcher(c SwitchParams) &Switch {
 		width:       sw_width
 		z_index:     c.z_index
 		open:        c.open
+		disabled:    c.disabled
 		on_click:    c.on_click
 		on_key_down: c.on_key_down
 		ui:          unsafe { nil }
@@ -72,6 +75,7 @@ fn (mut s Switch) init(parent Layout) {
 	// Create native widget if native_widgets is enabled
 	if s.ui.window.native_widgets.is_enabled() {
 		s.native_w = s.ui.window.native_widgets.create_switch(s.x, s.y, s.width, s.height, s.open)
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
 	}
 	mut subscriber := parent.get_subscriber()
 	subscriber.subscribe_method(events.on_key_down, sw_key_down, s)
@@ -120,6 +124,7 @@ fn (mut s Switch) draw() {
 fn (mut s Switch) draw_device(mut d DrawDevice) {
 	// Native widget: sync state from native → V model, update geometry only
 	if s.ui.window.native_widgets.is_enabled() && s.native_w.handle != unsafe { nil } {
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
 		s.open = s.ui.window.native_widgets.switch_is_open(&s.native_w)
 		s.ui.window.native_widgets.update_switch(&s.native_w, s.x, s.y, s.width, s.height, s.open)
 		return
@@ -132,15 +137,16 @@ fn (mut s Switch) draw_device(mut d DrawDevice) {
 	}
 	padding := (s.height - sw_dot_size) / 2
 	if s.open {
-		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_open_bg_color)
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, dim_color(sw_open_bg_color, s.disabled))
 		d.draw_rect_filled(s.x - padding + s.width - sw_dot_size, s.y + padding, sw_dot_size,
-			sw_dot_size, gg.white)
+			sw_dot_size, dim_color(gg.white, s.disabled))
 	} else {
-		d.draw_rect_filled(s.x, s.y, s.width, s.height, sw_close_bg_color)
-		d.draw_rect_filled(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size, gg.white)
+		d.draw_rect_filled(s.x, s.y, s.width, s.height, dim_color(sw_close_bg_color, s.disabled))
+		d.draw_rect_filled(s.x + padding, s.y + padding, sw_dot_size, sw_dot_size,
+			dim_color(gg.white, s.disabled))
 	}
 	if s.is_focused {
-		d.draw_rect_empty(s.x, s.y, s.width, s.height, sw_focus_bg_color)
+		d.draw_rect_empty(s.x, s.y, s.width, s.height, dim_color(sw_focus_bg_color, s.disabled))
 	}
 	$if bb ? {
 		debug_draw_bb_widget(mut s, s.ui)
@@ -158,7 +164,7 @@ fn sw_key_down(mut s Switch, e &KeyEvent, _ &Window) {
 	$if sw_keydown ? {
 		println('sw_keydown: ${s.id}  -> ${s.hidden} ${s.is_focused}')
 	}
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	if !s.is_focused {
@@ -179,7 +185,7 @@ fn sw_key_down(mut s Switch, e &KeyEvent, _ &Window) {
 }
 
 fn sw_click(mut s Switch, e &MouseEvent, _ &Window) {
-	if s.hidden {
+	if s.hidden || s.disabled {
 		return
 	}
 	if !s.point_inside(e.x, e.y) {
@@ -196,6 +202,9 @@ fn sw_click(mut s Switch, e &MouseEvent, _ &Window) {
 
 fn (mut s Switch) set_visible(state bool) {
 	s.hidden = !state
+	if s.ui != unsafe { nil } {
+		s.ui.window.native_widgets.sync_state(&s.native_w, s.disabled, s.hidden)
+	}
 }
 
 fn (mut s Switch) focus() {

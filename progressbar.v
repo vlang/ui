@@ -69,6 +69,7 @@ fn (mut pb ProgressBar) init(parent Layout) {
 	if pb.ui.window.native_widgets.is_enabled() {
 		pb.native_w = pb.ui.window.native_widgets.create_progressbar(pb.x, pb.y, pb.width,
 			pb.height, f64(pb.min), f64(pb.max), f64(pb.val))
+		pb.ui.window.native_widgets.sync_state(&pb.native_w, false, pb.hidden)
 	}
 }
 
@@ -118,6 +119,7 @@ fn (mut pb ProgressBar) draw() {
 fn (mut pb ProgressBar) draw_device(mut d DrawDevice) {
 	// Native widget: update position/value and skip custom drawing
 	if pb.ui.window.native_widgets.is_enabled() && pb.native_w.handle != unsafe { nil } {
+		pb.ui.window.native_widgets.sync_state(&pb.native_w, false, pb.hidden)
 		pb.ui.window.native_widgets.update_progressbar(&pb.native_w, pb.x, pb.y, pb.width,
 			pb.height, f64(pb.val))
 		return
@@ -147,4 +149,7 @@ fn (pb &ProgressBar) point_inside(x f64, y f64) bool {
 
 fn (mut pb ProgressBar) set_visible(state bool) {
 	pb.hidden = !state
+	if pb.ui != unsafe { nil } {
+		pb.ui.window.native_widgets.sync_state(&pb.native_w, false, pb.hidden)
+	}
 }

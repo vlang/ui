@@ -152,6 +152,20 @@ fn native_button_set_enabled(handle voidptr, enabled bool) {
 	C.macos_objc_msg_void_bool(macos.Id(handle), macos.sel('setEnabled:'), enabled)
 }
 
+fn native_set_enabled(handle voidptr, enabled bool) {
+	if handle == unsafe { nil } {
+		return
+	}
+	C.macos_objc_msg_void_bool(macos.Id(handle), macos.sel('setEnabled:'), enabled)
+}
+
+fn native_set_hidden(handle voidptr, hidden bool) {
+	if handle == unsafe { nil } {
+		return
+	}
+	C.macos_objc_msg_void_bool(macos.Id(handle), macos.sel('setHidden:'), hidden)
+}
+
 fn native_remove_view(handle voidptr) {
 	view := macos.Id(handle)
 	if view == unsafe { nil } {
@@ -515,6 +529,16 @@ fn native_create_menu(parent voidptr, x int, y int, w int, h int, items []string
 
 pub fn (mut nw NativeWidgets) init_parent(window_handle voidptr) {
 	nw.parent_handle = native_get_content_view(window_handle)
+}
+
+// set_enabled mirrors the V model's disabled flag onto the native control.
+pub fn (nw &NativeWidgets) set_enabled(nwidget &NativeWidget, enabled bool) {
+	native_set_enabled(nwidget.handle, enabled)
+}
+
+// set_visible mirrors the V model's hidden flag onto the native control.
+pub fn (nw &NativeWidgets) set_visible(nwidget &NativeWidget, visible bool) {
+	native_set_hidden(nwidget.handle, !visible)
 }
 
 pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title string) NativeWidget {

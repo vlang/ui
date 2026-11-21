@@ -67,3 +67,8 @@ pub fn (hs HexColor) color() gg.Color {
 pub fn alpha_colored(c gg.Color, a u8) gg.Color {
 	return gg.rgba(c.r, c.g, c.b, a)
 }
+
+// dim_color fades a widget's color when the widget is disabled.
+pub fn dim_color(c gg.Color, disabled bool) gg.Color {
+	return if disabled { alpha_colored(c, 50) } else { c }
+}

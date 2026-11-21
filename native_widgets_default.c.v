@@ -11,6 +11,13 @@ pub fn (mut nw NativeWidgets) init_parent(window_handle voidptr) {
 	nw.parent_handle = window_handle
 }
 
+// No native controls on this platform: state changes are custom-rendered instead.
+pub fn (nw &NativeWidgets) set_enabled(nwidget &NativeWidget, enabled bool) {
+}
+
+pub fn (nw &NativeWidgets) set_visible(nwidget &NativeWidget, visible bool) {
+}
+
 pub fn (mut nw NativeWidgets) create_button(x int, y int, w int, h int, title string) NativeWidget {
 	return NativeWidget{}
 }
